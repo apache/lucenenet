@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -30,7 +30,7 @@ namespace Lucene.Net.Support
     internal class AssemblyUtils
     {
         /// <summary>
-        /// Gets a list of the host assembly's referenced assemblies excluding 
+        /// Gets a list of the host assembly's referenced assemblies excluding
         /// any Microsoft, System, or Mono prefixed assemblies or assemblies with
         /// official Microsoft key hashes. Essentially, we get a list of all non
         /// Microsoft assemblies here.

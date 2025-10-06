@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
         /// <summary>
         /// Creates a new <see cref="Lucene42DocValuesFormat"/> with the specified
-        /// <paramref name="acceptableOverheadRatio"/> for <see cref="Index.NumericDocValues"/>. 
+        /// <paramref name="acceptableOverheadRatio"/> for <see cref="Index.NumericDocValues"/>.
         /// <para/>
         /// @lucene.experimental
         /// </summary>

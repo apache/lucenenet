@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -31,7 +31,7 @@ namespace Lucene.Net.Benchmarks.Quality
     public class QualityStats
     {
         /// <summary>Number of points for which precision is computed.</summary>
-        public static readonly int MAX_POINTS = 20;
+        public const int MAX_POINTS = 20;
 
         private double maxGoodPoints;
         private double recall;
@@ -66,7 +66,7 @@ namespace Lucene.Net.Benchmarks.Quality
         private readonly IList<RecallPoint> recallPoints; // LUCENENET: marked readonly
 
         /// <summary>
-        /// Construct a QualityStats object with anticipated maximal number of relevant hits. 
+        /// Construct a QualityStats object with anticipated maximal number of relevant hits.
         /// </summary>
         /// <param name="maxGoodPoints">maximal possible relevant hits.</param>
         /// <param name="searchTime"></param>
@@ -75,7 +75,7 @@ namespace Lucene.Net.Benchmarks.Quality
             this.maxGoodPoints = maxGoodPoints;
             this.searchTime = searchTime;
             this.recallPoints = new JCG.List<RecallPoint>();
-            pAt = new double[MAX_POINTS + 1]; // pAt[0] unused. 
+            pAt = new double[MAX_POINTS + 1]; // pAt[0] unused.
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Lucene.Net.Benchmarks.Quality
                 numGoodPoints += 1;
                 recallPoints.Add(new RecallPoint(n, numGoodPoints));
                 if (recallPoints.Count == 1 && n <= 5)
-                { // first point, but only within 5 top scores. 
+                { // first point, but only within 5 top scores.
                     mrr = 1.0 / n;
                 }
             }
@@ -197,19 +197,19 @@ namespace Lucene.Net.Benchmarks.Quality
         {
             s = (s ?? "");
             int n = Math.Max(minLen, s.Length);
-            return (s + padd).Substring(0, n-0);
+            return (s + padd).Substring(0, n - 0);
         }
         private static string FracFormat(string frac) // LUCENENET: CA1822: Mark members as static
         {
             int k = frac.IndexOf('.');
-            string s1 = padd + frac.Substring(0, k-0);
+            string s1 = padd + frac.Substring(0, k - 0);
             int n = Math.Max(k, 6);
             s1 = s1.Substring(s1.Length - n);
             return s1 + frac.Substring(k);
         }
 
         /// <summary>
-        /// Create a <see cref="QualityStats"/> object that is the average of the input <see cref="QualityStats"/> objects. 
+        /// Create a <see cref="QualityStats"/> object that is the average of the input <see cref="QualityStats"/> objects.
         /// </summary>
         /// <param name="stats">array of input stats to be averaged.</param>
         /// <returns>an average over the input stats.</returns>
@@ -255,7 +255,7 @@ namespace Lucene.Net.Benchmarks.Quality
             {
                 avg.pAt[j] /= m;
             }
-            avg.pReleventSum /= m;                 // this is actually avgp now 
+            avg.pReleventSum /= m;                 // this is actually avgp now
             avg.pReleventSum *= avg.maxGoodPoints; // so that getAvgP() would be correct
 
             return avg;
@@ -294,11 +294,11 @@ namespace Lucene.Net.Benchmarks.Quality
         /// Returns the Mean reciprocal rank over the queries or RR for a single query.
         /// </summary>
         /// <remarks>
-        /// Reciprocal rank is defined as <c>1/r</c> where <c>r</c> is the 
-        /// rank of the first correct result, or <c>0</c> if there are no correct 
+        /// Reciprocal rank is defined as <c>1/r</c> where <c>r</c> is the
+        /// rank of the first correct result, or <c>0</c> if there are no correct
         /// results within the top 5 results.
         /// <para/>
-        /// This follows the definition in 
+        /// This follows the definition in
         /// <a href="http://www.cnlp.org/publications/02cnlptrec10.pdf">
         /// Question Answering - CNLP at the TREC-10 Question Answering Track</a>.
         /// </remarks>

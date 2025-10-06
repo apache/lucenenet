@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Diagnostics;

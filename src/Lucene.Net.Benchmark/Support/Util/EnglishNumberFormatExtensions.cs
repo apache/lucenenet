@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -21,7 +21,7 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Extension methods to spell out numbers into English. 
+    /// Extension methods to spell out numbers into English.
     /// <para/>
     /// Inspiration: https://stackoverflow.com/a/2601001
     /// </summary>

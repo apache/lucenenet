@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.QueryParsers.Surround.Parser
+namespace Lucene.Net.QueryParsers.Surround.Parser
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -75,9 +75,9 @@
         public const int DEFAULT = 2;
     }
 
-    // NOTE: In Java, this was an interface. However, in 
+    // NOTE: In Java, this was an interface. However, in
     // .NET we cannot define constants in an interface.
-    // So, instead we are making it a static class so it 
+    // So, instead we are making it a static class so it
     // can be shared between classes with different base classes.
 
     // public interface QueryParserConstants
@@ -88,7 +88,8 @@
     public static class QueryParserConstants
     {
         /// <summary>Literal token values. </summary>
-        public static string[] TokenImage = new string[] {
+        // LUCENENET specific - made readonly
+        public static readonly string[] TokenImage = {
             "<EOF>",
             "<_NUM_CHAR>",
             "<_TERM_CHAR>",

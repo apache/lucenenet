@@ -1,4 +1,4 @@
-﻿using J2N.Threading.Atomic;
+using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
@@ -411,7 +411,7 @@ namespace Lucene.Net.Index
         /// <param name="directory"> the index directory </param>
         /// <param name="termInfosIndexDivisor"> Subsamples which indexed
         ///  terms are loaded into RAM. this has the same effect as
-        ///  <see cref="LiveIndexWriterConfig.TermIndexInterval"/> 
+        ///  <see cref="LiveIndexWriterConfig.TermIndexInterval"/>
         ///  (which can be set on <see cref="IndexWriterConfig"/>) except that setting
         ///  must be done at indexing time while this setting can be
         ///  set per reader.  When set to <c>N</c>, then one in every
@@ -452,7 +452,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: returns an <see cref="IndexReader"/> reading the index in the given
-        /// <see cref="IndexCommit"/>. 
+        /// <see cref="IndexCommit"/>.
         /// </summary>
         /// <param name="commit"> the commit point to open </param>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
@@ -468,7 +468,7 @@ namespace Lucene.Net.Index
         /// <param name="commit"> the commit point to open </param>
         /// <param name="termInfosIndexDivisor"> Subsamples which indexed
         ///  terms are loaded into RAM. this has the same effect as
-        ///  <see cref="LiveIndexWriterConfig.TermIndexInterval"/> 
+        ///  <see cref="LiveIndexWriterConfig.TermIndexInterval"/>
         ///  (which can be set in <see cref="IndexWriterConfig"/>) except that setting
         ///  must be done at indexing time while this setting can be
         ///  set per reader.  When set to <c>N</c>, then one in every
@@ -540,7 +540,7 @@ namespace Lucene.Net.Index
         /// <b>NOTE:</b> for performance reasons, this method does not check if the
         /// requested document is deleted, and therefore asking for a deleted document
         /// may yield unspecified results. Usually this is not required, however you
-        /// can test if the doc is deleted by checking the 
+        /// can test if the doc is deleted by checking the
         /// <see cref="Util.IBits"/> returned from <see cref="MultiFields.GetLiveDocs"/>.
         /// <para/>
         /// <b>NOTE:</b> only the content of a field is returned,
@@ -591,13 +591,13 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Closes files associated with this index.
-        /// This method implements the disposable pattern. 
+        /// This method implements the disposable pattern.
         /// It may be overridden to dispose any managed or unmanaged resources,
         /// but be sure to call <c>base.Dispose(disposing)</c> to close files associated with the
         /// underlying <see cref="IndexReader"/>.
         /// </summary>
-        /// <param name="disposing"><c>true</c> indicates to dispose all managed 
-        /// and unmanaged resources, <c>false</c> indicates dispose unmanaged 
+        /// <param name="disposing"><c>true</c> indicates to dispose all managed
+        /// and unmanaged resources, <c>false</c> indicates dispose unmanaged
         /// resources only</param>
         protected virtual void Dispose(bool disposing)
         {
@@ -619,7 +619,7 @@ namespace Lucene.Net.Index
             }
 
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-            // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
+            // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a ConditionalWeakTable enumerator,
             // we use a weak event to retrieve the ConditionalWeakTable items
             foreach (var getParentReadersEvent in getParentReadersEvents)
                 getParentReadersEvent.Unsubscribe(OnGetParentReaders);
@@ -636,7 +636,7 @@ namespace Lucene.Net.Index
         protected internal abstract void DoClose();
 
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-        // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
+        // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a ConditionalWeakTable enumerator,
         // we use a weak event to retrieve the ConditionalWeakTable items
         [ExcludeFromRamUsageEstimation]
         private readonly ISet<WeakEvents.GetParentReadersEvent> getParentReadersEvents = new JCG.HashSet<WeakEvents.GetParentReadersEvent>();
@@ -699,10 +699,10 @@ namespace Lucene.Net.Index
         public IList<AtomicReaderContext> Leaves => Context.Leaves;
 
         /// <summary>
-        /// Expert: Returns a key for this <see cref="IndexReader"/>, so 
+        /// Expert: Returns a key for this <see cref="IndexReader"/>, so
         /// <see cref="Search.FieldCache"/>/<see cref="Search.CachingWrapperFilter"/> can find
         /// it again.
-        /// This key must not have Equals()/GetHashCode() methods, 
+        /// This key must not have Equals()/GetHashCode() methods,
         /// so &quot;equals&quot; means &quot;identical&quot;.
         /// </summary>
         public virtual object CoreCacheKey =>
@@ -713,7 +713,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Expert: Returns a key for this <see cref="IndexReader"/> that also includes deletions,
         /// so <see cref="Search.IFieldCache"/>/<see cref="Search.CachingWrapperFilter"/> can find it again.
-        /// This key must not have Equals()/GetHashCode() methods, 
+        /// This key must not have Equals()/GetHashCode() methods,
         /// so &quot;equals&quot; means &quot;identical&quot;.
         /// </summary>
         public virtual object CombinedCoreAndDeletesKey =>

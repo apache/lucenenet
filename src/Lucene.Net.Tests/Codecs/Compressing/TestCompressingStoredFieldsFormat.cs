@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Documents;
+using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -73,7 +73,8 @@ namespace Lucene.Net.Codecs.Compressing
 
             try
             {
-                Assert.Throws<ArgumentException>(() => {
+                Assert.Throws<ArgumentException>(() =>
+                {
                     iw.AddDocument(invalidDoc);
                     iw.Commit();
                 });

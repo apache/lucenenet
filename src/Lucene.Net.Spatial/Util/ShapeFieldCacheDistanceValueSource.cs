@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Spatial4n.Context;
 using Spatial4n.Distance;
@@ -30,7 +30,7 @@ namespace Lucene.Net.Spatial.Util
     /// between an input point and a document's points in
     /// <see cref="ShapeFieldCacheProvider{T}"/>. The shortest distance is returned if a
     /// document has more than one point.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
     public class ShapeFieldCacheDistanceValueSource : ValueSource
@@ -40,7 +40,7 @@ namespace Lucene.Net.Spatial.Util
         private readonly ShapeFieldCacheProvider<IPoint> provider;
         private readonly double multiplier;
 
-        public ShapeFieldCacheDistanceValueSource(SpatialContext ctx, 
+        public ShapeFieldCacheDistanceValueSource(SpatialContext ctx,
             ShapeFieldCacheProvider<IPoint> provider, IPoint from, double multiplier)
         {
             // LUCENENET specific - added guard clauses

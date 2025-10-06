@@ -120,12 +120,16 @@ namespace Lucene.Net.Analysis.Br
         /// <returns> true if is vowel </returns>
         private static bool IsVowel(char value) // LUCENENET: CA1822: Mark members as static
         {
-            return (value == 'a') || (value == 'e') || (value == 'i') || (value == 'o') || (value == 'u');
+            return (value == 'a') ||
+                (value == 'e') ||
+                (value == 'i') ||
+                (value == 'o') ||
+                (value == 'u');
         }
 
         /// <summary>
         /// Gets R1
-        /// 
+        ///
         /// R1 - is the region after the first non-vowel following a vowel,
         ///      or is the null region at the end of the word if there is
         ///      no such non-vowel.
@@ -176,16 +180,16 @@ namespace Lucene.Net.Analysis.Br
 
         /// <summary>
         /// Gets RV
-        /// 
+        ///
         /// RV - IF the second letter is a consonant, RV is the region after
         ///      the next following vowel,
-        /// 
+        ///
         ///      OR if the first two letters are vowels, RV is the region
         ///      after the next consonant,
-        /// 
+        ///
         ///      AND otherwise (consonant-vowel case) RV is the region after
         ///      the third letter.
-        /// 
+        ///
         ///      BUT RV is the end of the word if this positions cannot be
         ///      found.
         /// </summary>
@@ -273,12 +277,16 @@ namespace Lucene.Net.Analysis.Br
             value = locale.TextInfo.ToLower(value);
             for (j = 0; j < value.Length; j++)
             {
-                if ((value[j] == 'á') || (value[j] == 'â') || (value[j] == 'ã'))
+                if ((value[j] == 'á') ||
+                    (value[j] == 'â') ||
+                    (value[j] == 'ã'))
                 {
                     r = r + "a";
                     continue;
                 }
-                if ((value[j] == 'é') || (value[j] == 'ê'))
+
+                if ((value[j] == 'é') ||
+                    (value[j] == 'ê'))
                 {
                     r = r + "e";
                     continue;
@@ -288,12 +296,17 @@ namespace Lucene.Net.Analysis.Br
                     r = r + "i";
                     continue;
                 }
-                if ((value[j] == 'ó') || (value[j] == 'ô') || (value[j] == 'õ'))
+
+                if ((value[j] == 'ó') ||
+                    (value[j] == 'ô') ||
+                    (value[j] == 'õ'))
                 {
                     r = r + "o";
                     continue;
                 }
-                if ((value[j] == 'ú') || (value[j] == 'ü'))
+
+                if ((value[j] == 'ú') ||
+                    (value[j] == 'ü'))
                 {
                     r = r + "u";
                     continue;
@@ -321,7 +334,6 @@ namespace Lucene.Net.Analysis.Br
         /// <returns> true if the string ends with the specified suffix </returns>
         private static bool Suffix(string value, string suffix) // LUCENENET: CA1822: Mark members as static
         {
-
             // be-safe !!!
             if ((value is null) || (suffix is null))
             {
@@ -345,7 +357,9 @@ namespace Lucene.Net.Analysis.Br
             string vvalue;
 
             // be-safe !!!
-            if ((value is null) || (toReplace is null) || (changeTo is null))
+            if ((value is null) ||
+                (toReplace is null) ||
+                (changeTo is null))
             {
                 return value;
             }
@@ -369,7 +383,9 @@ namespace Lucene.Net.Analysis.Br
         private static string RemoveSuffix(string value, string toRemove) // LUCENENET: CA1822: Mark members as static
         {
             // be-safe !!!
-            if ((value is null) || (toRemove is null) || !Suffix(value, toRemove))
+            if ((value is null) ||
+                (toRemove is null) ||
+                !Suffix(value, toRemove))
             {
                 return value;
             }
@@ -384,7 +400,10 @@ namespace Lucene.Net.Analysis.Br
         private static bool SuffixPreceded(string value, string suffix, string preceded) // LUCENENET: CA1822: Mark members as static
         {
             // be-safe !!!
-            if ((value is null) || (suffix is null) || (preceded is null) || !Suffix(value, suffix))
+            if ((value is null) ||
+                (suffix is null) ||
+                (preceded is null) ||
+                !Suffix(value, suffix))
             {
                 return false;
             }
@@ -405,7 +424,14 @@ namespace Lucene.Net.Analysis.Br
             }
 
             // if the first character is ... , remove it
-            if ((CT[0] == '"') || (CT[0] == '\'') || (CT[0] == '-') || (CT[0] == ',') || (CT[0] == ';') || (CT[0] == '.') || (CT[0] == '?') || (CT[0] == '!'))
+            if ((CT[0] == '"') ||
+                (CT[0] == '\'') ||
+                (CT[0] == '-') ||
+                (CT[0] == ',') ||
+                (CT[0] == ';') ||
+                (CT[0] == '.') ||
+                (CT[0] == '?') ||
+                (CT[0] == '!'))
             {
                 CT = CT.Substring(1);
             }
@@ -416,7 +442,14 @@ namespace Lucene.Net.Analysis.Br
             }
 
             // if the last character is ... , remove it
-            if ((CT[CT.Length - 1] == '-') || (CT[CT.Length - 1] == ',') || (CT[CT.Length - 1] == ';') || (CT[CT.Length - 1] == '.') || (CT[CT.Length - 1] == '?') || (CT[CT.Length - 1] == '!') || (CT[CT.Length - 1] == '\'') || (CT[CT.Length - 1] == '"'))
+            if ((CT[CT.Length - 1] == '-') ||
+                (CT[CT.Length - 1] == ',') ||
+                (CT[CT.Length - 1] == ';') ||
+                (CT[CT.Length - 1] == '.') ||
+                (CT[CT.Length - 1] == '?') ||
+                (CT[CT.Length - 1] == '!') ||
+                (CT[CT.Length - 1] == '\'') ||
+                (CT[CT.Length - 1] == '"'))
             {
                 CT = CT.Substring(0, CT.Length - 1);
             }
@@ -675,7 +708,7 @@ namespace Lucene.Net.Analysis.Br
 
         /// <summary>
         /// Verb suffixes.
-        /// 
+        ///
         /// Search for the longest among the following suffixes in RV,
         /// and if found, delete.
         /// </summary>
@@ -1306,12 +1339,11 @@ namespace Lucene.Net.Analysis.Br
             {
                 CT = RemoveSuffix(CT, "i");
             }
-
         }
 
         /// <summary>
         /// Residual suffix
-        /// 
+        ///
         /// If the word ends with one of the suffixes (os a i o á í ó)
         /// in RV, delete it
         /// </summary>
@@ -1342,14 +1374,13 @@ namespace Lucene.Net.Analysis.Br
                 CT = RemoveSuffix(CT, "o");
                 //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
             }
-
         }
 
         /// <summary>
         /// If the word ends with one of ( e é ê) in RV,delete it,
         /// and if preceded by 'gu' (or 'ci') with the 'u' (or 'i') in RV,
         /// delete the 'u' (or 'i')
-        /// 
+        ///
         /// Or if the word ends ç remove the cedilha
         /// </summary>
         private void Step5()
@@ -1386,7 +1417,11 @@ namespace Lucene.Net.Analysis.Br
         /// <returns> TERM, CT, RV, R1 and R2 </returns>
         public virtual string Log()
         {
-            return " (TERM = " + TERM + ")" + " (CT = " + CT + ")" + " (RV = " + RV + ")" + " (R1 = " + R1 + ")" + " (R2 = " + R2 + ")";
+            return " (TERM = " + TERM + ")" +
+                    " (CT = " + CT + ")" +
+                    " (RV = " + RV + ")" +
+                    " (R1 = " + R1 + ")" +
+                    " (R2 = " + R2 + ")";
         }
     }
 }

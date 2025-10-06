@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.ComponentModel;
@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
     /// </summary>
     // LUCENENET: In Lucene, this exception was so it could be re-thrown unchecked. It has been
     // re-purposed in .NET but used in all the same scenerios.
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]

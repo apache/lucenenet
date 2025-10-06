@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Utils;
+using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Facet;
 using System;
 using System.Collections.Generic;
@@ -30,7 +30,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// Supports the following parameters:
     /// <list type="bullet">
     ///     <item><term>rand.seed</term><description>defines the seed to initialize <see cref="Random"/> with (default: <b>13</b>).</description></item>
-    ///     <item><term>max.doc.facet.dims</term><description>Max number of random dimensions to create (default: <b>5</b>); 
+    ///     <item><term>max.doc.facet.dims</term><description>Max number of random dimensions to create (default: <b>5</b>);
     ///         actual number of dimensions would be anything between 1 and that number.</description></item>
     ///     <item><term>max.doc.facets</term><description>maximal #facets per doc (default: <b>10</b>).
     ///         Actual number of facets in a certain doc would be anything between 1 and that number.

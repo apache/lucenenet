@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Stats;
+using Lucene.Net.Benchmarks.ByTask.Stats;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -56,7 +56,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             // aggregate by task name
             int reported = 0;
-            JCG.LinkedDictionary<string, TaskStats> p2 = new JCG.LinkedDictionary<string, TaskStats>();
+            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            JCG.OrderedDictionary<string, TaskStats> p2 = new JCG.OrderedDictionary<string, TaskStats>();
             foreach (TaskStats stat1 in taskStats)
             {
                 if (stat1.Elapsed >= 0)

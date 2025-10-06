@@ -1,4 +1,4 @@
-﻿// lucene version compatibility level: 4.8.1
+// lucene version compatibility level: 4.8.1
 using Lucene.Net.Analysis.Phonetic.Language;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Phonetic
 
         public override bool IncrementToken()
         {
-            for (;;)
+            for (; ; )
             {
                 if (remainingTokens.TryDequeue(out State first))
                 {

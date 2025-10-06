@@ -1,4 +1,4 @@
-﻿// Attributes2Impl.java - extended AttributesImpl
+// Attributes2Impl.java - extended AttributesImpl
 // http://www.saxproject.org
 // Public Domain: no warranty.
 // $Id: Attributes2Impl.java,v 1.5 2004/03/08 13:01:01 dmegginson Exp $

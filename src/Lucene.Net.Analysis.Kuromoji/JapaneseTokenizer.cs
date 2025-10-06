@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1 + LUCENE-10059 (https://github.com/apache/lucene/pull/254 only)
+// Lucene version compatibility level 4.8.1 + LUCENE-10059 (https://github.com/apache/lucene/pull/254 only)
 
 using J2N;
 using Lucene.Net.Analysis.Ja.Dict;
@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Ja
         /// <summary>
         /// Default tokenization mode. Currently this is <see cref="JapaneseTokenizerMode.SEARCH"/>.
         /// </summary>
-        public static readonly JapaneseTokenizerMode DEFAULT_MODE = JapaneseTokenizerMode.SEARCH;
+        public const JapaneseTokenizerMode DEFAULT_MODE = JapaneseTokenizerMode.SEARCH;
 
         // LUCENENET specific: de-nested Type and renamed JapaneseTokenizerType
 
@@ -929,7 +929,7 @@ namespace Lucene.Net.Analysis.Ja
                 if (Debugging.AssertsEnabled) Debugging.Assert(bestIDX < posData.count);
 
                 int backPos = posData.backPos[bestIDX];
-                if (Debugging.AssertsEnabled) Debugging.Assert(backPos >= lastBackTracePos,"backPos={0} vs lastBackTracePos={1}", backPos, lastBackTracePos);
+                if (Debugging.AssertsEnabled) Debugging.Assert(backPos >= lastBackTracePos, "backPos={0} vs lastBackTracePos={1}", backPos, lastBackTracePos);
                 int length = pos - backPos;
                 JapaneseTokenizerType backType = posData.backType[bestIDX];
                 int backID = posData.backID[bestIDX];
@@ -1368,7 +1368,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             count = 0;
             // forwardCount naturally resets after it runs:
-            if (Debugging.AssertsEnabled) Debugging.Assert(forwardCount == 0,"pos={0} forwardCount={1}", pos, forwardCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(forwardCount == 0, "pos={0} forwardCount={1}", pos, forwardCount);
         }
     }
 

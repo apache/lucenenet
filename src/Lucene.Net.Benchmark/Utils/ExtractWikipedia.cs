@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Feeds;
+using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
@@ -34,7 +34,7 @@ namespace Lucene.Net.Benchmarks.Utils
     {
         private readonly DirectoryInfo outputDir; // LUCENENET: marked readonly
 
-        public static int count = 0;
+        public static int Count { get; set; } // LUCENENET: changed mutable static field into a property
 
         internal const int BASE = 10;
         protected DocMaker m_docMaker;
@@ -73,7 +73,7 @@ namespace Lucene.Net.Benchmarks.Utils
 
         public virtual void Create(string id, string title, string time, string body)
         {
-            DirectoryInfo d = Directory(count++, null);
+            DirectoryInfo d = Directory(Count++, null);
             d.Create();
             FileInfo f = new FileInfo(System.IO.Path.Combine(d.FullName, id + ".txt"));
 

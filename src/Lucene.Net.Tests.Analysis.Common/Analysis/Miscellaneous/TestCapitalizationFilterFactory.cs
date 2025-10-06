@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System;
@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             Reader reader = new StringReader("Hello thEre my Name is Ryan");
             TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", "forceFirstLetter", "true", 
+            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", "forceFirstLetter", "true",
                 // LUCENENET specific - pass in the invariant culture to get the same behavior as Lucene,
                 // otherwise the filter is culture-sensitive.
                 "culture", "invariant").Create(stream);
@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Test CapitalizationFilterFactory's minWordLength option.
-        /// 
+        ///
         /// This is very weird when combined with ONLY_FIRST_WORD!!!
         /// </summary>
         [Test]
@@ -224,7 +224,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Test CapitalizationFilterFactory's maxTokenLength option when exceeded
-        /// 
+        ///
         /// This is weird, it is not really a max, but inclusive (look at 'is')
         /// </summary>
         [Test]

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Documents;
+using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -187,11 +187,11 @@ namespace Lucene.Net.Index
                 }
             }
 
-            protected override void ReadInternal(byte[] b, int offset, int length)
+            protected override void ReadInternal(Span<byte> destination)
             {
                 SimOutage();
                 @delegate.Seek(Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
-                @delegate.ReadBytes(b, offset, length);
+                @delegate.ReadBytes(destination);
             }
 
             protected override void SeekInternal(long pos)

@@ -1,4 +1,4 @@
-﻿// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
+// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
 //
 // TagSoup is licensed under the Apache License,
 // Version 2.0.  You may obtain a copy of this license at
@@ -10,8 +10,8 @@
 // is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
 // OF ANY KIND, either express or implied; not even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// 
-// 
+//
+//
 // PYX Writer
 // FIXME: does not do escapes in attribute values
 // FIXME: outputs entities as bare '&' character

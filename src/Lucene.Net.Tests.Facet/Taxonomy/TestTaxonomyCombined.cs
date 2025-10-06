@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Support;
@@ -547,7 +547,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 tw.GetParent(-1);
                 fail("getParent for -1 should throw exception");
             }
-            catch (Exception e) when(e.IsArrayIndexOutOfBoundsException())
+            catch (Exception e) when (e.IsArrayIndexOutOfBoundsException())
             {
                 // ok
             }

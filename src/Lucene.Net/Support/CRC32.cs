@@ -19,6 +19,8 @@
  *
 */
 
+using System;
+
 namespace Lucene.Net.Support
 {
     internal class CRC32 : IChecksum
@@ -32,7 +34,7 @@ namespace Lucene.Net.Support
             for (uint n = 0; n < 256; n++)
             {
                 uint c = n;
-                for (int k = 8; --k >= 0; )
+                for (int k = 8; --k >= 0;)
                 {
                     if ((c & 1) != 0)
                         c = 0xedb88320 ^ (c >> 1);
@@ -62,15 +64,16 @@ namespace Lucene.Net.Support
 
         public void Update(byte[] buf, int off, int len)
         {
-            uint c = ~crc;
-            while (--len >= 0)
-                c = crcTable[(c ^ buf[off++]) & 0xff] ^ (c >> 8);
-            crc = ~c;
+            Update(buf.AsSpan(off, len));
         }
 
-        public void Update(byte[] buf)
+        public void Update(ReadOnlySpan<byte> bytes)
         {
-            Update(buf, 0, buf.Length);
+            int off = 0; int len = bytes.Length;
+            uint c = ~crc;
+            while (--len >= 0)
+                c = crcTable[(c ^ bytes[off++]) & 0xff] ^ (c >> 8);
+            crc = ~c;
         }
     }
 }

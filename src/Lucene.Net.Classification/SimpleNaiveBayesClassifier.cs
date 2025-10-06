@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Classification
         /// <param name="textFieldName">the name of the field used to compare documents</param>
         public virtual void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer, Query query)
         {
-            Train(atomicReader, new string[]{textFieldName}, classFieldName, analyzer, query);
+            Train(atomicReader, new string[] { textFieldName }, classFieldName, analyzer, query);
         }
 
         /// <summary>Train the classifier using the underlying Lucene index</summary>
@@ -114,7 +114,8 @@ namespace Lucene.Net.Classification
         private string[] TokenizeDoc(string doc)
         {
             ICollection<string> result = new LinkedList<string>();
-            foreach (string textFieldName in textFieldNames) {
+            foreach (string textFieldName in textFieldNames)
+            {
                 TokenStream tokenStream = analyzer.GetTokenStream(textFieldName, new StringReader(doc));
                 try
                 {
@@ -147,7 +148,7 @@ namespace Lucene.Net.Classification
             {
                 throw new IOException("You must first call Classifier#train");
             }
-            double max = - double.MaxValue;
+            double max = -double.MaxValue;
             BytesRef foundClass = new BytesRef();
 
             Terms terms = MultiFields.GetTerms(atomicReader, classFieldName);
@@ -200,7 +201,7 @@ namespace Lucene.Net.Classification
             {
                 Terms terms = MultiFields.GetTerms(atomicReader, textFieldName);
                 long numPostings = terms.SumDocFreq; // number of term/doc pairs
-                avgNumberOfUniqueTerms += numPostings / (double) terms.DocCount; // avg # of unique terms per doc
+                avgNumberOfUniqueTerms += numPostings / (double)terms.DocCount; // avg # of unique terms per doc
             }
             int docsWithC = atomicReader.DocFreq(new Term(classFieldName, c));
             return avgNumberOfUniqueTerms * docsWithC; // avg # of unique terms in text fields per doc * # docs with c
@@ -227,7 +228,7 @@ namespace Lucene.Net.Classification
 
         private double CalculateLogPrior(BytesRef currentClass)
         {
-            return Math.Log((double) DocCount(currentClass)) - Math.Log(docsWithClassSize);
+            return Math.Log((double)DocCount(currentClass)) - Math.Log(docsWithClassSize);
         }
 
         private int DocCount(BytesRef countedClass)

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Expert: The maximum number of skip levels. Smaller values result in
         /// slightly smaller indexes, but slower skipping in big posting lists.
         /// </summary>
-        internal readonly int maxSkipLevels = 10;
+        internal const int maxSkipLevels = 10;
 
         internal readonly int totalNumDocs;
 
@@ -209,7 +209,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 skipListWriter.BufferSkip(df);
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(docID < totalNumDocs,"docID={0} totalNumDocs={1}", docID, totalNumDocs);
+            if (Debugging.AssertsEnabled) Debugging.Assert(docID < totalNumDocs, "docID={0} totalNumDocs={1}", docID, totalNumDocs);
 
             lastDocID = docID;
             if (indexOptions == IndexOptions.DOCS_ONLY)
@@ -241,7 +241,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             int delta = position - lastPosition;
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(delta >= 0,"position={0} lastPosition={1}", position, lastPosition); // not quite right (if pos=0 is repeated twice we don't catch it)
+            if (Debugging.AssertsEnabled) Debugging.Assert(delta >= 0, "position={0} lastPosition={1}", position, lastPosition); // not quite right (if pos=0 is repeated twice we don't catch it)
 
             lastPosition = position;
 

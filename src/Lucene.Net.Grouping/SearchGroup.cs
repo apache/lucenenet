@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -28,14 +28,14 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// Represents a group that is found during the first pass search.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
     public class SearchGroup<TGroupValue> : ISearchGroup<TGroupValue>
     {
         /// <summary>
-        /// The value that defines this group 
+        /// The value that defines this group
         /// </summary>
         public TGroupValue GroupValue { get; set; }
 
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search.Grouping
     }
 
     /// <summary>
-    /// LUCENENET specific class used to nest types to mimic the syntax used 
+    /// LUCENENET specific class used to nest types to mimic the syntax used
     /// by Lucene (that is, without specifying the generic closing type of <see cref="SearchGroup{TGroupValue}"/>)
     /// </summary>
     public static class SearchGroup // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
@@ -185,8 +185,8 @@ namespace Lucene.Net.Search.Grouping
                     }
                     else
                     {
-                        
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!groupValueIsValueType 
+
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!groupValueIsValueType
                             ? JCG.EqualityComparer<T>.Default.Equals(groupValue, otherMergedGroup.groupValue)
 
                             // LUCENENET specific - use J2N.Collections.StructuralEqualityComparer.Default.Equals() if we have a reference type
@@ -485,7 +485,7 @@ namespace Lucene.Net.Search.Grouping
     public interface ISearchGroup<out TGroupValue>
     {
         /// <summary>
-        /// The value that defines this group 
+        /// The value that defines this group
         /// </summary>
         TGroupValue GroupValue { get; }
 

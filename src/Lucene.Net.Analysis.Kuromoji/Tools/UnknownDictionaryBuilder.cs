@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Support.Text;
 using System;

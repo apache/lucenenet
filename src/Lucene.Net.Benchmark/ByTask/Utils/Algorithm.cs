@@ -1,4 +1,4 @@
-﻿using J2N.IO;
+using J2N.IO;
 using J2N.Text;
 using Lucene.Net.Benchmarks.ByTask.Tasks;
 using Lucene.Net.Support;
@@ -116,7 +116,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                     {
                                         case StreamTokenizer.TokenType_Number:
                                             {
-                                                @params.Append(stok.NumberValue.ToString(CultureInfo.InvariantCulture));
+                                                @params.Append(J2N.Numerics.Double.ToString(stok.NumberValue, CultureInfo.InvariantCulture));
                                                 break;
                                             }
                                         case StreamTokenizer.TokenType_Word:
@@ -163,7 +163,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                     }
                                     stok.NextToken();
                                 }
-                                BALANCED_PARENS_BREAK: { /* LUCENENET: intentionally empty */ }
+                            BALANCED_PARENS_BREAK: { /* LUCENENET: intentionally empty */ }
                             }
                             stok.EndOfLineIsSignificant = false;
                             string prm = @params.ToString().Trim();

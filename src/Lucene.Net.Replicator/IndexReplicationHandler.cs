@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
@@ -51,7 +51,7 @@ namespace Lucene.Net.Replicator
     public class IndexReplicationHandler : IReplicationHandler
     {
         /// <summary>
-        /// The component used to log messages to the <see cref="Util.InfoStream.Default"/> 
+        /// The component used to log messages to the <see cref="Util.InfoStream.Default"/>
         /// <see cref="Util.InfoStream"/>.
         /// </summary>
         public const string INFO_STREAM_COMPONENT = "IndexReplicationHandler";
@@ -200,7 +200,7 @@ namespace Lucene.Net.Replicator
         }
 
         /// <summary>
-        /// Copies the provided list of files from the <paramref name="source"/> <see cref="Directory"/> to the 
+        /// Copies the provided list of files from the <paramref name="source"/> <see cref="Directory"/> to the
         /// <paramref name="target"/> <see cref="Directory"/>, if they are not the same.
         /// </summary>
         /// <exception cref="IOException"></exception>

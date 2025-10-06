@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using J2N.Text;
 using Lucene.Net.Attributes;
 using NUnit.Framework;
@@ -325,6 +325,55 @@ namespace Lucene.Net.Util
                 UnicodeUtil.UTF8toUTF16(@ref, cRef);
                 Assert.AreEqual(cRef.ToString(), unicode);
             }
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        [TestCase(new byte[] { 0x63, 0x61, 0xc3 }, true)] // ca�, start of 2-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xe3 }, true)] // ca�, start of 3-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xf3 }, true)] // ca�, start of 4-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xc3, 0xb1, 0x6f, 0x6e }, false)] // cañon
+        public void TestUTF8toUTF16Exception(byte[] invalidUtf8, bool shouldThrow)
+        {
+            var scratch = new CharsRef();
+
+            if (shouldThrow)
+            {
+                Assert.Throws<FormatException>(() => UnicodeUtil.UTF8toUTF16(invalidUtf8, scratch));
+            }
+            else
+            {
+                UnicodeUtil.UTF8toUTF16(invalidUtf8, scratch);
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific] // this is a Lucene.NET specific method
+        [Repeat(100)]
+        public void TestTryUTF8toUTF16()
+        {
+            string unicode = TestUtil.RandomRealisticUnicodeString(Random);
+            var utf8 = new BytesRef(IOUtils.ENCODING_UTF_8_NO_BOM.GetBytes(unicode));
+
+            bool success = UnicodeUtil.TryUTF8toUTF16(utf8, out var chars);
+
+            Assert.IsTrue(success);
+            Assert.AreEqual(unicode, chars?.ToString());
+        }
+
+        [Test]
+        [LuceneNetSpecific] // this is a Lucene.NET specific method
+        [TestCase(new byte[] { 0x63, 0x61, 0xc3 }, "ca\ufffd")] // ca�, start of 2-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xe3 }, "ca\ufffd")] // ca�, start of 3-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xf3 }, "ca\ufffd")] // ca�, start of 4-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xc3, 0xb1, 0x6f, 0x6e }, "cañon")]
+        public void TestUTF8toUTF16WithFallback(byte[] utf8, string expected)
+        {
+            var scratch = new CharsRef();
+
+            UnicodeUtil.UTF8toUTF16WithFallback(utf8, scratch);
+
+            Assert.AreEqual(expected, scratch.ToString());
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Lucene.Net.Documents
      */
 
     /// <summary>
-    /// A <see cref="StoredFieldVisitor"/> that creates a 
+    /// A <see cref="StoredFieldVisitor"/> that creates a
     /// <see cref="Document"/> containing all stored fields, or only specific
     /// requested fields provided to <see cref="DocumentStoredFieldVisitor.DocumentStoredFieldVisitor(ISet{string})"/>.
     /// <para/>

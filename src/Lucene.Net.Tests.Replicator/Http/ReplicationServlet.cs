@@ -1,15 +1,12 @@
-﻿using Lucene.Net.Replicator.AspNetCore;
+#if FEATURE_ASPNETCORE_TESTHOST
+using Lucene.Net.Replicator.AspNetCore;
 using Lucene.Net.Replicator.Http.Abstractions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http.Features;
-using System;
-using System.Threading.Tasks;
-
-#if FEATURE_ASPNETCORE_ENDPOINT_CONFIG
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-#endif
+using System;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Replicator.Http
 {
@@ -31,7 +28,7 @@ namespace Lucene.Net.Replicator.Http
      */
 
     // ********************** Option 1: Use a Startup Class ********************************************
-    // The startup class must define all middleware (app.Use) before the terminating endpoint (app.Run)
+    // The startup class must define all middleware (app.Use) before the terminating endpoint (app.Run).
 
     public class ReplicationServlet
     {
@@ -50,16 +47,11 @@ namespace Lucene.Net.Replicator.Http
 
             app.Run(async (context) =>
             {
-                // LUCENENET: This is to allow synchronous IO to happen for these requests.
-                // LUCENENET TODO: Allow async operations from Replicator.
-                var syncIoFeature = context.Features.Get<IHttpBodyControlFeature>();
-                if (syncIoFeature != null)
-                {
-                    syncIoFeature.AllowSynchronousIO = true;
-                }
+                // LUCENENET: Although the async/await pattern doesn't exist in Java Lucene, this is the recommended
+                // approach for modern .NET development.
+                await service.PerformAsync(context.Request, context.Response, context.RequestAborted);
 
-                await Task.Yield();
-                service.Perform(context.Request, context.Response);
+                // This is a terminating endpoint. Do not call the next delegate/middleware in the pipeline.
             });
         }
     }
@@ -68,7 +60,6 @@ namespace Lucene.Net.Replicator.Http
     // Running ReplicationService as middleware allows registering other URL patterns so other services
     // (such as controllers or razor pages) can be served from the same application.
 
-#if FEATURE_ASPNETCORE_ENDPOINT_CONFIG // Only available in .NET 5+
     public class ReplicationServiceMiddleware
     {
         private readonly RequestDelegate next;
@@ -82,27 +73,20 @@ namespace Lucene.Net.Replicator.Http
 
         public async Task InvokeAsync(HttpContext context)
         {
-            // LUCENENET: This is to allow synchronous IO to happen for these requests.
-            // LUCENENET TODO: Allow async operations from Replicator.
-            var syncIoFeature = context.Features.Get<IHttpBodyControlFeature>();
-            if (syncIoFeature != null)
-            {
-                syncIoFeature.AllowSynchronousIO = true;
-            }
-
-            await Task.Yield();
-            service.Perform(context.Request, context.Response);
+            // LUCENENET: Although the async/await pattern doesn't exist in Java Lucene, this is the recommended
+            // approach for modern .NET development.
+            await service.PerformAsync(context.Request, context.Response, context.RequestAborted);
 
             // This is a terminating endpoint. Do not call the next delegate/middleware in the pipeline.
         }
     }
 
-    public static class ReplicationServiceRouteBuilderExtensions
+    public static partial class ReplicationServiceRouteBuilderExtensions
     {
-        public static IEndpointConventionBuilder MapReplicator(this IEndpointRouteBuilder endpoints, string pattern)
+        public static IEndpointConventionBuilder MapReplicator<TReplicationServiceMiddleware>(this IEndpointRouteBuilder endpoints, string pattern) where TReplicationServiceMiddleware : class
         {
             var pipeline = endpoints.CreateApplicationBuilder()
-                .UseMiddleware<ReplicationServiceMiddleware>()
+                .UseMiddleware<TReplicationServiceMiddleware>()
                 .Build();
 
             return endpoints
@@ -110,5 +94,5 @@ namespace Lucene.Net.Replicator.Http
                 .WithDisplayName("Replication Service");
         }
     }
-#endif
 }
+#endif

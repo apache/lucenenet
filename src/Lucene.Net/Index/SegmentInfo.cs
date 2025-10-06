@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Diagnostics;
@@ -42,13 +42,13 @@ namespace Lucene.Net.Index
         /// Used by some member fields to mean not present (e.g.,
         /// norms, deletions).
         /// </summary>
-        public static readonly int NO = -1; // e.g. no norms; no deletes;
+        public const int NO = -1; // e.g. no norms; no deletes;
 
         /// <summary>
         /// Used by some member fields to mean present (e.g.,
         /// norms, deletions).
         /// </summary>
-        public static readonly int YES = 1; // e.g. have norms; have deletes;
+        public const int YES = 1; // e.g. have norms; have deletes;
 
         /// <summary>
         /// Unique segment name in the directory. </summary>

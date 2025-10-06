@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Store
 {
@@ -44,10 +45,11 @@ namespace Lucene.Net.Store
             return b;
         }
 
-        public override void ReadBytes(byte[] b, int offset, int len)
+        // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+        public override void ReadBytes(Span<byte> destination)
         {
-            main.ReadBytes(b, offset, len);
-            digest.Update(b, offset, len);
+            main.ReadBytes(destination);
+            digest.Update(destination);
         }
 
         public override long Checksum => digest.Value;

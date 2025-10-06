@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using System;
@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Standard.Std40
 
     /// <summary>
     /// This class implements StandardTokenizer using Unicode 6.1.0.
-    /// 
+    ///
     /// @deprecated This class is only for exact backwards compatibility
     /// </summary>
     [Obsolete("This class is only for exact backwards compatibility")]
@@ -782,7 +782,7 @@ namespace Lucene.Net.Analysis.Standard.Std40
 
         /// <summary>
         /// this buffer contains the current text to be matched and is
-        /// the source of the YyText string 
+        /// the source of the YyText string
         /// </summary>
         private char[] zzBuffer = new char[ZZ_BUFFERSIZE];
 
@@ -834,7 +834,7 @@ namespace Lucene.Net.Analysis.Standard.Std40
 
         /// <summary>
         /// Chars in class \p{Line_Break = Complex_Context} are from South East Asian
-        /// scripts (Thai, Lao, Myanmar, Khmer, etc.).  Sequences of these are kept 
+        /// scripts (Thai, Lao, Myanmar, Khmer, etc.).  Sequences of these are kept
         /// together as as a single token rather than broken up, because the logic
         /// required to break them at word boundaries is too complex for UAX#29.
         /// <para/>
@@ -931,7 +931,7 @@ namespace Lucene.Net.Analysis.Standard.Std40
                 zzEndRead += numRead;
                 return false;
             }
-            // unlikely but not impossible: read 0 characters, but not at end of stream    
+            // unlikely but not impossible: read 0 characters, but not at end of stream
             if (numRead == 0)
             {
                 int c = zzReader.Read();
@@ -968,7 +968,7 @@ namespace Lucene.Net.Analysis.Standard.Std40
         /// Resets the scanner to read from a new input stream.
         /// Does not close the old reader.
         /// <para/>
-        /// All internal variables are reset, the old input stream 
+        /// All internal variables are reset, the old input stream
         /// <b>cannot</b> be reused (internal buffer is discarded and lost).
         /// Lexical state is set to <see cref="YYINITIAL"/>.
         /// <para/>
@@ -1014,13 +1014,13 @@ namespace Lucene.Net.Analysis.Standard.Std40
 
 
         /// <summary>
-        /// Returns the character at position <paramref name="pos"/> from the 
+        /// Returns the character at position <paramref name="pos"/> from the
         /// matched text.
         /// <para/>
         /// It is equivalent to YyText[pos], but faster
         /// </summary>
         /// <param name="pos">
-        /// the position of the character to fetch. 
+        /// the position of the character to fetch.
         /// A value from 0 to YyLength-1.
         /// </param>
         /// <returns>the character at position pos</returns>
@@ -1039,8 +1039,8 @@ namespace Lucene.Net.Analysis.Standard.Std40
         /// <summary>
         /// Reports an error that occured while scanning.
         /// <para/>
-        /// In a wellformed scanner (no or only correct usage of 
-        /// YyPushBack(int) and a match-all fallback rule) this method 
+        /// In a wellformed scanner (no or only correct usage of
+        /// YyPushBack(int) and a match-all fallback rule) this method
         /// will only be called with things that "Can't Possibly Happen".
         /// If this method is called, something is seriously wrong
         /// (e.g. a JFlex bug producing a faulty scanner etc.).
@@ -1171,7 +1171,7 @@ namespace Lucene.Net.Analysis.Standard.Std40
                     }
 
                 }
-                zzForActionBreak:
+            zzForActionBreak:
 
                 // store back cached position
                 zzMarkedPos = zzMarkedPosL;

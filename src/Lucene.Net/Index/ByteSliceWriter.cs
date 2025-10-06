@@ -1,5 +1,5 @@
 using Lucene.Net.Diagnostics;
-using System.Diagnostics;
+using System;
 
 namespace Lucene.Net.Index
 {
@@ -69,8 +69,11 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled) Debugging.Assert(upto != slice.Length);
         }
 
-        public override void WriteBytes(byte[] b, int offset, int len)
+        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        public override void WriteBytes(ReadOnlySpan<byte> source)
         {
+            int offset = 0;
+            int len = source.Length;
             int offsetEnd = offset + len;
             while (offset < offsetEnd)
             {
@@ -82,7 +85,7 @@ namespace Lucene.Net.Index
                     offset0 = pool.ByteOffset;
                 }
 
-                slice[upto++] = (byte)b[offset++];
+                slice[upto++] = source[offset++];
                 if (Debugging.AssertsEnabled) Debugging.Assert(upto != slice.Length);
             }
         }

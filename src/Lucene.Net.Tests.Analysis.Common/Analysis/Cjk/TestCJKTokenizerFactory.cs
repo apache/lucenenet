@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System;
@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Cjk
 
     /// <summary>
     /// Simple tests to ensure the CJK tokenizer factory is working. </summary>
-    /// @deprecated remove this test in 5.0 
+    /// @deprecated remove this test in 5.0
     [Obsolete("remove this test in 5.0")]
     public class TestCJKTokenizerFactory : BaseTokenStreamFactoryTestCase
     {

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support.Threading;
+using Lucene.Net.Support.Threading;
 using System;
 using System.IO;
 using System.Runtime.ExceptionServices;
@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
     /// as documents are added to and deleted from an index.  Clients should thus not
     /// rely on a given document having the same number between sessions.
     ///
-    /// <para/><a name="thread-safety"></a><b>NOTE</b>: 
+    /// <para/><a name="thread-safety"></a><b>NOTE</b>:
     /// <see cref="IndexReader"/> instances are completely thread
     /// safe, meaning multiple threads can call any of its methods,
     /// concurrently.  If your application requires external
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
+                Exception ioe = null; // LUCENENET: No need to cast to IOException
                 foreach (IndexReader r in GetSequentialSubReaders())
                 {
                     try

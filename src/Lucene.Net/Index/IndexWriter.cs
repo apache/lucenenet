@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
@@ -195,23 +195,23 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Name of the write lock in the index.
         /// </summary>
-        public static readonly string WRITE_LOCK_NAME = "write.lock";
+        public const string WRITE_LOCK_NAME = "write.lock";
 
         /// <summary>
         /// Key for the source of a segment in the <see cref="SegmentInfo.Diagnostics"/>. </summary>
-        public static readonly string SOURCE = "source";
+        public const string SOURCE = "source";
 
         /// <summary>
         /// Source of a segment which results from a merge of other segments. </summary>
-        public static readonly string SOURCE_MERGE = "merge";
+        public const string SOURCE_MERGE = "merge";
 
         /// <summary>
         /// Source of a segment which results from a flush. </summary>
-        public static readonly string SOURCE_FLUSH = "flush";
+        public const string SOURCE_FLUSH = "flush";
 
         /// <summary>
         /// Source of a segment which results from a call to <see cref="AddIndexes(IndexReader[])"/>. </summary>
-        public static readonly string SOURCE_ADDINDEXES_READERS = "AddIndexes(params IndexReader[] readers)";
+        public const string SOURCE_ADDINDEXES_READERS = "AddIndexes(params IndexReader[] readers)";
 
         /// <summary>
         /// Absolute hard maximum length for a term, in bytes once
@@ -221,7 +221,7 @@ namespace Lucene.Net.Index
         /// and a message is printed to <see cref="infoStream"/>, if set (see
         /// <see cref="IndexWriterConfig.SetInfoStream(InfoStream)"/>).
         /// </summary>
-        public static readonly int MAX_TERM_LENGTH = DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8;
+        public const int MAX_TERM_LENGTH = DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8;
 
         private volatile bool hitOOM;
 

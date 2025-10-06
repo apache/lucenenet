@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -658,7 +658,7 @@ namespace Lucene.Net.Search
                                 break;
                             }
                         }
-                        Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
+                        Exception priorException = null; // LUCENENET: No need to cast to IOException
                         TokenStream ts = analyzer.GetTokenStream("ignore", new StringReader(term));
                         try
                         {

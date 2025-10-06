@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
@@ -35,14 +35,14 @@ namespace Lucene.Net.Analysis.Synonym
     /// Generated synonyms will start at the same position as the first matched source token.
     /// </para>
     /// </summary>
-    /// @deprecated (3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
+    /// @deprecated (3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0
     [Obsolete("(3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
     internal sealed class SlowSynonymFilter : TokenFilter
     {
         private readonly SlowSynonymMap map; // Map<String, SynonymMap>
         private IEnumerator<AttributeSource> replacement; // iterator over generated tokens
 
-        public SlowSynonymFilter(TokenStream @in, SlowSynonymMap map) 
+        public SlowSynonymFilter(TokenStream @in, SlowSynonymMap map)
             : base(@in)
         {
             if (map is null)

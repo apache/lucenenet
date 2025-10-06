@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using J2N;
 using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </para>
         /// </summary>
         public StemmerOverrideFilter(TokenStream input, StemmerOverrideMap stemmerOverrideMap)
-              : base(input)
+            : base(input)
         {
             this.stemmerOverrideMap = stemmerOverrideMap;
             fstReader = stemmerOverrideMap.GetBytesReader();
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /// <summary>
             /// Creates a new <see cref="StemmerOverrideMap"/> </summary>
             /// <param name="fst"> the fst to lookup the overrides </param>
-            /// <param name="ignoreCase"> if the keys case should be ingored </param>
+            /// <param name="ignoreCase"> if the keys case should be ignored </param>
             public StemmerOverrideMap(FST<BytesRef> fst, bool ignoreCase)
             {
                 this.fst = fst;
@@ -166,7 +166,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             private readonly CharsRef charsSpare = new CharsRef();
 
             /// <summary>
-            /// Creates a new <see cref="Builder"/> with <see cref="ignoreCase"/> set to <c>false</c> 
+            /// Creates a new <see cref="Builder"/> with <see cref="ignoreCase"/> set to <c>false</c>
             /// </summary>
             public Builder()
                 : this(false)

@@ -1,7 +1,10 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -270,5 +273,468 @@ namespace Lucene.Net.Util
             Assert.AreEqual(8, clone.Offset);
         }
 #endif
+
+        #region Test Data
+
+        // Reuse existing string test data but add offsets
+        public static IEnumerable<object[]> StringSliceTestData2
+        {
+            get
+            {
+                foreach (var data in TestHelpers.StringSliceTestData)
+                {
+                    // data = [text, start, length]
+                    var text = (string)data[0];
+                    var start = (int)data[1];
+                    var length = (int)data[2];
+
+                    // Offset = 0 case
+                    yield return new object[] { text, start, length, 0 };
+
+                    // Offset = 1 case, if feasible
+                    if (text.Length > 0)
+                        yield return new object[] { text, start, length, 1 };
+                }
+            }
+        }
+
+        public static IEnumerable<object[]> StringSlice1ArgTestOutOfRangeData2
+        {
+            get
+            {
+                foreach (var data in TestHelpers.StringSlice2ArgTestOutOfRangeData)
+                {
+                    // [text, start]
+                    yield return new object[] { (string)data[0], (int)data[1], 0 };
+                    yield return new object[] { (string)data[0], (int)data[1], 1 };
+                }
+            }
+        }
+
+        public static IEnumerable<object[]> StringSlice2ArgTestOutOfRangeData2
+        {
+            get
+            {
+                foreach (var data in TestHelpers.StringSlice3ArgTestOutOfRangeData)
+                {
+                    // [text, start, length]
+                    yield return new object[] { (string)data[0], (int)data[1], (int)data[2], 0 };
+                    yield return new object[] { (string)data[0], (int)data[1], (int)data[2], 1 };
+                }
+            }
+        }
+
+        #endregion
+
+        #region AsSpan
+
+
+        [Test]
+        [LuceneNetSpecific]
+        public static void Test_AsSpan_Nullary()
+        {
+            var buffer = "Hello".ToCharArray();
+
+            var cr = new CharsRef(buffer) { Offset = 0, Length = buffer.Length };
+
+            ReadOnlySpan<char> span = cr.AsSpan();
+            char[] expected = cr.Chars.AsSpan(cr.Offset, cr.Length).ToArray();
+            span.Validate(expected);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public static void Test_AsSpan_Empty()
+        {
+            var cr = new CharsRef(new char[0]) { Offset = 0, Length = 0 };
+            ReadOnlySpan<char> span = cr.AsSpan();
+            span.ValidateNonNullEmpty();
+        }
+
+        [TestCaseSource(nameof(StringSliceTestData2))]
+        [LuceneNetSpecific]
+        public static unsafe void Test_AsSpan_StartAndLength(string text, int start, int length, int offset)
+        {
+            var chars = text.ToCharArray();
+            var buffer = new char[chars.Length + offset];
+            Array.Copy(chars, 0, buffer, offset, chars.Length);
+
+            var cr = new CharsRef(buffer) { Offset = offset, Length = chars.Length };
+
+            if (start == -1)
+            {
+                Validate(cr, 0, cr.Length, cr.AsSpan());
+                Validate(cr, 0, cr.Length, cr.AsSpan(0));
+                Validate(cr, 0, cr.Length, cr.AsSpan(0..^0));
+            }
+            else if (length == -1)
+            {
+                Validate(cr, start, cr.Length - start, cr.AsSpan(start));
+                Validate(cr, start, cr.Length - start, cr.AsSpan(start..));
+            }
+            else
+            {
+                Validate(cr, start, length, cr.AsSpan(start, length));
+                Validate(cr, start, length, cr.AsSpan(start..(start + length)));
+            }
+
+            static unsafe void Validate(CharsRef text, int start, int length, ReadOnlySpan<char> span)
+            {
+                Assert.AreEqual(length, span.Length);
+                fixed (char* pText = &MemoryMarshal.GetReference(text.Chars.AsSpan()))
+                {
+                    char* expected = pText + text.Offset + start;
+                    void* actual = Unsafe.AsPointer(ref MemoryMarshal.GetReference(span));
+                    Assert.AreEqual((IntPtr)expected, (IntPtr)actual);
+                }
+            }
+        }
+
+        [TestCaseSource(nameof(StringSlice1ArgTestOutOfRangeData2))]
+        [LuceneNetSpecific]
+        public static void Test_AsSpan_1Arg_OutOfRange(string text, int start, int offset)
+        {
+            var chars = text.ToCharArray();
+            var buffer = new char[chars.Length + offset];
+            Array.Copy(chars, 0, buffer, offset, chars.Length);
+
+            var cr = new CharsRef(buffer) { Offset = offset, Length = chars.Length };
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => cr.AsSpan(start));
+        }
+
+        [TestCaseSource(nameof(StringSlice2ArgTestOutOfRangeData2))]
+        [LuceneNetSpecific]
+        public static void Test_AsSpan_2Arg_OutOfRange(string text, int start, int length, int offset)
+        {
+            var chars = text.ToCharArray();
+            var buffer = new char[chars.Length + offset];
+            Array.Copy(chars, 0, buffer, offset, chars.Length);
+
+            var cr = new CharsRef(buffer) { Offset = offset, Length = chars.Length };
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => cr.AsSpan(start, length));
+        }
+
+        [TestCase(5, 0, 0)]   // Offset = 0
+        [TestCase(5, 2, 0)]
+        [TestCase(5, 5, 0)]
+        [TestCase(5, 0, 1)]   // Offset = 1
+        [TestCase(5, 2, 1)]
+        [TestCase(5, 5, 1)]
+        [LuceneNetSpecific]
+        public static void Test_AsSpan_Index_FromEnd(int length, int startIndex, int offset)
+        {
+            var chars = new char[length + offset];
+            for (int i = 0; i < length; i++) chars[i + offset] = (char)(i + 1);
+            var cr = new CharsRef(chars) { Offset = offset, Length = length };
+
+            // From-end Index
+            if (startIndex <= length)
+            {
+                ReadOnlySpan<char> spanFromEnd = cr.AsSpan(^(length - startIndex));
+                Assert.AreEqual(length - startIndex, spanFromEnd.Length);
+                if (spanFromEnd.Length > 0) Assert.AreEqual((char)(startIndex + 1), spanFromEnd[0]);
+            }
+        }
+
+        [TestCase(5, -1, 0)]
+        [TestCase(5, 6, 0)]
+        [TestCase(5, -1, 1)]
+        [TestCase(5, 6, 1)]
+        [LuceneNetSpecific]
+        public static void Test_AsSpan_Index_FromEnd_OutOfRange(int length, int startIndex, int offset)
+        {
+            var chars = new char[length + offset];
+            var cr = new CharsRef(chars) { Offset = offset, Length = length };
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => cr.AsSpan(^(length + 1))); // from-end invalid
+        }
+
+        [TestCase(5, 0, 3)]
+        [TestCase(5, 1, 2)]
+        [TestCase(5, 0, 5)]
+        [LuceneNetSpecific]
+        public static void Test_AsSpan_Range(int length, int start, int subLength)
+        {
+            var chars = new char[length + 1];
+            for (int i = 0; i < length; i++) chars[i + 1] = (char)(i + 10);
+            var cr = new CharsRef(chars) { Offset = 1, Length = length };
+
+            // Range overload using .. syntax
+            ReadOnlySpan<char> span = cr.AsSpan(start..(start + subLength));
+            Assert.AreEqual(subLength, span.Length);
+            if (subLength > 0) Assert.AreEqual((char)(10 + start), span[0]);
+        }
+
+        [TestCase(5, 0, 3, 0)]   // length, start, subLength, offset
+        [TestCase(5, 1, 2, 0)]
+        [TestCase(5, 0, 5, 0)]
+        [TestCase(5, 0, 3, 1)]   // Offset = 1
+        [TestCase(5, 1, 2, 1)]
+        [TestCase(5, 0, 5, 1)]
+        [LuceneNetSpecific]
+        public static void Test_AsSpan_Range_WithOffset(int length, int start, int subLength, int offset)
+        {
+            var chars = new char[length + offset];
+            for (int i = 0; i < length; i++) chars[i + offset] = (char)(i + 10);
+            var cr = new CharsRef(chars) { Offset = offset, Length = length };
+
+            ReadOnlySpan<char> span = cr.AsSpan(start..(start + subLength));
+            Assert.AreEqual(subLength, span.Length);
+            if (subLength > 0) Assert.AreEqual((char)(10 + start), span[0]);
+        }
+
+        [TestCase(5, 3, 3)]
+        [TestCase(5, -1, 2)]
+        [TestCase(5, 4, 2)]
+        [LuceneNetSpecific]
+        public static void Test_AsSpan_Range_OutOfRange(int length, int start, int subLength)
+        {
+            var chars = new char[length];
+            var cr = new CharsRef(chars) { Offset = 0, Length = length };
+            Assert.Throws<ArgumentOutOfRangeException>(() => cr.AsSpan(start..(start + subLength)));
+        }
+
+        [TestCase(5, 0, 5, 1)]  // offset + start + length > bytes.Length -> second check
+        [TestCase(5, 2, 3, 1)]  // offset causes spill over backing array
+        [TestCase(5, 0, 5, 2)]  // offset + length > bytes.Length
+        [LuceneNetSpecific]
+        public static void Test_AsSpan_Range_OutOfRange_OffsetCheck(int length, int start, int subLength, int offset)
+        {
+            var chars = new char[length]; // intentionally too short to trigger the second check
+            var cr = new CharsRef(chars) { Offset = offset, Length = length };
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => cr.AsSpan(start, subLength));
+            Assert.Throws<ArgumentOutOfRangeException>(() => cr.AsSpan(start..(start + subLength)));
+        }
+
+        #endregion
+
+        #region AsMemory
+
+        [TestCase(0, 0)]
+        [TestCase(3, 0)]
+        [TestCase(3, 1)]
+        [TestCase(3, 2)]
+        [TestCase(3, 3)]
+        [TestCase(10, 0)]
+        [TestCase(10, 3)]
+        [TestCase(10, 10)]
+        [LuceneNetSpecific]
+        public static void Test_AsMemory_WithStart(int length, int start)
+        {
+            Span<char> preload = stackalloc char[length];
+            preload.Fill('\0');
+            var cr = new CharsRef(preload) { Offset = 0, Length = length };
+
+            var m = cr.AsMemory(start);
+            Assert.AreEqual(length - start, m.Length);
+            if (start != length)
+            {
+                cr.Chars[cr.Offset + start] = (char)42;
+                Assert.AreEqual((char)42, m.Span[0]);
+            }
+        }
+
+        [TestCase(0, -1)]
+        [TestCase(0, 1)]
+        [TestCase(5, 6)]
+        [LuceneNetSpecific]
+        public static void Test_AsMemory_WithStart_OutOfRange(int length, int start)
+        {
+            var chars = new char[length];
+            var cr = new CharsRef(chars) { Offset = 0, Length = length };
+            Assert.Throws<ArgumentOutOfRangeException>(() => cr.AsMemory(start));
+        }
+
+        [TestCase(10, 3, 2, 0)]
+        [TestCase(10, 3, 2, 2)] // offset
+        [LuceneNetSpecific]
+        public static void Test_AsMemory_WithStartAndLength(int length, int start, int subLength, int offset)
+        {
+            Span<char> preload = stackalloc char[length + offset];
+            preload.Fill('\0');
+
+            var cr = new CharsRef(preload) { Offset = offset, Length = length };
+
+            var m = cr.AsMemory(start, subLength);
+            Assert.AreEqual(subLength, m.Length);
+            if (subLength != 0)
+            {
+                cr.Chars[offset + start] = (char)42;
+                Assert.AreEqual((char)42, m.Span[0]);
+            }
+        }
+
+        [TestCase(0, -1, 0)]
+        [TestCase(0, 1, 0)]
+        [TestCase(0, 0, -1)]
+        [TestCase(0, 0, 1)]
+        [TestCase(5, 6, 0)]
+        [TestCase(5, 3, 3)]
+        [LuceneNetSpecific]
+        public static void Test_AsMemory_WithStartAndLength_OutOfRange(int length, int start, int subLength)
+        {
+            var chars = new char[length];
+            var cr = new CharsRef(chars) { Offset = 0, Length = length };
+            Assert.Throws<ArgumentOutOfRangeException>(() => cr.AsMemory(start, subLength));
+        }
+
+        [TestCase(5, 0, 0)]
+        [TestCase(5, 2, 0)]
+        [TestCase(5, 5, 0)]
+        [TestCase(5, 0, 1)]
+        [TestCase(5, 2, 1)]
+        [TestCase(5, 5, 1)]
+        [LuceneNetSpecific]
+        public static void Test_AsMemory_Index_FromEnd(int length, int startIndex, int offset)
+        {
+            var chars = new char[length + offset];
+            for (int i = 0; i < length; i++) chars[i + offset] = (char)(i + 1);
+            var cr = new CharsRef(chars) { Offset = offset, Length = length };
+
+            // From-end Index
+            ReadOnlyMemory<char> memFromEnd = cr.AsMemory(^(length - startIndex));
+            Assert.AreEqual(length - startIndex, memFromEnd.Length);
+            if (memFromEnd.Length > 0) Assert.AreEqual((char)(startIndex + 1), memFromEnd.Span[0]);
+        }
+
+        [TestCase(5, -1, 0)]
+        [TestCase(5, 6, 0)]
+        [TestCase(5, -1, 1)]
+        [TestCase(5, 6, 1)]
+        [LuceneNetSpecific]
+        public static void Test_AsMemory_Index_OutOfRange(int length, int startIndex, int offset)
+        {
+            var chars = new char[length + offset];
+            var cr = new CharsRef(chars) { Offset = offset, Length = length };
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => cr.AsMemory(^(length + 1))); // from-end invalid
+        }
+
+        [TestCase(5, 0, 5)]
+        [TestCase(5, 1, 3)]
+        [TestCase(5, 2, 2)]
+        [TestCase(5, 0, 0)]
+        [LuceneNetSpecific]
+        public static void Test_AsMemory_Range(int length, int start, int subLength)
+        {
+            var chars = new char[length + 1];
+            for (int i = 0; i < length; i++) chars[i + 1] = (char)(i + 100);
+            var cr = new CharsRef(chars) { Offset = 1, Length = length };
+
+            // Correct: use Range syntax
+            ReadOnlyMemory<char> m = cr.AsMemory(start..(start + subLength));
+            Assert.AreEqual(subLength, m.Length);
+            if (subLength > 0)
+            {
+                Assert.AreEqual((char)(100 + start), m.Span[0]);
+            }
+
+            // Also test start.. for completeness
+            ReadOnlyMemory<char> m2 = cr.AsMemory(start..);
+            Assert.AreEqual(length - start, m2.Length);
+        }
+
+        [TestCase(5, 0, 3, 0)]
+        [TestCase(5, 1, 2, 0)]
+        [TestCase(5, 0, 5, 0)]
+        [TestCase(5, 0, 3, 1)]
+        [TestCase(5, 1, 2, 1)]
+        [TestCase(5, 0, 5, 1)]
+        [LuceneNetSpecific]
+        public static void Test_AsMemory_Range_WithOffset(int length, int start, int subLength, int offset)
+        {
+            var chars = new char[length + offset];
+            for (int i = 0; i < length; i++) chars[i + offset] = (char)(i + 10);
+            var cr = new CharsRef(chars) { Offset = offset, Length = length };
+
+            ReadOnlyMemory<char> mem = cr.AsMemory(start..(start + subLength));
+            Assert.AreEqual(subLength, mem.Length);
+            if (subLength > 0) Assert.AreEqual((char)(10 + start), mem.Span[0]);
+        }
+
+        [TestCase(5, 0, 6)]
+        [TestCase(5, 4, 2)]
+        [TestCase(5, 3, -1)]
+        [LuceneNetSpecific]
+        public static void Test_AsMemory_Range_OutOfRange(int length, int start, int subLength)
+        {
+            var cr = new CharsRef(new char[length]) { Offset = 0, Length = length };
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => cr.AsMemory(start..(start + subLength)));
+        }
+
+        [TestCase(5, 0, 5, 1)]  // offset + start + length > chars.Length -> second check
+        [TestCase(5, 2, 3, 1)]  // offset causes spill over backing array
+        [TestCase(5, 0, 5, 2)]  // offset + length > chars.Length
+        [LuceneNetSpecific]
+        public static void Test_AsMemory_Range_OutOfRange_OffsetCheck(int length, int start, int subLength, int offset)
+        {
+            var chars = new char[length]; // intentionally too short to trigger the second check
+            var cr = new CharsRef(chars) { Offset = offset, Length = length };
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => cr.AsMemory(start, subLength));
+            Assert.Throws<ArgumentOutOfRangeException>(() => cr.AsMemory(start..(start + subLength)));
+        }
+
+        #endregion
+
+        #region Append
+
+        [Test]
+        [LuceneNetSpecific]
+        public static void Test_Append_WithinCapacity()
+        {
+            var cr = new CharsRef(new char[10]) { Length = 0 };
+            cr.Append(new char[] { (char)1, (char)2, (char)3 });
+            cr.Append(new char[] { (char)4, (char)5 });
+
+            Assert.AreEqual(5, cr.Length);
+            CollectionAssert.AreEqual(new char[] { (char)1, (char)2, (char)3, (char)4, (char)5 }, cr.AsSpan().ToArray());
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public static void Test_Append_ExceedsCapacity()
+        {
+            var cr = new CharsRef(new char[2]) { Length = 0 };
+            cr.Append(new char[] { (char)1, (char)2, (char)3 });
+
+            Assert.AreEqual(3, cr.Length);
+            CollectionAssert.AreEqual(new char[] { (char)1, (char)2, (char)3 }, cr.AsSpan().ToArray());
+        }
+
+        #endregion
+
+        #region Constructors
+
+        [Test]
+        [LuceneNetSpecific]
+        public static void Test_FromCharSpan()
+        {
+            var span = "abc".AsSpan();
+            var br = new CharsRef(span);
+
+            Assert.AreEqual(3, br.Length);
+            Assert.AreEqual("abc", br.AsSpan().ToString());
+        }
+
+        #endregion
+
+        #region CopyChars
+
+        [Test]
+        [LuceneNetSpecific]
+        public static void Test_CopyChars()
+        {
+            var br = new CharsRef(new char[10]) { Offset = 0, Length = 0 };
+            br.CopyChars("hello".AsSpan());
+
+            Assert.AreEqual("hello", br.AsSpan().ToString());
+        }
+
+        #endregion
     }
 }

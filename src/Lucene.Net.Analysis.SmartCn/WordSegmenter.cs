@@ -1,4 +1,4 @@
-﻿// lucene version compatibility level: 4.8.1
+// lucene version compatibility level: 4.8.1
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis.Cn.Smart.Hhmm;
 using Lucene.Net.Support;

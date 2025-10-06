@@ -1,4 +1,4 @@
-﻿// commons-codec version compatibility level: 1.9
+// commons-codec version compatibility level: 1.9
 using J2N;
 using J2N.Collections.Generic.Extensions;
 using System;
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         // exposes org/apache/commons/codec/language/bm/%s_languages.txt for %s in NameType.* as a list of supported
         // languages, and a second part that provides instance methods for accessing this set fo supported languages.
 
-        public static readonly string ANY = "any";
+        public const string ANY = "any";
 
         private static readonly IDictionary<NameType, Languages> LANGUAGES = LoadLanguages();
 

@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using System;
+
 namespace Lucene.Net.Support
 {
     /// <summary>
@@ -26,9 +28,9 @@ namespace Lucene.Net.Support
 
         void Update(int b);
 
-        void Update(byte[] b);
-
         void Update(byte[] b, int offset, int length);
+
+        void Update(ReadOnlySpan<byte> bytes);
 
         long Value { get; }
     }

@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -422,7 +422,7 @@ namespace Lucene.Net.Analysis.CharFilters
                                 // Same length: no change to offset
                             }
 
-                            if (Debugging.AssertsEnabled) Debugging.Assert(inputOffsets.Count == output.Length,"inputOffsets.Count={0} vs output.Length={1}", inputOffsets.Count, output.Length);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(inputOffsets.Count == output.Length, "inputOffsets.Count={0} vs output.Length={1}", inputOffsets.Count, output.Length);
                         }
                         else
                         {

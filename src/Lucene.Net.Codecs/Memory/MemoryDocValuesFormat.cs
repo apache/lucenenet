@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Util.Packed;
 
 namespace Lucene.Net.Codecs.Memory
@@ -26,28 +26,28 @@ namespace Lucene.Net.Codecs.Memory
     public class MemoryDocValuesFormat : DocValuesFormat
     {
         /// <summary>Maximum length for each binary doc values field. </summary>
-        public static readonly int MAX_BINARY_FIELD_LENGTH = (1 << 15) - 2;
+        public const int MAX_BINARY_FIELD_LENGTH = (1 << 15) - 2;
 
         internal readonly float acceptableOverheadRatio;
 
         /// <summary>
-        /// Calls <c>MemoryDocValuesFormat(PackedInts.DEFAULT)</c> 
+        /// Calls <c>MemoryDocValuesFormat(PackedInts.DEFAULT)</c>
         /// (<see cref="MemoryDocValuesFormat(float)"/>)
         /// </summary>
-        public MemoryDocValuesFormat() 
+        public MemoryDocValuesFormat()
             : this(PackedInt32s.DEFAULT)
         {
         }
 
         /// <summary>
         /// Creates a new <see cref="MemoryDocValuesFormat"/> with the specified
-        /// <paramref name="acceptableOverheadRatio"/> for <see cref="NumericDocValues"/>. 
+        /// <paramref name="acceptableOverheadRatio"/> for <see cref="NumericDocValues"/>.
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        /// <param name="acceptableOverheadRatio"> Compression parameter for numerics. 
+        /// <param name="acceptableOverheadRatio"> Compression parameter for numerics.
         ///        Currently this is only used when the number of unique values is small. </param>
-        public MemoryDocValuesFormat(float acceptableOverheadRatio) 
+        public MemoryDocValuesFormat(float acceptableOverheadRatio)
             : base()
         {
             this.acceptableOverheadRatio = acceptableOverheadRatio;

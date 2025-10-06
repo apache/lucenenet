@@ -1,4 +1,4 @@
-﻿// Rougly similar to: https://github.com/randomizedtesting/randomizedtesting/blob/release/2.7.8/randomized-runner/src/main/java/com/carrotsearch/randomizedtesting/RandomizedContext.java
+// Rougly similar to: https://github.com/randomizedtesting/randomizedtesting/blob/release/2.7.8/randomized-runner/src/main/java/com/carrotsearch/randomizedtesting/RandomizedContext.java
 
 using Lucene.Net.Support.Threading;
 using NUnit.Framework.Interfaces;
@@ -308,7 +308,7 @@ namespace Lucene.Net.Util
             }
 
             destination.AppendLine("Caller Details:");
-            if (scope != null) 
+            if (scope != null)
             {
                 destination.Append("Scope: ");
                 destination.AppendLine(scope);

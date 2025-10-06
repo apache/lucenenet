@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
@@ -1162,6 +1162,18 @@ namespace Lucene.Net.TestFramework
         public static Exception Throws(Type expectedExceptionType, Action action, string message, params object[] args)
         {
             return _NUnit.Assert.Throws(expectedExceptionType, () => action(), message, args);
+        }
+
+        [DebuggerStepThrough]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Throws<T>(string expectedParamName, Action action)
+            where T : ArgumentException
+        {
+            T exception = _NUnit.Assert.Throws<T>(() => action());
+
+            _NUnit.Assert.AreEqual(expectedParamName, exception.ParamName);
+
+            return exception;
         }
 
         [DebuggerStepThrough]

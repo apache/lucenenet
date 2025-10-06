@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using System;
 
 namespace Lucene.Net.Facet.Range
@@ -25,8 +25,8 @@ namespace Lucene.Net.Facet.Range
 
     /// <summary>
     /// Base class for a single labeled range.
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
     public abstract class Range
     {
@@ -46,14 +46,14 @@ namespace Lucene.Net.Facet.Range
         /// in this range.  This filter is not general-purpose;
         /// you should either use it with <see cref="DrillSideways"/> by
         /// adding it to <see cref="DrillDownQuery.Add(string, Filter)"/>, or pass it to
-        /// <see cref="Search.FilteredQuery"/> using its 
+        /// <see cref="Search.FilteredQuery"/> using its
         /// <see cref="Search.FilteredQuery.QUERY_FIRST_FILTER_STRATEGY"/>.
         /// If the <see cref="ValueSource"/> is static, e.g. an indexed numeric
-        /// field, then it may be more efficient to use 
+        /// field, then it may be more efficient to use
         /// <see cref="Search.NumericRangeFilter"/>.  The provided <paramref name="fastMatchFilter"/>,
         /// if non-null, will first be consulted, and only if
         /// that is set for each document will the range then be
-        /// checked. 
+        /// checked.
         /// </summary>
         public abstract Filter GetFilter(Filter fastMatchFilter, ValueSource valueSource);
 
@@ -62,10 +62,10 @@ namespace Lucene.Net.Facet.Range
         ///  in this range.  This filter is not general-purpose;
         ///  you should either use it with <see cref="DrillSideways"/> by
         ///  adding it to <see cref="DrillDownQuery.Add(string, Filter)"/>, or pass it to
-        ///  <see cref="Search.FilteredQuery"/> using its 
+        ///  <see cref="Search.FilteredQuery"/> using its
         ///  <see cref="Search.FilteredQuery.QUERY_FIRST_FILTER_STRATEGY"/>.  If the
         ///  <see cref="ValueSource"/> is static, e.g. an indexed numeric
-        ///  field, then it may be more efficient to use <see cref="Search.NumericRangeFilter"/>. 
+        ///  field, then it may be more efficient to use <see cref="Search.NumericRangeFilter"/>.
         /// </summary>
         public virtual Filter GetFilter(ValueSource valueSource)
         {

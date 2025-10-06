@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using System.Globalization;
 using System.Text;
@@ -53,7 +53,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         protected int m_positionIncrement;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">field name</param>
         /// <param name="text">value</param>
@@ -67,7 +67,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">field name</param>
         /// <param name="text">value</param>
@@ -81,7 +81,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">field name</param>
         /// <param name="text">value</param>
@@ -129,7 +129,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns>the term</returns>
         public virtual string GetTextAsString()

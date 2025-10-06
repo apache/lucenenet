@@ -1,4 +1,4 @@
-﻿using J2N.Threading.Atomic;
+using J2N.Threading.Atomic;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
@@ -180,14 +180,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         private readonly DisposableThreadLocal<LeftOver> leftovr = new DisposableThreadLocal<LeftOver>();
         private DisposableThreadLocal<DocState> docState = new DisposableThreadLocal<DocState>();
 
-        public static readonly string BODY_FIELD = "body";
-        public static readonly string TITLE_FIELD = "doctitle";
-        public static readonly string DATE_FIELD = "docdate";
-        public static readonly string DATE_MSEC_FIELD = "docdatenum";
-        public static readonly string TIME_SEC_FIELD = "doctimesecnum";
-        public static readonly string ID_FIELD = "docid";
-        public static readonly string BYTES_FIELD = "bytes";
-        public static readonly string NAME_FIELD = "docname";
+        public const string BODY_FIELD = "body";
+        public const string TITLE_FIELD = "doctitle";
+        public const string DATE_FIELD = "docdate";
+        public const string DATE_MSEC_FIELD = "docdatenum";
+        public const string TIME_SEC_FIELD = "doctimesecnum";
+        public const string ID_FIELD = "docid";
+        public const string BYTES_FIELD = "bytes";
+        public const string NAME_FIELD = "docname";
 
         protected Config m_config;
 

@@ -1,16 +1,21 @@
-﻿using Lucene.Net.Replicator.Http;
+using Lucene.Net.Replicator.Http;
 using Lucene.Net.Replicator.Http.Abstractions;
 using Lucene.Net.Util;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
-#if FEATURE_ASPNETCORE_ENDPOINT_CONFIG
+#if FEATURE_ASPNETCORE_TESTHOST
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+#else
+using Lucene.Net.Replicator.Net;
 #endif
+
 
 namespace Lucene.Net.Replicator
 {
@@ -32,78 +37,12 @@ namespace Lucene.Net.Replicator
      */
 
     [SuppressCodecs("Lucene3x")]
-    public class ReplicatorTestCase : LuceneTestCase
+    public partial class ReplicatorTestCase : LuceneTestCase
     {
-
-#if FEATURE_ASPNETCORE_ENDPOINT_CONFIG
-        /// <summary>
-        /// Call this overload to use <see cref="ReplicationServiceMiddleware"/> to host <see cref="ReplicationService"/>.
-        /// </summary>
-        /// <param name="service">The <see cref="ReplicationService"/> that will be registered as singleton.</param>
-        /// <param name="mockErrorConfig">The <see cref="MockErrorConfig"/> that will be registered as singleton.</param>
-        /// <returns>A configured <see cref="TestServer"/> instance.</returns>
-        public static TestServer NewHttpServer(IReplicationService service, MockErrorConfig mockErrorConfig)
-        {
-            var builder = new WebHostBuilder()
-                .ConfigureServices(container =>
-                {
-                    container.AddRouting();
-                    container.AddSingleton(service);
-                    container.AddSingleton(mockErrorConfig);
-                    container.AddSingleton<ReplicationServiceMiddleware>();
-                    container.AddSingleton<MockErrorMiddleware>();
-                })
-                .Configure(app =>
-                {
-                    app.UseRouting();
-
-                    // Middleware so we can mock a server exception and toggle the exception on and off.
-                    app.UseMiddleware<MockErrorMiddleware>();
-
-                    app.UseEndpoints(endpoints =>
-                    {
-                        // This is to define the endpoint for Replicator.
-                        // All URLs with the pattern /replicate/{shard?}/{action?} terminate here and any middleware that
-                        // is expected to run for Replicator must be registered before this call.
-                        endpoints.MapReplicator(ReplicationService.REPLICATION_CONTEXT + "/{shard?}/{action?}");
-
-                        endpoints.MapGet("/{controller?}/{action?}/{id?}", async context =>
-                        {
-                            // This is just to demonstrate allowing requests to other services/controllers in the same
-                            // application. This isn't required, but is allowed.
-                            await context.Response.WriteAsync("Hello World!");
-                        });
-                    });
-                });
-            var server = new TestServer(builder);
-            return server;
-        }
-#else
-        /// <summary>
-        /// Call this overload to use <typeparamref name="TStartUp"/> as the Startup Class.
-        /// </summary>
-        /// <typeparam name="TStartUp">The type of startup class.</typeparam>
-        /// <param name="service">The <see cref="ReplicationService"/> that will be registered as singleton.</param>
-        /// <param name="mockErrorConfig">The <see cref="MockErrorConfig"/> that will be registered as singleton.</param>
-        /// <returns>A configured <see cref="TestServer"/> instance.</returns>
-        public static TestServer NewHttpServer<TStartUp>(IReplicationService service, MockErrorConfig mockErrorConfig) where TStartUp : class
-        {
-            var builder = new WebHostBuilder()
-                .ConfigureServices(container =>
-                {
-                    container.AddSingleton(service);
-                    container.AddSingleton(mockErrorConfig);
-                })
-                .UseStartup<TStartUp>();
-
-            var server = new TestServer(builder);
-            server.BaseAddress = new Uri("http://localhost" + ReplicationService.REPLICATION_CONTEXT);
-            return server;
-        }
-#endif
+        // LUCENENET: Moved NewHttpServer() implementations into partial classes for different server stacks
 
         /// <summary>
-        /// Returns a <see cref="server"/>'s port. 
+        /// Returns a <see cref="server"/>'s port.
         /// </summary>
         public static int ServerPort(TestServer server)
         {
@@ -111,7 +50,7 @@ namespace Lucene.Net.Replicator
         }
 
         /// <summary>
-        /// Returns a <see cref="server"/>'s host. 
+        /// Returns a <see cref="server"/>'s host.
         /// </summary>
         public static string ServerHost(TestServer server)
         {
@@ -131,6 +70,119 @@ namespace Lucene.Net.Replicator
             public int Status { get; set; } = 500;
 
             public object Value { get; set; }
+        }
+
+        public class MockErrorConfig
+        {
+            public bool RespondWithError { get; set; } = false;
+        }
+    }
+
+#if FEATURE_ASPNETCORE_TESTHOST
+    public partial class ReplicatorTestCase
+    {
+        public static TestServer NewHttpServer(IReplicationService service, MockErrorConfig mockErrorConfig, bool useSynchronousIO, bool useStartupClass)
+        {
+            if (useStartupClass)
+            {
+                var builder = new WebHostBuilder()
+                    .ConfigureServices(container =>
+                    {
+                        container.AddSingleton(service);
+                        container.AddSingleton(mockErrorConfig);
+                    });
+
+                if (useSynchronousIO)
+                {
+                    builder.UseStartup<SynchronousReplicationServlet>();
+                }
+                else
+                {
+                    builder.UseStartup<ReplicationServlet>();
+                }
+
+                var server = new TestServer(builder);
+                server.BaseAddress = new Uri("http://localhost" + ReplicationService.REPLICATION_CONTEXT);
+                return server;
+            }
+            else
+            {
+                var builder = new WebHostBuilder()
+                    .ConfigureServices(container =>
+                    {
+                        container.AddRouting();
+                        container.AddSingleton(service);
+                        container.AddSingleton(mockErrorConfig);
+                        if (useSynchronousIO)
+                        {
+                            container.AddSingleton<SynchronousReplicationServiceMiddleware>();
+                            container.AddSingleton<EnableSynchronousIOMiddleware>();
+                        }
+                        else
+                        {
+                            container.AddSingleton<ReplicationServiceMiddleware>();
+                        }
+                        container.AddSingleton<MockErrorMiddleware>();
+                    })
+                    .Configure(app =>
+                    {
+                        app.UseRouting();
+
+                        // Middleware so we can mock a server exception and toggle the exception on and off.
+                        app.UseMiddleware<MockErrorMiddleware>();
+
+                        if (useSynchronousIO)
+                        {
+                            app.UseMiddleware<EnableSynchronousIOMiddleware>();
+                        }
+
+                        app.UseEndpoints(endpoints =>
+                        {
+                            // This is to define the endpoint for Replicator.
+                            // All URLs with the pattern /replicate/{shard?}/{action?} terminate here and any middleware that
+                            // is expected to run for Replicator must be registered before this call.
+                            string pattern = ReplicationService.REPLICATION_CONTEXT + "/{shard?}/{action?}";
+                            if (useSynchronousIO)
+                                endpoints.MapReplicator<SynchronousReplicationServiceMiddleware>(pattern);
+                            else
+                                endpoints.MapReplicator<ReplicationServiceMiddleware>(pattern);
+
+                            endpoints.MapGet("/{controller?}/{action?}/{id?}", async context =>
+                            {
+                                // This is just to demonstrate allowing requests to other services/controllers in the same
+                                // application. This isn't required, but is allowed.
+                                await context.Response.WriteAsync("Hello World!");
+                            });
+                        });
+                    });
+                var server = new TestServer(builder);
+                return server;
+            }
+        }
+
+        public class EnableSynchronousIOMiddleware
+        {
+            private readonly RequestDelegate next;
+
+            public EnableSynchronousIOMiddleware(RequestDelegate next)
+            {
+                this.next = next ?? throw new ArgumentNullException(nameof(next));
+            }
+
+            public async Task InvokeAsync(HttpContext context)
+            {
+                // LUCENENET: This is to allow synchronous IO to happen for these requests.
+                // Note that in a real-world app this would be set in the configuration, not
+                // per HTTP request. However, this setting is not recommended in modern production
+                // applications.
+                var syncIoFeature = context.Features.Get<IHttpBodyControlFeature>();
+                if (syncIoFeature != null)
+                {
+                    syncIoFeature.AllowSynchronousIO = true;
+                }
+
+                await next(context);
+            }
         }
 
         public class MockErrorMiddleware
@@ -159,10 +211,15 @@ namespace Lucene.Net.Replicator
                 await next(context);
             }
         }
-
-        public class MockErrorConfig
+    }
+#else
+    public partial class ReplicatorTestCase
+    {
+        // LUCENENET: This uses HttpListener from System.Net to test the service where ASP.NET Core is not supported.
+        public static TestServer NewHttpServer(IReplicationService service, MockErrorConfig mockErrorConfig, bool useSynchronousIO, bool useStartupClass)
         {
-            public bool RespondWithError { get; set; } = false;
+            return new TestServer(service, mockErrorConfig, useSynchronousIO);
         }
     }
+#endif
 }

@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -31,7 +31,7 @@ namespace Lucene.Net.Codecs.BlockTerms
     // But we could decouple the two, ie allow several blocks in between two indexed terms
 
     /// <summary>
-    /// Writes terms dict, block-encoding (column stride) each term's metadata 
+    /// Writes terms dict, block-encoding (column stride) each term's metadata
     /// for each set of terms between two index terms.
     /// <para/>
     /// @lucene.experimental
@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         public readonly static int VERSION_CURRENT = VERSION_CHECKSUM;
 
         /// <summary>Extension of terms file</summary>
-        public readonly static string TERMS_EXTENSION = "tib";
+        public const string TERMS_EXTENSION = "tib";
 
 #pragma warning disable CA2213 // Disposable fields should be disposed
         protected IndexOutput m_output;
@@ -377,7 +377,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 bytesWriter.WriteTo(outerInstance.m_output);
                 bytesWriter.Reset();
 
-                // 4th pass: write the metadata 
+                // 4th pass: write the metadata
                 long[] longs = new long[longsSize];
                 bool absolute = true;
                 for (int termCount = 0; termCount < pendingCount; termCount++)

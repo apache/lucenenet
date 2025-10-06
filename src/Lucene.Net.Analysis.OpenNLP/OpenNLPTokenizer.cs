@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 8.2.0
+// Lucene version compatibility level 8.2.0
 using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
@@ -33,7 +33,8 @@ namespace Lucene.Net.Analysis.OpenNlp
     /// </summary>
     public sealed class OpenNLPTokenizer : SegmentingTokenizerBase
     {
-        public static int EOS_FLAG_BIT = 1;
+        // LUCENENET specific - made const, since it is never modified. Removed in Lucene 9.5.0.
+        public const int EOS_FLAG_BIT = 1;
 
         private readonly ICharTermAttribute termAtt;
         private readonly IFlagsAttribute flagsAtt;

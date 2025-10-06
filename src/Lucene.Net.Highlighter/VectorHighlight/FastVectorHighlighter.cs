@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Search.Highlight;
 using System;
 using System.Collections.Generic;
@@ -28,8 +28,8 @@ namespace Lucene.Net.Search.VectorHighlight
     /// </summary>
     public class FastVectorHighlighter
     {
-        public static readonly bool DEFAULT_PHRASE_HIGHLIGHT = true;
-        public static readonly bool DEFAULT_FIELD_MATCH = true;
+        public const bool DEFAULT_PHRASE_HIGHLIGHT = true;
+        public const bool DEFAULT_FIELD_MATCH = true;
         private readonly bool phraseHighlight;
         private readonly bool fieldMatch;
         private readonly IFragListBuilder fragListBuilder;
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <returns>the created <see cref="FieldQuery"/> object</returns>
         public virtual FieldQuery GetFieldQuery(Query query)
         {
-            // TODO: should we deprecate this? 
+            // TODO: should we deprecate this?
             // because if there is no reader, then we cannot rewrite MTQ.
             try
             {

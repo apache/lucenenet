@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -76,7 +76,8 @@ namespace Lucene.Net.Facet
 
         private readonly FacetsConfig config;
         private readonly BooleanQuery query;
-        private readonly IDictionary<string, int> drillDownDims = new JCG.LinkedDictionary<string, int>();
+        // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+        private readonly IDictionary<string, int> drillDownDims = new JCG.OrderedDictionary<string, int>();
 
         /// <summary>
         /// Used by <see cref="Clone"/>

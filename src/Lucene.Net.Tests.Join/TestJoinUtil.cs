@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
@@ -390,7 +390,7 @@ namespace Lucene.Net.Search.Join
         [Test]
         // [Slow] // LUCENENET specific - Not slow in .NET
         public void TestMultiValueRandomJoin()
-            // this test really takes more time, that is why the number of iterations are smaller.
+        // this test really takes more time, that is why the number of iterations are smaller.
         {
             int maxIndexIter = TestUtil.NextInt32(Random, 3, 6);
             int maxSearchIter = TestUtil.NextInt32(Random, 6, 12);
@@ -437,7 +437,7 @@ namespace Lucene.Net.Search.Join
                     }
 
                     var scoreModeLength = Enum.GetNames(typeof(ScoreMode)).Length;
-                    ScoreMode scoreMode = (ScoreMode) Random.Next(scoreModeLength);
+                    ScoreMode scoreMode = (ScoreMode)Random.Next(scoreModeLength);
                     if (Verbose)
                     {
                         Console.WriteLine("scoreMode=" + scoreMode);
@@ -940,7 +940,7 @@ namespace Lucene.Net.Search.Join
                 : context.ToHitsToJoinScore[queryValue];
 
             var hits = new JCG.List<KeyValuePair<int, JoinScore>>(hitsToJoinScores);
-            hits.Sort(Comparer< KeyValuePair<int, JoinScore>>.Create( (hit1, hit2) =>
+            hits.Sort(Comparer<KeyValuePair<int, JoinScore>>.Create((hit1, hit2) =>
             {
                 float score1 = hit1.Value.Score(scoreMode);
                 float score2 = hit2.Value.Score(scoreMode);

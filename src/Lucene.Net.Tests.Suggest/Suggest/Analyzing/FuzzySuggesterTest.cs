@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Analysis;
@@ -1313,7 +1313,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 else
                 {
                     int c = CHARSEQUENCE_COMPARER.Compare(a.Key, b.Key);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(c != 0,"term={0}", a.Key);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(c != 0, "term={0}", a.Key);
                     return c;
                 }
             }

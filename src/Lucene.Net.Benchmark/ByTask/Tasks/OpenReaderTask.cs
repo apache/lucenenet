@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </summary>
     public class OpenReaderTask : PerfTask
     {
-        public static readonly string USER_DATA = "userData";
+        public const string USER_DATA = "userData";
         private string commitUserData = null;
 
         public OpenReaderTask(PerfRunData runData)

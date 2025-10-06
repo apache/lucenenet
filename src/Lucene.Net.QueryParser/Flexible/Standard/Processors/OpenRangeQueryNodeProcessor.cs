@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Processors;
 using Lucene.Net.QueryParsers.Flexible.Core.Util;
@@ -30,7 +30,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// </summary>
     public class OpenRangeQueryNodeProcessor : QueryNodeProcessor
     {
-        public readonly static string OPEN_RANGE_TOKEN = "*";
+        public const string OPEN_RANGE_TOKEN = "*";
 
         public OpenRangeQueryNodeProcessor() { }
 

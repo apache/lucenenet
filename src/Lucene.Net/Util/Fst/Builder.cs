@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -142,7 +142,7 @@ namespace Lucene.Net.Util.Fst
         /// </param>
         /// <param name="doPackFST"> Pass <c>true</c> to create a packed FST.
         /// </param>
-        /// <param name="acceptableOverheadRatio"> How to trade speed for space when building the FST. this option 
+        /// <param name="acceptableOverheadRatio"> How to trade speed for space when building the FST. this option
         ///    is only relevant when doPackFST is true. <see cref="PackedInt32s.GetMutable(int, int, float)"/>
         /// </param>
         /// <param name="allowArrayArcs"> Pass false to disable the array arc optimization
@@ -153,9 +153,9 @@ namespace Lucene.Net.Util.Fst
         ///    <see cref="T:byte[]"/> block in the <see cref="BytesStore"/>; if you know the FST
         ///    will be large then make this larger.  For example 15
         ///    bits = 32768 byte pages. </param>
-        public Builder(FST.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, bool doShareSuffix, 
-            bool doShareNonSingletonNodes, int shareMaxTailLength, Outputs<T> outputs, 
-            FreezeTail<T> freezeTail, bool doPackFST, float acceptableOverheadRatio, bool allowArrayArcs, 
+        public Builder(FST.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, bool doShareSuffix,
+            bool doShareNonSingletonNodes, int shareMaxTailLength, Outputs<T> outputs,
+            FreezeTail<T> freezeTail, bool doPackFST, float acceptableOverheadRatio, bool allowArrayArcs,
             int bytesPageBits)
         {
             this.minSuffixCount1 = minSuffixCount1;
@@ -345,7 +345,7 @@ namespace Lucene.Net.Util.Fst
         /// method. Note that input is fully consumed after this
         /// method is returned (so caller is free to reuse), but
         /// output is not.  So if your outputs are changeable (eg
-        /// <see cref="ByteSequenceOutputs"/> or 
+        /// <see cref="ByteSequenceOutputs"/> or
         /// <see cref="Int32SequenceOutputs"/>) then you cannot reuse across
         /// calls.
         /// </summary>
@@ -700,7 +700,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(NumArcs > 0);
                 Arc<S> arc = Arcs[NumArcs - 1];
-                if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == labelToMatch,"arc.Label={0} vs {1}", arc.Label, labelToMatch);
+                if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == labelToMatch, "arc.Label={0} vs {1}", arc.Label, labelToMatch);
                 arc.Target = target;
                 //assert target.Node != -2;
                 arc.NextFinalOutput = nextFinalOutput;

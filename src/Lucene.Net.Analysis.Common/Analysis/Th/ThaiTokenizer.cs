@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 #if FEATURE_BREAKITERATOR
 using ICU4N.Support.Text;
 using ICU4N.Text;
@@ -46,41 +46,13 @@ namespace Lucene.Net.Analysis.Th
     /// </summary>
     public class ThaiTokenizer : SegmentingTokenizerBase
     {
-        private static readonly object syncLock = new object(); // LUCENENET specific - workaround until BreakIterator is made thread safe  (LUCENENET TODO: TO REVERT)
-
         // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
-        private static readonly BreakIterator proto = LoadProto();
+        private static readonly BreakIterator proto = BreakIterator.GetWordInstance(new CultureInfo("th"));
 
         /// <summary>
         /// used for breaking the text into sentences
         /// </summary>
-        private static readonly BreakIterator sentenceProto = LoadSentenceProto();
-
-        private static BreakIterator LoadProto()
-        {
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                return BreakIterator.GetWordInstance(new CultureInfo("th"));
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
-        }
-
-        private static BreakIterator LoadSentenceProto()
-        {
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                return BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
-        }
+        private static readonly BreakIterator sentenceProto = BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
 
         private readonly ThaiWordBreaker wordBreaker;
         private readonly CharArrayIterator wrapper = CharArrayIterator.NewWordInstance();
@@ -101,112 +73,48 @@ namespace Lucene.Net.Analysis.Th
         /// <summary>
         /// Creates a new <see cref="ThaiTokenizer"/>, supplying the <see cref="AttributeFactory"/> </summary>
         public ThaiTokenizer(AttributeFactory factory, TextReader reader)
-            : base(factory, reader, CreateSentenceClone())
+            : base(factory, reader, (BreakIterator)sentenceProto.Clone())
         {
             // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
-
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                wordBreaker = new ThaiWordBreaker((BreakIterator)proto.Clone());
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
+            wordBreaker = new ThaiWordBreaker((BreakIterator)proto.Clone());
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
-        private static BreakIterator CreateSentenceClone()
-        {
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                return (BreakIterator)sentenceProto.Clone();
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
-        }
-
-        public override void Reset()
-        {
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                base.Reset();
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
-        }
-
-        public override State CaptureState()
-        {
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                return base.CaptureState();
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
-        }
-
         protected override void SetNextSentence(int sentenceStart, int sentenceEnd)
         {
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                this.sentenceStart = sentenceStart;
-                this.sentenceEnd = sentenceEnd;
-                wrapper.SetText(m_buffer, sentenceStart, sentenceEnd - sentenceStart);
-                wordBreaker.SetText(wrapper);
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
+            this.sentenceStart = sentenceStart;
+            this.sentenceEnd = sentenceEnd;
+            wrapper.SetText(m_buffer, sentenceStart, sentenceEnd - sentenceStart);
+            wordBreaker.SetText(wrapper);
         }
 
         protected override bool IncrementWord()
         {
             int start, end;
-            UninterruptableMonitor.Enter(syncLock);
-            try
+            start = wordBreaker.Current;
+            if (start == BreakIterator.Done)
             {
-                start = wordBreaker.Current;
-                if (start == BreakIterator.Done)
-                {
-                    return false; // BreakIterator exhausted
-                }
+                return false; // BreakIterator exhausted
+            }
 
-                // find the next set of boundaries, skipping over non-tokens
+            // find the next set of boundaries, skipping over non-tokens
+            end = wordBreaker.Next();
+            while (end != BreakIterator.Done && !Character.IsLetterOrDigit(Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
+            {
+                start = end;
                 end = wordBreaker.Next();
-                while (end != BreakIterator.Done && !Character.IsLetterOrDigit(Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
-                {
-                    start = end;
-                    end = wordBreaker.Next();
-                }
-
-                if (end == BreakIterator.Done)
-                {
-                    return false; // BreakIterator exhausted
-                }
-
-                ClearAttributes();
-                termAtt.CopyBuffer(m_buffer, sentenceStart + start, end - start);
-                offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart + start), CorrectOffset(m_offset + sentenceStart + end));
-                return true;
             }
-            finally
+
+            if (end == BreakIterator.Done)
             {
-                UninterruptableMonitor.Exit(syncLock);
+                return false; // BreakIterator exhausted
             }
+
+            ClearAttributes();
+            termAtt.CopyBuffer(m_buffer, sentenceStart + start, end - start);
+            offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart + start), CorrectOffset(m_offset + sentenceStart + end));
+            return true;
         }
     }
 
@@ -231,6 +139,7 @@ namespace Lucene.Net.Analysis.Th
         {
             this.text.CopyChars(text.Text, text.Start, text.Length);
             wordBreaker.SetText(text);
+            transitions.Clear();
         }
 
         public int Current

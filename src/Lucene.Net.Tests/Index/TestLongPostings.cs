@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
                 {
                     continue;
                 }
-                Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
+                Exception priorException = null; // LUCENENET: No need to cast to IOException
                 TokenStream ts = a.GetTokenStream("foo", new StringReader(s));
                 try
                 {

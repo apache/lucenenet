@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
@@ -50,15 +50,15 @@ namespace Lucene.Net.Codecs
     public static class BlockTreeTermsWriter
     {
         /// <summary>
-        /// Suggested default value for the 
-        /// <c>minItemsInBlock</c> parameter to 
+        /// Suggested default value for the
+        /// <c>minItemsInBlock</c> parameter to
         /// <see cref="BlockTreeTermsWriter{TSubclassState}(SegmentWriteState, PostingsWriterBase, int, int, TSubclassState)"/>.
         /// </summary>
         public const int DEFAULT_MIN_BLOCK_SIZE = 25;
 
         /// <summary>
-        /// Suggested default value for the 
-        /// <c>maxItemsInBlock</c> parameter to 
+        /// Suggested default value for the
+        /// <c>maxItemsInBlock</c> parameter to
         /// <see cref="BlockTreeTermsWriter{TSubclassState}(SegmentWriteState, PostingsWriterBase, int, int, TSubclassState)"/>.
         /// </summary>
         public const int DEFAULT_MAX_BLOCK_SIZE = 48;
@@ -296,12 +296,12 @@ namespace Lucene.Net.Codecs
         /// to set state. It is *optional* and can be used when overriding the WriteHeader(),
         /// WriteIndexHeader(). It only matters in the case where the state
         /// is required inside of any of those methods that is passed in to the subclass constructor.
-        /// 
+        ///
         /// When passed to the constructor, it is set to the protected field m_subclassState before
         /// any of the above methods are called where it is available for reading when overriding the above methods.
-        /// 
+        ///
         /// If your subclass needs to pass more than one piece of data, you can create a class or struct to do so.
-        /// All other virtual members of BlockTreeTermsWriter are not called in the constructor, 
+        /// All other virtual members of BlockTreeTermsWriter are not called in the constructor,
         /// so the overrides of those methods won't specifically need to use this field (although they could for consistency).
         /// </param>
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
@@ -440,7 +440,8 @@ namespace Lucene.Net.Codecs
 
             public override string ToString()
             {
-                return Term.Utf8ToString();
+                // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
+                return Term.Utf8ToStringWithFallback();
             }
         }
 
@@ -468,7 +469,21 @@ namespace Lucene.Net.Codecs
 
             public override string ToString()
             {
-                return "BLOCK: " + Prefix.Utf8ToString();
+                // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
+                return $"BLOCK: {Prefix.Utf8ToStringWithFallback()}";
+            }
+
+            #nullable enable
+            public bool TryToString([NotNullWhen(true)] out string? result)
+            {
+                if (Prefix.TryUtf8ToString(out string? prefixString))
+                {
+                    result = $"BLOCK: {prefixString}";
+                    return true;
+                }
+
+                result = null;
+                return false;
             }
 
             // LUCENENET specific - to keep the Debug.Assert statement from throwing exceptions
@@ -476,12 +491,11 @@ namespace Lucene.Net.Codecs
             // to using PendingBlock.Prefix.ToString() if PendingBlock.ToString() errors.
             // This struct defers formatting the string until it is actually used as a parameter
             // in string.Format().
-            private struct PendingBlocksFormatter // For assert
+            private readonly struct PendingBlocksFormatter // For assert
             {
-#pragma warning disable IDE0044 // Add readonly modifier
-                private IList<PendingBlock> blocks;
-#pragma warning restore IDE0044 // Add readonly modifier
-                public PendingBlocksFormatter(IList<PendingBlock> blocks)
+                private readonly IList<PendingBlock>? blocks;
+
+                public PendingBlocksFormatter(IList<PendingBlock>? blocks)
                 {
                     this.blocks = blocks; // May be null
                 }
@@ -500,17 +514,17 @@ namespace Lucene.Net.Codecs
                     it.MoveNext();
                     while (true)
                     {
-                        var e = it.Current;
+                        var e = it.Current ?? throw new InvalidOperationException("Expected a non-null value in the enumerator due to Count check above.");
                         // There is a chance that the Prefix will contain invalid UTF8,
                         // so we catch that and use the alternative way of displaying it
-                        try
+                        if (e.TryToString(out string? eString))
                         {
-                            sb.Append(e.ToString());
+                            sb.Append(eString);
                         }
-                        catch (IndexOutOfRangeException)
+                        else
                         {
                             sb.Append("BLOCK: ");
-                            sb.Append(e.Prefix.ToString());
+                            sb.Append(e.Prefix);
                         }
                         if (!it.MoveNext())
                         {
@@ -520,6 +534,7 @@ namespace Lucene.Net.Codecs
                     }
                 }
             }
+            #nullable restore
 
             public void CompileIndex(IList<PendingBlock> floorBlocks, RAMOutputStream scratchBytes)
             {
@@ -943,7 +958,7 @@ namespace Lucene.Net.Codecs
                                   System.out.println("      **");
                                 }
                                 */
-                                floorBlocks.Add(WriteBlock(prevTerm, prefixLength, prefixLength + 1, curStart,curStart, /* 0, LUCENENET: Never read */ true, startLabel, true));
+                                floorBlocks.Add(WriteBlock(prevTerm, prefixLength, prefixLength + 1, curStart, curStart, /* 0, LUCENENET: Never read */ true, startLabel, true));
                                 break;
                             }
                         }
@@ -1311,7 +1326,7 @@ namespace Lucene.Net.Codecs
         {
             if (disposing)
             {
-                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
+                Exception ioe = null; // LUCENENET: No need to cast to IOException
                 try
                 {
                     long dirStart = @out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream

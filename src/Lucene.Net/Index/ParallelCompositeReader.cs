@@ -1,4 +1,4 @@
-﻿using J2N.Runtime.CompilerServices;
+using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
+                Exception ioe = null; // LUCENENET: No need to cast to IOException
                 foreach (IndexReader reader in completeReaderSet)
                 {
                     try

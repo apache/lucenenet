@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
+using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Processors;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using Lucene.Net.QueryParsers.Flexible.Standard.Nodes;
@@ -33,7 +33,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// </summary>
     public class MultiTermRewriteMethodProcessor : QueryNodeProcessor
     {
-        public static readonly string TAG_ID = "MultiTermRewriteMethodConfiguration";
+        public const string TAG_ID = "MultiTermRewriteMethodConfiguration";
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {

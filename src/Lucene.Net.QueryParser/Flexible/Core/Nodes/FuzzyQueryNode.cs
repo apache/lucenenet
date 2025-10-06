@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using System.Text;
 
@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         private int prefixLength;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">Name of the field query will use.</param>
         /// <param name="term">Term token to use for building term for the query</param>
@@ -47,7 +47,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">Name of the field query will use.</param>
         /// <param name="term">Term token to use for building term for the query</param>
@@ -62,7 +62,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">Name of the field query will use.</param>
         /// <param name="term">Term token to use for building term for the query</param>

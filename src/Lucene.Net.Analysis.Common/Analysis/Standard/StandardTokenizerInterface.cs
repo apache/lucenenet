@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Standard
 
     /// <summary>
     /// Internal interface for supporting versioned grammars.
-    /// @lucene.internal 
+    /// @lucene.internal
     /// </summary>
     public interface IStandardTokenizerInterface
     {
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Standard
         /// Resets the scanner to read from a new input stream.
         /// Does not close the old reader.
         /// <para/>
-        /// All internal variables are reset, the old input stream 
+        /// All internal variables are reset, the old input stream
         /// <b>cannot</b> be reused (internal buffer is discarded and lost).
         /// Lexical state is set to <c>YYINITIAL</c>.
         /// </summary>

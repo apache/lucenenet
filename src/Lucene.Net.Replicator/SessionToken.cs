@@ -1,7 +1,11 @@
-﻿using J2N.IO;
+using J2N.IO;
 using System.Collections.Generic;
+using System;
 using System.IO;
 using JCG = J2N.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Lucene.Net.Support.IO;
 
 namespace Lucene.Net.Replicator
 {
@@ -36,7 +40,7 @@ namespace Lucene.Net.Replicator
     {
         /// <summary>
         /// Id of this session.
-        /// Should be passed when releasing the session, thereby acknowledging the 
+        /// Should be passed when releasing the session, thereby acknowledging the
         /// <see cref="IReplicator"/> that this session is no longer in use.
         /// </summary>
         /// <seealso cref="IReplicator.Release"/>
@@ -110,6 +114,37 @@ namespace Lucene.Net.Replicator
                     writer.WriteInt64(file.Length);
                 }
             }
+        }
+
+        /// <summary>
+        /// Asynchronously serializes the token's properties, including ID, version, and source files,
+        /// to the provided <see cref="Stream"/> for transmission or storage.
+        /// </summary>
+        /// <param name="output">The <see cref="Stream"/> to write the token data to.</param>
+        /// <param name="cancellationToken">A cancellation token to observe while writing and flushing the stream.</param>
+        /// <returns>A task representing the asynchronous serialization operation.</returns>
+        internal async Task SerializeAsync(Stream output, CancellationToken cancellationToken = default)
+        {
+            if (output is null)
+                throw new ArgumentNullException(nameof(output));
+
+            await output.WriteUTFAsync(Id, cancellationToken).ConfigureAwait(false);
+            await output.WriteUTFAsync(Version, cancellationToken).ConfigureAwait(false);
+            await output.WriteInt32BigEndianAsync(SourceFiles.Count, cancellationToken).ConfigureAwait(false);
+
+            foreach (var pair in SourceFiles)
+            {
+                await output.WriteUTFAsync(pair.Key, cancellationToken).ConfigureAwait(false);
+                await output.WriteInt32BigEndianAsync(pair.Value.Count, cancellationToken).ConfigureAwait(false);
+
+                foreach (var file in pair.Value)
+                {
+                    await output.WriteUTFAsync(file.FileName, cancellationToken).ConfigureAwait(false);
+                    await output.WriteInt64BigEndianAsync(file.Length, cancellationToken).ConfigureAwait(false);
+                }
+            }
+
+            await output.FlushAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public override string ToString()

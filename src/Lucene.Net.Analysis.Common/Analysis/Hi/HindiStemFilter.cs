@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Hi
         private readonly HindiStemmer stemmer = new HindiStemmer();
 
         public HindiStemFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAtt = AddAttribute<IKeywordAttribute>();

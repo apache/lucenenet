@@ -18,15 +18,15 @@
 # -----------------------------------------------------------------------------------
 
 param (
-	[switch] $ServeDocs = $false,
-	[switch] $Clean = $false,
-	# LogLevel can be: Diagnostic, Verbose, Info, Warning, Error
-	[Parameter(Mandatory=$false)]
-	[string]
-	$LogLevel = 'Info',
-	[Parameter(Mandatory=$false)]
-	[int]
-	$StagingPort = 8081
+    [switch] $ServeDocs = $false,
+    [switch] $Clean = $false,
+    # LogLevel can be: Diagnostic, Verbose, Info, Warning, Error
+    [Parameter(Mandatory=$false)]
+    [string]
+    $LogLevel = 'Info',
+    [Parameter(Mandatory=$false)]
+    [int]
+    $StagingPort = 8081
 )
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -39,8 +39,8 @@ $ToolsFolder = Join-Path -Path $SiteFolder -ChildPath "tools";
 New-Item $ToolsFolder -type directory -force
 
 if ($Clean) {
-	Write-Host "Cleaning tools..."
-	Remove-Item (Join-Path -Path $ToolsFolder "\*") -recurse -force -ErrorAction SilentlyContinue
+    Write-Host "Cleaning tools..."
+    Remove-Item (Join-Path -Path $ToolsFolder "\*") -recurse -force -ErrorAction SilentlyContinue
 }
 
 # install docfx tool
@@ -51,25 +51,25 @@ Set-Location $PreviousLocation
 
 # delete anything that already exists
 if ($Clean) {
-	Write-Host "Cleaning..."
-	Remove-Item (Join-Path -Path $SiteFolder "_site\*") -recurse -force -ErrorAction SilentlyContinue
-	Remove-Item (Join-Path -Path $SiteFolder "_site") -force -ErrorAction SilentlyContinue
-	Remove-Item (Join-Path -Path $SiteFolder "obj\*") -recurse -force -ErrorAction SilentlyContinue
-	Remove-Item (Join-Path -Path $SiteFolder "obj") -force -ErrorAction SilentlyContinue
+    Write-Host "Cleaning..."
+    Remove-Item (Join-Path -Path $SiteFolder "_site\*") -recurse -force -ErrorAction SilentlyContinue
+    Remove-Item (Join-Path -Path $SiteFolder "_site") -force -ErrorAction SilentlyContinue
+    Remove-Item (Join-Path -Path $SiteFolder "obj\*") -recurse -force -ErrorAction SilentlyContinue
+    Remove-Item (Join-Path -Path $SiteFolder "obj") -force -ErrorAction SilentlyContinue
 }
 
 $DocFxJson = Join-Path -Path $SiteFolder "docfx.json"
 $DocFxLog = Join-Path -Path $SiteFolder "obj\docfx.log"
 
 if($?) {
-	if ($ServeDocs -eq $false) {
-		# build the output
-		Write-Host "Building docs..."
-		& dotnet tool run docfx build $DocFxJson -l "$DocFxLog" --logLevel $LogLevel
-	}
-	else {
-		# build + serve (for testing)
-		Write-Host "starting website..."
-		& dotnet tool run docfx $DocFxJson --serve --port $StagingPort
-	}
+    if ($ServeDocs -eq $false) {
+        # build the output
+        Write-Host "Building docs..."
+        & dotnet tool run docfx build $DocFxJson -l "$DocFxLog" --logLevel $LogLevel
+    }
+    else {
+        # build + serve (for testing)
+        Write-Host "starting website..."
+        & dotnet tool run docfx $DocFxJson --serve --port $StagingPort
+    }
 }

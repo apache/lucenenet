@@ -27,12 +27,13 @@ namespace Lucene.Net
 
         // LUCENENET: removed unused string argument and overload
         public Support_SetTest(/*String p1,*/ ISet<int> s)
-            //: base(p1)
+        //: base(p1)
         {
             set = s;
         }
 
-        public void RunTest() {
+        public void RunTest()
+        {
             // add
             assertTrue("Set Test - Adding a duplicate element changed the set",
                 !set.Add(50));

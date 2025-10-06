@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.IO;
@@ -193,7 +193,7 @@ namespace Lucene.Net.Search.Grouping
                 if (facetEntries.Count == maxSize)
                 {
                     var max = facetEntries.Max;
-                    currentMin =  max != null ? max.Count : 0;
+                    currentMin = max != null ? max.Count : 0;
                 }
             }
 
@@ -278,7 +278,7 @@ namespace Lucene.Net.Search.Grouping
             public override string ToString()
             {
                 return "FacetEntry{" +
-                    "value=" + value.Utf8ToString() +
+                    "value=" + value.Utf8ToStringWithFallback() + // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
                     ", count=" + count +
                     '}';
             }

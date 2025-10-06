@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
@@ -117,8 +117,11 @@ namespace Lucene.Net.Analysis
         public static void AssertTokenStreamContents(TokenStream ts, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, int? finalOffset, int? finalPosInc, bool[] keywordAtts, bool offsetsAreCorrect, byte[][] payloads)
         {
             // LUCENENET: Bug fix: NUnit throws an exception when something fails.
-            // This causes Dispose() to be skipped and it pollutes other tests indicating false negatives.
-            // Added this try-finally block to fix this.
+            // This causes Close() to be skipped and it pollutes other tests indicating false negatives
+            // if there are open file handles. We added this try-finally block to fix this, but we must
+            // take care not to swallow our original exception message, so we track whether or not the
+            // try block completed and only throw an exception if it did, otherwise log the error (Verbose ignored).
+            bool success = false;
             try
             {
                 Assert.IsNotNull(output);
@@ -381,10 +384,25 @@ namespace Lucene.Net.Analysis
                 {
                     Assert.AreEqual((int)finalPosInc, posIncrAtt.PositionIncrement, "finalPosInc");
                 }
+
+                // LUCENENET: Keep track of successful completion for the finally block
+                success = true;
             }
             finally
             {
-                ts.Close();
+                // LUCENENET: We are doing this in the finally block to ensure it happens
+                // when there are exceptions thrown (such as when the assert fails).
+                try
+                {
+                    ts.Close();
+                }
+                // LUCENENET: Make the failure as visible as possible, but do not rethrow it
+                // in case of a primary exception because it may swallow the information required
+                // to reproduce the failure.
+                catch (Exception e) when (!success)
+                {
+                    Console.WriteLine($"BaseTokenStreamTestCase.AssertTokenStreamContents(): Failed to close TokenStream: {e}");
+                }
             }
         }
 
@@ -934,6 +952,14 @@ namespace Lucene.Net.Analysis
             int remainder = random.Next(10);
             TextReader reader = new StringReader(text);
             TokenStream ts = a.GetTokenStream("dummy", useCharFilter ? new MockCharFilter(reader, remainder) : reader);
+
+            // LUCENENET: Bug fix: NUnit throws an exception when something fails.
+            // This causes Close() to be skipped and it pollutes other tests indicating false negatives
+            // if there are open file handles. We added this try-finally block to fix this, but we must
+            // take care not to swallow our original exception message, so we track whether or not the
+            // try block completed and only throw an exception if it did, otherwise log the error (Verbose ignored).
+            bool success = false;
+
             ICharTermAttribute termAtt = ts.HasAttribute<ICharTermAttribute>() ? ts.GetAttribute<ICharTermAttribute>() : null;
             IOffsetAttribute offsetAtt = ts.HasAttribute<IOffsetAttribute>() ? ts.GetAttribute<IOffsetAttribute>() : null;
             IPositionIncrementAttribute posIncAtt = ts.HasAttribute<IPositionIncrementAttribute>() ? ts.GetAttribute<IPositionIncrementAttribute>() : null;
@@ -977,12 +1003,25 @@ namespace Lucene.Net.Analysis
                 }
 
                 ts.End();
+
+                // LUCENENET: Keep track of successful completion for the finally block
+                success = true;
             }
             finally
             {
                 // LUCENENET: We are doing this in the finally block to ensure it happens
                 // when there are exceptions thrown (such as when the assert fails).
-                ts.Close();
+                try
+                {
+                    ts.Close();
+                }
+                // LUCENENET: Make the failure as visible as possible, but do not rethrow it
+                // in case of a primary exception because it may swallow the information required
+                // to reproduce the failure.
+                catch (Exception e) when (!success)
+                {
+                    Console.WriteLine($"BaseTokenStreamTestCase.CheckAnalysisConsistency() - (1): Failed to close TokenStream: {e}");
+                }
             }
 
             // verify reusing is "reproducable" and also get the normal tokenstream sanity checks
@@ -1027,9 +1066,19 @@ namespace Lucene.Net.Analysis
                             Assert.IsTrue(MockReaderWrapper.IsMyEvilException(re));
                         }
 
+                        // LUCENENET: Bug fix: NUnit throws an exception when something fails.
+                        // This causes Close() to be skipped and it pollutes other tests indicating false negatives
+                        // if there are open file handles. We added this try-finally block to fix this, but we must
+                        // take care not to swallow our original exception message, so we track whether or not the
+                        // try block completed and only throw an exception if it did, otherwise log the error (Verbose ignored).
+                        success = false;
+
                         try
                         {
                             ts.End();
+
+                            // LUCENENET: Keep track of successful completion for the finally block
+                            success = true;
                         }
                         catch (Exception ae) when (ae.IsAssertionError() && ae.Message.Contains("End() called before IncrementToken() returned false!"))
                         {
@@ -1039,7 +1088,17 @@ namespace Lucene.Net.Analysis
                         }
                         finally
                         {
-                            ts.Close();
+                            try
+                            {
+                                ts.Close();
+                            }
+                            // LUCENENET: Make the failure as visible as possible, but do not rethrow it
+                            // in case of a primary exception because it may swallow the information required
+                            // to reproduce the failure.
+                            catch (Exception e) when (!success)
+                            {
+                                Console.WriteLine($"BaseTokenStreamTestCase.CheckAnalysisConsistency() - (2): Failed to close TokenStream: {e}");
+                            }
                         }
                     }
                     else if (evilness == 7)
@@ -1059,9 +1118,19 @@ namespace Lucene.Net.Analysis
                             Assert.IsTrue(ts.IncrementToken());
                         }
 
+                        // LUCENENET: Bug fix: NUnit throws an exception when something fails.
+                        // This causes Close() to be skipped and it pollutes other tests indicating false negatives
+                        // if there are open file handles. We added this try-finally block to fix this, but we must
+                        // take care not to swallow our original exception message, so we track whether or not the
+                        // try block completed and only throw an exception if it did, otherwise log the error (Verbose ignored).
+                        success = false;
+
                         try
                         {
                             ts.End();
+
+                            // LUCENENET: Keep track of successful completion for the finally block
+                            success = true;
                         }
                         catch (Exception ae) when (ae.IsAssertionError() && ae.Message.Contains("End() called before IncrementToken() returned false!"))
                         {
@@ -1071,7 +1140,17 @@ namespace Lucene.Net.Analysis
                         }
                         finally
                         {
-                            ts.Close();
+                            try
+                            {
+                                ts.Close();
+                            }
+                            // LUCENENET: Make the failure as visible as possible, but do not rethrow it
+                            // in case of a primary exception because it may swallow the information required
+                            // to reproduce the failure.
+                            catch (Exception e) when (!success)
+                            {
+                                Console.WriteLine($"BaseTokenStreamTestCase.CheckAnalysisConsistency() - (3): Failed to close TokenStream: {e}");
+                            }
                         }
                     }
                 }
@@ -1100,82 +1179,75 @@ namespace Lucene.Net.Analysis
 
             ts = a.GetTokenStream("dummy", useCharFilter ? new MockCharFilter(reader, remainder) : reader);
 
-            try
+            if (typeAtt != null && posIncAtt != null && posLengthAtt != null && offsetAtt != null)
             {
-                if (typeAtt != null && posIncAtt != null && posLengthAtt != null && offsetAtt != null)
-                {
-                    // offset + pos + posLength + type
-                    AssertTokenStreamContents(ts,
-                        tokens.ToArray(),
-                        ToIntArray(startOffsets),
-                        ToIntArray(endOffsets),
-                        types.ToArray(),
-                        ToIntArray(positions),
-                        ToIntArray(positionLengths),
-                        text.Length,
-                        offsetsAreCorrect);
-                }
-                else if (typeAtt != null && posIncAtt != null && offsetAtt != null)
-                {
-                    // offset + pos + type
-                    AssertTokenStreamContents(ts,
-                        tokens.ToArray(),
-                        ToIntArray(startOffsets),
-                        ToIntArray(endOffsets),
-                        types.ToArray(),
-                        ToIntArray(positions),
-                        null,
-                        text.Length,
-                        offsetsAreCorrect);
-                }
-                else if (posIncAtt != null && posLengthAtt != null && offsetAtt != null)
-                {
-                    // offset + pos + posLength
-                    AssertTokenStreamContents(ts,
-                        tokens.ToArray(),
-                        ToIntArray(startOffsets),
-                        ToIntArray(endOffsets),
-                        null,
-                        ToIntArray(positions),
-                        ToIntArray(positionLengths),
-                        text.Length,
-                        offsetsAreCorrect);
-                }
-                else if (posIncAtt != null && offsetAtt != null)
-                {
-                    // offset + pos
-                    AssertTokenStreamContents(ts,
-                        tokens.ToArray(),
-                        ToIntArray(startOffsets),
-                        ToIntArray(endOffsets),
-                        null,
-                        ToIntArray(positions),
-                        null,
-                        text.Length,
-                        offsetsAreCorrect);
-                }
-                else if (offsetAtt != null)
-                {
-                    // offset
-                    AssertTokenStreamContents(ts,
-                        tokens.ToArray(),
-                        ToIntArray(startOffsets),
-                        ToIntArray(endOffsets),
-                        null,
-                        null,
-                        null,
-                        text.Length,
-                        offsetsAreCorrect);
-                }
-                else
-                {
-                    // terms only
-                    AssertTokenStreamContents(ts, tokens.ToArray());
-                }
+                // offset + pos + posLength + type
+                AssertTokenStreamContents(ts,
+                    tokens.ToArray(),
+                    ToIntArray(startOffsets),
+                    ToIntArray(endOffsets),
+                    types.ToArray(),
+                    ToIntArray(positions),
+                    ToIntArray(positionLengths),
+                    text.Length,
+                    offsetsAreCorrect);
             }
-            finally
+            else if (typeAtt != null && posIncAtt != null && offsetAtt != null)
             {
-                ts.Close();
+                // offset + pos + type
+                AssertTokenStreamContents(ts,
+                    tokens.ToArray(),
+                    ToIntArray(startOffsets),
+                    ToIntArray(endOffsets),
+                    types.ToArray(),
+                    ToIntArray(positions),
+                    null,
+                    text.Length,
+                    offsetsAreCorrect);
+            }
+            else if (posIncAtt != null && posLengthAtt != null && offsetAtt != null)
+            {
+                // offset + pos + posLength
+                AssertTokenStreamContents(ts,
+                    tokens.ToArray(),
+                    ToIntArray(startOffsets),
+                    ToIntArray(endOffsets),
+                    null,
+                    ToIntArray(positions),
+                    ToIntArray(positionLengths),
+                    text.Length,
+                    offsetsAreCorrect);
+            }
+            else if (posIncAtt != null && offsetAtt != null)
+            {
+                // offset + pos
+                AssertTokenStreamContents(ts,
+                    tokens.ToArray(),
+                    ToIntArray(startOffsets),
+                    ToIntArray(endOffsets),
+                    null,
+                    ToIntArray(positions),
+                    null,
+                    text.Length,
+                    offsetsAreCorrect);
+            }
+            else if (offsetAtt != null)
+            {
+                // offset
+                AssertTokenStreamContents(ts,
+                    tokens.ToArray(),
+                    ToIntArray(startOffsets),
+                    ToIntArray(endOffsets),
+                    null,
+                    null,
+                    null,
+                    text.Length,
+                    offsetsAreCorrect);
+            }
+            else
+            {
+                // terms only
+                AssertTokenStreamContents(ts, tokens.ToArray());
             }
 
             if (field != null)

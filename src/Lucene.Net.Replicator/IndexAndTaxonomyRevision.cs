@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Facet.Taxonomy.WriterCache;
 using Lucene.Net.Index;
@@ -153,7 +153,7 @@ namespace Lucene.Net.Replicator
             {
                 indexSdp.Release(indexCommit);
             }
-            finally 
+            finally
             {
                 taxonomySdp.Release(taxonomyCommit);
             }

@@ -1,4 +1,4 @@
-﻿using J2N.Threading.Atomic;
+using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
@@ -243,9 +243,9 @@ namespace Lucene.Net.Index
         /// Returns approximate RAM bytes used </summary>
         public long RamBytesUsed()
         {
-            return ((normsProducer != null) ? normsProducer.RamBytesUsed() : 0) + 
-                ((fields != null) ? fields.RamBytesUsed() : 0) + 
-                ((fieldsReaderOrig != null) ? fieldsReaderOrig.RamBytesUsed() : 0) + 
+            return ((normsProducer != null) ? normsProducer.RamBytesUsed() : 0) +
+                ((fields != null) ? fields.RamBytesUsed() : 0) +
+                ((fieldsReaderOrig != null) ? fieldsReaderOrig.RamBytesUsed() : 0) +
                 ((termVectorsReaderOrig != null) ? termVectorsReaderOrig.RamBytesUsed() : 0);
         }
     }

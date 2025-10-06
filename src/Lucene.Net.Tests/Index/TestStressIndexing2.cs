@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using J2N.Threading;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -359,7 +359,7 @@ namespace Lucene.Net.Index
             }
             if (r1.NumDocs != r2.NumDocs)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(false,"r1.NumDocs={0} vs r2.NumDocs={1}", r1.NumDocs, r2.NumDocs);
+                if (Debugging.AssertsEnabled) Debugging.Assert(false, "r1.NumDocs={0} vs r2.NumDocs={1}", r1.NumDocs, r2.NumDocs);
             }
             bool hasDeletes = !(r1.MaxDoc == r2.MaxDoc && r1.NumDocs == r1.MaxDoc);
 
@@ -557,13 +557,13 @@ namespace Lucene.Net.Index
             long[] info1 = new long[r1.NumDocs];
             long[] info2 = new long[r2.NumDocs];
 
-            for (;;)
+            for (; ; )
             {
                 BytesRef term1 = null, term2 = null;
 
                 // iterate until we get some docs
                 int len1;
-                for (;;)
+                for (; ; )
                 {
                     len1 = 0;
                     if (termsEnum1 is null)
@@ -606,7 +606,7 @@ namespace Lucene.Net.Index
 
                 // iterate until we get some docs
                 int len2;
-                for (;;)
+                for (; ; )
                 {
                     len2 = 0;
                     if (termsEnum2 is null)

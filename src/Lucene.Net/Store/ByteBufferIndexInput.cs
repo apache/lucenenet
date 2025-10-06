@@ -1,4 +1,4 @@
-﻿using J2N.IO;
+using J2N.IO;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
@@ -129,21 +129,27 @@ namespace Lucene.Net.Store
             return curBuf.Get();
         }
 
-        public override sealed void ReadBytes(byte[] b, int offset, int len)
+        // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+        public override sealed void ReadBytes(Span<byte> destination)
         {
+            int offset = 0;
+            int len = destination.Length;
+
             // LUCENENET: Refactored to avoid calls on invalid conditions instead of
             // catching and re-throwing exceptions in the normal workflow.
             EnsureOpen();
             int curAvail = curBuf.Remaining;
             if (len <= curAvail)
             {
-                curBuf.Get(b, offset, len);
+                //curBuf.Get(b, offset, len);
+                curBuf.Get(destination.Slice(offset, len));
             }
             else
             {
                 while (len > curAvail)
                 {
-                    curBuf.Get(b, offset, curAvail);
+                    //curBuf.Get(b, offset, curAvail);
+                    curBuf.Get(destination.Slice(offset, curAvail));
                     len -= curAvail;
                     offset += curAvail;
                     curBufIndex++;
@@ -155,7 +161,8 @@ namespace Lucene.Net.Store
                     curBuf.Position = 0;
                     curAvail = curBuf.Remaining;
                 }
-                curBuf.Get(b, offset, len);
+                //curBuf.Get(b, offset, len);
+                curBuf.Get(destination.Slice(offset, len));
             }
         }
 

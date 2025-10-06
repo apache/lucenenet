@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -52,25 +52,25 @@ namespace Lucene.Net.Index
         /// log size, minus LEVEL_LOG_SPAN, and finding all
         /// segments falling within that range.
         /// </summary>
-        public static readonly double LEVEL_LOG_SPAN = 0.75;
+        public const double LEVEL_LOG_SPAN = 0.75;
 
         /// <summary>
         /// Default merge factor, which is how many segments are
         /// merged at a time
         /// </summary>
-        public static readonly int DEFAULT_MERGE_FACTOR = 10;
+        public const int DEFAULT_MERGE_FACTOR = 10;
 
         /// <summary>
         /// Default maximum segment size.  A segment of this size
         /// or larger will never be merged. </summary>
         /// <seealso cref="MaxMergeDocs"/>
-        public static readonly int DEFAULT_MAX_MERGE_DOCS = int.MaxValue;
+        public const int DEFAULT_MAX_MERGE_DOCS = int.MaxValue;
 
         /// <summary>
         /// Default noCFSRatio.  If a merge's size is >= 10% of
         /// the index, then we disable compound file for it. </summary>
         /// <seealso cref="MergePolicy.NoCFSRatio"/>
-        public new static readonly double DEFAULT_NO_CFS_RATIO = 0.1;
+        public new const double DEFAULT_NO_CFS_RATIO = 0.1;
 
         /// <summary>
         /// How many segments to merge at a time. </summary>
@@ -660,7 +660,7 @@ namespace Lucene.Net.Index
                 }
                 if (IsVerbose)
                 {
-                    Message("  level " + levelBottom.ToString("0.0") + " to " + maxLevel.ToString("0.0") + ": " + (1 + upto - start) + " segments");
+                    Message("  level " + J2N.Numerics.Single.ToString(levelBottom) + " to " + J2N.Numerics.Single.ToString(maxLevel) + ": " + (1 + upto - start) + " segments");
                 }
 
                 // Finally, record all merges that are viable at this level:

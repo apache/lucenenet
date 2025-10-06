@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -99,8 +99,8 @@ namespace Lucene.Net.Util
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(length >= 0,"length={0}", length);
-                    Debugging.Assert(length <= blockSize + 1,"length={0}", length);
+                    Debugging.Assert(length >= 0, "length={0}", length);
+                    Debugging.Assert(length <= blockSize + 1, "length={0}", length);
                 }
                 b.Length = length;
                 if (length == 0)
@@ -385,9 +385,13 @@ namespace Lucene.Net.Util
                 return (byte)currentBlock[currentBlockUpto++];
             }
 
-            public override void ReadBytes(byte[] b, int offset, int len)
+            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+            public override void ReadBytes(Span<byte> destination)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(b.Length >= offset + len);
+                int offset = 0;
+                int len = destination.Length;
+
+                if (Debugging.AssertsEnabled) Debugging.Assert(destination.Length >= offset + len);
                 int offsetEnd = offset + len;
                 while (true)
                 {
@@ -395,14 +399,14 @@ namespace Lucene.Net.Util
                     int left = offsetEnd - offset;
                     if (blockLeft < left)
                     {
-                        Arrays.Copy(currentBlock, currentBlockUpto, b, offset, blockLeft);
+                        Arrays.Copy(currentBlock, currentBlockUpto, destination, offset, blockLeft);
                         NextBlock();
                         offset += blockLeft;
                     }
                     else
                     {
                         // Last block
-                        Arrays.Copy(currentBlock, currentBlockUpto, b, offset, left);
+                        Arrays.Copy(currentBlock, currentBlockUpto, destination, offset, left);
                         currentBlockUpto += left;
                         break;
                     }
@@ -442,9 +446,12 @@ namespace Lucene.Net.Util
                 outerInstance.currentBlock[outerInstance.upto++] = (byte)b;
             }
 
-            public override void WriteBytes(byte[] b, int offset, int length)
+            // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+            public override void WriteBytes(ReadOnlySpan<byte> source)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(b.Length >= offset + length);
+                int offset = 0;
+                int length = source.Length;
+                //if (Debugging.AssertsEnabled) Debugging.Assert(bytes.Length >= offset + length); // LUCENENET: Not needed
                 if (length == 0)
                 {
                     return;
@@ -468,7 +475,7 @@ namespace Lucene.Net.Util
                     int blockLeft = outerInstance.blockSize - outerInstance.upto;
                     if (blockLeft < left)
                     {
-                        Arrays.Copy(b, offset, outerInstance.currentBlock, outerInstance.upto, blockLeft);
+                        Arrays.Copy(source, offset, outerInstance.currentBlock, outerInstance.upto, blockLeft);
                         outerInstance.blocks.Add(outerInstance.currentBlock);
                         outerInstance.blockEnd.Add(outerInstance.blockSize);
                         outerInstance.currentBlock = new byte[outerInstance.blockSize];
@@ -478,7 +485,7 @@ namespace Lucene.Net.Util
                     else
                     {
                         // Last block
-                        Arrays.Copy(b, offset, outerInstance.currentBlock, outerInstance.upto, left);
+                        Arrays.Copy(source, offset, outerInstance.currentBlock, outerInstance.upto, left);
                         outerInstance.upto += left;
                         break;
                     }

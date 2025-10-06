@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Util.Mutable;
 using System.Collections;
@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Grouping.Function
 
     /// <summary>
     /// Function based implementation of <see cref="AbstractDistinctValuesCollector"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class FunctionDistinctValuesCollector : AbstractDistinctValuesCollector<FunctionDistinctValuesCollector.GroupCount>
@@ -46,7 +46,8 @@ namespace Lucene.Net.Search.Grouping.Function
             this.vsContext = vsContext;
             this.groupSource = groupSource;
             this.countSource = countSource;
-            groupMap = new JCG.LinkedDictionary<MutableValue, GroupCount>();
+            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            groupMap = new JCG.OrderedDictionary<MutableValue, GroupCount>();
             foreach (SearchGroup<MutableValue> group in groups)
             {
                 groupMap[group.GroupValue] = new GroupCount(group.GroupValue);
@@ -77,7 +78,7 @@ namespace Lucene.Net.Search.Grouping.Function
 
         /// <summary>
         /// Holds distinct values for a single group.
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         public class GroupCount : AbstractDistinctValuesCollector.GroupCount<MutableValue>

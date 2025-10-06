@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Diagnostics;
@@ -583,7 +583,8 @@ namespace Lucene.Net.Search.Grouping
             docNoFacet.Add(content);
             docNoGroupNoFacet.Add(content);
 
-            ISet<string> uniqueFacetValues = new JCG.SortedSet<string>(Comparer<string>.Create((a, b) => {
+            ISet<string> uniqueFacetValues = new JCG.SortedSet<string>(Comparer<string>.Create((a, b) =>
+            {
                 if (a == b)
                 {
                     return 0;
@@ -781,7 +782,8 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            entries.Sort(Comparer<TermGroupFacetCollector.FacetEntry>.Create((a, b) => {
+            entries.Sort(Comparer<TermGroupFacetCollector.FacetEntry>.Create((a, b) =>
+            {
                 if (orderByCount)
                 {
                     int cmp = b.Count - a.Count;

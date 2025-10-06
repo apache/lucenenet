@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -200,7 +200,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         // mapping of 4.0 types -> 4.2 types
-        internal static IDictionary<LegacyDocValuesType, DocValuesType> mapping = new Dictionary<LegacyDocValuesType, DocValuesType>
+        internal static readonly IDictionary<LegacyDocValuesType, DocValuesType> mapping = new Dictionary<LegacyDocValuesType, DocValuesType>
         {
             { LegacyDocValuesType.NONE, DocValuesType.NONE },
             { LegacyDocValuesType.VAR_INTS, DocValuesType.NUMERIC },

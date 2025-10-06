@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
@@ -29,16 +29,16 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
      * limitations under the License.
      */
 
-    /// <summary> 
+    /// <summary>
     /// This exception is thrown when parse errors are encountered.
     /// You can explicitly create objects of this exception type by
     /// calling the method GenerateParseException in the generated
     /// parser.
-    /// 
+    ///
     /// You can modify this class to customize your error reporting
     /// mechanisms so long as you retain the public fields.
     /// </summary>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
@@ -114,14 +114,14 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         }
 #endif
 
-        /// <summary> 
+        /// <summary>
         /// This is the last token that has been consumed successfully.  If
         /// this object has been created due to a parse error, the token
         /// following this token will (therefore) be the first error token.
         /// </summary>
         public Token CurrentToken { get; set; }
 
-        /// <summary> 
+        /// <summary>
         /// Each entry in this array is an array of integers.  Each array
         /// of integers represents a sequence of tokens (by their ordinal
         /// values) that is expected at this point of the parse.
@@ -130,7 +130,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public int[][] ExpectedTokenSequences { get; set; }
 
-        /// <summary> 
+        /// <summary>
         /// This is a reference to the "tokenImage" array of the generated
         /// parser within which the parse error occurred.  This array is
         /// defined in the generated ...Constants interface.
@@ -201,12 +201,14 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             return retval;
         }
 
-        /// <summary> 
+        /// <summary>
         /// The end of line string for this machine.
         /// </summary>
-        protected static string eol = Environment.NewLine;
+        // LUCENENET specific - changed from a mutable protected static field into a property.
+        // While it's not likely that someone will change the end of line string, it is possible.
+        protected static string eol { get; set; } = Environment.NewLine;
 
-        /// <summary> 
+        /// <summary>
         /// Used to convert raw characters to their escaped version
         /// when these raw version cannot be used as part of an ASCII
         /// string literal.

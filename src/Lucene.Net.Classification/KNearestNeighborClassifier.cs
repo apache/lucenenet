@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Mlt;
 using Lucene.Net.Search;
@@ -118,7 +118,7 @@ namespace Lucene.Net.Classification
                     assignedClass = (BytesRef)entry.Key.Clone();
                 }
             }
-            double score = max / (double) k;
+            double score = max / (double)k;
             return new ClassificationResult<BytesRef>(assignedClass, score);
         }
 
@@ -142,7 +142,7 @@ namespace Lucene.Net.Classification
         /// <param name="textFieldName">the name of the field used to compare documents</param>
         public virtual void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer, Query query)
         {
-            Train(atomicReader, new string[]{textFieldName}, classFieldName, analyzer, query);
+            Train(atomicReader, new string[] { textFieldName }, classFieldName, analyzer, query);
         }
 
         /// <summary>Train the classifier using the underlying Lucene index</summary>

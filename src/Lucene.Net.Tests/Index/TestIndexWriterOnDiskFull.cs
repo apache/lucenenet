@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs;
+using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -298,7 +298,7 @@ namespace Lucene.Net.Index
                     // Make a new dir that will enforce disk usage:
                     MockDirectoryWrapper dir = new MockDirectoryWrapper(Random, new RAMDirectory(startDir, NewIOContext(Random)));
                     indWriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetMergePolicy(NewLogMergePolicy(false)));
-                    Exception err = null; // LUCENENET: No need to cast to IOExcpetion
+                    Exception err = null; // LUCENENET: No need to cast to IOException
 
                     IMergeScheduler ms = indWriter.Config.MergeScheduler;
                     for (int x = 0; x < 2; x++)

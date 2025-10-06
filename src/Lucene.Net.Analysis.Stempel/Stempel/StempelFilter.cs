@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using System.Text;
 
@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Stempel
         /// Minimum length of input words to be processed. Shorter words are returned
         /// unchanged.
         /// </summary>
-        public static readonly int DEFAULT_MIN_LENGTH = 3;
+        public const int DEFAULT_MIN_LENGTH = 3;
 
         /// <summary>
         /// Create filter using the supplied stemming table.

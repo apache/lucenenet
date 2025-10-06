@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Documents;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
@@ -66,12 +66,13 @@ namespace Lucene.Net.Search.Spell
         // don't modify the directory directly - see SwapSearcher()
         // TODO: why is this package private?
         internal Directory spellIndex;
+
         /// <summary>
         /// Boost value for start and end grams
         /// </summary>
-        private readonly float bStart = 2.0f; // LUCENENET: marked readonly
+        private const float bStart = 2.0f; // LUCENENET: marked const
 
-        private readonly float bEnd = 1.0f; // LUCENENET: marked readonly
+        private const float bEnd = 1.0f; // LUCENENET: marked const
 
         // don't use this searcher directly - see SwapSearcher()
         private IndexSearcher searcher;

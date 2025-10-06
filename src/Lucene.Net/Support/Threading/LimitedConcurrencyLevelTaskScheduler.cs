@@ -1,4 +1,4 @@
-﻿/*
+/*
 MICROSOFT LIMITED PUBLIC LICENSE version 1.1
 This license governs use of code marked as "sample" or "example" available on this web site
 without a license agreement, as provided under the section above titled

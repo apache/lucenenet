@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
@@ -319,7 +319,7 @@ namespace Lucene.Net.Queries
                     }
                     first = false;
                     builder.Append(current.field).Append(':');
-                    builder.Append(spare.Utf8ToString());
+                    builder.Append(spare.Utf8ToStringWithFallback()); // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
                 }
             }
 

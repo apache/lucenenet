@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Config;
+using Lucene.Net.QueryParsers.Flexible.Core.Config;
 
 namespace Lucene.Net.QueryParsers.Flexible.Spans
 {

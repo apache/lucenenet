@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -31,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Classic
     public class TestMultiFieldQueryParser : LuceneTestCase
     {
         /// <summary>
-        /// test stop words parsing for both the non static form, and for the 
+        /// test stop words parsing for both the non static form, and for the
         /// corresponding static form (qtxt, fields[]).
         /// </summary>
         [Test]
@@ -47,7 +48,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         /// <summary>
-        /// verify parsing of query using a stopping analyzer  
+        /// verify parsing of query using a stopping analyzer
         /// </summary>
         /// <param name="qtxt"></param>
         /// <param name="expectedRes"></param>
@@ -384,6 +385,165 @@ namespace Lucene.Net.QueryParsers.Classic
             bq.Add(new RegexpQuery(new Term("a", "[a-z][123]")), Occur.SHOULD);
             bq.Add(new RegexpQuery(new Term("b", "[a-z][123]")), Occur.SHOULD);
             assertEquals(bq, mfqp.Parse("/[a-z][123]/"));
+        }
+
+        [Test]
+        [LuceneNetSpecific] // LUCENENET specific - Issue #1157
+        public virtual void TestFieldBoostsWithPartialBoostMap()
+        {
+            string[] fields = { "title", "keyword", "description" };
+            MockAnalyzer analyzer = new MockAnalyzer(Random);
+
+            // Create a boost map that only contains boosts for some fields, not all
+            // This tests that the TryGetValue fix prevents KeyNotFoundException
+            var boosts = new Dictionary<string, float>
+            {
+                { "title", 2.0f },
+                // Intentionally omitting "keyword" and "description" from boost map
+            };
+
+            MultiFieldQueryParser parser = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, analyzer, boosts);
+            Query q = parser.Parse("test");
+
+            // The query should successfully parse without throwing KeyNotFoundException
+            string queryString = q.toString();
+            assertTrue("Query should contain boosted title field", queryString.Contains("title:test^2.0"));
+            assertTrue("Query should contain keyword field without boost", queryString.Contains("keyword:test"));
+            assertTrue("Query should contain description field without boost", queryString.Contains("description:test"));
+
+            // Ensure no boost notation for fields not in the boost map
+            assertFalse("Keyword should not have boost notation", queryString.Contains("keyword:test^"));
+            assertFalse("Description should not have boost notation", queryString.Contains("description:test^"));
+        }
+
+        [Test]
+        [LuceneNetSpecific] // LUCENENET specific - Issue #1157
+        public virtual void TestFieldBoosts()
+        {
+            string[] fields = { "title", "keyword" };
+            MockAnalyzer analyzer = new MockAnalyzer(Random);
+
+            // Test 1: Verify boosts are applied to the query string representation
+            var boosts = new Dictionary<string, float>
+            {
+                { "title", 2.0f },
+                { "keyword", 1.0f }
+            };
+
+            MultiFieldQueryParser parser = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, analyzer, boosts);
+            Query q = parser.Parse("ldqk");
+
+            // The query should have different boosts for each field
+            string queryString = q.toString();
+            assertTrue("Query should contain boosted title field", queryString.Contains("title:ldqk^2.0"));
+            assertFalse("Keyword field should not have boost notation when boost is 1.0", queryString.Contains("keyword:ldqk^"));
+
+            // Test 2: Different boost configuration
+            var boosts2 = new Dictionary<string, float>
+            {
+                { "title", 1.0f },
+                { "keyword", 2.0f }
+            };
+
+            MultiFieldQueryParser parser2 = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, analyzer, boosts2);
+            Query q2 = parser2.Parse("ldqk");
+
+            string queryString2 = q2.toString();
+            assertFalse("Title field should not have boost notation when boost is 1.0", queryString2.Contains("title:ldqk^"));
+            assertTrue("Query should contain boosted keyword field", queryString2.Contains("keyword:ldqk^2.0"));
+
+            // Test 3: Verify that boosts actually affect document scoring
+            using var ramDir = NewDirectory();
+            using (IndexWriter iw = new IndexWriter(ramDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)))
+            {
+                // Doc 0: "ldqk" only in title
+                Document doc0 = new Document();
+                doc0.Add(NewTextField("title", "ldqk", Field.Store.YES));
+                doc0.Add(NewTextField("keyword", "other", Field.Store.YES));
+                iw.AddDocument(doc0);
+
+                // Doc 1: "ldqk" only in keyword
+                Document doc1 = new Document();
+                doc1.Add(NewTextField("title", "other", Field.Store.YES));
+                doc1.Add(NewTextField("keyword", "ldqk", Field.Store.YES));
+                iw.AddDocument(doc1);
+            }
+
+            using (IndexReader ir = DirectoryReader.Open(ramDir))
+            {
+                IndexSearcher searcher = NewSearcher(ir);
+
+                // Test with equal boosts first (baseline)
+                var equalBoosts = new Dictionary<string, float>
+                {
+                    { "title", 1.0f },
+                    { "keyword", 1.0f }
+                };
+                MultiFieldQueryParser equalParser = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, analyzer, equalBoosts);
+                Query equalQuery = equalParser.Parse("ldqk");
+                TopDocs equalDocs = searcher.Search(equalQuery, 10);
+
+                // Get baseline scores
+                float doc0BaseScore = 0, doc1BaseScore = 0;
+                foreach (var scoreDoc in equalDocs.ScoreDocs)
+                {
+                    if (scoreDoc.Doc == 0) doc0BaseScore = scoreDoc.Score;
+                    if (scoreDoc.Doc == 1) doc1BaseScore = scoreDoc.Score;
+                }
+
+                // Search with title boosted 2.0
+                var titleBoosts = new Dictionary<string, float>
+                {
+                    { "title", 2.0f },
+                    { "keyword", 1.0f }
+                };
+                MultiFieldQueryParser titleParser = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, analyzer, titleBoosts);
+                Query titleQuery = titleParser.Parse("ldqk");
+                TopDocs titleDocs = searcher.Search(titleQuery, 10);
+
+                // Get scores with title boost
+                float doc0TitleBoostScore = 0, doc1TitleBoostScore = 0;
+                foreach (var scoreDoc in titleDocs.ScoreDocs)
+                {
+                    if (scoreDoc.Doc == 0) doc0TitleBoostScore = scoreDoc.Score;
+                    if (scoreDoc.Doc == 1) doc1TitleBoostScore = scoreDoc.Score;
+                }
+
+                // Search with keyword boosted 2.0
+                var keywordBoosts = new Dictionary<string, float>
+                {
+                    { "title", 1.0f },
+                    { "keyword", 2.0f }
+                };
+                MultiFieldQueryParser keywordParser = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, analyzer, keywordBoosts);
+                Query keywordQuery = keywordParser.Parse("ldqk");
+                TopDocs keywordDocs = searcher.Search(keywordQuery, 10);
+
+                // Get scores with keyword boost
+                float doc0KeywordBoostScore = 0, doc1KeywordBoostScore = 0;
+                foreach (var scoreDoc in keywordDocs.ScoreDocs)
+                {
+                    if (scoreDoc.Doc == 0) doc0KeywordBoostScore = scoreDoc.Score;
+                    if (scoreDoc.Doc == 1) doc1KeywordBoostScore = scoreDoc.Score;
+                }
+
+                // Assertions:
+                // When title is boosted, doc0 (title match) should score higher than baseline
+                assertTrue("Doc0 with title match should score higher when title is boosted compared to equal boosts",
+                          doc0TitleBoostScore > doc0BaseScore);
+
+                // When keyword is boosted, doc1 (keyword match) should score higher than baseline
+                assertTrue("Doc1 with keyword match should score higher when keyword is boosted compared to equal boosts",
+                          doc1KeywordBoostScore > doc1BaseScore);
+
+                // Doc0 should score higher with title boost than with keyword boost
+                assertTrue("Doc0 (title match) should score higher with title boost than keyword boost",
+                          doc0TitleBoostScore > doc0KeywordBoostScore);
+
+                // Doc1 should score higher with keyword boost than with title boost
+                assertTrue("Doc1 (keyword match) should score higher with keyword boost than title boost",
+                          doc1KeywordBoostScore > doc1TitleBoostScore);
+            }
         }
     }
 }

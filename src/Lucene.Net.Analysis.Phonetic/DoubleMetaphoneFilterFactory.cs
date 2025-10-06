@@ -1,4 +1,4 @@
-﻿// lucene version compatibility level: 4.8.1
+// lucene version compatibility level: 4.8.1
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
@@ -36,11 +36,11 @@ namespace Lucene.Net.Analysis.Phonetic
     public class DoubleMetaphoneFilterFactory : TokenFilterFactory
     {
         /// <summary>parameter name: true if encoded tokens should be added as synonyms</summary>
-        public static readonly string INJECT = "inject";
+        public const string INJECT = "inject";
         /// <summary>parameter name: restricts the length of the phonetic code</summary>
-        public static readonly string MAX_CODE_LENGTH = "maxCodeLength";
+        public const string MAX_CODE_LENGTH = "maxCodeLength";
         /// <summary>default maxCodeLength if not specified</summary>
-        public static readonly int DEFAULT_MAX_CODE_LENGTH = 4;
+        public const int DEFAULT_MAX_CODE_LENGTH = 4;
 
         private readonly bool inject;
         private readonly int maxCodeLength;

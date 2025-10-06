@@ -133,7 +133,7 @@ namespace Egothor.Stemmer
             Trie t = new MultiTrie2(true);
 
             string[] keys = { "a", "ba", "bb", "c" };
-            /* 
+            /*
              * short vals won't work, see line 155 for example
              * the IOOBE is caught (wierd), but shouldnt affect patch cmds?
              */
@@ -153,7 +153,7 @@ namespace Egothor.Stemmer
             Trie t = new MultiTrie2(false);
 
             string[] keys = { "a", "ba", "bb", "c" };
-            /* 
+            /*
              * short vals won't work, see line 155 for example
              * the IOOBE is caught (wierd), but shouldnt affect patch cmds?
              */

@@ -1,4 +1,4 @@
-﻿using J2N.Threading;
+using J2N.Threading;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -252,7 +252,7 @@ namespace Lucene.Net.Analysis
             for (int i = 0; i < numTestPoints; i++)
             {
                 string term = TestUtil.RandomSimpleString(Random);
-                Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
+                Exception priorException = null; // LUCENENET: No need to cast to IOException
                 TokenStream ts = analyzer.GetTokenStream("fake", new StringReader(term));
                 try
                 {
@@ -310,7 +310,7 @@ namespace Lucene.Net.Analysis
                     {
                         string term = mapping.Key;
                         BytesRef expected = mapping.Value;
-                        Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
+                        Exception priorException = null; // LUCENENET: No need to cast to IOException
                         TokenStream ts = this.analyzer.GetTokenStream("fake", new StringReader(term));
                         try
                         {

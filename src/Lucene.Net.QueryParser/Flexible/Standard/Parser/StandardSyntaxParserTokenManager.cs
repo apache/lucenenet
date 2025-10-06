@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     /// Token Manager.
     /// </summary>
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
-	[SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
+    [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
     public class StandardSyntaxParserTokenManager /*: StandardSyntaxParserConstants*/
     {
         /** Debug output. */
@@ -120,7 +120,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             int i = 1;
             jjstateSet[0] = startState;
             int kind = 0x7fffffff;
-            for (;;)
+            for (; ; )
             {
                 if (++jjround == 0x7fffffff)
                     ReInitRounds();
@@ -436,7 +436,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             int i = 1;
             jjstateSet[0] = startState;
             int kind = 0x7fffffff;
-            for (;;)
+            for (; ; )
             {
                 if (++jjround == 0x7fffffff)
                     ReInitRounds();
@@ -578,7 +578,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             int i = 1;
             jjstateSet[0] = startState;
             int kind = 0x7fffffff;
-            for (;;)
+            for (; ; )
             {
                 if (++jjround == 0x7fffffff)
                     ReInitRounds();
@@ -864,7 +864,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             int curPos = 0;
 
 
-            for (;;)
+            for (; ; )
             {
                 try
                 {
@@ -937,7 +937,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 }
                 throw new TokenMgrError(EOFSeen, curLexState, error_line, error_column, error_after, m_curChar, TokenMgrError.LEXICAL_ERROR);
 
-                EOFLoop_continue: { /* LUCENENET: intentionally empty */ }
+            EOFLoop_continue: { /* LUCENENET: intentionally empty */ }
             }
         }
 

@@ -34,4 +34,3 @@
 {{#footer}}
 <div class="markdown level0 api-footer">{{{footer}}}</div>
 {{/footer}}
-

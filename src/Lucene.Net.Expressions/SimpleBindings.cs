@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Queries.Function;
+using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.ValueSources;
 using Lucene.Net.Search;
 using System;
@@ -135,7 +135,7 @@ namespace Lucene.Net.Expressions
                     try
                     {
 #endif
-                        expr.GetValueSource(this);
+                    expr.GetValueSource(this);
 #if FEATURE_STACKOVERFLOWEXCEPTION__ISCATCHABLE
                     }
                     catch (Exception e) when (e.IsStackOverflowError())

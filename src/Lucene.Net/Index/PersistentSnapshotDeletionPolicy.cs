@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
             try
             {
                 long genLoaded = -1;
-                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
+                Exception ioe = null; // LUCENENET: No need to cast to IOException
                 IList<string> snapshotFiles = new JCG.List<string>();
                 foreach (string file in dir.ListAll())
                 {

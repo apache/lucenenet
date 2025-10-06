@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using JCG = J2N.Collections.Generic;
@@ -46,7 +46,7 @@ namespace Lucene.Net.Util.Automaton
         /// Minimizes (and determinizes if not already deterministic) the given
         /// automaton.
         /// </summary>
-        /// <seealso cref="Automaton.SetMinimization(int)"/>
+        // LUCENENET: unused reference; it always uses Hopcroft /// <seealso cref="Automaton.SetMinimization(int)"/>
         public static void Minimize(Automaton a)
         {
             if (!a.IsSingleton)

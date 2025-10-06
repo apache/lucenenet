@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -76,7 +76,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(field.Number > lastFieldNumber,"writing norms fields out of order {0} -> {1}", lastFieldNumber, field.Number);
+            if (Debugging.AssertsEnabled) Debugging.Assert(field.Number > lastFieldNumber, "writing norms fields out of order {0} -> {1}", lastFieldNumber, field.Number);
             foreach (var n in values)
             {
                 if (((sbyte)n) < sbyte.MinValue || ((sbyte)n) > sbyte.MaxValue)

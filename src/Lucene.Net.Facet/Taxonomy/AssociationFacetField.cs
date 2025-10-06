@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -31,11 +31,11 @@ namespace Lucene.Net.Facet.Taxonomy
     /// Add an instance of this to your <see cref="Document"/> to add
     /// a facet label associated with an arbitrary <see cref="T:byte[]"/>.
     /// This will require a custom <see cref="Facets"/>
-    /// implementation at search time; see <see cref="Int32AssociationFacetField"/> 
-    /// and <see cref="SingleAssociationFacetField"/> to use existing 
+    /// implementation at search time; see <see cref="Int32AssociationFacetField"/>
+    /// and <see cref="SingleAssociationFacetField"/> to use existing
     /// <see cref="Facets"/> implementations.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     public class AssociationFacetField : Field
     {
@@ -67,7 +67,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Creates this from <paramref name="dim"/> and <paramref name="path"/> and an
-        /// association 
+        /// association
         /// </summary>
         public AssociationFacetField(BytesRef assoc, string dim, params string[] path)
             : base("dummy", TYPE)

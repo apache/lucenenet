@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.QueryParsers.Flexible.Core.Config;
 using Lucene.Net.Search;
@@ -50,7 +50,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             Set(ConfigurationKeys.PHRASE_SLOP, 0); //default value 2.4
             Set(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS, true); //default value 2.4
             Set(ConfigurationKeys.ENABLE_POSITION_INCREMENTS, false); //default value 2.4
-            Set(ConfigurationKeys.FIELD_BOOST_MAP, new JCG.LinkedDictionary<string, float>());
+            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            Set(ConfigurationKeys.FIELD_BOOST_MAP, new JCG.OrderedDictionary<string, float>());
             Set(ConfigurationKeys.FUZZY_CONFIG, new FuzzyConfig());
             Set(ConfigurationKeys.LOCALE, null);
             Set(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
@@ -119,7 +120,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// <summary>
         /// Key used to set the <see cref="MultiTermQuery.RewriteMethod"/> used when creating queries
         /// </summary>
-        /// <seealso cref="StandardQueryParser.MultiTermRewriteMethod"/> 
+        /// <seealso cref="StandardQueryParser.MultiTermRewriteMethod"/>
         public readonly static ConfigurationKey<MultiTermQuery.RewriteMethod> MULTI_TERM_REWRITE_METHOD = ConfigurationKey.NewInstance<MultiTermQuery.RewriteMethod>();
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using System;
 using System.Collections;
@@ -34,7 +34,7 @@ namespace Lucene.Net.Spatial.Util
     {
         protected readonly ValueSource m_source;
         protected readonly IDictionary<int, double> m_cache;
-        
+
         public CachingDoubleValueSource(ValueSource source)
         {
             // LUCENENET specific - added guard clause

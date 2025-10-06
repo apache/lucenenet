@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Benchmarks
+namespace Lucene.Net.Benchmarks
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -26,7 +26,8 @@
         public const int DEFAULT_SCALE_UP = 5;
         public const int DEFAULT_LOG_STEP = 1000;
 
-        public static bool[] BOOLEANS = new bool[] { false, true };
+        // LUCENENET specific - made readonly
+        public static readonly bool[] BOOLEANS = new bool[] { false, true };
 
         public const int DEFAULT_MAXIMUM_DOCUMENTS = int.MaxValue;
     }

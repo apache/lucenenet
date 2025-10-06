@@ -35,17 +35,17 @@ namespace Lucene.Net.Util
         /// <summary>
         /// NOTE: This was INT_BLOCK_SHIFT in Lucene
         /// </summary>
-        public static readonly int INT32_BLOCK_SHIFT = 13;
+        public const int INT32_BLOCK_SHIFT = 13;
 
         /// <summary>
         /// NOTE: This was INT_BLOCK_SIZE in Lucene
         /// </summary>
-        public static readonly int INT32_BLOCK_SIZE = 1 << INT32_BLOCK_SHIFT;
+        public const int INT32_BLOCK_SIZE = 1 << INT32_BLOCK_SHIFT;
 
         /// <summary>
         /// NOTE: This was INT_BLOCK_MASK in Lucene
         /// </summary>
-        public static readonly int INT32_BLOCK_MASK = INT32_BLOCK_SIZE - 1;
+        public const int INT32_BLOCK_MASK = INT32_BLOCK_SIZE - 1;
 
         /// <summary>
         /// Abstract class for allocating and freeing <see cref="int"/>
@@ -129,7 +129,7 @@ namespace Lucene.Net.Util
         private int[] buffer;
 
         /// <summary>
-        /// Current head offset. 
+        /// Current head offset.
         /// <para/>
         /// NOTE: This was intOffset in Lucene
         /// </summary>
@@ -315,7 +315,7 @@ namespace Lucene.Net.Util
         /// <para/>
         /// @lucene.internal
         /// </summary>
-        /// <seealso cref="SliceReader"/> 
+        /// <seealso cref="SliceReader"/>
         public class SliceWriter
         {
             private int offset;
@@ -439,7 +439,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Reads the next <see cref="int"/> from the current slice and returns it. 
+            /// Reads the next <see cref="int"/> from the current slice and returns it.
             /// <para/>
             /// NOTE: This was readInt() in Lucene
             /// </summary>

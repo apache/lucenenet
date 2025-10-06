@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 
@@ -23,14 +23,14 @@ namespace Lucene.Net.Search.Join
 
     /// <summary>
     /// A <see cref="CachingWrapperFilter"/> that caches sets using a <see cref="FixedBitSet"/>,
-    /// as required for joins. 
+    /// as required for joins.
     /// </summary>
     public sealed class FixedBitSetCachingWrapperFilter : CachingWrapperFilter
     {
         /// <summary>
         /// Sole constructor, see <see cref="CachingWrapperFilter.CachingWrapperFilter(Filter)"/>.
         /// </summary>
-        public FixedBitSetCachingWrapperFilter(Filter filter) 
+        public FixedBitSetCachingWrapperFilter(Filter filter)
             : base(filter)
         {
         }

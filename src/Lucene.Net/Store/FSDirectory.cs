@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
@@ -450,7 +450,7 @@ namespace Lucene.Net.Store
             for (int charIDX = 0; charIDX < dirName.Length; charIDX++)
             {
                 char ch = dirName[charIDX];
-                digest = 31*digest + ch;
+                digest = 31 * digest + ch;
             }
             return "lucene-" + digest.ToString("x", CultureInfo.InvariantCulture);
         }
@@ -538,25 +538,27 @@ namespace Lucene.Net.Store
             }
 
             /// <inheritdoc/>
-            public override void WriteBytes(byte[] b, int offset, int length)
+            // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+            public override void WriteBytes(ReadOnlySpan<byte> source)
             {
                 // LUCENENET specific: Guard to ensure we aren't disposed.
                 if (!isOpen)
                     throw AlreadyClosedException.Create(this.GetType().FullName, "This FSIndexOutput is disposed.");
 
-                crc.Update(b, offset, length);
-                file.Write(b, offset, length);
+                crc.Update(source);
+                file.Write(source);
             }
 
             /// <inheritdoc/>
-            protected internal override void FlushBuffer(byte[] b, int offset, int size)
+            // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+            protected internal override void FlushBuffer(ReadOnlySpan<byte> source)
             {
                 // LUCENENET specific: Guard to ensure we aren't disposed.
                 if (!isOpen)
                     throw AlreadyClosedException.Create(this.GetType().FullName, "This FSIndexOutput is disposed.");
 
-                crc.Update(b, offset, size);
-                file.Write(b, offset, size);
+                crc.Update(source);
+                file.Write(source);
             }
 
             /// <inheritdoc/>
@@ -578,7 +580,7 @@ namespace Lucene.Net.Store
                     // only close the file if it has not been closed yet
                     if (isOpen)
                     {
-                        Exception priorE = null; // LUCENENET: No need to cast to IOExcpetion
+                        Exception priorE = null; // LUCENENET: No need to cast to IOException
                         try
                         {
                             file.Flush(flushToDisk: false);

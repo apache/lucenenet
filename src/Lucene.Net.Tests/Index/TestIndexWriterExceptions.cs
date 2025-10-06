@@ -1,4 +1,4 @@
-﻿using J2N.Threading;
+using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Codecs;
@@ -333,7 +333,7 @@ namespace Lucene.Net.Index
             analyzer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
 
             IndexWriter writer = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
-                .SetRAMBufferSizeMB(0.1).SetMergeScheduler(new ConcurrentMergeScheduler()) , new TestPoint1(this));
+                .SetRAMBufferSizeMB(0.1).SetMergeScheduler(new ConcurrentMergeScheduler()), new TestPoint1(this));
             ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
             //writer.SetMaxBufferedDocs(10);
             if (Verbose)

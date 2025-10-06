@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.CommonGrams
     /// Tests pretty much copied from StopFilterFactoryTest We use the test files
     /// used by the StopFilterFactoryTest TODO: consider creating separate test files
     /// so this won't break if stop filter test files change
-    /// 
+    ///
     /// </summary>
     public class TestCommonGramsQueryFilterFactory : BaseTokenStreamFactoryTestCase
     {

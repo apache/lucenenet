@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -211,9 +211,10 @@ namespace Lucene.Net.Index
                 return this.input.ReadByte();
             }
 
-            public override void ReadBytes(byte[] b, int offset, int len)
+            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+            public override void ReadBytes(Span<byte> destination)
             {
-                this.input.ReadBytes(b, offset, len);
+                this.input.ReadBytes(destination);
             }
 
             protected override void Dispose(bool disposing)

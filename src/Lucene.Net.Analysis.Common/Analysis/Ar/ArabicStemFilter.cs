@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.Ar
@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Ar
         private readonly IKeywordAttribute keywordAttr;
 
         public ArabicStemFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Documents;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
@@ -314,10 +314,10 @@ namespace Lucene.Net.Sandbox.Queries
             directory.Dispose();
         }
 
-        /** 
+        /**
          * MultiTermQuery provides (via attribute) information about which values
-         * must be competitive to enter the priority queue. 
-         * 
+         * must be competitive to enter the priority queue.
+         *
          * SlowFuzzyQuery optimizes itself around this information, if the attribute
          * is not implemented correctly, there will be problems!
          */

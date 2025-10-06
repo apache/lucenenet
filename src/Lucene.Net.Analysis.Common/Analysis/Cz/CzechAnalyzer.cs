@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Standard;
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Cz
                 try
                 {
                     return WordlistLoader.GetWordSet(
-                        IOUtils.GetDecodingReader(typeof(CzechAnalyzer), DEFAULT_STOPWORD_FILE, Encoding.UTF8), 
+                        IOUtils.GetDecodingReader(typeof(CzechAnalyzer), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
                         "#",
 #pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Cz
         /// </summary>
         /// <param name="matchVersion"> <see cref="LuceneVersion"/> to match </param>
         public CzechAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_SET)
         {
         }
 
@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Cz
         /// <param name="matchVersion"> <see cref="LuceneVersion"/> to match </param>
         /// <param name="stopwords"> a stopword set </param>
         public CzechAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.Empty)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Cz
         /// <param name="stopwords"> a stopword set </param>
         /// <param name="stemExclusionTable"> a stemming exclusion set </param>
         public CzechAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionTable)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
             this.stemExclusionTable = CharArraySet.Copy(matchVersion, stemExclusionTable).AsReadOnly();
         }
@@ -129,7 +129,6 @@ namespace Lucene.Net.Analysis.Cz
         ///         <see cref="CzechAnalyzer(LuceneVersion, CharArraySet, CharArraySet)"/> a
         ///         <see cref="SetKeywordMarkerFilter"/> is added before
         ///         <see cref="CzechStemFilter"/>. </returns>
-
         protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new StandardTokenizer(m_matchVersion, reader);

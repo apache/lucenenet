@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;

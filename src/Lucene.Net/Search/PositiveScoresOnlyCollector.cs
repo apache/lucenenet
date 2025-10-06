@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
         {
             c.SetNextReader(context);
         }
-        
+
         public virtual void SetScorer(Scorer scorer)
         {
             // Set a ScoreCachingWrappingScorer in case the wrapped Collector will call

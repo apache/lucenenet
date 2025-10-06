@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -120,8 +120,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         storePayloads = false;
                     }
-                    infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, 
-                        omitNorms, storePayloads, indexOptions, DocValuesType.NONE, 
+                    infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector,
+                        omitNorms, storePayloads, indexOptions, DocValuesType.NONE,
                         isIndexed && !omitNorms ? DocValuesType.NUMERIC : DocValuesType.NONE,
                         Collections.EmptyMap<string, string>());
                 }

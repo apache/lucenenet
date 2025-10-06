@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
 
@@ -105,6 +106,18 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
+        /// Creates a new <see cref="BytesRef"/> initialized with the given <see cref="ReadOnlySpan{T}"/> byte
+        /// array. The sequence is copied to the byte array.
+        /// </summary>
+        public BytesRef(ReadOnlySpan<byte> value) // LUCENENET specific
+        {
+            this.bytes = new byte[value.Length];
+            value.CopyTo(bytes);
+            this.Offset = 0;
+            this.Length = bytes.Length;
+        }
+
+        /// <summary>
         /// Create a <see cref="BytesRef"/> pointing to a new array of size <paramref name="capacity"/>.
         /// Offset and length will both be zero.
         /// </summary>
@@ -120,6 +133,18 @@ namespace Lucene.Net.Util
         /// <param name="text"> This must be well-formed
         /// unicode text, with no unpaired surrogates. </param>
         public BytesRef(ICharSequence text)
+            : this()
+        {
+            CopyChars(text);
+        }
+
+        /// <summary>
+        /// Initialize the <see cref="T:byte[]"/> from the UTF8 bytes
+        /// for the provided <see cref="ReadOnlySpan{Char}"/>.
+        /// </summary>
+        /// <param name="text"> This must be well-formed
+        /// unicode text, with no unpaired surrogates. </param>
+        public BytesRef(ReadOnlySpan<char> text) // LUCENENET specific
             : this()
         {
             CopyChars(text);
@@ -150,6 +175,18 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
+        /// Copies the UTF8 bytes for this <see cref="ReadOnlySpan{Char}"/>.
+        /// </summary>
+        /// <param name="text"> Must be well-formed unicode text, with no
+        /// unpaired surrogates or invalid UTF16 code units. </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CopyChars(ReadOnlySpan<char> text) // LUCENENET specific
+        {
+            if (Debugging.AssertsEnabled) Debugging.Assert(Offset == 0); // TODO broken if offset != 0
+            UnicodeUtil.UTF16toUTF8(text, this);
+        }
+
+        /// <summary>
         /// Copies the UTF8 bytes for this <see cref="string"/>.
         /// </summary>
         /// <param name="text"> Must be well-formed unicode text, with no
@@ -173,9 +210,9 @@ namespace Lucene.Net.Util
             if (Debugging.AssertsEnabled) Debugging.Assert(other != null);
             if (Length == other.Length)
             {
-                var otherUpto = other.Offset;
-                var otherBytes = other.bytes;
-                var end = Offset + Length;
+                int otherUpto = other.Offset;
+                byte[] otherBytes = other.bytes;
+                int end = Offset + Length;
                 for (int upto = Offset; upto < end; upto++, otherUpto++)
                 {
                     if (bytes[upto] != otherBytes[otherUpto])
@@ -244,6 +281,43 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
+        /// Interprets stored bytes as UTF8 bytes, returning the
+        /// resulting <see cref="string"/>.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific version that does not throw exceptions on invalid UTF-8,
+        /// primarily for use in ToString() and other cases that should not throw exceptions,
+        /// such as when building a message for another exception.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public string Utf8ToStringWithFallback()
+        {
+            CharsRef @ref = new CharsRef(Length);
+            UnicodeUtil.UTF8toUTF16WithFallback(bytes, Offset, Length, @ref);
+            return @ref.ToString();
+        }
+
+        #nullable enable
+        /// <summary>
+        /// Tries to interpret the stored bytes as UTF8 bytes, returning the
+        /// resulting <see cref="string"/> as an output parameter <paramref name="result"/>.
+        /// </summary>
+        /// <param name="result">The resulting string output.</param>
+        /// <returns><c>true</c> if successful, <c>false</c> otherwise.</returns>
+        public bool TryUtf8ToString([NotNullWhen(true)] out string? result)
+        {
+            if (UnicodeUtil.TryUTF8toUTF16(bytes, Offset, Length, out CharsRef? @ref))
+            {
+                result = @ref.ToString();
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+        #nullable restore
+
+        /// <summary>
         /// Returns hex encoded bytes, eg [0x6c 0x75 0x63 0x65 0x6e 0x65] </summary>
         public override string ToString()
         {
@@ -296,6 +370,26 @@ namespace Lucene.Net.Util
                 bytes = newBytes;
             }
             Arrays.Copy(other.bytes, other.Offset, bytes, Length + Offset, other.Length);
+            Length = newLen;
+        }
+
+        /// <summary>
+        /// Appends the bytes from the given <see cref="ReadOnlySpan{Byte}"/>
+        /// <para/>
+        /// NOTE: if this would exceed the array size, this method creates a
+        /// new reference array.
+        /// </summary>
+        public void Append(ReadOnlySpan<byte> other) // LUCENENET specific
+        {
+            int newLen = Length + other.Length;
+            if (bytes.Length - Offset < newLen)
+            {
+                var newBytes = new byte[newLen];
+                Arrays.Copy(bytes, Offset, newBytes, 0, Length);
+                Offset = 0;
+                bytes = newBytes;
+            }
+            other.CopyTo(bytes.AsSpan(Length + Offset, other.Length));
             Length = newLen;
         }
 
@@ -425,6 +519,267 @@ namespace Lucene.Net.Util
 
 #nullable restore
         #endregion
+
+        #region AsSpan
+
+        /// <summary>
+        /// Creates a new readonly span over the portion of the target bytes.
+        /// </summary>
+        /// <returns>The read-only span representation of the bytes.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ReadOnlySpan<byte> AsSpan() // LUCENENET specific
+        {
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<byte>(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(bytes), Offset), Length);
+#else
+            return new ReadOnlySpan<byte>(bytes, Offset, Length);
+#endif
+        }
+
+        /// <summary>
+        /// Creates a new read-only span over a portion of the target bytes from
+        /// a specified position to the end of the bytes.
+        /// </summary>
+        /// <param name="start">The index at which to begin this slice.</param>
+        /// <returns>The read-only span representation of the bytes.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="start"/> is less than 0 or greater than <c>text.Length</c>.
+        /// </exception>
+        public ReadOnlySpan<byte> AsSpan(int start) // LUCENENET specific
+        {
+            if ((uint)start > (uint)Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+            // Prevent overflow and ensure we stay within the backing array
+            uint totalOffset = (uint)Offset + (uint)start;
+            if (totalOffset > bytes.Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<byte>(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(bytes),
+                (nint)totalOffset /* force zero-extension */), Length - start);
+#else
+            return new ReadOnlySpan<byte>(bytes, checked((int)totalOffset), Length - start);
+#endif
+        }
+
+        /// <summary>
+        /// Creates a new read-only span over a portion of the target bytes from a
+        /// specified position for a specified number of characters.
+        /// </summary>
+        /// <param name="start">The index at which to begin this slice.</param>
+        /// <param name="length">The desired length for the slice.</param>
+        /// <returns>The read-only span representation of the bytes.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="start"/>, <paramref name="length"/>, or
+        /// <paramref name="start"/> + <paramref name="length"/> is not
+        /// in the range of <see cref="Length"/>.
+        /// </exception>
+        public ReadOnlySpan<byte> AsSpan(int start, int length) // LUCENENET specific
+        {
+            if (IntPtr.Size == 8) // 64-bit process
+            {
+                // See comment in Span<T>.Slice for how this works.
+                if ((ulong)(uint)start + (ulong)(uint)length > (ulong)(uint)Length)
+                    throw new ArgumentOutOfRangeException(nameof(start));
+            }
+            else
+            {
+                if ((uint)start > (uint)Length || (uint)length > (uint)(Length - start))
+                    throw new ArgumentOutOfRangeException(nameof(start));
+            }
+
+            // Compute offset in uint to prevent overflow
+            uint totalOffset = (uint)Offset + (uint)start;
+
+            // Ensure we stay within the backing array bounds
+            if (totalOffset + (uint)length > (uint)bytes.Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<byte>(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(bytes),
+                (nint)totalOffset /* force zero-extension */), length);
+#else
+            return new ReadOnlySpan<byte>(bytes, checked((int)totalOffset), length);
+#endif
+        }
+
+        /// <summary>
+        /// Creates a new read-only span over a portion of the
+        /// target bytes from a specified position to the end of the bytes.
+        /// </summary>
+        /// <param name="startIndex">The index at which to begin this slice.</param>
+        /// <returns>The read-only span representation of the bytes.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> is less
+        /// than 0 or greater than <c>text.Length</c>.</exception>
+        public ReadOnlySpan<byte> AsSpan(System.Index startIndex) // LUCENENET specific
+        {
+            int actualIndex = startIndex.GetOffset(Length);
+            if ((uint)actualIndex > (uint)Length)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            // Prevent overflow and ensure we stay within the backing array
+            uint totalOffset = (uint)Offset + (uint)actualIndex;
+            if (totalOffset > bytes.Length)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<byte>(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(bytes),
+                (nint)totalOffset /* force zero-extension */), Length - actualIndex);
+#else
+            return new ReadOnlySpan<byte>(bytes, checked((int)totalOffset), Length - actualIndex);
+#endif
+        }
+
+        /// <summary>
+        /// Creates a new read-only span over a portion of a target bytes
+        /// using the range start and end indexes.
+        /// </summary>
+        /// <param name="range">The range that has start and end indexes to use for slicing the bytes.</param>
+        /// <returns>The read-only span representation of the bytes.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="range"/>'s start or end index is not within the bounds of the bytes.
+        /// -or-
+        /// <paramref name="range"/>'s start index is greater than its end index.
+        /// </exception>
+        public ReadOnlySpan<byte> AsSpan(Range range) // LUCENENET specific
+        {
+            (int start, int length) = range.GetOffsetAndLength(Length);
+
+            // Compute offset in uint to prevent overflow
+            uint totalOffset = (uint)Offset + (uint)start;
+
+            // Ensure we stay within the backing array bounds
+            if (totalOffset + (uint)length > (uint)bytes.Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<byte>(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(bytes),
+                (nint)totalOffset /* force zero-extension */), length);
+#else
+            return new ReadOnlySpan<byte>(bytes, checked((int)totalOffset), length);
+#endif
+        }
+
+        #endregion AsSpan
+
+        #region AsMemory
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over the portion of <see cref="Bytes"/>
+        /// between <see cref="Offset"/> and <see cref="Length"/>.
+        /// </summary>
+        /// <returns>The read-only byte memory representation of the backing array.</returns>
+        public ReadOnlyMemory<byte> AsMemory() // LUCENENET specific
+        {
+            return new ReadOnlyMemory<byte>(bytes, Offset, Length);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over the portion of <see cref="Bytes"/>
+        /// between <see cref="Offset"/> + <paramref name="start"/> and
+        /// <see cref="Length"/> - <paramref name="start"/>.
+        /// </summary>
+        /// <param name="start">The index into the usable portion of this instance at which to begin this slice.</param>
+        /// <returns>The read-only byte memory representation of the backing array.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="start"/> is not in range of this instance
+        /// (<paramref name="start"/> is &lt;0 or &gt;<see cref="Length"/>).
+        /// </exception>
+        public ReadOnlyMemory<byte> AsMemory(int start) // LUCENENET specific
+        {
+            if ((uint)start > (uint)Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+            // Prevent overflow and ensure we stay within the backing array
+            uint totalOffset = (uint)Offset + (uint)start;
+            if (totalOffset > bytes.Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+            return new ReadOnlyMemory<byte>(bytes, checked((int)totalOffset), Length - start);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over the portion of <see cref="Bytes"/>
+        /// between <see cref="Offset"/> + <paramref name="start"/> and <paramref name="length"/>.
+        /// </summary>
+        /// <param name="start">The index into the usable portion of this instance at which to begin this slice.</param>
+        /// <param name="length">The desired length for the slice (exclusive).</param>
+        /// <returns>The read-only byte memory representation of the backing array.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="start"/>, <paramref name="length"/>,
+        /// or <paramref name="start"/> + <paramref name="length"/> is not in the range of this instance.</exception>
+        public ReadOnlyMemory<byte> AsMemory(int start, int length) // LUCENENET specific
+        {
+            if (IntPtr.Size == 8) // 64-bit process
+            {
+                // See comment in Span<T>.Slice for how this works.
+                if ((ulong)(uint)start + (ulong)(uint)length > (ulong)(uint)Length)
+                    throw new ArgumentOutOfRangeException(nameof(start));
+            }
+            else
+            {
+                if ((uint)start > (uint)Length || (uint)length > (uint)(Length - start))
+                    throw new ArgumentOutOfRangeException(nameof(start));
+            }
+
+            // Compute offset in uint to prevent overflow
+            uint totalOffset = (uint)Offset + (uint)start;
+
+            // Ensure we stay within the backing array bounds
+            if (totalOffset + (uint)length > (uint)bytes.Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+            return new ReadOnlyMemory<byte>(bytes, checked((int)totalOffset), length);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over the portion of <see cref="Bytes"/>
+        /// between <see cref="Offset"/> + <paramref name="startIndex"/> and <see cref="Length"/>.
+        /// </summary>
+        /// <param name="startIndex">The index into the usable portion of this instance at which to begin this slice.</param>
+        /// <returns>The read-only byte memory representation of the backing array.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> is less
+        /// than 0 or greater than <see cref="Length"/>.</exception>
+        public ReadOnlyMemory<byte> AsMemory(System.Index startIndex) // LUCENENET specific
+        {
+            int actualIndex = startIndex.GetOffset(Length);
+            if ((uint)actualIndex > (uint)Length)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            // Prevent overflow and ensure we stay within the backing array
+            uint totalOffset = (uint)Offset + (uint)actualIndex;
+            if (totalOffset > bytes.Length)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            return new ReadOnlyMemory<byte>(bytes, checked((int)totalOffset), Length - actualIndex);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over the portion of <see cref="Bytes"/>
+        /// between <see cref="Offset"/> + <paramref name="range"/>.Start and <paramref name="range"/>.Length.
+        /// </summary>
+        /// <param name="range">The range used to indicate the start and length of the sliced string.</param>
+        /// <returns>The read-only byte memory representation of the backing array.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="range"/>'s start or end index is not within the bounds of the array.
+        /// -or-
+        /// <paramref name="range"/>'s start index is greater than its end index.
+        /// </exception>
+        public ReadOnlyMemory<byte> AsMemory(Range range) // LUCENENET specific
+        {
+            (int start, int length) = range.GetOffsetAndLength(Length);
+
+            // Compute offset in uint to prevent overflow
+            uint totalOffset = (uint)Offset + (uint)start;
+
+            // Ensure we stay within the backing array bounds
+            if (totalOffset + (uint)length > (uint)bytes.Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+            return new ReadOnlyMemory<byte>(bytes, checked((int)totalOffset), length);
+        }
+
+        #endregion AsMemory
     }
 
     // LUCENENET: It is no longer good practice to use binary serialization.
@@ -434,7 +789,7 @@ namespace Lucene.Net.Util
 #endif
     internal class Utf8SortedAsUnicodeComparer : IComparer<BytesRef>
     {
-        public static Utf8SortedAsUnicodeComparer Instance = new Utf8SortedAsUnicodeComparer();
+        public static readonly Utf8SortedAsUnicodeComparer Instance = new Utf8SortedAsUnicodeComparer();
 
         // Only singleton
         private Utf8SortedAsUnicodeComparer()
@@ -567,11 +922,11 @@ namespace Lucene.Net.Util
             switch (format)
             {
                 case BytesRefFormat.UTF8:
-                    try
+                    if (bytesRef.TryUtf8ToString(out var utf8String))
                     {
-                        return bytesRef.Utf8ToString();
+                        return utf8String;
                     }
-                    catch (Exception e) when (e.IsIndexOutOfBoundsException())
+                    else
                     {
                         return bytesRef.ToString();
                     }

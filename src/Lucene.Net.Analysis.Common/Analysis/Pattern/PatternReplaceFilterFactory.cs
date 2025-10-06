@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Pattern
      */
 
     /// <summary>
-    /// Factory for <see cref="PatternReplaceFilter"/>. 
+    /// Factory for <see cref="PatternReplaceFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_ptnreplace" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

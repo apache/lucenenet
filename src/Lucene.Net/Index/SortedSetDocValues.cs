@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Index
+namespace Lucene.Net.Index
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -41,7 +41,7 @@
         /// When returned by <see cref="NextOrd()"/> it means there are no more
         /// ordinals for the document.
         /// </summary>
-        public static readonly long NO_MORE_ORDS = -1;
+        public const long NO_MORE_ORDS = -1;
 
         /// <summary>
         /// Returns the next ordinal for the current document (previously

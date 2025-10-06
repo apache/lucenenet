@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs;
+using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.Asserting;
 using Lucene.Net.Codecs.Bloom;
 using Lucene.Net.Codecs.DiskDV;

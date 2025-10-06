@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
@@ -399,7 +399,8 @@ namespace Lucene.Net.Analysis.Synonym
                 {
                     priorException = e;
                 }
-                finally {
+                finally
+                {
                     IOUtils.CloseWhileHandlingException(priorException, ts);
                 }
 

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Utils;
+using Lucene.Net.Benchmarks.ByTask.Utils;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -26,8 +26,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// Adds fields appropriate for sorting: country, random_string and sort_field
     /// (int). Supports the following parameters:
     /// <list type="bullet">
-    ///     <item><term><b>sort.rng</b></term><description>defines the range for sort-by-int field (default <b>20000</b>).</description></item> 
-    ///     <item><term><b>rand.seed</b></term><description>defines the seed to initialize Random with (default <b>13</b>).</description></item> 
+    ///     <item><term><b>sort.rng</b></term><description>defines the range for sort-by-int field (default <b>20000</b>).</description></item>
+    ///     <item><term><b>rand.seed</b></term><description>defines the seed to initialize Random with (default <b>13</b>).</description></item>
     /// </list>
     /// </summary>
     public class SortableSingleDocSource : SingleDocSource

@@ -22,7 +22,7 @@ namespace Lucene.Net.Support.IO
      * limitations under the License.
      */
 
-    public static class WindowsFsyncSupport
+    internal static class WindowsFsyncSupport
     {
         public static void Fsync(string path, bool isDir)
         {

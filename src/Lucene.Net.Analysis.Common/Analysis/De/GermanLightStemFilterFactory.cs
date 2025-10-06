@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.De
         /// <summary>
         /// Creates a new <see cref="GermanLightStemFilterFactory"/> </summary>
         public GermanLightStemFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {

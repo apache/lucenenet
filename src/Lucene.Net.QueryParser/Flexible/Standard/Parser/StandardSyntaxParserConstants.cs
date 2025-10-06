@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
+namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -103,7 +103,8 @@
     public static class StandardSyntaxParserConstants
     {
         /// <summary>Literal token values.</summary>
-        public static string[] TokenImage = new string[] {
+        // LUCENENET specific - made readonly
+        public readonly static string[] TokenImage = {
             "<EOF>",
             "<_NUM_CHAR>",
             "<_ESCAPED_CHAR>",

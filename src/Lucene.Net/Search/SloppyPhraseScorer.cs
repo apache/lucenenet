@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -452,7 +452,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Detect repetition groups. Done once - for first doc. </summary>
-        private IList<IList<PhrasePositions>> GatherRptGroups(JCG.LinkedDictionary<Term, int> rptTerms)
+        private IList<IList<PhrasePositions>> GatherRptGroups(JCG.OrderedDictionary<Term, int> rptTerms)
         {
             PhrasePositions[] rpp = RepeatingPPs(rptTerms);
             IList<IList<PhrasePositions>> res = new JCG.List<IList<PhrasePositions>>();
@@ -534,9 +534,10 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Find repeating terms and assign them ordinal values </summary>
-        private JCG.LinkedDictionary<Term, int> RepeatingTerms()
+        private JCG.OrderedDictionary<Term, int> RepeatingTerms()
         {
-            JCG.LinkedDictionary<Term, int> tord = new JCG.LinkedDictionary<Term, int>();
+            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            JCG.OrderedDictionary<Term, int> tord = new JCG.OrderedDictionary<Term, int>();
             Dictionary<Term, int> tcnt = new Dictionary<Term, int>();
             for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
             {
@@ -618,7 +619,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Map each term to the single group that contains it </summary>
-        private static IDictionary<Term, int> TermGroups(JCG.LinkedDictionary<Term, int> tord, IList<FixedBitSet> bb) // LUCENENET: CA1822: Mark members as static
+        private static IDictionary<Term, int> TermGroups(JCG.OrderedDictionary<Term, int> tord, IList<FixedBitSet> bb) // LUCENENET: CA1822: Mark members as static
         {
             Dictionary<Term, int> tg = new Dictionary<Term, int>();
             Term[] t = tord.Keys.ToArray(/*new Term[0]*/);

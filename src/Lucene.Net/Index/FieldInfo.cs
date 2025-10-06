@@ -62,8 +62,8 @@ namespace Lucene.Net.Index
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public FieldInfo(string name, bool indexed, int number, bool storeTermVector, bool omitNorms, 
-            bool storePayloads, IndexOptions indexOptions, DocValuesType docValues, DocValuesType normsType, 
+        public FieldInfo(string name, bool indexed, int number, bool storeTermVector, bool omitNorms,
+            bool storePayloads, IndexOptions indexOptions, DocValuesType docValues, DocValuesType normsType,
             IDictionary<string, string> attributes)
         {
             this.Name = name;

@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.10.4
+// Lucene version compatibility level 4.10.4
 using J2N;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
@@ -290,7 +290,8 @@ namespace Lucene.Net.Analysis.Hunspell
             patterns.Add(null);
 
             // zero strip -> 0 ord
-            IDictionary<string, int> seenStrips = new JCG.LinkedDictionary<string, int>
+            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            IDictionary<string, int> seenStrips = new JCG.OrderedDictionary<string, int>
             {
                 [""] = 0
             };
@@ -688,7 +689,7 @@ namespace Lucene.Net.Analysis.Hunspell
         internal static string GetDictionaryEncoding(Stream affix)
         {
             StringBuilder encoding = new StringBuilder();
-            for (;;)
+            for (; ; )
             {
                 encoding.Length = 0;
                 int ch;

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Icu.TokenAttributes

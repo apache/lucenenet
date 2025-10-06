@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -53,28 +53,35 @@ namespace Lucene.Net.Analysis.Ar
 
         private static IList<char[]> InitializePrefix()
         {
-            return new JCG.List<char[]>(){ ("" + ALEF + LAM).ToCharArray(),
-            ("" + WAW + ALEF + LAM).ToCharArray(),
-            ("" + BEH + ALEF + LAM).ToCharArray(),
-            ("" + KAF + ALEF + LAM).ToCharArray(),
-            ("" + FEH + ALEF + LAM).ToCharArray(),
-            ("" + LAM + LAM).ToCharArray(),
-            ("" + WAW).ToCharArray() };
+            return new JCG.List<char[]>()
+            {
+                ("" + ALEF + LAM).ToCharArray(),
+                ("" + WAW + ALEF + LAM).ToCharArray(),
+                ("" + BEH + ALEF + LAM).ToCharArray(),
+                ("" + KAF + ALEF + LAM).ToCharArray(),
+                ("" + FEH + ALEF + LAM).ToCharArray(),
+                ("" + LAM + LAM).ToCharArray(),
+                ("" + WAW).ToCharArray()
+            };
         }
+
         private static IList<char[]> InitializeSuffix()
         {
-            return new JCG.List<char[]>(){ ("" + HEH + ALEF).ToCharArray(),
-            ("" + ALEF + NOON).ToCharArray(),
-            ("" + ALEF + TEH).ToCharArray(),
-            ("" + WAW + NOON).ToCharArray(),
-            ("" + YEH + NOON).ToCharArray(),
-            ("" + YEH + HEH).ToCharArray(),
-            ("" + YEH + TEH_MARBUTA).ToCharArray(),
-            ("" + HEH).ToCharArray(),
-            ("" + TEH_MARBUTA).ToCharArray(),
-            ("" + YEH).ToCharArray() };
+            return new JCG.List<char[]>()
+            {
+                ("" + HEH + ALEF).ToCharArray(),
+                ("" + ALEF + NOON).ToCharArray(),
+                ("" + ALEF + TEH).ToCharArray(),
+                ("" + WAW + NOON).ToCharArray(),
+                ("" + YEH + NOON).ToCharArray(),
+                ("" + YEH + HEH).ToCharArray(),
+                ("" + YEH + TEH_MARBUTA).ToCharArray(),
+                ("" + HEH).ToCharArray(),
+                ("" + TEH_MARBUTA).ToCharArray(),
+                ("" + YEH).ToCharArray()
+            };
         }
-        
+
         /// <summary>
         /// Stem an input buffer of Arabic text.
         /// </summary>

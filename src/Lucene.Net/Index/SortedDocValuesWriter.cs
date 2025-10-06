@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs;
+using Lucene.Net.Codecs;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
             }
 
             dvConsumer.AddSortedField(fieldInfo, GetBytesRefEnumberable(valueCount, sortedValues),
-                // doc -> ord
+                                      // doc -> ord
                                       GetOrdsEnumberable(maxDoc, ordMap));
         }
 

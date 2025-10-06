@@ -1,4 +1,4 @@
-﻿// LUCENENET specific - This is the content of QueryParserMessages.Designer that was generated, with customizations.
+// LUCENENET specific - This is the content of QueryParserMessages.Designer that was generated, with customizations.
 // The NLS derived class was replaced with this one to make interop with .NET resources easier.
 //
 // We turned off auto-generation of this file and added a SetResourceProvider() to supply a class that can supply string/object localized resources.

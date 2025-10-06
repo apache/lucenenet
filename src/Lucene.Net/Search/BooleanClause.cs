@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Lucene.Net.Search
 {
@@ -89,8 +89,8 @@ namespace Lucene.Net.Search
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return query.GetHashCode() 
-                ^ (Occur.MUST == occur ? 1 : 0) 
+            return query.GetHashCode()
+                ^ (Occur.MUST == occur ? 1 : 0)
                 ^ (Occur.MUST_NOT == occur ? 2 : 0);
         }
 

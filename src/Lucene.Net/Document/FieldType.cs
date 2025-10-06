@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using System.Text;
@@ -218,7 +218,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Sets the indexing options for the field. 
+        /// Sets the indexing options for the field.
         /// <para/>
         /// The default is <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS"/>.
         /// </summary>
@@ -236,7 +236,7 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Specifies the field's numeric type, or set to <see cref="NumericType.NONE"/> if the field has no numeric type.
-        /// If not <see cref="NumericType.NONE"/> then the field's value will be indexed numerically so that 
+        /// If not <see cref="NumericType.NONE"/> then the field's value will be indexed numerically so that
         /// <see cref="Search.NumericRangeQuery"/> can be used at search time.
         /// <para/>
         /// The default is <see cref="NumericType.NONE"/>.

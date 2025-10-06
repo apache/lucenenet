@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Data.Common;
@@ -54,7 +54,7 @@ namespace Lucene.Net.Codecs
         // the skipInterval. The top level can not contain more than
         // skipLevel entries, the second top level can not contain more
         // than skipLevel^2 entries and so forth.
-        private readonly int numberOfLevelsToBuffer = 1; // LUCENENET: marked readonly
+        private const int numberOfLevelsToBuffer = 1; // LUCENENET: marked const
 
         private int docCount;
         private bool haveSkipped;
@@ -255,7 +255,7 @@ namespace Lucene.Net.Codecs
         {
             this.skipPointer[0] = skipPointer;
             this.docCount = df;
-            if (Debugging.AssertsEnabled) Debugging.Assert(skipPointer >= 0 && skipPointer <= skipStream[0].Length,"invalid skip pointer: {0}, length={1}", skipPointer, skipStream[0].Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(skipPointer >= 0 && skipPointer <= skipStream[0].Length, "invalid skip pointer: {0}, length={1}", skipPointer, skipStream[0].Length);
             Arrays.Fill(m_skipDoc, 0);
             Arrays.Fill(numSkipped, 0);
             Arrays.Fill(childPointer, 0);
@@ -378,11 +378,13 @@ namespace Lucene.Net.Codecs
                 return data[pos++];
             }
 
+            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override void ReadBytes(byte[] b, int offset, int len)
+            public override void ReadBytes(Span<byte> destination)
             {
                 EnsureOpen(); // LUCENENET: Guard against disposed IndexInput
-                Arrays.Copy(data, pos, b, offset, len);
+                int len = destination.Length;
+                Arrays.Copy(data, pos, destination, /*offset*/ 0, len);
                 pos += len;
             }
 

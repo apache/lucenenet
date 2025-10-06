@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -42,21 +42,21 @@ namespace Lucene.Net.Analysis.Miscellaneous
         //    StringReader r = new StringReader(s);
         //    TokenStream ts = new WhitespaceTokenizer(r);
         //    ts = new WordDelimiterFilter(ts, 1,1,1,1,0);
-        // 
+        //
         //    while (ts.next(tok) != null) ret++;
         //  }
-        // 
+        //
         //  System.out.println("ret="+ret+" time="+(J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond-start)); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
         // }
 
         [Test]
         public virtual void TestOffsets()
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.CATENATE_ALL 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.CATENATE_ALL
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             // test that subwords and catenated subwords have
             // the correct offsets.
@@ -72,11 +72,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestOffsetChange()
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.CATENATE_ALL 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.CATENATE_ALL
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             WordDelimiterFilter wdf = new WordDelimiterFilter(TEST_VERSION_CURRENT, new SingleTokenTokenStream(new Token("übelkeit)", 7, 16)), WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
 
@@ -86,11 +86,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestOffsetChange2()
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.CATENATE_ALL 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.CATENATE_ALL
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             WordDelimiterFilter wdf = new WordDelimiterFilter(TEST_VERSION_CURRENT, new SingleTokenTokenStream(new Token("(übelkeit", 7, 17)), WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
 
@@ -100,11 +100,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestOffsetChange3()
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.CATENATE_ALL 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.CATENATE_ALL
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             WordDelimiterFilter wdf = new WordDelimiterFilter(TEST_VERSION_CURRENT, new SingleTokenTokenStream(new Token("(übelkeit", 7, 16)), WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
 
@@ -114,11 +114,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestOffsetChange4()
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.CATENATE_ALL 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.CATENATE_ALL
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             WordDelimiterFilter wdf = new WordDelimiterFilter(TEST_VERSION_CURRENT, new SingleTokenTokenStream(new Token("(foo,bar)", 7, 16)), WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
 
@@ -127,10 +127,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public virtual void doSplit(string input, params string[] output)
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             WordDelimiterFilter wdf = new WordDelimiterFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader(input), MockTokenizer.KEYWORD, false), WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
 
@@ -144,7 +144,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             doSplit("camelCase", "camel", "Case");
 
             // non-space marking symbol shouldn't cause split
-            // this is an example in Thai    
+            // this is an example in Thai
             doSplit("\u0e1a\u0e49\u0e32\u0e19", "\u0e1a\u0e49\u0e32\u0e19");
             // possessive followed by delimiter
             doSplit("test's'", "test");
@@ -175,9 +175,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public virtual void doSplitPossessive(int stemPossessive, string input, params string[] output)
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
                 | WordDelimiterFlags.SPLIT_ON_NUMERICS;
             flags |= (stemPossessive == 1) ? WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE : 0;
             WordDelimiterFilter wdf = new WordDelimiterFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader(input), MockTokenizer.KEYWORD, false), flags, null);
@@ -186,7 +186,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /*
-         * Test option that allows disabling the special "'s" stemming, instead treating the single quote like other delimiters. 
+         * Test option that allows disabling the special "'s" stemming, instead treating the single quote like other delimiters.
          */
         [Test]
         public virtual void TestPossessives()
@@ -232,11 +232,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestPositionIncrements()
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.CATENATE_ALL 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.CATENATE_ALL
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
 
             CharArraySet protWords = new CharArraySet(TEST_VERSION_CURRENT, new string[] { "NUTCH" }, false);
@@ -292,13 +292,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestLotsOfConcatenating()
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.CATENATE_WORDS 
-                | WordDelimiterFlags.CATENATE_NUMBERS 
-                | WordDelimiterFlags.CATENATE_ALL 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.CATENATE_WORDS
+                | WordDelimiterFlags.CATENATE_NUMBERS
+                | WordDelimiterFlags.CATENATE_ALL
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
 
             /* analyzer that uses whitespace + wdf */
@@ -316,14 +316,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestLotsOfConcatenating2()
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.PRESERVE_ORIGINAL 
-                | WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.CATENATE_WORDS 
-                | WordDelimiterFlags.CATENATE_NUMBERS 
-                | WordDelimiterFlags.CATENATE_ALL 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.PRESERVE_ORIGINAL
+                | WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.CATENATE_WORDS
+                | WordDelimiterFlags.CATENATE_NUMBERS
+                | WordDelimiterFlags.CATENATE_ALL
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
 
             /* analyzer that uses whitespace + wdf */

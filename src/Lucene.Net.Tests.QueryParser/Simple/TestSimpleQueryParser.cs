@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
@@ -541,7 +541,8 @@ namespace Lucene.Net.QueryParsers.Simple
         [Test]
         public virtual void TestWeightedTerm()
         {
-            IDictionary<string, float> weights = new JCG.LinkedDictionary<string, float>();
+            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            IDictionary<string, float> weights = new JCG.OrderedDictionary<string, float>();
             weights["field0"] = 5f;
             weights["field1"] = 10f;
 
@@ -562,7 +563,8 @@ namespace Lucene.Net.QueryParsers.Simple
         [Test]
         public virtual void TestWeightedOR()
         {
-            IDictionary<string, float> weights = new JCG.LinkedDictionary<string, float>();
+            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            IDictionary<string, float> weights = new JCG.OrderedDictionary<string, float>();
             weights["field0"] = 5f;
             weights["field1"] = 10f;
 

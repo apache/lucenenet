@@ -33,7 +33,7 @@ namespace Lucene.Net.Collation
     /// <summary>
     /// Factory for <see cref="CollationKeyFilter"/>.
     /// <para>
-    /// This factory can be created in two ways: 
+    /// This factory can be created in two ways:
     /// <list type="bullet">
     ///  <item><description>Based upon a system collator associated with a <see cref="System.Globalization.CultureInfo"/>.</description></item>
     ///  <item><description>Based upon a tailored ruleset.</description></item>
@@ -56,7 +56,7 @@ namespace Lucene.Net.Collation
     ///  <item><description>strength: 'primary','secondary','tertiary', or 'identical' (optional)</description></item>
     ///  <item><description>decomposition: 'no','canonical', or 'full' (optional)</description></item>
     /// </list>
-    /// 
+    ///
     /// <code>
     /// &lt;fieldType name="text_clltnky" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -64,14 +64,14 @@ namespace Lucene.Net.Collation
     ///     &lt;filter class="solr.CollationKeyFilterFactory" language="ja" country="JP"/&gt;
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
-    /// 
+    ///
     /// </para>
     /// </summary>
     /// <seealso cref="Collator"/>
     /// <seealso cref="CultureInfo"/>
     /// <seealso cref="RuleBasedCollator"/>
     /// @since solr 3.1
-    /// @deprecated use <see cref="CollationKeyAnalyzer"/> instead. 
+    /// @deprecated use <see cref="CollationKeyAnalyzer"/> instead.
     [Obsolete("use <seealso cref=\"CollationKeyAnalyzer\"/> instead.")]
     public class CollationKeyFilterFactory : TokenFilterFactory, IMultiTermAwareComponent, IResourceLoaderAware
     {
@@ -91,7 +91,7 @@ namespace Lucene.Net.Collation
             this.variant = this.RemoveFromDictionary(args, "variant");
             this.strength = this.RemoveFromDictionary(args, "strength");
             this.decomposition = this.RemoveFromDictionary(args, "decomposition");
-            
+
             if (this.custom is null && this.language is null)
             {
                 throw new ArgumentException("Either custom or language is required.");

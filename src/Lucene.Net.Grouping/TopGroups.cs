@@ -1,4 +1,4 @@
-﻿using J2N.Collections;
+using J2N.Collections;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;

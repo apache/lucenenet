@@ -1,10 +1,8 @@
-﻿using J2N.Text;
-using Lucene.Net.Support;
+using J2N.Text;
 using Lucene.Net.Support.Buffers;
-using Lucene.Net.Support.Text;
+using Lucene.Net.Util;
 using System;
 using System.Buffers;
-using System.Text;
 
 namespace Lucene.Net.Index
 {
@@ -25,8 +23,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using BytesRef = Lucene.Net.Util.BytesRef;
-
     /// <summary>
     /// A <see cref="Term"/> represents a word from text.  This is the unit of search.  It is
     /// composed of two elements, the text of the word, as a string, and the name of
@@ -37,9 +33,7 @@ namespace Lucene.Net.Index
     /// </summary>
     public sealed class Term : IComparable<Term>, IEquatable<Term> // LUCENENET specific - class implements IEquatable<T>
     {
-#if FEATURE_UTF8_TOUTF16
         private const int CharStackBufferSize = 64;
-#endif
 
         /// <summary>
         /// Constructs a <see cref="Term"/> with the given field and bytes.
@@ -100,9 +94,11 @@ namespace Lucene.Net.Index
         {
             if (termText is null)
                 throw new ArgumentNullException(nameof(termText)); // LUCENENET: Added guard clause
-#if FEATURE_UTF8_TOUTF16
+
+            // the term might not be text, but usually is. so we make a best effort
+
             // View the relevant portion of the byte array
-            ReadOnlySpan<byte> utf8Span = new ReadOnlySpan<byte>(termText.Bytes, termText.Offset, termText.Length);
+            ReadOnlySpan<byte> utf8Span = termText.AsSpan();
 
             // Allocate a buffer for the maximum possible UTF-16 output
             int maxChars = utf8Span.Length; // Worst case: 1 byte -> 1 char (ASCII)
@@ -136,18 +132,6 @@ namespace Lucene.Net.Index
 
             // Fallback to the default string representation if decoding fails
             return termText.ToString();
-#else
-            // the term might not be text, but usually is. so we make a best effort
-            Encoding decoder = StandardCharsets.UTF_8.WithDecoderExceptionFallback();
-            try
-            {
-                return decoder.GetString(termText.Bytes, termText.Offset, termText.Length);
-            }
-            catch (DecoderFallbackException)
-            {
-                return termText.ToString();
-            }
-#endif
         }
 #nullable restore
 

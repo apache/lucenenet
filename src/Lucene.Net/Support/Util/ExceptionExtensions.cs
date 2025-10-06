@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -29,7 +29,7 @@ namespace Lucene.Net.Util
     /// </summary>
     public static class ExceptionExtensions
     {
-        public static readonly string SUPPRESSED_EXCEPTIONS_KEY = "Lucene_SuppressedExceptions";
+        public const string SUPPRESSED_EXCEPTIONS_KEY = "Lucene_SuppressedExceptions";
 
         public static Exception[] GetSuppressed(this Exception e)
         {

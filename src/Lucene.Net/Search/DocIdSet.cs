@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Search
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
         /// LUCENENET specific
         /// </summary>
         /// <param name="getIterator">
-        /// A delegate method that represents (is called by) the <see cref="GetIterator()"/> 
+        /// A delegate method that represents (is called by) the <see cref="GetIterator()"/>
         /// method. It returns the <see cref="DocIdSetIterator"/> for this <see cref="DocIdSet"/>.
         /// </param>
         /// <returns> A new <see cref="AnonymousDocIdSet"/> instance. </returns>
@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
         ///         OpenBitSet bitset = new OpenBitSet(5);
         ///         bitset.Set(0, 5);
         ///         return new DocIdBitSet(bitset);
-        ///     }, bits: () => 
+        ///     }, bits: () =>
         ///     {
         ///         return bits;
         ///     });
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
         /// LUCENENET specific
         /// </summary>
         /// <param name="getIterator">
-        /// A delegate method that represents (is called by) the <see cref="GetIterator()"/> 
+        /// A delegate method that represents (is called by) the <see cref="GetIterator()"/>
         /// method. It returns the <see cref="DocIdSetIterator"/> for this <see cref="DocIdSet"/>.
         /// </param>
         /// <param name="bits">
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
         /// LUCENENET specific
         /// </summary>
         /// <param name="getIterator">
-        /// A delegate method that represents (is called by) the <see cref="GetIterator()"/> 
+        /// A delegate method that represents (is called by) the <see cref="GetIterator()"/>
         /// method. It returns the <see cref="DocIdSetIterator"/> for this <see cref="DocIdSet"/>.
         /// </param>
         /// <param name="isCacheable">
@@ -168,7 +168,7 @@ namespace Lucene.Net.Search
         ///         OpenBitSet bitset = new OpenBitSet(5);
         ///         bitset.Set(0, 5);
         ///         return new DocIdBitSet(bitset);
-        ///     }, bits: () => 
+        ///     }, bits: () =>
         ///     {
         ///         return bits;
         ///     }, isCacheable: () =>
@@ -180,7 +180,7 @@ namespace Lucene.Net.Search
         /// LUCENENET specific
         /// </summary>
         /// <param name="getIterator">
-        /// A delegate method that represents (is called by) the <see cref="GetIterator()"/> 
+        /// A delegate method that represents (is called by) the <see cref="GetIterator()"/>
         /// method. It returns the <see cref="DocIdSetIterator"/> for this <see cref="DocIdSet"/>.
         /// </param>
         /// <param name="bits">

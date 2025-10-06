@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support.IO;
@@ -659,7 +659,7 @@ namespace Lucene.Net.Index
 
             // LUCENENET: We created the segments names wrong in 4.8.0-beta00001 - 4.8.0-beta00015,
             // so we added a switch to be able to read these indexes in later versions.
-            int segmentRadix = SegmentInfos.useLegacySegmentNames ? 10 : J2N.Character.MaxRadix;
+            int segmentRadix = SegmentInfos.UseLegacySegmentNames ? 10 : J2N.Character.MaxRadix;
 
             for (int i = 0; i < numSegments; i++)
             {
@@ -717,7 +717,7 @@ namespace Lucene.Net.Index
 #pragma warning restore 612, 618
                     {
                         // don't print size in bytes if its a 3.0 segment with shared docstores
-                        Msg(infoStream, "    size (MB)=" + segInfoStat.SizeMB.ToString(nf));
+                        Msg(infoStream, "    size (MB)=" + J2N.Numerics.Double.ToString(segInfoStat.SizeMB, nf));
                     }
                     IDictionary<string, string> diagnostics = info.Info.Diagnostics;
                     segInfoStat.Diagnostics = diagnostics;
@@ -2269,7 +2269,7 @@ namespace Lucene.Net.Index
                     }
                 }
                 float vectorAvg = status.DocCount == 0 ? 0 : status.TotVectors / (float)status.DocCount;
-                Msg(infoStream, "OK [" + status.TotVectors + " total vector count; avg " + vectorAvg.ToString(CultureInfo.InvariantCulture.NumberFormat) + " term/freq vector fields per doc]");
+                Msg(infoStream, "OK [" + status.TotVectors + " total vector count; avg " + J2N.Numerics.Single.ToString(vectorAvg, NumberFormatInfo.InvariantInfo) + " term/freq vector fields per doc]");
             }
             catch (Exception e) when (e.IsThrowable())
             {

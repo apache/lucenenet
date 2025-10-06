@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 8.2.0
+// Lucene version compatibility level 8.2.0
 using J2N;
 using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Analysis.Core;

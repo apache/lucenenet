@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -41,7 +41,7 @@ namespace Lucene.Net.Facet.SortedSet
 
         /// <summary>
         /// Creates this, pulling doc values from the specified
-        /// field. 
+        /// field.
         /// </summary>
         public DefaultSortedSetDocValuesReaderState(IndexReader reader, string field = FacetsConfig.DEFAULT_INDEX_FIELD_NAME)
         {
@@ -79,7 +79,8 @@ namespace Lucene.Net.Facet.SortedSet
                 string[] components = FacetsConfig.StringToPath(spare.Utf8ToString());
                 if (components.Length != 2)
                 {
-                    throw new ArgumentException("this class can only handle 2 level hierarchy (dim/value); got: " + Arrays.ToString(components) + " " + spare.Utf8ToString());
+                    // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
+                    throw new ArgumentException("this class can only handle 2 level hierarchy (dim/value); got: " + Arrays.ToString(components) + " " + spare.Utf8ToStringWithFallback());
                 }
                 if (!components[0].Equals(lastDim, StringComparison.Ordinal))
                 {
@@ -101,7 +102,7 @@ namespace Lucene.Net.Facet.SortedSet
         /// <summary>
         /// Return top-level doc values.
         /// </summary>
-        public override SortedSetDocValues GetDocValues() 
+        public override SortedSetDocValues GetDocValues()
         {
             return topReader.GetSortedSetDocValues(field);
         }

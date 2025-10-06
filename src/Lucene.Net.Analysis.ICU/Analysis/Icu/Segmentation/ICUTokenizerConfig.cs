@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 8.6.1
+// Lucene version compatibility level 8.6.1
 using ICU4N.Text;
 using Lucene.Net.Support;
 
@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         public const int EMOJI_SEQUENCE_STATUS = 299;
 
         /// <summary>
-        /// Sole constructor. (For invocation by subclass 
+        /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
         protected ICUTokenizerConfig() { } // LUCENENET specific - marked protected instead of public

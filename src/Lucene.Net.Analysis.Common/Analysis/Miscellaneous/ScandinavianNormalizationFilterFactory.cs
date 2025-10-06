@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     {
         /// <summary>
         /// Creates a new <see cref="ScandinavianNormalizationFilterFactory"/> </summary>
-        public ScandinavianNormalizationFilterFactory(IDictionary<string, string> args) 
+        public ScandinavianNormalizationFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             if (args.Count > 0)

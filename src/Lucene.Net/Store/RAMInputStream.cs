@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using System;
 using System.IO;
 
@@ -73,8 +73,11 @@ namespace Lucene.Net.Store
             return currentBuffer[bufferPosition++];
         }
 
-        public override void ReadBytes(byte[] b, int offset, int len)
+        // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+        public override void ReadBytes(Span<byte> destination)
         {
+            int offset = 0;
+            int len = destination.Length;
             while (len > 0)
             {
                 if (bufferPosition >= bufferLength)
@@ -85,7 +88,7 @@ namespace Lucene.Net.Store
 
                 int remainInBuffer = bufferLength - bufferPosition;
                 int bytesToCopy = len < remainInBuffer ? len : remainInBuffer;
-                Arrays.Copy(currentBuffer, bufferPosition, b, offset, bytesToCopy);
+                Arrays.Copy(currentBuffer, bufferPosition, destination, offset, bytesToCopy);
                 offset += bytesToCopy;
                 len -= bytesToCopy;
                 bufferPosition += bytesToCopy;

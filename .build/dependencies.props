@@ -1,4 +1,4 @@
-﻿<!--
+<!--
 
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -20,6 +20,7 @@
 -->
 <Project>
   <PropertyGroup Label="NuGet Package Reference Versions">
+    <Antlr4CodeGeneratorPackageVersion>4.6.6</Antlr4CodeGeneratorPackageVersion>
     <Antlr4RuntimeStandardPackageVersion>4.13.1</Antlr4RuntimeStandardPackageVersion>
     <Antlr4BuildTasksPackageVersion>12.8.0</Antlr4BuildTasksPackageVersion>
     <!-- LUCENENET TODO: When ICU4N is released to production,
@@ -33,17 +34,16 @@
         https://github.com/apache/lucene-solr/tree/31d7ec7bbfdcd2c4cc61d9d35e962165410b65fe/lucene/analysis/icu/src/data/utr30
         Just make sure they are adjusted to the right version of ICU/Lucene.
     <ICU4NPackageVersion>[60.1,60.2)</ICU4NPackageVersion> -->
-    <ICU4NPackageVersion>[60.1.0-alpha.436,60.1.0-alpha.446)</ICU4NPackageVersion>
+    <ICU4NPackageVersion>[60.1.0-alpha.438,60.1.0-alpha.446)</ICU4NPackageVersion>
     <IKVMPackageVersion>8.7.5</IKVMPackageVersion>
     <IKVMMavenSdkPackageVersion>1.6.7</IKVMMavenSdkPackageVersion>
     <!-- J2N will break binary compatibility in 3.0.0 to fix the APIs of collection types -->
-    <J2NPackageVersion>[2.1.0, 3.0.0)</J2NPackageVersion>
+    <J2NPackageVersion>[2.2.0-alpha-0026, 3.0.0)</J2NPackageVersion>
     <LiquidTestReportsMarkdownPackageVersion>1.0.9</LiquidTestReportsMarkdownPackageVersion>
-    <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>2.1.1</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
-    <MicrosoftAspNetCoreHttpPackageVersion>2.1.34</MicrosoftAspNetCoreHttpPackageVersion>
-    <MicrosoftAspNetCoreTestHostPackageVersion>6.0.0</MicrosoftAspNetCoreTestHostPackageVersion>
-    <MicrosoftAspNetCoreTestHostPackageVersion Condition=" $(TargetFramework.StartsWith('net4')) ">2.1.1</MicrosoftAspNetCoreTestHostPackageVersion>
-    <MicrosoftAspNetCoreTestHostPackageVersion Condition=" '$(TargetFramework)' == 'net5.0' ">3.1.32</MicrosoftAspNetCoreTestHostPackageVersion>
+    <LuceneNetCodeAnalysisDevPackageVersion>1.0.0-alpha.18</LuceneNetCodeAnalysisDevPackageVersion>
+    <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>2.3.0</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
+    <MicrosoftAspNetCoreTestHostPackageVersion>8.0.19</MicrosoftAspNetCoreTestHostPackageVersion>
+    <MicrosoftBclMemoryPackageVersion>10.0.0-rc.1.25451.107</MicrosoftBclMemoryPackageVersion>
     <MicrosoftCodeAnalysisAnalyzersPackageVersion>2.9.8</MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisCSharpPackageVersion>2.6.1</MicrosoftCodeAnalysisCSharpPackageVersion>
     <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>$(MicrosoftCodeAnalysisCSharpPackageVersion)</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
@@ -71,8 +71,7 @@
     <RandomizedTestingGeneratorsPackageVersion>2.7.8</RandomizedTestingGeneratorsPackageVersion>
     <SharpZipLibPackageVersion>1.4.2</SharpZipLibPackageVersion>
     <Spatial4nPackageVersion>0.4.1.1</Spatial4nPackageVersion>
-    <SystemIOPipelinesPackageVersion>8.0.0</SystemIOPipelinesPackageVersion>
-    <SystemMemoryPackageVersion>4.5.5</SystemMemoryPackageVersion>
+    <SystemMemoryPackageVersion>4.6.3</SystemMemoryPackageVersion>
     <SystemNetHttpPackageVersion>4.3.4</SystemNetHttpPackageVersion>
     <SystemReflectionEmitPackageVersion>4.3.0</SystemReflectionEmitPackageVersion>
     <SystemReflectionEmitILGenerationPackageVersion>4.3.0</SystemReflectionEmitILGenerationPackageVersion>
@@ -80,7 +79,6 @@
     <SystemRuntimeInteropServicesRuntimeInformationPackageVersion>4.3.0</SystemRuntimeInteropServicesRuntimeInformationPackageVersion>
     <SystemTextEncodingCodePagesPackageVersion>4.3.0</SystemTextEncodingCodePagesPackageVersion>
     <SystemTextEncodingCodePagesPackageVersion Condition=" '$(TargetFramework)' == 'net472' ">5.0.0</SystemTextEncodingCodePagesPackageVersion>
-    <SystemTextEncodingsWebPackageVersion>8.0.0</SystemTextEncodingsWebPackageVersion>
     <SystemTextJsonPackageVersion>6.0.10</SystemTextJsonPackageVersion>
     <SystemTextRegularExpressionsPackageVersion>4.3.1</SystemTextRegularExpressionsPackageVersion>
     <TimeZoneConverterPackageVersion>6.1.0</TimeZoneConverterPackageVersion>

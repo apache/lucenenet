@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using RandomizedTesting.Generators;
 using System;
 using System.Diagnostics;
@@ -36,10 +36,10 @@ namespace Lucene.Net.Facet
     public class SlowRAMDirectory : RAMDirectory
     {
         private const int IO_SLEEP_THRESHOLD = 50;
-        
+
         internal Random random;
         private int sleepMillis;
-        
+
         public virtual void SetSleepMillis(int sleepMillis)
         {
             this.sleepMillis = sleepMillis;
@@ -143,15 +143,17 @@ namespace Lucene.Net.Facet
                 return ii.ReadByte();
             }
 
-            public override void ReadBytes(byte[] b, int offset, int len)
+            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+            public override void ReadBytes(Span<byte> destination)
             {
+                int len = destination.Length;
                 if (numRead >= IO_SLEEP_THRESHOLD)
                 {
                     outerInstance.DoSleep(rand, len);
                     numRead = 0;
                 }
                 numRead += len;
-                ii.ReadBytes(b, offset, len);
+                ii.ReadBytes(destination);
             }
 
 
@@ -201,7 +203,7 @@ namespace Lucene.Net.Facet
             private readonly IndexOutput io;
             private int numWrote;
             private readonly Random rand;
-            
+
             public SlowIndexOutput(SlowRAMDirectory outerInstance, IndexOutput io)
             {
                 this.outerInstance = outerInstance;
@@ -220,15 +222,17 @@ namespace Lucene.Net.Facet
                 io.WriteByte(b);
             }
 
-            public override void WriteBytes(byte[] b, int offset, int length)
+            // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+            public override void WriteBytes(ReadOnlySpan<byte> source)
             {
+                int length = source.Length;
                 if (numWrote >= IO_SLEEP_THRESHOLD)
                 {
                     outerInstance.DoSleep(rand, length);
                     numWrote = 0;
                 }
                 numWrote += length;
-                io.WriteBytes(b, offset, length);
+                io.WriteBytes(source);
             }
 
             [Obsolete]

@@ -1,4 +1,4 @@
-﻿using J2N.Threading.Atomic;
+using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
@@ -183,10 +183,12 @@ namespace Lucene.Net.Index
                 return this.input.ReadByte();
             }
 
-            public override void ReadBytes(byte[] b, int offset, int len)
+            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+            public override void ReadBytes(Span<byte> destination)
             {
+                int len = destination.Length;
                 outerInstance.counter += len;
-                this.input.ReadBytes(b, offset, len);
+                this.input.ReadBytes(destination);
             }
 
             protected override void Dispose(bool disposing)

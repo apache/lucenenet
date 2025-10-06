@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.El
      */
 
     /// <summary>
-    /// <see cref="Analyzer"/> for the Greek language. 
+    /// <see cref="Analyzer"/> for the Greek language.
     /// <para>
     /// Supports an external list of stopwords (words
     /// that will not be indexed at all).
@@ -78,23 +78,23 @@ namespace Lucene.Net.Analysis.El
         /// <param name="matchVersion"> Lucene compatibility version,
         ///   See <see cref="LuceneVersion"/> </param>
         public GreekAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_SET)
         {
         }
 
         /// <summary>
-        /// Builds an analyzer with the given stop words. 
+        /// Builds an analyzer with the given stop words.
         /// <para>
-        /// <b>NOTE:</b> The stopwords set should be pre-processed with the logic of 
+        /// <b>NOTE:</b> The stopwords set should be pre-processed with the logic of
         /// <see cref="GreekLowerCaseFilter"/> for best results.
-        ///  
+        ///
         /// </para>
         /// </summary>
         /// <param name="matchVersion"> Lucene compatibility version,
         ///   See <see cref="LuceneVersion"/> </param>
         /// <param name="stopwords"> a stopword set </param>
         public GreekAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
         }
 

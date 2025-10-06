@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
@@ -605,7 +605,7 @@ namespace Lucene.Net.Index
             long diskUsage = startDir.GetSizeInBytes();
             long diskFree = diskUsage + 10;
 
-            Exception err = null; // LUCENENET: No need to cast to IOExcpetion
+            Exception err = null; // LUCENENET: No need to cast to IOException
 
             bool done = false;
 

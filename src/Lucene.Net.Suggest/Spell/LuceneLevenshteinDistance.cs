@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using Lucene.Net.Util;
 using System;
 using RectangularArrays = Lucene.Net.Support.RectangularArrays;
@@ -23,20 +23,20 @@ namespace Lucene.Net.Search.Spell
      */
 
     /// <summary>
-    ///  Damerau-Levenshtein (optimal string alignment) implemented in a consistent 
+    ///  Damerau-Levenshtein (optimal string alignment) implemented in a consistent
     ///  way as Lucene's FuzzyTermsEnum with the transpositions option enabled.
-    ///  
+    ///
     ///  Notes:
     ///  <list type="bullet">
     ///    <item><description> This metric treats full unicode codepoints as characters</description></item>
     ///    <item><description> This metric scales raw edit distances into a floating point score
     ///         based upon the shortest of the two terms</description></item>
-    ///    <item><description> Transpositions of two adjacent codepoints are treated as primitive 
+    ///    <item><description> Transpositions of two adjacent codepoints are treated as primitive
     ///         edits.</description></item>
-    ///    <item><description> Edits are applied in parallel: for example, "ab" and "bca" have 
+    ///    <item><description> Edits are applied in parallel: for example, "ab" and "bca" have
     ///         distance 3.</description></item>
     ///  </list>
-    ///  
+    ///
     ///  NOTE: this class is not particularly efficient. It is only intended
     ///  for merging results from multiple DirectSpellCheckers.
     /// </summary>
@@ -58,10 +58,10 @@ namespace Lucene.Net.Search.Spell
             int n;
             int[][] d; // cost array
 
-            // NOTE: if we cared, we could 3*m space instead of m*n space, similar to 
-            // what LevenshteinDistance does, except cycling thru a ring of three 
-            // horizontal cost arrays... but this comparer is never actually used by 
-            // DirectSpellChecker, its only used for merging results from multiple shards 
+            // NOTE: if we cared, we could 3*m space instead of m*n space, similar to
+            // what LevenshteinDistance does, except cycling thru a ring of three
+            // horizontal cost arrays... but this comparer is never actually used by
+            // DirectSpellChecker, its only used for merging results from multiple shards
             // in "distributed spellcheck", and its inefficient in other ways too...
 
             // cheaper to do this up front once

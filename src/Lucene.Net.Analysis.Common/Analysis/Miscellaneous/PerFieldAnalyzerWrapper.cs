@@ -27,14 +27,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// fields Require different analysis techniques.  Use the Map
     /// argument in <see cref="PerFieldAnalyzerWrapper(Analyzer, IDictionary{string, Analyzer})"/>
     /// to add non-default analyzers for fields.
-    /// 
+    ///
     /// <para>Example usage:
-    /// 
+    ///
     /// <code>
     /// IDictionary&lt;string, Analyzer&gt; analyzerPerField = new Dictionary&lt;string, Analyzer&gt;();
     /// analyzerPerField["firstname"] = new KeywordAnalyzer();
     /// analyzerPerField["lastname"] = new KeywordAnalyzer();
-    /// 
+    ///
     /// PerFieldAnalyzerWrapper aWrapper =
     ///   new PerFieldAnalyzerWrapper(new StandardAnalyzer(version), analyzerPerField);
     /// </code>
@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Constructs with default analyzer and a map of analyzers to use for 
+        /// Constructs with default analyzer and a map of analyzers to use for
         /// specific fields.
         /// <para/>
         /// The type of <see cref="IDictionary{TKey, TValue}"/> supplied will determine the type of behavior.
@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         ///         <description>Use when sorted keys are required. <c>null</c> keys are supported.</description>
         ///     </item>
         ///     <item>
-        ///         <term><see cref="JCG.LinkedDictionary{TKey, TValue}"/></term>
+        ///         <term><see cref="JCG.OrderedDictionary{TKey, TValue}"/></term>
         ///         <description>Use when insertion order must be preserved (<see cref="Dictionary{TKey, TValue}"/> preserves insertion
         ///             order only until items are removed). <c>null</c> keys are supported.</description>
         ///     </item>
@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         /// <param name="defaultAnalyzer"> Any fields not specifically
         /// defined to use a different analyzer will use the one provided here. </param>
-        /// <param name="fieldAnalyzers"> A <see cref="IDictionary{TKey, TValue}"/> (String field name to the Analyzer) to be 
+        /// <param name="fieldAnalyzers"> A <see cref="IDictionary{TKey, TValue}"/> (String field name to the Analyzer) to be
         /// used for those fields. </param>
         public PerFieldAnalyzerWrapper(Analyzer defaultAnalyzer, IDictionary<string, Analyzer> fieldAnalyzers)
             : base(PER_FIELD_REUSE_STRATEGY)

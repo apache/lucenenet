@@ -34,31 +34,93 @@ namespace Lucene.Net.Analysis.Hi
         public virtual int Stem(char[] buffer, int len)
         {
             // 5
-            if ((len > 6) && (StemmerUtil.EndsWith(buffer, len, "ाएंगी") || StemmerUtil.EndsWith(buffer, len, "ाएंगे") || StemmerUtil.EndsWith(buffer, len, "ाऊंगी") || StemmerUtil.EndsWith(buffer, len, "ाऊंगा") || StemmerUtil.EndsWith(buffer, len, "ाइयाँ") || StemmerUtil.EndsWith(buffer, len, "ाइयों") || StemmerUtil.EndsWith(buffer, len, "ाइयां")))
+            if ((len > 6) && (StemmerUtil.EndsWith(buffer, len, "ाएंगी") ||
+                StemmerUtil.EndsWith(buffer, len, "ाएंगे") ||
+                StemmerUtil.EndsWith(buffer, len, "ाऊंगी") ||
+                StemmerUtil.EndsWith(buffer, len, "ाऊंगा") ||
+                StemmerUtil.EndsWith(buffer, len, "ाइयाँ") ||
+                StemmerUtil.EndsWith(buffer, len, "ाइयों") ||
+                StemmerUtil.EndsWith(buffer, len, "ाइयां")))
             {
                 return len - 5;
             }
 
             // 4
-            if ((len > 5) && (StemmerUtil.EndsWith(buffer, len, "ाएगी") || StemmerUtil.EndsWith(buffer, len, "ाएगा") || StemmerUtil.EndsWith(buffer, len, "ाओगी") || StemmerUtil.EndsWith(buffer, len, "ाओगे") || StemmerUtil.EndsWith(buffer, len, "एंगी") || StemmerUtil.EndsWith(buffer, len, "ेंगी") || StemmerUtil.EndsWith(buffer, len, "एंगे") || StemmerUtil.EndsWith(buffer, len, "ेंगे") || StemmerUtil.EndsWith(buffer, len, "ूंगी") || StemmerUtil.EndsWith(buffer, len, "ूंगा") || StemmerUtil.EndsWith(buffer, len, "ातीं") || StemmerUtil.EndsWith(buffer, len, "नाओं") || StemmerUtil.EndsWith(buffer, len, "नाएं") || StemmerUtil.EndsWith(buffer, len, "ताओं") || StemmerUtil.EndsWith(buffer, len, "ताएं") || StemmerUtil.EndsWith(buffer, len, "ियाँ") || StemmerUtil.EndsWith(buffer, len, "ियों") || StemmerUtil.EndsWith(buffer, len, "ियां")))
+            if ((len > 5) && (StemmerUtil.EndsWith(buffer, len, "ाएगी") ||
+                StemmerUtil.EndsWith(buffer, len, "ाएगा") ||
+                StemmerUtil.EndsWith(buffer, len, "ाओगी") ||
+                StemmerUtil.EndsWith(buffer, len, "ाओगे") ||
+                StemmerUtil.EndsWith(buffer, len, "एंगी") ||
+                StemmerUtil.EndsWith(buffer, len, "ेंगी") ||
+                StemmerUtil.EndsWith(buffer, len, "एंगे") ||
+                StemmerUtil.EndsWith(buffer, len, "ेंगे") ||
+                StemmerUtil.EndsWith(buffer, len, "ूंगी") ||
+                StemmerUtil.EndsWith(buffer, len, "ूंगा") ||
+                StemmerUtil.EndsWith(buffer, len, "ातीं") ||
+                StemmerUtil.EndsWith(buffer, len, "नाओं") ||
+                StemmerUtil.EndsWith(buffer, len, "नाएं") ||
+                StemmerUtil.EndsWith(buffer, len, "ताओं") ||
+                StemmerUtil.EndsWith(buffer, len, "ताएं") ||
+                StemmerUtil.EndsWith(buffer, len, "ियाँ") ||
+                StemmerUtil.EndsWith(buffer, len, "ियों") ||
+                StemmerUtil.EndsWith(buffer, len, "ियां")))
             {
                 return len - 4;
             }
 
             // 3
-            if ((len > 4) && (StemmerUtil.EndsWith(buffer, len, "ाकर") || StemmerUtil.EndsWith(buffer, len, "ाइए") || StemmerUtil.EndsWith(buffer, len, "ाईं") || StemmerUtil.EndsWith(buffer, len, "ाया") || StemmerUtil.EndsWith(buffer, len, "ेगी") || StemmerUtil.EndsWith(buffer, len, "ेगा") || StemmerUtil.EndsWith(buffer, len, "ोगी") || StemmerUtil.EndsWith(buffer, len, "ोगे") || StemmerUtil.EndsWith(buffer, len, "ाने") || StemmerUtil.EndsWith(buffer, len, "ाना") || StemmerUtil.EndsWith(buffer, len, "ाते") || StemmerUtil.EndsWith(buffer, len, "ाती") || StemmerUtil.EndsWith(buffer, len, "ाता") || StemmerUtil.EndsWith(buffer, len, "तीं") || StemmerUtil.EndsWith(buffer, len, "ाओं") || StemmerUtil.EndsWith(buffer, len, "ाएं") || StemmerUtil.EndsWith(buffer, len, "ुओं") || StemmerUtil.EndsWith(buffer, len, "ुएं") || StemmerUtil.EndsWith(buffer, len, "ुआं")))
+            if ((len > 4) && (StemmerUtil.EndsWith(buffer, len, "ाकर") ||
+                StemmerUtil.EndsWith(buffer, len, "ाइए") ||
+                StemmerUtil.EndsWith(buffer, len, "ाईं") ||
+                StemmerUtil.EndsWith(buffer, len, "ाया") ||
+                StemmerUtil.EndsWith(buffer, len, "ेगी") ||
+                StemmerUtil.EndsWith(buffer, len, "ेगा") ||
+                StemmerUtil.EndsWith(buffer, len, "ोगी") ||
+                StemmerUtil.EndsWith(buffer, len, "ोगे") ||
+                StemmerUtil.EndsWith(buffer, len, "ाने") ||
+                StemmerUtil.EndsWith(buffer, len, "ाना") ||
+                StemmerUtil.EndsWith(buffer, len, "ाते") ||
+                StemmerUtil.EndsWith(buffer, len, "ाती") ||
+                StemmerUtil.EndsWith(buffer, len, "ाता") ||
+                StemmerUtil.EndsWith(buffer, len, "तीं") ||
+                StemmerUtil.EndsWith(buffer, len, "ाओं") ||
+                StemmerUtil.EndsWith(buffer, len, "ाएं") ||
+                StemmerUtil.EndsWith(buffer, len, "ुओं") ||
+                StemmerUtil.EndsWith(buffer, len, "ुएं") ||
+                StemmerUtil.EndsWith(buffer, len, "ुआं")))
             {
                 return len - 3;
             }
 
             // 2
-            if ((len > 3) && (StemmerUtil.EndsWith(buffer, len, "कर") || StemmerUtil.EndsWith(buffer, len, "ाओ") || StemmerUtil.EndsWith(buffer, len, "िए") || StemmerUtil.EndsWith(buffer, len, "ाई") || StemmerUtil.EndsWith(buffer, len, "ाए") || StemmerUtil.EndsWith(buffer, len, "ने") || StemmerUtil.EndsWith(buffer, len, "नी") || StemmerUtil.EndsWith(buffer, len, "ना") || StemmerUtil.EndsWith(buffer, len, "ते") || StemmerUtil.EndsWith(buffer, len, "ीं") || StemmerUtil.EndsWith(buffer, len, "ती") || StemmerUtil.EndsWith(buffer, len, "ता") || StemmerUtil.EndsWith(buffer, len, "ाँ") || StemmerUtil.EndsWith(buffer, len, "ां") || StemmerUtil.EndsWith(buffer, len, "ों") || StemmerUtil.EndsWith(buffer, len, "ें")))
+            if ((len > 3) && (StemmerUtil.EndsWith(buffer, len, "कर") ||
+                StemmerUtil.EndsWith(buffer, len, "ाओ") ||
+                StemmerUtil.EndsWith(buffer, len, "िए") ||
+                StemmerUtil.EndsWith(buffer, len, "ाई") ||
+                StemmerUtil.EndsWith(buffer, len, "ाए") ||
+                StemmerUtil.EndsWith(buffer, len, "ने") ||
+                StemmerUtil.EndsWith(buffer, len, "नी") ||
+                StemmerUtil.EndsWith(buffer, len, "ना") ||
+                StemmerUtil.EndsWith(buffer, len, "ते") ||
+                StemmerUtil.EndsWith(buffer, len, "ीं") ||
+                StemmerUtil.EndsWith(buffer, len, "ती") ||
+                StemmerUtil.EndsWith(buffer, len, "ता") ||
+                StemmerUtil.EndsWith(buffer, len, "ाँ") ||
+                StemmerUtil.EndsWith(buffer, len, "ां") ||
+                StemmerUtil.EndsWith(buffer, len, "ों") ||
+                StemmerUtil.EndsWith(buffer, len, "ें")))
             {
                 return len - 2;
             }
 
             // 1
-            if ((len > 2) && (StemmerUtil.EndsWith(buffer, len, "ो") || StemmerUtil.EndsWith(buffer, len, "े") || StemmerUtil.EndsWith(buffer, len, "ू") || StemmerUtil.EndsWith(buffer, len, "ु") || StemmerUtil.EndsWith(buffer, len, "ी") || StemmerUtil.EndsWith(buffer, len, "ि") || StemmerUtil.EndsWith(buffer, len, "ा")))
+            if ((len > 2) && (StemmerUtil.EndsWith(buffer, len, "ो") ||
+                StemmerUtil.EndsWith(buffer, len, "े") ||
+                StemmerUtil.EndsWith(buffer, len, "ू") ||
+                StemmerUtil.EndsWith(buffer, len, "ु") ||
+                StemmerUtil.EndsWith(buffer, len, "ी") ||
+                StemmerUtil.EndsWith(buffer, len, "ि") ||
+                StemmerUtil.EndsWith(buffer, len, "ा")))
             {
                 return len - 1;
             }

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Utils;
+using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Documents;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
@@ -360,9 +360,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             // turned on.
         }
 
-        /** 
+        /**
          * Open a trec content source over a directory with files of all trec path types and all
-         * supported formats - bzip, gzip, txt. 
+         * supported formats - bzip, gzip, txt.
          */
         [Test]
         public void TestTrecFeedDirAllTypes()

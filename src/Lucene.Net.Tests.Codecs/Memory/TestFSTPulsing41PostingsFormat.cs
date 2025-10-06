@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Codecs.Memory
@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Memory
      */
 
     /// <summary>
-    /// Tests FSTPulsing41PostingsFormat 
+    /// Tests FSTPulsing41PostingsFormat
     /// </summary>
     public class TestFSTPulsing41PostingsFormat : BasePostingsFormatTestCase
     {

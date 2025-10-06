@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support.Threading;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {

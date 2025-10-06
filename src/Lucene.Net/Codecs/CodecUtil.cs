@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
@@ -37,12 +37,12 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Constant to identify the start of a codec header.
         /// </summary>
-        public static readonly int CODEC_MAGIC = 0x3fd76c17;
+        public const int CODEC_MAGIC = 0x3fd76c17;
 
         /// <summary>
         /// Constant to identify the start of a codec footer.
         /// </summary>
-        public static readonly int FOOTER_MAGIC = ~CODEC_MAGIC;
+        public const int FOOTER_MAGIC = ~CODEC_MAGIC;
 
         /// <summary>
         /// Writes a codec header, which records both a string to
@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Like 
+        /// Like
         /// <see cref="CheckHeader(DataInput,string,int,int)"/> except this
         /// version assumes the first <see cref="int"/> has already been read
         /// and validated from the input.

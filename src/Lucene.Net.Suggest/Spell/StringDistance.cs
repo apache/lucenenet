@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Search.Spell
+namespace Lucene.Net.Search.Spell
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -24,7 +24,7 @@
     {
 
         /// <summary>
-        /// Returns a float between 0 and 1 based on how similar the specified strings are to one another.  
+        /// Returns a float between 0 and 1 based on how similar the specified strings are to one another.
         /// Returning a value of 1 means the specified strings are identical and 0 means the
         /// string are maximally different. </summary>
         /// <param name="s1"> The first string. </param>

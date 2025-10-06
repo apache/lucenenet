@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System;
@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Ar
     {
         /// <summary>
         /// Test ArabicLetterTokenizerFactory </summary>
-        /// @deprecated (3.1) Remove in Lucene 5.0 
+        /// @deprecated (3.1) Remove in Lucene 5.0
         [Test]
         [Obsolete("(3.1) Remove in Lucene 5.0")]
         public virtual void TestTokenizer()

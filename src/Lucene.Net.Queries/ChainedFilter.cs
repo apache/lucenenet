@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
@@ -36,7 +36,7 @@ namespace Lucene.Net.Queries
     /// <para>
     /// Order in which filters are called depends on
     /// the position of the filter in the chain. It's probably
-    /// more efficient to place the most restrictive filters/least 
+    /// more efficient to place the most restrictive filters/least
     /// computationally-intensive filters first.
     /// </para>
     /// </summary>

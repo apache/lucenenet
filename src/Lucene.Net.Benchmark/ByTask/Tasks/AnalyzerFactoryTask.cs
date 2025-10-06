@@ -1,4 +1,4 @@
-﻿using J2N.IO;
+using J2N.IO;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Util;
@@ -155,7 +155,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                     {
                                         case StreamTokenizer.TokenType_Number:
                                             {
-                                                argValue = stok.NumberValue.ToString(CultureInfo.InvariantCulture);
+                                                argValue = J2N.Numerics.Double.ToString(stok.NumberValue, CultureInfo.InvariantCulture);
                                                 // Drop the ".0" from numbers, for integer arguments
                                                 argValue = TRAILING_DOT_ZERO_PATTERN.Replace(argValue, "", 1);
                                                 // Intentional fallthrough
@@ -440,7 +440,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                 {
                                     case StreamTokenizer.TokenType_Number:
                                         {
-                                            argValue = stok.NumberValue.ToString(CultureInfo.InvariantCulture);
+                                            argValue = J2N.Numerics.Double.ToString(stok.NumberValue, CultureInfo.InvariantCulture);
                                             // Drop the ".0" from numbers, for integer arguments
                                             argValue = TRAILING_DOT_ZERO_PATTERN.Replace(argValue, "", 1);
                                             // Intentional fall-through
@@ -468,7 +468,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             }
                     }
                 }
-                WHILE_LOOP_BREAK: { /* LUCENENET: intentionally empty */ }
+            WHILE_LOOP_BREAK: { /* LUCENENET: intentionally empty */ }
 
                 if (!argMap.ContainsKey("luceneMatchVersion"))
                 {

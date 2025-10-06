@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Documents;
+using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
@@ -110,7 +110,7 @@ namespace Lucene.Net.Spatial.Prefix
             doTest(SpatialOperation.IsWithin);
         }
 
-        [Test , Repeat(ITERATIONS)]
+        [Test, Repeat(ITERATIONS)]
         public virtual void TestContains()
         {
             SetupGrid(-1);
@@ -231,8 +231,10 @@ namespace Lucene.Net.Spatial.Prefix
             bool biasContains = (operation == SpatialOperation.Contains);
 
             //Main index loop:
-            IDictionary<String, IShape> indexedShapes = new JCG.LinkedDictionary<String, IShape>();
-            IDictionary<String, IShape> indexedShapesGS = new JCG.LinkedDictionary<String, IShape>();//grid snapped
+            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            IDictionary<String, IShape> indexedShapes = new JCG.OrderedDictionary<String, IShape>();
+            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            IDictionary<String, IShape> indexedShapesGS = new JCG.OrderedDictionary<String, IShape>(); //grid snapped
             int numIndexedShapes = randomIntBetween(1, 6);
 #pragma warning disable 219
             bool indexedAtLeastOneShapePair = false;
@@ -467,7 +469,8 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 if (!ctx.IsGeo)
                     return shape;//already non-geo
-                if (shape is IRectangle) {
+                if (shape is IRectangle)
+                {
                     Rectangle rect = (Rectangle)shape;
                     if (rect.CrossesDateLine)
                     {

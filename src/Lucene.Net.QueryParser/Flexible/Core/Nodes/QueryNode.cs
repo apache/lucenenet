@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Parser;
+using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using System.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
@@ -99,7 +99,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         void UnsetTag(string tagName);
 
         /// <summary>
-        /// Gets a map containing all tags attached to this query node. 
+        /// Gets a map containing all tags attached to this query node.
         /// </summary>
         IDictionary<string, object> TagMap { get; }
 

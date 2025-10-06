@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Globalization;
@@ -37,7 +37,7 @@ namespace Lucene.Net.Documents
     /// Another approach is <see cref="Util.NumericUtils"/>, which provides
     /// a sortable binary representation (prefix encoded) of numeric values, which
     /// date/time are.
-    /// 
+    ///
     /// For indexing a <see cref="DateTime"/>, just get the <see cref="UnixTimeMillisecondsToTicks(long)"/> from <see cref="DateTime.Ticks"/> and index
     /// this as a numeric value with <see cref="Int64Field"/> and use <see cref="Search.NumericRangeQuery{T}"/>
     /// to query it.
@@ -126,7 +126,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Converts a <see cref="DateTimeOffset"/> to a string suitable for indexing using the specified 
+        /// Converts a <see cref="DateTimeOffset"/> to a string suitable for indexing using the specified
         /// <paramref name="resolution"/>.
         /// <para/>
         /// The <paramref name="date"/> is converted using its <see cref="DateTimeOffset.UtcDateTime"/> property.
@@ -285,7 +285,7 @@ namespace Lucene.Net.Documents
                 NumericRepresentation.TICKS_AS_MILLISECONDS => time * TimeSpan.TicksPerMillisecond,
                 _ => throw new ArgumentException($"'{inputRepresentation}' is not a valid {nameof(inputRepresentation)}.")
             };
-            
+
             DateTimeOffset dt = new DateTimeOffset(ticks, TimeSpan.Zero);
             // Remove extra ticks beyond milliseconds
             dt = new DateTimeOffset(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond, TimeSpan.Zero);

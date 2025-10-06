@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using System;
 using Single = J2N.Numerics.Single;
 
@@ -38,7 +38,7 @@ namespace Lucene.Net.Documents
     ///     Document document = new Document();
     ///     document.Add(field);
     ///
-    ///     for (all documents) 
+    ///     for (all documents)
     ///     {
     ///         ...
     ///         field.SetSingleValue(value)
@@ -47,11 +47,11 @@ namespace Lucene.Net.Documents
     ///     }
     /// </code>
     ///
-    /// See also <see cref="Int32Field"/>, <seealso cref="Int64Field"/>, 
+    /// See also <see cref="Int32Field"/>, <seealso cref="Int64Field"/>,
     /// <see cref="DoubleField"/>.</para>
     ///
     /// <para>To perform range querying or filtering against a
-    /// <see cref="SingleField"/>, use <see cref="Search.NumericRangeQuery{T}"/> or 
+    /// <see cref="SingleField"/>, use <see cref="Search.NumericRangeQuery{T}"/> or
     /// <see cref="Search.NumericRangeFilter{T}"/>.  To sort according to a
     /// <see cref="SingleField"/>, use the normal numeric sort types, eg
     /// <see cref="Lucene.Net.Search.SortFieldType.SINGLE"/>. <see cref="SingleField"/>
@@ -81,10 +81,10 @@ namespace Lucene.Net.Documents
     /// but may result in faster range search performance.  The
     /// default value, 4, was selected for a reasonable tradeoff
     /// of disk space consumption versus performance.  You can
-    /// create a custom <see cref="FieldType"/> and invoke the 
+    /// create a custom <see cref="FieldType"/> and invoke the
     /// <see cref="FieldType.NumericPrecisionStep"/> setter if you'd
     /// like to change the value.  Note that you must also
-    /// specify a congruent value when creating 
+    /// specify a congruent value when creating
     /// <see cref="Search.NumericRangeQuery{T}"/>
     /// or <see cref="Search.NumericRangeFilter{T}"/>.
     /// For low cardinality fields larger precision steps are good.
@@ -103,7 +103,7 @@ namespace Lucene.Net.Documents
     /// <c>precisionStep</c> of <see cref="int.MaxValue"/>.
     /// this will minimize disk space consumed. </para>
     ///
-    /// <para>More advanced users can instead use 
+    /// <para>More advanced users can instead use
     /// <see cref="Analysis.NumericTokenStream"/>
     /// directly, when indexing numbers. This
     /// class is a wrapper around this token stream type for
@@ -160,7 +160,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Expert: allows you to customize the <see cref="FieldType"/>. 
+        /// Expert: allows you to customize the <see cref="FieldType"/>.
         /// </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> 32-bit <see cref="float"/> value </param>

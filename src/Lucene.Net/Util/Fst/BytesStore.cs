@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
@@ -97,14 +97,18 @@ namespace Lucene.Net.Util.Fst
             current[nextWrite++] = b;
         }
 
-        public override void WriteBytes(byte[] b, int offset, int len)
+        /// <inheritdoc/>
+        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        public override void WriteBytes(ReadOnlySpan<byte> source)
         {
+            int offset = 0;
+            int len = source.Length;
             while (len > 0)
             {
                 int chunk = blockSize - nextWrite;
                 if (len <= chunk)
                 {
-                    Arrays.Copy(b, offset, current, nextWrite, len);
+                    Arrays.Copy(source, offset, current, nextWrite, len);
                     nextWrite += len;
                     break;
                 }
@@ -112,7 +116,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     if (chunk > 0)
                     {
-                        Arrays.Copy(b, offset, current, nextWrite, chunk);
+                        Arrays.Copy(source, offset, current, nextWrite, chunk);
                         offset += chunk;
                         len -= chunk;
                     }
@@ -445,14 +449,18 @@ namespace Lucene.Net.Util.Fst
                 Position += count;
             }
 
-            public override void ReadBytes(byte[] b, int offset, int len)
+            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+            public override void ReadBytes(Span<byte> destination)
             {
+                int offset = 0;
+                int len = destination.Length;
+
                 while (len > 0)
                 {
                     int chunkLeft = outerInstance.blockSize - nextRead;
                     if (len <= chunkLeft)
                     {
-                        Arrays.Copy(current, nextRead, b, offset, len);
+                        Arrays.Copy(current, nextRead, destination, offset, len);
                         nextRead += len;
                         break;
                     }
@@ -460,7 +468,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         if (chunkLeft > 0)
                         {
-                            Arrays.Copy(current, nextRead, b, offset, chunkLeft);
+                            Arrays.Copy(current, nextRead, destination, offset, chunkLeft);
                             offset += chunkLeft;
                             len -= chunkLeft;
                         }
@@ -479,7 +487,7 @@ namespace Lucene.Net.Util.Fst
                     nextBuffer = bufferIndex + 1;
                     current = outerInstance.blocks[bufferIndex];
                     nextRead = (int)(value & outerInstance.blockMask);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value,"value={0} Position={1}", value, this.Position);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value, "value={0} Position={1}", value, this.Position);
                 }
             }
 
@@ -535,12 +543,15 @@ namespace Lucene.Net.Util.Fst
                 Position -= count;
             }
 
+            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override void ReadBytes(byte[] b, int offset, int len)
+            public override void ReadBytes(Span<byte> destination)
             {
+                int len = destination.Length;
+
                 for (int i = 0; i < len; i++)
                 {
-                    b[offset + i] = ReadByte();
+                    destination[i] = ReadByte();
                 }
             }
 
@@ -557,7 +568,7 @@ namespace Lucene.Net.Util.Fst
                     nextBuffer = bufferIndex - 1;
                     current = outerInstance.blocks[bufferIndex];
                     nextRead = (int)(value & outerInstance.blockMask);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value,"value={0} this.Position={1}", value, this.Position);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value, "value={0} this.Position={1}", value, this.Position);
                 }
             }
 

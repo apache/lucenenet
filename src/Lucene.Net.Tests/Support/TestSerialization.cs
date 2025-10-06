@@ -1,4 +1,4 @@
-﻿// LUCENENENET: Microsoft no longer considers it good practice to use binary serialization
+// LUCENENENET: Microsoft no longer considers it good practice to use binary serialization
 // in new applications. Therefore, we are no longer marking queries serializable
 // (It isn't serializable in Lucene 4.8.0 anymore anyway).
 // See: https://github.com/dotnet/corefx/issues/23584

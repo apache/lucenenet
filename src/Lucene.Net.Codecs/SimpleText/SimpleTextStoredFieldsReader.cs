@@ -1,4 +1,4 @@
-﻿using J2N.Globalization;
+using J2N.Globalization;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     try
                     {
                         Dispose();
-                    } 
+                    }
                     catch (Exception t) when (t.IsThrowable())
                     {
                         // ensure we throw our original exception
@@ -96,8 +96,8 @@ namespace Lucene.Net.Codecs.SimpleText
         }
 
         /// <remarks>
-        /// We don't actually write a .fdx-like index, instead we read the 
-        /// stored fields file in entirety up-front and save the offsets 
+        /// We don't actually write a .fdx-like index, instead we read the
+        /// stored fields file in entirety up-front and save the offsets
         /// so we can seek to the documents later.
         /// </remarks>
         private void ReadIndex(int size)
@@ -229,7 +229,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 throw AlreadyClosedException.Create(this.GetType().FullName, "this FieldsReader is disposed.");
             }
-            return new SimpleTextStoredFieldsReader(_offsets, (IndexInput) _input.Clone(), _fieldInfos);
+            return new SimpleTextStoredFieldsReader(_offsets, (IndexInput)_input.Clone(), _fieldInfos);
         }
 
         protected override void Dispose(bool disposing)

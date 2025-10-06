@@ -1,4 +1,4 @@
-﻿using J2N.Threading;
+using J2N.Threading;
 using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Benchmarks.ByTask.Stats;
 using Lucene.Net.Util;
@@ -33,7 +33,17 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </summary>
     public class TaskSequence : PerfTask
     {
+        /// <summary>
+        /// A sentinel value to be used with <see cref="SetRepetitions"/> that indicates
+        /// that it should run until exhaustion.
+        /// </summary>
+        /// <remarks>
+        /// These docs are LUCENENET specific. In the original Java code, this value is
+        /// mutable, so we are leaving this as mutable to match. Note, however, that
+        /// mutating this during execution could result in unexpected behavior.
+        /// </remarks>
         public static int REPEAT_EXHAUST = -2;
+
         private IList<PerfTask> tasks;
         private int repetitions = 1;
         private readonly bool parallel;
@@ -46,7 +56,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         private bool resetExhausted = false;
         private PerfTask[] tasksArray;
         private bool anyExhaustibleTasks;
-        private readonly bool collapsable = false; // to not collapse external sequence named in alg.  
+        private readonly bool collapsable = false; // to not collapse external sequence named in alg.
 
         private bool fixedTime;                      // true if we run for fixed time
         private double runTimeSec;                      // how long to run for
@@ -120,6 +130,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// Sets the repetitions.
         /// </summary>
         /// <param name="repetitions">The repetitions to set.</param>
+        /// <seealso cref="REPEAT_EXHAUST"/>
         public virtual void SetRepetitions(int repetitions)
         {
             fixedTime = false;
@@ -299,7 +310,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     {
                         break;
                     }
-                    nextStartTime += delayStep; // this aims at avarage rate. 
+                    nextStartTime += delayStep; // this aims at avarage rate.
                     try
                     {
                         int inc = task.RunAndMaybeStats(letChildReport);
@@ -494,7 +505,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     Thread.Sleep((int)waitMore);
                 }
-                nextStartTime += delayStep; // this aims at average rate of starting threads. 
+                nextStartTime += delayStep; // this aims at average rate of starting threads.
                 t[i].Start();
             }
         }
@@ -573,7 +584,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="rate">The rate to set.</param>
         /// <param name="perMin"></param>
@@ -607,7 +618,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         public override string GetName()
         {
-            return seqName; // override to include more info 
+            return seqName; // override to include more info
         }
 
         /// <summary>

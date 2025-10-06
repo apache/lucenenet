@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.QueryParsers.Xml.Builders;
 using Lucene.Net.Search;
@@ -34,8 +34,11 @@ namespace Lucene.Net.QueryParsers.Xml
         protected QueryParser m_parser;
         protected QueryBuilderFactory m_queryFactory;
         protected FilterBuilderFactory m_filterFactory;
-        //Controls the max size of the LRU cache used for QueryFilter objects parsed.
-        public static int maxNumCachedFilters = 20;
+
+        /// <summary>Controls the max size of the LRU cache used for QueryFilter objects parsed.</summary>
+        // LUCENENET specific - changed from a mutable static field into a property.
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+        public static int MaxNumCachedFilters { get; set; } = 20;
 
         /// <summary>
         /// Construct an XML parser that uses a single instance <see cref="QueryParser"/> for handling
@@ -85,7 +88,7 @@ namespace Lucene.Net.QueryParsers.Xml
             m_queryFactory.AddBuilder("ConstantScoreQuery", new ConstantScoreQueryBuilder(m_filterFactory));
 
             m_filterFactory.AddBuilder("CachedFilter", new CachedFilterBuilder(m_queryFactory,
-                m_filterFactory, maxNumCachedFilters));
+                m_filterFactory, MaxNumCachedFilters));
 
             SpanQueryBuilderFactory sqof = new SpanQueryBuilderFactory();
 

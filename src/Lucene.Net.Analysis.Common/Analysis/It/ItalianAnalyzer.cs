@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Snowball;
@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.It
     /// compatibility when creating <see cref="ItalianAnalyzer"/>:
     /// <list type="bullet">
     ///     <item><description> As of 3.6, <see cref="ItalianLightStemFilter"/> is used for less aggressive stemming.</description></item>
-    ///     <item><description> As of 3.2, <see cref="ElisionFilter"/> with a set of Italian 
+    ///     <item><description> As of 3.2, <see cref="ElisionFilter"/> with a set of Italian
     ///        contractions is used by default.</description></item>
     /// </list>
     /// </para>
@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.It
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
         /// <summary>
-        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class
         /// accesses the static final set the first time.;
         /// </summary>
         private static class DefaultSetHolder

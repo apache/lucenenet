@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 
 namespace Lucene.Net.Store
@@ -48,16 +48,19 @@ namespace Lucene.Net.Store
             this.rateLimiter = rateLimiter;
         }
 
-        protected internal override void FlushBuffer(byte[] b, int offset, int len)
+        /// <inheritdoc/>
+        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        protected internal override void FlushBuffer(ReadOnlySpan<byte> source)
         {
+            int len = source.Length;
             rateLimiter.Pause(len);
             if (bufferedDelegate != null)
             {
-                bufferedDelegate.FlushBuffer(b, offset, len);
+                bufferedDelegate.FlushBuffer(source);
             }
             else
             {
-                @delegate.WriteBytes(b, offset, len);
+                @delegate.WriteBytes(source);
             }
         }
 

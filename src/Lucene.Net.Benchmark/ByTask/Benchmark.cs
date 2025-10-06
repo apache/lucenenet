@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Utils;
+using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;

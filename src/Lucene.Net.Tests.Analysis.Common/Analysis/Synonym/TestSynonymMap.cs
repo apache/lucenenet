@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.NGram;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Synonym
      * limitations under the License.
      */
 
-    /// @deprecated Remove this test in Lucene 5.0 
+    /// @deprecated Remove this test in Lucene 5.0
     [Obsolete("Remove this test in Lucene 5.0")]
     public class TestSynonymMap : LuceneTestCase
     {

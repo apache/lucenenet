@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
+using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Processors;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using System;
@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
     /// This processor is used to apply the correct <see cref="ModifierQueryNode"/> to <see cref="BooleanQueryNode"/>s children.
     /// <para>
     /// It walks through the query node tree looking for <see cref="BooleanQueryNode"/>s. If an <see cref="AndQueryNode"/> is found,
-    /// every child, which is not a <see cref="ModifierQueryNode"/> or the <see cref="ModifierQueryNode"/> 
+    /// every child, which is not a <see cref="ModifierQueryNode"/> or the <see cref="ModifierQueryNode"/>
     /// is <see cref="Modifier.MOD_NONE"/>, becomes a <see cref="Modifier.MOD_REQ"/>. For any other
     /// <see cref="BooleanQueryNode"/> which is not an <see cref="OrQueryNode"/>, it checks the default operator is <see cref="Operator.AND"/>,
     /// if it is, the same operation when an <see cref="AndQueryNode"/> is found is applied to it.

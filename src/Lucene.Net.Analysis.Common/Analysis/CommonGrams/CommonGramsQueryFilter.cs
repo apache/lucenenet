@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         private bool exhausted;
 
         /// <summary>
-        /// Constructs a new CommonGramsQueryFilter based on the provided CommomGramsFilter 
+        /// Constructs a new CommonGramsQueryFilter based on the provided CommomGramsFilter
         /// </summary>
         /// <param name="input"> CommonGramsFilter the QueryFilter will use </param>
         public CommonGramsQueryFilter(CommonGramsFilter input)

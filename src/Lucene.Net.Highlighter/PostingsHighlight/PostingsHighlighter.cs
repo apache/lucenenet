@@ -1,4 +1,4 @@
-﻿#if FEATURE_BREAKITERATOR
+#if FEATURE_BREAKITERATOR
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using ICU4N.Text;
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// Default maximum content size to process. Typically snippets
         /// closer to the beginning of the document better summarize its content
         /// </summary>
-        public static readonly int DEFAULT_MAX_LENGTH = 10000;
+        public const int DEFAULT_MAX_LENGTH = 10000;
 
         private readonly int maxLength;
 

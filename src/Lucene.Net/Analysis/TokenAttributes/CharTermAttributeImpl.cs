@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     {
         private const int MIN_BUFFER_SIZE = 10;
 
-        private char[] termBuffer = CreateBuffer(MIN_BUFFER_SIZE);
+        internal char[] termBuffer = CreateBuffer(MIN_BUFFER_SIZE);
         private int termLength = 0;
 
         /// <summary>

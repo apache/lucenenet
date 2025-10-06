@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using System;
 using System.IO;
 
@@ -23,7 +23,7 @@ namespace Lucene.Net.Search.Join
 
     /// <summary>
     /// Utility for query time joining using <see cref="TermsQuery"/> and <see cref="TermsCollector"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public sealed class JoinUtil

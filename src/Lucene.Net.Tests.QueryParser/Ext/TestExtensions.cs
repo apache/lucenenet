@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 
@@ -51,7 +51,7 @@ namespace Lucene.Net.QueryParsers.Ext
         {
             assertEquals("field\\:key", ext.BuildExtensionField("key", "field"));
             assertEquals("\\:key", ext.BuildExtensionField("key"));
-            
+
             ext = new Extensions('.');
             assertEquals("field.key", ext.BuildExtensionField("key", "field"));
             assertEquals(".key", ext.BuildExtensionField("key"));
@@ -89,7 +89,7 @@ namespace Lucene.Net.QueryParsers.Ext
             }
             catch (ArgumentNullException /*e*/) // LUCENENET specific - Added guard clause to throw ArgumentNullException instead of letting NullReferenceException happen.
             {
-                // 
+                //
             }
         }
     }

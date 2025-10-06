@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Documents;
+using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -192,7 +192,7 @@ namespace Lucene.Net.Index
             Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             Document doc = new Document();
-            Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
+            Exception priorException = null; // LUCENENET: No need to cast to IOException
             TokenStream stream = analyzer.GetTokenStream("field", new StringReader("abcd   "));
             try
             {

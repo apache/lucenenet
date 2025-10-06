@@ -1,14 +1,20 @@
-﻿using Lucene.Net.Documents;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using Microsoft.AspNetCore.TestHost;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Directory = Lucene.Net.Store.Directory;
+
+#if FEATURE_ASPNETCORE_TESTHOST
+using Microsoft.AspNetCore.TestHost;
+#else
+using Lucene.Net.Replicator.Net;
+#endif
+
 
 namespace Lucene.Net.Replicator.Http
 {
@@ -29,6 +35,14 @@ namespace Lucene.Net.Replicator.Http
      * limitations under the License.
      */
 
+    // Technically, the ConfigOption is only supported by ASP.NET Core
+    // so we just ignore the other option when running on HttpListener.
+    [TestFixture(IOOption.Synchronous, ConfigOption.StartupClass)]
+    [TestFixture(IOOption.Asynchronous, ConfigOption.StartupClass)]
+#if FEATURE_ASPNETCORE_TESTHOST
+    [TestFixture(IOOption.Synchronous, ConfigOption.Middleware)]
+    [TestFixture(IOOption.Asynchronous, ConfigOption.Middleware)]
+#endif
     public class HttpReplicatorTest : ReplicatorTestCase
     {
         private DirectoryInfo clientWorkDir;
@@ -45,16 +59,31 @@ namespace Lucene.Net.Replicator.Http
 
         private MockErrorConfig mockErrorConfig;
 
+        private readonly bool useSynchronousIO;
+        private readonly bool useStartupClass;
+
+        public enum IOOption
+        {
+            Synchronous,
+            Asynchronous,
+        }
+
+        public enum ConfigOption
+        {
+            StartupClass,
+            Middleware
+        }
+
+        public HttpReplicatorTest(IOOption ioOption, ConfigOption configOption)
+        {
+            this.useSynchronousIO = ioOption == IOOption.Synchronous;
+            this.useStartupClass = configOption == ConfigOption.StartupClass;
+        }
+
         private void StartServer()
         {
             ReplicationService service = new ReplicationService(new Dictionary<string, IReplicator> { { "s1", serverReplicator } });
-
-#if FEATURE_ASPNETCORE_ENDPOINT_CONFIG
-            server = NewHttpServer(service, mockErrorConfig); // Call like this to use ReplicationServerMiddleware on the specific path /replicate/{shard?}/{action?}, but allow other paths to be served
-#else
-            server = NewHttpServer<ReplicationServlet>(service, mockErrorConfig); // Call like this to use ReplicationServlet as a Startup Class
-#endif
-
+            server = NewHttpServer(service, mockErrorConfig, useSynchronousIO, useStartupClass);
             port = ServerPort(server);
             host = ServerHost(server);
         }
@@ -144,7 +173,7 @@ namespace Lucene.Net.Replicator.Http
                 mockErrorConfig.RespondWithError = false;
                 client.UpdateNow(); // now it should work
                 ReopenReader();
-                assertEquals(5, J2N.Numerics.Int32.Parse(reader.IndexCommit.UserData["ID"], 16));
+                assertEquals(5, int.Parse(reader.IndexCommit.UserData["ID"], NumberStyles.HexNumber));
 
                 client.Dispose();
             }

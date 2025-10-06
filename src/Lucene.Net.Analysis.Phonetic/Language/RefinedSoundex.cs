@@ -1,4 +1,4 @@
-﻿// commons-codec version compatibility level: 1.9
+// commons-codec version compatibility level: 1.9
 using Lucene.Net.Support;
 using System.Globalization;
 using System.Text;
@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// since 1.4
         /// </summary>
-        public static readonly string US_ENGLISH_MAPPING_STRING = "01360240043788015936020505";
+        public const string US_ENGLISH_MAPPING_STRING = "01360240043788015936020505";
 
         /// <summary>
         /// RefinedSoundex is *refined* for a number of reasons one being that the

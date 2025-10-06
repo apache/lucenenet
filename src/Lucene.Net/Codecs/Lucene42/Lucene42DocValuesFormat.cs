@@ -117,7 +117,7 @@ namespace Lucene.Net.Codecs.Lucene42
     /// Limitations:
     /// <list type="bullet">
     ///   <item><description> Binary doc values can be at most <see cref="MAX_BINARY_FIELD_LENGTH"/> in length.</description></item>
-    /// </list> 
+    /// </list>
     /// </summary>
     [Obsolete("Only for reading old 4.2 segments")]
     [DocValuesFormatName("Lucene42")] // LUCENENET specific - using DocValuesFormatName attribute to ensure the default name passed from subclasses is the same as this class name
@@ -125,7 +125,7 @@ namespace Lucene.Net.Codecs.Lucene42
     {
         /// <summary>
         /// Maximum length for each binary doc values field. </summary>
-        public static readonly int MAX_BINARY_FIELD_LENGTH = (1 << 15) - 2;
+        public const int MAX_BINARY_FIELD_LENGTH = (1 << 15) - 2;
 
         protected readonly float m_acceptableOverheadRatio;
 
@@ -139,7 +139,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
         /// <summary>
         /// Creates a new <see cref="Lucene42DocValuesFormat"/> with the specified
-        /// <paramref name="acceptableOverheadRatio"/> for <see cref="Index.NumericDocValues"/>. 
+        /// <paramref name="acceptableOverheadRatio"/> for <see cref="Index.NumericDocValues"/>.
         /// <para/>
         /// @lucene.experimental
         /// </summary>

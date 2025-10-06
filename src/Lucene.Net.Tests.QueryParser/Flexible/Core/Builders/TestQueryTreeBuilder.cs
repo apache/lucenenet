@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
+using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using Lucene.Net.QueryParsers.Flexible.Core.Util;
 using Lucene.Net.Util;
@@ -53,8 +53,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         private class DummyQueryNode : AbstractDummyQueryNode
         {
 
-            
-        public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
+
+            public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
             {
                 return "DummyQueryNode";
             }

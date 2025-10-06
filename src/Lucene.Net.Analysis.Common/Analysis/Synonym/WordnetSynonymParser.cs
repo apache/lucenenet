@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using J2N.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Synonym
     {
         private readonly bool expand;
 
-        public WordnetSynonymParser(bool dedup, bool expand, Analyzer analyzer) 
+        public WordnetSynonymParser(bool dedup, bool expand, Analyzer analyzer)
             : base(dedup, analyzer)
         {
             this.expand = expand;

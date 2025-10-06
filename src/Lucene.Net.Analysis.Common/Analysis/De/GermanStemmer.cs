@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.De
      */
 
     /// <summary>
-    /// A stemmer for German words. 
+    /// A stemmer for German words.
     /// <para>
     /// The algorithm is based on the report
     /// "A Fast and Simple Stemming Algorithm for German Words" by Jörg
@@ -176,7 +176,7 @@ namespace Lucene.Net.Analysis.De
 
         /// <summary>
         /// Do some substitutions for the term to reduce overstemming:
-        /// 
+        ///
         /// <list type="bullet">
         /// <item><description>Substitute Umlauts with their corresponding vowel: äöü -> aou,
         ///   "ß" is substituted by "ss"</description></item>

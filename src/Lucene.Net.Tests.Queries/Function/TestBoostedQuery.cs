@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Tests.Queries.Function
         internal static Directory dir;
         internal static IndexReader ir;
         internal static IndexSearcher @is;
-        
+
         [SetUp]
         public override void SetUp()
         {
@@ -66,7 +66,7 @@ namespace Lucene.Net.Tests.Queries.Function
             dir = null;
             base.TearDown();
         }
-        
+
         [Test]
         public virtual void TestBasic()
         {

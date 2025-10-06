@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Store;
+using Lucene.Net.Store;
 using Lucene.Net.Util.Fst;
 using System;
 using System.IO;
@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
     /// </summary>
     public sealed class TokenInfoDictionary : BinaryDictionary
     {
-        public static readonly string FST_FILENAME_SUFFIX = "$fst.dat";
+        public const string FST_FILENAME_SUFFIX = "$fst.dat";
 
         private readonly TokenInfoFST fst;
 

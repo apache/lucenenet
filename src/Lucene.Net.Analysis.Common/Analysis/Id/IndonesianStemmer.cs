@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Id
     /// Stemmer for Indonesian.
     /// <para>
     /// Stems Indonesian words with the algorithm presented in:
-    /// <c>A Study of Stemming Effects on Information Retrieval in 
+    /// <c>A Study of Stemming Effects on Information Retrieval in
     /// Bahasa Indonesia</c>, Fadillah Z Tala.
     /// http://www.illc.uva.nl/Publications/ResearchReports/MoL-2003-02.text.pdf
     /// </para>
@@ -129,7 +129,9 @@ namespace Lucene.Net.Analysis.Id
 
         private int RemoveParticle(char[] text, int length)
         {
-            if (StemmerUtil.EndsWith(text, length, "kah") || StemmerUtil.EndsWith(text, length, "lah") || StemmerUtil.EndsWith(text, length, "pun"))
+            if (StemmerUtil.EndsWith(text, length, "kah") ||
+                StemmerUtil.EndsWith(text, length, "lah") ||
+                StemmerUtil.EndsWith(text, length, "pun"))
             {
                 numSyllables--;
                 return length - 3;
@@ -277,7 +279,8 @@ namespace Lucene.Net.Analysis.Id
                 return StemmerUtil.DeleteN(text, 0, length, 3);
             }
 
-            if (StemmerUtil.StartsWith(text, length, "be") && length > 4 && !IsVowel(text[2]) && text[3] == 'e' && text[4] == 'r')
+            if (StemmerUtil.StartsWith(text, length, "be") && length > 4
+                && !IsVowel(text[2]) && text[3] == 'e' && text[4] == 'r')
             {
                 flags |= REMOVED_BER;
                 numSyllables--;
@@ -308,19 +311,29 @@ namespace Lucene.Net.Analysis.Id
 
         private int RemoveSuffix(char[] text, int length)
         {
-            if (StemmerUtil.EndsWith(text, length, "kan") && (flags & REMOVED_KE) == 0 && (flags & REMOVED_PENG) == 0 && (flags & REMOVED_PE) == 0)
+            if (StemmerUtil.EndsWith(text, length, "kan")
+                && (flags & REMOVED_KE) == 0
+                && (flags & REMOVED_PENG) == 0
+                && (flags & REMOVED_PE) == 0)
             {
                 numSyllables--;
                 return length - 3;
             }
 
-            if (StemmerUtil.EndsWith(text, length, "an") && (flags & REMOVED_DI) == 0 && (flags & REMOVED_MENG) == 0 && (flags & REMOVED_TER) == 0)
+            if (StemmerUtil.EndsWith(text, length, "an")
+                && (flags & REMOVED_DI) == 0
+                && (flags & REMOVED_MENG) == 0
+                && (flags & REMOVED_TER) == 0)
             {
                 numSyllables--;
                 return length - 2;
             }
 
-            if (StemmerUtil.EndsWith(text, length, "i") && !StemmerUtil.EndsWith(text, length, "si") && (flags & REMOVED_BER) == 0 && (flags & REMOVED_KE) == 0 && (flags & REMOVED_PENG) == 0)
+            if (StemmerUtil.EndsWith(text, length, "i")
+                && !StemmerUtil.EndsWith(text, length, "si")
+                && (flags & REMOVED_BER) == 0
+                && (flags & REMOVED_KE) == 0
+                && (flags & REMOVED_PENG) == 0)
             {
                 numSyllables--;
                 return length - 1;

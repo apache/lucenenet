@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support.Threading;
+using Lucene.Net.Support.Threading;
 using System;
 using System.IO;
 using System.Threading;
@@ -25,11 +25,11 @@ namespace Lucene.Net.Store
     /// <summary>
     /// An interprocess mutex lock.
     /// <para/>Typical use might look like:
-    /// 
+    ///
     /// <code>
     ///     var result = Lock.With.NewAnonymous&lt;string&gt;(
-    ///         @lock: directory.MakeLock("my.lock"), 
-    ///         lockWaitTimeout: Lock.LOCK_OBTAIN_WAIT_FOREVER, 
+    ///         @lock: directory.MakeLock("my.lock"),
+    ///         lockWaitTimeout: Lock.LOCK_OBTAIN_WAIT_FOREVER,
     ///         doBody: () =>
     ///     {
     ///         //... code to execute while locked ...
@@ -44,7 +44,8 @@ namespace Lucene.Net.Store
         /// How long <see cref="Obtain(long)"/> waits, in milliseconds,
         /// in between attempts to acquire the lock.
         /// </summary>
-        public static long LOCK_POLL_INTERVAL = 1000;
+        // LUCENENET specific - changed mutable static field into a property
+        public static long LOCK_POLL_INTERVAL { get; set; } = 1000;
 
         /// <summary>
         /// Pass this value to <see cref="Obtain(long)"/> to try
@@ -59,8 +60,8 @@ namespace Lucene.Net.Store
         /// Simple example:
         /// <code>
         ///     var result = Lock.With.NewAnonymous&lt;string&gt;(
-        ///         @lock: directory.MakeLock("my.lock"), 
-        ///         lockWaitTimeout: Lock.LOCK_OBTAIN_WAIT_FOREVER, 
+        ///         @lock: directory.MakeLock("my.lock"),
+        ///         lockWaitTimeout: Lock.LOCK_OBTAIN_WAIT_FOREVER,
         ///         doBody: () =>
         ///     {
         ///         //... code to execute while locked ...
@@ -74,7 +75,7 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <param name="lock"> the <see cref="Lock"/> instance to use </param>
         /// <param name="lockWaitTimeout"> length of time to wait in
-        ///        milliseconds or 
+        ///        milliseconds or
         ///        <see cref="LOCK_OBTAIN_WAIT_FOREVER"/> to retry forever </param>
         /// <param name="doBody"> a delegate method that </param>
         /// <returns>The value that is returned from the <paramref name="doBody"/> delegate method (i.e. () => { return theObject; })</returns>
@@ -104,7 +105,7 @@ namespace Lucene.Net.Store
         /// passed.
         /// </summary>
         /// <param name="lockWaitTimeout"> length of time to wait in
-        ///        milliseconds or 
+        ///        milliseconds or
         ///        <see cref="LOCK_OBTAIN_WAIT_FOREVER"/> to retry forever </param>
         /// <returns> <c>true</c> if lock was obtained </returns>
         /// <exception cref="LockObtainFailedException"> if lock wait times out </exception>
@@ -150,7 +151,7 @@ namespace Lucene.Net.Store
             }
             return locked;
         }
-        
+
         /// <summary>
         /// Releases exclusive access. </summary>
         public void Dispose()
@@ -182,7 +183,7 @@ namespace Lucene.Net.Store
             /// Constructs an executor that will grab the named <paramref name="lock"/>. </summary>
             /// <param name="lock"> the <see cref="Lock"/> instance to use </param>
             /// <param name="lockWaitTimeout"> length of time to wait in
-            ///        milliseconds or 
+            ///        milliseconds or
             ///        <see cref="LOCK_OBTAIN_WAIT_FOREVER"/> to retry forever </param>
             protected With(Lock @lock, long lockWaitTimeout) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {

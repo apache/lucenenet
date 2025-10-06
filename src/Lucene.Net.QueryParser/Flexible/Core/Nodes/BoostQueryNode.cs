@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Messages;
+using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using System.Collections.Generic;
 
@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// <summary>
     /// A <see cref="BoostQueryNode"/> boosts the QueryNode tree which is under this node.
     /// So, it must only and always have one child.
-    /// 
+    ///
     /// The boost value may vary from 0.0 to 1.0.
     /// </summary>
     public class BoostQueryNode : QueryNode
@@ -83,7 +83,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             if (f == (long)f)
                 return "" + (long)f;
             else
-                return "" + f.ToString("0.0#######"); // LUCENENET TODO: Culture
+                return "" + J2N.Numerics.Single.ToString(f, "0.0#######"); // LUCENENET TODO: Culture
         }
 
         public override string ToString()

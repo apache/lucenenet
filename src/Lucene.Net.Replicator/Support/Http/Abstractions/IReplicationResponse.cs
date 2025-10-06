@@ -23,7 +23,7 @@ namespace Lucene.Net.Replicator.Http.Abstractions
     /// Abstraction for remote replication response, allows easy integration into any hosting frameworks.
     /// </summary>
     /// <remarks>
-    /// .NET Specific Abstraction  
+    /// .NET Specific Abstraction
     /// </remarks>
     //Note: LUCENENET specific
     public interface IReplicationResponse
@@ -37,10 +37,5 @@ namespace Lucene.Net.Replicator.Http.Abstractions
         /// The response content.
         /// </summary>
         Stream Body { get; }
-
-        /// <summary>
-        /// Flushes the reponse to the underlying response stream.
-        /// </summary>
-        void Flush();
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search

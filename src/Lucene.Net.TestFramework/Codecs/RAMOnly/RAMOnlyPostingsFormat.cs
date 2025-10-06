@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
@@ -571,7 +571,7 @@ namespace Lucene.Net.Codecs.RAMOnly
 
         private readonly AtomicInt32 nextID = new AtomicInt32();
 
-        private readonly string RAM_ONLY_NAME = "RAMOnly";
+        private const string RAM_ONLY_NAME = "RAMOnly";
         private const int VERSION_START = 0;
         private const int VERSION_LATEST = VERSION_START;
 

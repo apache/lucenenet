@@ -25,19 +25,19 @@ namespace Lucene.Net.Index
     {
         /// <summary>Default minimum segment size. </summary>
         /// <seealso cref="MinMergeMB"/>
-        public static readonly double DEFAULT_MIN_MERGE_MB = 1.6;
+        public const double DEFAULT_MIN_MERGE_MB = 1.6;
 
         /// <summary>
-        /// Default maximum segment size.  A segment of this size 
-        /// or larger will never be merged. </summary> 
+        /// Default maximum segment size.  A segment of this size
+        /// or larger will never be merged. </summary>
         /// <seealso cref="MaxMergeMB"/>
-        public static readonly double DEFAULT_MAX_MERGE_MB = 2048;
+        public const double DEFAULT_MAX_MERGE_MB = 2048;
 
         /// <summary>
-        /// Default maximum segment size.  A segment of this size 
+        /// Default maximum segment size.  A segment of this size
         /// or larger will never be merged during <see cref="IndexWriter.ForceMerge(int)"/>.  </summary>
         /// <seealso cref="MaxMergeMBForForcedMerge"/>
-        public static readonly double DEFAULT_MAX_MERGE_MB_FOR_FORCED_MERGE = long.MaxValue;
+        public const double DEFAULT_MAX_MERGE_MB_FOR_FORCED_MERGE = long.MaxValue;
 
         /// <summary>
         /// Sole constructor, setting all settings to their
@@ -47,8 +47,8 @@ namespace Lucene.Net.Index
         {
             m_minMergeSize = (long)(DEFAULT_MIN_MERGE_MB * 1024 * 1024);
             m_maxMergeSize = (long)(DEFAULT_MAX_MERGE_MB * 1024 * 1024);
-            
-            // .Net port, original line is inappropriate, overflows in .NET 
+
+            // .Net port, original line is inappropriate, overflows in .NET
             // and the property gets set to a negative value.
             // In Java however such statements results in long.MaxValue
 

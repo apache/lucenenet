@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Search.Highlight
+namespace Lucene.Net.Search.Highlight
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,7 +17,7 @@
      * limitations under the License.
      */
 
-    /// <summary> Processes terms found in the original text, typically by applying some form 
+    /// <summary> Processes terms found in the original text, typically by applying some form
     /// of mark-up to highlight terms in HTML search results pages.</summary>
     public interface IFormatter
     {

@@ -1,4 +1,4 @@
-﻿using J2N.Numerics;
+using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System.Runtime.CompilerServices;
 
@@ -144,9 +144,9 @@ namespace Lucene.Net.Util
         /// These contain the high bit of each group of k bits.
         /// The suffix _L indicates the <see cref="long"/> implementation.
         /// </summary>
-        public static readonly long H8_L = L8_L << 7;
+        public const long H8_L = L8_L << 7;
 
-        public static readonly long H16_L = L16_L << 15;
+        public const long H16_L = L16_L << 15;
 
         /// <summary>
         /// Naive implementation of <see cref="Select(long, int)"/>, using <see cref="BitOperation.TrailingZeroCount(long)"/> repetitively.

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Ja
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.JapaneseTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.JapanesePartOfSpeechStopFilterFactory"
-    ///             tags="stopTags.txt" 
+    ///             tags="stopTags.txt"
     ///             enablePositionIncrements="true"/&gt;
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;
@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Ja
             if (cas != null)
             {
                 stopTags = new JCG.HashSet<string>();
-                foreach (string element in cas) 
+                foreach (string element in cas)
                 {
                     stopTags.Add(element);
                 }

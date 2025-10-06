@@ -126,7 +126,7 @@ namespace Lucene.Net.Util.Packed
                     pending[i] -= minValue;
                 }
                 PackedInt32s.Mutable mutable = PackedInt32s.GetMutable(pendingOff, bitsRequired, acceptableOverheadRatio);
-                for (int i = 0; i < pendingOff; )
+                for (int i = 0; i < pendingOff;)
                 {
                     i += mutable.Set(i, pending, i, pendingOff - i);
                 }

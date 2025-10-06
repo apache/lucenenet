@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Analysis;
@@ -97,7 +97,7 @@ namespace Lucene.Net.Tests.Queries.Function
             searcher = NewSearcher(reader);
             iw.Dispose();
         }
-        
+
         [TearDown]
         public override void TearDown()
         {
@@ -108,7 +108,7 @@ namespace Lucene.Net.Tests.Queries.Function
             dir = null;
             base.TearDown();
         }
-        
+
         [Test]
         public void TestByte()
         {

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.IO;
@@ -137,18 +137,34 @@ namespace Lucene.Net.Store
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override sealed void ReadBytes(byte[] b, int offset, int len)
         {
-            ReadBytes(b, offset, len, true);
+            ReadBytes(b.AsSpan(offset, len), true);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override sealed void ReadBytes(byte[] b, int offset, int len, bool useBuffer)
         {
+            ReadBytes(b.AsSpan(offset, len), useBuffer);
+        }
+
+        // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override sealed void ReadBytes(Span<byte> destination)
+        {
+            ReadBytes(destination, true);
+        }
+
+        // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+        public override sealed void ReadBytes(Span<byte> destination, bool useBuffer)
+        {
+            int offset = 0;
+            int len = destination.Length;
             int available = bufferLength - bufferPosition;
             if (len <= available)
             {
                 // the buffer contains enough data to satisfy this request
                 if (len > 0) // to allow b to be null if len is 0...
                 {
-                    Arrays.Copy(m_buffer, bufferPosition, b, offset, len);
+                    Arrays.Copy(m_buffer, bufferPosition, destination, offset, len);
                 }
                 bufferPosition += len;
             }
@@ -157,7 +173,7 @@ namespace Lucene.Net.Store
                 // the buffer does not have enough data. First serve all we've got.
                 if (available > 0)
                 {
-                    Arrays.Copy(m_buffer, bufferPosition, b, offset, available);
+                    Arrays.Copy(m_buffer, bufferPosition, destination, offset, available);
                     offset += available;
                     len -= available;
                     bufferPosition += available;
@@ -172,12 +188,12 @@ namespace Lucene.Net.Store
                     if (bufferLength < len)
                     {
                         // Throw an exception when refill() could not read len bytes:
-                        Arrays.Copy(m_buffer, 0, b, offset, bufferLength);
+                        Arrays.Copy(m_buffer, 0, destination, offset, bufferLength);
                         throw EOFException.Create("read past EOF: " + this);
                     }
                     else
                     {
-                        Arrays.Copy(m_buffer, 0, b, offset, len);
+                        Arrays.Copy(m_buffer, 0, destination, offset, len);
                         bufferPosition = len;
                     }
                 }
@@ -195,7 +211,8 @@ namespace Lucene.Net.Store
                     {
                         throw EOFException.Create("read past EOF: " + this);
                     }
-                    ReadInternal(b, offset, len);
+                    //ReadInternal(b, offset, len);
+                    ReadInternal(destination.Slice(offset, len));
                     bufferStart = after;
                     bufferPosition = 0;
                     bufferLength = 0; // trigger refill() on read
@@ -399,7 +416,17 @@ namespace Lucene.Net.Store
         /// <param name="b"> the array to read bytes into </param>
         /// <param name="offset"> the offset in the array to start storing bytes </param>
         /// <param name="length"> the number of bytes to read </param>
-        protected abstract void ReadInternal(byte[] b, int offset, int length);
+        protected virtual void ReadInternal(byte[] b, int offset, int length)
+        {
+            ReadInternal(b.AsSpan(offset, length));
+        }
+
+        /// <summary>
+        /// Expert: implements buffer refill. Reads bytes from the current position
+        /// in the input.
+        /// </summary>
+        /// <param name="destination">The span to read bytes into.</param>
+        protected abstract void ReadInternal(Span<byte> destination);
 
         public override sealed long Position => bufferStart + bufferPosition; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 

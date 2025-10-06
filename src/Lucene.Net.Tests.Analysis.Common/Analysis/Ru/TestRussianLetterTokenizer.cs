@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Ru
 
     /// <summary>
     /// Testcase for <seealso cref="RussianLetterTokenizer"/> </summary>
-    /// @deprecated (3.1) Remove this test class in Lucene 5.0 
+    /// @deprecated (3.1) Remove this test class in Lucene 5.0
     [Obsolete("(3.1) Remove this test class in Lucene 5.0")]
     public class TestRussianLetterTokenizer : BaseTokenStreamTestCase
     {

@@ -73,7 +73,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Sets the maximum (approx) MB/sec allowed by all write IO performed by
-        /// <see cref="IndexOutput"/> created with the given <see cref="IOContext.UsageContext"/>. Pass 
+        /// <see cref="IndexOutput"/> created with the given <see cref="IOContext.UsageContext"/>. Pass
         /// <c>null</c> for <paramref name="mbPerSec"/> to have no limit.
         ///
         /// <para/>

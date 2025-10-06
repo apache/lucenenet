@@ -1,4 +1,4 @@
-﻿#if FEATURE_BREAKITERATOR
+#if FEATURE_BREAKITERATOR
 using ICU4N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// tests to pass, then ported to .NET. The only change required was that of the TestEmptyHighlights method
     /// which breaks the sentence in a different place than in the JDK.
     /// <para/>
-    /// Although the ICU <see cref="BreakIterator"/> acts slightly different than the JDK's verision, using the default 
+    /// Although the ICU <see cref="BreakIterator"/> acts slightly different than the JDK's version, using the default
     /// behavior of the ICU <see cref="BreakIterator"/> is the most logical default to use in .NET. It is the same
     /// default that was chosen in Apache Harmony.
     /// </summary>

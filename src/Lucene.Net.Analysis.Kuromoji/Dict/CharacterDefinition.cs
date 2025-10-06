@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs;
+using Lucene.Net.Codecs;
 using Lucene.Net.Store;
 using System;
 using System.IO;
@@ -27,8 +27,9 @@ namespace Lucene.Net.Analysis.Ja.Dict
     /// </summary>
     public sealed class CharacterDefinition
     {
-        public static readonly string FILENAME_SUFFIX = ".dat";
-        public static readonly string HEADER = "kuromoji_cd";
+        public const string FILENAME_SUFFIX = ".dat";
+        public const string HEADER = "kuromoji_cd";
+        // ReSharper disable once ConvertToConstant.Global - VERSION should be a field
         public static readonly int VERSION = 1;
 
         public static readonly int CLASS_COUNT = Enum.GetValues(typeof(CharacterClass)).Length;
@@ -45,18 +46,18 @@ namespace Lucene.Net.Analysis.Ja.Dict
         private readonly bool[] groupMap = new bool[CLASS_COUNT];
 
         // the classes:
-        public static readonly byte NGRAM = (byte)CharacterClass.NGRAM;
-        public static readonly byte DEFAULT = (byte)CharacterClass.DEFAULT;
-        public static readonly byte SPACE = (byte)CharacterClass.SPACE;
-        public static readonly byte SYMBOL = (byte)CharacterClass.SYMBOL;
-        public static readonly byte NUMERIC = (byte)CharacterClass.NUMERIC;
-        public static readonly byte ALPHA = (byte)CharacterClass.ALPHA;
-        public static readonly byte CYRILLIC = (byte)CharacterClass.CYRILLIC;
-        public static readonly byte GREEK = (byte)CharacterClass.GREEK;
-        public static readonly byte HIRAGANA = (byte)CharacterClass.HIRAGANA;
-        public static readonly byte KATAKANA = (byte)CharacterClass.KATAKANA;
-        public static readonly byte KANJI = (byte)CharacterClass.KANJI;
-        public static readonly byte KANJINUMERIC = (byte)CharacterClass.KANJINUMERIC;
+        public const byte NGRAM = (byte)CharacterClass.NGRAM;
+        public const byte DEFAULT = (byte)CharacterClass.DEFAULT;
+        public const byte SPACE = (byte)CharacterClass.SPACE;
+        public const byte SYMBOL = (byte)CharacterClass.SYMBOL;
+        public const byte NUMERIC = (byte)CharacterClass.NUMERIC;
+        public const byte ALPHA = (byte)CharacterClass.ALPHA;
+        public const byte CYRILLIC = (byte)CharacterClass.CYRILLIC;
+        public const byte GREEK = (byte)CharacterClass.GREEK;
+        public const byte HIRAGANA = (byte)CharacterClass.HIRAGANA;
+        public const byte KATAKANA = (byte)CharacterClass.KATAKANA;
+        public const byte KANJI = (byte)CharacterClass.KANJI;
+        public const byte KANJINUMERIC = (byte)CharacterClass.KANJINUMERIC;
 
         private CharacterDefinition()
         {

@@ -41,7 +41,7 @@ namespace Lucene.Net.Codecs.Lucene41
     /// <para/>
     /// See <see cref="Lucene.Net.Codecs.Lucene41"/> package documentation for file format details.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [Obsolete("Only for reading old 4.0 segments")]
     [CodecName("Lucene41")] // LUCENENET specific - using CodecName attribute to ensure the default name passed from subclasses is the same as this class name

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -41,7 +41,7 @@ namespace Lucene.Net.Util
 
             var assembliesToExamine = Support.AssemblyUtils.GetReferencedAssemblies();
 
-            // LUCENENET NOTE: The following hack is not required because we are using abstract factories 
+            // LUCENENET NOTE: The following hack is not required because we are using abstract factories
             // and pure DI to ensure the order of the codecs are always correct during testing.
 
             //// LUCENENET HACK:

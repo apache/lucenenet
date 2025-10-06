@@ -27,23 +27,23 @@ namespace Lucene.Net.Analysis.Pattern
     /// <summary>
     /// <see cref="CharFilter"/> that uses a regular expression for the target of replace string.
     /// The pattern match will be done in each "block" in char stream.
-    /// 
+    ///
     /// <para>
     /// ex1) source="aa  bb aa bb", pattern="(aa)\\s+(bb)" replacement="$1#$2"
     /// output="aa#bb aa#bb"
     /// </para>
-    /// 
+    ///
     /// NOTE: If you produce a phrase that has different length to source string
     /// and the field is used for highlighting for a term of the phrase, you will
     /// face a trouble.
-    /// 
+    ///
     /// <para>
     /// ex2) source="aa123bb", pattern="(aa)\\d+(bb)" replacement="$1 $2"
     /// output="aa bb"
     /// and you want to search bb and highlight it, you will get
     /// highlight snippet="aa1&lt;em&gt;23bb&lt;/em&gt;"
     /// </para>
-    /// 
+    ///
     /// @since Solr 1.5
     /// </summary>
     public class PatternReplaceCharFilter : BaseCharFilter
@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Pattern
         }
 
         /// <summary>
-        /// Replace pattern in input and mark correction offsets. 
+        /// Replace pattern in input and mark correction offsets.
         /// </summary>
         private string ProcessPattern(StringBuilder input)
         {
@@ -151,9 +151,9 @@ namespace Lucene.Net.Analysis.Pattern
                     {
                         if (replacementSize < groupSize)
                         {
-                            // The replacement is smaller. 
-                            // Add the 'backskip' to the next index after the replacement (this is possibly 
-                            // after the end of string, but it's fine -- it just means the last character 
+                            // The replacement is smaller.
+                            // Add the 'backskip' to the next index after the replacement (this is possibly
+                            // after the end of string, but it's fine -- it just means the last character
                             // of the replaced block doesn't reach the end of the original string.
                             cumulative += groupSize - replacementSize;
                             int atIndex = lengthBeforeReplacement + replacementSize;

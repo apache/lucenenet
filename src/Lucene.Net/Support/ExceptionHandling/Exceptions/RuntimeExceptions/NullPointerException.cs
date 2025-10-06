@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -75,7 +75,7 @@ namespace Lucene
     /// There are also other edge cases (i.e. <c>null</c> state in the middle of a method where the null value isn't being passed in)
     /// where throwing <see cref="InvalidOperationException"/> may be more sensible, but this sort of change would need to be tested thoroughly.
     /// </summary>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
@@ -122,7 +122,7 @@ namespace Lucene
 
         /// <summary>
         /// LUCENENET: This overload is for a "direct" translation without passing the name of the argument. In cases where
-        /// there is no message and there is a useful argument name, it would make more senes to call <c>new ArgumentNullExcpetion()</c> directly.
+        /// there is no message and there is a useful argument name, it would make more sense to call <c>new ArgumentNullException()</c> directly.
         /// Since this class is basically intended as training wheels for those who don't want to bother looking up exception types,
         /// this is probably a reasonable default.
         /// </summary>

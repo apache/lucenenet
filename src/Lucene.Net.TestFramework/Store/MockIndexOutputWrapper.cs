@@ -1,8 +1,9 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Threading;
+#nullable enable
 
 namespace Lucene.Net.Store
 {
@@ -56,7 +57,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        private void CheckDiskFull(byte[] b, int offset, DataInput @in, long len)
+        private void CheckDiskFull(ReadOnlySpan<byte> b, int offset, DataInput? @in, long len)
         {
             long freeSpace = dir.maxSize == 0 ? 0 : dir.maxSize - dir.GetSizeInBytes();
             long realUsage = 0;
@@ -75,9 +76,9 @@ namespace Lucene.Net.Store
                 if (freeSpace > 0)
                 {
                     realUsage += freeSpace;
-                    if (b != null)
+                    if (@in is null) // LUCENENET: Inverted condition to use @in, since ReadOnlySpan cannot be null and Empty would not be a reliable check
                     {
-                        @delegate.WriteBytes(b, offset, (int)freeSpace);
+                        @delegate.WriteBytes(b.Slice(offset, (int)freeSpace));
                     }
                     else
                     {
@@ -141,6 +142,9 @@ namespace Lucene.Net.Store
             WriteBytes(singleByte, 0, 1);
         }
 
+        // LUCENENET: For performance reasons, it is better to keep this duplication, for now.
+        // At least until we have migrated many of the callers to call the ReadOnlySpan<char> overload
+        // directly.
         public override void WriteBytes(byte[] b, int offset, int len)
         {
             CheckCrashed();
@@ -156,6 +160,39 @@ namespace Lucene.Net.Store
             else
             {
                 @delegate.WriteBytes(b, offset, len);
+            }
+
+            dir.MaybeThrowDeterministicException();
+
+            if (first)
+            {
+                // Maybe throw random exception; only do this on first
+                // write to a new file:
+                first = false;
+                dir.MaybeThrowIOException(name);
+            }
+        }
+
+        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        public override void WriteBytes(ReadOnlySpan<byte> source)
+        {
+            int len = source.Length;
+            CheckCrashed();
+            CheckDiskFull(source, 0, null, len);
+
+            if (dir.randomState.Next(200) == 0)
+            {
+                int half = len / 2;
+                //@delegate.WriteBytes(b, offset, half);
+                @delegate.WriteBytes(source.Slice(/*offset*/ 0, half));
+                Thread.Yield();
+                //@delegate.WriteBytes(b, offset + half, len - half);
+                @delegate.WriteBytes(source.Slice(/*offset +*/ half, len - half));
+            }
+            else
+            {
+                //@delegate.WriteBytes(b, offset, len);
+                @delegate.WriteBytes(source);
             }
 
             dir.MaybeThrowDeterministicException();

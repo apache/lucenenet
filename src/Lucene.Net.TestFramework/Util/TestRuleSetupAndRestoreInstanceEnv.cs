@@ -24,7 +24,7 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Prepares and restores <seealso cref="LuceneTestCase"/> at instance level 
+    /// Prepares and restores <seealso cref="LuceneTestCase"/> at instance level
     /// (fine grained junk that doesn't fit anywhere else).
     /// </summary>
     internal sealed class TestRuleSetupAndRestoreInstanceEnv : AbstractBeforeAfterRule

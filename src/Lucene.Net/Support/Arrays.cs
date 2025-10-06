@@ -1,11 +1,13 @@
-﻿using J2N.Collections;
+using J2N.Collections;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+#if NETSTANDARD2_0_OR_GREATER
 using System.Runtime.InteropServices;
+#endif
 using System.Text;
 
 namespace Lucene.Net.Support
@@ -27,10 +29,10 @@ namespace Lucene.Net.Support
      * limitations under the License.
      */
 
-    internal static class Arrays
+    internal static partial class Arrays
     {
         /// <summary>
-        /// Compares the entire members of one array whith the other one.
+        /// Compares the entire members of one array with the other one.
         /// </summary>
         /// <param name="a">The array to be compared.</param>
         /// <param name="b">The array to be compared with.</param>
@@ -165,7 +167,7 @@ namespace Lucene.Net.Support
         /// <b>Usage Note:</b> This implementation uses the most efficient (known) method for copying the
         /// array based on the data type and platform.
         /// </summary>
-        /// <typeparam name="T">The array type.</typeparam>
+        /// <typeparam name="T">The array element type.</typeparam>
         /// <param name="sourceArray">The Array that contains the data to copy.</param>
         /// <param name="destinationArray">The Array that receives the data.</param>
         /// <param name="length">A 32-bit integer that represents the number of elements to copy.</param>
@@ -193,7 +195,7 @@ namespace Lucene.Net.Support
         /// <b>Usage Note:</b> This implementation uses the most efficient (known) method for copying the
         /// array based on the data type and platform.
         /// </summary>
-        /// <typeparam name="T">The array type.</typeparam>
+        /// <typeparam name="T">The array element type.</typeparam>
         /// <param name="sourceArray">The Array that contains the data to copy.</param>
         /// <param name="sourceIndex">A 32-bit integer that represents the index in the
         /// <paramref name="sourceArray"/> at which copying begins.</param>
@@ -389,7 +391,7 @@ namespace Lucene.Net.Support
                 {
                     fixed (short* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
                     {
-                        int size = sizeof(short);
+                        const int size = sizeof(short);
                         long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
                         long sourceBytesToCopy = length * size;
                         // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
@@ -408,7 +410,7 @@ namespace Lucene.Net.Support
                 {
                     fixed (ushort* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
                     {
-                        int size = sizeof(ushort);
+                        const int size = sizeof(ushort);
                         long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
                         long sourceBytesToCopy = length * size;
                         // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
@@ -427,7 +429,7 @@ namespace Lucene.Net.Support
                 {
                     fixed (int* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
                     {
-                        int size = sizeof(int);
+                        const int size = sizeof(int);
                         long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
                         long sourceBytesToCopy = length * size;
                         // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
@@ -446,7 +448,7 @@ namespace Lucene.Net.Support
                 {
                     fixed (uint* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
                     {
-                        int size = sizeof(uint);
+                        const int size = sizeof(uint);
                         long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
                         long sourceBytesToCopy = length * size;
                         // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
@@ -465,7 +467,7 @@ namespace Lucene.Net.Support
                 {
                     fixed (long* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
                     {
-                        int size = sizeof(long);
+                        const int size = sizeof(long);
                         long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
                         long sourceBytesToCopy = length * size;
                         // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
@@ -484,7 +486,7 @@ namespace Lucene.Net.Support
                 {
                     fixed (ulong* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
                     {
-                        int size = sizeof(ulong);
+                        const int size = sizeof(ulong);
                         long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
                         long sourceBytesToCopy = length * size;
                         // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
@@ -503,7 +505,7 @@ namespace Lucene.Net.Support
                 {
                     fixed (float* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
                     {
-                        int size = sizeof(float);
+                        const int size = sizeof(float);
                         long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
                         long sourceBytesToCopy = length * size;
                         // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
@@ -522,7 +524,7 @@ namespace Lucene.Net.Support
                 {
                     fixed (double* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
                     {
-                        int size = sizeof(double);
+                        const int size = sizeof(double);
                         long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
                         long sourceBytesToCopy = length * size;
                         // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
@@ -541,7 +543,7 @@ namespace Lucene.Net.Support
                 {
                     fixed (char* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
                     {
-                        int size = sizeof(char);
+                        const int size = sizeof(char);
                         long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
                         long sourceBytesToCopy = length * size;
                         // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
@@ -560,7 +562,7 @@ namespace Lucene.Net.Support
                 {
                     fixed (bool* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
                     {
-                        int size = sizeof(bool);
+                        const int size = sizeof(bool);
                         long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
                         long sourceBytesToCopy = length * size;
                         // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
@@ -618,35 +620,6 @@ namespace Lucene.Net.Support
             {
                 sb.Append(", "); //$NON-NLS-1$
                 sb.AppendFormat(J2N.Text.StringFormatter.InvariantCulture, "{0}", array[i]);
-            }
-            sb.Append(']');
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// Creates a <see cref="string"/> representation of the array passed.
-        /// The result is surrounded by brackets <c>"[]"</c>, each
-        /// element is converted to a <see cref="string"/> via the
-        /// <paramref name="provider"/> and separated by <c>", "</c>. If
-        /// the array is <c>null</c>, then <c>"null"</c> is returned.
-        /// </summary>
-        /// <typeparam name="T">The type of array element.</typeparam>
-        /// <param name="array">The array to convert.</param>
-        /// <param name="provider">A <see cref="IFormatProvider"/> instance that supplies the culture formatting information.</param>
-        /// <returns>The converted array string.</returns>
-        public static string ToString<T>(T[] array, IFormatProvider provider)
-        {
-            if (array is null)
-                return "null"; //$NON-NLS-1$
-            if (array.Length == 0)
-                return "[]"; //$NON-NLS-1$
-            StringBuilder sb = new StringBuilder(2 + array.Length * 4);
-            sb.Append('[');
-            sb.AppendFormat(provider, "{0}", array[0]);
-            for (int i = 1; i < array.Length; i++)
-            {
-                sb.Append(", "); //$NON-NLS-1$
-                sb.AppendFormat(provider, "{0}", array[i]);
             }
             sb.Append(']');
             return sb.ToString();

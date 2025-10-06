@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -28,7 +28,7 @@ namespace Lucene.Net.Facet
 
     /// <summary>
     /// Add an instance of this to your <see cref="Document"/> for every facet label.
-    /// 
+    ///
     /// <para>
     /// <b>NOTE:</b> you must call <see cref="FacetsConfig.Build(Document)"/> before
     /// you add the document to <see cref="Index.IndexWriter"/>.
@@ -56,7 +56,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Creates the this from <paramref name="dim"/> and
-        /// <paramref name="path"/>. 
+        /// <paramref name="path"/>.
         /// </summary>
         public FacetField(string dim, params string[] path)
             : base("dummy", TYPE)
@@ -81,8 +81,8 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Verifies the label is not null or empty string.
-        /// 
-        ///  @lucene.internal 
+        ///
+        ///  @lucene.internal
         /// </summary>
         public static void VerifyLabel(string label)
         {

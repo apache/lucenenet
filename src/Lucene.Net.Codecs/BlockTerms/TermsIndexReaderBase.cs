@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// indexed terms (many pairs of <see cref="BytesRef"/> text + long
     /// fileOffset), and then this reader must be able to
     /// retrieve the nearest index term to a provided term
-    /// text. 
+    /// text.
     /// <para/>
     /// @lucene.experimental
     /// </summary>
@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         /// </summary>
         public abstract class FieldIndexEnum
         {
-            /// <summary> 
+            /// <summary>
             /// Seeks to "largest" indexed term that's less than or equal
             /// to term; returns file pointer index (into the main
             /// terms index file) for that term.
@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             public abstract long Seek(long ord);
 
             /// <summary></summary>
-            /// <remarks>Only implemented if <see cref="TermsIndexReaderBase.SupportsOrd"/> 
+            /// <remarks>Only implemented if <see cref="TermsIndexReaderBase.SupportsOrd"/>
             /// returns <c>true</c></remarks>
             /// <returns></returns>
             public abstract long Ord { get; }

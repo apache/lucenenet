@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using System;
 using Lucene.Net.Diagnostics;
 
@@ -160,10 +160,13 @@ namespace Lucene.Net.Store
             currentBuffer[bufferPosition++] = b;
         }
 
-        public override void WriteBytes(byte[] b, int offset, int len)
+        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        public override void WriteBytes(ReadOnlySpan<byte> source)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(b != null);
-            crc.Update(b, offset, len);
+            int offset = 0;
+            int len = source.Length;
+            //if (Debugging.AssertsEnabled) Debugging.Assert(b != null); // LUCENENET: Not needed
+            crc.Update(source);
             while (len > 0)
             {
                 if (bufferPosition == bufferLength)
@@ -174,7 +177,7 @@ namespace Lucene.Net.Store
 
                 int remainInBuffer = currentBuffer.Length - bufferPosition;
                 int bytesToCopy = len < remainInBuffer ? len : remainInBuffer;
-                Arrays.Copy(b, offset, currentBuffer, bufferPosition, bytesToCopy);
+                Arrays.Copy(source, offset, currentBuffer, bufferPosition, bytesToCopy);
                 offset += bytesToCopy;
                 len -= bytesToCopy;
                 bufferPosition += bytesToCopy;

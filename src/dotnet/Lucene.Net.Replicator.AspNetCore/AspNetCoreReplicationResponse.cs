@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Replicator.Http.Abstractions;
+using Lucene.Net.Replicator.Http.Abstractions;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 
@@ -57,16 +57,5 @@ namespace Lucene.Net.Replicator.AspNetCore
         /// This simply returns the <see cref="HttpResponse.Body"/>.
         /// </remarks>
         public Stream Body => response.Body;
-
-        /// <summary>
-        /// Flushes the reponse to the underlying response stream.
-        /// </summary>
-        /// <remarks>
-        /// This simply calls <see cref="Stream.Flush"/> on the <see cref="HttpResponse.Body"/>.
-        /// </remarks>
-        public void Flush()
-        {
-            response.Body.Flush();
-        }
     }
 }

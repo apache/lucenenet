@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using J2N.Collections;
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
@@ -224,7 +224,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                ((ISet<string>)set).ExceptWith(new CharArraySet(TEST_VERSION_CURRENT, new [] { NOT_IN_SET }, true));
+                ((ISet<string>)set).ExceptWith(new CharArraySet(TEST_VERSION_CURRENT, new[] { NOT_IN_SET }, true));
                 fail("Modified unmodifiable set");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -235,7 +235,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                set.UnionWith(new[] { NOT_IN_SET});
+                set.UnionWith(new[] { NOT_IN_SET });
                 fail("Modified unmodifiable set");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -273,7 +273,7 @@ namespace Lucene.Net.Analysis.Util
             //    CharArraySet.UnmodifiableSet(null);
             //    fail("can not make null unmodifiable");
             //}
-            //catch (ArgumentNullException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            //catch (ArgumentNullException) // NOTE: In .NET we throw an ArgumentException, not a NullReferenceException
             //{
             //    // expected
             //}
@@ -341,7 +341,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// @deprecated (3.1) remove this test when lucene 3.0 "broken unicode 4" support is
-        ///             no longer needed. 
+        ///             no longer needed.
         [Test]
         [Obsolete("(3.1) remove this test when lucene 3.0 'broken unicode 4' support is no longer needed.")]
         public virtual void TestSupplementaryCharsBWCompat()
@@ -375,7 +375,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// @deprecated (3.1) remove this test when lucene 3.0 "broken unicode 4" support is
-        ///             no longer needed. 
+        ///             no longer needed.
         [Test]
         [Obsolete("(3.1) remove this test when lucene 3.0 'broken unicode 4' support is no longer needed.")]
         public virtual void TestSingleHighSurrogateBWComapt()
@@ -417,7 +417,7 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestCopyCharArraySetBWCompat()
         {
-            CharArraySet setIngoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
+            CharArraySet setIgnoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
             CharArraySet setCaseSensitive = new CharArraySet(TEST_VERSION_CURRENT, 10, false);
 
             IList<string> stopwords = TEST_STOP_WORDS;
@@ -426,15 +426,15 @@ namespace Lucene.Net.Analysis.Util
             {
                 stopwordsUpper.Add(@string.ToUpperInvariant());
             }
-            setIngoreCase.addAll(TEST_STOP_WORDS);
-            setIngoreCase.Add(Convert.ToInt32(1));
+            setIgnoreCase.addAll(TEST_STOP_WORDS);
+            setIgnoreCase.Add(Convert.ToInt32(1));
             setCaseSensitive.addAll(TEST_STOP_WORDS);
             setCaseSensitive.Add(Convert.ToInt32(1));
 
-            CharArraySet copy = CharArraySet.Copy(TEST_VERSION_CURRENT, setIngoreCase);
+            CharArraySet copy = CharArraySet.Copy(TEST_VERSION_CURRENT, setIgnoreCase);
             CharArraySet copyCaseSens = CharArraySet.Copy(TEST_VERSION_CURRENT, setCaseSensitive);
 
-            assertEquals(setIngoreCase.size(), copy.size());
+            assertEquals(setIgnoreCase.size(), copy.size());
             assertEquals(setCaseSensitive.size(), copy.size());
 
             assertTrue(copy.containsAll(stopwords));
@@ -458,7 +458,7 @@ namespace Lucene.Net.Analysis.Util
             // new added terms are not in the source set
             foreach (string @string in newWords)
             {
-                assertFalse(setIngoreCase.contains(@string));
+                assertFalse(setIgnoreCase.contains(@string));
                 assertFalse(setCaseSensitive.contains(@string));
 
             }
@@ -470,7 +470,7 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestCopyCharArraySet()
         {
-            CharArraySet setIngoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
+            CharArraySet setIgnoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
             CharArraySet setCaseSensitive = new CharArraySet(TEST_VERSION_CURRENT, 10, false);
 
             IList<string> stopwords = TEST_STOP_WORDS;
@@ -479,15 +479,15 @@ namespace Lucene.Net.Analysis.Util
             {
                 stopwordsUpper.Add(@string.ToUpperInvariant());
             }
-            setIngoreCase.addAll(TEST_STOP_WORDS);
-            setIngoreCase.Add(Convert.ToInt32(1));
+            setIgnoreCase.addAll(TEST_STOP_WORDS);
+            setIgnoreCase.Add(Convert.ToInt32(1));
             setCaseSensitive.addAll(TEST_STOP_WORDS);
             setCaseSensitive.Add(Convert.ToInt32(1));
 
-            CharArraySet copy = CharArraySet.Copy(TEST_VERSION_CURRENT, setIngoreCase);
+            CharArraySet copy = CharArraySet.Copy(TEST_VERSION_CURRENT, setIgnoreCase);
             CharArraySet copyCaseSens = CharArraySet.Copy(TEST_VERSION_CURRENT, setCaseSensitive);
 
-            assertEquals(setIngoreCase.size(), copy.size());
+            assertEquals(setIgnoreCase.size(), copy.size());
             assertEquals(setCaseSensitive.size(), copy.size());
 
             assertTrue(copy.containsAll(stopwords));
@@ -511,7 +511,7 @@ namespace Lucene.Net.Analysis.Util
             // new added terms are not in the source set
             foreach (string @string in newWords)
             {
-                assertFalse(setIngoreCase.contains(@string));
+                assertFalse(setIgnoreCase.contains(@string));
                 assertFalse(setCaseSensitive.contains(@string));
             }
         }
@@ -600,7 +600,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Contains((char[])null, 0, 10);
                 fail("null value must raise NPE");
             }
-            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentException, not a NullReferenceException
             {
             }
             try
@@ -608,7 +608,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Contains((ICharSequence)null);
                 fail("null value must raise NPE");
             }
-            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentException, not a NullReferenceException
             {
             }
             // LUCENENET Specific test for string (since it does not implement ICharSequence)
@@ -617,7 +617,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Contains((string)null);
                 fail("null value must raise NPE");
             }
-            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentException, not a NullReferenceException
             {
             }
             try
@@ -625,7 +625,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Contains((object)null);
                 fail("null value must raise NPE");
             }
-            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentException, not a NullReferenceException
             {
             }
         }
@@ -1376,7 +1376,7 @@ namespace Lucene.Net.Analysis.Util
         [Test, LuceneNetSpecific]
         public virtual void TestToCharArraySet_CharArraySet_BWCompat()
         {
-            CharArraySet setIngoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
+            CharArraySet setIgnoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
             CharArraySet setCaseSensitive = new CharArraySet(TEST_VERSION_CURRENT, 10, false);
 
             IList<string> stopwords = TEST_STOP_WORDS;
@@ -1385,15 +1385,15 @@ namespace Lucene.Net.Analysis.Util
             {
                 stopwordsUpper.Add(@string.ToUpperInvariant());
             }
-            setIngoreCase.UnionWith(TEST_STOP_WORDS);
-            setIngoreCase.Add(Convert.ToInt32(1));
+            setIgnoreCase.UnionWith(TEST_STOP_WORDS);
+            setIgnoreCase.Add(Convert.ToInt32(1));
             setCaseSensitive.UnionWith(TEST_STOP_WORDS);
             setCaseSensitive.Add(Convert.ToInt32(1));
 
-            CharArraySet copy = setIngoreCase.ToCharArraySet(TEST_VERSION_CURRENT);
+            CharArraySet copy = setIgnoreCase.ToCharArraySet(TEST_VERSION_CURRENT);
             CharArraySet copyCaseSens = setCaseSensitive.ToCharArraySet(TEST_VERSION_CURRENT);
 
-            assertEquals(setIngoreCase.Count, copy.Count);
+            assertEquals(setIgnoreCase.Count, copy.Count);
             assertEquals(setCaseSensitive.Count, copy.Count);
 
             assertTrue(copy.IsSupersetOf(stopwords));
@@ -1417,7 +1417,7 @@ namespace Lucene.Net.Analysis.Util
             // new added terms are not in the source set
             foreach (string @string in newWords)
             {
-                assertFalse(setIngoreCase.Contains(@string));
+                assertFalse(setIgnoreCase.Contains(@string));
                 assertFalse(setCaseSensitive.Contains(@string));
 
             }
@@ -1429,7 +1429,7 @@ namespace Lucene.Net.Analysis.Util
         [Test, LuceneNetSpecific]
         public virtual void TestToCharArraySet_CharArraySet()
         {
-            CharArraySet setIngoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
+            CharArraySet setIgnoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
             CharArraySet setCaseSensitive = new CharArraySet(TEST_VERSION_CURRENT, 10, false);
 
             IList<string> stopwords = TEST_STOP_WORDS;
@@ -1438,15 +1438,15 @@ namespace Lucene.Net.Analysis.Util
             {
                 stopwordsUpper.Add(@string.ToUpperInvariant());
             }
-            setIngoreCase.UnionWith(TEST_STOP_WORDS);
-            setIngoreCase.Add(Convert.ToInt32(1));
+            setIgnoreCase.UnionWith(TEST_STOP_WORDS);
+            setIgnoreCase.Add(Convert.ToInt32(1));
             setCaseSensitive.UnionWith(TEST_STOP_WORDS);
             setCaseSensitive.Add(Convert.ToInt32(1));
 
-            CharArraySet copy = CharArraySet.Copy(TEST_VERSION_CURRENT, setIngoreCase);
+            CharArraySet copy = CharArraySet.Copy(TEST_VERSION_CURRENT, setIgnoreCase);
             CharArraySet copyCaseSens = CharArraySet.Copy(TEST_VERSION_CURRENT, setCaseSensitive);
 
-            assertEquals(setIngoreCase.Count, copy.Count);
+            assertEquals(setIgnoreCase.Count, copy.Count);
             assertEquals(setCaseSensitive.Count, copy.Count);
 
             assertTrue(copy.IsSupersetOf(stopwords));
@@ -1470,7 +1470,7 @@ namespace Lucene.Net.Analysis.Util
             // new added terms are not in the source set
             foreach (string @string in newWords)
             {
-                assertFalse(setIngoreCase.Contains(@string));
+                assertFalse(setIgnoreCase.Contains(@string));
                 assertFalse(setCaseSensitive.Contains(@string));
             }
         }
@@ -1481,7 +1481,7 @@ namespace Lucene.Net.Analysis.Util
         [Test, LuceneNetSpecific]
         public virtual void TestToCharArray_MatchVersion_IgnoreCase_SetCharArray()
         {
-            CharArraySet setIngoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
+            CharArraySet setIgnoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
             CharArraySet setCaseSensitive = new CharArraySet(TEST_VERSION_CURRENT, 10, false);
 
             IList<string> stopwords = TEST_STOP_WORDS;
@@ -1490,15 +1490,15 @@ namespace Lucene.Net.Analysis.Util
             {
                 stopwordsUpper.Add(@string.ToUpperInvariant());
             }
-            setIngoreCase.UnionWith(TEST_STOP_WORDS);
-            setIngoreCase.Add(Convert.ToInt32(1));
+            setIgnoreCase.UnionWith(TEST_STOP_WORDS);
+            setIgnoreCase.Add(Convert.ToInt32(1));
             setCaseSensitive.UnionWith(TEST_STOP_WORDS);
             setCaseSensitive.Add(Convert.ToInt32(1));
 
             CharArraySet copy = setCaseSensitive.ToCharArraySet(TEST_VERSION_CURRENT, ignoreCase: true);
             CharArraySet copyCaseSens = setCaseSensitive.ToCharArraySet(TEST_VERSION_CURRENT, ignoreCase: false);
 
-            assertEquals(setIngoreCase.Count, copy.Count);
+            assertEquals(setIgnoreCase.Count, copy.Count);
             assertEquals(setCaseSensitive.Count, copy.Count);
 
             assertTrue(copy.IsSupersetOf(stopwords));
@@ -1522,7 +1522,7 @@ namespace Lucene.Net.Analysis.Util
             // new added terms are not in the source set
             foreach (string @string in newWords)
             {
-                assertFalse(setIngoreCase.Contains(@string));
+                assertFalse(setIgnoreCase.Contains(@string));
                 assertFalse(setCaseSensitive.Contains(@string));
             }
         }

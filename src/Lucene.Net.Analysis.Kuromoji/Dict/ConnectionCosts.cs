@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs;
+using Lucene.Net.Codecs;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using System;
@@ -28,8 +28,9 @@ namespace Lucene.Net.Analysis.Ja.Dict
     /// </summary>
     public sealed class ConnectionCosts
     {
-        public static readonly string FILENAME_SUFFIX = ".dat";
-        public static readonly string HEADER = "kuromoji_cc";
+        public const string FILENAME_SUFFIX = ".dat";
+        public const string HEADER = "kuromoji_cc";
+        // ReSharper disable once ConvertToConstant.Global - VERSION should be a field
         public static readonly int VERSION = 1;
 
         private readonly short[][] costs; // array is backward IDs first since get is called using the same backward ID consecutively. maybe doesn't matter.

@@ -1,4 +1,4 @@
-﻿using J2N.Numerics;
+using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -46,32 +46,32 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// At most 700% memory overhead, always select a direct implementation.
         /// </summary>
-        public static float FASTEST = 7f;
+        public const float FASTEST = 7f;
 
         /// <summary>
         /// At most 50% memory overhead, always select a reasonably fast implementation.
         /// </summary>
-        public static float FAST = 0.5f;
+        public const float FAST = 0.5f;
 
         /// <summary>
         /// At most 20% memory overhead.
         /// </summary>
-        public static float DEFAULT = 0.2f;
+        public const float DEFAULT = 0.2f;
 
         /// <summary>
         /// No memory overhead at all, but the returned implementation may be slow.
         /// </summary>
-        public static float COMPACT = 0f;
+        public const float COMPACT = 0f;
 
         /// <summary>
         /// Default amount of memory to use for bulk operations.
         /// </summary>
-        public static int DEFAULT_BUFFER_SIZE = 1024; // 1K
+        public const int DEFAULT_BUFFER_SIZE = 1024; // 1K
 
-        public static string CODEC_NAME = "PackedInts";
-        public static int VERSION_START = 0; // PackedInts were long-aligned
-        public static int VERSION_BYTE_ALIGNED = 1;
-        public static int VERSION_CURRENT = VERSION_BYTE_ALIGNED;
+        public const string CODEC_NAME = "PackedInts";
+        public static readonly int VERSION_START = 0; // PackedInts were long-aligned
+        public static readonly int VERSION_BYTE_ALIGNED = 1;
+        public static readonly int VERSION_CURRENT = VERSION_BYTE_ALIGNED;
 
         /// <summary>
         /// Check the validity of a version number.

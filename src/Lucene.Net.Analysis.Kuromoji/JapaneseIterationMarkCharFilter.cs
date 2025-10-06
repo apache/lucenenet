@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
 using System.IO;
 
@@ -42,10 +42,10 @@ namespace Lucene.Net.Analysis.Ja
     public class JapaneseIterationMarkCharFilter : CharFilter
     {
         /// <summary>Normalize kanji iteration marks by default</summary>
-        public static readonly bool NORMALIZE_KANJI_DEFAULT = true;
+        public const bool NORMALIZE_KANJI_DEFAULT = true;
 
         /// <summary>Normalize kana iteration marks by default</summary>
-        public static readonly bool NORMALIZE_KANA_DEFAULT = true;
+        public const bool NORMALIZE_KANA_DEFAULT = true;
 
         private const char KANJI_ITERATION_MARK = '\u3005';           // 々
 
@@ -167,17 +167,17 @@ namespace Lucene.Net.Analysis.Ja
         /// Reads a specified maximum number of characters from the current reader and writes the data to a buffer, beginning at the specified index.
         /// </summary>
         /// <param name="buffer">
-        /// When this method returns, contains the specified character array with the values between index and (index + count - 1) 
+        /// When this method returns, contains the specified character array with the values between index and (index + count - 1)
         /// replaced by the characters read from the current source.</param>
         /// <param name="offset">
         /// The position in buffer at which to begin writing.
         /// </param>
         /// <param name="length">
-        /// The maximum number of characters to read. If the end of the reader is reached before the specified number of characters is 
+        /// The maximum number of characters to read. If the end of the reader is reached before the specified number of characters is
         /// read into the buffer, the method returns.
         /// </param>
         /// <returns>
-        /// The number of characters that have been read. The number will be less than or equal to count, depending on whether the data is 
+        /// The number of characters that have been read. The number will be less than or equal to count, depending on whether the data is
         /// available within the reader. This method returns 0 (zero) if it is called when no more characters are left to read.
         /// </returns>
         public override int Read(char[] buffer, int offset, int length)

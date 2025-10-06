@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Fa
         private readonly ICharTermAttribute termAtt;
 
         public PersianNormalizationFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
         }

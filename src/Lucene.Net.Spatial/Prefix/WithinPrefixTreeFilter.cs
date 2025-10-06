@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
@@ -62,7 +62,7 @@ namespace Lucene.Net.Spatial.Prefix
         /// </summary>
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
-        public WithinPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, 
+        public WithinPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid,
                                       int detailLevel, int prefixGridScanLevel, double queryBuffer)
             : this(queryShape, fieldName, grid, detailLevel, prefixGridScanLevel, bufferedQueryShape: null)
         {
@@ -78,7 +78,7 @@ namespace Lucene.Net.Spatial.Prefix
 
         // LUCENENET specific - subclasses can use this class to override the behavior of
         // BufferShape method in a way that's safe and called from the subclass constructor
-        protected WithinPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, 
+        protected WithinPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid,
                                       int detailLevel, int prefixGridScanLevel, IShape? bufferedQueryShape)
             : base(queryShape, fieldName, grid, detailLevel, prefixGridScanLevel)
         {
@@ -167,7 +167,7 @@ namespace Lucene.Net.Spatial.Prefix
             private FixedBitSet? outside;
             private SpatialRelation visitRelation;
 
-            public VisitorTemplateAnonymousClass(WithinPrefixTreeFilter outerInstance, AtomicReaderContext context, 
+            public VisitorTemplateAnonymousClass(WithinPrefixTreeFilter outerInstance, AtomicReaderContext context,
                 IBits? acceptDocs, bool hasIndexedLeaves)
                 : base(outerInstance, context, acceptDocs, hasIndexedLeaves)
             {

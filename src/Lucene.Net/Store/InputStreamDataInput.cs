@@ -1,4 +1,5 @@
-﻿using System;
+using Lucene.Net.Support.IO;
+using System;
 using System.IO;
 using System.Threading;
 
@@ -64,11 +65,15 @@ namespace Lucene.Net.Store
             return (byte)v;
         }
 
-        public override void ReadBytes(byte[] b, int offset, int len)
+        // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+        public override void ReadBytes(Span<byte> destination)
         {
+            int offset = 0;
+            int len = destination.Length;
             while (len > 0)
             {
-                int cnt = _is.Read(b, offset, len);
+                //int cnt = _is.Read(b, offset, len);
+                int cnt = _is.Read(destination.Slice(offset, len));
                 if (cnt < 0)
                 {
                     // Partially read the input, but no more data available in the stream.

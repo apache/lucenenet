@@ -1,5 +1,5 @@
 // LUCENENET specific - excluding this class in favor of DirectoryNotFoundException,
-// although that means we need to catch DirectoryNotFoundException everywhere that 
+// although that means we need to catch DirectoryNotFoundException everywhere that
 // FileNotFoundException is being caught (because it is a superclass) to be sure we have the same behavior.
 
 //using System;
@@ -28,7 +28,7 @@
 //    /// This exception is thrown when you try to list a
 //    /// non-existent directory.
 //    /// </summary>
-//    // LUCENENET: It is no longer good practice to use binary serialization. 
+//    // LUCENENET: It is no longer good practice to use binary serialization.
 //    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 //#if FEATURE_SERIALIZABLE_EXCEPTIONS
 //    [Serializable]

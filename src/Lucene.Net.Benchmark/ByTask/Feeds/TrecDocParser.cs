@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,7 +34,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public enum ParsePathType { GOV2, FBIS, FT, FR94, LATIMES, UNKNOWN }
 
         /// <summary>trec parser type used for unknown extensions</summary>
-        public static readonly ParsePathType DEFAULT_PATH_TYPE = ParsePathType.GOV2;
+        public const ParsePathType DEFAULT_PATH_TYPE = ParsePathType.GOV2;
 
         internal static readonly IDictionary<ParsePathType, TrecDocParser> pathType2parser = new Dictionary<ParsePathType, TrecDocParser>() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {

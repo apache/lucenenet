@@ -1,4 +1,4 @@
-﻿using J2N.IO;
+using J2N.IO;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -68,8 +68,9 @@ namespace Egothor.Stemmer
     /// </summary>
     public class MultiTrie : Trie
     {
-        internal static char EOM = '*';
-        internal static string EOM_NODE = "" + EOM;
+        // LUCENENET specific - made const
+        internal const char EOM = '*';
+        internal const string EOM_NODE = "*"; // was `= "" + EOM;` but that is not a compile-time constant
 
         protected IList<Trie> m_tries = new JCG.List<Trie>();
 

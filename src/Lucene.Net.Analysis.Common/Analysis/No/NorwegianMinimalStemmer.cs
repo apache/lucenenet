@@ -21,10 +21,10 @@ namespace Lucene.Net.Analysis.No
      * limitations under the License.
      */
 
-    /* 
+    /*
      * This algorithm is updated based on code located at:
      * http://members.unine.ch/jacques.savoy/clef/
-     * 
+     *
      * Full copyright for that code follows:
      */
 
@@ -32,26 +32,26 @@ namespace Lucene.Net.Analysis.No
      * Copyright (c) 2005, Jacques Savoy
      * All rights reserved.
      *
-     * Redistribution and use in source and binary forms, with or without 
+     * Redistribution and use in source and binary forms, with or without
      * modification, are permitted provided that the following conditions are met:
      *
-     * Redistributions of source code must retain the above copyright notice, this 
-     * list of conditions and the following disclaimer. Redistributions in binary 
+     * Redistributions of source code must retain the above copyright notice, this
+     * list of conditions and the following disclaimer. Redistributions in binary
      * form must reproduce the above copyright notice, this list of conditions and
-     * the following disclaimer in the documentation and/or other materials 
-     * provided with the distribution. Neither the name of the author nor the names 
-     * of its contributors may be used to endorse or promote products derived from 
+     * the following disclaimer in the documentation and/or other materials
+     * provided with the distribution. Neither the name of the author nor the names
+     * of its contributors may be used to endorse or promote products derived from
      * this software without specific prior written permission.
-     * 
-     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-     * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-     * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-     * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE 
-     * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-     * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-     * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-     * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-     * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+     *
+     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+     * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+     * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+     * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+     * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+     * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+     * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+     * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+     * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
      * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
      * POSSIBILITY OF SUCH DAMAGE.
      */
@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.No
 
         /// <summary>
         /// Creates a new <see cref="NorwegianMinimalStemmer"/> </summary>
-        /// <param name="flags"> set to <see cref="NorwegianStandard.BOKMAAL"/>, 
+        /// <param name="flags"> set to <see cref="NorwegianStandard.BOKMAAL"/>,
         ///                     <see cref="NorwegianStandard.NYNORSK"/>, or both. </param>
         public NorwegianMinimalStemmer(NorwegianStandard flags)
         {
@@ -77,6 +77,7 @@ namespace Lucene.Net.Analysis.No
             {
                 throw new ArgumentException("invalid flags");
             }
+
             //useBokmaal = (flags & NorwegianStandard.BOKMAAL) != 0; // LUCENENET: Never read
             useNynorsk = (flags & NorwegianStandard.NYNORSK) != 0;
         }
@@ -89,12 +90,20 @@ namespace Lucene.Net.Analysis.No
                 len--;
             }
 
-            if (len > 5 && (StemmerUtil.EndsWith(s, len, "ene") || (StemmerUtil.EndsWith(s, len, "ane") && useNynorsk))) // masc pl definite (gut-ane) -  masc/fem/neutr pl definite (hus-ene)
+            if (len > 5 &&
+                (StemmerUtil.EndsWith(s, len, "ene") ||  // masc/fem/neutr pl definite (hus-ene)
+                (StemmerUtil.EndsWith(s, len, "ane") &&
+                useNynorsk)))                            // masc pl definite (gut-ane)
             {
                 return len - 3;
             }
 
-            if (len > 4 && (StemmerUtil.EndsWith(s, len, "er") || StemmerUtil.EndsWith(s, len, "en") || StemmerUtil.EndsWith(s, len, "et") || (StemmerUtil.EndsWith(s, len, "ar") && useNynorsk))) // masc pl indefinite -  neutr definite -  masc/fem definite -  masc/fem indefinite
+            if (len > 4 &&
+                (StemmerUtil.EndsWith(s, len, "er") ||  // masc/fem indefinite
+                StemmerUtil.EndsWith(s, len, "en") ||   // masc/fem definite
+                StemmerUtil.EndsWith(s, len, "et") ||   // neutr definite
+                (StemmerUtil.EndsWith(s, len, "ar") &&
+                useNynorsk)))                           // masc pl indefinite
             {
                 return len - 2;
             }

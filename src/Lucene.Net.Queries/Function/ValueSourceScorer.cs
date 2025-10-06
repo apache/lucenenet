@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
@@ -22,11 +22,11 @@ namespace Lucene.Net.Queries.Function
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// <see cref="Scorer"/> which returns the result of <see cref="FunctionValues.SingleVal(int)"/> as
     /// the score for a document.
-    /// 
+    ///
     /// When overriding this class, be aware that ValueSourceScorer constructor is calling
     /// its private SetCheckDeletesInternal method as opposed to virtual SetCheckDeletes method.
     /// This is done to avoid virtual call in constructor. You can call your own private

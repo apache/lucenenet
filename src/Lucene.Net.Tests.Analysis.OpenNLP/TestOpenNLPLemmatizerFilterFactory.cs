@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 8.2.0
+// Lucene version compatibility level 8.2.0
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
@@ -26,48 +26,48 @@ namespace Lucene.Net.Analysis.OpenNlp
 
     public class TestOpenNLPLemmatizerFilterFactory : BaseTokenStreamTestCase
     {
-        private const String SENTENCE = "They sent him running in the evening.";
-        private static readonly String[] SENTENCE_dict_punc = { "they", "send", "he", "run", "in", "the", "evening", "." };
-        private static readonly String[] SENTENCE_maxent_punc = { "they", "send", "he", "runn", "in", "the", "evening", "." };
-        private static readonly String[] SENTENCE_posTags = { "NNP", "VBD", "PRP", "VBG", "IN", "DT", "NN", "." };
-        private static readonly String SENTENCES = "They sent him running in the evening. He did not come back.";
-        private static readonly String[] SENTENCES_dict_punc
+        private const string SENTENCE = "They sent him running in the evening.";
+        private static readonly string[] SENTENCE_dict_punc = { "they", "send", "he", "run", "in", "the", "evening", "." };
+        private static readonly string[] SENTENCE_maxent_punc = { "they", "send", "he", "runn", "in", "the", "evening", "." };
+        private static readonly string[] SENTENCE_posTags = { "NNP", "VBD", "PRP", "VBG", "IN", "DT", "NN", "." };
+        private const string SENTENCES = "They sent him running in the evening. He did not come back.";
+        private static readonly string[] SENTENCES_dict_punc
             = { "they", "send", "he", "run", "in", "the", "evening", ".", "he", "do", "not", "come", "back", "." };
-        private static readonly String[] SENTENCES_maxent_punc
+        private static readonly string[] SENTENCES_maxent_punc
             = { "they", "send", "he", "runn", "in", "the", "evening", ".", "he", "do", "not", "come", "back", "." };
-        private static readonly String[] SENTENCES_posTags
+        private static readonly string[] SENTENCES_posTags
             = { "NNP", "VBD", "PRP", "VBG", "IN", "DT", "NN", ".", "PRP", "VBD", "RB", "VB", "RB", "." };
 
-        private static readonly String SENTENCE_both = "Konstantin Kalashnitsov constantly caliphed.";
-        private static readonly String[] SENTENCE_both_punc
+        private const string SENTENCE_both = "Konstantin Kalashnitsov constantly caliphed.";
+        private static readonly string[] SENTENCE_both_punc
             = { "konstantin", "kalashnitsov", "constantly", "caliph", "." };
-        private static readonly String[] SENTENCE_both_posTags
+        private static readonly string[] SENTENCE_both_posTags
             = { "IN", "JJ", "NN", "VBN", "." };
 
-        private const String SENTENCES_both = "Konstantin Kalashnitsov constantly caliphed. Coreena could care, completely.";
-        private static readonly String[] SENTENCES_both_punc
+        private const string SENTENCES_both = "Konstantin Kalashnitsov constantly caliphed. Coreena could care, completely.";
+        private static readonly string[] SENTENCES_both_punc
             = { "konstantin", "kalashnitsov", "constantly", "caliph", ".", "coreena", "could", "care", ",", "completely", "." };
-        private static readonly String[] SENTENCES_both_posTags
+        private static readonly string[] SENTENCES_both_posTags
             = { "IN", "JJ", "NN", "VBN", ".", "NNP", "VBN", "NN", ",", "NN", "." };
 
-        private static readonly String[] SENTENCES_dict_keep_orig_punc
+        private static readonly string[] SENTENCES_dict_keep_orig_punc
             = { "They", "they", "sent", "send", "him", "he", "running", "run", "in", "the", "evening", ".", "He", "he", "did", "do", "not", "come", "back", "." };
-        private static readonly String[] SENTENCES_max_ent_keep_orig_punc
+        private static readonly string[] SENTENCES_max_ent_keep_orig_punc
             = { "They", "they", "sent", "send", "him", "he", "running", "runn", "in", "the", "evening", ".", "He", "he", "did", "do", "not", "come", "back", "." };
-        private static readonly String[] SENTENCES_keep_orig_posTags
+        private static readonly string[] SENTENCES_keep_orig_posTags
             = { "NNP", "NNP", "VBD", "VBD", "PRP", "PRP", "VBG", "VBG", "IN", "DT", "NN", ".", "PRP", "PRP", "VBD", "VBD", "RB", "VB", "RB", "." };
 
-        private static readonly String[] SENTENCES_both_keep_orig_punc
+        private static readonly string[] SENTENCES_both_keep_orig_punc
             = { "Konstantin", "konstantin", "Kalashnitsov", "kalashnitsov", "constantly", "caliphed", "caliph", ".", "Coreena", "coreena", "could", "care", ",", "completely", "." };
-        private static readonly String[] SENTENCES_both_keep_orig_posTags
+        private static readonly string[] SENTENCES_both_keep_orig_posTags
             = { "IN", "IN", "JJ", "JJ", "NN", "VBN", "VBN", ".", "NNP", "NNP", "VBN", "NN", ",", "NN", "." };
 
 
-        private const String tokenizerModelFile = "en-test-tokenizer.bin";
-        private const String sentenceModelFile = "en-test-sent.bin";
-        private const String posTaggerModelFile = "en-test-pos-maxent.bin";
-        private const String lemmatizerModelFile = "en-test-lemmatizer.bin";
-        private const String lemmatizerDictFile = "en-test-lemmas.dict";
+        private const string tokenizerModelFile = "en-test-tokenizer.bin";
+        private const string sentenceModelFile = "en-test-sent.bin";
+        private const string posTaggerModelFile = "en-test-pos-maxent.bin";
+        private const string lemmatizerModelFile = "en-test-lemmatizer.bin";
+        private const string lemmatizerDictFile = "en-test-lemmas.dict";
 
         [Test]
         public void Test1SentenceDictionaryOnly()

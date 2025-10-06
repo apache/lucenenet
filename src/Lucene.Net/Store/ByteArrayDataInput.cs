@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Store
@@ -102,7 +102,7 @@ namespace Lucene.Net.Store
         /// </summary>
         public override int ReadInt32()
         {
-            return ((bytes[pos++] & 0xFF) << 24) | ((bytes[pos++] & 0xFF) << 16) 
+            return ((bytes[pos++] & 0xFF) << 24) | ((bytes[pos++] & 0xFF) << 16)
                 | ((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF);
         }
 
@@ -111,9 +111,9 @@ namespace Lucene.Net.Store
         /// </summary>
         public override long ReadInt64()
         {
-            int i1 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16) 
+            int i1 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16)
                 | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
-            int i2 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16) 
+            int i2 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16)
                 | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
             return (((long)i1) << 32) | (i2 & 0xFFFFFFFFL);
         }
@@ -226,9 +226,11 @@ namespace Lucene.Net.Store
         }
 
         // NOTE: AIOOBE not EOF if you read too much
-        public override void ReadBytes(byte[] b, int offset, int len)
+        // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+        public override void ReadBytes(Span<byte> destination)
         {
-            Arrays.Copy(bytes, pos, b, offset, len);
+            int len = destination.Length;
+            Arrays.Copy(bytes, pos, destination, /*offset*/ 0, len);
             pos += len;
         }
     }

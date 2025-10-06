@@ -1,4 +1,4 @@
-﻿#if FEATURE_BREAKITERATOR
+#if FEATURE_BREAKITERATOR
 using ICU4N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Diagnostics;
@@ -36,12 +36,12 @@ namespace Lucene.Net.Search.PostingsHighlight
      */
 
     /// <summary>
-    /// LUCENENET specific - These are the original tests from Lucene. They are only here as proof that we 
+    /// LUCENENET specific - These are the original tests from Lucene. They are only here as proof that we
     /// can customize the <see cref="ICUPostingsHighlighter"/> to act like the PostingsHighlighter in Lucene,
     /// which has slightly different default behavior than that of ICU because Lucene uses
     /// the RuleBasedBreakIterator from the JDK, not that of ICU4J.
     /// <para/>
-    /// These tests use a mock <see cref="PostingsHighlighter"/>, which is backed by an ICU 
+    /// These tests use a mock <see cref="PostingsHighlighter"/>, which is backed by an ICU
     /// <see cref="ICU4N.Text.RuleBasedBreakIterator"/> that is customized a bit to act (sort of)
     /// like the one in the JDK. However, this customized implementation is not a logical default for
     /// the <see cref="ICUPostingsHighlighter"/>.

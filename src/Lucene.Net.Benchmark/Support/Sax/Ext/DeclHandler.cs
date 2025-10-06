@@ -1,4 +1,4 @@
-﻿// DeclHandler.java - Optional handler for DTD declaration events.
+// DeclHandler.java - Optional handler for DTD declaration events.
 // http://www.saxproject.org
 // Public Domain: no warranty.
 // $Id: DeclHandler.java,v 1.6 2004/04/22 13:28:49 dmegginson Exp $
@@ -49,9 +49,9 @@ namespace Sax.Ext
         /// The content model will consist of the string "EMPTY", the
         /// string "ANY", or a parenthesised group, optionally followed
         /// by an occurrence indicator.The model will be normalized so
-        /// that all parameter entities are fully resolved and all whitespace 
+        /// that all parameter entities are fully resolved and all whitespace
         /// is removed,and will include the enclosing parentheses.Other
-        /// normalization (such as removing redundant parentheses or 
+        /// normalization (such as removing redundant parentheses or
         /// simplifying occurrence indicators) is at the discretion of the
         /// parser.
         /// </remarks>

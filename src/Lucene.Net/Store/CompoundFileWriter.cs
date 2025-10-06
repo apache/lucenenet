@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
@@ -149,7 +149,7 @@ namespace Lucene.Net.Store
             {
                 return;
             }
-            Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
+            Exception priorException = null; // LUCENENET: No need to cast to IOException
             IndexOutput entryTableOut = null;
             // TODO this code should clean up after itself
             // (remove partial .cfs/.cfe)
@@ -420,11 +420,13 @@ namespace Lucene.Net.Store
                 @delegate.WriteByte(b);
             }
 
-            public override void WriteBytes(byte[] b, int offset, int length)
+            // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+            public override void WriteBytes(ReadOnlySpan<byte> source)
             {
+                int length = source.Length;
                 if (Debugging.AssertsEnabled) Debugging.Assert(!closed);
                 writtenBytes += length;
-                @delegate.WriteBytes(b, offset, length);
+                @delegate.WriteBytes(source);
             }
 
             public override long Checksum => @delegate.Checksum;

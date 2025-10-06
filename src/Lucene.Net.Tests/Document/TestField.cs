@@ -1,4 +1,4 @@
-﻿using J2N.Globalization;
+using J2N.Globalization;
 using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;

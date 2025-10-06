@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.CommonGrams
 
     /// <summary>
     /// Construct <see cref="CommonGramsQueryFilter"/>.
-    /// 
+    ///
     /// <code>
     /// &lt;fieldType name="text_cmmngrmsqry" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

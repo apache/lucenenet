@@ -26,7 +26,7 @@ namespace Lucene.Net.Documents
     /// <code>
     ///   document.Add(new ByteDocValuesField(name, (byte) 22));
     /// </code>
-    /// 
+    ///
     /// <para/>
     /// If you also need to store the value, you should add a
     /// separate <see cref="StoredField"/> instance.

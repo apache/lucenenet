@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
             pendingUpdates = new BufferedUpdates();
             intBlockAllocator = new Int32BlockAllocator(bytesUsed);
             this.deleteQueue = deleteQueue;
-            if (Debugging.AssertsEnabled) Debugging.Assert(numDocsInRAM == 0,"num docs {0}", numDocsInRAM);
+            if (Debugging.AssertsEnabled) Debugging.Assert(numDocsInRAM == 0, "num docs {0}", numDocsInRAM);
             pendingUpdates.Clear();
             deleteSlice = deleteQueue.NewSlice();
 
@@ -571,7 +571,7 @@ namespace Lucene.Net.Index
                 if (infoStream.IsEnabled("DWPT"))
                 {
                     double newSegmentSize = segmentInfoPerCommit.GetSizeInBytes() / 1024.0 / 1024.0;
-                    infoStream.Message("DWPT", "flushed: segment=" + segmentInfo.Name + " ramUsed=" + startMBUsed.ToString(nf) + " MB" + " newFlushedSize(includes docstores)=" + newSegmentSize.ToString(nf) + " MB" + " docs/MB=" + (flushState.SegmentInfo.DocCount / newSegmentSize).ToString(nf));
+                    infoStream.Message("DWPT", "flushed: segment=" + segmentInfo.Name + " ramUsed=" + J2N.Numerics.Double.ToString(startMBUsed, nf) + " MB" + " newFlushedSize(includes docstores)=" + J2N.Numerics.Double.ToString(newSegmentSize, nf) + " MB" + " docs/MB=" + J2N.Numerics.Double.ToString((flushState.SegmentInfo.DocCount / newSegmentSize), nf));
                 }
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(segmentInfo != null);
@@ -680,13 +680,13 @@ namespace Lucene.Net.Index
         /// Initial chunks size of the shared byte[] blocks used to
         /// store postings data
         /// </summary>
-        internal static readonly int BYTE_BLOCK_NOT_MASK = ~ByteBlockPool.BYTE_BLOCK_MASK;
+        internal const int BYTE_BLOCK_NOT_MASK = ~ByteBlockPool.BYTE_BLOCK_MASK;
 
         /// <summary>
         /// if you increase this, you must fix field cache impl for
         /// getTerms/getTermsIndex requires &lt;= 32768
         /// </summary>
-        internal static readonly int MAX_TERM_LENGTH_UTF8 = ByteBlockPool.BYTE_BLOCK_SIZE - 2;
+        internal const int MAX_TERM_LENGTH_UTF8 = ByteBlockPool.BYTE_BLOCK_SIZE - 2;
 
         /// <summary>
         /// NOTE: This was IntBlockAllocator in Lucene

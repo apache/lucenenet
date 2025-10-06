@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Support.Text
+namespace Lucene.Net.Support.Text
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

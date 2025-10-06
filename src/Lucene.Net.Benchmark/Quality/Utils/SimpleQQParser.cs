@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Analysis.Standard;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
@@ -23,8 +23,8 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
      */
 
     /// <summary>
-    /// Simplistic quality query parser. A Lucene query is created by passing 
-    /// the value of the specified <see cref="QualityQuery"/> name-value pair(s) into 
+    /// Simplistic quality query parser. A Lucene query is created by passing
+    /// the value of the specified <see cref="QualityQuery"/> name-value pair(s) into
     /// a Lucene's <see cref="QueryParser"/> using <see cref="StandardAnalyzer"/>.
     /// </summary>
     public class SimpleQQParser : IQualityQueryParser

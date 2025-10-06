@@ -1,4 +1,4 @@
-﻿// LUCENENET specific - not used. This was to specify what directory the files
+// LUCENENET specific - not used. This was to specify what directory the files
 // were in in Lucene. But we went the route of zipping the files and adding them
 // as an embedded resource, and then unpacking them to a known location for the test.
 

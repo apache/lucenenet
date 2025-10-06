@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using System;
 using System.Diagnostics.CodeAnalysis;

@@ -1,4 +1,4 @@
-﻿#if FEATURE_BREAKITERATOR
+#if FEATURE_BREAKITERATOR
 using ICU4N.Text;
 using System;
 using ICU4N.Support.Text;
@@ -26,8 +26,8 @@ namespace Lucene.Net.Search.PostingsHighlight
     public sealed class WholeBreakIterator : BreakIterator
     {
         private CharacterIterator text;
-        private int start; 
-        private int end; 
+        private int start;
+        private int end;
         private int current;
 
         public override int Current => current;

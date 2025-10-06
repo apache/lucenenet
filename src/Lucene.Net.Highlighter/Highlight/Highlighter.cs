@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.Highlight
     /// </summary>
     public class Highlighter
     {
-        public static readonly int DEFAULT_MAX_CHARS_TO_ANALYZE = 50 * 1024;
+        public const int DEFAULT_MAX_CHARS_TO_ANALYZE = 50 * 1024;
 
         private int _maxDocCharsToAnalyze = DEFAULT_MAX_CHARS_TO_ANALYZE;
         private readonly IFormatter _formatter; // LUCENENET: marked readonly
@@ -170,7 +170,8 @@ namespace Lucene.Net.Search.Highlight
             tokenStream.Reset();
             var currentFrag = new TextFragment(newText, newText.Length, docFrags.Count);
 
-            if (_fragmentScorer is QueryScorer queryScorer) {
+            if (_fragmentScorer is QueryScorer queryScorer)
+            {
                 queryScorer.SetMaxDocCharsToAnalyze(_maxDocCharsToAnalyze);
             }
 
