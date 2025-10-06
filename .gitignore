@@ -1,4 +1,4 @@
-﻿# this is the git pattern ignore file for the project.
+# this is the git pattern ignore file for the project.
 # Git can be used with svn http://code.google.com/p/msysgit/
 bin
 Bin
@@ -64,6 +64,6 @@ websites/apidocs/api/**/*.manifest
 # Apache Releases on Subversion
 svn-*/
 
-# vscode files
+# Visual Studio Code/Rider files
 .vscode/
-.idea/**/misc.xml
+.idea/
