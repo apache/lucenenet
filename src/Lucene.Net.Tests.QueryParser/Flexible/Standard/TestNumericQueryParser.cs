@@ -1,3 +1,4 @@
+using J2N.Globalization;
 using J2N.Numerics;
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
@@ -527,22 +528,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             // Use a culture that uses a Unicode minus sign rather than a hyphen-minus
             // in exponential notation.
             LOCALE = new CultureInfo("sv-FI");
-            CultureInfo.CurrentCulture = LOCALE;
-
-            NUMBER_FORMAT = new MockNumberFormat(LOCALE);
-
-            var randomNumberMap = new JCG.Dictionary<string, Number>(RANDOM_NUMBER_MAP!)
+            using (var cultureContext = new CultureContext(LOCALE))
             {
-                [nameof(NumericType.DOUBLE)] = J2N.Numerics.Double.GetInstance(1.0E-20),
-                [nameof(NumericType.SINGLE)] = J2N.Numerics.Single.GetInstance(1.0E-20f)
-            };
+                NUMBER_FORMAT = new MockNumberFormat(LOCALE);
 
-            RANDOM_NUMBER_MAP = JCG.Extensions.DictionaryExtensions.AsReadOnly(randomNumberMap);
+                var randomNumberMap = new JCG.Dictionary<string, Number>(RANDOM_NUMBER_MAP!)
+                {
+                    [nameof(NumericType.DOUBLE)] = J2N.Numerics.Double.GetInstance(1.0E-20),
+                    [nameof(NumericType.SINGLE)] = J2N.Numerics.Single.GetInstance(1.0E-20f)
+                };
 
-            qp!.NumericConfigMap[nameof(NumericType.DOUBLE)] = new NumericConfig(PRECISION_STEP, NUMBER_FORMAT, NumericType.DOUBLE);
-            qp.NumericConfigMap[nameof(NumericType.SINGLE)] = new NumericConfig(PRECISION_STEP, NUMBER_FORMAT, NumericType.SINGLE);
+                RANDOM_NUMBER_MAP = JCG.Extensions.DictionaryExtensions.AsReadOnly(randomNumberMap);
 
-            AssertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, true, true, 1);
+                qp!.NumericConfigMap[nameof(NumericType.DOUBLE)] = new NumericConfig(PRECISION_STEP, NUMBER_FORMAT, NumericType.DOUBLE);
+                qp.NumericConfigMap[nameof(NumericType.SINGLE)] = new NumericConfig(PRECISION_STEP, NUMBER_FORMAT, NumericType.SINGLE);
+
+                AssertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, true, true, 1);
+            }
         }
 
         public void AssertRangeQuery(NumberType? lowerType, NumberType? upperType,
