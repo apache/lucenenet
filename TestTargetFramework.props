@@ -91,6 +91,9 @@
 
     <!-- SonarCloud issues -->
     <NoWarn Label="Add at least one assertion to this test case">$(NoWarn);S2699</NoWarn>
+
+    <!-- Lucene.NET Dev Analyzers -->
+    <NoWarn Label="Types in the Lucene.Net.Support namespace should not be public">$(NoWarn);LuceneDev1005</NoWarn>
   </PropertyGroup>
 
 </Project>
