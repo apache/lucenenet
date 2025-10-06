@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 using BytesRef = Lucene.Net.Util.BytesRef;
 using FieldInvertState = Lucene.Net.Index.FieldInvertState;
@@ -43,9 +44,7 @@ namespace Lucene.Net.Search.Similarities
     /// </summary>
     public abstract class SimilarityBase : Similarity
     {
-        /// <summary>
-        /// For <see cref="Log2(double)"/>. Precomputed for efficiency reasons. </summary>
-        private static readonly double LOG_2 = Math.Log(2);
+        // LUCENENET specific - pre-computed LOG_2 value not needed because we are using J2N.MathExtensions.Log2() instead, which may be hardware optimized
 
         /// <summary>
         /// True if overlap tokens (tokens with a position of increment of zero) are
@@ -272,10 +271,11 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Returns the base two logarithm of <c>x</c>. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Log2(double x)
         {
             // Put this to a 'util' class if we need more of these.
-            return Math.Log(x) / LOG_2;
+            return J2N.MathExtensions.Log2(x); // LUCENENET: Use hardware-optimized Log2() method, when available
         }
 
         // --------------------------------- Classes ---------------------------------
