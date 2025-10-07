@@ -288,11 +288,9 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 {
                     cnt = reader.ReadInt32();  // LUCENENET: Use BinaryReader to decode little endian instead of ByteBuffer, since this is the default in .NET
                 }
-                catch (EndOfStreamException)
+                catch (EndOfStreamException ex)
                 {
-                    // Test dictionary files contain fewer entries than production files
-                    // Breaking here is normal and expected behavior for test files
-                    break;
+                    throw new IOException($"Bigram dictionary file is incomplete at character index {i}.", ex);
                 }
 
                 if (cnt <= 0)
