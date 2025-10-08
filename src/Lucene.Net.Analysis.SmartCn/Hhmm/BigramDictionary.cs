@@ -254,30 +254,45 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <summary>
         /// Load the datafile into this <see cref="BigramDictionary"/>
         /// </summary>
-        /// <param name="dctFilePath">dctFilePath path to the Bigramdictionary (bigramdict.dct)</param>
+        /// <param name="dctFilePath">Path to the Bigramdictionary (bigramdict.dct)</param>
         /// <exception cref="IOException">If there is a low-level I/O error</exception>
         public virtual void LoadFromFile(string dctFilePath)
         {
             int i, cnt, length, total = 0;
+
             // The file only counted 6763 Chinese characters plus 5 reserved slots 3756~3760.
             // The 3756th is used (as a header) to store information.
-            int[]
-            buffer = new int[3];
-            byte[] intBuffer = new byte[4];
+
+            Span<int> buffer = stackalloc int[3];
             string tmpword;
+
+            // LUCENENET: Removed intBuffer arrays since BinaryReader handles reading values directly in a more type-safe and readable way.
+            // LUCENENET specific - refactored constants for clarity
+
+            // The 3756th position (using 1-based counting) corresponds to index 3755 (using 0-based indexing)
+            // This matches the original Java implementation which used 3755 + GB2312_FIRST_CHAR in the condition
+            const int HEADER_POSITION = 3755;
+
             //using (RandomAccessFile dctFile = new RandomAccessFile(dctFilePath, "r"))
             using var dctFile = new FileStream(dctFilePath, FileMode.Open, FileAccess.Read);
+            using var reader = new BinaryReader(dctFile);
 
             // GB2312 characters 0 - 6768
             for (i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
             {
+
                 string currentStr = GetCCByGB2312Id(i);
                 // if (i == 5231)
                 // System.out.println(i);
+                try
+                {
+                    cnt = reader.ReadInt32();  // LUCENENET: Use BinaryReader to decode little endian instead of ByteBuffer, since this is the default in .NET
+                }
+                catch (EndOfStreamException ex)
+                {
+                    throw new IOException($"Bigram dictionary file is incomplete at character index {i}.", ex);
+                }
 
-                dctFile.Read(intBuffer, 0, intBuffer.Length);
-                // the dictionary was developed for C, and byte order must be converted to work with Java
-                cnt = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian).GetInt32();
                 if (cnt <= 0)
                 {
                     continue;
@@ -286,37 +301,37 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 int j = 0;
                 while (j < cnt)
                 {
-                    dctFile.Read(intBuffer, 0, intBuffer.Length);
-                    buffer[0] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
-                        .GetInt32();// frequency
-                    dctFile.Read(intBuffer, 0, intBuffer.Length);
-                    buffer[1] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
-                        .GetInt32();// length
-                    dctFile.Read(intBuffer, 0, intBuffer.Length);
-                    // buffer[2] = ByteBuffer.wrap(intBuffer).order(
-                    // ByteOrder.LITTLE_ENDIAN).getInt();// handle
+                    // LUCENENET: Use BinaryReader to decode little endian instead of ByteBuffer, since this is the default in .NET
+                    buffer[0] = reader.ReadInt32(); // frequency
+                    buffer[1] = reader.ReadInt32(); // length
+                    reader.BaseStream.Seek(4, SeekOrigin.Current); // Skip handle value (unused)
 
                     length = buffer[1];
                     if (length > 0)
                     {
-                        byte[] lchBuffer = new byte[length];
-                        dctFile.Read(lchBuffer, 0, lchBuffer.Length);
+                        byte[] lchBuffer = reader.ReadBytes(length);  // LUCENENET: Use BinaryReader to decode little endian instead of ByteBuffer, since this is the default in .NET
+
                         //tmpword = new String(lchBuffer, "GB2312");
                         tmpword = gb2312Encoding.GetString(lchBuffer); // LUCENENET specific: use cached encoding instance from base class
                         //tmpword = Encoding.GetEncoding("hz-gb-2312").GetString(lchBuffer);
-                        if (i != 3755 + GB2312_FIRST_CHAR)
+
+
+                        if (i != HEADER_POSITION + GB2312_FIRST_CHAR)
                         {
                             tmpword = currentStr + tmpword;
                         }
-                        char[] carray = tmpword.ToCharArray();
+
+                        ReadOnlySpan<char> carray = tmpword.AsSpan();
                         long hashId = Hash1(carray);
                         int index = GetAvaliableIndex(hashId, carray);
+
                         if (index != -1)
                         {
                             if (bigramHashTable[index] == 0)
                             {
                                 bigramHashTable[index] = hashId;
                                 // bigramStringTable[index] = tmpword;
+
                             }
                             frequencyTable[index] += buffer[0];
                         }
@@ -326,8 +341,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             }
             // log.info("load dictionary done! " + dctFilePath + " total:" + total);
         }
-
-        private int GetAvaliableIndex(long hashId, char[] carray)
+        private int GetAvaliableIndex(long hashId, ReadOnlySpan<char> carray)
         {
             int hash1 = (int)(hashId % PRIME_BIGRAM_LENGTH);
             int hash2 = Hash2(carray) % PRIME_BIGRAM_LENGTH;
@@ -357,7 +371,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <summary>
         /// lookup the index into the frequency array.
         /// </summary>
-        private int GetBigramItemIndex(char[] carray)
+        private int GetBigramItemIndex(ReadOnlySpan<char> carray)
         {
             long hashId = Hash1(carray);
             int hash1 = (int)(hashId % PRIME_BIGRAM_LENGTH);
@@ -388,7 +402,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 return -1;
         }
 
-        public int GetFrequency(char[] carray)
+        public int GetFrequency(ReadOnlySpan<char> carray)
         {
             int index = GetBigramItemIndex(carray);
             if (index != -1)

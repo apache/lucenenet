@@ -28,6 +28,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="**/*.zip" Exclude="bin/**/*;obj/**/*" Label="Zip Test Data" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
       <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
     </ProjectReference>

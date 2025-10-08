@@ -25,12 +25,11 @@ Analyzer for Simplified Chinese, which indexes words.
 
 Three analyzers are provided for Chinese, each of which treats Chinese text in a different way.
 
-*   StandardAnalyzer: Index unigrams (individual Chinese characters) as a token.
+- StandardAnalyzer: Index unigrams (individual Chinese characters) as a token.
 
-*   CJKAnalyzer (in the <xref:Lucene.Net.Analysis.Cjk> namespace of <xref:Lucene.Net.Analysis.Common>): Index bigrams (overlapping groups of two adjacent Chinese characters) as tokens.
+- CJKAnalyzer (in the <xref:Lucene.Net.Analysis.Cjk> namespace of <xref:Lucene.Net.Analysis.Common>): Index bigrams (overlapping groups of two adjacent Chinese characters) as tokens.
 
-*   SmartChineseAnalyzer (in this package): Index words (attempt to segment Chinese text into words) as tokens.
-
+- SmartChineseAnalyzer (in this package): Index words (attempt to segment Chinese text into words) as tokens.
 
 Example phrase： "我是中国人"
 

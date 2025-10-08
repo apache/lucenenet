@@ -38,8 +38,6 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
-
-
   <ItemGroup>
     <EmbeddedResource Include="Hhmm/*.mem" Label="Dict Test Data" />
     <EmbeddedResource Include="**/*.txt" Exclude="bin/**/*;obj/**/*" Label="Text Test Data" />
@@ -62,6 +60,10 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="System.Text.Encoding.CodePages" Version="$(SystemTextEncodingCodePagesPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.SmartCn" />
   </ItemGroup>
 
 </Project>

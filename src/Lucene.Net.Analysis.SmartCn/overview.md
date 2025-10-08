@@ -22,4 +22,4 @@ summary: *content
 
 Analyzer for Simplified Chinese, which indexes words.
 
-For an introduction to Lucene's analysis API, see the [Lucene.Net.Analysis](../core/Lucene.Net.Analysis.html) namespace documentation. 
+For an introduction to Lucene's analysis API, see the [Lucene.Net.Analysis](../core/Lucene.Net.Analysis.html) namespace documentation.

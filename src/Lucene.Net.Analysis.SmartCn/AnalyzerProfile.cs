@@ -81,6 +81,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
                 return;
             }
 
+
             try
             {
                 while (new DirectoryInfo(currentPath).Parent != null)

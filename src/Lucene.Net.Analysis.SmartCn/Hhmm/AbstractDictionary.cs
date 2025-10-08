@@ -33,7 +33,9 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
     internal abstract class AbstractDictionary
     {
         // LUCENENET specific: cached GB2312 encoding to avoid repeated calls to Encoding.GetEncoding("GB2312")
-        protected static readonly Encoding gb2312Encoding = Encoding.GetEncoding("GB2312");
+        protected static readonly Encoding gb2312Encoding = Encoding.GetEncoding("GB2312",
+    EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
+
 
         /// <summary>
         /// First Chinese Character in GB2312 (15 * 94)
@@ -162,7 +164,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// </summary>
         /// <param name="carray">character array</param>
         /// <returns>hashcode</returns>
-        public virtual long Hash1(char[] carray)
+        public virtual long Hash1(ReadOnlySpan<char> carray)
         {
             long p = 1099511628211L;
             long hash = unchecked((long)0xcbf29ce484222325L);
@@ -210,7 +212,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// </summary>
         /// <param name="carray">character array</param>
         /// <returns>hashcode</returns>
-        public virtual int Hash2(char[] carray)
+        public virtual int Hash2(ReadOnlySpan<char> carray)
         {
             int hash = 5381;
 
