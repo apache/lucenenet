@@ -30,7 +30,7 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
+    <TargetFrameworks>net8.0;netstandard2.0;net462</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Analysis.Kuromoji</AssemblyTitle>
     <PackageTags>$(PackageTags);analysis;japanese</PackageTags>
@@ -52,10 +52,6 @@
 
   <ItemGroup>
     <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1' ">
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="$(SystemTextEncodingCodePagesPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' ">
