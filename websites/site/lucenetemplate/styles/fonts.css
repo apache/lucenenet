@@ -1,0 +1,46 @@
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://lucenenet.apache.org/fonts/lato-v25-latin-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 700;
+  src: url('https://lucenenet.apache.org/fonts/lato-v25-latin-bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://lucenenet.apache.org/fonts/merriweather-v33-latin-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Roboto Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://lucenenet.apache.org/fonts/roboto-mono-v31-latin-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Academicons';
+  src: url('https://lucenenet.apache.org/fonts/academicons.eot?v=1.8.0');
+  src: url('https://lucenenet.apache.org/fonts/academicons.woff?v=1.8.0') format('woff'),
+       url('https://lucenenet.apache.org/fonts/academicons.ttf?v=1.8.0') format('truetype'),
+       url('https://lucenenet.apache.org/fonts/academicons.svg?v=1.8.0#academicons') format('svg'),
+       url('https://lucenenet.apache.org/fonts/academicons.eot?v=1.8.0') format('embedded-opentype');
+}
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('https://lucenenet.apache.org/fonts/fontawesome-webfont.eot?v=4.7.0');
+  src: url('https://lucenenet.apache.org/fonts/fontawesome-webfont.woff?v=4.7.0') format('woff'),
+       url('https://lucenenet.apache.org/fonts/fontawesome-webfont.woff2?v=4.7.0') format('woff2'),
+       url('https://lucenenet.apache.org/fonts/fontawesome-webfont.ttf?v=4.7.0') format('truetype'),
+       url('https://lucenenet.apache.org/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg'),
+       url('https://lucenenet.apache.org/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype');
+}
