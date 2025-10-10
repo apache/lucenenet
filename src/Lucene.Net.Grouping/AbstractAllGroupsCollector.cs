@@ -1,6 +1,6 @@
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -34,14 +34,14 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public abstract class AbstractAllGroupsCollector<TGroupValue> : IAbstractAllGroupsCollector<TGroupValue>
+    public abstract class AbstractAllGroupsCollector<TGroupValue> : IAbstractAllGroupsCollector
     {
         /// <summary>
         /// Returns the total number of groups for the executed search.
         /// This is a convenience method. The following code snippet has the same effect: <code>GetGroups().Count</code>
         /// </summary>
         /// <returns>The total number of groups for the executed search</returns>
-        public virtual int GroupCount => Groups.Count();
+        public virtual int GroupCount => Groups.Count;
 
         /// <summary>
         /// Returns the group values
@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Grouping
         /// </para>
         /// </summary>
         /// <returns>the group values</returns>
-        public abstract IEnumerable<TGroupValue> Groups { get; }
+        public abstract ICollection<TGroupValue> Groups { get; }
 
 
         // Empty not necessary
@@ -88,29 +88,34 @@ namespace Lucene.Net.Search.Grouping
         public abstract void SetNextReader(AtomicReaderContext context);
 
         public virtual bool AcceptsDocsOutOfOrder => true;
+
+        #region Explicit interface implementations
+
+        /// <summary>
+        /// LUCENENET specific method to provide an object-based implementation of <see cref="Groups"/>.
+        /// </summary>
+        ICollection<object> IAbstractAllGroupsCollector.Groups => new CastingCollectionAdapter<TGroupValue, object>(Groups);
+
+        #endregion
     }
 
     /// <summary>
-    /// LUCENENET specific interface used to apply covariance to TGroupValue
+    /// LUCENENET specific interface to provide a non-generic abstraction
+    /// for <see cref="AbstractAllGroupsCollector{TGroupValue}"/>.
     /// </summary>
-    /// <typeparam name="TGroupValue"></typeparam>
-    public interface IAbstractAllGroupsCollector<out TGroupValue> : ICollector
+    public interface IAbstractAllGroupsCollector : ICollector
     {
         /// <summary>
         /// Returns the total number of groups for the executed search.
-        /// This is a convenience method. The following code snippet has the same effect: <code>GetGroups().Count</code>
         /// </summary>
-        /// <returns>The total number of groups for the executed search</returns>
         int GroupCount { get; }
 
         /// <summary>
         /// Returns the group values
-        /// <para>
+        /// <para />
         /// This is an unordered collections of group values. For each group that matched the query there is a <see cref="Util.BytesRef"/>
         /// representing a group value.
-        /// </para>
         /// </summary>
-        /// <returns>the group values</returns>
-        IEnumerable<TGroupValue> Groups { get; }
+        ICollection<object> Groups { get; }
     }
 }
