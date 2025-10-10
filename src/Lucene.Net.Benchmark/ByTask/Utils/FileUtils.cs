@@ -27,19 +27,31 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         /// <summary>
         /// Delete files and directories, even if non-empty.
         /// </summary>
-        /// <param name="dir">File or directory.</param>
+        /// <param name="dir">Directory to delete.</param>
         /// <returns><c>true</c> on success, <c>false</c> if no or part of files have been deleted.</returns>
         /// <exception cref="IOException">If there is a low-level I/O error.</exception>
         public static bool FullyDelete(DirectoryInfo dir)
+            => FullyDelete(dir.FullName);
+
+        /// <summary>
+        /// Delete files and directories, even if non-empty.
+        /// </summary>
+        /// <param name="dirName">Directory path to delete. The path is not normalized by this method.</param>
+        /// <returns><c>true</c> on success, <c>false</c> if no or part of files have been deleted.</returns>
+        /// <exception cref="IOException">If there is a low-level I/O error.</exception>
+        /// <remarks>
+        /// LUCENENET: This overload takes a string to avoid allocating a <see cref="DirectoryInfo"/> object.
+        /// </remarks>
+        public static bool FullyDelete(string dirName)
         {
             try
             {
-                Directory.Delete(dir.FullName, true);
+                Directory.Delete(dirName, true);
                 return true;
             }
             catch
             {
-                return !Directory.Exists(dir.FullName);
+                return !Directory.Exists(dirName);
             }
         }
     }

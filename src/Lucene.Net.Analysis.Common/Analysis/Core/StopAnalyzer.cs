@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
+#nullable enable
+
 namespace Lucene.Net.Analysis.Core
 {
     /*
@@ -74,6 +76,19 @@ namespace Lucene.Net.Analysis.Core
         /// <param name="stopWords"> Set of stop words  </param>
         public StopAnalyzer(LuceneVersion matchVersion, CharArraySet stopWords)
             : base(matchVersion, stopWords)
+        {
+        }
+
+        /// <summary>
+        /// Builds an analyzer with the stop words from the given file. </summary>
+        /// <seealso cref="WordlistLoader.GetWordSet(TextReader, LuceneVersion)"/>
+        /// <param name="matchVersion"> See <see cref="LuceneVersion"/> </param>
+        /// <param name="stopwordsFileName"> File name to load stop words from. The path is not normalized by this method. </param>
+        /// <remarks>
+        /// LUCENENET: This overload takes a string file name to avoid allocating a <see cref="FileInfo"/> object.
+        /// </remarks>
+        public StopAnalyzer(LuceneVersion matchVersion, string stopwordsFileName)
+            : this(matchVersion, LoadStopwordSet(stopwordsFileName, matchVersion))
         {
         }
 
