@@ -3,6 +3,7 @@
 [![Nuget](https://img.shields.io/nuget/dt/Lucene.Net)](https://www.nuget.org/packages/Lucene.Net)
 [![Azure DevOps builds (master)](https://img.shields.io/azure-devops/build/lucene-net/6ba240c9-9598-47e7-a793-0ed8a4ba2f8b/3/master)](https://dev.azure.com/lucene-net/Lucene.NET/_build?definitionId=3&_a=summary)
 [![GitHub](https://img.shields.io/github/license/apache/lucenenet)](https://github.com/apache/lucenenet/blob/master/LICENSE.txt)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=apache_lucenenet&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=apache_lucenenet)
 
 ## Powerful Full-text search for .NET
 
