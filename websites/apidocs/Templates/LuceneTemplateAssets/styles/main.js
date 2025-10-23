@@ -233,9 +233,10 @@
     if (!document.body) return false;
     if (document.querySelector('.sidetoc')) {
       document.body.classList.add('has-sidetoc');
-      return true;					    }
+      return true;}
     return false;
-  }						    function watchUntilFound() {
+  }
+  function watchUntilFound() {
         if (tagIfHasTOC()) return;
         new MutationObserver(function (m, obs) {
             if (tagIfHasTOC()) obs.disconnect();
@@ -373,7 +374,7 @@
     function onSubmitOnce() { closeOverlay(); }  // close after pressing Enter
 
     /* 6.5 — Sync trigger vs inline search visibility according to the range (1200–1400): show trigger, hide inline form
-	Out of range: hide trigger, show the inline form; if overlay open, close it. */
+    Out of range: hide trigger, show the inline form; if overlay open, close it. */
     function updateVisibility() {
         ensureTrigger();
 

@@ -233,7 +233,7 @@
     if (!document.body) return false;
     if (document.querySelector('.sidetoc')) {
       document.body.classList.add('has-sidetoc');
-      return true;					    }
+      return true;}
     return false;
   }
   function watchUntilFound() {
