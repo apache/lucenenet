@@ -24,10 +24,9 @@ The Apache Lucene.NET website is at:
 
 ### Lucene.NET 4.8.0
 
-- [.NET 8.0](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
+- [.NET 8.0](https://dotnet.microsoft.com/download/dotnet/8.0) or later
 - [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
-- .NET Framework 4.6.2
+- .NET Framework 4.6.2 or later
 
 ## Status
 
@@ -37,8 +36,8 @@ Working toward Lucene.NET 4.8.0 (currently in BETA)
 
 * The beta version is extremely stable
 * Has more than 7800+ passing unit tests
-* Integrates well with .NET 8.0 (as well as other unsupported versions)
-* Supports .NET Standard 2.1 and .NET Standard 2.0
+* Integrates well with .NET 8.0+ (as well as other unsupported versions)
+* Supports .NET Standard 2.0
 * Supports .NET Framework 4.6.2+
 * Some developers already use it in production environments
 
