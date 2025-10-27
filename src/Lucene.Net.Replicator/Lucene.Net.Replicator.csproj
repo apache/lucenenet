@@ -47,7 +47,6 @@
 
   <ItemGroup>
     <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">

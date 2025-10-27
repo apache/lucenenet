@@ -1,13 +1,10 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -174,15 +171,14 @@ namespace Lucene.Net.Replicator.Http
         /// <b>Internal:</b> Execute a request and return its result.
         /// The <paramref name="parameters"/> argument is treated as: name1,value1,name2,value2,...
         /// </summary>
-        protected virtual HttpResponseMessage ExecutePost(string request, object entity, params string[] parameters)
+        protected virtual HttpResponseMessage ExecutePost(string request, HttpContent content, params string[] parameters)
         {
             EnsureOpen();
 
             //.NET Note: No headers? No ContentType?... Bad use of Http?
             HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Post, QueryString(request, parameters));
 
-            req.Content = new StringContent(JToken.FromObject(entity, JsonSerializer.Create())
-                .ToString(Formatting.None), Encoding.UTF8, "application/json");
+            req.Content = content;
 
             return Execute(req);
         }

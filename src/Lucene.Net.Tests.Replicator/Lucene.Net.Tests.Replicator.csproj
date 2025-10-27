@@ -63,10 +63,6 @@
 
   <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonPackageVersion)" />
-  </ItemGroup>
-
   <ItemGroup Condition="$(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.'))">
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="$(MicrosoftAspNetCoreTestHostPackageVersion)" />
   </ItemGroup>
