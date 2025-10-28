@@ -2,7 +2,6 @@ using J2N.IO;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Replicator.Http.Abstractions;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
