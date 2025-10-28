@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+#nullable enable
 
 namespace Lucene.Net.Replicator.Http
 {
@@ -44,7 +45,7 @@ namespace Lucene.Net.Replicator.Http
         /// Default request timeout for this client (100 seconds).
         /// <see cref="Timeout"/>.
         /// </summary>
-        public readonly static TimeSpan DEFAULT_TIMEOUT = TimeSpan.FromSeconds(100); // LUCENENET: This was DEFAULT_SO_TIMEOUT in Lucene, using .NET's default timeout value of 100 instead of 61 seconds
+        public static readonly TimeSpan DEFAULT_TIMEOUT = TimeSpan.FromSeconds(100); // LUCENENET: This was DEFAULT_SO_TIMEOUT in Lucene, using .NET's default timeout value of 100 instead of 61 seconds
 
         // TODO compression?
 
@@ -53,7 +54,8 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         protected string Url { get; private set; }
 
-        private volatile bool isDisposed = false;
+        private volatile bool isDisposed;
+
         private readonly HttpClient httpc;
 
         /// <summary>
@@ -70,7 +72,7 @@ namespace Lucene.Net.Replicator.Http
         /// <param name="port">The port to be used to connect on.</param>
         /// <param name="path">The path to the replicator on the host.</param>
         /// <param name="messageHandler">Optional, The HTTP handler stack to use for sending requests, defaults to <c>null</c>.</param>
-        protected HttpClientBase(string host, int port, string path, HttpMessageHandler messageHandler = null)
+        protected HttpClientBase(string host, int port, string path, HttpMessageHandler? messageHandler = null)
             : this(NormalizedUrl(host, port, path), messageHandler)
         {
         }
@@ -85,7 +87,7 @@ namespace Lucene.Net.Replicator.Http
         /// <param name="url">The full url, including with host, port and path.</param>
         /// <param name="messageHandler">Optional, The HTTP handler stack to use for sending requests.</param>
         //Note: LUCENENET Specific
-        protected HttpClientBase(string url, HttpMessageHandler messageHandler = null)
+        protected HttpClientBase(string url, HttpMessageHandler? messageHandler = null)
             : this(url, new HttpClient(messageHandler ?? new HttpClientHandler()) { Timeout = DEFAULT_TIMEOUT })
         {
         }
@@ -94,7 +96,7 @@ namespace Lucene.Net.Replicator.Http
         /// Creates a new <see cref="HttpClientBase"/> with the given <paramref name="url"/> and <see cref="HttpClient"/>.
         /// </summary>
         /// <remarks>
-        /// This allows full controll over how the <see cref="HttpClient"/> is created,
+        /// This allows full control over how the <see cref="HttpClient"/> is created,
         /// prefer the <see cref="HttpClientBase(string, HttpMessageHandler)"/> over this unless you know you need the control of the <see cref="HttpClient"/>.
         /// </remarks>
         /// <param name="url"></param>
@@ -135,8 +137,11 @@ namespace Lucene.Net.Replicator.Http
         private static string NormalizedUrl(string host, int port, string path)
         {
             if (string.IsNullOrEmpty(path))
+            {
                 path = "/";
-            return string.Format("http://{0}:{1}{2}", host, port, path);
+            }
+
+            return $"http://{host}:{port}{path}";
         }
 
         /// <summary>
@@ -171,12 +176,11 @@ namespace Lucene.Net.Replicator.Http
         /// <b>Internal:</b> Execute a request and return its result.
         /// The <paramref name="parameters"/> argument is treated as: name1,value1,name2,value2,...
         /// </summary>
-        protected virtual HttpResponseMessage ExecutePost(string request, HttpContent content, params string[] parameters)
+        protected virtual HttpResponseMessage ExecutePost(string request, HttpContent content, params string[]? parameters)
         {
             EnsureOpen();
 
-            //.NET Note: No headers? No ContentType?... Bad use of Http?
-            HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Post, QueryString(request, parameters));
+            var req = new HttpRequestMessage(HttpMethod.Post, QueryString(request, parameters));
 
             req.Content = content;
 
@@ -187,12 +191,12 @@ namespace Lucene.Net.Replicator.Http
         /// <b>Internal:</b> Execute a request and return its result.
         /// The <paramref name="parameters"/> argument is treated as: name1,value1,name2,value2,...
         /// </summary>
-        protected virtual HttpResponseMessage ExecuteGet(string request, params string[] parameters)
+        protected virtual HttpResponseMessage ExecuteGet(string request, params string[]? parameters)
         {
             EnsureOpen();
 
-            //Note: No headers? No ContentType?... Bad use of Http?
-            HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Get, QueryString(request, parameters));
+            var req = new HttpRequestMessage(HttpMethod.Get, QueryString(request, parameters));
+
             return Execute(req);
         }
 
@@ -200,17 +204,16 @@ namespace Lucene.Net.Replicator.Http
         {
             //.NET Note: Bridging from Async to Sync, this is not ideal and we could consider changing the interface to be Async or provide Async overloads
             //      and have these Sync methods with their caveats.
-            HttpResponseMessage response = httpc.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false).GetAwaiter().GetResult();
+            var response = httpc.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false).GetAwaiter().GetResult();
             VerifyStatus(response);
             return response;
         }
 
-        private string QueryString(string request, params string[] parameters)
+        private string QueryString(string request, params string[]? parameters)
         {
-            return parameters is null
-                ? string.Format("{0}/{1}", Url, request)
-                : string.Format("{0}/{1}?{2}", Url, request, string
-                .Join("&", parameters.Select(WebUtility.UrlEncode).InPairs((key, val) => string.Format("{0}={1}", key, val))));
+            return parameters is null || parameters.Length == 0
+                ? $"{Url}/{request}"
+                : $"{Url}/{request}?{string.Join("&", parameters.Select(WebUtility.UrlEncode).InPairs((key, val) => $"{key}={val}"))}";
         }
 
         /// <summary>
@@ -253,8 +256,12 @@ namespace Lucene.Net.Replicator.Http
         public virtual Stream GetResponseStream(HttpResponseMessage response, bool consume) // LUCENENET: This was ResponseInputStream in Lucene
         {
             Stream result = response.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+
             if (consume)
+            {
                 result = new ConsumingStream(result);
+            }
+
             return result;
         }
 
@@ -280,7 +287,7 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         protected virtual T DoAction<T>(HttpResponseMessage response, bool consume, Func<T> call)
         {
-            Exception th = null;
+            Exception? th /* = null */;
             try
             {
                 return call();
@@ -299,20 +306,13 @@ namespace Lucene.Net.Replicator.Http
                 {
                     if (consume)
                     {
-                        try
-                        {
-                            ConsumeQuietly(response);
-                        }
-                        finally
-                        {
-                            // ignoring on purpose
-                        }
+                        ConsumeQuietly(response);
                     }
                 }
             }
             if (Debugging.AssertsEnabled) Debugging.Assert(th != null); // extra safety - if we get here, it means the Func<T> failed
             Util.IOUtils.ReThrow(th);
-            return default; // silly, if we're here, IOUtils.reThrow always throws an exception
+            return default!; // silly, if we're here, IOUtils.reThrow always throws an exception
         }
 
         /// <summary>
@@ -342,7 +342,7 @@ namespace Lucene.Net.Replicator.Http
         {
             try
             {
-                response.Content?.Dispose(); // LUCENENET: Force a flush and and dispose the underlying stream
+                response.Content?.Dispose(); // LUCENENET: Force a flush and dispose the underlying stream
             }
             catch (Exception ioe) when (ioe.IsIOException())
             {
@@ -414,8 +414,11 @@ namespace Lucene.Net.Replicator.Http
                 Consume(res);
                 return res;
             }
+
             public override long Seek(long offset, SeekOrigin origin) => input.Seek(offset, origin);
+
             public override void SetLength(long value) => input.SetLength(value);
+
             public override void Write(byte[] buffer, int offset, int count) => input.Write(buffer, offset, count);
 
             private void Consume(int zeroOrMinusOne)

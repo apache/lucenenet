@@ -2,6 +2,7 @@ using J2N.IO;
 using System;
 using System.IO;
 using System.Net.Http;
+#nullable enable
 
 namespace Lucene.Net.Replicator.Http
 {
@@ -34,7 +35,7 @@ namespace Lucene.Net.Replicator.Http
         /// Creates a new <see cref="HttpReplicator"/> with the given host, port and path.
         /// <see cref="HttpClientBase(string, int, string, HttpMessageHandler)"/> for more details.
         /// </summary>
-        public HttpReplicator(string host, int port, string path, HttpMessageHandler messageHandler = null)
+        public HttpReplicator(string host, int port, string path, HttpMessageHandler? messageHandler = null)
             : base(host, port, path, messageHandler)
         {
         }
@@ -44,7 +45,7 @@ namespace Lucene.Net.Replicator.Http
         /// <see cref="HttpClientBase(string, HttpMessageHandler)"/> for more details.
         /// </summary>
         //Note: LUCENENET Specific
-        public HttpReplicator(string url, HttpMessageHandler messageHandler = null)
+        public HttpReplicator(string url, HttpMessageHandler? messageHandler = null)
             : this(url, new HttpClient(messageHandler ?? new HttpClientHandler()) { Timeout = DEFAULT_TIMEOUT })
         {
         }
@@ -62,26 +63,28 @@ namespace Lucene.Net.Replicator.Http
         /// <summary>
         /// Checks for updates at the remote host.
         /// </summary>
-        public virtual SessionToken CheckForUpdate(string currentVersion)
+        public virtual SessionToken? CheckForUpdate(string? currentVersion)
         {
-            string[] parameters = null;
+            string[]? parameters = null;
             if (currentVersion != null)
+            {
                 parameters = new[] { ReplicationService.REPLICATE_VERSION_PARAM, currentVersion };
+            }
 
-            HttpResponseMessage response = base.ExecuteGet(ReplicationService.ReplicationAction.UPDATE.ToString(), parameters);
+            var response = base.ExecuteGet(nameof(ReplicationService.ReplicationAction.UPDATE), parameters);
             return DoAction(response, () =>
             {
-                using DataInputStream inputStream = new DataInputStream(GetResponseStream(response));
+                using var inputStream = new DataInputStream(GetResponseStream(response));
                 return inputStream.ReadByte() == 0 ? null : new SessionToken(inputStream);
             });
         }
 
         /// <summary>
-        /// Obtains the given file from it's source at the remote host.
+        /// Obtains the given file from its source at the remote host.
         /// </summary>
         public virtual Stream ObtainFile(string sessionId, string source, string fileName)
         {
-            HttpResponseMessage response = ExecuteGet(ReplicationService.ReplicationAction.OBTAIN.ToString(),
+            var response = ExecuteGet(nameof(ReplicationService.ReplicationAction.OBTAIN),
                 ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
                 ReplicationService.REPLICATE_SOURCE_PARAM, source,
                 ReplicationService.REPLICATE_FILENAME_PARAM, fileName);
@@ -102,9 +105,9 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         public virtual void Release(string sessionId)
         {
-            HttpResponseMessage response = ExecuteGet(ReplicationService.ReplicationAction.RELEASE.ToString(), ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId);
+            var response = ExecuteGet(nameof(ReplicationService.ReplicationAction.RELEASE), ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId);
             // do not remove this call: as it is still validating for us!
-            DoAction<object>(response, () => null);
+            DoAction<object?>(response, () => null);
         }
     }
 }
