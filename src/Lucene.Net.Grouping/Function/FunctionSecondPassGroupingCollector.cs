@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Grouping.Function
         /// <param name="groupByVS">The <see cref="ValueSource"/> to group by</param>
         /// <param name="vsContext">The value source context</param>
         /// <exception cref="IOException">When I/O related errors occur</exception>
-        public FunctionSecondPassGroupingCollector(IEnumerable<ISearchGroup<TMutableValue>> searchGroups,
+        public FunctionSecondPassGroupingCollector(ICollection<SearchGroup<TMutableValue>> searchGroups,
             Sort groupSort, Sort withinGroupSort, int maxDocsPerGroup, bool getScores, bool getMaxScores,
             bool fillSortFields, ValueSource groupByVS, IDictionary /* Map<?, ?> */ vsContext)
             : base(searchGroups, groupSort, withinGroupSort, maxDocsPerGroup, getScores, getMaxScores, fillSortFields)
