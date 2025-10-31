@@ -66,8 +66,12 @@ $BreadcrumbPath = Join-Path -Path $ApiDocsFolder -ChildPath "docfx.global.subsit
 Write-Host "Restoring docfx tool..."
 $PreviousLocation = Get-Location
 Set-Location $RepoRoot
-dotnet tool restore
-Set-Location $PreviousLocation
+try {
+    dotnet tool restore
+} finally {
+    Set-Location $PreviousLocation
+}
+
 
 # delete anything that already exists
 if ($Clean) {
@@ -155,7 +159,13 @@ if ($? -and $DisableMetaData -eq $false) {
 
         # build the output
         Write-Host "Building api metadata for $projFile..."
-        & dotnet tool run docfx metadata $projFile --log "$DocFxLog" --logLevel $LogLevel
+        $PreviousLocation = Get-Location
+        Set-Location $RepoRoot
+        try {
+            & dotnet tool run docfx metadata $projFile --log "$DocFxLog" --logLevel $LogLevel
+        } finally {
+            Set-Location $PreviousLocation
+        }
     }
 }
 
@@ -183,7 +193,13 @@ if ($? -and $DisableBuild -eq $false) {
 
         # build the output
         Write-Host "Building site output for $projFile..."
-        & dotnet tool run docfx build $projFile --log "$DocFxLog" --logLevel $LogLevel --debug --maxParallelism 1
+        $PreviousLocation = Get-Location
+        Set-Location $RepoRoot
+        try {
+            & dotnet tool run docfx build $projFile --log "$DocFxLog" --logLevel $LogLevel --debug --maxParallelism 1
+        } finally {
+            Set-Location $PreviousLocation
+        }
 
         # Add the baseUrl to the output xrefmap, see https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027
         $projFileJson = Get-Content $projFile | ConvertFrom-Json
@@ -201,16 +217,22 @@ if ($? -and $DisableBuild -eq $false) {
 if ($?) {
     $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\docfx.site.json.log"
 
-    if ($ServeDocs -eq $false) {
+    $PreviousLocation = Get-Location
+    Set-Location $RepoRoot
+    try {
+        if ($ServeDocs -eq $false) {
 
-        # build the output
-        Write-Host "Building docs..."
-        & dotnet tool run docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --debug --maxParallelism 1
-    }
-    else {
-        # build + serve (for testing)
-        Write-Host "starting website..."
-        & dotnet tool run docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --serve --port $StagingPort --debug --maxParallelism 1
+            # build the output
+            Write-Host "Building docs..."
+            & dotnet tool run docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --debug --maxParallelism 1
+        }
+        else {
+            # build + serve (for testing)
+            Write-Host "starting website..."
+            & dotnet tool run docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --serve --port $StagingPort --debug --maxParallelism 1
+        }
+    } finally {
+        Set-Location $PreviousLocation
     }
 }
 
