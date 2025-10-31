@@ -132,6 +132,13 @@ jobs:
         run: ./main-repo/websites/apidocs/docs.ps1 -Clean -LuceneNetVersion ${{ env.RELEASE_VERSION }}
         shell: powershell
 
+      - name: Upload apidocs as build artifact
+        uses: actions/upload-artifact@v5
+        if: ${{always()}}
+        with:
+          name: 'apidocs'
+          path: '${{github.workspace}}/main-repo/websites/apidocs/_site'
+
       - name: Checkout Lucene.Net website
         uses: actions/checkout@v5
         with:
