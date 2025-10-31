@@ -17,11 +17,11 @@
  * under the License.
  */
 
-/* 1. Mode controller (desktop vs mobile; width only with hysteresis) */
+/* 1. Mode controller (desktop vs mobile) — use matchMedia to align with CSS */
 (function () {
   var ROOT_ID = 'autocollapse', COLLAPSED = 'collapsed', MODE = null;
-  // Using the same range so both sides feel identical:
-  var MOBILE_MAX = 1200, DESKTOP_MIN = 1200;
+  // Keep readable constant in case you want to change breakpoint in one place
+  var DESKTOP_QUERY = '(min-width: 768px)';
   var scheduled = false;
 
   function $(id) { return document.getElementById(id); }
@@ -44,13 +44,15 @@
     }
   }
 
-  function decide(from) {
-    var w = window.innerWidth;
-    if (from === 'mobile') return (w >= DESKTOP_MIN) ? 'desktop' : 'mobile';
-    if (from === 'desktop') return (w < MOBILE_MAX) ? 'mobile' : 'desktop';
-    if (w >= DESKTOP_MIN) return 'desktop';
-    if (w < MOBILE_MAX) return 'mobile';
-    return 'desktop';
+  // Use matchMedia to determine desktop/mobile to match the CSS
+  function isDesktop() {
+    if (window.matchMedia) return window.matchMedia(DESKTOP_QUERY).matches;
+    // Fallback: numeric check (rarely used)
+    return (window.innerWidth || document.documentElement.clientWidth) >= 768;
+  }
+
+  function decide() {
+    return isDesktop() ? 'desktop' : 'mobile';
   }
 
   function paint(mode) {
@@ -59,6 +61,13 @@
     if (MODE !== mode) {
       r.classList.toggle(COLLAPSED, isMobile);
       setCollapseOpen(false);   // never auto-open when switching
+      // When switching to desktop, ensure any mobile-only open states are cleared
+      if (!isMobile) {
+        try {
+          var opens = r.querySelectorAll('.nav-asf.is-open');
+          for (var i = 0; i < opens.length; i++) opens[i].classList.remove('is-open');
+        } catch (e) { /* defensive */ }
+      }
       MODE = mode;
       return;
     }
@@ -68,7 +77,7 @@
   function recalc() {
     scheduled = false;
     if (root() && root().classList.contains(COLLAPSED) && isPanelOpen()) return;
-    paint(decide(MODE));
+    paint(decide());
   }
   function schedule() { if (scheduled) return; scheduled = true; requestAnimationFrame(recalc); }
 
@@ -135,16 +144,19 @@
 /* 3. Close hamburger when leaving mobile */
 (function () {
   var ROOT_ID = 'autocollapse';
-  var MOBILE_MAX = 1200, DESKTOP_MIN = 1200;
+  var DESKTOP_QUERY = '(min-width: 768px)';
   var lastMode = null, rafScheduled = false;
 
   function $(sel, ctx) { return (ctx || document).querySelector(sel); }
   function $id(id) { return document.getElementById(id); }
 
-  function modeFromWidth(w) {
-    if (lastMode === 'mobile') return (w >= DESKTOP_MIN) ? 'desktop' : 'mobile';
-    if (lastMode === 'desktop') return (w < MOBILE_MAX) ? 'mobile' : 'desktop';
-    return (w >= DESKTOP_MIN) ? 'desktop' : 'mobile';
+  function isDesktop() {
+    if (window.matchMedia) return window.matchMedia(DESKTOP_QUERY).matches;
+    return (window.innerWidth || document.documentElement.clientWidth) >= 768;
+  }
+
+  function modeFromWidth() {
+    return isDesktop() ? 'desktop' : 'mobile';
   }
 
   function setCollapsed(root, collapsed) {
@@ -176,23 +188,18 @@
     var root = $id(ROOT_ID);
     if (!root) return;
 
-    var w = window.innerWidth || document.documentElement.clientWidth;
-    var mode = modeFromWidth(w);
+    var mode = modeFromWidth();
     if (mode !== lastMode) {
-      // toggle collapsed state by mode
       setCollapsed(root, mode === 'mobile');
-      // when leaving mobile, make sure hamburger is closed
       if (mode === 'desktop') closeHamburger();
       lastMode = mode;
     } else {
-      // keep class in sync even if mode didn't change
       setCollapsed(root, mode === 'mobile');
     }
   }
 
   function schedule() { if (rafScheduled) return; rafScheduled = true; requestAnimationFrame(apply); }
 
-  // initial + after load (some CSS/DocFX bits settle after load)
   if (document.readyState !== 'loading') schedule(); else document.addEventListener('DOMContentLoaded', schedule);
   window.addEventListener('load', function () { schedule(); setTimeout(schedule, 120); });
 
@@ -227,205 +234,3 @@
   }
 })();
 
-/* 5. Body tagging for TOC presence (adds .has-sidetoc if a left TOC exists) */
-(function () {
-  function tagIfHasTOC() {
-    if (!document.body) return false;
-    if (document.querySelector('.sidetoc')) {
-      document.body.classList.add('has-sidetoc');
-      return true;}
-    return false;
-  }
-  function watchUntilFound() {
-        if (tagIfHasTOC()) return;
-        new MutationObserver(function (m, obs) {
-            if (tagIfHasTOC()) obs.disconnect();
-        }).observe(document.documentElement, { childList: true, subtree: true });
-    }
-    if (document.readyState !== 'loading') watchUntilFound();
-    else document.addEventListener('DOMContentLoaded', watchUntilFound);
-})();
-
-(function () {
-    /* 6. Band detection & shared refs */
-    var BAND_MIN = 1200, BAND_MAX = 1400;
-    var overlay, triggerLi, triggerA;
-    var originalParent = null, originalNext = null;
-
-    function inBand() {
-        var w = window.innerWidth || document.documentElement.clientWidth;
-        return (w >= BAND_MIN && w <= BAND_MAX);
-    }
-
-    /* 6.1 Ensure the navbar trigger LI ("Search…") exists; wire click to open overlay */
-    function ensureTrigger() {
-        if (triggerLi && document.body.contains(triggerLi)) return triggerLi;
-
-        var navUl = document.querySelector('#navbar ul.navbar-nav');
-        if (!navUl) return null;
-
-        triggerLi = document.createElement('li');
-        triggerLi.className = 'nav-search-li'; // styled in APIDOCS CSS
-
-        triggerA = document.createElement('a');
-        triggerA.className = 'nav-search-trigger';
-        triggerA.href = '#';
-        triggerA.setAttribute('role', 'button');
-        triggerA.setAttribute('aria-label', 'Open search');
-        triggerA.textContent = 'Search…';      // placeholder-like label to match the inline search style
-
-        triggerA.addEventListener('click', function (e) {
-            e.preventDefault();
-            openOverlay();
-        });
-
-        navUl.appendChild(triggerLi);
-        triggerLi.appendChild(triggerA);
-        return triggerLi;
-    }
-
-    /* 6.2 Ensure the overlay container exists; create panel/close button once */
-    function ensureOverlay() {
-        if (overlay && document.body.contains(overlay)) return overlay;
-
-        overlay = document.createElement('div');
-        overlay.id = 'lucene-search-overlay';  // styled in APIDOCS CSS
-
-        var panel = document.createElement('div');
-        panel.className = 'panel';
-
-        var row = document.createElement('div');
-        row.className = 'row';
-
-        var closeBtn = document.createElement('button');
-        closeBtn.className = 'overlay-close';
-        closeBtn.type = 'button';
-        closeBtn.setAttribute('aria-label', 'Close search');
-        closeBtn.title = 'Close';
-        closeBtn.textContent = '×';
-        closeBtn.addEventListener('click', closeOverlay);
-
-        row.appendChild(closeBtn);
-        panel.appendChild(row);
-        overlay.appendChild(panel);
-
-        /* 6.2.1 Click outside panel closes overlay */
-        overlay.addEventListener('click', function (e) {
-            if (e.target === overlay) closeOverlay();
-        });
-
-        document.body.appendChild(overlay);
-        return overlay;
-    }
-
-    /* 6.3 Open overlay: move DocFX form into overlay, enforce visibility, focus input */
-    function openOverlay() {
-        var form = document.getElementById('search');
-        if (!form) return;
-
-        ensureOverlay();
-
-        if (!originalParent) {
-            originalParent = form.parentNode;
-            originalNext = form.nextSibling;
-        }
-
-        // Move real form into overlay
-        var row = overlay.querySelector('.row');
-        row.appendChild(form);
-
-        overlay.classList.add('open');  // CSS displays the overlay
-
-        // Ensure form is visible while in overlay
-        form.style.display = 'block';
-
-        // Focus the text input
-        var input = form.querySelector('#search-query');
-        if (input) { setTimeout(function () { input.focus(); input.select && input.select(); }, 0); }
-
-        // ESC closes overlay
-        document.addEventListener('keydown', onEsc);
-
-        // Enter/submit closes overlay (one-shot)
-        form.addEventListener('submit', onSubmitOnce, { once: true });
-    }
-
-    /* 6.4 Close overlay: restore and resync visibility */
-    function closeOverlay() {
-        var form = document.getElementById('search');
-
-        if (overlay) overlay.classList.remove('open');
-
-        // Put form back exactly where it was in the header.
-        if (form && originalParent) {
-            if (originalNext) originalParent.insertBefore(form, originalNext);
-            else originalParent.appendChild(form);
-        }
-
-        // After move, make sure visibility matches current band.
-        updateVisibility();
-
-        // Remove ESC listener added at open.
-        document.removeEventListener('keydown', onEsc);
-    }
-
-    /* 6.4.1 — Keyboard & submit handlers */
-    function onEsc(e) { if (e.key === 'Escape') { e.preventDefault(); closeOverlay(); } }
-    function onSubmitOnce() { closeOverlay(); }  // close after pressing Enter
-
-    /* 6.5 — Sync trigger vs inline search visibility according to the range (1200–1400): show trigger, hide inline form
-    Out of range: hide trigger, show the inline form; if overlay open, close it. */
-    function updateVisibility() {
-        ensureTrigger();
-
-        var form = document.getElementById('search');
-        if (!form) return;
-
-        if (inBand()) {
-            if (triggerLi) triggerLi.style.display = '';
-            form.style.display = 'none';           // hidden inline; shown when overlay opens
-        } else {
-            if (triggerLi) triggerLi.style.display = 'none';
-            form.style.display = '';               // normal inline search
-            if (overlay && overlay.classList.contains('open')) closeOverlay();
-        }
-    }
-
-    /* 6.6 — Init & watchers: run once, then watch viewport + DocFX rebuilds + mode flips */
-    function initOnce() {
-        ensureTrigger();
-        updateVisibility();
-    }
-
-    // Run early, then again after layout settles.
-    if (document.readyState !== 'loading') initOnce();
-    else document.addEventListener('DOMContentLoaded', initOnce);
-
-    // Re-check for late load.
-    window.addEventListener('load', function () {
-        updateVisibility();
-        setTimeout(updateVisibility, 60);
-        setTimeout(updateVisibility, 200);
-        setTimeout(updateVisibility, 600);
-    });
-
-    // Normal viewport changes (zoom/resize/orientation).
-    window.addEventListener('resize', updateVisibility);
-    window.addEventListener('orientationchange', updateVisibility);
-
-    // Watch your mobile/desktop class flip on #autocollapse
-    var auto = document.getElementById('autocollapse');
-    if (auto) {
-        new MutationObserver(updateVisibility)
-            .observe(auto, { attributes: true, attributeFilter: ['class'] });
-    }
-
-    // Making sure our search button trigger is made
-    var navbar = document.getElementById('navbar');
-    if (navbar) {
-        new MutationObserver(function () {
-            ensureTrigger();
-            updateVisibility();
-        }).observe(navbar, { childList: true, subtree: true });
-    }
-})();

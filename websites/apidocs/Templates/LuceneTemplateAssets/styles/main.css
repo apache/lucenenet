@@ -17,30 +17,58 @@
  * under the License.
  */
 
-/* 1. Navbar & Header
-   ------------------ */
-
-/* 1.1 Variables & small constants */
+/* 0. Design tokens / variables (centralized) */
 :root {
+  /* sizes */
   --nav-h: 80px;
   --brand-h: 55px;
   --submenu-min-width: 260px;
-  --ribbon-safe-zone: 150px;
+  --ribbon-safe-zone: 0;
+  --nav-wrap-extra: 0; /* default extra offset when navbar wraps */
+
+  /* colors */
+  --color-bg: #ffffff;
+  --color-primary: #0095eb;
+  --color-primary-contrast: #ffffff;
+  --color-muted: #143653;
+  --color-muted-2: #0f2a40;
+  --color-border: #e5e7eb;
+  --color-subnav-bg: #f7f7f7;
+  --color-breadcrumb: #bbb;
+  --color-ribbon-bg: #1764aa;
+
+  /* shadows & z-index */
+  --shadow-lg: 0 8px 24px rgba(0,0,0,.12);
+  --shadow-ribbon: 4px 4px 10px rgba(0,0,0,.8);
+  --z-nav: 1000;
+  --z-dropdown: 1001;
+  --z-ribbon: 9999;
 }
 
-/* 1.2 Basic header / navbar */
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* 1. Navbar & Header
+   ------------------ */
+
+/* 1.1 Basic header / navbar */
 nav.navbar {
-  background: #fff;
+  background: var(--color-bg);
   min-height: var(--nav-h);
-  margin-bottom: 0 !important;
+  margin-bottom: 8px !important;
 }
 
 #wrapper > header,
 header {
   position: relative;
-  z-index: 1000;
+  z-index: var(--z-nav);
   margin-bottom: 0;
-  background: #fff;
+  background: var(--color-bg);
 }
 
 /* 1.2.1 Brand/logo sizing */
@@ -80,8 +108,7 @@ body {
   padding-top: 0 !important;
 }
 
-/* 1.3 Collapsed / desktop toggle behavior */
-/* mobile = #autocollapse.collapsed (JS sets this) */
+/* 1.3 Collapsed / desktop toggle behavior (JS toggles #autocollapse.collapsed) */
 #autocollapse.collapsed .navbar-toggle {
   display: block !important;
   visibility: visible !important;
@@ -93,9 +120,9 @@ body {
   display: none;
 }
 
-  #autocollapse.collapsed #navbar.collapse.in {
-    display: block !important;
-  }
+#autocollapse.collapsed #navbar.collapse.in {
+  display: block !important;
+}
 
 /* 1.3.1 Desktop shows nav, hides hamburger */
 #autocollapse:not(.collapsed) #navbar {
@@ -108,28 +135,31 @@ body {
 
 /* 1.4 Hamburger button appearance */
 #autocollapse .navbar-toggle {
-  background: transparent !important;
-  border: 1px solid #0095eb !important;
+  background: transparent;
+  border: 1px solid var(--color-primary);
   border-radius: 4px;
   padding: 10px 12px;
   line-height: 1;
   margin-top: 18px;
+  transition: box-shadow .12s ease, border-color .12s ease;
 }
 
-  #autocollapse .navbar-toggle:focus {
+  #autocollapse .navbar-toggle:focus,
+  #autocollapse .navbar-toggle:focus-visible {
     outline: none;
-    box-shadow: none;
+    box-shadow: 0 0 0 3px rgba(0,149,235,0.18);
+    border-color: #00598d;
   }
 
-  #autocollapse .navbar-toggle .icon-bar {
-    width: 24px;
-    height: 3px;
-    background-color: #0095eb !important;
-  }
+#autocollapse .navbar-toggle .icon-bar {
+  width: 24px;
+  height: 3px;
+  background-color: var(--color-primary);
+}
 
-    #autocollapse .navbar-toggle .icon-bar + .icon-bar {
-      margin-top: 4px;
-    }
+#autocollapse .navbar-toggle .icon-bar + .icon-bar {
+  margin-top: 4px;
+}
 
 /* 1.5 Ensure hamburger hidden on desktop */
 #autocollapse:not(.collapsed) .navbar-toggle {
@@ -144,9 +174,9 @@ body {
   position: relative;
 }
 
-  .navbar-nav > li.nav-asf > .expand-stub {
-    display: none !important;
-  }
+.navbar-nav > li.nav-asf > .expand-stub {
+  display: none !important;
+}
 
 .navbar-nav .nav-asf > a {
   display: flex;
@@ -155,30 +185,30 @@ body {
   font-weight: 600;
 }
 
-  .navbar-nav .nav-asf > a .lucene-caret {
-    display: inline-block;
-    width: 1em;
-    text-align: center;
-  }
+.navbar-nav .nav-asf > a .lucene-caret {
+  display: inline-block;
+  width: 1em;
+  text-align: center;
+}
 
 /* 2.2 Submenu style (unified across desktop & mobile) */
 .navbar-nav > li.nav-asf > ul.nav.level2.asf-menu > li > a {
   font-size: 15px;
   line-height: 1.34;
   font-weight: 500;
-  color: #143653;
+  color: var(--color-muted);
   opacity: .95;
   padding: .48rem .9rem;
   white-space: nowrap;
 }
 
-  .navbar-nav > li.nav-asf > ul.nav.level2.asf-menu > li > a:hover {
-    background: #f2f6fb;
-    color: #0f2a40;
-  }
+.navbar-nav > li.nav-asf > ul.nav.level2.asf-menu > li > a:hover {
+  background: #f2f6fb;
+  color: var(--color-muted-2);
+}
 
-/* 2.3 Desktop hover dropdown (>=1200) — overlay with fade/slide */
-@media (min-width:1200px) {
+/* 2.3 Desktop hover dropdown (>=768) — overlay with fade/slide */
+@media (min-width:768px) {
   #autocollapse:not(.collapsed) .navbar-nav > li.nav-asf > a .lucene-caret::after {
     content: "▾";
   }
@@ -193,16 +223,16 @@ body {
     top: 100%;
     left: 0;
     min-width: var(--submenu-min-width);
-    background: #fff;
-    border: 1px solid #e5e7eb;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     padding: .35rem 0;
-    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    box-shadow: var(--shadow-lg);
     opacity: 0;
     pointer-events: none;
     transform: translateY(6px);
     transition: transform .16s ease, opacity .16s ease;
-    z-index: 1001;
+    z-index: var(--z-dropdown);
   }
 
   #autocollapse:not(.collapsed) .navbar-nav > li.nav-asf:hover > ul.nav.level2.asf-menu,
@@ -212,7 +242,7 @@ body {
     transform: translateY(0);
   }
 
-  /* 2.3.1 Ensure desktop dropdown does not affect layout (overlay) */
+  /* Ensure desktop dropdown does not affect layout (overlay) */
   #autocollapse:not(.collapsed) .navbar-nav > li.nav-asf > ul.nav.level2.asf-menu {
     display: block;
   }
@@ -224,9 +254,9 @@ body {
   width: 100%;
 }
 
-  #autocollapse.collapsed .navbar-nav > li.nav-asf > a .lucene-caret::after {
-    content: "▸";
-  }
+#autocollapse.collapsed .navbar-nav > li.nav-asf > a .lucene-caret::after {
+  content: "▸";
+}
 
 #autocollapse.collapsed .navbar-nav > li.nav-asf.is-open > a .lucene-caret::after {
   content: "▾";
@@ -261,52 +291,108 @@ body {
   --submenu-indent: 24px;
 }
 
-  #autocollapse.collapsed .navbar-nav > li > a {
-    display: block;
-    padding: 10px 12px 10px var(--m-left);
-  }
+#autocollapse.collapsed .navbar-nav > li > a {
+  display: block;
+  padding: 10px 12px 10px var(--m-left);
+}
 
-  #autocollapse.collapsed .navbar-nav > li.nav-asf > a {
-    gap: .35rem;
-    padding-left: var(--m-left);
-  }
+#autocollapse.collapsed .navbar-nav > li.nav-asf > a {
+  gap: .35rem;
+  padding-left: var(--m-left);
+}
 
-  #autocollapse.collapsed .navbar-nav > li.nav-asf > ul.nav.level2.asf-menu > li > a {
-    padding: 8px 12px 8px calc(var(--m-left) + var(--submenu-indent));
-  }
+#autocollapse.collapsed .navbar-nav > li.nav-asf > ul.nav.level2.asf-menu > li > a {
+  padding: 8px 12px 8px calc(var(--m-left) + var(--submenu-indent));
+}
 
-
-/* 2.7 768–1199: keep the same centered/left-aligned hamburger column as ≤767 */
+/* 2.7 768–1199: force full navbar (no compact/hamburger), sticky header and reduced button height */
 @media (min-width:768px) and (max-width:1199px) {
+  /* Force full navbar visible and hide hamburger regardless of the JS .collapsed state */
+  #autocollapse .navbar-toggle {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    margin-right: 0 !important;
+    position: static !important;
+    z-index: auto !important;
+  }
+
+  /* Make header sticky in this range (restore desktop sticky behaviour) */
+  header.is-sticky, #wrapper > header.is-sticky {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: var(--z-nav);
+    background: var(--color-bg);
+  }
+
+  header.is-sticky nav.navbar {
+    box-shadow: 0 1px 0 rgba(0,0,0,.06);
+    margin-bottom: 0 !important;
+  }
+
+  /* Reduce nav button height further to keep more content visible when the nav wraps under the logo */
+  header ul.navbar-nav > li > a {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    line-height: 30px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* Ensure navbar items layout behaves like desktop (allow wrapping but avoid the collapsed centered column) */
+  #autocollapse .navbar-nav {
+    float: none !important;
+    width: auto !important;
+    margin: 0 !important;
+    text-align: left !important;
+    white-space: normal;
+  }
+
   #autocollapse.collapsed #navbar .navbar-nav {
-    width: min(560px, 90vw);
-    margin: 8px auto;
-    text-align: left;
+    width: auto !important;
+    margin: 0 !important;
   }
 
-  #autocollapse.collapsed .navbar-nav > li > a {
-    padding: 10px 12px 10px 16px;
-    font-size: 16px;
-    line-height: 1.6;
-  }
-
+  /* Keep submenu/padding sensible in this width range */
   #autocollapse.collapsed .navbar-nav > li.nav-asf > a {
-    padding-left: 16px;
+    padding-left: 12px;
   }
 
   #autocollapse.collapsed .navbar-nav > li.nav-asf > ul.nav.level2.asf-menu > li > a {
-    padding: 8px 12px 8px calc(16px + 24px);
+    padding: 6px 12px 6px calc(12px + 24px);
   }
 
-  /* Making sure header is not sticky mid-range */
-  header.is-sticky, #wrapper > header.is-sticky {
-    position: static !important;
-    top: auto !important;
+  /* tuned extra offset only in this wrap range */
+  :root {
+    --nav-wrap-extra: 20px;
   }
 
-    header.is-sticky nav.navbar {
-      box-shadow: none !important;
+  html {
+    scroll-padding-top: calc(var(--nav-h) + var(--nav-wrap-extra) + 4px);
+  }
+
+  .sidefilter {
+    top: calc(var(--nav-h) + 40px + var(--nav-wrap-extra)) !important;
+  }
+
+  .sidetoc {
+    top: calc(var(--nav-h) + 100px + var(--nav-wrap-extra)) !important;
+  }
+
+  /* 2.8.1 Reduce padding to avoid shrinking */
+  @media (min-width:768px) and (max-width:991px) {
+    body #autocollapse .navbar-nav > li > a {
+      padding-left: 9px !important;
+      padding-right: 9px !important;
     }
+  }
+  /* Reverting the earlier */
+  @media (min-width:992px) {
+    body #autocollapse .navbar-nav > li > a {
+      padding-left: 15px !important;
+      padding-right: 15px !important;
+    }
+  }
 }
 
 /* 3. Sticky header for desktop (>=1200) (JS still toggles .is-sticky) */
@@ -314,14 +400,14 @@ body {
 header.is-sticky {
   position: sticky;
   top: 0;
-  z-index: 1000;
-  background: #fff;
+  z-index: var(--z-nav);
+  background: var(--color-bg);
 }
 
-  header.is-sticky nav.navbar {
-    box-shadow: 0 1px 0 rgba(0,0,0,.06);
-    margin-bottom: 0 !important;
-  }
+header.is-sticky nav.navbar {
+  box-shadow: 0 1px 0 rgba(0,0,0,.06);
+  margin-bottom: 0 !important;
+}
 
 /* 4. GitHub ribbon
    ---------------------------------------- */
@@ -329,45 +415,45 @@ header.is-sticky {
   display: block;
 }
 
-  #forkongithub a {
-    background: #1764aa;
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 5px 40px;
-    font-size: 1rem;
-    line-height: 2rem;
-    position: relative;
-    transition: .5s;
-    font-family: arial,sans-serif;
-    text-align: center;
-  }
+#forkongithub a {
+  background: var(--color-ribbon-bg);
+  color: var(--color-primary-contrast);
+  text-decoration: none;
+  font-weight: bold;
+  padding: 5px 40px;
+  font-size: 1rem;
+  line-height: 2rem;
+  position: relative;
+  transition: .5s;
+  font-family: arial,sans-serif;
+  text-align: center;
+}
 
-    #forkongithub a::before, #forkongithub a::after {
-      content: "";
-      width: 100%;
-      display: block;
-      position: absolute;
-      left: 0;
-      height: 1px;
-      background: #fff;
-    }
+#forkongithub a::before, #forkongithub a::after {
+  content: "";
+  width: 100%;
+  display: block;
+  position: absolute;
+  left: 0;
+  height: 1px;
+  background: var(--color-primary-contrast);
+}
 
-    #forkongithub a::before {
-      top: 1px;
-    }
+#forkongithub a::before {
+  top: 1px;
+}
 
-    #forkongithub a::after {
-      bottom: 1px;
-      top: auto;
-    }
+#forkongithub a::after {
+  bottom: 1px;
+  top: auto;
+}
 
-    #forkongithub a:hover {
-      background: black;
-      color: #fff;
-    }
+#forkongithub a:hover {
+  background: black;
+  color: var(--color-primary-contrast);
+}
 
-@media (min-width:769px) {
+@media (min-width:768px) {
   #forkongithub {
     position: fixed;
     top: 0;
@@ -375,38 +461,29 @@ header.is-sticky {
     width: 200px;
     height: 150px;
     overflow: hidden;
-    z-index: 9999;
+    z-index: var(--z-ribbon);
   }
 
-    #forkongithub a {
-      width: 200px;
-      position: absolute;
-      top: 40px;
-      right: -40px;
-      transform: rotate(45deg);
-      box-shadow: 4px 4px 10px rgba(0,0,0,.8);
-    }
+  #forkongithub a {
+    width: 200px;
+    position: absolute;
+    top: 40px;
+    right: -40px;
+    transform: rotate(45deg);
+    box-shadow: var(--shadow-ribbon);
+  }
 }
 
 /* 4.1 Keep a safe margin for the ribbon on mid widths so the nav doesn't collide */
-@media (min-width:769px) and (max-width:1400px) {
+@media (min-width:768px) and (max-width:1500px) {
   #autocollapse:not(.collapsed) #navbar,
   #autocollapse:not(.collapsed) .navbar-toggle {
     margin-right: var(--ribbon-safe-zone) !important;
   }
-    /* except when the collapse is open */
-    #autocollapse:not(.collapsed) #navbar.in,
-    #autocollapse:not(.collapsed) #navbar.collapsing {
-      margin-right: 0 !important;
-    }
-}
-
-/* 4.2 Making sure to especially keep the hamburger away from ribbon on mid widths */
-@media (min-width:769px) and (max-width:1199px) {
-  #autocollapse .navbar-toggle {
-    margin-right: 165px !important;
-    position: relative;
-    z-index: 10001;
+  /* except when the collapse is open */
+  #autocollapse:not(.collapsed) #navbar.in,
+  #autocollapse:not(.collapsed) #navbar.collapsing {
+    margin-right: 0 !important;
   }
 }
 
@@ -417,36 +494,35 @@ header.is-sticky {
   min-height: 40px;
   border: none;
   box-shadow: none;
-  background: #fff;
+  background: var(--color-bg);
   position: relative;
   z-index: 900;
-  background-color: #f7f7f7 !important;
-  border-bottom: 1px solid #e5e5e5 !important;
+  background-color: var(--color-subnav-bg) !important;
+  border-bottom: 1px solid #e5e7e5 !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.5);
 }
 
-  .subnav.navbar .container {
-    padding: 8px 0;
-  }
-
-  .subnav.navbar .breadcrumb {
-    margin: 0;
-    background: transparent;
-    padding: 0;
-  }
-
-    .subnav.navbar .breadcrumb > li + li:before {
-      content: "/";
-      color: #bbb;
-      padding: 0 6px;
-    }
-
-/* 5.1 Hide subnav on homepage */
-#homepage .subnav.navbar {
-  display: none !important;
+.subnav.navbar .container {
+  padding: 8px 0;
 }
 
-/* 5.2 Breadcrumb padding adjustments */
+.subnav.navbar .breadcrumb {
+  margin: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.subnav.navbar .breadcrumb > li + li:before {
+  content: "/";
+  color: var(--color-breadcrumb);
+  padding: 0 6px;
+}
+
+.subnav.navbar .breadcrumb > li {
+  display: inline-block;
+}
+
+/* 5.1 Breadcrumb padding adjustments */
 .subnav.navbar #breadcrumb {
   padding-left: 28px;
 }
@@ -471,36 +547,34 @@ header.is-sticky {
 .container.body-content:first-of-type,
 .content.wrap:first-of-type,
 .article.row.grid:first-of-type {
-  overflow: auto;
+  overflow: auto !important;
 }
 
-  /* 6.1 Default small top padding */
-  .container.body-content:first-of-type,
-  .content.wrap:first-of-type,
-  .article.row.grid:first-of-type {
-    padding-top: 8px !important;
-    margin-top: 0 !important;
-  }
+/* 6.1 Default small top padding */
+.container.body-content:first-of-type,
+.content.wrap:first-of-type,
+.article.row.grid:first-of-type {
+  padding-top: 8px !important;
+  margin-top: 0 !important;
+}
 
 #homepage .home-section:first-of-type {
   padding-top: 8px !important;
   margin-top: 0 !important;
-  overflow: auto;
+  overflow: auto !important;
 }
 
-  #homepage .home-section:first-of-type .container > h1:first-child,
-  .container.body-content h1:first-child,
-  .content.wrap > h1:first-child,
-  .article.row.grid h1:first-child {
-    margin-top: 0 !important;
-  }
+#homepage .home-section:first-of-type .container > h1:first-child,
+.container.body-content h1:first-child,
+.content.wrap > h1:first-child,
+.article.row.grid h1:first-child {
+  margin-top: 0 !important;
+}
 
-/* 6.2 Making sure the first block starts without a gap */
-#homepage .home-section:first-of-type,
-.container.body-content:first-of-type,
-.content.wrap:first-of-type,
-.article.row.grid:first-of-type {
+#homepage .home-section:first-of-type h1:first-child {
+  /* 6.2 Making sure the first block starts without a gap */
   padding-top: 0 !important;
+  margin-top: 0 !important;
 }
 
 .article.row.grid-right {
@@ -512,14 +586,9 @@ header.is-sticky {
   margin-top: 0 !important;
 }
 
-  #wrapper > header + *:not(.subnav):not(.navbar) {
-    padding-top: 8px !important;
-    overflow: auto;
-  }
-
-/* 6.4 Remove nav bottom gap consistently */
-nav.navbar {
-  margin-bottom: 0 !important;
+#wrapper > header + *:not(.subnav):not(.navbar) {
+  padding-top: 8px !important;
+  overflow: auto;
 }
 
 /* 6.5 Ensure header does not cover target */
@@ -527,98 +596,24 @@ html {
   scroll-padding-top: 84px;
 }
 
-/* 7. Side TOC / rail / affix behavior
-   ----------------------------------- */
-
-.sidefilter {
-  top: calc(var(--nav-h) + 40px) !important;
-}
-
-.sidetoc {
-  top: calc(var(--nav-h) + 100px) !important;
-}
-
-/* 7.1 Right column alignment (large screens) */
-@media (min-width: 1200px) {
-  .sideaffix {
-    padding-top: 48px !important;
-    margin-top: 0 !important;
-  }
-
-    .sideaffix .contribution {
-      margin-bottom: 6px !important;
-    }
-
-      .sideaffix .contribution .nav {
-        margin: 0 !important;
-      }
-
-    .sideaffix h5 {
-      margin-top: 6px !important;
-      margin-bottom: 8px !important;
-    }
-}
-
-/* 7.2 TOC positioning context tweaks (768–1199) */
-@media (min-width: 768px) and (max-width: 1199px) {
+/* 7. Side TOC offsets (kept) */
+@media (max-width:1199px) {
   .sidefilter {
-    padding-top: 25px !important;
+    top: calc(var(--nav-h) + 80px) !important;
   }
 
   .sidetoc {
-    margin-top: 5px !important;
+    top: calc(var(--nav-h) + 140px) !important;
   }
 }
 
-/* 7.3 Visual gray rail column only when a left TOC exists (769–991) so it does not appear anywhere it should not */
-@media (min-width:769px) and (max-width:991px) {
-  body::before {
-    content: none !important;
-  }
-  /* reset default */
-  body:has(.sidetoc)::before, body.has-sidetoc::before {
-    content: "" !important;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: calc((100vw - 750px)/2 + 13px);
-    width: 258px;
-    background: #f7f7f7;
-    border-right: 1px solid #e5e7eb;
-    z-index: 0;
-    pointer-events: none;
+@media (min-width:1200px) {
+  .sidefilter {
+    top: calc(var(--nav-h) + 40px) !important;
   }
 
-  .sidenav, .sidenav .sidefilter, .sidenav .sidetoc, .sidenav .sidetoc .toc, .sidenav .sidefilter {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-}
-
-/* 7.4 Visual gray rail column similarly as before but with different range (992–1199) */
-@media (min-width:992px) and (max-width:1199px) {
-  body::before {
-    content: none !important;
-  }
-
-  body:has(.sidetoc)::before, body.has-sidetoc::before {
-    content: "" !important;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: calc((100vw - 970px)/2 + 13px);
-    width: 258px;
-    background: #f7f7f7;
-    border-right: 1px solid #e5e7eb;
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  .sidenav, .sidenav .sidefilter, .sidenav .sidetoc, .sidenav .sidetoc .toc, .sidenav .sidefilter {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
+  .sidetoc {
+    top: calc(var(--nav-h) + 100px) !important;
   }
 }
 
@@ -630,47 +625,49 @@ header ul.navbar-nav {
   font-weight: normal !important;
 }
 
-  header ul.navbar-nav > li > a {
-    font-weight: 600 !important;
-  }
+header ul.navbar-nav > li > a {
+  font-weight: 600 !important;
+}
 
 /* 8.2 Ensure ASF submenu tone consistent in both collapsed and desktop */
 #autocollapse .navbar-nav > li.nav-asf ul.asf-menu a {
   font-size: 15px;
   line-height: 1.34;
   font-weight: 400;
-  color: #143653;
+  color: var(--color-muted);
   opacity: .95;
 }
 
-/* 8.3 Hamburger ASF polish (snug caret etc) */
+/* 8.3 Hamburger ASF improvements */
 #autocollapse.collapsed .navbar-nav > li.nav-asf > a .lucene-caret {
   margin-left: .1rem;
 }
 
-  #autocollapse.collapsed .navbar-nav > li.nav-asf > a .lucene-caret::after {
-    content: "▸";
-  }
+#autocollapse.collapsed .navbar-nav > li.nav-asf > a .lucene-caret::after {
+  content: "▸";
+}
 
 #autocollapse.collapsed .navbar-nav > li.nav-asf.is-open > a .lucene-caret::after {
   content: "▾";
 }
 
-/* 8.4 Defensive: ensure desktop ASF dropdowns overlay */
+/* 8.4 Defensive: ensure desktop ASF dropdowns overlay (consolidated) */
 #autocollapse:not(.collapsed) .navbar-nav > li.nav-asf > ul.nav.level2.asf-menu {
   position: absolute;
   top: 100%;
   left: 0;
-  z-index: 1001;
+  z-index: var(--z-dropdown);
 }
 
-/* 8.5 Remove small duplicated artifacts and ensure consistent nav spacing */
-nav.navbar {
-  margin-bottom: 8px !important;
+/* Accessibility: visible focus for keyboard users */
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid rgba(0,0,0,0.12);
+  outline-offset: 2px;
 }
 
-/* 8.6 At 768px Show/Hide ToC bleeding prevention */
-@media (min-width: 768px) and (max-width: 768px) {
+/* 8.6 Small-screen ToC bleeding prevention (fixed broken media query) */
+@media (max-width:767.98px) {
   .sidenav .sidetoggle.collapse {
     display: block !important;
     height: 0 !important;
@@ -683,175 +680,125 @@ nav.navbar {
       overflow: visible !important;
       visibility: visible !important;
     }
-}
-
-/* 9. APIDOCS-ONLY — Search alignment + compact trigger + overlay
-   ------------------------------------------------------------- */
-
-/* 9.1 Nav links + search alignment on one row (≥768) */
-@media (min-width:768px) {
-  /* (Similarly to 1.2.2 */
-  header ul.navbar-nav > li > a {
-    padding-top: calc((var(--nav-h) - 34px)/2);
-    padding-bottom: calc((var(--nav-h) - 34px)/2);
-    line-height: 34px;
-    font-size: 16px;
-    font-weight: 600;
   }
 
-  /* Keep nav items left, search on the right in the same row */
-  #navbar .navbar-nav {
-    float: left !important;
-    margin: 0 !important;
-  }
+  /* 9. APIDOCS-ONLY — Search inserted into navbar as a nav item
+     The search input is styled to match nav links and participate in wrapping.
+  */
 
-  #navbar form.navbar-form.navbar-right {
-    float: right !important;
-    margin: calc((var(--nav-h) - 34px)/2) 0 calc((var(--nav-h) - 34px)/2) 8px !important;
-  }
-
-  /* Base input size with gentle step-downs */
-  #search .form-control {
-    width: 200px;
-    max-width: 26vw;
-  }
-
-  @media (max-width:1280px) {
-    #search .form-control {
-      width: 190px;
-    }
-  }
-
-  @media (max-width:1140px) {
-    #search .form-control {
-      width: 175px;
-    }
-  }
-}
-
-/* 9.2 Compact “Search…” button between 1200–1399px */
-/* button hidden by default */
-#navbar .nav-search-li {
-  display: none;
-}
-
-/* ≥1400px — show full inline search, hide button */
-@media (min-width:1400px) {
-  #navbar form#search {
-    display: block !important;
-  }
-
-  #navbar .nav-search-li {
-    display: none !important;
-  }
-}
-
-/* 1200–1399px — hide inline search, show button */
-@media (min-width:1200px) and (max-width:1400px) {
-  #navbar form#search {
-    display: none !important;
-  }
-
-  #navbar .nav-search-li {
-    display: block !important;
-  }
-
-    #navbar .nav-search-li > a.nav-search-trigger {
-      display: block;
-      color: #93a2ad;
-      font-weight: 350 !important;
-      border: 1px solid #c0c8cf;
-      border-radius: 4px;
-      padding: 2px 15px;
-      margin: 25px 10px 21px 10px;
-      line-height: 1.6;
-    }
-
-      #navbar .nav-search-li > a.nav-search-trigger:hover,
-      #navbar .nav-search-li > a.nav-search-trigger:focus {
-        color: #143653;
-        text-decoration: none;
-        outline: none;
-      }
-}
-
-/* ≤1199px In the Hamburger, we revert to the usual inline search */
-@media (max-width:1199px) {
-  #navbar .nav-search-li {
-    display: none !important;
-  }
-
-  #navbar form#search {
-    display: block !important;
-  }
-}
-
-/* 9.3 Fixed search overlay (click-to-close) */
-#lucene-search-overlay {
-  position: fixed;
-  inset: 0;
-  background: transparent;
-  z-index: 10050;
-  display: none;
-}
-
-  #lucene-search-overlay.open {
-    display: block;
-  }
-
-  /* Centered panel near the top; holds the real DocFX form */
-  #lucene-search-overlay .panel {
-    position: absolute;
-    top: 70px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(390px, 92vw);
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    box-shadow: 0 22px 55px rgba(0,0,0,.22);
-    padding: 12px 14px;
-  }
-
-  /* Row layout */
-  #lucene-search-overlay .row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-
-  #lucene-search-overlay .overlay-close {
-    background: transparent;
-    border: 0;
-    cursor: pointer;
-    font-size: 18px;
-    line-height: 1;
-    color: #666;
-  }
-
-    #lucene-search-overlay .overlay-close:hover {
-      color: #222;
-    }
-
-  /* Search through the overlay*/
-  #lucene-search-overlay #search {
-    display: block !important;
-    width: 100%;
-    margin: 0 !important;
-  }
-
-    #lucene-search-overlay #search .form-group {
+  /* 9.1 MOBILE (≤767): search in hamburger, full width, should stay as it was */
+  @media (max-width:767px) {
+    #autocollapse .navbar-form#search {
+      display: block !important;
+      float: none !important;
       width: 100%;
+      padding: 10px 15px;
       margin: 0;
+      border: 0;
+      box-shadow: none;
     }
 
-    #lucene-search-overlay #search #search-query {
-      width: 100%;
+    #autocollapse #search .form-control {
+      width: 100% !important;
     }
 
-/* 9.4 Making sure nothing can force the inline search to be visible, when it should not appear (1200–1399) */
-@media (min-width:1200px) and (max-width:1399px) {
-  #navbar #search[style*="display: block"] {
-    display: none !important;
+    #autocollapse .navbar-form.navbar-right {
+      margin: 0 !important;
+    }
   }
-}
+
+  /* 9.2 APIDOCS 768–1199: Nav + Search wraps */
+  @media (min-width:768px) and (max-width:1199px) {
+    /* SEARCH: float right on the first row (next to logo) */
+    #autocollapse .navbar-form#search {
+      display: block !important;
+      float: right !important; /* put it on Row 1 */
+      padding: 0 !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+
+    /* Kill the 100% block width on DocFX/bootstrap overrides */
+    #autocollapse #search .form-group {
+      display: inline-block !important;
+      width: auto !important;
+      margin: 0 !important;
+    }
+    /* Fixed, tidy input width (but still responsive) */
+    #autocollapse #search .form-control {
+      width: 210px !important;
+      max-width: 40vw;
+      height: 34px;
+      line-height: 34px;
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid #dedede;
+      vertical-align: middle;
+    }
+
+    /* NAVBAR-COLLAPSE becomes another row under the logo */
+    #autocollapse .navbar-collapse {
+      clear: both;
+      width: 100%;
+      float: none;
+      display: block !important; /* override any previous flex */
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+    }
+
+    /* Center nav items and search */
+    #autocollapse ul.navbar-nav {
+      float: none;
+      display: flex;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    #autocollapse ul.navbar-nav > li {
+      float: none;
+    }
+
+    /* Making sure the right affix remains visible and not covered */
+    .sideaffix {
+      margin-top: 100px !important;
+    }
+  }
+
+  /* 9.2.1 Pushing the search box closer to the navbar, distance from ribbon*/
+  @media (min-width:992px) and (max-width:1199px) {
+    .navbar-form.navbar-right {
+      margin: 2px 200px 6px 0 !important; /* gap from right edge */
+    }
+  }
+
+  /* 9.2.2 Reverts 9.2.1, as the sideaffix is no longer present
+      and search box is already closer to the navbar */
+  @media (min-width:768px) and (max-width:991px) {
+    .navbar-form.navbar-right {
+      margin: 2px 50px 6px 0 !important; /* align with buttons + ribbon gap */
+    }
+  }
+
+  /* 9.3 >=1200: align search with nav text and keep away from ribbon
+      and makes it more centered to align with the navbar buttons */
+  @media (min-width:1200px) {
+    #autocollapse .navbar-form.navbar-right {
+      display: block !important;
+      float: right;
+      margin: 22px 70px 18px 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+
+    #autocollapse #search .form-control {
+      width: auto !important; /* back to natural width */
+    }
+
+    /* Reverts 9.1 sideaffix margin change, so they are more uniform with the desktop mode one */
+    .sideaffix {
+      margin-top: 50px !important;
+    }
+  }
