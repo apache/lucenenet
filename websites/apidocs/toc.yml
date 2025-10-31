@@ -6,4 +6,19 @@
   topicHref: ../../src/dotnet/tools/lucene-cli/docs/index.md
 - name: Lucene.Net Website
   href: https://lucenenet.apache.org/
-
+- name: ASF
+  items:
+    - name: Foundation
+      href: https://www.apache.org/
+    - name: Events
+      href: https://www.apache.org/events/
+    - name: License
+      href: https://www.apache.org/licenses/
+    - name: Thanks
+      href: https://www.apache.org/foundation/thanks.html
+    - name: Security
+      href: https://www.apache.org/security/
+    - name: Sponsorship
+      href: https://www.apache.org/foundation/sponsorship.html
+    - name: Privacy Policy
+      href: https://privacy.apache.org/policies/privacy-policy-public.html
