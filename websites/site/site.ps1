@@ -46,8 +46,11 @@ if ($Clean) {
 # install docfx tool
 $PreviousLocation = Get-Location
 Set-Location $RepoRoot
-dotnet tool restore
-Set-Location $PreviousLocation
+try {
+    dotnet tool restore
+} finally {
+    Set-Location $PreviousLocation
+}
 
 # delete anything that already exists
 if ($Clean) {
@@ -62,14 +65,20 @@ $DocFxJson = Join-Path -Path $SiteFolder "docfx.json"
 $DocFxLog = Join-Path -Path $SiteFolder "obj\docfx.log"
 
 if($?) {
-    if ($ServeDocs -eq $false) {
-        # build the output
-        Write-Host "Building docs..."
-        & dotnet tool run docfx build $DocFxJson -l "$DocFxLog" --logLevel $LogLevel
-    }
-    else {
-        # build + serve (for testing)
-        Write-Host "starting website..."
-        & dotnet tool run docfx $DocFxJson --serve --port $StagingPort
+    $PreviousLocation = Get-Location
+    Set-Location $RepoRoot
+    try {
+        if ($ServeDocs -eq $false) {
+            # build the output
+            Write-Host "Building docs..."
+            & dotnet tool run docfx build $DocFxJson -l "$DocFxLog" --logLevel $LogLevel
+        }
+        else {
+            # build + serve (for testing)
+            Write-Host "starting website..."
+            & dotnet tool run docfx $DocFxJson --serve --port $StagingPort
+        }
+    } finally {
+        Set-Location $PreviousLocation
     }
 }
