@@ -17,11 +17,11 @@
  * under the License.
  */
 
-/* 1. Mode controller (desktop vs mobile; width only with hysteresis) */
+/* 1. Mode controller (desktop vs mobile) — use matchMedia to align with CSS */
 (function () {
   var ROOT_ID = 'autocollapse', COLLAPSED = 'collapsed', MODE = null;
-  // Using the same range so both sides feel identical:
-  var MOBILE_MAX = 1200, DESKTOP_MIN = 1200;
+  // Keep readable constant in case you want to change breakpoint in one place
+  var DESKTOP_QUERY = '(min-width: 768px)';
   var scheduled = false;
 
   function $(id) { return document.getElementById(id); }
@@ -44,13 +44,15 @@
     }
   }
 
-  function decide(from) {
-    var w = window.innerWidth;
-    if (from === 'mobile') return (w >= DESKTOP_MIN) ? 'desktop' : 'mobile';
-    if (from === 'desktop') return (w < MOBILE_MAX) ? 'mobile' : 'desktop';
-    if (w >= DESKTOP_MIN) return 'desktop';
-    if (w < MOBILE_MAX) return 'mobile';
-    return 'desktop';
+  // Use matchMedia to determine desktop/mobile to match the CSS
+  function isDesktop() {
+    if (window.matchMedia) return window.matchMedia(DESKTOP_QUERY).matches;
+    // Fallback: numeric check (rarely used)
+    return (window.innerWidth || document.documentElement.clientWidth) >= 768;
+  }
+
+  function decide() {
+    return isDesktop() ? 'desktop' : 'mobile';
   }
 
   function paint(mode) {
@@ -59,6 +61,13 @@
     if (MODE !== mode) {
       r.classList.toggle(COLLAPSED, isMobile);
       setCollapseOpen(false);   // never auto-open when switching
+      // When switching to desktop, ensure any mobile-only open states are cleared
+      if (!isMobile) {
+        try {
+          var opens = r.querySelectorAll('.nav-asf.is-open');
+          for (var i = 0; i < opens.length; i++) opens[i].classList.remove('is-open');
+        } catch (e) { /* defensive */ }
+      }
       MODE = mode;
       return;
     }
@@ -68,7 +77,7 @@
   function recalc() {
     scheduled = false;
     if (root() && root().classList.contains(COLLAPSED) && isPanelOpen()) return;
-    paint(decide(MODE));
+    paint(decide());
   }
   function schedule() { if (scheduled) return; scheduled = true; requestAnimationFrame(recalc); }
 
@@ -135,16 +144,19 @@
 /* 3. Close hamburger when leaving mobile */
 (function () {
   var ROOT_ID = 'autocollapse';
-  var MOBILE_MAX = 1200, DESKTOP_MIN = 1200;
+  var DESKTOP_QUERY = '(min-width: 768px)';
   var lastMode = null, rafScheduled = false;
 
   function $(sel, ctx) { return (ctx || document).querySelector(sel); }
   function $id(id) { return document.getElementById(id); }
 
-  function modeFromWidth(w) {
-    if (lastMode === 'mobile') return (w >= DESKTOP_MIN) ? 'desktop' : 'mobile';
-    if (lastMode === 'desktop') return (w < MOBILE_MAX) ? 'mobile' : 'desktop';
-    return (w >= DESKTOP_MIN) ? 'desktop' : 'mobile';
+  function isDesktop() {
+    if (window.matchMedia) return window.matchMedia(DESKTOP_QUERY).matches;
+    return (window.innerWidth || document.documentElement.clientWidth) >= 768;
+  }
+
+  function modeFromWidth() {
+    return isDesktop() ? 'desktop' : 'mobile';
   }
 
   function setCollapsed(root, collapsed) {
@@ -176,23 +188,18 @@
     var root = $id(ROOT_ID);
     if (!root) return;
 
-    var w = window.innerWidth || document.documentElement.clientWidth;
-    var mode = modeFromWidth(w);
+    var mode = modeFromWidth();
     if (mode !== lastMode) {
-      // toggle collapsed state by mode
       setCollapsed(root, mode === 'mobile');
-      // when leaving mobile, make sure hamburger is closed
       if (mode === 'desktop') closeHamburger();
       lastMode = mode;
     } else {
-      // keep class in sync even if mode didn't change
       setCollapsed(root, mode === 'mobile');
     }
   }
 
   function schedule() { if (rafScheduled) return; rafScheduled = true; requestAnimationFrame(apply); }
 
-  // initial + after load (some CSS/DocFX bits settle after load)
   if (document.readyState !== 'loading') schedule(); else document.addEventListener('DOMContentLoaded', schedule);
   window.addEventListener('load', function () { schedule(); setTimeout(schedule, 120); });
 
@@ -227,21 +234,3 @@
   }
 })();
 
-/* 5. Body tagging for TOC presence (adds .has-sidetoc if a left TOC exists) */
-(function () {
-  function tagIfHasTOC() {
-    if (!document.body) return false;
-    if (document.querySelector('.sidetoc')) {
-      document.body.classList.add('has-sidetoc');
-      return true;}
-    return false;
-  }
-  function watchUntilFound() {
-    if (tagIfHasTOC()) return;
-    new MutationObserver(function (m, obs) {
-      if (tagIfHasTOC()) obs.disconnect();
-    }).observe(document.documentElement, { childList: true, subtree: true });
-  }
-  if (document.readyState !== 'loading') watchUntilFound();
-  else document.addEventListener('DOMContentLoaded', watchUntilFound);
-})();
