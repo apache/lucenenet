@@ -125,7 +125,7 @@ jobs:
 
       - name: Create Pull Request
         id: cpr
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v7.0.8
         with:
           token: ${{ secrets.LUCENE_NET_WEBSITE_BUILD }}
           path: website-repo
