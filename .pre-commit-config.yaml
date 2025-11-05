@@ -37,4 +37,5 @@ repos:
       - id: codespell
         name: run codespell
         description: check spelling with codespell
+        exclude: ^.*Lucene\.Net\.Tests.*$
         args: [--ignore-words=.github/linters/codespell.txt]
