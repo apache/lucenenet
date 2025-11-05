@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Lucene.Net source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: Execute Python scripts
         working-directory: src/Lucene.Net/Util/Packed
