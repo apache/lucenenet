@@ -185,38 +185,50 @@ namespace Lucene.Net.Store
             EnsureOpen();
             var file = new FileInfo(Path.Combine(Directory.FullName, name));
             var fc = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file + "\")", fc);
+            return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file + "\")", fc, context);
         }
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
-            var full = (MMapIndexInput)OpenInput(name, context);
-            return new IndexInputSlicerAnonymousClass(this, full);
+            EnsureOpen();
+            var file = new FileInfo(Path.Combine(Directory.FullName, name));
+            var descriptor = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            return new IndexInputSlicerAnonymousClass(this, context, file, descriptor);
         }
 
         private sealed class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly MMapDirectory outerInstance;
-            private readonly MMapIndexInput full;
+            private readonly FileInfo file;
+            private readonly FileStream descriptor;
             private int disposed = 0; // LUCENENET specific - allow double-dispose
+            private readonly IOContext context;
 
-            public IndexInputSlicerAnonymousClass(MMapDirectory outerInstance, MMapIndexInput full)
+            public IndexInputSlicerAnonymousClass(MMapDirectory outerInstance, IOContext context, FileInfo file, FileStream descriptor)
             {
                 this.outerInstance = outerInstance;
-                this.full = full;
+                this.context = context;
+                this.file = file;
+                this.descriptor = descriptor;
             }
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
-                outerInstance.EnsureOpen();
-                return full.Slice(sliceDescription, offset, length);
+                var fc = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                return new MMapIndexInput(outerInstance, "MMapIndexInput(" + sliceDescription + " in path=\"" + file.FullName + "\" slice=" + offset + ":" + (offset + length) + ")", fc, offset, length, BufferedIndexInput.GetBufferSize(context));
             }
 
             [Obsolete("Only for reading CFS files from 3.x indexes.")]
             public override IndexInput OpenFullSlice()
             {
-                outerInstance.EnsureOpen();
-                return (IndexInput)full.Clone();
+                try
+                {
+                    return OpenSlice("full-slice", 0, descriptor.Length);
+                }
+                catch (Exception ex) when (ex.IsIOException())
+                {
+                    throw RuntimeException.Create(ex);
+                }
             }
 
             protected override void Dispose(bool disposing)
@@ -225,25 +237,75 @@ namespace Lucene.Net.Store
 
                 if (disposing)
                 {
-                    full.Dispose();
+                    descriptor.Dispose();
                 }
             }
         }
 
-        public sealed class MMapIndexInput : ByteBufferIndexInput
+        public sealed class MMapIndexInput : BufferedIndexInput
         {
-            internal MemoryMappedFile memoryMappedFile; // .NET port: this is equivalent to FileChannel.map
-            private readonly FileStream fc;
+            internal readonly MemoryMappedFile memoryMappedFile; // .NET port: this is equivalent to FileChannel.map
+            private readonly MemoryMappedViewAccessor accessor;
+            internal readonly FileStream fc;
             private int disposed = 0; // LUCENENET specific - allow double-dispose
+            private readonly long m_off;
+            private readonly long m_end;
 
-            internal MMapIndexInput(MMapDirectory outerInstance, string resourceDescription, FileStream fc)
-                : base(resourceDescription, null, fc.Length, outerInstance.chunkSizePower, true)
+            public bool IsClone { get; set; }
+
+            internal MMapIndexInput(MMapDirectory outerInstance, string resourceDescription, FileStream fc, IOContext context)
+                : base(resourceDescription, context)
             {
-                this.fc = fc ?? throw new ArgumentNullException(nameof(fc)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-                this.SetBuffers(outerInstance.Map(this, fc, 0, fc.Length));
+                this.fc = fc ?? throw new ArgumentNullException(nameof(fc)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention))
+
+                if (fc.Length > 0)
+                {
+                    this.memoryMappedFile = MemoryMappedFile.CreateFromFile(
+                        fileStream: fc,
+                        mapName: null,
+                        capacity: fc.Length,
+                        access: MemoryMappedFileAccess.Read,
+#if FEATURE_MEMORYMAPPEDFILESECURITY
+                        memoryMappedFileSecurity: null,
+#endif
+                        inheritability: HandleInheritability.Inheritable,
+                        leaveOpen: true); // LUCENENET: We explicitly dispose the FileStream separately.
+
+                    this.accessor = memoryMappedFile.CreateViewAccessor(0, fc.Length, MemoryMappedFileAccess.Read);
+                }
+
+                this.IsClone = false;
+                this.m_end = fc.Length;
             }
 
-            protected override sealed void Dispose(bool disposing)
+            internal MMapIndexInput(MMapDirectory outerInstance, string resourceDescription, FileStream fc,
+                long offset, long length, int bufferSize)
+                : base(resourceDescription, bufferSize)
+            {
+                this.fc = fc ?? throw new ArgumentNullException(nameof(fc)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+
+                if (fc.Length > 0)
+                {
+                    this.memoryMappedFile = MemoryMappedFile.CreateFromFile(
+                        fileStream: fc,
+                        mapName: null,
+                        capacity: fc.Length,
+                        access: MemoryMappedFileAccess.Read,
+#if FEATURE_MEMORYMAPPEDFILESECURITY
+                        memoryMappedFileSecurity: null,
+#endif
+                        inheritability: HandleInheritability.Inheritable,
+                        leaveOpen: true); // LUCENENET: We explicitly dispose the FileStream separately.
+
+                    this.accessor = memoryMappedFile.CreateViewAccessor(offset, length, MemoryMappedFileAccess.Read);
+                }
+
+                this.IsClone = true;
+                this.m_off = offset;
+                this.m_end = offset + length;
+            }
+
+            protected override void Dispose(bool disposing)
             {
                 if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
 
@@ -253,98 +315,128 @@ namespace Lucene.Net.Store
                     {
                         try
                         {
+                            if (this.accessor != null)
+                            {
+                                this.accessor.Dispose();
+                            }
+
                             if (this.memoryMappedFile != null)
                             {
                                 this.memoryMappedFile.Dispose();
-                                this.memoryMappedFile = null;
                             }
                         }
                         finally
                         {
                             // LUCENENET: If the file is 0 length we will not create a memoryMappedFile above
                             // so we must always ensure the FileStream is explicitly disposed.
-                            this.fc.Dispose();
+                            if (!IsClone)
+                            {
+                                this.fc.Dispose();
+                            }
                         }
                     }
                 }
                 finally
                 {
-                    base.Dispose(disposing);
+                    //base.Dispose(disposing);
                 }
             }
 
-            /// <summary>
-            /// Try to unmap the buffer, this method silently fails if no support
-            /// for that in the runtime. On Windows, this leads to the fact,
-            /// that mmapped files cannot be modified or deleted.
-            /// </summary>
-            protected override void FreeBuffer(ByteBuffer buffer)
+            public override object Clone()
             {
-                // LUCENENET specific: this should free the memory mapped view accessor
-                if (buffer is IDisposable disposable)
-                    disposable.Dispose();
-
-                // LUCENENET specific: no need for UnmapHack
-            }
-        }
-
-        /// <summary>
-        /// Maps a file into a set of buffers </summary>
-        internal virtual ByteBuffer[] Map(MMapIndexInput input, FileStream fc, long offset, long length)
-        {
-            if ((length >>> chunkSizePower) >= int.MaxValue)
-                throw new ArgumentException("RandomAccessFile too big for chunk size: " + fc.ToString());
-
-            // LUCENENET specific: Return empty buffer if length is 0, rather than attempting to create a MemoryMappedFile.
-            // Part of a solution provided by Vincent Van Den Berghe: http://apache.markmail.org/message/hafnuhq2ydhfjmi2
-            if (length == 0)
-            {
-                return new[] { ByteBuffer.Allocate(0).AsReadOnlyBuffer() };
+                MMapIndexInput clone = (MMapIndexInput)base.Clone();
+                clone.IsClone = true;
+                return clone;
             }
 
-            long chunkSize = 1L << chunkSizePower;
+            public override long Length => m_end - m_off;
 
-            // we always allocate one more buffer, the last one may be a 0 byte one
-            int nrBuffers = (int)(length >>> chunkSizePower) + 1;
-
-            ByteBuffer[] buffers = new ByteBuffer[nrBuffers];
-
-            if (input.memoryMappedFile is null)
+            // /// <summary>
+            // /// Try to unmap the buffer, this method silently fails if no support
+            // /// for that in the runtime. On Windows, this leads to the fact,
+            // /// that mmapped files cannot be modified or deleted.
+            // /// </summary>
+            // protected override void FreeBuffer(ByteBuffer buffer)
+            // {
+            //     // LUCENENET specific: this should free the memory mapped view accessor
+            //     if (buffer is IDisposable disposable)
+            //         disposable.Dispose();
+            //
+            //     // LUCENENET specific: no need for UnmapHack
+            // }
+            protected override void ReadInternal(byte[] b, int offset, int length)
             {
-                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(
-                    fileStream: fc,
-                    mapName: null,
-                    capacity: length,
-                    access: MemoryMappedFileAccess.Read,
-#if FEATURE_MEMORYMAPPEDFILESECURITY
-                    memoryMappedFileSecurity: null,
-#endif
-                    inheritability: HandleInheritability.Inheritable,
-                    leaveOpen: true); // LUCENENET: We explicitly dispose the FileStream separately.
-            }
-
-            long bufferStart = 0L;
-            for (int bufNr = 0; bufNr < nrBuffers; bufNr++)
-            {
-                int bufSize = (int)((length > (bufferStart + chunkSize)) ? chunkSize : (length - bufferStart));
-
-                // LUCENENET: We get an UnauthorizedAccessException if we create a 0 byte file at the end of the range.
-                // See: https://stackoverflow.com/a/5501331
-                // We can fix this by using an empty ByteBuffer if the buffer size is 0.
-                if (bufSize == 0 && bufNr == (nrBuffers - 1))
+                if (accessor == null)
                 {
-                    buffers[bufNr] = ByteBuffer.Allocate(0).AsReadOnlyBuffer();
-                    break;
+                    return;
                 }
 
-                buffers[bufNr] = input.memoryMappedFile.CreateViewByteBuffer(
-                    offset: offset + bufferStart,
-                    size: bufSize,
-                    access: MemoryMappedFileAccess.Read);
-                bufferStart += bufSize;
+                long position = Position;
+                accessor.ReadArray(position, b, offset, length);
             }
 
-            return buffers;
+            protected override void SeekInternal(long pos)
+            {
+            }
         }
+
+//         /// <summary>
+//         /// Maps a file into a set of buffers </summary>
+//         internal virtual ByteBuffer[] Map(MMapIndexInput input, FileStream fc, long offset, long length)
+//         {
+//             if ((length >>> chunkSizePower) >= int.MaxValue)
+//                 throw new ArgumentException("RandomAccessFile too big for chunk size: " + fc.ToString());
+//
+//             // LUCENENET specific: Return empty buffer if length is 0, rather than attempting to create a MemoryMappedFile.
+//             // Part of a solution provided by Vincent Van Den Berghe: http://apache.markmail.org/message/hafnuhq2ydhfjmi2
+//             if (length == 0)
+//             {
+//                 return new[] { ByteBuffer.Allocate(0).AsReadOnlyBuffer() };
+//             }
+//
+//             long chunkSize = 1L << chunkSizePower;
+//
+//             // we always allocate one more buffer, the last one may be a 0 byte one
+//             int nrBuffers = (int)(length >>> chunkSizePower) + 1;
+//
+//             ByteBuffer[] buffers = new ByteBuffer[nrBuffers];
+//
+//             if (input.memoryMappedFile is null)
+//             {
+//                 input.memoryMappedFile = MemoryMappedFile.CreateFromFile(
+//                     fileStream: fc,
+//                     mapName: null,
+//                     capacity: length,
+//                     access: MemoryMappedFileAccess.Read,
+// #if FEATURE_MEMORYMAPPEDFILESECURITY
+//                     memoryMappedFileSecurity: null,
+// #endif
+//                     inheritability: HandleInheritability.Inheritable,
+//                     leaveOpen: true); // LUCENENET: We explicitly dispose the FileStream separately.
+//             }
+//
+//             long bufferStart = 0L;
+//             for (int bufNr = 0; bufNr < nrBuffers; bufNr++)
+//             {
+//                 int bufSize = (int)((length > (bufferStart + chunkSize)) ? chunkSize : (length - bufferStart));
+//
+//                 // LUCENENET: We get an UnauthorizedAccessException if we create a 0 byte file at the end of the range.
+//                 // See: https://stackoverflow.com/a/5501331
+//                 // We can fix this by using an empty ByteBuffer if the buffer size is 0.
+//                 if (bufSize == 0 && bufNr == (nrBuffers - 1))
+//                 {
+//                     buffers[bufNr] = ByteBuffer.Allocate(0).AsReadOnlyBuffer();
+//                     break;
+//                 }
+//
+//                 buffers[bufNr] = input.memoryMappedFile.CreateViewByteBuffer(
+//                     offset: offset + bufferStart,
+//                     size: bufSize,
+//                     access: MemoryMappedFileAccess.Read);
+//                 bufferStart += bufSize;
+//             }
+//
+//             return buffers;
+//         }
     }
 }
