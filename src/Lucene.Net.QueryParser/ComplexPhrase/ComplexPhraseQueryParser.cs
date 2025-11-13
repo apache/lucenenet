@@ -212,7 +212,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
         /// </summary>
         public class ComplexPhraseQuery : Query
         {
-            private readonly string field;
+            private readonly string _field;  // LUCENENET specific: renamed from 'field' since field is a keyword in C# 14
             private readonly string phrasedQueryStringContents;
             private readonly int slopFactor;
             private readonly bool inOrder;
@@ -221,13 +221,13 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
             public ComplexPhraseQuery(string field, string phrasedQueryStringContents,
                 int slopFactor, bool inOrder)
             {
-                this.field = field;
+                this._field = field;
                 this.phrasedQueryStringContents = phrasedQueryStringContents;
                 this.slopFactor = slopFactor;
                 this.inOrder = inOrder;
             }
 
-            public string Field => field;
+            public string Field => _field;
 
             // Called by ComplexPhraseQueryParser for each phrase after the main
             // parse
@@ -244,7 +244,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                 try
                 {
                     //temporarily set the QueryParser to be parsing the default field for this phrase e.g author:"fred* smith"
-                    qp.m_field = this.field;
+                    qp.m_field = this._field;
                     contents = qp.Parse(phrasedQueryStringContents);
                 }
                 finally
@@ -299,7 +299,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                             // Insert fake term e.g. phrase query was for "Fred Smithe*" and
                             // there were no "Smithe*" terms - need to
                             // prevent match on just "Fred".
-                            allSpanClauses[i] = new SpanTermQuery(new Term(field,
+                            allSpanClauses[i] = new SpanTermQuery(new Term(_field,
                                 "Dummy clause because no terms found - must match nothing"));
                         }
                     }
@@ -423,7 +423,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                 {
                     const int prime = 31;
                     int result = base.GetHashCode();
-                    result = prime * result + (field is null ? 0 : field.GetHashCode());
+                    result = prime * result + (_field is null ? 0 : _field.GetHashCode());
                     result = prime
                         * result
                         + (phrasedQueryStringContents is null ? 0
@@ -447,12 +447,12 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                     return false;
                 }
                 ComplexPhraseQuery other = (ComplexPhraseQuery)obj;
-                if (field is null)
+                if (_field is null)
                 {
-                    if (other.field != null)
+                    if (other._field != null)
                         return false;
                 }
-                else if (!field.Equals(other.field, StringComparison.Ordinal))
+                else if (!_field.Equals(other._field, StringComparison.Ordinal))
                     return false;
                 if (phrasedQueryStringContents is null)
                 {

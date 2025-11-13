@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
 
     public abstract class DocTermOrdsRangeFilter : Filter
     {
-        internal readonly string field;
+        internal readonly string _field; // LUCENENET specific: renamed from 'field' since field is a keyword in C# 14
         internal readonly BytesRef lowerVal;
         internal readonly BytesRef upperVal;
         internal readonly bool includeLower;
@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
 
         private DocTermOrdsRangeFilter(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
         {
-            this.field = field;
+            this._field = field;
             this.lowerVal = lowerVal;
             this.upperVal = upperVal;
             this.includeLower = includeLower;
@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, field);
+                SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, _field);
                 long lowerPoint = lowerVal is null ? -1 : docTermOrds.LookupTerm(lowerVal);
                 long upperPoint = upperVal is null ? -1 : docTermOrds.LookupTerm(upperVal);
 
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
 
         public override sealed string ToString()
         {
-            StringBuilder sb = (new StringBuilder(field)).Append(':');
+            StringBuilder sb = (new StringBuilder(_field)).Append(':');
             return sb.Append(includeLower ? '[' : '{')
                 .Append((lowerVal is null) ? "*" : lowerVal.ToString())
                 .Append(" TO ")
@@ -167,7 +167,7 @@ namespace Lucene.Net.Search
                 return false;
             }
 
-            if (!this.field.Equals(other.field, StringComparison.Ordinal) || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
+            if (!this._field.Equals(other._field, StringComparison.Ordinal) || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
             {
                 return false;
             }
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
 
         public override sealed int GetHashCode()
         {
-            int h = field.GetHashCode();
+            int h = _field.GetHashCode();
             h ^= (lowerVal != null) ? lowerVal.GetHashCode() : 550356204;
             h = (h << 1) | (h >>> 31); // rotate to distinguish lower from upper
             h ^= (upperVal != null) ? upperVal.GetHashCode() : -1674416163;
@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the field name for this filter </summary>
-        public virtual string Field => field;
+        public virtual string Field => _field;
 
         /// <summary>
         /// Returns <c>true</c> if the lower endpoint is inclusive </summary>

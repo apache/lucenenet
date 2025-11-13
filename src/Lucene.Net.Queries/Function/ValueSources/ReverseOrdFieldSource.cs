@@ -47,17 +47,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
     public class ReverseOrdFieldSource : ValueSource
     {
         // LUCENENET NOTE: Made private and added public property for reading
-        private readonly string field;
-        public string Field => field;
+        private readonly string _field; // LUCENENET specific: renamed from 'field' since field is a keyword in C# 14
+        public string Field => _field;
 
         public ReverseOrdFieldSource(string field)
         {
-            this.field = field;
+            this._field = field;
         }
 
         public override string GetDescription()
         {
-            return "rord(" + field + ')';
+            return "rord(" + _field + ')';
         }
 
         // TODO: this is trappy? perhaps this query instead should make you pass a slow reader yourself?
@@ -67,7 +67,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             AtomicReader r = SlowCompositeReaderWrapper.Wrap(topReader);
             int off = readerContext.DocBase;
 
-            var sindex = FieldCache.DEFAULT.GetTermsIndex(r, field);
+            var sindex = FieldCache.DEFAULT.GetTermsIndex(r, _field);
             var end = sindex.ValueCount;
 
             return new Int32DocValuesAnonymousClass(this, off, sindex, end);
@@ -100,7 +100,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             if (o is not ReverseOrdFieldSource other)
                 return false;
-            return this.field.Equals(other.field, StringComparison.Ordinal);
+            return this._field.Equals(other._field, StringComparison.Ordinal);
         }
 
         private static readonly int hcode = typeof(ReverseOrdFieldSource).GetHashCode();
@@ -108,7 +108,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             unchecked
             {
-                return hcode + field.GetHashCode();
+                return hcode + _field.GetHashCode();
             }
         }
     }

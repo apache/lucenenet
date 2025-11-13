@@ -32,8 +32,7 @@
   <PropertyGroup>
     <!-- Currently, IKVM doesn't officially support building NetFX on anything but Windows, so we skip it for contributors who may be on various platforms.
         We can remove the condition once that has been addressed. See: https://github.com/ikvmnet/ikvm-maven/issues/49 -->
-    <!--suppress MsbuildTargetFrameworkTagInspection - even though this only has one target right now, we need to use the plural version for the line below -->
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net472</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Analysis.OpenNLP</AssemblyTitle>

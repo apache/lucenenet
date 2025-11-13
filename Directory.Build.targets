@@ -45,15 +45,15 @@
 
   </PropertyGroup>
 
-  <!-- Features in .NET 8.x and .NET 9.x only -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET 8.x+ only -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ASPNETCORE_TESTHOST</DefineConstants>
 
   </PropertyGroup>
 
-  <!-- Features in .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x only -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET 6.x+ only -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_RANDOM_NEXTINT64_NEXTSINGLE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_RANDOMACCESS_READ</DefineConstants>
@@ -62,24 +62,24 @@
 
   </PropertyGroup>
 
-  <!-- Features in .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x only -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET 5.x+ only -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_READONLYSET</DefineConstants>
 
   </PropertyGroup>
 
-  <!-- Features in .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x only -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET Core 3.x and .NET 5.x+ only -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_PROCESS_KILL_ENTIREPROCESSTREE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_STRING_CONCAT_READONLYSPAN</DefineConstants>
 
   </PropertyGroup>
 
-  <!-- Features in .NET Standard, .NET Core, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x only (no .NET Framework support) -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) Or $(TargetFramework.StartsWith('netcoreapp')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET Standard, .NET Core, and .NET 5.x+ (no .NET Framework support) -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) Or $(TargetFramework.StartsWith('netcoreapp')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
     <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CULTUREINFO_CURRENTCULTURE_SETTER</DefineConstants>
@@ -88,8 +88,8 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
-  <!-- Features in .NET Standard 2.1, .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x only -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET Standard 2.1, .NET Core 3.x, and .NET 5.x+ only -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ARRAY_FILL</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR</DefineConstants>
@@ -102,22 +102,22 @@
 
   </PropertyGroup>
 
-  <!-- Features in .NET Standard 2.1, .NET Core 2.1-2.2, .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x only -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'netcoreapp2.2' Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET Standard 2.1, .NET Core 2.1-2.2, .NET Core 3.x, and .NET 5.x+ only -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'netcoreapp2.2' Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_STRING_CONTAINS_STRINGCOMPARISON</DefineConstants>
 
   </PropertyGroup>
 
-  <!-- Features in .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, and .NET 5.x+ -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONROOT_PROVIDERS</DefineConstants>
 
   </PropertyGroup>
 
-  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x  -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x+  -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ASSEMBLY_GETCALLINGASSEMBLY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_FILESTREAM_LOCK</DefineConstants>
@@ -126,7 +126,7 @@
 
   </PropertyGroup>
 
-  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, and .NET 8.x (No .NET 9.x support)  -->
+  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, and .NET 8.x (No .NET 9.x+ support)  -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) ">
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
@@ -163,8 +163,8 @@
   </PropertyGroup>
 
   <!-- Features in .NET Framework 4.5+ and .NET 8.0+ but not in .NET Standard 2.0 or .NET Standard 2.1 -->
-  <!-- net472 is used to test .NET Standard 2.0, and .NET 6.0 for .NET Standard 2.1, so we treat them like it is not part of this group -->
-  <PropertyGroup Condition=" ($(TargetFramework.StartsWith('net4')) And '$(TargetFramework)' != 'net472') Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- net472 is used to test .NET Standard 2.0, so we treat them like it is not part of this group -->
+  <PropertyGroup Condition=" ($(TargetFramework.StartsWith('net4')) And '$(TargetFramework)' != 'net472') Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_OPENNLP</DefineConstants>
 

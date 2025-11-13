@@ -24,7 +24,7 @@ namespace Lucene.Net.Search.Similarities
     /// </summary>
     public class BasicStats : Similarity.SimWeight
     {
-        private readonly string field;
+        private readonly string m_field; // LUCENENET specific: renamed from 'field' since field is a keyword in C# 14
 
         /// <summary>
         /// The number of documents. </summary>
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search.Similarities
         /// Constructor. Sets the query boost. </summary>
         public BasicStats(string field, float queryBoost)
         {
-            this.field = field;
+            this.m_field = field;
             this.m_queryBoost = queryBoost;
             this.m_totalBoost = queryBoost;
         }
@@ -119,7 +119,7 @@ namespace Lucene.Net.Search.Similarities
         /// The field.
         /// </summary>
         // LUCENENET specific
-        public string Field => field;
+        public string Field => m_field;
 
         // -------------------------- Boost-related stuff --------------------------
 
