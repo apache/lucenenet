@@ -1,6 +1,5 @@
 using Lucene.Net.Index;
 using Lucene.Net.Util;
-using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -97,7 +96,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        public override IEnumerable<BytesRef> Groups => groups;
+        public override ICollection<BytesRef> Groups => groups;
 
         public override void SetNextReader(AtomicReaderContext context)
         {
