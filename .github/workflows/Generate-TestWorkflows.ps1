@@ -278,6 +278,7 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '$DotNet8SDKVersion'
+        if: `${{ startswith(matrix.framework, 'net8.') }}
 
       - name: Setup .NET 9 SDK
         uses: actions/setup-dotnet@v5
