@@ -97,15 +97,20 @@ namespace Lucene.Net.Index
 
             try
             {
+                // LUCENENET NOTE: We need the FileInfo instance here to resolve relative paths, so there's no benefit to using a string. (#832)
                 FileInfo file = new FileInfo(filename);
-                string dirname = file.DirectoryName;
+                string dirname = file.DirectoryName
+                                 ?? throw new InvalidOperationException($"Could not determine directory name from filename: {filename}");
                 filename = file.Name;
+
                 if (dirImpl is null)
                 {
-                    dir = FSDirectory.Open(new DirectoryInfo(dirname));
+                    dir = FSDirectory.Open(dirname);
                 }
                 else
                 {
+                    // LUCENENET NOTE: We need the DirectoryInfo instance here, as there's no benefit to using a string.
+                    // See comments on CommandLineUtil.NewFSDirectory(string, DirectoryInfo) for more information. (#832)
                     dir = CommandLineUtil.NewFSDirectory(dirImpl, new DirectoryInfo(dirname));
                 }
 

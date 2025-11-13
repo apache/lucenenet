@@ -131,9 +131,7 @@ namespace Lucene.Net.Analysis.Compound
         /// <returns> An object representing the hyphenation patterns </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static HyphenationTree GetHyphenationTree(string hyphenationFilename)
-        {
-            return GetHyphenationTree(hyphenationFilename, Encoding.UTF8);
-        }
+            => GetHyphenationTree(hyphenationFilename, Encoding.UTF8);
 
         /// <summary>
         /// Create a hyphenator tree
@@ -143,9 +141,7 @@ namespace Lucene.Net.Analysis.Compound
         /// <returns> An object representing the hyphenation patterns </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static HyphenationTree GetHyphenationTree(string hyphenationFilename, Encoding encoding)
-        {
-            return GetHyphenationTree(new FileStream(hyphenationFilename, FileMode.Open, FileAccess.Read), encoding);
-        }
+            => GetHyphenationTree(new FileStream(hyphenationFilename, FileMode.Open, FileAccess.Read), encoding);
 
         /// <summary>
         /// Create a hyphenator tree
@@ -154,9 +150,7 @@ namespace Lucene.Net.Analysis.Compound
         /// <returns> An object representing the hyphenation patterns </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static HyphenationTree GetHyphenationTree(FileInfo hyphenationFile)
-        {
-            return GetHyphenationTree(hyphenationFile, Encoding.UTF8);
-        }
+            => GetHyphenationTree(hyphenationFile.FullName, Encoding.UTF8);
 
         /// <summary>
         /// Create a hyphenator tree
@@ -166,9 +160,7 @@ namespace Lucene.Net.Analysis.Compound
         /// <returns> An object representing the hyphenation patterns </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static HyphenationTree GetHyphenationTree(FileInfo hyphenationFile, Encoding encoding)
-        {
-            return GetHyphenationTree(new FileStream(hyphenationFile.FullName, FileMode.Open, FileAccess.Read), encoding);
-        }
+            => GetHyphenationTree(hyphenationFile.FullName, encoding);
 
         /// <summary>
         /// Create a hyphenator tree
@@ -177,9 +169,7 @@ namespace Lucene.Net.Analysis.Compound
         /// <returns> An object representing the hyphenation patterns </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static HyphenationTree GetHyphenationTree(Stream hyphenationSource)
-        {
-            return GetHyphenationTree(hyphenationSource, Encoding.UTF8);
-        }
+            => GetHyphenationTree(hyphenationSource, Encoding.UTF8);
 
         /// <summary>
         /// Create a hyphenator tree

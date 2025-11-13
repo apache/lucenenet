@@ -101,14 +101,14 @@ namespace Lucene.Net.Configuration
 
             try
             {
-                while (new DirectoryInfo(currentPath).Parent != null)
+                while (Directory.GetParent(currentPath) is { } parent) // LUCENENET: Reduce DirectoryInfo allocations by only getting parent once per iteration (#832)
                 {
-                    candidatePath = System.IO.Path.Combine(new DirectoryInfo(currentPath).Parent.FullName, fileName);
+                    candidatePath = Path.Combine(parent.FullName, fileName);
                     if (File.Exists(candidatePath))
                     {
                         locations.Push(candidatePath);
                     }
-                    currentPath = new DirectoryInfo(currentPath).Parent.FullName;
+                    currentPath = parent.FullName;
                 }
             }
             catch (SecurityException)
