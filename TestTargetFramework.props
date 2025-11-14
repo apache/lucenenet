@@ -28,7 +28,6 @@
     this setting only affects the test projects. -->
     <!--<TargetFramework>net472</TargetFramework>-->
     <!--<TargetFramework>net48</TargetFramework>-->
-    <!--<TargetFramework>net6.0</TargetFramework>-->
     <!--<TargetFramework>net8.0</TargetFramework>-->
     <TargetFramework>net9.0</TargetFramework>
 
@@ -40,12 +39,11 @@
       Test Client       | Target Under Test
       net9.0            | net8.0
       net8.0            | net8.0
-      net6.0            | netstandard2.1
       net48             | net462
       net472            | netstandard2.0
     -->
 
-    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net9.0;net8.0;net6.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net9.0;net8.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48;net472</TargetFrameworks>
     <TargetFramework Condition=" '$(TargetFrameworks)' != '' "></TargetFramework>
   </PropertyGroup>
@@ -64,10 +62,6 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Warnings to be Disabled in Test Projects">
-
-    <!-- We purposely test on EoL frameworks for testing netstandard2.1, but we want to keep this warning in production code. -->
-    <CheckEolTargetFramework Condition=" '$(TargetFramework)' == 'net5.0' ">false</CheckEolTargetFramework>
-    <SuppressTfmSupportBuildWarnings Condition=" '$(TargetFramework)' == 'net5.0' ">true</SuppressTfmSupportBuildWarnings>
 
     <NoWarn Label="Nested types should not be visible">$(NoWarn);CA1034</NoWarn>
     <NoWarn Label="Use Literals Where Appropriate">$(NoWarn);CA1802</NoWarn>
