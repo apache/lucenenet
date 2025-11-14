@@ -318,13 +318,14 @@ jobs:
     if ($isCLI) {
         # Special case: Generate lucene-cli.nupkg for installation test so the test runner doesn't have to do it
         $fileText += "
-      - run: dotnet pack `${{env.project_under_test_path}} --configuration `${{matrix.configuration}} --no-restore /p:TestFrameworks=`${{ env.BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS }} /p:PortableDebugTypeOnly=true"
+      - run: dotnet pack `"`${{env.project_under_test_path}}`" --configuration `"`${{matrix.configuration}}`" --no-restore -p:TestFrameworks=`${{ env.BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS }} -p:PortableDebugTypeOnly=true
+        shell: bash"
     }
 
     $fileText += "
-      - run: dotnet build `${{env.project_path}} --configuration `${{matrix.configuration}} --framework `${{matrix.framework}} --no-restore /p:TestFrameworks=`${{ env.BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS }}
+      - run: dotnet build `"`${{env.project_path}}`" --configuration `"`${{matrix.configuration}}`" --framework `"`${{matrix.framework}}`" --no-restore -p:TestFrameworks=`${{ env.BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS }}
         shell: bash
-      - run: dotnet test `${{env.project_path}} --configuration `${{matrix.configuration}} --framework `${{matrix.framework}} --no-build --no-restore --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 20minutes --logger:`"console;verbosity=normal`" --logger:`"trx;LogFileName=`${{env.trx_file_name}}`" --logger:`"liquid.md;LogFileName=`${{env.md_file_name}};Title=`${{env.title}};`" --results-directory:`"`${{github.workspace}}/`${{env.test_results_artifact_name}}/`${{env.project_name}}`" -- RunConfiguration.TargetPlatform=`${{matrix.platform}} NUnit.DisplayName=FullName TestRunParameters.Parameter\(name=\`"tests:slow\`",\ value=\`"\`${{env.run_slow_tests}}\`"\)
+      - run: dotnet test `"`${{env.project_path}}`" --configuration `"`${{matrix.configuration}}`" --framework `"`${{matrix.framework}}`" --no-build --no-restore --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 20minutes --logger:`"console;verbosity=normal`" --logger:`"trx;LogFileName=`${{env.trx_file_name}}`" --logger:`"liquid.md;LogFileName=`${{env.md_file_name}};Title=`${{env.title}};`" --results-directory:`"`${{github.workspace}}/`${{env.test_results_artifact_name}}/`${{env.project_name}}`" -- RunConfiguration.TargetPlatform=`${{matrix.platform}} NUnit.DisplayName=FullName TestRunParameters.Parameter\(name=\`"tests:slow\`",\ value=\`"\`${{env.run_slow_tests}}\`"\)
         shell: bash
       # upload reports as build artifacts
       - name: Upload a Build Artifact
