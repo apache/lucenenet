@@ -39,7 +39,7 @@
     <IsPublishable>false</IsPublishable>
     <IsTestProject>false</IsTestProject>
     <!-- For the IDE, the above doesn't work. Redirect to a supported test framework instead. -->
-    <TargetFramework Condition=" '$(TargetFramework)' == 'net472' ">net48</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
