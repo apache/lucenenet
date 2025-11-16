@@ -45,7 +45,64 @@
       "_gitContribute": {
         "repo": "https://github.com/apache/lucenenet",
         "branch": "master"
-      }
+      },
+        "_navbarLinks": [
+          {
+            "text": "About",
+            "href": "/#about",
+            "title": "About"
+          },
+          {
+            "text": "Quick Start",
+            "href": "/quick-start/index.html",
+            "title": "Quick Start"
+          },
+          {
+            "text": "Download",
+            "href": "/download/download.html",
+            "title": "Download"
+          },
+          {
+            "text": "Documentation",
+            "href": "/docs.html",
+            "title": "Documentation"
+          },
+          {
+            "text": "Contributing",
+            "href": "/contributing/index.html",
+            "title": "Contributing"
+          }
+        ],
+        "_asfLinks": [
+          {
+            "text": "Foundation",
+            "href": "https://www.apache.org/"
+          },
+          {
+            "text": "Events",
+            "href": "https://events.apache.org/"
+          },
+          {
+            "text": "License",
+            "href": "https://www.apache.org/licenses/"
+          },
+          {
+            "text": "Thanks",
+            "href": "https://www.apache.org/foundation/thanks.html"
+          },
+          {
+            "text": "Security",
+            "href": "https://www.apache.org/security/"
+          },
+          {
+            "text": "Sponsorship",
+            "href": "https://www.apache.org/foundation/sponsorship.html"
+          },
+          {
+            "text": "Privacy Policy",
+            "href": "https://privacy.apache.org/policies/privacy-policy-public.html"
+          }
+        ]
     },
     "dest": "_site",
     "globalMetadataFiles": [],

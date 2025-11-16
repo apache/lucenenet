@@ -17,6 +17,7 @@
           <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
         </div>
       </form>
+	 {{>partials/navbar-links}}
     </div>
   </div>
 </nav>
