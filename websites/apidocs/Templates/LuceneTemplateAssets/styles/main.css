@@ -522,23 +522,6 @@ header.is-sticky nav.navbar {
   display: inline-block;
 }
 
-/* 5.1 Breadcrumb padding adjustments */
-.subnav.navbar #breadcrumb {
-  padding-left: 28px;
-}
-
-@media (min-width:1200px) {
-  .subnav.navbar #breadcrumb {
-    padding-left: 34px;
-  }
-}
-
-@media (min-width:1600px) {
-  .subnav.navbar #breadcrumb {
-    padding-left: 40px;
-  }
-}
-
 /* 6. First-content padding / margin-collapse prevention
    ---------------------------------------------------- */
 .container.body-content,
@@ -802,3 +785,36 @@ button:focus-visible {
       margin-top: 50px !important;
     }
   }
+
+/* 9.4.1 Keep the inner (level1) trail inline and tidy */
+.subnav.navbar #breadcrumb .breadcrumb {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .35rem;
+  margin: 0;
+  padding: 0;
+}
+
+/* 9.4.2 Add the slash after “API/CLI” only when a trail exists */
+.subnav.navbar ul.level0.breadcrumb > li > a::after {
+  content: "";
+}
+/* reset */
+.subnav.navbar ul.level0.breadcrumb > li:has(#breadcrumb .breadcrumb) > a::after {
+  content: " /";
+  margin: 0 .35rem;
+  color: #bbb;
+}
+
+/* 9.4.3 restore the default side padding for the breadcrumb container */
+.subnav.navbar .container {
+  padding: 8px 28px !important; /* 8 top/bottom, 15 left/right */
+}
+
+/* 9.4.4 mobile: add a little extra left indent (28px total feel) */
+@media (max-width: 767px) {
+  .subnav.navbar .container {
+    padding-left: 28px !important; /* right stays 15px */
+  }
+}
