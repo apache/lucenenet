@@ -2178,7 +2178,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns true if the codec "supports" docsWithField
-        /// (other codecs return MatchAllBits, because you couldnt write missing values before)
+        /// (other codecs return MatchAllBits, because you couldn't write missing values before)
         /// </summary>
         public static bool DefaultCodecSupportsDocsWithField
         {
