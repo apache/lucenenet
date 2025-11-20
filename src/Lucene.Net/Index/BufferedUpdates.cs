@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
         // one that came in wins), and helps us detect faster if the same Term is
         // used to update the same field multiple times (so we later traverse it
         // only once).
-        // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+        // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
         internal readonly SCG.IDictionary<string, OrderedDictionary<Term, NumericDocValuesUpdate>> numericUpdates = new Dictionary<string, OrderedDictionary<Term, NumericDocValuesUpdate>>();
 
         // Map<dvField,Map<updateTerm,BinaryUpdate>>
@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
         // one that came in wins), and helps us detect faster if the same Term is
         // used to update the same field multiple times (so we later traverse it
         // only once).
-        // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+        // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
         internal readonly SCG.IDictionary<string, OrderedDictionary<Term, BinaryDocValuesUpdate>> binaryUpdates = new Dictionary<string, OrderedDictionary<Term, BinaryDocValuesUpdate>>();
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
         {
             if (!numericUpdates.TryGetValue(update.field, out OrderedDictionary<Term, NumericDocValuesUpdate> fieldUpdates))
             {
-                // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+                // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
                 fieldUpdates = new OrderedDictionary<Term, NumericDocValuesUpdate>();
                 numericUpdates[update.field] = fieldUpdates;
                 bytesUsed.AddAndGet(BYTES_PER_NUMERIC_FIELD_ENTRY);
@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
         {
             if (!binaryUpdates.TryGetValue(update.field, out OrderedDictionary<Term, BinaryDocValuesUpdate> fieldUpdates))
             {
-                // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+                // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
                 fieldUpdates = new OrderedDictionary<Term, BinaryDocValuesUpdate>();
                 binaryUpdates[update.field] = fieldUpdates;
                 bytesUsed.AddAndGet(BYTES_PER_BINARY_FIELD_ENTRY);

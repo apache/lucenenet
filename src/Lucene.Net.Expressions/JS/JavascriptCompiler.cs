@@ -89,7 +89,7 @@ namespace Lucene.Net.Expressions.JS
 
         private readonly string sourceText;
 
-        // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+        // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
         private readonly IDictionary<string, int> externalsMap = new JCG.OrderedDictionary<string, int>();
 
         private TypeBuilder dynamicType;
