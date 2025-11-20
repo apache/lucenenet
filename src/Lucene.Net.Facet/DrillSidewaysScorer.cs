@@ -89,7 +89,7 @@ namespace Lucene.Net.Facet
 
             // TODO: if we ever allow null baseScorer ... it will
             // mean we DO score docs out of order ... hmm, or if we
-            // change up the order of the conjuntions below
+            // change up the order of the conjunctions below
             if (Debugging.AssertsEnabled) Debugging.Assert(baseScorer != null);
 
             // some scorers, eg ReqExlScorer, can hit NPE if cost is called after nextDoc

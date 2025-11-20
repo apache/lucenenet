@@ -499,7 +499,7 @@ namespace Lucene.Net.Index.Sorter
         {
             /// <summary>
             /// A <see cref="TimSorter"/> which sorts two parallel arrays of doc IDs and
-            /// offsets in one go. Everytime a doc ID is 'swapped', its correponding offset
+            /// offsets in one go. Everytime a doc ID is 'swapped', its corresponding offset
             /// is swapped too.
             /// </summary>
             internal sealed class DocOffsetSorter : TimSorter

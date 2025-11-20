@@ -1073,7 +1073,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
         /// <summary>
         /// Determines whether or not a value is of slavo-germanic origin. A value is
-        /// of slavo-germanic origin if it contians any of 'W', 'K', 'CZ', or 'WITZ'.
+        /// of slavo-germanic origin if it contains any of 'W', 'K', 'CZ', or 'WITZ'.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsSlavoGermanic(string value) // LUCENENET: CA1822: Mark members as static
