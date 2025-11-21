@@ -1,4 +1,3 @@
-using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.IO;
@@ -7,6 +6,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+// ReSharper disable VirtualMemberNeverOverridden.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 #nullable enable
 
@@ -396,7 +397,8 @@ namespace Lucene.Net.Replicator.Http
                     }
                 }
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(th != null); // extra safety - if we get here, it means the Func<T> failed
+
+            // if (Debugging.AssertsEnabled) Debugging.Assert(th != null); // LUCENENET: Removed assertion because it'll never be null here, ensured by NRT
             Util.IOUtils.ReThrow(th);
             return default!; // silly, if we're here, IOUtils.reThrow always throws an exception
         }
@@ -408,7 +410,7 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         protected virtual async Task<T> DoActionAsync<T>(HttpResponseMessage response, bool consume, Func<Task<T>> call)
         {
-            Exception? th = null;
+            Exception? th /* = null */;
             try
             {
                 VerifyStatus(response);
@@ -440,8 +442,8 @@ namespace Lucene.Net.Replicator.Http
                 }
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(th != null);
-            Util.IOUtils.ReThrow(th!);
+            // if (Debugging.AssertsEnabled) Debugging.Assert(th != null); // LUCENENET: Removed assertion because it'll never be null here, ensured by NRT
+            Util.IOUtils.ReThrow(th);
             return default!; // never reached, rethrow above always throws
         }
 
@@ -496,7 +498,7 @@ namespace Lucene.Net.Replicator.Http
         private class ConsumingStream : Stream
         {
             private readonly Stream input;
-            private bool consumed = false;
+            private bool consumed /* = false */;
 
             public ConsumingStream(Stream input)
             {

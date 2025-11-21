@@ -128,16 +128,17 @@ namespace Lucene.Net.Replicator.Http
         public async Task<SessionToken?> CheckForUpdateAsync(string? currentVersion, CancellationToken cancellationToken = default)
         {
             string[]? parameters = !string.IsNullOrEmpty(currentVersion)
-                ? new[] { ReplicationService.REPLICATE_VERSION_PARAM, currentVersion! }
+                ? new[] { ReplicationService.REPLICATE_VERSION_PARAM, currentVersion! } // [!]: verified above
                 : null;
 
             using var response = await ExecuteGetAsync(
-                ReplicationService.ReplicationAction.UPDATE.ToString(),
-                parameters ?? Array.Empty<string>(),
+                nameof(ReplicationService.ReplicationAction.UPDATE),
+                parameters,
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
             return await DoActionAsync(response, async () =>
             {
+                // ReSharper disable once AccessToDisposedClosure - DoActionAsync definitively returns after this lambda is invoked
                 using var inputStream = new DataInputStream(
                     await GetResponseStreamAsync(response, cancellationToken).ConfigureAwait(false));
 
@@ -156,16 +157,16 @@ namespace Lucene.Net.Replicator.Http
         public async Task<Stream> ObtainFileAsync(string sessionId, string source, string fileName, CancellationToken cancellationToken = default)
         {
             using var response = await ExecuteGetAsync(
-                ReplicationService.ReplicationAction.OBTAIN.ToString(),
+                nameof(ReplicationService.ReplicationAction.OBTAIN),
                 ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
                 ReplicationService.REPLICATE_SOURCE_PARAM, source,
                 ReplicationService.REPLICATE_FILENAME_PARAM, fileName,
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
-            return await DoActionAsync(response, async () =>
-            {
-                return await GetResponseStreamAsync(response, cancellationToken).ConfigureAwait(false);
-            }).ConfigureAwait(false);
+            return await DoActionAsync(response,
+                    // ReSharper disable once AccessToDisposedClosure - DoActionAsync definitively returns after this lambda is invoked
+                    async () => await GetResponseStreamAsync(response, cancellationToken).ConfigureAwait(false))
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -191,7 +192,7 @@ namespace Lucene.Net.Replicator.Http
         public async Task ReleaseAsync(string sessionId, CancellationToken cancellationToken = default)
         {
             using var response = await ExecuteGetAsync(
-                ReplicationService.ReplicationAction.RELEASE.ToString(),
+                nameof(ReplicationService.ReplicationAction.RELEASE),
                 ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
@@ -206,4 +207,3 @@ namespace Lucene.Net.Replicator.Http
 
     }
 }
-#nullable restore
