@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Benchmarks.ByTask.Feeds
 summary: *content
 ---

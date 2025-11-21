@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Index.Memory
 summary: *content
 ---

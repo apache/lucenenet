@@ -1,4 +1,4 @@
-﻿# find-quality-queries
+# find-quality-queries
 
 ### Name
 

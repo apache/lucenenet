@@ -1,4 +1,4 @@
-﻿# Documentation Tools
+# Documentation Tools
 
 ## LuceneDocsPlugins
 

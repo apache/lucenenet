@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Queries.Mlt
 summary: *content
 ---

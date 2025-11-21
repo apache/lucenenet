@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Spatial.Vector
 summary: *content
 ---

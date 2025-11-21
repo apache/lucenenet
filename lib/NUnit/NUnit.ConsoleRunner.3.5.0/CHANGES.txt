@@ -1,4 +1,4 @@
-﻿NUnit 3.5 - October 11, 2016
+NUnit 3.5 - October 11, 2016
 
 This is the first version of NUnit where the framework will be released separately from the
 console runner, engine and other extensions. From this point forward, the NUnit console and engine will be

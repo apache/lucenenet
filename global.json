@@ -1,4 +1,4 @@
-﻿{
+{
   "msbuild-sdks": {
     "Microsoft.Build.NoTargets": "3.7.56"
   },

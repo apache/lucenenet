@@ -1,4 +1,4 @@
-﻿---
+---
 uid: org.apache.lucene.store
 summary: *content
 ---

@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Benchmarks
 title: Lucene.Net.Benchmarks
 summary: *content

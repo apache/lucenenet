@@ -1,4 +1,4 @@
-﻿---
+---
 uid: contributing/setup-java-debugging
 ---
 
