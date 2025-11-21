@@ -35,6 +35,8 @@ namespace Lucene.Net.Util
         /// <param name="clazzName"> The name of the <see cref="FSDirectory"/> class to load. </param>
         /// <param name="dir"> The <see cref="DirectoryInfo"/> to be used as parameter constructor. </param>
         /// <returns> The new <see cref="FSDirectory"/> instance </returns>
+        // LUCENENET NOTE: We do not benefit from creating a string overload here to avoid DirectoryInfo allocations,
+        // because the FSDirectory implementations that take string just convert it to a DirectoryInfo anyway. (#832)
         public static FSDirectory NewFSDirectory(string clazzName, DirectoryInfo dir)
         {
             try
@@ -114,6 +116,8 @@ namespace Lucene.Net.Util
         /// <exception cref="MemberAccessException"> If the class is abstract or an interface. </exception>
         /// <exception cref="TypeLoadException"> If the constructor does not have public visibility. </exception>
         /// <exception cref="TargetInvocationException"> If the constructor throws an exception </exception>
+        // LUCENENET NOTE: We do not benefit from creating a string overload here to avoid DirectoryInfo allocations,
+        // because the FSDirectory implementations that take string just convert it to a DirectoryInfo anyway. (#832)
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static FSDirectory NewFSDirectory(Type clazz, DirectoryInfo dir)
         {

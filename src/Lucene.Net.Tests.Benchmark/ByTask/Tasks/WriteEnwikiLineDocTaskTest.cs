@@ -4,7 +4,6 @@ using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Documents;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -52,37 +51,40 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         }
 
-        private PerfRunData createPerfRunData(FileInfo file, String docMakerName)
+        // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
+        private PerfRunData createPerfRunData(string fileName, string docMakerName)
         {
             Dictionary<string, string> props = new Dictionary<string, string>();
             props["doc.maker"] = docMakerName;
-            props["line.file.out"] = file.FullName;
+            props["line.file.out"] = fileName;
             props["directory"] = "RAMDirectory"; // no accidental FS dir.
             Config config = new Config(props);
             return new PerfRunData(config);
         }
 
-        private void doReadTest(FileInfo file, String expTitle,
-                                String expDate, String expBody)
+        // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
+        private void doReadTest(string fileName, string expTitle,
+                                string expDate, string expBody)
         {
-            doReadTest(2, file, expTitle, expDate, expBody);
-            FileInfo categoriesFile = WriteEnwikiLineDocTask.CategoriesLineFile(file);
+            doReadTest(2, fileName, expTitle, expDate, expBody);
+            string categoriesFile = WriteEnwikiLineDocTask.CategoriesLineFile(fileName);
             doReadTest(2, categoriesFile, "Category:" + expTitle, expDate, expBody);
         }
 
-        private void doReadTest(int n, FileInfo file, String expTitle, String expDate, String expBody)
+        // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
+        private void doReadTest(int n, string fileName, string expTitle, string expDate, string expBody)
         {
-            Stream @in = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
+            Stream @in = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             TextReader br = new StreamReader(@in, Encoding.UTF8);
             try
             {
-                String line = br.ReadLine();
+                string line = br.ReadLine();
                 WriteLineDocTaskTest.assertHeaderLine(line);
                 for (int i = 0; i < n; i++)
                 {
                     line = br.ReadLine();
                     assertNotNull(line);
-                    String[] parts = line.Split(WriteLineDocTask.SEP).TrimEnd();
+                    string[] parts = line.Split(WriteLineDocTask.SEP).TrimEnd();
                     int numExpParts = expBody is null ? 2 : 3;
                     assertEquals(numExpParts, parts.Length);
                     assertEquals(expTitle, parts[0]);
@@ -106,7 +108,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             // WriteLineDocTask replaced only \t characters w/ a space, since that's its
             // separator char. However, it didn't replace newline characters, which
             // resulted in errors in LineDocSource.
-            FileInfo file = new FileInfo(Path.Combine(getWorkDir().FullName, "two-lines-each.txt"));
+            // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
+            string file = Path.Combine(getWorkDir().FullName, "two-lines-each.txt");
             PerfRunData runData = createPerfRunData(file, typeof(WriteLineCategoryDocMaker).AssemblyQualifiedName);
             WriteLineDocTask wldt = new WriteEnwikiLineDocTask(runData);
             for (int i = 0; i < 4; i++)

@@ -99,27 +99,27 @@ namespace Lucene.Net.Store
         public override IndexInput OpenInput(string name, IOContext context)
         {
             EnsureOpen();
-            var path = new FileInfo(Path.Combine(Directory.FullName, name));
-            var raf = new FileStream(path.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            return new SimpleFSIndexInput("SimpleFSIndexInput(path=\"" + path.FullName + "\")", raf, context);
+            var path = Path.Combine(Directory.FullName, name); // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
+            var raf = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            return new SimpleFSIndexInput("SimpleFSIndexInput(path=\"" + path + "\")", raf, context);
         }
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
-            var file = new FileInfo(Path.Combine(Directory.FullName, name));
-            var descriptor = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var file = Path.Combine(Directory.FullName, name); // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
+            var descriptor = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             return new IndexInputSlicerAnonymousClass(context, file, descriptor);
         }
 
         private sealed class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly IOContext context;
-            private readonly FileInfo file;
+            private readonly string file; // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
             private readonly FileStream descriptor;
             private int disposed = 0; // LUCENENET specific - allow double-dispose
 
-            public IndexInputSlicerAnonymousClass(IOContext context, FileInfo file, FileStream descriptor)
+            public IndexInputSlicerAnonymousClass(IOContext context, string file, FileStream descriptor)
             {
                 this.context = context;
                 this.file = file;
@@ -138,7 +138,7 @@ namespace Lucene.Net.Store
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
-                return new SimpleFSIndexInput("SimpleFSIndexInput(" + sliceDescription + " in path=\"" + file.FullName + "\" slice=" + offset + ":" + (offset + length) + ")", descriptor, offset, length, BufferedIndexInput.GetBufferSize(context));
+                return new SimpleFSIndexInput("SimpleFSIndexInput(" + sliceDescription + " in path=\"" + file + "\" slice=" + offset + ":" + (offset + length) + ")", descriptor, offset, length, BufferedIndexInput.GetBufferSize(context));
             }
 
             [Obsolete("Only for reading CFS files from 3.x indexes.")]

@@ -127,9 +127,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="filename"> the filename </param>
         /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(string filename)
-        {
-            LoadPatterns(filename, Encoding.UTF8);
-        }
+            => LoadPatterns(filename, Encoding.UTF8);
 
         /// <summary>
         /// Read hyphenation patterns from an XML file.
@@ -149,9 +147,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="f"> a <see cref="FileInfo"/> object representing the file </param>
         /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(FileInfo f)
-        {
-            LoadPatterns(f, Encoding.UTF8);
-        }
+            => LoadPatterns(f.FullName, Encoding.UTF8);
 
         /// <summary>
         /// Read hyphenation patterns from an XML file.
@@ -160,10 +156,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="encoding">The character encoding to use</param>
         /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(FileInfo f, Encoding encoding)
-        {
-            var src = new FileStream(f.FullName, FileMode.Open, FileAccess.Read);
-            LoadPatterns(src, encoding);
-        }
+            => LoadPatterns(f.FullName, encoding);
 
         /// <summary>
         /// Read hyphenation patterns from an XML file.
@@ -171,9 +164,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="source"> <see cref="Stream"/> input source for the file </param>
         /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(Stream source)
-        {
-            LoadPatterns(source, Encoding.UTF8);
-        }
+            => LoadPatterns(source, Encoding.UTF8);
 
         /// <summary>
         /// Read hyphenation patterns from an XML file.
