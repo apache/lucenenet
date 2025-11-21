@@ -1,8 +1,8 @@
 using J2N.Collections;
 using Lucene.Net.Support;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -28,7 +28,7 @@ namespace Lucene.Net.Search.Grouping
     ///
     /// @lucene.experimental
     /// </summary>
-    public class TopGroups<TGroupValue> : ITopGroups<TGroupValue>
+    public class TopGroups<TGroupValue> : ITopGroups
     {
         /// <summary>
         /// Number of documents matching the search </summary>
@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Grouping
         /// Group results in groupSort order </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public IGroupDocs<TGroupValue>[] Groups { get; private set; }
+        public GroupDocs<TGroupValue>[] Groups { get; private set; }
 
         /// <summary>
         /// How groups are sorted against each other </summary>
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         public float MaxScore { get; private set; }
 
-        public TopGroups(SortField[] groupSort, SortField[] withinGroupSort, int totalHitCount, int totalGroupedHitCount, IGroupDocs<TGroupValue>[] groups, float maxScore)
+        public TopGroups(SortField[] groupSort, SortField[] withinGroupSort, int totalHitCount, int totalGroupedHitCount, GroupDocs<TGroupValue>[] groups, float maxScore)
         {
             GroupSort = groupSort;
             WithinGroupSort = withinGroupSort;
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Grouping
             MaxScore = maxScore;
         }
 
-        public TopGroups(ITopGroups<TGroupValue> oldTopGroups, int? totalGroupCount)
+        public TopGroups(TopGroups<TGroupValue> oldTopGroups, int? totalGroupCount)
         {
             GroupSort = oldTopGroups.GroupSort;
             WithinGroupSort = oldTopGroups.WithinGroupSort;
@@ -87,6 +87,15 @@ namespace Lucene.Net.Search.Grouping
             MaxScore = oldTopGroups.MaxScore;
             TotalGroupCount = totalGroupCount;
         }
+
+        #region Explicit interface implementations
+
+        /// <summary>
+        /// LUCENENET specific method to provide an <see cref="IGroupDocs"/>-based implementation of <see cref="Groups"/>.
+        /// </summary>
+        IList<IGroupDocs> ITopGroups.Groups => new CastingListAdapter<GroupDocs<TGroupValue>, IGroupDocs>(Groups);
+
+        #endregion
     }
 
     /// <summary>
@@ -132,7 +141,7 @@ namespace Lucene.Net.Search.Grouping
         /// <b>NOTE</b>: the topDocs in each GroupDocs is actually
         /// an instance of TopDocsAndShards
         /// </summary>
-        public static TopGroups<T> Merge<T>(ITopGroups<T>[] shardGroups, Sort groupSort, Sort docSort, int docOffset, int docTopN, ScoreMergeMode scoreMergeMode)
+        public static TopGroups<T> Merge<T>(TopGroups<T>[] shardGroups, Sort groupSort, Sort docSort, int docOffset, int docTopN, ScoreMergeMode scoreMergeMode)
         {
             //System.out.println("TopGroups.merge");
 
@@ -185,7 +194,7 @@ namespace Lucene.Net.Search.Grouping
                 for (int shardIdx = 0; shardIdx < shardGroups.Length; shardIdx++)
                 {
                     //System.out.println("    shard=" + shardIDX);
-                    ITopGroups<T> shard = shardGroups[shardIdx];
+                    TopGroups<T> shard = shardGroups[shardIdx];
                     var shardGroupDocs = shard.Groups[groupIDX];
                     if (groupValue is null)
                     {
@@ -270,36 +279,44 @@ namespace Lucene.Net.Search.Grouping
     }
 
     /// <summary>
-    /// LUCENENET specific interface used to provide covariance
-    /// with the TGroupValue type to simulate Java's wildcard generics.
+    /// LUCENENET specific interface to provide a non-generic abstraction
+    /// for <see cref="TopGroups{TGroupValue}"/>.
     /// </summary>
-    /// <typeparam name="TGroupValue"></typeparam>
-    public interface ITopGroups<out TGroupValue>
+    public interface ITopGroups
     {
         /// <summary>
-        /// Number of documents matching the search </summary>
+        /// Number of documents matching the search
+        /// </summary>
         int TotalHitCount { get; }
 
         /// <summary>
-        /// Number of documents grouped into the topN groups </summary>
+        /// Number of documents grouped into the topN groups
+        /// </summary>
         int TotalGroupedHitCount { get; }
 
         /// <summary>
-        /// The total number of unique groups. If <c>null</c> this value is not computed. </summary>
+        /// The total number of unique groups. If <c>null</c> this value is not computed.
+        /// </summary>
         int? TotalGroupCount { get; }
 
         /// <summary>
-        /// Group results in groupSort order </summary>
-        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
-        IGroupDocs<TGroupValue>[] Groups { get; }
+        /// Group results in groupSort order
+        /// <para />
+        /// LUCENENET specific - this uses IList instead of an array
+        /// as it would require a new array to be created each time
+        /// the property is accessed.
+        /// </summary>
+        IList<IGroupDocs> Groups { get; }
 
         /// <summary>
-        /// How groups are sorted against each other </summary>
+        /// How groups are sorted against each other
+        /// </summary>
         [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         SortField[] GroupSort { get; }
 
         /// <summary>
-        /// How docs are sorted within each group </summary>
+        /// How docs are sorted within each group
+        /// </summary>
         [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         SortField[] WithinGroupSort { get; }
 

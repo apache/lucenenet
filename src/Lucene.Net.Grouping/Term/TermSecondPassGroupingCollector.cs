@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         private SortedDocValues index;
         private readonly string groupField;
 
-        public TermSecondPassGroupingCollector(string groupField, IEnumerable<ISearchGroup<BytesRef>> groups, Sort groupSort, Sort withinGroupSort,
+        public TermSecondPassGroupingCollector(string groupField, ICollection<SearchGroup<BytesRef>> groups, Sort groupSort, Sort withinGroupSort,
                                                int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields)
                   : base(groups, groupSort, withinGroupSort, maxDocsPerGroup, getScores, getMaxScores, fillSortFields)
         {

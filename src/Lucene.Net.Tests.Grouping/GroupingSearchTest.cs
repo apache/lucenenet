@@ -10,6 +10,7 @@ using Lucene.Net.Util.Mutable;
 using NUnit.Framework;
 using System;
 using System.Collections;
+using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
@@ -112,9 +113,10 @@ namespace Lucene.Net.Search.Grouping
             w.Dispose();
 
             Sort groupSort = Sort.RELEVANCE;
-            GroupingSearch groupingSearch = CreateRandomGroupingSearch(groupField, groupSort, 5, canUseIDV);
+            // LUCENENET specific - using SearchDelegate callback and GroupingSearchResult type to encapsulate non-covariant generic type use
+            SearchDelegate groupingSearch = CreateRandomGroupingSearch(groupField, groupSort, 5, canUseIDV);
 
-            ITopGroups<object> groups = groupingSearch.Search(indexSearcher, (Filter)null, new TermQuery(new Index.Term("content", "random")), 0, 10);
+            GroupingSearchResult groups = groupingSearch(indexSearcher, (Filter)null, new TermQuery(new Index.Term("content", "random")), 0, 10);
 
             assertEquals(7, groups.TotalHitCount);
             assertEquals(7, groups.TotalGroupedHitCount);
@@ -124,7 +126,7 @@ namespace Lucene.Net.Search.Grouping
 
             // the later a document is added the higher this docId
             // value
-            IGroupDocs<object> group = groups.Groups[0];
+            GroupResult group = groups.Groups[0]; // LUCENENET: using GroupResult type
             CompareGroupValue("author3", group);
             assertEquals(2, group.ScoreDocs.Length);
             assertEquals(5, group.ScoreDocs[0].Doc);
@@ -151,8 +153,24 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(6, group.ScoreDocs[0].Doc);
 
             Filter lastDocInBlock = new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Index.Term("groupend", "x"))));
-            groupingSearch = new GroupingSearch(lastDocInBlock);
-            groups = groupingSearch.Search(indexSearcher, null, new TermQuery(new Index.Term("content", "random")), 0, 10);
+            // LUCENENET: using SearchDelegate callback to encapsulate non-covariant generic type use
+            groupingSearch = (searcher, filter, query, offset, limit) =>
+            {
+                var topGroups = GroupingSearch.ByDocBlock<object>(lastDocInBlock).Search(searcher, filter, query, offset, limit);
+
+                return new GroupingSearchResult
+                {
+                    TotalGroupCount = topGroups.TotalGroupCount,
+                    TotalGroupedHitCount = topGroups.TotalGroupedHitCount,
+                    TotalHitCount = topGroups.TotalHitCount,
+                    Groups = topGroups.Groups.Select(i => new GroupResult
+                    {
+                        GroupValue = i.GroupValue,
+                        ScoreDocs = i.ScoreDocs,
+                    }).ToArray()
+                };
+            };
+            groups = groupingSearch(indexSearcher, null, new TermQuery(new Index.Term("content", "random")), 0, 10);
 
             assertEquals(7, groups.TotalHitCount);
             assertEquals(7, groups.TotalGroupedHitCount);
@@ -172,7 +190,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private void CompareGroupValue(string expected, IGroupDocs<object> group)
+        private void CompareGroupValue(string expected, GroupResult group)
         {
             if (expected is null)
             {
@@ -207,28 +225,85 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private GroupingSearch CreateRandomGroupingSearch(string groupField, Sort groupSort, int docsInGroup, bool canUseIDV)
+        // LUCENENET specific callback interface to encapsulate the generic type usage
+        private delegate GroupingSearchResult SearchDelegate(IndexSearcher indexSearcher, Filter filter, Query query, int groupOffset, int groupLimit);
+
+        // LUCENENET specific class to contain grouping search results
+        private class GroupingSearchResult
         {
-            GroupingSearch groupingSearch;
+            public int TotalHitCount { get; set; }
+            public int TotalGroupedHitCount { get; set; }
+            public int? TotalGroupCount { get; set; }
+            public GroupResult[] Groups { get; set; }
+        }
+
+        // LUCENENET specific class to contain individual group result data
+        private class GroupResult
+        {
+            public object GroupValue { get; set; }
+            public ScoreDoc[] ScoreDocs { get; set; }
+        }
+
+        private SearchDelegate CreateRandomGroupingSearch(string groupField, Sort groupSort, int docsInGroup, bool canUseIDV)
+        {
+            // LUCENENET specific - this method returns a delegate to encapsulate the non-covariant generic type usage.
             if (Random.nextBoolean())
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
-                groupingSearch = new GroupingSearch(vs, new Hashtable());
+                var groupingSearch = GroupingSearch.ByFunction<MutableValueStr>(vs, new Hashtable());
+                groupingSearch.SetGroupSort(groupSort);
+                groupingSearch.SetGroupDocsLimit(docsInGroup);
+
+                if (Random.nextBoolean())
+                {
+                    groupingSearch.SetCachingInMB(4.0, true);
+                }
+
+                return (searcher, filter, query, offset, limit) =>
+                {
+                    var topGroups = groupingSearch.Search(searcher, filter, query, offset, limit);
+
+                    return new GroupingSearchResult
+                    {
+                        TotalGroupCount = topGroups.TotalGroupCount,
+                        TotalGroupedHitCount = topGroups.TotalGroupedHitCount,
+                        TotalHitCount = topGroups.TotalHitCount,
+                        Groups = topGroups.Groups.Select(i => new GroupResult
+                        {
+                            GroupValue = i.GroupValue,
+                            ScoreDocs = i.ScoreDocs,
+                        }).ToArray()
+                    };
+                };
             }
             else
             {
-                groupingSearch = new GroupingSearch(groupField);
+                var groupingSearch = GroupingSearch.ByField(groupField);
+                groupingSearch.SetGroupSort(groupSort);
+                groupingSearch.SetGroupDocsLimit(docsInGroup);
+
+                if (Random.nextBoolean())
+                {
+                    groupingSearch.SetCachingInMB(4.0, true);
+                }
+
+                return (searcher, filter, query, offset, limit) =>
+                {
+                    var topGroups = groupingSearch.Search(searcher, filter, query, offset, limit);
+
+                    return new GroupingSearchResult
+                    {
+                        TotalGroupCount = topGroups.TotalGroupCount,
+                        TotalGroupedHitCount = topGroups.TotalGroupedHitCount,
+                        TotalHitCount = topGroups.TotalHitCount,
+                        Groups = topGroups.Groups.Select(i => new GroupResult
+                        {
+                            GroupValue = i.GroupValue,
+                            ScoreDocs = i.ScoreDocs,
+                        }).ToArray()
+                    };
+                };
             }
-
-            groupingSearch.SetGroupSort(groupSort);
-            groupingSearch.SetGroupDocsLimit(docsInGroup);
-
-            if (Random.nextBoolean())
-            {
-                groupingSearch.SetCachingInMB(4.0, true);
-            }
-
-            return groupingSearch;
         }
 
         [Test]
@@ -247,9 +322,9 @@ namespace Lucene.Net.Search.Grouping
             IndexSearcher indexSearcher = NewSearcher(w.GetReader());
             w.Dispose();
 
-            GroupingSearch gs = new GroupingSearch("group");
+            var gs = GroupingSearch.ByField("group");
             gs.SetAllGroups(true);
-            ITopGroups<object> groups = gs.Search(indexSearcher, null, new TermQuery(new Index.Term("group", "foo")), 0, 10);
+            TopGroups<BytesRef> groups = gs.Search(indexSearcher, null, new TermQuery(new Index.Term("group", "foo")), 0, 10);
             assertEquals(1, groups.TotalHitCount);
             //assertEquals(1, groups.totalGroupCount.intValue());
             assertEquals(1, groups.TotalGroupedHitCount);

@@ -37,11 +37,11 @@ namespace Lucene.Net.Search.Grouping.Function
     /// @lucene.experimental
     /// </summary>
     // LUCENENET Specific - Made generic to reduce need for casting.
-    public class FunctionAllGroupsCollector<TMutableValue> : AbstractAllGroupsCollector<MutableValue> where TMutableValue : MutableValue
+    public class FunctionAllGroupsCollector<TMutableValue> : AbstractAllGroupsCollector<TMutableValue> where TMutableValue : MutableValue
     {
         private readonly IDictionary /* Map<?, ?> */ vsContext;
         private readonly ValueSource groupBy;
-        private readonly ISet<MutableValue> groups = new JCG.SortedSet<MutableValue>();
+        private readonly ISet<TMutableValue> groups = new JCG.SortedSet<TMutableValue>();
 
         private FunctionValues.ValueFiller filler;
         private TMutableValue mval;
@@ -57,14 +57,14 @@ namespace Lucene.Net.Search.Grouping.Function
             this.groupBy = groupBy;
         }
 
-        public override IEnumerable<MutableValue> Groups => groups;
+        public override ICollection<TMutableValue> Groups => groups;
 
         public override void Collect(int doc)
         {
             filler.FillValue(doc);
             if (!groups.Contains(mval))
             {
-                groups.Add(mval.Duplicate());
+                groups.Add((TMutableValue)mval.Duplicate()); // LUCENENET: We have to cast here because Duplicate() returns a MutableValue
             }
         }
 
