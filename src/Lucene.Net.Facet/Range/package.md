@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Facet.Range
 summary: *content
 ---

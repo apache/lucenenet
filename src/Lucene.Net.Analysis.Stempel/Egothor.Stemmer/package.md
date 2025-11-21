@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Egothor.Stemmer
 summary: *content
 ---

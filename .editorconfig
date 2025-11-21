@@ -344,6 +344,7 @@ indent_style = unset
 
 # Exclude *.snk (we don't care about formatting here)
 [**/*.snk]
+charset = unset
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
@@ -393,6 +394,7 @@ indent_style = unset
 
 # Exclude *.dat (copied directly from Lucene)
 [**/*.dat]
+charset = unset
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
@@ -400,6 +402,7 @@ indent_style = unset
 
 # Exclude *.brk (copied directly from Lucene)
 [**/*.brk]
+charset = unset
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
@@ -414,6 +417,7 @@ indent_style = unset
 
 # Exclude *.nrm (binary copied directly from Lucene)
 [**/*.nrm]
+charset = unset
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
@@ -456,6 +460,7 @@ indent_style = unset
 
 # Exclude *.tbl (binary copied directly from Lucene for Stempel)
 [**/*.tbl]
+charset = unset
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
@@ -463,6 +468,7 @@ indent_style = unset
 
 # Exclude *.bz2 (binary copied directly from Lucene for Benchmark)
 [**/*.bz2]
+charset = unset
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
@@ -470,6 +476,7 @@ indent_style = unset
 
 # Exclude *.rnc (binary copied directly from Lucene for Benchmark)
 [**/*.rnc]
+charset = unset
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
@@ -477,6 +484,7 @@ indent_style = unset
 
 # Exclude *.mem (binary copied directly from Lucene for SmartCn)
 [**/*.mem]
+charset = unset
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
@@ -498,6 +506,7 @@ indent_style = unset
 
 # Exclude *.dict (binary copied directly from Lucene for Morfologik)
 [**/*.dict]
+charset = unset
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false

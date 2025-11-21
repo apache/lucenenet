@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Grouping
 title: Lucene.Net.Grouping
 summary: *content

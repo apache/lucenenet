@@ -1,4 +1,4 @@
-﻿# Parses and validates the command arguments and bootstraps the Psake build script with the cleaned values
+# Parses and validates the command arguments and bootstraps the Psake build script with the cleaned values
 
 # -----------------------------------------------------------------------------------
 #

@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.TestFramework
 title: Lucene.Net.TestFramework
 summary: *content

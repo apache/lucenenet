@@ -1,4 +1,4 @@
-﻿Some fairly large changes happened between Lucene 2.x and 3.x, particularly the addition of Generics and Enum types to Java.
+Some fairly large changes happened between Lucene 2.x and 3.x, particularly the addition of Generics and Enum types to Java.
 Due to some of the major differences between C#'s generics and Java's generics, there are some areas of lucene that differ
 greatly in design.  
 

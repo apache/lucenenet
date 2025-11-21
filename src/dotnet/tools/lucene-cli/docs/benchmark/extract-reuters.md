@@ -1,4 +1,4 @@
-﻿# extract-reuters
+# extract-reuters
 
 ### Name
 

@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.QueryParsers.ComplexPhrase
 summary: *content
 ---

@@ -1,4 +1,4 @@
-﻿# Source code
+# Source code
 
 ---
 

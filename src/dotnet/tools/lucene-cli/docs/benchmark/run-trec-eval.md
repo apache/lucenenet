@@ -1,4 +1,4 @@
-﻿# run-trec-eval
+# run-trec-eval
 
 ### Name
 

@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Store
 summary: *content
 ---

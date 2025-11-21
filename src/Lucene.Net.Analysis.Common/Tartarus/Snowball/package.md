@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Tartarus.Snowball
 summary: *content
 ---

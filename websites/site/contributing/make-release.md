@@ -1,4 +1,4 @@
-﻿---
+---
 uid: contributing/make-release
 ---
 

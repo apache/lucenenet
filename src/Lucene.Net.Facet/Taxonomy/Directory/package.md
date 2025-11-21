@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Facet.Taxonomy.Directory
 summary: *content
 ---

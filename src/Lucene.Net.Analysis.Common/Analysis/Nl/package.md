@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Analysis.Nl
 summary: *content
 ---
