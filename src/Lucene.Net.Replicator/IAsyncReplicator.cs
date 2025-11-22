@@ -18,7 +18,7 @@ namespace Lucene.Net.Replicator
         /// <param name="currentVersion">Current version of the index.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>A <see cref="SessionToken"/> if an update exists; otherwise, <c>null</c>.</returns>
-        Task<SessionToken?> CheckForUpdateAsync(string currentVersion, CancellationToken cancellationToken = default);
+        Task<SessionToken?> CheckForUpdateAsync(string? currentVersion, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Returns a stream for the requested file and source.
