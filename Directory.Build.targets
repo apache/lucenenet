@@ -50,6 +50,7 @@
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ASPNETCORE_TESTHOST</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CANCELLATIONTOKENSOURCE_CANCELASYNC</DefineConstants>
 
   </PropertyGroup>
 
