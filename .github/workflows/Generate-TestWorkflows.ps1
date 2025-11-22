@@ -65,13 +65,15 @@ param(
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net9.0','net8.0','net472','net48'), # targets under test: net8.0, net8.0, netstandard2.0, net462
+    [string[]]$TestFrameworks = @('net10.0', 'net9.0','net8.0','net472','net48'), # targets under test: net10.0, net8.0, net8.0, netstandard2.0, net462
 
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
     [string[]]$TestPlatforms = @('x64'),
 
     [string[]]$Configurations = @('Release'),
+
+    [string]$DotNet10SDKVersion = '10.0.x',
 
     [string]$DotNet9SDKVersion = '9.0.x',
 
@@ -155,6 +157,7 @@ function Write-TestWorkflow(
     [string[]]$TestFrameworks = @('net6.0', 'net48'),
     [string[]]$TestPlatforms = @('x64'),
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
+    [string]$DotNet10SDKVersion = $DotNet10SDKVersion,
     [string]$DotNet9SDKVersion = $DotNet9SDKVersion,
     [string]$DotNet8SDKVersion = $DotNet8SDKVersion) {
 
@@ -284,6 +287,12 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '$DotNet9SDKVersion'
+        if: `${{ startswith(matrix.framework, 'net9.') }}
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '$DotNet10SDKVersion'
 
       - name: Cache NuGet Packages
         uses: actions/cache@v4
