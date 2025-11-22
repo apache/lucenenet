@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
+using Lucene.Net.Attributes;
 using Directory = Lucene.Net.Store.Directory;
 
 #if FEATURE_ASPNETCORE_TESTHOST
@@ -128,7 +130,6 @@ namespace Lucene.Net.Replicator.Http
             reader = newReader;
         }
 
-
         [Test]
         public void TestBasic()
         {
@@ -143,6 +144,25 @@ namespace Lucene.Net.Replicator.Http
 
             PublishRevision(2);
             client.UpdateNow();
+            ReopenReader();
+            assertEquals(2, int.Parse(reader.IndexCommit.UserData["ID"], NumberStyles.HexNumber));
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public async Task TestBasicAsync()
+        {
+            IAsyncReplicator replicator = new HttpReplicator(host, port, ReplicationService.REPLICATION_CONTEXT + "/s1", server.CreateHandler());
+            ReplicationClient client = new ReplicationClient(replicator, new IndexReplicationHandler(handlerIndexDir, null),
+                new PerSessionDirectoryFactory(clientWorkDir.FullName));
+
+            PublishRevision(1);
+            await client.UpdateNowAsync();
+            ReopenReader();
+            assertEquals(1, int.Parse(reader.IndexCommit.UserData["ID"], NumberStyles.HexNumber));
+
+            PublishRevision(2);
+            await client.UpdateNowAsync();
             ReopenReader();
             assertEquals(2, int.Parse(reader.IndexCommit.UserData["ID"], NumberStyles.HexNumber));
         }
@@ -175,7 +195,44 @@ namespace Lucene.Net.Replicator.Http
                 ReopenReader();
                 assertEquals(5, int.Parse(reader.IndexCommit.UserData["ID"], NumberStyles.HexNumber));
 
-                client.Dispose();
+                // client.Dispose(); // LUCENENET: Handled by 'using' statement
+            }
+            finally
+            {
+                mockErrorConfig.RespondWithError = false;
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public async Task TestServerErrorsAsync()
+        {
+            // tests the behaviour of the client when the server sends an error
+            IAsyncReplicator replicator = new HttpReplicator(host, port, ReplicationService.REPLICATION_CONTEXT + "/s1", server.CreateHandler());
+            using ReplicationClient client = new ReplicationClient(replicator, new IndexReplicationHandler(handlerIndexDir, null),
+                new PerSessionDirectoryFactory(clientWorkDir.FullName));
+
+            try
+            {
+                PublishRevision(5);
+
+                try
+                {
+                    mockErrorConfig.RespondWithError = true;
+                    await client.UpdateNowAsync();
+                    fail("expected exception");
+                }
+                catch (Exception t) when (t.IsThrowable())
+                {
+                    // expected
+                }
+
+                mockErrorConfig.RespondWithError = false;
+                await client.UpdateNowAsync(); // now it should work
+                ReopenReader();
+                assertEquals(5, int.Parse(reader.IndexCommit.UserData["ID"], NumberStyles.HexNumber));
+
+                // client.Dispose(); // LUCENENET: Handled by 'using' statement
             }
             finally
             {
