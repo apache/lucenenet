@@ -348,7 +348,7 @@ namespace Lucene.Net.Util
         }
 
         [Test]
-        [LuceneNetSpecific] // this is a Lucene.NET specific method
+        [LuceneNetSpecific]
         [Repeat(100)]
         public void TestTryUTF8toUTF16()
         {
@@ -362,7 +362,7 @@ namespace Lucene.Net.Util
         }
 
         [Test]
-        [LuceneNetSpecific] // this is a Lucene.NET specific method
+        [LuceneNetSpecific]
         [TestCase(new byte[] { 0x63, 0x61, 0xc3 }, "ca\ufffd")] // ca�, start of 2-byte sequence
         [TestCase(new byte[] { 0x63, 0x61, 0xe3 }, "ca\ufffd")] // ca�, start of 3-byte sequence
         [TestCase(new byte[] { 0x63, 0x61, 0xf3 }, "ca\ufffd")] // ca�, start of 4-byte sequence
@@ -374,6 +374,20 @@ namespace Lucene.Net.Util
             UnicodeUtil.UTF8toUTF16WithFallback(utf8, scratch);
 
             Assert.AreEqual(expected, scratch.ToString());
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        [Repeat(100)]
+        public void TestTryUTF16toUTF8()
+        {
+            string unicode = TestUtil.RandomRealisticUnicodeString(Random);
+            var utf8 = new byte[IOUtils.ENCODING_UTF_8_NO_BOM.GetMaxByteCount(unicode.Length)];
+
+            bool success = UnicodeUtil.TryUTF16toUTF8(unicode.AsSpan(), utf8.AsSpan(), out int bytesWritten);
+
+            Assert.IsTrue(success);
+            Assert.AreEqual(unicode, IOUtils.ENCODING_UTF_8_NO_BOM.GetString(utf8, 0, bytesWritten));
         }
     }
 }
