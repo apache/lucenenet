@@ -35,7 +35,8 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Solution-level Publish to Project-specific Directory">
-    <PublishDir Condition="'$(AlternatePublishRootDirectory)' != ''">$(AlternatePublishRootDirectory)/$(TargetFramework)/$(MSBuildProjectName)/</PublishDir>
+    <PublishDir Condition="'$(AlternatePublishRootDirectory)' != ''">
+      $(AlternatePublishRootDirectory)/$(TargetFramework)/$(MSBuildProjectName)/</PublishDir>
   </PropertyGroup>
 
   <!-- Features in .NET 9.x only -->
@@ -46,14 +47,17 @@
   </PropertyGroup>
 
   <!-- Features in .NET 8.x and .NET 9.x only -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <PropertyGroup
+    Condition=" $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ASPNETCORE_TESTHOST</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CANCELLATIONTOKENSOURCE_CANCELASYNC</DefineConstants>
 
   </PropertyGroup>
 
   <!-- Features in .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x only -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <PropertyGroup
+    Condition=" $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_RANDOM_NEXTINT64_NEXTSINGLE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_RANDOMACCESS_READ</DefineConstants>
@@ -63,7 +67,8 @@
   </PropertyGroup>
 
   <!-- Features in .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x only -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <PropertyGroup
+    Condition=" $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_READONLYSET</DefineConstants>
@@ -71,15 +76,18 @@
   </PropertyGroup>
 
   <!-- Features in .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x only -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <PropertyGroup
+    Condition=" $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_PROCESS_KILL_ENTIREPROCESSTREE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_STRING_CONCAT_READONLYSPAN</DefineConstants>
 
   </PropertyGroup>
 
-  <!-- Features in .NET Standard, .NET Core, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x only (no .NET Framework support) -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) Or $(TargetFramework.StartsWith('netcoreapp')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET Standard, .NET Core, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x
+  only (no .NET Framework support) -->
+  <PropertyGroup
+    Condition=" $(TargetFramework.StartsWith('netstandard')) Or $(TargetFramework.StartsWith('netcoreapp')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
 
     <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CULTUREINFO_CURRENTCULTURE_SETTER</DefineConstants>
@@ -87,9 +95,16 @@
 
     <DebugType>portable</DebugType>
   </PropertyGroup>
-
-  <!-- Features in .NET Standard 2.1, .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x only -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET 8.x and .NET 9.x only -->
+  <PropertyGroup
+    Condition=" $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+    <DefineConstants>$(DefineConstants);FEATURE_HTTPCONTENT_READASSTREAM</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_HTTPCONTENT_READASSTREAM_CANCELLATIONTOKEN</DefineConstants>
+  </PropertyGroup>
+  <!-- Features in .NET Standard 2.1, .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and
+  .NET 9.x only -->
+  <PropertyGroup
+    Condition=" '$(TargetFramework)' == 'netstandard2.1' Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ARRAY_FILL</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR</DefineConstants>
@@ -102,22 +117,28 @@
 
   </PropertyGroup>
 
-  <!-- Features in .NET Standard 2.1, .NET Core 2.1-2.2, .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x only -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'netcoreapp2.2' Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET Standard 2.1, .NET Core 2.1-2.2, .NET Core 3.x, .NET 5.x, .NET 6.x, .NET
+  7.x, .NET 8.x, and .NET 9.x only -->
+  <PropertyGroup
+    Condition=" '$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'netcoreapp2.2' Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_STRING_CONTAINS_STRINGCOMPARISON</DefineConstants>
 
   </PropertyGroup>
 
-  <!-- Features in .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x,
+  .NET 8.x, and .NET 9.x -->
+  <PropertyGroup
+    Condition=" $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONROOT_PROVIDERS</DefineConstants>
 
   </PropertyGroup>
 
-  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x  -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x,
+  .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x  -->
+  <PropertyGroup
+    Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ASSEMBLY_GETCALLINGASSEMBLY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_FILESTREAM_LOCK</DefineConstants>
@@ -126,14 +147,17 @@
 
   </PropertyGroup>
 
-  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, and .NET 8.x (No .NET 9.x support)  -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) ">
+  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x,
+  .NET 6.x, .NET 7.x, and .NET 8.x (No .NET 9.x support)  -->
+  <PropertyGroup
+    Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) ">
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
   </PropertyGroup>
 
   <!-- Features in .NET Framework 4.5+ and .NET Standard 2.x only (No .NET Core support) -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) ">
+  <PropertyGroup
+    Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) ">
 
     <!-- NOTE: The API for this exists in .NET Core, but it throws a PlatformNotSupportedException.
          We simply don't override this to get the same behavior. -->
@@ -142,7 +166,8 @@
   </PropertyGroup>
 
   <!-- Features in .NET Framework 4.6.1+ only -->
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or $(TargetFramework.StartsWith('net47')) Or $(TargetFramework.StartsWith('net48'))">
+  <PropertyGroup
+    Condition="'$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or $(TargetFramework.StartsWith('net47')) Or $(TargetFramework.StartsWith('net48'))">
 
     <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONROOT_PROVIDERS</DefineConstants>
 
@@ -152,7 +177,8 @@
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
 
     <DefineConstants>$(DefineConstants);NETFRAMEWORK</DefineConstants>
-    <!-- Although code access security is available in .NET Standard 2.0+ via platform extensions, we are excluding
+    <!-- Although code access security is available in .NET Standard 2.0+ via platform extensions,
+    we are excluding
     it due to the fact it is not a primary feature of Lucene.NET and it is supported in .NET Framework -->
     <DefineConstants>$(DefineConstants);FEATURE_CODE_ACCESS_SECURITY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_MEMORYMAPPEDFILESECURITY</DefineConstants>
@@ -162,9 +188,12 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
 
-  <!-- Features in .NET Framework 4.5+ and .NET 8.0+ but not in .NET Standard 2.0 or .NET Standard 2.1 -->
-  <!-- net472 is used to test .NET Standard 2.0, and .NET 6.0 for .NET Standard 2.1, so we treat them like it is not part of this group -->
-  <PropertyGroup Condition=" ($(TargetFramework.StartsWith('net4')) And '$(TargetFramework)' != 'net472') Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+  <!-- Features in .NET Framework 4.5+ and .NET 8.0+ but not in .NET Standard 2.0 or .NET Standard
+  2.1 -->
+  <!-- net472 is used to test .NET Standard 2.0, and .NET 6.0 for .NET Standard 2.1, so we treat
+  them like it is not part of this group -->
+  <PropertyGroup
+    Condition=" ($(TargetFramework.StartsWith('net4')) And '$(TargetFramework)' != 'net472') Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_OPENNLP</DefineConstants>
 
@@ -173,34 +202,45 @@
 
   <PropertyGroup>
     <!-- NuGet.org only supports portable debug symbol format:
-         https://docs.microsoft.com/en-us/nuget/create-packages/symbol-packages-snupkg#nugetorg-symbol-package-constraints -->
+    https://docs.microsoft.com/en-us/nuget/create-packages/symbol-packages-snupkg#nugetorg-symbol-package-constraints -->
     <DebugType Condition=" '$(PortableDebugTypeOnly)' == 'true' ">portable</DebugType>
   </PropertyGroup>
 
-  <Target Name="AddInternalsVisibleTo" BeforeTargets="BeforeCompile" Label="Adds InternalsVisibleTo Attribute and PublicKey (if supplied)">
+  <Target Name="AddInternalsVisibleTo" BeforeTargets="BeforeCompile"
+    Label="Adds InternalsVisibleTo Attribute and PublicKey (if supplied)">
     <ItemGroup Condition="'@(InternalsVisibleTo->Count())' &gt; 0 ">
       <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
         <_Parameter1>%(InternalsVisibleTo.Identity)</_Parameter1>
-        <_Parameter1 Condition=" '$(SignAssembly)' == 'true' And '$(PublicKey)' != '' ">%(InternalsVisibleTo.Identity), PublicKey=$(PublicKey)</_Parameter1>
+        <_Parameter1 Condition=" '$(SignAssembly)' == 'true' And '$(PublicKey)' != '' ">%(InternalsVisibleTo.Identity),
+          PublicKey=$(PublicKey)</_Parameter1>
       </AssemblyAttribute>
     </ItemGroup>
   </Target>
 
-  <Target Name="PrintTargetFrameworks" Label="Prints the value for the $(TargetFrameworks) property or 'none' if no frameworks apply. Pass TestProjectsOnly=true to get results only if this is a test project.">
+  <Target Name="PrintTargetFrameworks"
+    Label="Prints the value for the $(TargetFrameworks) property or 'none' if no frameworks apply. Pass TestProjectsOnly=true to get results only if this is a test project.">
     <PropertyGroup>
-      <DoOutputTargetFrameworks Condition=" '$(TestProjectsOnly)' != 'true' Or ('$(TestProjectsOnly)' == 'true' And '$(IsTestProject)' == 'true')">true</DoOutputTargetFrameworks>
-      <OutputTargetFrameworks Condition=" '$(DoOutputTargetFrameworks)' == 'true' ">$(TargetFramework)</OutputTargetFrameworks>
+      <DoOutputTargetFrameworks
+        Condition=" '$(TestProjectsOnly)' != 'true' Or ('$(TestProjectsOnly)' == 'true' And '$(IsTestProject)' == 'true')">
+        true</DoOutputTargetFrameworks>
+      <OutputTargetFrameworks Condition=" '$(DoOutputTargetFrameworks)' == 'true' ">
+        $(TargetFramework)</OutputTargetFrameworks>
       <!-- Fallback to TargetFrameworks field if TargetFramework is empty -->
-      <OutputTargetFrameworks Condition=" '$(DoOutputTargetFrameworks)' == 'true' And '$(OutputTargetFrameworks)' == '' ">$(TargetFrameworks)</OutputTargetFrameworks>
+      <OutputTargetFrameworks
+        Condition=" '$(DoOutputTargetFrameworks)' == 'true' And '$(OutputTargetFrameworks)' == '' ">
+        $(TargetFrameworks)</OutputTargetFrameworks>
       <OutputTargetFrameworks Condition=" '$(OutputTargetFrameworks)' == '' ">none</OutputTargetFrameworks>
     </PropertyGroup>
-    <Message Text="$(OutputTargetFrameworks)" Importance="high"/>
+    <Message Text="$(OutputTargetFrameworks)" Importance="high" />
   </Target>
 
 
-  <!-- Disable Json Source Generator from being added to projects. This is being done to work around a bug in VS 2022
-    which appeared around VS2022 7.3.6 which causes StackOverflowExceptions when compiling the solution.
-    see: https://developercommunity.visualstudio.com/t/VS-2022-1736-Process-is-terminated-due/10173885#T-ND10184855
+  <!-- Disable Json Source Generator from being added to projects. This is being done to work around
+  a bug in VS 2022
+    which appeared around VS2022 7.3.6 which causes StackOverflowExceptions when compiling the
+  solution.
+    see:
+  https://developercommunity.visualstudio.com/t/VS-2022-1736-Process-is-terminated-due/10173885#T-ND10184855
     for more details.  Once a fix is rolled out for VS2022, this block can be removed -->
   <Target Name="RemoveJsonSourceGenerator" BeforeTargets="CoreCompile">
     <ItemGroup>
@@ -211,7 +251,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <AnalyzersToRemove Include="@(AnalyzersByFileName)" Condition="'@(AnalyzersToRemoveByFileName)' == '@(AnalyzersByFileName)' and '%(Identity)' != ''" />
+      <AnalyzersToRemove Include="@(AnalyzersByFileName)"
+        Condition="'@(AnalyzersToRemoveByFileName)' == '@(AnalyzersByFileName)' and '%(Identity)' != ''" />
       <Analyzer Remove="%(AnalyzersToRemove.OriginalIdentity)" />
     </ItemGroup>
   </Target>
@@ -219,17 +260,24 @@
 
   <!-- Global PackageReferences -->
   <ItemGroup>
-    <!-- This is to allow the .NET Framework references to be machine-indepenedent so builds can happen without installing prerequisites -->
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="$(MicrosoftNETFrameworkReferenceAssembliesPackageReferenceVersion)" PrivateAssets="All" />
+    <!-- This is to allow the .NET Framework references to be machine-indepenedent so builds can
+    happen without installing prerequisites -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies"
+      Version="$(MicrosoftNETFrameworkReferenceAssembliesPackageReferenceVersion)"
+      PrivateAssets="All" />
   </ItemGroup>
 
   <!-- This is for testing only, we use SourceLink from any Azure DevOps git repo -->
-  <ItemGroup Condition=" '$(BUILD_REPOSITORY_PROVIDER)' == 'TfsGit' " Label="SourceLink Packages (experimental Azure Repos)">
-    <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="$(MicrosoftSourceLinkAzureReposGitPackageReferenceVersion)" PrivateAssets="All"/>
+  <ItemGroup Condition=" '$(BUILD_REPOSITORY_PROVIDER)' == 'TfsGit' "
+    Label="SourceLink Packages (experimental Azure Repos)">
+    <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git"
+      Version="$(MicrosoftSourceLinkAzureReposGitPackageReferenceVersion)" PrivateAssets="All" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(BUILD_REPOSITORY_PROVIDER)' == 'GitHub' " Label="SourceLink Packages (main repo)">
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubPackageReferenceVersion)" PrivateAssets="All"/>
+  <ItemGroup Condition=" '$(BUILD_REPOSITORY_PROVIDER)' == 'GitHub' "
+    Label="SourceLink Packages (main repo)">
+    <PackageReference Include="Microsoft.SourceLink.GitHub"
+      Version="$(MicrosoftSourceLinkGitHubPackageReferenceVersion)" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
