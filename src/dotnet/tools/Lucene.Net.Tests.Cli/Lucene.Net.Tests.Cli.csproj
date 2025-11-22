@@ -25,7 +25,7 @@
 
   <PropertyGroup>
     <!-- Allow specific target framework to flow in from TestTargetFrameworks.props -->
-    <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net10.0;net8.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net10.0;net9.0;net8.0</TargetFrameworks>
     <AssemblyTitle>Lucene.Net.Tests.Cli</AssemblyTitle>
   </PropertyGroup>
 
