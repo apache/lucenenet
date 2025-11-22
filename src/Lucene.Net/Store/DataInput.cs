@@ -1,5 +1,10 @@
+using J2N.Numerics;
+using J2N.Text;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Buffers;
+using Lucene.Net.Util;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -274,16 +279,36 @@ namespace Lucene.Net.Store
             throw new IOException("Invalid VInt64 detected (negative values disallowed)");
         }
 
+#nullable enable
+
         /// <summary>
         /// Reads a <see cref="string"/>. </summary>
         /// <seealso cref="DataOutput.WriteString(string)"/>
         public virtual string ReadString()
         {
+            // LUCENENET: Use stack or array pool for the temporary array so we don't put pressure on the GC
             int length = ReadVInt32();
-            byte[] bytes = new byte[length];
-            ReadBytes(bytes, 0, length);
-
-            return Encoding.UTF8.GetString(bytes);
+            if (length == 0)
+            {
+                // Fast path - don't allocate if we don't need to
+                return string.Empty;
+            }
+            // Always use a power of 2 for the length
+            int bufferLength = BitOperation.IsPow2(length) ? length : BitOperation.RoundUpToPowerOf2(length);
+            byte[]? arrayToReturnToPool = null;
+            Span<byte> bytes = (bufferLength > Constants.MaxStackByteLimit
+                ? (arrayToReturnToPool = ArrayPool<byte>.Shared.Rent(bufferLength))
+                : stackalloc byte[bufferLength])
+                .Slice(0, length); // Slice to exact byte length
+            try
+            {
+                ReadBytes(bytes);
+                return Encoding.UTF8.GetString(bytes);
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.ReturnIfNotNull(arrayToReturnToPool);
+            }
         }
 
         /// <summary>
