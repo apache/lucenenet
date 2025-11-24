@@ -24,8 +24,8 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
-    <RollForward>Major</RollForward>
+    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
+    <RollForward Condition=" $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net10.')) ">Major</RollForward>
 
     <IsPublishable>true</IsPublishable>
     <PackAsTool>true</PackAsTool>
