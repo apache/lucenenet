@@ -125,7 +125,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 }
             }
 
-            return new Languages(ls.AsReadOnly());
+            // ReSharper disable once InvokeAsExtensionMethod - net10.0 has a conflict with the ambiguous overloads
+            return new Languages(SetExtensions.AsReadOnly(ls));
         }
 
         private static string LangResourceName(NameType nameType)
@@ -241,7 +242,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         internal SomeLanguages(ISet<string> languages)
         {
-            this.languages = languages.AsReadOnly();
+            // ReSharper disable once InvokeAsExtensionMethod - net10.0 has a conflict with the ambiguous overloads
+            this.languages = SetExtensions.AsReadOnly(languages);
         }
 
         public override bool Contains(string language)

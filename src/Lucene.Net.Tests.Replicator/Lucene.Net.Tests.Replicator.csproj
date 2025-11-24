@@ -57,13 +57,13 @@
     </ProjectReference>
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.'))">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.'))">
     <ProjectReference Include="..\dotnet\Lucene.Net.Replicator.AspNetCore\Lucene.Net.Replicator.AspNetCore.csproj" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
 
-  <ItemGroup Condition="$(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.'))">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.'))">
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="$(MicrosoftAspNetCoreTestHostPackageVersion)" />
   </ItemGroup>
 

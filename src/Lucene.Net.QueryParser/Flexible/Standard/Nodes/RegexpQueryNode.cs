@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     public class RegexpQueryNode : QueryNode, ITextableQueryNode, IFieldableNode
     {
         private ICharSequence text;
-        private string field;
+        private string _field; // LUCENENET specific: renamed from 'field' since field is a keyword in C# 14
 
         /// <summary>
         ///
@@ -69,7 +69,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         public RegexpQueryNode(string field, ICharSequence text, int begin,
             int end) // LUCENENET TODO: API - Change to use length rather than end index to match .NET
         {
-            this.field = field;
+            this._field = field;
             this.text = text.Subsequence(begin, end - begin);
         }
 
@@ -80,13 +80,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
         public override string ToString()
         {
-            return "<regexp field='" + this.field + "' term='" + this.text + "'/>";
+            return "<regexp field='" + this._field + "' term='" + this.text + "'/>";
         }
 
         public override IQueryNode CloneTree()
         {
             RegexpQueryNode clone = (RegexpQueryNode)base.CloneTree();
-            clone.field = this.field;
+            clone._field = this._field;
             clone.text = this.text;
             return clone;
         }
@@ -99,18 +99,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
         public virtual string Field
         {
-            get => field;
-            set => this.field = value;
+            get => _field;
+            set => this._field = value;
         }
 
         public virtual string GetFieldAsString()
         {
-            return field.ToString();
+            return _field.ToString();
         }
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
-            return IsDefaultField(field) ? "/" + text + "/" : field + ":/" + text + "/";
+            return IsDefaultField(_field) ? "/" + text + "/" : _field + ":/" + text + "/";
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public class DocValuesOrdinalsReader : OrdinalsReader
     {
-        private readonly string field;
+        private readonly string _field; // LUCENENET: must name as _field in C# 14 since 'field' is now a keyword
 
         /// <summary>
         /// Default constructor.
@@ -46,12 +46,12 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public DocValuesOrdinalsReader(string field)
         {
-            this.field = field;
+            this._field = field;
         }
 
         public override OrdinalsSegmentReader GetReader(AtomicReaderContext context)
         {
-            BinaryDocValues values0 = context.AtomicReader.GetBinaryDocValues(field);
+            BinaryDocValues values0 = context.AtomicReader.GetBinaryDocValues(_field);
             if (values0 is null)
             {
                 values0 = DocValues.EMPTY_BINARY;
@@ -82,7 +82,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
 
-        public override string IndexFieldName => field;
+        public override string IndexFieldName => _field;
 
         /// <summary>
         /// Subclass &amp; override if you change the encoding.

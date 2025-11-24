@@ -138,9 +138,9 @@ namespace Lucene.Net.Codecs.Memory
 
             public DirectFields(SegmentReadState state, Fields fields, int minSkipCount, int lowFreqCutoff)
             {
-                foreach (string field in fields)
+                foreach (string f in fields)
                 {
-                    this.fields[field] = new DirectField(state, field, fields.GetTerms(field), minSkipCount, lowFreqCutoff);
+                    this.fields[f] = new DirectField(state, f, fields.GetTerms(f), minSkipCount, lowFreqCutoff);
                 }
             }
 
@@ -163,9 +163,9 @@ namespace Lucene.Net.Codecs.Memory
                 get
                 {
                     long numTerms = 0;
-                    foreach (DirectField field in fields.Values)
+                    foreach (DirectField f in fields.Values)
                     {
-                        numTerms += field.terms.Length;
+                        numTerms += f.terms.Length;
                     }
                     return numTerms;
                 }

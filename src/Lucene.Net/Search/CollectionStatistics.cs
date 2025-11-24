@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public class CollectionStatistics
     {
-        private readonly string field;
+        private readonly string _field; // LUCENENET specific: renamed from 'field' since field is a keyword in C# 14
         private readonly long maxDoc;
         private readonly long docCount;
         private readonly long sumTotalTermFreq;
@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
                 Debugging.Assert(sumDocFreq == -1 || sumDocFreq >= docCount); // #postings must be >= #docs with field
                 Debugging.Assert(sumTotalTermFreq == -1 || sumTotalTermFreq >= sumDocFreq); // #positions must be >= #postings
             }
-            this.field = field;
+            this._field = field;
             this.maxDoc = maxDoc;
             this.docCount = docCount;
             this.sumTotalTermFreq = sumTotalTermFreq;
@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the field name </summary>
-        public string Field => field;
+        public string Field => _field;
 
         /// <summary>
         /// Returns the total number of documents, regardless of

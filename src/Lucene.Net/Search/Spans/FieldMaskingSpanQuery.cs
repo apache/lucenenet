@@ -75,15 +75,15 @@ namespace Lucene.Net.Search.Spans
     public class FieldMaskingSpanQuery : SpanQuery
     {
         private SpanQuery maskedQuery;
-        private readonly string field; // LUCENENET: marked readonly
+        private readonly string _field; // LUCENENET: marked readonly, renamed from 'field' since field is a keyword in C# 14
 
         public FieldMaskingSpanQuery(SpanQuery maskedQuery, string maskedField)
         {
             this.maskedQuery = maskedQuery;
-            this.field = maskedField;
+            this._field = maskedField;
         }
 
-        public override string Field => field;
+        public override string Field => _field;
 
         public virtual SpanQuery MaskedQuery => maskedQuery;
 
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search.Spans
             buffer.Append(')');
             buffer.Append(ToStringUtils.Boost(Boost));
             buffer.Append(" as ");
-            buffer.Append(this.field);
+            buffer.Append(this._field);
             return buffer.ToString();
         }
 

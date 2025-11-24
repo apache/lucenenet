@@ -174,7 +174,8 @@ namespace Lucene.Net.Index
             {
                 throw IllegalStateException.Create("files were not computed yet");
             }
-            return setFiles.AsReadOnly();
+            // ReSharper disable once InvokeAsExtensionMethod - net10.0 has a conflict with the ambiguous overloads
+            return SetExtensions.AsReadOnly(setFiles);
         }
 
         public override string ToString()
