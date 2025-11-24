@@ -82,12 +82,6 @@ jobs:
           dotnet-version: '8.0.x'
         if: ${{ startswith(matrix.framework, 'net8.') }}
 
-      - name: Setup .NET 9 SDK
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: '9.0.x'
-        if: ${{ startswith(matrix.framework, 'net9.') }}
-
       - name: Setup .NET 10 SDK
         uses: actions/setup-dotnet@v5
         with:
