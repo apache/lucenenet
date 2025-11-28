@@ -57,7 +57,7 @@ jobs:
 
       # Checkout the main repo with all history so we get all tags
       - name: Checkout Lucene.Net source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: main-repo
           fetch-depth: 0
@@ -140,7 +140,7 @@ jobs:
           path: '${{github.workspace}}/main-repo/websites/apidocs/_site'
 
       - name: Checkout Lucene.Net website
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: ${{ env.SITE_REPO }}
           ref: asf-site
