@@ -40,14 +40,15 @@
     <!-- Test Client to DLL target works as follows:
       Test Client       | Target Under Test
       net10.0           | net10.0
+      net9.0            | net8.0
       net8.0            | net8.0
       net48             | net462
       net472            | netstandard2.0
     -->
 
     <!-- CI builds - conditional based on VS version -->
-    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' And '$(VisualStudioVersion)' &gt;= '18.0' ">net10.0;net8.0</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' And ('$(VisualStudioVersion)' &lt; '18.0' Or '$(VisualStudioVersion)' == '') ">net8.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' And '$(VisualStudioVersion)' &gt;= '18.0' ">net10.0;net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' And ('$(VisualStudioVersion)' &lt; '18.0' Or '$(VisualStudioVersion)' == '') ">net9.0;net8.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48;net472</TargetFrameworks>
     <TargetFramework Condition=" '$(TargetFrameworks)' != '' "></TargetFramework>
   </PropertyGroup>
