@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
         /// Represents sorting by document number (index order). </summary>
         public static readonly SortField FIELD_DOC = new SortField(null, SortFieldType.DOC);
 
-        private string _field; // LUCENENET specific: renamed from 'field' since field is a keyword in C# 14
+        private string field;
         private SortFieldType type; // defaults to determining type dynamically
         internal readonly bool reverse /*= false*/; // defaults to natural order // LUCENENET: marked readonly
         private readonly FieldCache.IParser parser; // LUCENENET: marked readonly
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                this._field = field;
+                this.field = field;
             }
         }
 
@@ -276,7 +276,7 @@ namespace Lucene.Net.Search
         /// Returns the name of the field.  Could return <c>null</c>
         /// if the sort is by <see cref="SortFieldType.SCORE"/> or <see cref="SortFieldType.DOC"/>. </summary>
         /// <returns> Name of field, possibly <c>null</c>. </returns>
-        public virtual string Field => _field;
+        public virtual string Field => field;
 
         /// <summary>
         /// Returns the type of contents in the field. </summary>
@@ -315,49 +315,49 @@ namespace Lucene.Net.Search
                     break;
 
                 case SortFieldType.STRING:
-                    buffer.Append("<string" + ": \"").Append(_field).Append("\">");
+                    buffer.Append("<string" + ": \"").Append(field).Append("\">");
                     break;
 
                 case SortFieldType.STRING_VAL:
-                    buffer.Append("<string_val" + ": \"").Append(_field).Append("\">");
+                    buffer.Append("<string_val" + ": \"").Append(field).Append("\">");
                     break;
 
 #pragma warning disable 612, 618
                 case SortFieldType.BYTE:
-                    buffer.Append("<byte: \"").Append(_field).Append("\">");
+                    buffer.Append("<byte: \"").Append(field).Append("\">");
                     break;
 
                 case SortFieldType.INT16:
 #pragma warning restore 612, 618
-                    buffer.Append("<short: \"").Append(_field).Append("\">");
+                    buffer.Append("<short: \"").Append(field).Append("\">");
                     break;
 
                 case SortFieldType.INT32:
-                    buffer.Append("<int" + ": \"").Append(_field).Append("\">");
+                    buffer.Append("<int" + ": \"").Append(field).Append("\">");
                     break;
 
                 case SortFieldType.INT64:
-                    buffer.Append("<long: \"").Append(_field).Append("\">");
+                    buffer.Append("<long: \"").Append(field).Append("\">");
                     break;
 
                 case SortFieldType.SINGLE:
-                    buffer.Append("<float" + ": \"").Append(_field).Append("\">");
+                    buffer.Append("<float" + ": \"").Append(field).Append("\">");
                     break;
 
                 case SortFieldType.DOUBLE:
-                    buffer.Append("<double" + ": \"").Append(_field).Append("\">");
+                    buffer.Append("<double" + ": \"").Append(field).Append("\">");
                     break;
 
                 case SortFieldType.CUSTOM:
-                    buffer.Append("<custom:\"").Append(_field).Append("\": ").Append(comparerSource).Append('>');
+                    buffer.Append("<custom:\"").Append(field).Append("\": ").Append(comparerSource).Append('>');
                     break;
 
                 case SortFieldType.REWRITEABLE:
-                    buffer.Append("<rewriteable: \"").Append(_field).Append("\">");
+                    buffer.Append("<rewriteable: \"").Append(field).Append("\">");
                     break;
 
                 default:
-                    buffer.Append("<???: \"").Append(_field).Append("\">");
+                    buffer.Append("<???: \"").Append(field).Append("\">");
                     break;
             }
 
@@ -391,7 +391,7 @@ namespace Lucene.Net.Search
                 return false;
             }
 
-            return StringHelper.Equals(other._field, this._field)
+            return StringHelper.Equals(other.field, this.field)
                    && other.type == this.type
                    && other.reverse == this.reverse
                    && (other.comparerSource is null ? this.comparerSource is null : other.comparerSource.Equals(this.comparerSource));
@@ -409,9 +409,9 @@ namespace Lucene.Net.Search
             unchecked
             {
                 int hash = (int)(type.GetHashCode() ^ 0x346565dd + reverse.GetHashCode() ^ 0xaf5998bb);
-                if (_field != null)
+                if (field != null)
                 {
-                    hash += (int)(_field.GetHashCode() ^ 0xff5685dd);
+                    hash += (int)(field.GetHashCode() ^ 0xff5685dd);
                 }
                 if (comparerSource != null)
                 {
@@ -452,35 +452,35 @@ namespace Lucene.Net.Search
                     return new FieldComparer.DocComparer(numHits);
 
                 case SortFieldType.INT32:
-                    return new FieldComparer.Int32Comparer(numHits, _field, parser, (J2N.Numerics.Int32)m_missingValue);
+                    return new FieldComparer.Int32Comparer(numHits, field, parser, (J2N.Numerics.Int32)m_missingValue);
 
                 case SortFieldType.SINGLE:
-                    return new FieldComparer.SingleComparer(numHits, _field, parser, (J2N.Numerics.Single)m_missingValue);
+                    return new FieldComparer.SingleComparer(numHits, field, parser, (J2N.Numerics.Single)m_missingValue);
 
                 case SortFieldType.INT64:
-                    return new FieldComparer.Int64Comparer(numHits, _field, parser, (J2N.Numerics.Int64)m_missingValue);
+                    return new FieldComparer.Int64Comparer(numHits, field, parser, (J2N.Numerics.Int64)m_missingValue);
 
                 case SortFieldType.DOUBLE:
-                    return new FieldComparer.DoubleComparer(numHits, _field, parser, (J2N.Numerics.Double)m_missingValue);
+                    return new FieldComparer.DoubleComparer(numHits, field, parser, (J2N.Numerics.Double)m_missingValue);
 
 #pragma warning disable 612, 618
                 case SortFieldType.BYTE:
-                    return new FieldComparer.ByteComparer(numHits, _field, parser, (J2N.Numerics.SByte)m_missingValue);
+                    return new FieldComparer.ByteComparer(numHits, field, parser, (J2N.Numerics.SByte)m_missingValue);
 
                 case SortFieldType.INT16:
-                    return new FieldComparer.Int16Comparer(numHits, _field, parser, (J2N.Numerics.Int16)m_missingValue);
+                    return new FieldComparer.Int16Comparer(numHits, field, parser, (J2N.Numerics.Int16)m_missingValue);
 #pragma warning restore 612, 618
 
                 case SortFieldType.CUSTOM:
                     if (Debugging.AssertsEnabled) Debugging.Assert(comparerSource != null);
-                    return comparerSource.NewComparer(_field, numHits, sortPos, reverse);
+                    return comparerSource.NewComparer(field, numHits, sortPos, reverse);
 
                 case SortFieldType.STRING:
-                    return new FieldComparer.TermOrdValComparer(numHits, _field, m_missingValue == STRING_LAST);
+                    return new FieldComparer.TermOrdValComparer(numHits, field, m_missingValue == STRING_LAST);
 
                 case SortFieldType.STRING_VAL:
                     // TODO: should we remove this?  who really uses it?
-                    return new FieldComparer.TermValComparer(numHits, _field);
+                    return new FieldComparer.TermValComparer(numHits, field);
 
                 case SortFieldType.REWRITEABLE:
                     throw IllegalStateException.Create("SortField needs to be rewritten through Sort.Rewrite(..) and SortField.Rewrite(..)");

@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public class FieldValueFilter : Filter
     {
-        private readonly string _field; // LUCENENET specific: renamed from 'field' since field is a keyword in C# 14
+        private readonly string field;
         private readonly bool negate;
 
         /// <summary>
@@ -56,14 +56,14 @@ namespace Lucene.Net.Search
         ///  </param>
         public FieldValueFilter(string field, bool negate)
         {
-            this._field = field;
+            this.field = field;
             this.negate = negate;
         }
 
         /// <summary>
         /// Returns the field this filter is applied on. </summary>
         /// <returns> The field this filter is applied on. </returns>
-        public virtual string Field => _field;
+        public virtual string Field => field;
 
         /// <summary>
         /// Returns <c>true</c> if this filter is negated, otherwise <c>false</c> </summary>
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
-            IBits docsWithField = FieldCache.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader), _field);
+            IBits docsWithField = FieldCache.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader), field);
             if (negate)
             {
                 if (docsWithField is MatchAllBits)
@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
             {
                 const int prime = 31;
                 int result = 1;
-                result = prime * result + (_field is null ? 0 : _field.GetHashCode());
+                result = prime * result + (field is null ? 0 : field.GetHashCode());
                 result = prime * result + (negate ? 1231 : 1237);
                 return result;
             }
@@ -124,14 +124,14 @@ namespace Lucene.Net.Search
                 return false;
             }
             FieldValueFilter other = (FieldValueFilter)obj;
-            if (_field is null)
+            if (field is null)
             {
-                if (other._field != null)
+                if (other.field != null)
                 {
                     return false;
                 }
             }
-            else if (!_field.Equals(other._field, StringComparison.Ordinal))
+            else if (!field.Equals(other.field, StringComparison.Ordinal))
             {
                 return false;
             }
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
 
         public override string ToString()
         {
-            return "FieldValueFilter [field=" + _field + ", negate=" + negate + "]";
+            return "FieldValueFilter [field=" + field + ", negate=" + negate + "]";
         }
     }
 }

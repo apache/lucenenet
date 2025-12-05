@@ -30,7 +30,7 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net8.0;netstandard2.0;net462</TargetFrameworks>
+    <TargetFrameworks>$(LibraryTargetFrameworks)</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Facet</AssemblyTitle>
     <PackageTags>$(PackageTags);facet;faceted</PackageTags>

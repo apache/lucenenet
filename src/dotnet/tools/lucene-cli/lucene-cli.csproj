@@ -24,10 +24,10 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
-    <RollForward Condition=" $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net10.')) ">Major</RollForward>
+    <TargetFrameworks>$(NetCoreOnlyTargetFrameworks)</TargetFrameworks>
+    <RollForward>Major</RollForward>
 
-    <IsPublishable Condition="' $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net10.')) '">true</IsPublishable>
+    <IsPublishable Condition=" $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net10.')) ">true</IsPublishable>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>lucene</ToolCommandName>
 

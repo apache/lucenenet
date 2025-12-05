@@ -894,14 +894,14 @@ namespace Lucene.Net.Codecs.Memory
             private readonly int termCount;
             internal FST<BytesRef> fst;
             private readonly ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
-            internal readonly FieldInfo _field; // LUCENENET: must name as _field in C# 14 since 'field' is now a keyword
+            internal readonly FieldInfo field;
 
             public TermsReader(FieldInfos fieldInfos, IndexInput @in, int termCount)
             {
                 this.termCount = termCount;
                 int fieldNumber = @in.ReadVInt32();
-                _field = fieldInfos.FieldInfo(fieldNumber);
-                if (_field.IndexOptions != IndexOptions.DOCS_ONLY)
+                field = fieldInfos.FieldInfo(fieldNumber);
+                if (field.IndexOptions != IndexOptions.DOCS_ONLY)
                 {
                     sumTotalTermFreq = @in.ReadVInt64();
                 }
@@ -925,19 +925,19 @@ namespace Lucene.Net.Codecs.Memory
 
             public override TermsEnum GetEnumerator()
             {
-                return new FSTTermsEnum(_field, fst);
+                return new FSTTermsEnum(field, fst);
             }
 
             public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
             // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
-            public override bool HasFreqs => IndexOptionsComparer.Default.Compare(_field.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0;
+            public override bool HasFreqs => IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0;
 
-            public override bool HasOffsets => IndexOptionsComparer.Default.Compare(_field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            public override bool HasOffsets => IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
-            public override bool HasPositions => IndexOptionsComparer.Default.Compare(_field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            public override bool HasPositions => IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
-            public override bool HasPayloads => _field.HasPayloads;
+            public override bool HasPayloads => field.HasPayloads;
 
             public long RamBytesUsed()
             {
@@ -966,7 +966,7 @@ namespace Lucene.Net.Codecs.Memory
 
                     TermsReader termsReader = new TermsReader(state.FieldInfos, @in, termCount);
                     // System.out.println("load field=" + termsReader.field.name);
-                    fields.Add(termsReader._field.Name, termsReader);
+                    fields.Add(termsReader.field.Name, termsReader);
                 }
                 CodecUtil.CheckFooter(@in);
             }

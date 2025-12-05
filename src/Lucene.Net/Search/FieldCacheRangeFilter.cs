@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, _field);
+                SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, field);
                 int lowerPoint = lowerVal is null ? -1 : fcsi.LookupTerm(new BytesRef(lowerVal));
                 int upperPoint = upperVal is null ? -1 : fcsi.LookupTerm(new BytesRef(upperVal));
 
@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, _field);
+                SortedDocValues fcsi = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, field);
                 int lowerPoint = lowerVal is null ? -1 : fcsi.LookupTerm(lowerVal);
                 int upperPoint = upperVal is null ? -1 : fcsi.LookupTerm(upperVal);
 
@@ -234,7 +234,7 @@ namespace Lucene.Net.Search
                     return null;
 
 #pragma warning disable 612, 618
-                var values = FieldCache.DEFAULT.GetBytes(context.AtomicReader, _field, (FieldCache.IByteParser)parser, false);
+                var values = FieldCache.DEFAULT.GetBytes(context.AtomicReader, field, (FieldCache.IByteParser)parser, false);
 #pragma warning restore 612, 618
 
                 // we only request the usage of termDocs, if the range contains 0
@@ -292,7 +292,7 @@ namespace Lucene.Net.Search
                     return null;
 
 #pragma warning disable 612, 618
-                FieldCache.Int16s values = FieldCache.DEFAULT.GetInt16s(context.AtomicReader, _field, (FieldCache.IInt16Parser)parser, false);
+                FieldCache.Int16s values = FieldCache.DEFAULT.GetInt16s(context.AtomicReader, field, (FieldCache.IInt16Parser)parser, false);
 #pragma warning restore 612, 618
 
                 // we only request the usage of termDocs, if the range contains 0
@@ -349,7 +349,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache.Int32s values = FieldCache.DEFAULT.GetInt32s(context.AtomicReader, _field, (FieldCache.IInt32Parser)parser, false);
+                FieldCache.Int32s values = FieldCache.DEFAULT.GetInt32s(context.AtomicReader, field, (FieldCache.IInt32Parser)parser, false);
                 // we only request the usage of termDocs, if the range contains 0
                 return new FieldCacheDocIdSet(context.Reader.MaxDoc, acceptDocs, (doc) =>
                 {
@@ -404,7 +404,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache.Int64s values = FieldCache.DEFAULT.GetInt64s(context.AtomicReader, _field, (FieldCache.IInt64Parser)parser, false);
+                FieldCache.Int64s values = FieldCache.DEFAULT.GetInt64s(context.AtomicReader, field, (FieldCache.IInt64Parser)parser, false);
                 // we only request the usage of termDocs, if the range contains 0
                 return new FieldCacheDocIdSet(context.Reader.MaxDoc, acceptDocs, (doc) =>
                 {
@@ -463,7 +463,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache.Singles values = FieldCache.DEFAULT.GetSingles(context.AtomicReader, _field, (FieldCache.ISingleParser)parser, false);
+                FieldCache.Singles values = FieldCache.DEFAULT.GetSingles(context.AtomicReader, field, (FieldCache.ISingleParser)parser, false);
 
                 // we only request the usage of termDocs, if the range contains 0
                 return new FieldCacheDocIdSet(context.Reader.MaxDoc, acceptDocs, (doc) =>
@@ -523,7 +523,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache.Doubles values = FieldCache.DEFAULT.GetDoubles(context.AtomicReader, _field, (FieldCache.IDoubleParser)parser, false);
+                FieldCache.Doubles values = FieldCache.DEFAULT.GetDoubles(context.AtomicReader, field, (FieldCache.IDoubleParser)parser, false);
 
                 // we only request the usage of termDocs, if the range contains 0
                 return new FieldCacheDocIdSet(context.Reader.MaxDoc, acceptDocs, (doc) =>
@@ -706,7 +706,7 @@ namespace Lucene.Net.Search
 
     public abstract class FieldCacheRangeFilter<T> : Filter
     {
-        internal readonly string _field; // LUCENENET specific: renamed from 'field' since field is a keyword in C# 14
+        internal readonly string field;
         internal readonly FieldCache.IParser parser;
         internal readonly T lowerVal;
         internal readonly T upperVal;
@@ -715,7 +715,7 @@ namespace Lucene.Net.Search
 
         private protected FieldCacheRangeFilter(string field, FieldCache.IParser parser, T lowerVal, T upperVal, bool includeLower, bool includeUpper)
         {
-            this._field = field;
+            this.field = field;
             this.parser = parser;
             this.lowerVal = lowerVal;
             this.upperVal = upperVal;
@@ -732,7 +732,7 @@ namespace Lucene.Net.Search
         // From line 516 in Lucene
         public override sealed string ToString()
         {
-            StringBuilder sb = (new StringBuilder(_field)).Append(':');
+            StringBuilder sb = (new StringBuilder(field)).Append(':');
             return sb.Append(includeLower ? '[' : '{').Append((lowerVal is null) ? "*" : lowerVal.ToString()).Append(" TO ").Append((upperVal is null) ? "*" : upperVal.ToString()).Append(includeUpper ? ']' : '}').ToString();
         }
 
@@ -747,7 +747,7 @@ namespace Lucene.Net.Search
                 return false;
             }
 
-            if (!this._field.Equals(other._field, StringComparison.Ordinal) || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
+            if (!this.field.Equals(other.field, StringComparison.Ordinal) || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
             {
                 return false;
             }
@@ -776,7 +776,7 @@ namespace Lucene.Net.Search
 
         public override sealed int GetHashCode()
         {
-            int h = _field.GetHashCode();
+            int h = field.GetHashCode();
             h ^= (lowerVal != null) ? lowerVal.GetHashCode() : 550356204;
             h = (h << 1) | (h >>> 31); // rotate to distinguish lower from upper
             h ^= (upperVal != null) ? upperVal.GetHashCode() : -1674416163;
@@ -787,7 +787,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the field name for this filter </summary>
-        public virtual string Field => _field;
+        public virtual string Field => field;
 
         /// <summary>
         /// Returns <c>true</c> if the lower endpoint is inclusive </summary>

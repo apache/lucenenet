@@ -29,7 +29,9 @@
     <!--<TargetFramework>net472</TargetFramework>-->
     <!--<TargetFramework>net48</TargetFramework>-->
     <!--<TargetFramework>net8.0</TargetFramework>-->
-    <TargetFramework>net10.0</TargetFramework>
+    <!-- Default for local development - conditional based on VS version (VS2024+ = 18.0) -->
+    <TargetFramework Condition=" '$(VisualStudioVersion)' &gt;= '18.0' ">net10.0</TargetFramework>
+    <TargetFramework Condition=" '$(VisualStudioVersion)' &lt; '18.0' Or '$(VisualStudioVersion)' == '' ">net8.0</TargetFramework>
 
     <!-- Allow the build script to pass in the test frameworks to build for.
       This overrides the above TargetFramework setting.
@@ -43,7 +45,9 @@
       net472            | netstandard2.0
     -->
 
-    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net10.0;net8.0</TargetFrameworks>
+    <!-- CI builds - conditional based on VS version -->
+    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' And '$(VisualStudioVersion)' &gt;= '18.0' ">net10.0;net8.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' And ('$(VisualStudioVersion)' &lt; '18.0' Or '$(VisualStudioVersion)' == '') ">net8.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48;net472</TargetFrameworks>
     <TargetFramework Condition=" '$(TargetFrameworks)' != '' "></TargetFramework>
   </PropertyGroup>

@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Spans
     public class SpanOrQuery : SpanQuery // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         private readonly IList<SpanQuery> clauses;
-        private string _field; // LUCENENET specific: renamed from 'field' since field is a keyword in C# 14
+        private string field;
 
         /// <summary>
         /// Construct a <see cref="SpanOrQuery"/> merging the provided <paramref name="clauses"/>. </summary>
@@ -61,11 +61,11 @@ namespace Lucene.Net.Search.Spans
         /// Adds a <paramref name="clause"/> to this query </summary>
         public void AddClause(SpanQuery clause)
         {
-            if (_field is null)
+            if (field is null)
             {
-                _field = clause.Field;
+                field = clause.Field;
             }
-            else if (clause.Field != null && !clause.Field.Equals(_field, StringComparison.Ordinal))
+            else if (clause.Field != null && !clause.Field.Equals(field, StringComparison.Ordinal))
             {
                 throw new ArgumentException("Clauses must have same field.");
             }
@@ -79,7 +79,7 @@ namespace Lucene.Net.Search.Spans
             return clauses.ToArray();
         }
 
-        public override string Field => _field;
+        public override string Field => field;
 
         public override void ExtractTerms(ISet<Term> terms)
         {

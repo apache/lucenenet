@@ -29,7 +29,7 @@ namespace Lucene.Net.Facet.SortedSet
     /// </summary>
     public class DefaultSortedSetDocValuesReaderState : SortedSetDocValuesReaderState
     {
-        private readonly string _field; // LUCENENET: must name as _field in C# 14 since 'field' is now a keyword
+        private readonly string field;
         private readonly AtomicReader topReader;
         private readonly int valueCount;
 
@@ -45,7 +45,7 @@ namespace Lucene.Net.Facet.SortedSet
         /// </summary>
         public DefaultSortedSetDocValuesReaderState(IndexReader reader, string field = FacetsConfig.DEFAULT_INDEX_FIELD_NAME)
         {
-            this._field = field;
+            this.field = field;
             this.origReader = reader;
 
             // We need this to create thread-safe MultiSortedSetDV
@@ -104,7 +104,7 @@ namespace Lucene.Net.Facet.SortedSet
         /// </summary>
         public override SortedSetDocValues GetDocValues()
         {
-            return topReader.GetSortedSetDocValues(_field);
+            return topReader.GetSortedSetDocValues(field);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Lucene.Net.Facet.SortedSet
         /// <summary>
         /// Indexed field we are reading.
         /// </summary>
-        public override string Field => _field;
+        public override string Field => field;
 
         public override IndexReader OrigReader => origReader;
 
