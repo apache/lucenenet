@@ -46,15 +46,15 @@
       net472            | netstandard2.0
     -->
 
-    <!-- CI builds - conditional based on VS version -->
-    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' And '$(VisualStudioVersion)' &gt;= '18.0' ">net10.0;net9.0;net8.0</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' And ('$(VisualStudioVersion)' &lt; '18.0' Or '$(VisualStudioVersion)' == '') ">net9.0;net8.0</TargetFrameworks>
+    <!-- CI builds - always build all test frameworks (CI installs required SDKs) -->
+    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net10.0;net9.0;net8.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48;net472</TargetFrameworks>
     <TargetFramework Condition=" '$(TargetFrameworks)' != '' "></TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Label="Mismatched Target Framework (to override the target framework under test)">
     <SetTargetFramework></SetTargetFramework>
+    <SetTargetFramework Condition=" '$(TargetFramework)' == 'net9.0' ">TargetFramework=net8.0</SetTargetFramework>
     <SetTargetFramework Condition=" '$(TargetFramework)' == 'net472' ">TargetFramework=netstandard2.0</SetTargetFramework>
   </PropertyGroup>
 
