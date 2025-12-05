@@ -22,7 +22,7 @@
   <PropertyGroup Label="NuGet Package Reference Versions">
     <Antlr4CodeGeneratorPackageVersion>4.6.6</Antlr4CodeGeneratorPackageVersion>
     <Antlr4RuntimeStandardPackageVersion>4.13.1</Antlr4RuntimeStandardPackageVersion>
-    <Antlr4BuildTasksPackageVersion>12.8.0</Antlr4BuildTasksPackageVersion>
+    <Antlr4BuildTasksPackageVersion>12.11.0</Antlr4BuildTasksPackageVersion>
     <!-- LUCENENET TODO: When ICU4N is released to production,
         be sure to lock down the version range below. The resource
         files in Lucene.Net.ICU are not compatible with any other
