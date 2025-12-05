@@ -29,7 +29,9 @@
     <!--<TargetFramework>net472</TargetFramework>-->
     <!--<TargetFramework>net48</TargetFramework>-->
     <!--<TargetFramework>net8.0</TargetFramework>-->
-    <TargetFramework>net9.0</TargetFramework>
+    <!-- Default for local development - conditional based on VS version (VS2024+ = 18.0) -->
+    <TargetFramework Condition=" '$(VisualStudioVersion)' &gt;= '18.0' ">net10.0</TargetFramework>
+    <TargetFramework Condition=" '$(VisualStudioVersion)' &lt; '18.0' Or '$(VisualStudioVersion)' == '' ">net8.0</TargetFramework>
 
     <!-- Allow the build script to pass in the test frameworks to build for.
       This overrides the above TargetFramework setting.
@@ -37,19 +39,22 @@
 
     <!-- Test Client to DLL target works as follows:
       Test Client       | Target Under Test
+      net10.0           | net10.0
       net9.0            | net8.0
       net8.0            | net8.0
       net48             | net462
       net472            | netstandard2.0
     -->
 
-    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net9.0;net8.0</TargetFrameworks>
+    <!-- CI builds - always build all test frameworks (CI installs required SDKs) -->
+    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net10.0;net9.0;net8.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48;net472</TargetFrameworks>
     <TargetFramework Condition=" '$(TargetFrameworks)' != '' "></TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Label="Mismatched Target Framework (to override the target framework under test)">
     <SetTargetFramework></SetTargetFramework>
+    <SetTargetFramework Condition=" '$(TargetFramework)' == 'net9.0' ">TargetFramework=net8.0</SetTargetFramework>
     <SetTargetFramework Condition=" '$(TargetFramework)' == 'net472' ">TargetFramework=netstandard2.0</SetTargetFramework>
   </PropertyGroup>
 

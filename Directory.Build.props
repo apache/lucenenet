@@ -31,6 +31,19 @@
     <GitHubProject>lucenenet</GitHubProject>
   </PropertyGroup>
 
+  <PropertyGroup Label="Centralized Target Frameworks">
+    <!-- Base frameworks without net10.0 -->
+    <LibraryTargetFrameworksBase>net8.0;netstandard2.0;net462</LibraryTargetFrameworksBase>
+    <NetCoreOnlyTargetFrameworksBase>net8.0</NetCoreOnlyTargetFrameworksBase>
+
+    <!-- Add net10.0 conditionally based on VS version (VS2024+ = 18.0) -->
+    <LibraryTargetFrameworks Condition=" '$(VisualStudioVersion)' &gt;= '18.0' ">net10.0;$(LibraryTargetFrameworksBase)</LibraryTargetFrameworks>
+    <LibraryTargetFrameworks Condition=" '$(VisualStudioVersion)' &lt; '18.0' Or '$(VisualStudioVersion)' == '' ">$(LibraryTargetFrameworksBase)</LibraryTargetFrameworks>
+
+    <NetCoreOnlyTargetFrameworks Condition=" '$(VisualStudioVersion)' &gt;= '18.0' ">net10.0;$(NetCoreOnlyTargetFrameworksBase)</NetCoreOnlyTargetFrameworks>
+    <NetCoreOnlyTargetFrameworks Condition=" '$(VisualStudioVersion)' &lt; '18.0' Or '$(VisualStudioVersion)' == '' ">$(NetCoreOnlyTargetFrameworksBase)</NetCoreOnlyTargetFrameworks>
+  </PropertyGroup>
+
   <!-- IMPORTANT: When these values are changed, the CI counter number should also be reset. -->
   <PropertyGroup Label="Version of Builds">
     <!-- IMPORTANT: VersionPrefix must always be the same as the Lucene version this is based on.

@@ -38,7 +38,7 @@
 
  .PARAMETER TestFrameworks
     A string array of Dotnet target framework monikers to run the tests on. The default is
-    @('net9.0','net8.0','net6.0','net472','net48').
+    @('net10.0','net8.0','net472','net48').
 
  .PARAMETER OperatingSystems
     A string array of Github Actions operating system monikers to run the tests on.
@@ -51,9 +51,9 @@
  .PARAMETER Configurations
     A string array of build configurations to run the tests on. The default is @('Release').
 
- .PARAMETER DotNet9SDKVersion
-    The SDK version of .NET 9.x to install on the build agent to be used for building and
-    testing. This SDK is always installed on the build agent. The default is 9.0.x.
+ .PARAMETER DotNet10SDKVersion
+    The SDK version of .NET 10.x to install on the build agent to be used for building and
+    testing. This SDK is always installed on the build agent. The default is 10.0.x.
 
  .PARAMETER DotNet8SDKVersion
     The SDK version of .NET 8.x to install on the build agent to be used for building and
@@ -65,7 +65,7 @@ param(
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net9.0','net8.0','net472','net48'), # targets under test: net8.0, net8.0, netstandard2.0, net462
+    [string[]]$TestFrameworks = @('net10.0', 'net8.0', 'net472', 'net48'), # targets under test: net10.0, net8.0, netstandard2.0, net462
 
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
@@ -73,7 +73,7 @@ param(
 
     [string[]]$Configurations = @('Release'),
 
-    [string]$DotNet9SDKVersion = '9.0.x',
+    [string]$DotNet10SDKVersion = '10.0.x',
 
     [string]$DotNet8SDKVersion = '8.0.x'
 )
@@ -155,7 +155,7 @@ function Write-TestWorkflow(
     [string[]]$TestFrameworks = @('net6.0', 'net48'),
     [string[]]$TestPlatforms = @('x64'),
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
-    [string]$DotNet9SDKVersion = $DotNet9SDKVersion,
+    [string]$DotNet10SDKVersion = $DotNet10SDKVersion,
     [string]$DotNet8SDKVersion = $DotNet8SDKVersion) {
 
     $dependencies = New-Object System.Collections.Generic.HashSet[string]
@@ -280,10 +280,10 @@ jobs:
           dotnet-version: '$DotNet8SDKVersion'
         if: `${{ startswith(matrix.framework, 'net8.') }}
 
-      - name: Setup .NET 9 SDK
+      - name: Setup .NET 10 SDK
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '$DotNet9SDKVersion'
+          dotnet-version: '$DotNet10SDKVersion'
 
       - name: Cache NuGet Packages
         uses: actions/cache@v4
