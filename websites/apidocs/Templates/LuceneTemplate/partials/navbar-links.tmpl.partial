@@ -1,0 +1,17 @@
+{{! lucenetemplate/partials/navbar-links.tmpl.partial }}
+
+        <ul class="nav level1 navbar-nav">
+          {{#_navbarLinks}}
+              <li><a href="{{_rel}}{{href}}" title="{{title}}">{{text}}</a></li>
+          {{/_navbarLinks}}
+
+          <!-- ASF dropdown -->
+          <li class="nav-asf">
+            <a>ASF<span class="lucene-caret"></span></a>
+            <ul class="nav level2 asf-menu">
+              {{#_asfLinks}}
+                <li><a href="{{href}}">{{text}}</a></li>
+              {{/_asfLinks}}
+            </ul>
+          </li>
+        </ul>
