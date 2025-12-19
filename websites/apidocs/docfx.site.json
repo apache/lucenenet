@@ -57,7 +57,8 @@
     ],
     "dest": "_site",
     "globalMetadataFiles": [
-      "docfx.global.json"
+      "docfx.global.json",
+      "docfx.links.json"
     ],
     "template": [
       "default",

@@ -1,0 +1,49 @@
+{
+    "_navbarLinks":  [
+                         {
+                             "href":  "https://lucenenet.apache.org/docs/4.8.0-beta00018/",
+                             "title":  "Lucene.Net API",
+                             "text":  "Lucene.Net API"
+                         },
+                         {
+                             "href":  "../../src/dotnet/tools/lucene-cli/docs/index.md",
+                             "title":  "Lucene.Net CLI",
+                             "text":  "Lucene.Net CLI"
+                         },
+                         {
+                             "href":  "https://lucenenet.apache.org/",
+                             "title":  "Lucene.Net Website",
+                             "text":  "Lucene.Net Website"
+                         }
+                     ],
+    "_asfLinks":  [
+                      {
+                          "text":  "Foundation",
+                          "href":  "https://www.apache.org/"
+                      },
+                      {
+                          "text":  "Events",
+                          "href":  "https://events.apache.org/"
+                      },
+                      {
+                          "text":  "License",
+                          "href":  "https://www.apache.org/licenses/"
+                      },
+                      {
+                          "text":  "Thanks",
+                          "href":  "https://www.apache.org/foundation/thanks.html"
+                      },
+                      {
+                          "text":  "Security",
+                          "href":  "https://www.apache.org/security/"
+                      },
+                      {
+                          "text":  "Sponsorship",
+                          "href":  "https://www.apache.org/foundation/sponsorship.html"
+                      },
+                      {
+                          "text":  "Privacy Policy",
+                          "href":  "https://privacy.apache.org/policies/privacy-policy-public.html"
+                      }
+                  ]
+}
