@@ -1,4 +1,4 @@
-﻿---
+---
 uid: quick-start/introduction
 ---
 

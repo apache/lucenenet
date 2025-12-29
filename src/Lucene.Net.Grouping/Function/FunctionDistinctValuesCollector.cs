@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Grouping.Function
             this.vsContext = vsContext;
             this.groupSource = groupSource;
             this.countSource = countSource;
-            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
             groupMap = new JCG.OrderedDictionary<MutableValue, GroupCount>();
             foreach (SearchGroup<MutableValue> group in groups)
             {

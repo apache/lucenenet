@@ -130,7 +130,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             return sb.ToString();
         }
 
-        // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+        // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
         protected virtual Report GenPartialReport(int reported, JCG.OrderedDictionary<string, TaskStats> partOfTasks, int totalSize)
         {
             string longetOp = LongestOp(partOfTasks.Values);

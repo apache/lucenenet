@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Demo
 summary: *content
 ---

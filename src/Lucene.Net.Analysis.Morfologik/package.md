@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Analysis.Morfologik
 title: Lucene.Net.Analysis.Morfologik
 summary: *content

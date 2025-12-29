@@ -76,7 +76,7 @@ namespace Lucene.Net.Facet
 
         private readonly FacetsConfig config;
         private readonly BooleanQuery query;
-        // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+        // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
         private readonly IDictionary<string, int> drillDownDims = new JCG.OrderedDictionary<string, int>();
 
         /// <summary>

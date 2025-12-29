@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Util.Fst
 summary: *content
 ---

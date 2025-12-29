@@ -214,7 +214,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     m_lo[pp]++;
                     if (m_kv[m_lo[pp]] == 0)
                     {
-                        // key completly decompressed leaving garbage in key array
+                        // key completely decompressed leaving garbage in key array
                         m_lo[pp] = (char)0;
                         m_sc[pp] = (char)0;
                         m_hi[pp] = (char)0;

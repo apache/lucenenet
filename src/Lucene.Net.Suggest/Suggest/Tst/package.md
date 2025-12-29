@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Search.Suggest.Tst
 summary: *content
 ---

@@ -55,7 +55,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         protected virtual Report ReportSumByNameRound(IList<TaskStats> taskStats)
         {
             // aggregate by task name and round
-            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
             JCG.OrderedDictionary<string, TaskStats> p2 = new JCG.OrderedDictionary<string, TaskStats>();
             int reported = 0;
             foreach (TaskStats stat1 in taskStats)

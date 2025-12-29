@@ -1,4 +1,4 @@
-﻿# extract-wikipedia
+# extract-wikipedia
 
 ### Name
 

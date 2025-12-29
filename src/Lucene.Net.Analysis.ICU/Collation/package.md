@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Collation
 summary: *content
 ---

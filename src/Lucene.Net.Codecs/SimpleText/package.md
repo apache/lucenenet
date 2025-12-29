@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Codecs.SimpleText
 summary: *content
 ---

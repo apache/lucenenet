@@ -245,9 +245,9 @@ namespace Lucene.Net.Util
         /// </summary>
         public AttributeSource(AttributeFactory factory)
         {
-            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
             this.attributes = new JCG.OrderedDictionary<Type, Util.Attribute>();
-            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
             this.attributeImpls = new JCG.OrderedDictionary<Type, Util.Attribute>();
             this.currentState = new State[1];
             this.factory = factory;
@@ -429,7 +429,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// The caller must pass in an interface type that extends <see cref="IAttribute"/>.
-        /// Returns <c>true</c>, if this <see cref="AttributeSource"/> contains the corrsponding <see cref="Attribute"/>.
+        /// Returns <c>true</c>, if this <see cref="AttributeSource"/> contains the corresponding <see cref="Attribute"/>.
         /// </summary>
         public bool HasAttribute<T>() where T : IAttribute
         {

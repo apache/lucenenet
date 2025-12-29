@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Analysis.Cn.Smart.Hhmm
 summary: *content
 ---

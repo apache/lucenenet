@@ -118,8 +118,8 @@ namespace Lucene.Net.Search.Grouping
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: Audi\r\nAudi A3 Orange\r\nAudi A3 Green\r\nAudi A3 Blue\r\nAudi S4 Yellow\r\n\r\nGroup: Bently\r\nBently Arnage Grey\r\nBently Arnage Blue\r\nBently Azure Green\r\nBently Azure Blue\r\n\r\nGroup: Ford\r\nFord Aspire Yellow\r\nFord Aspire Blue\r\nFord Bronco Green\r\nFord Bronco Orange\r\n".Replace("\r\n", Environment.NewLine);
-            assertEquals(expectdValue, output);
+            string expectedValue = "\r\nGroup: Audi\r\nAudi A3 Orange\r\nAudi A3 Green\r\nAudi A3 Blue\r\nAudi S4 Yellow\r\n\r\nGroup: Bently\r\nBently Arnage Grey\r\nBently Arnage Blue\r\nBently Azure Green\r\nBently Azure Blue\r\n\r\nGroup: Ford\r\nFord Aspire Yellow\r\nFord Aspire Blue\r\nFord Bronco Green\r\nFord Bronco Orange\r\n".Replace("\r\n", Environment.NewLine);
+            assertEquals(expectedValue, output);
 
             /*  Output:
 
@@ -226,8 +226,8 @@ namespace Lucene.Net.Search.Grouping
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n3000 3993 9\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n\r\nGroup: 8000\r\n8000 8123 28\r\n8000 8888 8\r\n8000 8998 92\r\n".Replace("\r\n", Environment.NewLine);
-            assertEquals(expectdValue, output);
+            string expectedValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n3000 3993 9\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n\r\nGroup: 8000\r\n8000 8123 28\r\n8000 8888 8\r\n8000 8998 92\r\n".Replace("\r\n", Environment.NewLine);
+            assertEquals(expectedValue, output);
 
             /*  Output:
              *
@@ -322,8 +322,8 @@ namespace Lucene.Net.Search.Grouping
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: Audi\r\nAudi A3 Orange\r\nAudi A3 Green\r\nAudi A3 Blue\r\nAudi S4 Yellow\r\n\r\nGroup: Bently\r\nBently Arnage Grey\r\nBently Arnage Blue\r\nBently Azure Green\r\nBently Azure Blue\r\n\r\nGroup: Ford\r\nFord Aspire Yellow\r\nFord Aspire Blue\r\nFord Bronco Green\r\nFord Bronco Orange\r\n".Replace("\r\n", Environment.NewLine);
-            assertEquals(expectdValue, output);
+            string expectedValue = "\r\nGroup: Audi\r\nAudi A3 Orange\r\nAudi A3 Green\r\nAudi A3 Blue\r\nAudi S4 Yellow\r\n\r\nGroup: Bently\r\nBently Arnage Grey\r\nBently Arnage Blue\r\nBently Azure Green\r\nBently Azure Blue\r\n\r\nGroup: Ford\r\nFord Aspire Yellow\r\nFord Aspire Blue\r\nFord Bronco Green\r\nFord Bronco Orange\r\n".Replace("\r\n", Environment.NewLine);
+            assertEquals(expectedValue, output);
 
             /*  Output:
 
@@ -417,8 +417,8 @@ namespace Lucene.Net.Search.Grouping
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: Audi\r\nAudi A3 Orange\r\nAudi A3 Green\r\nAudi A3 Blue\r\nAudi S4 Yellow\r\n\r\nGroup: Bently\r\nBently Arnage Grey\r\nBently Arnage Blue\r\nBently Azure Green\r\nBently Azure Blue\r\n\r\nGroup: Ford\r\nFord Aspire Yellow\r\nFord Aspire Blue\r\nFord Bronco Green\r\nFord Bronco Orange\r\n".Replace("\r\n", Environment.NewLine);
-            assertEquals(expectdValue, output);
+            string expectedValue = "\r\nGroup: Audi\r\nAudi A3 Orange\r\nAudi A3 Green\r\nAudi A3 Blue\r\nAudi S4 Yellow\r\n\r\nGroup: Bently\r\nBently Arnage Grey\r\nBently Arnage Blue\r\nBently Azure Green\r\nBently Azure Blue\r\n\r\nGroup: Ford\r\nFord Aspire Yellow\r\nFord Aspire Blue\r\nFord Bronco Green\r\nFord Bronco Orange\r\n".Replace("\r\n", Environment.NewLine);
+            assertEquals(expectedValue, output);
 
             /*  Output:
 
@@ -523,8 +523,8 @@ namespace Lucene.Net.Search.Grouping
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n3000 3993 9\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n\r\nGroup: 8000\r\n8000 8123 28\r\n8000 8888 8\r\n8000 8998 92\r\n".Replace("\r\n", Environment.NewLine);
-            assertEquals(expectdValue, output);
+            string expectedValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n3000 3993 9\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n\r\nGroup: 8000\r\n8000 8123 28\r\n8000 8888 8\r\n8000 8998 92\r\n".Replace("\r\n", Environment.NewLine);
+            assertEquals(expectedValue, output);
 
             /*  Output:
 
@@ -635,8 +635,8 @@ namespace Lucene.Net.Search.Grouping
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n3000 3993 9\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n\r\nGroup: 8000\r\n8000 8123 28\r\n8000 8888 8\r\n8000 8998 92\r\n".Replace("\r\n", Environment.NewLine);
-            assertEquals(expectdValue, output);
+            string expectedValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n3000 3993 9\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n\r\nGroup: 8000\r\n8000 8123 28\r\n8000 8888 8\r\n8000 8998 92\r\n".Replace("\r\n", Environment.NewLine);
+            assertEquals(expectedValue, output);
 
             /*  Output:
              *
@@ -730,8 +730,8 @@ namespace Lucene.Net.Search.Grouping
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n3000 3993 9\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n\r\nGroup: 8000\r\n8000 8123 28\r\n8000 8888 8\r\n8000 8998 92\r\n".Replace("\r\n", Environment.NewLine);
-            assertEquals(expectdValue, output);
+            string expectedValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n3000 3993 9\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n\r\nGroup: 8000\r\n8000 8123 28\r\n8000 8888 8\r\n8000 8998 92\r\n".Replace("\r\n", Environment.NewLine);
+            assertEquals(expectedValue, output);
 
             /*  Output:
              *
@@ -824,8 +824,8 @@ namespace Lucene.Net.Search.Grouping
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n".Replace("\r\n", Environment.NewLine);
-            assertEquals(expectdValue, output);
+            string expectedValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n".Replace("\r\n", Environment.NewLine);
+            assertEquals(expectedValue, output);
 
             /*  Output:
              *
@@ -935,8 +935,8 @@ namespace Lucene.Net.Search.Grouping
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: Audi\r\nAudi A3 Orange\r\nAudi A3 Green\r\nAudi A3 Blue\r\nAudi S4 Yellow\r\n\r\nGroup: Bently\r\nBently Arnage Grey\r\nBently Arnage Blue\r\nBently Azure Green\r\nBently Azure Blue\r\n\r\nGroup: Ford\r\nFord Aspire Yellow\r\nFord Aspire Blue\r\nFord Bronco Green\r\nFord Bronco Orange\r\n".Replace("\r\n", Environment.NewLine);
-            assertEquals(expectdValue, output);
+            string expectedValue = "\r\nGroup: Audi\r\nAudi A3 Orange\r\nAudi A3 Green\r\nAudi A3 Blue\r\nAudi S4 Yellow\r\n\r\nGroup: Bently\r\nBently Arnage Grey\r\nBently Arnage Blue\r\nBently Azure Green\r\nBently Azure Blue\r\n\r\nGroup: Ford\r\nFord Aspire Yellow\r\nFord Aspire Blue\r\nFord Bronco Green\r\nFord Bronco Orange\r\n".Replace("\r\n", Environment.NewLine);
+            assertEquals(expectedValue, output);
 
             /*  Output:
 
@@ -1061,8 +1061,8 @@ namespace Lucene.Net.Search.Grouping
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n".Replace("\r\n", Environment.NewLine);
-            assertEquals(expectdValue, output);
+            string expectedValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n".Replace("\r\n", Environment.NewLine);
+            assertEquals(expectedValue, output);
 
             /*  Output:
              *
@@ -1188,8 +1188,8 @@ namespace Lucene.Net.Search.Grouping
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n".Replace("\r\n", Environment.NewLine);
-            assertEquals(expectdValue, output);
+            string expectedValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n".Replace("\r\n", Environment.NewLine);
+            assertEquals(expectedValue, output);
 
             /*  Output:
              *
@@ -1301,8 +1301,8 @@ namespace Lucene.Net.Search.Grouping
             }
 
             string output = sb.ToString();
-            string expectdValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n".Replace("\r\n", Environment.NewLine);
-            assertEquals(expectdValue, output);
+            string expectedValue = "\r\nGroup: 1000\r\n1000 1102 21\r\n1000 1123 45\r\n\r\nGroup: 2000\r\n2000 2222 7\r\n2000 2888 88\r\n\r\nGroup: 3000\r\n3000 3123 11\r\n3000 3222 37\r\n\r\nGroup: 4000\r\n4000 4001 88\r\n4000 4011 10\r\n".Replace("\r\n", Environment.NewLine);
+            assertEquals(expectedValue, output);
 
             /*  Output:
              *

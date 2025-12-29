@@ -30,7 +30,7 @@ namespace Lucene.Net.Attributes
         public LuceneNetSpecificAttribute()
             : base("LUCENENET")
         {
-            // nothing to do here but invoke the base contsructor.
+            // nothing to do here but invoke the base constructor.
         }
     }
 }

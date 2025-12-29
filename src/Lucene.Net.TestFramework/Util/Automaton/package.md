@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Util.Automaton
 summary: *content
 ---
