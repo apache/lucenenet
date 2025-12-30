@@ -322,6 +322,22 @@ namespace Lucene.Net.Replicator.Http
         }
 
         /// <summary>
+        /// Internal utility: input stream of the provided response.
+        /// The returned stream takes ownership of the response and will dispose it
+        /// when the stream is disposed.
+        /// </summary>
+        /// <exception cref="IOException"></exception>
+        protected virtual Stream GetResponseStreamWithOwnership(HttpResponseMessage response)
+        {
+#if FEATURE_HTTPCONTENT_READASSTREAM
+            Stream result = response.Content.ReadAsStream();
+#else
+            Stream result = response.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+#endif
+            return new ResponseOwningStream(result, response);
+        }
+
+        /// <summary>
         /// Internal utility: input stream of the provided response asynchronously.
         /// </summary>
         /// <exception cref="IOException"></exception>
@@ -340,6 +356,7 @@ namespace Lucene.Net.Replicator.Http
         /// consumes the response's resources when the input stream is exhausted.
         /// </summary>
         /// <exception cref="IOException"></exception>
+        // ReSharper disable once UnusedMember.Global - public API
         public virtual async Task<Stream> GetResponseStreamAsync(HttpResponseMessage response, bool consume, CancellationToken cancellationToken = default)
         {
 #if FEATURE_HTTPCONTENT_READASSTREAM_CANCELLATIONTOKEN
@@ -350,6 +367,22 @@ namespace Lucene.Net.Replicator.Http
             if (consume)
                 result = new ConsumingStream(result);
             return result;
+        }
+
+        /// <summary>
+        /// Internal utility: input stream of the provided response asynchronously.
+        /// The returned stream takes ownership of the response and will dispose it
+        /// when the stream is disposed.
+        /// </summary>
+        /// <exception cref="IOException"></exception>
+        protected virtual async Task<Stream> GetResponseStreamWithOwnershipAsync(HttpResponseMessage response, CancellationToken cancellationToken = default)
+        {
+#if FEATURE_HTTPCONTENT_READASSTREAM_CANCELLATIONTOKEN
+            Stream result = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+#else
+            Stream result = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#endif
+            return new ResponseOwningStream(result, response);
         }
 
         /// <summary>
@@ -455,7 +488,6 @@ namespace Lucene.Net.Replicator.Http
             return DoActionAsync(response, true, call);
         }
 
-
         /// <summary>
         /// Disposes this <see cref="HttpClientBase"/>.
         /// When called with <code>true</code>, this disposes the underlying <see cref="HttpClient"/>.
@@ -488,6 +520,62 @@ namespace Lucene.Net.Replicator.Http
             catch (Exception ioe) when (ioe.IsIOException())
             {
                 // Ignore
+            }
+        }
+
+        /// <summary>
+        /// Wraps a stream and disposes the associated <see cref="HttpResponseMessage"/>
+        /// when the stream is disposed.
+        /// </summary>
+        private sealed class ResponseOwningStream : Stream
+        {
+            private readonly Stream input;
+            private readonly HttpResponseMessage response;
+            private bool disposed;
+
+            public ResponseOwningStream(Stream input, HttpResponseMessage response)
+            {
+                this.input = input ?? throw new ArgumentNullException(nameof(input));
+                this.response = response ?? throw new ArgumentNullException(nameof(response));
+            }
+
+            public override bool CanRead => input.CanRead;
+            public override bool CanSeek => input.CanSeek;
+            public override bool CanWrite => input.CanWrite;
+            public override long Length => input.Length;
+            public override long Position
+            {
+                get => input.Position;
+                set => input.Position = value;
+            }
+
+            public override void Flush() => input.Flush();
+            public override int Read(byte[] buffer, int offset, int count) => input.Read(buffer, offset, count);
+            public override long Seek(long offset, SeekOrigin origin) => input.Seek(offset, origin);
+            public override void SetLength(long value) => input.SetLength(value);
+            public override void Write(byte[] buffer, int offset, int count) => input.Write(buffer, offset, count);
+
+            public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+                => input.ReadAsync(buffer, offset, count, cancellationToken);
+
+#if FEATURE_STREAM_READ_SPAN
+            public override int Read(Span<byte> buffer) => input.Read(buffer);
+            public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+                => input.ReadAsync(buffer, cancellationToken);
+#endif
+
+            protected override void Dispose(bool disposing)
+            {
+                if (!disposed)
+                {
+                    if (disposing)
+                    {
+                        input.Dispose();
+                        response.Dispose();
+                    }
+                    disposed = true;
+                }
+                base.Dispose(disposing);
             }
         }
 
