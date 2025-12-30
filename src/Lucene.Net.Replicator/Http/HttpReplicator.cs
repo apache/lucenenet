@@ -93,7 +93,7 @@ namespace Lucene.Net.Replicator.Http
                 ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
                 ReplicationService.REPLICATE_SOURCE_PARAM, source,
                 ReplicationService.REPLICATE_FILENAME_PARAM, fileName);
-            return DoAction(response, false, () => GetResponseStream(response));
+            return DoAction(response, false, () => GetResponseStreamWithOwnership(response));
         }
 
         /// <summary>
@@ -156,16 +156,15 @@ namespace Lucene.Net.Replicator.Http
         /// <returns>A <see cref="Stream"/> of the requested file.</returns>
         public async Task<Stream> ObtainFileAsync(string sessionId, string source, string fileName, CancellationToken cancellationToken = default)
         {
-            using var response = await ExecuteGetAsync(
+            var response = await ExecuteGetAsync(
                 nameof(ReplicationService.ReplicationAction.OBTAIN),
                 ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
                 ReplicationService.REPLICATE_SOURCE_PARAM, source,
                 ReplicationService.REPLICATE_FILENAME_PARAM, fileName,
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
-            return await DoActionAsync(response,
-                    // ReSharper disable once AccessToDisposedClosure - DoActionAsync definitively returns after this lambda is invoked
-                    async () => await GetResponseStreamAsync(response, cancellationToken).ConfigureAwait(false))
+            return await DoActionAsync(response, false,
+                    async () => await GetResponseStreamWithOwnershipAsync(response, cancellationToken).ConfigureAwait(false))
                 .ConfigureAwait(false);
         }
 
