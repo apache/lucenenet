@@ -286,7 +286,7 @@ jobs:
           dotnet-version: '$DotNet9SDKVersion'
 
       - name: Cache NuGet Packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           # '**/*.*proj' includes .csproj, .vbproj, .fsproj, msbuildproj, etc.
           # '**/*.props' includes Directory.Packages.props, Directory.Build.props and Dependencies.props
