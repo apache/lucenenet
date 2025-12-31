@@ -415,7 +415,7 @@ namespace Lucene.Net.Util.Automaton
         /// <c>RegExp(s, RegExpSyntax.ALL)</c>.
         /// </summary>
         /// <param name="s"> Regexp string. </param>
-        /// <exception cref="ArgumentException"> If an error occured while parsing the
+        /// <exception cref="ArgumentException"> If an error occurred while parsing the
         ///              regular expression. </exception>
         public RegExp(string s)
             : this(s, RegExpSyntax.ALL)
@@ -428,7 +428,7 @@ namespace Lucene.Net.Util.Automaton
         /// <param name="s"> Regexp string. </param>
         /// <param name="syntax_flags"> Boolean 'or' of optional <see cref="RegExpSyntax"/> constructs to be
         ///          enabled. </param>
-        /// <exception cref="ArgumentException"> If an error occured while parsing the
+        /// <exception cref="ArgumentException"> If an error occurred while parsing the
         ///              regular expression </exception>
         public RegExp(string s, RegExpSyntax syntax_flags)
         {

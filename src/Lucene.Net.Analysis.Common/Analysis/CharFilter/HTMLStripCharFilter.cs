@@ -31125,7 +31125,7 @@ namespace Lucene.Net.Analysis.CharFilters
         private int YyLength => zzMarkedPos - zzStartRead;
 
         /// <summary>
-        /// Reports an error that occured while scanning.
+        /// Reports an error that occurred while scanning.
         /// <para/>
         /// In a wellformed scanner (no or only correct usage of
         /// YyPushBack(int) and a match-all fallback rule) this method

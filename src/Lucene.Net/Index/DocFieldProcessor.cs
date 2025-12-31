@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            // If any errors occured, throw it.
+            // If any errors occurred, throw it.
             if (th != null)
             {
                 if (th.IsRuntimeException()) ExceptionDispatchInfo.Capture(th).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw

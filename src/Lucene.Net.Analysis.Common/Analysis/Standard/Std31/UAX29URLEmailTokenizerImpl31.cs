@@ -3456,7 +3456,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
         public int YyLength => zzMarkedPos - zzStartRead;
 
         /// <summary>
-        /// Reports an error that occured while scanning.
+        /// Reports an error that occurred while scanning.
         ///
         /// In a wellformed scanner (no or only correct usage of
         /// YyPushBack(int) and a match-all fallback rule) this method

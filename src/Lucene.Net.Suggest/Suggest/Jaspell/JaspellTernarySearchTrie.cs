@@ -219,7 +219,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="file">
         ///          The <see cref="FileInfo"/> with the data to load into the Trie. </param>
         /// <exception cref="IOException">
-        ///              A problem occured while reading the data. </exception>
+        ///              A problem occurred while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file)
             : this(file.FullName, false, CultureInfo.CurrentCulture)
         {
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="fileName">
         ///          The file name with the data to load into the Trie. The path is not normalized by this method. </param>
         /// <exception cref="IOException">
-        ///              A problem occured while reading the data. </exception>
+        ///              A problem occurred while reading the data. </exception>
         /// <remarks>
         /// LUCENENET: This constructor overload takes a string <paramref name="fileName"/> to avoid having to allocate a <see cref="FileInfo"/> object.
         /// </remarks>
@@ -255,7 +255,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          The <see cref="FileInfo"/> with the data to load into the Trie. </param>
         /// <param name="culture">The culture used for lowercasing.</param>
         /// <exception cref="IOException">
-        ///              A problem occured while reading the data. </exception>
+        ///              A problem occurred while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file, CultureInfo culture)
             : this(file.FullName, false, culture)
         { }
@@ -271,7 +271,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          The file name with the data to load into the Trie. The path is not normalized by this method. </param>
         /// <param name="culture">The culture used for lowercasing.</param>
         /// <exception cref="IOException">
-        ///              A problem occured while reading the data. </exception>
+        ///              A problem occurred while reading the data. </exception>
         /// <remarks>
         /// LUCENENET: This constructor overload takes a string <paramref name="fileName"/> to avoid having to allocate a <see cref="FileInfo"/> object.
         /// </remarks>
@@ -292,7 +292,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          If true, the file is compressed with the GZIP algorithm, and if
         ///          false, the file is a normal text document. </param>
         /// <exception cref="IOException">
-        ///              A problem occured while reading the data. </exception>
+        ///              A problem occurred while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file, bool compression)
             : this(file.FullName, compression, CultureInfo.CurrentCulture)
         { }
@@ -310,7 +310,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          If true, the file is compressed with the GZIP algorithm, and if
         ///          false, the file is a normal text document. </param>
         /// <exception cref="IOException">
-        ///              A problem occured while reading the data. </exception>
+        ///              A problem occurred while reading the data. </exception>
         /// <remarks>
         /// LUCENENET: This constructor overload takes a string <paramref name="fileName"/> to avoid having to allocate a <see cref="FileInfo"/> object.
         /// </remarks>
@@ -337,7 +337,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          false, the file is a normal text document. </param>
         /// <param name="culture">The culture used for lowercasing.</param>
         /// <exception cref="IOException">
-        ///              A problem occured while reading the data. </exception>
+        ///              A problem occurred while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file, bool compression, CultureInfo culture)
             : this(file.FullName, compression, culture)
         {
@@ -362,7 +362,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          false, the file is a normal text document. </param>
         /// <param name="culture">The culture used for lowercasing.</param>
         /// <exception cref="IOException">
-        ///              A problem occured while reading the data. </exception>
+        ///              A problem occurred while reading the data. </exception>
         /// <remarks>
         /// LUCENENET: This constructor overload takes a string <paramref name="fileName"/> to avoid having to allocate a <see cref="FileInfo"/> object.
         /// </remarks>

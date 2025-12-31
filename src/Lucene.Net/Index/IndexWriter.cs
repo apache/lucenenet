@@ -5387,7 +5387,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                // If any error occured, throw it.
+                // If any error occurred, throw it.
                 if (!suppressExceptions)
                 {
                     IOUtils.ReThrow(th);

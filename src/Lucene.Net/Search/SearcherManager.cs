@@ -143,7 +143,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns <c>true</c> if no changes have occured since this searcher
+        /// Returns <c>true</c> if no changes have occurred since this searcher
         /// ie. reader was opened, otherwise <c>false</c>. </summary>
         /// <seealso cref="DirectoryReader.IsCurrent()"/>
         public bool IsSearcherCurrent()
