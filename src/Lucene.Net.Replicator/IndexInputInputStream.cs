@@ -38,7 +38,7 @@ namespace Lucene.Net.Replicator
 
         public override void Flush()
         {
-            throw IllegalStateException.Create("Cannot flush a readonly stream."); // LUCENENET TODO: Change to NotSupportedException ?
+            throw new NotSupportedException("Cannot flush a readonly stream.");
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -60,7 +60,7 @@ namespace Lucene.Net.Replicator
 
         public override void SetLength(long value)
         {
-            throw IllegalStateException.Create("Cannot change length of a readonly stream."); // LUCENENET TODO: Change to NotSupportedException ?
+            throw new NotSupportedException("Cannot change length of a readonly stream.");
         }
 
         public override int Read(byte[] buffer, int offset, int count)
@@ -74,7 +74,7 @@ namespace Lucene.Net.Replicator
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            throw new InvalidCastException("Cannot write to a readonly stream."); // LUCENENET TODO: Change to NotSupportedException ?
+            throw new NotSupportedException("Cannot write to a readonly stream.");
         }
 
         public override bool CanRead => true;

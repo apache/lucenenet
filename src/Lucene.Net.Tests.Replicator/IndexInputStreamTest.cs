@@ -65,6 +65,51 @@ namespace Lucene.Net.Tests.Replicator
         }
 
         /// <summary>
+        /// Test for GitHub issue #1175: IndexInputStream should throw NotSupportedException for writable members
+        /// https://github.com/apache/lucenenet/issues/1175
+        /// </summary>
+        [Test]
+        [LuceneNetSpecific]
+        public void TestGitHubIssue1175_Flush_ThrowsNotSupportedException()
+        {
+            byte[] buffer = new byte[1.KiloBytes()];
+            Random.NextBytes(buffer);
+            using IndexInputStream stream = new IndexInputStream(new MockIndexInput(buffer));
+
+            Assert.Throws<NotSupportedException>(() => stream.Flush());
+        }
+
+        /// <summary>
+        /// Test for GitHub issue #1175: IndexInputStream should throw NotSupportedException for writable members
+        /// https://github.com/apache/lucenenet/issues/1175
+        /// </summary>
+        [Test]
+        [LuceneNetSpecific]
+        public void TestGitHubIssue1175_SetLength_ThrowsNotSupportedException()
+        {
+            byte[] buffer = new byte[1.KiloBytes()];
+            Random.NextBytes(buffer);
+            using IndexInputStream stream = new IndexInputStream(new MockIndexInput(buffer));
+
+            Assert.Throws<NotSupportedException>(() => stream.SetLength(100));
+        }
+
+        /// <summary>
+        /// Test for GitHub issue #1175: IndexInputStream should throw NotSupportedException for writable members
+        /// https://github.com/apache/lucenenet/issues/1175
+        /// </summary>
+        [Test]
+        [LuceneNetSpecific]
+        public void TestGitHubIssue1175_Write_ThrowsNotSupportedException()
+        {
+            byte[] buffer = new byte[1.KiloBytes()];
+            Random.NextBytes(buffer);
+            using IndexInputStream stream = new IndexInputStream(new MockIndexInput(buffer));
+
+            Assert.Throws<NotSupportedException>(() => stream.Write(new byte[10], 0, 10));
+        }
+
+        /// <summary>
         /// Test for GitHub issue #1158: Integer overflow in IndexInputStream.Read()
         /// https://github.com/apache/lucenenet/issues/1158
         /// </summary>
