@@ -1,10 +1,10 @@
 {
     "_navbarLinks":  [
-                         {
-                             "href":  "https://lucenenet.apache.org/docs/4.8.0-beta00018/",
-                             "title":  "Lucene.Net API",
-                             "text":  "Lucene.Net API"
-                         },
+      {
+        "href": "https://lucenenet.apache.org/docs/4.8.0-ci/",
+        "title": "Lucene.Net API",
+        "text": "Lucene.Net API"
+      },
                          {
                              "href":  "../../src/dotnet/tools/lucene-cli/docs/index.md",
                              "title":  "Lucene.Net CLI",
@@ -47,3 +47,23 @@
                       }
                   ]
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-﻿{
+{
   "metadata": [
     {
       "src": [
@@ -77,7 +77,8 @@
     "dest": "_site/api/core",
     "globalMetadataFiles": [
       "docfx.global.json",
-      "docfx.global.subsite.json"
+      "docfx.global.subsite.json",
+      "docfx.links.json"
     ],
     "template": [
       "Templates/DefaultTemplateNoAssets",
