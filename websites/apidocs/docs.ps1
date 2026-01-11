@@ -183,6 +183,9 @@ if ($? -and $DisableBuild -eq $false) {
     # Note we don't update _rel because that is used for styles and js
     (Get-Content -Path $BreadcrumbPath -Raw) -Replace '(?<="_api":\s*?"https?\:\/\/lucenenet\.apache\.org\/docs\/)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $BreadcrumbPath
 
+    # Update the CLI link to the latest LuceneNetVersion
+    (Get-Content -Path $BreadcrumbPath -Raw) -Replace '(?<="_navCliHref":\s*?"https?\:\/\/lucenenet\.apache\.org\/docs\/)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $BreadcrumbPath
+
     foreach ($proj in $DocFxJsonMeta) {
         $projFile = Join-Path -Path $ApiDocsFolder $proj
 
