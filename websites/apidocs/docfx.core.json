@@ -77,8 +77,7 @@
     "dest": "_site/api/core",
     "globalMetadataFiles": [
       "docfx.global.json",
-      "docfx.global.subsite.json",
-      "docfx.links.json"
+      "docfx.global.subsite.json"
     ],
     "template": [
       "Templates/DefaultTemplateNoAssets",

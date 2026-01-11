@@ -1,4 +1,37 @@
-﻿{
+{
   "_api": "https://lucenenet.apache.org/docs/4.8.0-ci/"
+  "_navApiTitle": "Lucene.Net API",
+  "_navApiText": "Lucene.Net API",
+
+  "_navCliHref": "../../src/dotnet/tools/lucene-cli/docs/index.md",
+  "_navCliTitle": "Lucene.Net CLI",
+  "_navCliText": "Lucene.Net CLI",
+
+  "_navWebsiteHref": "https://lucenenet.apache.org/",
+  "_navWebsiteTitle": "Lucene.Net Website",
+  "_navWebsiteText": "Lucene.Net Website",
+
+  "_asfFoundationHref": "https://www.apache.org/",
+  "_asfFoundationText": "Foundation",
+
+  "_asfEventsHref": "https://events.apache.org/",
+  "_asfEventsText": "Events",
+
+  "_asfLicenseHref": "https://www.apache.org/licenses/",
+  "_asfLicenseText": "License",
+
+  "_asfThanksHref": "https://www.apache.org/foundation/thanks.html",
+  "_asfThanksText": "Thanks",
+
+  "_asfSecurityHref": "https://www.apache.org/security/",
+  "_asfSecurityText": "Security",
+
+  "_asfSponsorshipHref": "https://www.apache.org/foundation/sponsorship.html",
+  "_asfSponsorshipText": "Sponsorship",
+
+  "_asfPrivacyHref": "https://privacy.apache.org/policies/privacy-policy-public.html",
+  "_asfPrivacyText": "Privacy Policy"
 }
+
+
 
