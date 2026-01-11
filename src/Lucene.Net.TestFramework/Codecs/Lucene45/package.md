@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Codecs.Lucene45
 summary: *content
 ---

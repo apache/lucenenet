@@ -1,4 +1,4 @@
-﻿# Licensed to the Apache Software Foundation (ASF) under one
+# Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
 # regarding copyright ownership.  The ASF licenses this file
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Lucene.Net source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Execute Python scripts
         working-directory: src/Lucene.Net/Util/Packed

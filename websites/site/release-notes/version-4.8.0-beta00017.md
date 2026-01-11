@@ -1,4 +1,4 @@
-﻿---
+---
 uid: releasenotes/4.8.0-beta00017
 version: 4.8.0-beta00017
 ---

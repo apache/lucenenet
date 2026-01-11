@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Codecs.Appending
 summary: *content
 ---

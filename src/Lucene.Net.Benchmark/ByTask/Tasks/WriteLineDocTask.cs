@@ -112,7 +112,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             {
                 throw new ArgumentException("line.file.out must be set");
             }
-            Stream @out = StreamUtils.GetOutputStream(new FileInfo(m_fname));
+            Stream @out = StreamUtils.GetOutputStream(m_fname); // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
             m_lineFileOut = new StreamWriter(@out, StandardCharsets.UTF_8);
             docMaker = runData.DocMaker;
 

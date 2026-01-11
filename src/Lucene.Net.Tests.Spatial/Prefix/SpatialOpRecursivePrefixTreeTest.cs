@@ -231,9 +231,9 @@ namespace Lucene.Net.Spatial.Prefix
             bool biasContains = (operation == SpatialOperation.Contains);
 
             //Main index loop:
-            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
             IDictionary<String, IShape> indexedShapes = new JCG.OrderedDictionary<String, IShape>();
-            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
             IDictionary<String, IShape> indexedShapesGS = new JCG.OrderedDictionary<String, IShape>(); //grid snapped
             int numIndexedShapes = randomIntBetween(1, 6);
 #pragma warning disable 219

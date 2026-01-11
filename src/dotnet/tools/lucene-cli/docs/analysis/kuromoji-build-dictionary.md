@@ -1,4 +1,4 @@
-﻿# kuromoji-build-dictionary
+# kuromoji-build-dictionary
 
 ### Name
 

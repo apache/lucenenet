@@ -1,4 +1,4 @@
-﻿Apache Lucene.Net
+Apache Lucene.Net
 Copyright 2006-2024 The Apache Software Foundation
 
 This product includes software developed at

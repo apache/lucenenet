@@ -290,7 +290,7 @@ namespace Lucene.Net.Analysis.Hunspell
             patterns.Add(null);
 
             // zero strip -> 0 ord
-            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
             IDictionary<string, int> seenStrips = new JCG.OrderedDictionary<string, int>
             {
                 [""] = 0

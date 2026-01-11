@@ -536,7 +536,7 @@ namespace Lucene.Net.Search
         /// Find repeating terms and assign them ordinal values </summary>
         private JCG.OrderedDictionary<Term, int> RepeatingTerms()
         {
-            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
             JCG.OrderedDictionary<Term, int> tord = new JCG.OrderedDictionary<Term, int>();
             Dictionary<Term, int> tcnt = new Dictionary<Term, int>();
             for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max

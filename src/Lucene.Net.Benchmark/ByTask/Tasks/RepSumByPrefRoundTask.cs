@@ -51,7 +51,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             // aggregate by task name and by round
             int reported = 0;
-            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
             JCG.OrderedDictionary<string, TaskStats> p2 = new JCG.OrderedDictionary<string, TaskStats>();
             foreach (TaskStats stat1 in taskStats)
             {

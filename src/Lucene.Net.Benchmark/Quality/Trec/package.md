@@ -1,4 +1,4 @@
-﻿---
+---
 uid: Lucene.Net.Benchmarks.Quality.Trec
 summary: *content
 ---
