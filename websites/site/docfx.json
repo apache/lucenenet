@@ -46,63 +46,47 @@
         "repo": "https://github.com/apache/lucenenet",
         "branch": "master"
       },
-        "_navbarLinks": [
-          {
-            "text": "About",
-            "href": "/#about",
-            "title": "About"
-          },
-          {
-            "text": "Quick Start",
-            "href": "/quick-start/index.html",
-            "title": "Quick Start"
-          },
-          {
-            "text": "Download",
-            "href": "/download/download.html",
-            "title": "Download"
-          },
-          {
-            "text": "Documentation",
-            "href": "/docs.html",
-            "title": "Documentation"
-          },
-          {
-            "text": "Contributing",
-            "href": "/contributing/index.html",
-            "title": "Contributing"
-          }
-        ],
-        "_asfLinks": [
-          {
-            "text": "Foundation",
-            "href": "https://www.apache.org/"
-          },
-          {
-            "text": "Events",
-            "href": "https://events.apache.org/"
-          },
-          {
-            "text": "License",
-            "href": "https://www.apache.org/licenses/"
-          },
-          {
-            "text": "Thanks",
-            "href": "https://www.apache.org/foundation/thanks.html"
-          },
-          {
-            "text": "Security",
-            "href": "https://www.apache.org/security/"
-          },
-          {
-            "text": "Sponsorship",
-            "href": "https://www.apache.org/foundation/sponsorship.html"
-          },
-          {
-            "text": "Privacy Policy",
-            "href": "https://privacy.apache.org/policies/privacy-policy-public.html"
-          }
-        ]
+
+      "_navAboutHref": "/#about",
+      "_navAboutTitle": "About",
+      "_navAboutText": "About",
+
+      "_navQuickStartHref": "/quick-start/index.html",
+      "_navQuickStartTitle": "Quick Start",
+      "_navQuickStartText": "Quick Start",
+
+      "_navDownloadHref": "/download/download.html",
+      "_navDownloadTitle": "Download",
+      "_navDownloadText": "Download",
+
+      "_navDocsHref": "/docs.html",
+      "_navDocsTitle": "Documentation",
+      "_navDocsText": "Documentation",
+
+      "_navContributingHref": "/contributing/index.html",
+      "_navContributingTitle": "Contributing",
+      "_navContributingText": "Contributing",
+
+      "_asfFoundationHref": "https://www.apache.org/",
+      "_asfFoundationText": "Foundation",
+
+      "_asfEventsHref": "https://events.apache.org/",
+      "_asfEventsText": "Events",
+
+      "_asfLicenseHref": "https://www.apache.org/licenses/",
+      "_asfLicenseText": "License",
+
+      "_asfThanksHref": "https://www.apache.org/foundation/thanks.html",
+      "_asfThanksText": "Thanks",
+
+      "_asfSecurityHref": "https://www.apache.org/security/",
+      "_asfSecurityText": "Security",
+
+      "_asfSponsorshipHref": "https://www.apache.org/foundation/sponsorship.html",
+      "_asfSponsorshipText": "Sponsorship",
+
+      "_asfPrivacyHref": "https://privacy.apache.org/policies/privacy-policy-public.html",
+      "_asfPrivacyText": "Privacy Policy"
     },
     "dest": "_site",
     "globalMetadataFiles": [],
