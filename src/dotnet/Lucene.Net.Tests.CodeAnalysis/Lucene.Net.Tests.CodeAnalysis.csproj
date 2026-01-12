@@ -23,7 +23,7 @@
 
   <PropertyGroup>
     <!-- We don't really care which target framework we test with - this is just to emulate Visual Studio 2017+ all which can load netstandard1.3 analyzers -->
-    <!-- Given that VS 2022 doesn't support net10.0 we will use net8.0 (which will outlive net9.0). We will need to adjust this when we stop testing on net8.0. -->
+    <!-- Given that VS 2022 doesn't support net10.0 we will use net8.0. We will need to adjust this when we stop testing on net8.0. -->
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>Lucene.Net.CodeAnalysis</RootNamespace>
 
