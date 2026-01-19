@@ -149,7 +149,30 @@ namespace Lucene.Net.Replicator
 
         public override string ToString()
         {
-            return string.Format("id={0} version={1} files={2}", Id, Version, SourceFiles);
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append("id=").Append(Id).Append(" version=").Append(Version).Append(" files={");
+            
+            bool firstSource = true;
+            foreach (KeyValuePair<string, IList<RevisionFile>> pair in SourceFiles)
+            {
+                if (!firstSource)
+                    sb.Append(", ");
+                firstSource = false;
+                
+                sb.Append(pair.Key).Append("=[");
+                bool firstFile = true;
+                foreach (RevisionFile file in pair.Value)
+                {
+                    if (!firstFile)
+                        sb.Append(", ");
+                    firstFile = false;
+                    sb.Append(file.ToString());
+                }
+                sb.Append("]");
+            }
+            sb.Append("}");
+            
+            return sb.ToString();
         }
     }
 }
