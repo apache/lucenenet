@@ -65,7 +65,7 @@ namespace Lucene.Net.Replicator
             IOUtils.Dispose(writer, directory);
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestToString()
         {
             // Create a mock SessionToken with known data
