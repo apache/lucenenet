@@ -96,7 +96,7 @@ namespace Lucene.Net.Replicator
             Assert.IsTrue(result.Contains("fileName=file1.txt length=100"), "Should contain file1 details");
             Assert.IsTrue(result.Contains("fileName=file2.txt length=200"), "Should contain file2 details");
             Assert.IsTrue(result.Contains("fileName=file3.txt length=300"), "Should contain file3 details");
-            
+
             // Verify it's not using the generic dictionary ToString()
             Assert.IsFalse(result.Contains("System.Collections.Generic.Dictionary"), "Should not contain generic Dictionary type");
         }
