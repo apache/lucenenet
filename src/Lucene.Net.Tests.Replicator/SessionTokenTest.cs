@@ -3,6 +3,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -115,7 +116,7 @@ namespace Lucene.Net.Replicator
             public IDictionary<string, IList<RevisionFile>> SourceFiles => sourceFiles;
             public int CompareTo(string other) => version.CompareTo(other);
             public int CompareTo(IRevision other) => version.CompareTo(other?.Version);
-            public Stream Open(string source, string fileName) => null;
+            public Stream Open(string source, string fileName) => throw new NotImplementedException();
             public void Release() { }
         }
 
