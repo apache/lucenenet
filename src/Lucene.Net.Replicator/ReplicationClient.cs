@@ -179,7 +179,6 @@ namespace Lucene.Net.Replicator
                     return;
 
                 IDictionary<string, IList<RevisionFile>> requiredFiles = RequiredFiles(session.SourceFiles);
-                WriteToInfoStream(string.Format("DoUpdate(): handlerVersion={0} session={1}", version, session));
 
                 foreach (KeyValuePair<string, IList<RevisionFile>> pair in requiredFiles)
                 {
