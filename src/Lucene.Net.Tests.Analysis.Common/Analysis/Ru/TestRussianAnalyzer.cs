@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Ru
     {
 
         /// <summary>
-        /// Check that RussianAnalyzer doesnt discard any numbers </summary>
+        /// Check that RussianAnalyzer doesn't discard any numbers </summary>
         [Test]
         public virtual void TestDigitsInRussianCharset()
         {

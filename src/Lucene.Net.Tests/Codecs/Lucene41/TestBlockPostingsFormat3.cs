@@ -325,7 +325,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
         /// <summary>
         /// checks the terms enum sequentially
-        /// if deep is false, it does a 'shallow' test that doesnt go down to the docsenums
+        /// if deep is false, it does a 'shallow' test that doesn't go down to the docsenums
         /// </summary>
         /// <remarks>
         /// LUCENENET specific - made static

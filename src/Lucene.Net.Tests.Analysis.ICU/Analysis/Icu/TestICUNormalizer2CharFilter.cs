@@ -128,7 +128,7 @@ namespace Lucene.Net.Analysis.Icu
                 String normalized = normalizer.Normalize(input);
                 if (normalized.Length == 0)
                 {
-                    continue; // MockTokenizer doesnt tokenize empty string...
+                    continue; // MockTokenizer doesn't tokenize empty string...
                 }
                 CheckOneTerm(a, input, normalized);
             }

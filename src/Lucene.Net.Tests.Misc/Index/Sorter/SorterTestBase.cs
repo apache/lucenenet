@@ -142,7 +142,7 @@ namespace Lucene.Net.Index.Sorter
             positions.SetId(id);
             if (DoesntSupportOffsets.Contains(TestUtil.GetPostingsFormat(DOC_POSITIONS_FIELD)))
             {
-                // codec doesnt support offsets: just index positions for the field
+                // codec doesn't support offsets: just index positions for the field
                 doc.Add(new Field(DOC_POSITIONS_FIELD, positions, TextField.TYPE_NOT_STORED));
             }
             else

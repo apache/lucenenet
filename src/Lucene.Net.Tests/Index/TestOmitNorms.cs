@@ -260,7 +260,7 @@ namespace Lucene.Net.Index
             customType3.IsStored = true;
             customType3.OmitNorms = true;
             Field noNormsNoIndex = new Field("foo", "a", customType3);
-            // not indexed nor stored (doesnt exist at all, we index a different field instead)
+            // not indexed nor stored (doesn't exist at all, we index a different field instead)
             Field emptyNorms = new Field("bar", "a", customType);
 
             Assert.IsNotNull(GetNorms("foo", norms, norms));

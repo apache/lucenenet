@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Util
     /// </para>
     /// </summary>
     // TODO: this has to be here, since the abstract factories are not in lucene-core,
-    // so test-framework doesnt know about them...
+    // so test-framework doesn't know about them...
     // this also means we currently cannot use this in other analysis modules :(
     // TODO: maybe after we improve the abstract factory/SPI apis, they can sit in core and resolve this.
     public abstract class BaseTokenStreamFactoryTestCase : BaseTokenStreamTestCase

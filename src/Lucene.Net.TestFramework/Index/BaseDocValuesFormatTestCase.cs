@@ -1171,7 +1171,7 @@ namespace Lucene.Net.Index
 
             if (!DefaultCodecSupportsDocsWithField)
             {
-                // if the codec doesnt support missing, we expect missing to be mapped to byte[]
+                // if the codec doesn't support missing, we expect missing to be mapped to byte[]
                 // by the impersonator, but we have to give it a chance to merge them to this
                 cfg.SetMergePolicy(NewLogMergePolicy());
             }
@@ -1213,7 +1213,7 @@ namespace Lucene.Net.Index
             }
             if (!DefaultCodecSupportsDocsWithField)
             {
-                // if the codec doesnt support missing, we expect missing to be mapped to byte[]
+                // if the codec doesn't support missing, we expect missing to be mapped to byte[]
                 // by the impersonator, but we have to give it a chance to merge them to this
                 w.ForceMerge(1);
             }

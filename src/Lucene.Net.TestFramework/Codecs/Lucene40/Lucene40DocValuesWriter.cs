@@ -176,7 +176,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 BytesRef b = value;
                 if (b is null)
                 {
-                    b = new BytesRef(); // 4.0 doesnt distinguish
+                    b = new BytesRef(); // 4.0 doesn't distinguish
                 }
                 if (b.Length > Lucene40DocValuesFormat.MAX_BINARY_FIELD_LENGTH)
                 {

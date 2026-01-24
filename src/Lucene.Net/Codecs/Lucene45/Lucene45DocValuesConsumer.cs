@@ -264,7 +264,7 @@ namespace Lucene.Net.Codecs.Lucene45
         }
 
         // TODO: in some cases representing missing with minValue-1 wouldn't take up additional space and so on,
-        // but this is very simple, and algorithms only check this for values of 0 anyway (doesnt slow down normal decode)
+        // but this is very simple, and algorithms only check this for values of 0 anyway (doesn't slow down normal decode)
         internal virtual void WriteMissingBitset(IEnumerable values)
         {
             sbyte bits = 0;

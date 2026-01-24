@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
                             Assert.IsNotNull(dp.GetPayload());
                             BytesRef payload = dp.GetPayload();
                             Assert.IsTrue(payload.Utf8ToString().StartsWith("pos:", StringComparison.Ordinal));
-                        } // note: withPayloads=false doesnt necessarily mean we dont have them from MockAnalyzer!
+                        } // note: withPayloads=false doesn't necessarily mean we dont have them from MockAnalyzer!
                     }
                 }
             }
@@ -226,7 +226,7 @@ namespace Lucene.Net.Index
                         Assert.IsNotNull(dp.GetPayload());
                         BytesRef payload = dp.GetPayload();
                         Assert.IsTrue(payload.Utf8ToString().StartsWith("pos:", StringComparison.Ordinal));
-                    } // note: withPayloads=false doesnt necessarily mean we dont have them from MockAnalyzer!
+                    } // note: withPayloads=false doesn't necessarily mean we dont have them from MockAnalyzer!
                 }
             }
 

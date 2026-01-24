@@ -559,7 +559,7 @@ namespace Lucene.Net.Search
         /// fields containing zero or one term in the field. The range can be half-open by setting one
         /// of the values to <c>null</c>.
         /// </summary>
-        // TODO: bogus that newStringRange doesnt share this code... generics hell
+        // TODO: bogus that newStringRange doesn't share this code... generics hell
         public static FieldCacheRangeFilter<BytesRef> NewBytesRefRange(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
         {
             return new BytesRefFieldCacheRangeFilterAnonymousClass(field, lowerVal, upperVal, includeLower, includeUpper);

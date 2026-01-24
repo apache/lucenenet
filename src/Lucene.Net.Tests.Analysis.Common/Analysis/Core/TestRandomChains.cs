@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.Core
                     typeof(CommonGramsFilter),
                     // TODO: doesn't handle graph inputs
                     typeof(CommonGramsQueryFilter),
-                    // TODO: probably doesnt handle graph inputs, too afraid to try
+                    // TODO: probably doesn't handle graph inputs, too afraid to try
                     typeof(WordDelimiterFilter) })
                 {
                     foreach (ConstructorInfo ctor in c.GetConstructors())
