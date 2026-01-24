@@ -25,10 +25,10 @@
 				<TermQuery fieldName="date">19870408</TermQuery>
 			</Clause>
 		</BooleanQuery>
-	</Query>	
+	</Query>
 	<Filter>
 		<!-- Filters to last document with this date -->
 		<DuplicateFilter fieldName="date" keepMode="last"/>
 	</Filter>
-	
+
 </FilteredQuery>

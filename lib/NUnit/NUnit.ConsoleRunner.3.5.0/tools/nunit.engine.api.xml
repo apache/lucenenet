@@ -26,7 +26,7 @@
         <member name="P:NUnit.Engine.Extensibility.TypeExtensionPointAttribute.Path">
             <summary>
             The unique string identifying this ExtensionPoint. This identifier
-            is typically formatted as a path using '/' and the set of extension 
+            is typically formatted as a path using '/' and the set of extension
             points is sometimes viewed as forming a tree.
             </summary>
         </member>
@@ -70,7 +70,7 @@
         </member>
         <member name="P:NUnit.Engine.Extensibility.ExtensionAttribute.Path">
             <summary>
-            A unique string identifying the ExtensionPoint for which this Extension is 
+            A unique string identifying the ExtensionPoint for which this Extension is
             intended. This is an optional field provided NUnit is able to deduce the
             ExtensionPoint from the Type of the extension class.
             </summary>
@@ -107,13 +107,13 @@
         <member name="P:NUnit.Engine.Extensibility.ExtensionPointAttribute.Path">
             <summary>
             The unique string identifying this ExtensionPoint. This identifier
-            is typically formatted as a path using '/' and the set of extension 
+            is typically formatted as a path using '/' and the set of extension
             points is sometimes viewed as forming a tree.
             </summary>
         </member>
         <member name="P:NUnit.Engine.Extensibility.ExtensionPointAttribute.Type">
             <summary>
-            The required Type (usually an interface) of any extension that is 
+            The required Type (usually an interface) of any extension that is
             installed at this ExtensionPoint.
             </summary>
         </member>
@@ -168,7 +168,7 @@
         <member name="M:NUnit.Engine.Extensibility.IProject.GetTestPackage">
             <summary>
             Gets a test package for the primary or active
-            configuration within the project. The package 
+            configuration within the project. The package
             includes all the assemblies and any settings
             specified in the project format.
             </summary>
@@ -178,7 +178,7 @@
             <summary>
             Gets a TestPackage for a specific configuration
             within the project. The package includes all the
-            assemblies and any settings specified in the 
+            assemblies and any settings specified in the
             project format.
             </summary>
             <param name="configName">The name of the config to use</param>
@@ -306,7 +306,7 @@
         </member>
         <member name="T:NUnit.Engine.Extensibility.IExtensionNode">
             <summary>
-            The IExtensionNode interface is implemented by a class that represents a 
+            The IExtensionNode interface is implemented by a class that represents a
             single extension being installed on a particular extension point.
             </summary>
         </member>
@@ -323,7 +323,7 @@
         </member>
         <member name="P:NUnit.Engine.Extensibility.IExtensionNode.Path">
             <summary>
-            Gets the unique string identifying the ExtensionPoint for which 
+            Gets the unique string identifying the ExtensionPoint for which
             this Extension is intended. This identifier may be supplied by the attribute
             marking the extension or deduced by NUnit from the Type of the extension class.
             </summary>
@@ -473,7 +473,7 @@
         <member name="P:NUnit.Engine.IRuntimeFramework.Profile">
             <summary>
             Gets a string representing the particular profile installed,
-            or null if there is no profile. Currently. the only defined 
+            or null if there is no profile. Currently. the only defined
             values are Full and Client.
             </summary>
         </member>
@@ -524,7 +524,7 @@
             <summary>
             Selects a target runtime framework for a TestPackage based on
             the settings in the package and the assemblies themselves.
-            The package RuntimeFramework setting may be updated as a 
+            The package RuntimeFramework setting may be updated as a
             result and the selected runtime is returned.
             </summary>
             <param name="package">A TestPackage</param>
@@ -636,7 +636,7 @@
             <summary>
             IServiceLocator allows clients to locate any NUnit services
             for which the interface is referenced. In normal use, this
-            linits it to those services using interfaces defined in the 
+            linits it to those services using interfaces defined in the
             nunit.engine.api assembly.
             </summary>
         </member>
@@ -722,7 +722,7 @@
             <summary>
             ITestEngine represents an instance of the test engine.
             Clients wanting to discover, explore or run tests start
-            require an instance of the engine, which is generally 
+            require an instance of the engine, which is generally
             acquired from the TestEngineActivator class.
             </summary>
         </member>
@@ -749,12 +749,12 @@
         <member name="M:NUnit.Engine.ITestEngine.Initialize">
             <summary>
             Initialize the engine. This includes initializing mono addins,
-            setting the trace level and creating the standard set of services 
+            setting the trace level and creating the standard set of services
             used in the Engine.
-            
-            This interface is not normally called by user code. Programs linking 
+
+            This interface is not normally called by user code. Programs linking
             only to the nunit.engine.api assembly are given a
-            pre-initialized instance of TestEngine. Programs 
+            pre-initialized instance of TestEngine. Programs
             that link directly to nunit.engine usually do so
             in order to perform custom initialization.
             </summary>
@@ -770,7 +770,7 @@
         <member name="T:NUnit.Engine.ITestEventListener">
             <summary>
             The ITestListener interface is used to receive notices of significant
-            events while a test is running. It's single method accepts an Xml string, 
+            events while a test is running. It's single method accepts an Xml string,
             which may represent any event generated by the test framework, the driver
             or any of the runners internal to the engine. Use of Xml means that
             any driver and framework may add additional events and the engine will
@@ -921,7 +921,7 @@
             </summary>
             <remarks>If private copy is false, the search order is the NUnit install directory for the current user, then
             the install directory for the local machine and finally the current AppDomain's ApplicationBase.</remarks>
-            <param name="privateCopy">if set to <c>true</c> loads the engine found in the application base directory, 
+            <param name="privateCopy">if set to <c>true</c> loads the engine found in the application base directory,
             otherwise searches for the test engine with the highest version installed. Defaults to <c>true</c>.</param>
             <exception cref="T:NUnit.Engine.NUnitEngineNotFoundException">Thrown when a test engine of the required minimum version is not found</exception>
             <returns>An <see cref="T:NUnit.Engine.ITestEngine"/></returns>
@@ -933,7 +933,7 @@
             <remarks>If private copy is false, the search order is the NUnit install directory for the current user, then
             the install directory for the local machine and finally the current AppDomain's ApplicationBase.</remarks>
             <param name="minVersion">The minimum version of the engine to return inclusive.</param>
-            <param name="privateCopy">if set to <c>true</c> loads the engine found in the application base directory, 
+            <param name="privateCopy">if set to <c>true</c> loads the engine found in the application base directory,
             otherwise searches for the test engine with the highest version installed. Defaults to <c>true</c>.</param>
             <exception cref="T:NUnit.Engine.NUnitEngineNotFoundException">Thrown when a test engine of the given minimum version is not found</exception>
             <returns>An <see cref="T:NUnit.Engine.ITestEngine"/></returns>
@@ -966,7 +966,7 @@
             <summary>
             TestPackage holds information about a set of test files to
             be loaded by a TestRunner. Each TestPackage represents
-            tests for one or more test files. TestPackages may be named 
+            tests for one or more test files. TestPackages may be named
             or anonymous, depending on how they are constructed.
             </summary>
         </member>
@@ -1094,7 +1094,7 @@
         </member>
         <member name="T:NUnit.Engine.TestSelectionParserException">
             <summary>
-            TestSelectionParserException is thrown when an error 
+            TestSelectionParserException is thrown when an error
             is found while parsing the selection expression.
             </summary>
         </member>
