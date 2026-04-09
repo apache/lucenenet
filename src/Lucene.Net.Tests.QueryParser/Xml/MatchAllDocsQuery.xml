@@ -19,9 +19,9 @@
 	<Query>
 		<MatchAllDocsQuery/>
 	</Query>
-	
+
 	<Filter>
 		<RangeFilter fieldName="date" lowerTerm="19870409" upperTerm="19870412"/>
 	</Filter>
-	
+
 </FilteredQuery>

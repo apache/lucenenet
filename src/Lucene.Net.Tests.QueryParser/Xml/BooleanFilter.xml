@@ -19,7 +19,7 @@
 	<Query>
 		<MatchAllDocsQuery/>
 	</Query>
-	
+
 	<Filter>
 		<!--
 			This query illustrates how a BooleanFilter can be used to combine
@@ -31,11 +31,11 @@
 				<RangeFilter fieldName="date" lowerTerm="19870409" upperTerm="19870412"/>
 			</Clause>
 			<Clause occurs="mustNot">
-				<TermsFilter fieldName="contents">Emcore</TermsFilter> 
+				<TermsFilter fieldName="contents">Emcore</TermsFilter>
 			</Clause>
 		</BooleanFilter>
-		
+
 	</Filter>
-	
+
 </FilteredQuery>
 
