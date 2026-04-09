@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// because of stupid things like querynorm, its possible we computeStats on a field that doesnt exist at all
+        /// because of stupid things like querynorm, its possible we computeStats on a field that doesn't exist at all
         ///  test this against a totally empty index, to make sure sims handle it
         /// </summary>
         [Test]
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// similar to the above, however the field exists, but we query with a term that doesnt exist too </summary>
+        /// similar to the above, however the field exists, but we query with a term that doesn't exist too </summary>
         [Test]
         public virtual void TestEmptyTerm()
         {

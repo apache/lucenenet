@@ -120,7 +120,7 @@ namespace Lucene.Net.Search.Similarities
             if (sumTotalTermFreq <= 0)
             {
                 // field does not exist;
-                // We have to provide something if codec doesnt supply these measures,
+                // We have to provide something if codec doesn't supply these measures,
                 // or if someone omitted frequencies for the field... negative values cause
                 // NaN/Inf for some scorers.
                 numberOfFieldTokens = docFreq;

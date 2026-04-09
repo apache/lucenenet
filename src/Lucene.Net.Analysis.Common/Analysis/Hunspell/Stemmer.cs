@@ -632,7 +632,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     if (Dictionary.HasFlag(wordFlags, flag))
                     {
                         // confusing: in this one exception, we already chained the first prefix against the second,
-                        // so it doesnt need to be checked against the word
+                        // so it doesn't need to be checked against the word
                         bool chainedPrefix = dictionary.complexPrefixes && recursionDepth == 1 && prefix;
                         if (chainedPrefix == false && prefixFlag >= 0 && !Dictionary.HasFlag(wordFlags, (char)prefixFlag))
                         {

@@ -190,7 +190,7 @@ namespace Lucene.Net.Analysis.El
         public virtual void TestNeuterNouns()
         {
             // ending with -ο
-            // note: nom doesnt conflate
+            // note: nom doesn't conflate
             CheckOneTerm(a, "βιβλίο", "βιβλι");
             CheckOneTerm(a, "βιβλίου", "βιβλ");
             CheckOneTerm(a, "βιβλία", "βιβλ");
@@ -203,7 +203,7 @@ namespace Lucene.Net.Analysis.El
             CheckOneTerm(a, "πουλιών", "πουλ");
 
             // ending with -α
-            // note: nom. doesnt conflate
+            // note: nom. doesn't conflate
             CheckOneTerm(a, "πρόβλημα", "προβλημ");
             CheckOneTerm(a, "προβλήματος", "προβλημα");
             CheckOneTerm(a, "προβλήματα", "προβλημα");
@@ -229,7 +229,7 @@ namespace Lucene.Net.Analysis.El
             CheckOneTerm(a, "βραδιών", "βραδ");
 
             // ending with -υ/-ατος
-            // note: nom. doesnt conflate
+            // note: nom. doesn't conflate
             CheckOneTerm(a, "δόρυ", "δορ");
             CheckOneTerm(a, "δόρατος", "δορατ");
             CheckOneTerm(a, "δόρατα", "δορατ");
@@ -248,14 +248,14 @@ namespace Lucene.Net.Analysis.El
             CheckOneTerm(a, "λυκοφώτων", "λυκοφω");
 
             // ending with -ον/-ου
-            // note: nom. doesnt conflate
+            // note: nom. doesn't conflate
             CheckOneTerm(a, "μέσον", "μεσον");
             CheckOneTerm(a, "μέσου", "μεσ");
             CheckOneTerm(a, "μέσα", "μεσ");
             CheckOneTerm(a, "μέσων", "μεσ");
 
             // ending in -ον/-οντος
-            // note: nom. doesnt conflate
+            // note: nom. doesn't conflate
             CheckOneTerm(a, "ενδιαφέρον", "ενδιαφερον");
             CheckOneTerm(a, "ενδιαφέροντος", "ενδιαφεροντ");
             CheckOneTerm(a, "ενδιαφέροντα", "ενδιαφεροντ");
@@ -433,7 +433,7 @@ namespace Lucene.Net.Analysis.El
             CheckOneTerm(a, "καλώντας", "καλ");
 
             CheckOneTerm(a, "καλούμαι", "καλ");
-            // pass. imperfect /imp. progressive doesnt conflate
+            // pass. imperfect /imp. progressive doesn't conflate
             CheckOneTerm(a, "καλούμουν", "καλουμ");
             CheckOneTerm(a, "καλείσαι", "καλεισα");
 
@@ -485,10 +485,10 @@ namespace Lucene.Net.Analysis.El
 
             CheckOneTerm(a, "κρατούμαι", "κρατ");
             CheckOneTerm(a, "κρατιέμαι", "κρατ");
-            // this imperfect form doesnt conflate
+            // this imperfect form doesn't conflate
             CheckOneTerm(a, "κρατούμουν", "κρατουμ");
             CheckOneTerm(a, "κρατιόμουν", "κρατ");
-            // this imp. prog form doesnt conflate
+            // this imp. prog form doesn't conflate
             CheckOneTerm(a, "κρατείσαι", "κρατεισα");
 
             CheckOneTerm(a, "κρατήθηκα", "κρατ");

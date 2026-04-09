@@ -2370,7 +2370,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Checks the terms enum sequentially.
-        /// If <paramref name="deep"/> is false, it does a 'shallow' test that doesnt go down to the docsenums.
+        /// If <paramref name="deep"/> is false, it does a 'shallow' test that doesn't go down to the docsenums.
         /// </summary>
         public virtual void AssertTermsEnumEquals(string info, IndexReader leftReader, TermsEnum leftTermsEnum, TermsEnum rightTermsEnum, bool deep)
         {

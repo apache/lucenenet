@@ -332,7 +332,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        // a weaker form of testLongPostings, that doesnt check positions
+        // a weaker form of testLongPostings, that doesn't check positions
         [Test]
         public virtual void TestLongPostingsNoPositions()
         {

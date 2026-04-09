@@ -157,7 +157,7 @@ namespace Lucene.Net.Facet
             }
 
 
-            // TODO: is it intentional that clone doesnt wrap?
+            // TODO: is it intentional that clone doesn't wrap?
             public override object Clone()
             {
                 return ii.Clone();

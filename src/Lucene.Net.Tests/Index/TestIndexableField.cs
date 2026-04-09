@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
                         if (Codec.Default is Lucene3xCodec)
 #pragma warning restore 612, 618
                         {
-                            return false; // 3.x doesnt support
+                            return false; // 3.x doesn't support
                         }
                         else
                         {

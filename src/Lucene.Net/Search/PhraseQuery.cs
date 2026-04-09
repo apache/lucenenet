@@ -359,7 +359,7 @@ namespace Lucene.Net.Search
                 {
                     Term t = outerInstance.terms[i];
                     TermState state = states[i].Get(context.Ord);
-                    if (state is null) // term doesnt exist in this segment
+                    if (state is null) // term doesn't exist in this segment
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(TermNotInReader(reader, t), "no termstate found but term exists in reader");
                         return null;

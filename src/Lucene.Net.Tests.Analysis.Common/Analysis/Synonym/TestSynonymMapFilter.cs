@@ -541,7 +541,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         /// <summary>
         /// simple random test, doesn't verify correctness.
-        ///  does verify it doesnt throw exceptions, or that the stream doesn't misbehave
+        ///  does verify it doesn't throw exceptions, or that the stream doesn't misbehave
         /// </summary>
         [Test]
         public virtual void TestRandom2()

@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Hunspell
      * limitations under the License.
      */
 
-    // Tests that > 64k affixes actually works and doesnt overflow some internal int
+    // Tests that > 64k affixes actually works and doesn't overflow some internal int
     public class Test64kAffixes : LuceneTestCase
     {
         [Test]
