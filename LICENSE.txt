@@ -492,7 +492,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========
 
-Some code in src/Lucene.Net/Support/LimitedConcurrencyLevelTaskScheduler.cs
+Some code in src/Lucene.Net.TestFramework/Support/Threading/LimitedConcurrencyLevelTaskScheduler.cs
 was derived from the MSDN web site and falls under the following license:
 
 MICROSOFT LIMITED PUBLIC LICENSE version 1.1
