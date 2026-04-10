@@ -27,7 +27,7 @@
 
         <!-- ASF dropdown -->
         <li class="nav-asf">
-          <a>ASF<span class="lucene-caret"></span></a>
+          <a role="button" tabindex="0">ASF<span class="lucene-caret"></span></a>
           <ul class="nav level2 asf-menu">
             <li><a href="{{_asfFoundationHref}}">{{_asfFoundationText}}</a></li>
             <li><a href="{{_asfEventsHref}}">{{_asfEventsText}}</a></li>
