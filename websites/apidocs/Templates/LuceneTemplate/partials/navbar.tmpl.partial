@@ -32,6 +32,25 @@
           <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
         </div>
       </form>
+      <ul class="nav level1 navbar-nav">
+
+        <li><a href="{{_rel}}{{_api}}" title="{{_navApiTitle}}">{{_navApiText}}</a></li>
+        <li><a href="{{_rel}}{{_navCliHref}}" title="{{_navCliTitle}}">{{_navCliText}}</a></li>
+        <li><a href="{{_navWebsiteHref}}" title="{{_navWebsiteTitle}}">{{_navWebsiteText}}</a></li>
+
+        <li class="nav-asf">
+          <a role="button" tabindex="0">ASF<span class="lucene-caret"></span></a>
+          <ul class="nav level2 asf-menu">
+            <li><a href="{{_asfFoundationHref}}">{{_asfFoundationText}}</a></li>
+            <li><a href="{{_asfEventsHref}}">{{_asfEventsText}}</a></li>
+            <li><a href="{{_asfLicenseHref}}">{{_asfLicenseText}}</a></li>
+            <li><a href="{{_asfThanksHref}}">{{_asfThanksText}}</a></li>
+            <li><a href="{{_asfSecurityHref}}">{{_asfSecurityText}}</a></li>
+            <li><a href="{{_asfSponsorshipHref}}">{{_asfSponsorshipText}}</a></li>
+            <li><a href="{{_asfPrivacyHref}}">{{_asfPrivacyText}}</a></li>
+          </ul>
+        </li>
+      </ul>
     </div>
   </div>
 </nav>
