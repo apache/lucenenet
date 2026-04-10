@@ -8,13 +8,13 @@ uid: quick-start/introduction
 
 ## Background
 
-Apache Lucene.NET is a C# port of Java based Apache Lucene.  Apache Lucene has a huge following and is used directly or indirectly to power search by many companies you probably know including Amazon, Twitter, LinkedIn, Netflix, Salesforce, SAS, and Microsoft Power BI. 
+Apache Lucene.NET is a C# port of Java based Apache Lucene.  Apache Lucene has a huge following and is used directly or indirectly to power search by many companies you probably know including Amazon, Twitter, LinkedIn, Netflix, Salesforce, SAS, and Microsoft Power BI.
 
 Apache Lucene is the core search library used by popular open source search servers like Apache Solr, ElasticSearch and OpenSearch.  The reason Apache Lucene is so widely used is because it's extremely powerful and can index large amounts of data quickly -- think 100s of GB/Hours. And it can perform full text search on that data in sub-second time. And unlike traditional sql databases, it's data engine is optimized for full text search.  
 
 The codebase for Apache Lucene is very mature.  In March 2020, the open source project celebrated it's 20th birthday. You can scroll through the years and see the major [Apache Lucene milestones](https://www.elastic.co/celebrating-lucene).
 
-Apache Lucene.NET 4.8 is an open source project who's aim is to be a line by line c# port of java based Apache Lucene 4.8.  This port makes the power of Lucene available to all .NET developers. And makes it easy for them to contribute to the project or customize it since it's pure C#. 
+Apache Lucene.NET 4.8 is an open source project who's aim is to be a line by line c# port of java based Apache Lucene 4.8.  This port makes the power of Lucene available to all .NET developers. And makes it easy for them to contribute to the project or customize it since it's pure C#.
 
 Currently Lucene.NET 4.8 is in Beta but it is extremely stable and many developers already use it in production. It has far more features than Lucene.NET 3.03 and has much better unit test coverage than the older version.  Lucene.NET has more than 7800+ passing unit tests.  This test coverage is what makes Lucene.NET so stable.
 

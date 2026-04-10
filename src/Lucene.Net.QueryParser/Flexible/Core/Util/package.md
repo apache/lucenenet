@@ -24,4 +24,4 @@ Utility classes to used with the Query Parser.
 
 ## Utility classes to used with the Query Parser
 
-This namespace contains utility classes used with the query parsers. 
+This namespace contains utility classes used with the query parsers.

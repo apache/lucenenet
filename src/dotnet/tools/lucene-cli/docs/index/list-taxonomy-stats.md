@@ -20,7 +20,7 @@ Prints how many ords are under each dimension.
 
 The directory of the index. If omitted, it defaults to the current working directory.
 
-> [!NOTE] 
+> [!NOTE]
 > This directory must be a facet taxonomy directory for the command to succeed.
 
 ### Options

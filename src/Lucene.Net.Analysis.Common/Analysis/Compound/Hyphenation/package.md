@@ -20,4 +20,4 @@ summary: *content
  limitations under the License.
 -->
 
- The code for the compound word hyphenation is taken from the [Apache FOP project](http://xmlgraphics.apache.org/fop/). All credits for the hyphenation code belongs to them. 
+ The code for the compound word hyphenation is taken from the [Apache FOP project](http://xmlgraphics.apache.org/fop/). All credits for the hyphenation code belongs to them.

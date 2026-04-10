@@ -163,7 +163,7 @@ public void TestHyphenationCompoundWordsDE()
 
     HyphenationCompoundWordTokenFilter tf = new HyphenationCompoundWordTokenFilter(
         matchVersion
-    
+
         new WhitespaceTokenizer(
             matchVersion,
             new StringReader("Rindfleischüberwachungsgesetz Drahtschere abba")),

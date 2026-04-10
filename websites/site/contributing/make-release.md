@@ -202,7 +202,7 @@ If there are PRs that need to be edited, do so now. Then regenerate the release 
 
   > [!NOTE]
   > Be sure to check the "This is a pre-release" box as appropriate.
-  
+
 - Click the "Save draft" button when finished.
 
 ### Add the Release Notes to the Website
@@ -434,7 +434,7 @@ A new release candidate can now be prepared. When complete, a new VOTE thread ca
 > 1. To use the same version number that failed:
 >    - Create a new Azure DevOps pipeline by copying the settings from the pipeline named Lucene.NET-Release.
 >    - Test the Lucene.NET-Release pipeline thoroughly, using different version numbers than the one you are releasing.
->    - Create a release pipeline and copy the settings from the release pipeline named Lucene.NET-Release.   
+>    - Create a release pipeline and copy the settings from the release pipeline named Lucene.NET-Release.  
 >    - Delete the tag for this release and recreate it with the same version number at the appropriate commit.
 >    - If the vote has already started, the new release vote email should provide instructions for removing the previous version from the `.nuget` cache to ensure the new release with the same version is the one being scrutinized.
 > 2. To use a new version number, simply re-start the process from the beginning, copy the release notes from the previous version (both on GitHub and the website) and follow all of the remaining steps above. Discard the draft release notes on GitHub when complete.

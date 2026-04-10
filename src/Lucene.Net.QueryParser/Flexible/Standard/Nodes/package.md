@@ -25,4 +25,4 @@ Standard Lucene Query Nodes.
 
 ## Standard Lucene Query Nodes
 
-The namespace <tt>Lucene.Net.QueryParsers.Flexible.Standard.Nodes</tt> contains QueryNode classes that are used specifically for Lucene query node tree. Any other generic QueryNode is defined under  <xref:Lucene.Net.QueryParsers.Flexible.Core.Nodes>. 
+The namespace <tt>Lucene.Net.QueryParsers.Flexible.Standard.Nodes</tt> contains QueryNode classes that are used specifically for Lucene query node tree. Any other generic QueryNode is defined under  <xref:Lucene.Net.QueryParsers.Flexible.Core.Nodes>.

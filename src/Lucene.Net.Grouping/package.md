@@ -29,7 +29,7 @@ Grouping requires a number of inputs:
       For example, if you use the `author` field then each
       group has all books by the same author.  Documents that don't
       have this field are grouped under a single group with
-      a `null` group value.
+      a `null` group value.
 
 *   `groupSort`: how the groups are sorted.  For sorting
       purposes, each group is "represented" by the highest-sorted
@@ -37,28 +37,28 @@ Grouping requires a number of inputs:
       example, if you specify "price" (ascending) then the first group
       is the one with the lowest price book within it.  Or if you
       specify relevance group sort, then the first group is the one
-      containing the highest scoring book.
+      containing the highest scoring book.
 
 *   `topNGroups`: how many top groups to keep.  For
-      example, 10 means the top 10 groups are computed.
+      example, 10 means the top 10 groups are computed.
 
 *   `groupOffset`: which "slice" of top groups you want to
       retrieve.  For example, 3 means you'll get 7 groups back
       (assuming `topNGroups` is 10).  This is useful for
-      paging, where you might show 5 groups per page.
+      paging, where you might show 5 groups per page.
 
 *   `withinGroupSort`: how the documents within each group
-      are sorted.  This can be different from the group sort.
+      are sorted.  This can be different from the group sort.
 
 *   `maxDocsPerGroup`: how many top documents within each
-      group to keep.
+      group to keep.
 
 *   `withinGroupOffset`: which "slice" of top
-      documents you want to retrieve from each group.
+      documents you want to retrieve from each group.
 
 The implementation is two-pass: the first pass (<xref:Lucene.Net.Search.Grouping.Terms.TermFirstPassGroupingCollector>) gathers the top groups, and the second pass (<xref:Lucene.Net.Search.Grouping.Terms.TermSecondPassGroupingCollector>) gathers documents within those groups. If the search is costly to run you may want to use the <xref:Lucene.Net.Search.CachingCollector> class, which caches hits and can (quickly) replay them for the second pass. This way you only run the query once, but you pay a RAM cost to (briefly) hold all hits. Results are returned as a <xref:Lucene.Net.Search.Grouping.TopGroups> instance.
 
- This module abstracts away what defines group and how it is collected. All grouping collectors are abstract and have currently term based implementations. One can implement collectors that for example group on multiple fields. 
+ This module abstracts away what defines group and how it is collected. All grouping collectors are abstract and have currently term based implementations. One can implement collectors that for example group on multiple fields.
 
 Known limitations:
 
@@ -166,4 +166,4 @@ int maxDoc = s.MaxDoc;
 FixedBitSet groupHeadsBitSet = c.RetrieveGroupHeads(maxDoc);
 ```
 
-For each of the above collector types there is also a variant that works with `ValueSource` instead of of fields. Concretely this means that these variants can work with functions. These variants are slower than there term based counter parts. These implementations are located in the `Lucene.Net.Search.Grouping.Function` package, but can also be used with the `GroupingSearch` convenience utility 
+For each of the above collector types there is also a variant that works with `ValueSource` instead of of fields. Concretely this means that these variants can work with functions. These variants are slower than there term based counter parts. These implementations are located in the `Lucene.Net.Search.Grouping.Function` package, but can also be used with the `GroupingSearch` convenience utility

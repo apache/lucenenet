@@ -15,7 +15,7 @@ Have you found a bug or do you have an idea for a cool new enhancement? Contribu
   - Create a new branch with a descriptive name (tracking master) and [submit a Pull Request](https://help.github.com/articles/creating-a-pull-request/).
 
 > **NOTE:** In the past, the Lucene.NET project used the [JIRA issue tracker](https://issues.apache.org/jira/projects/LUCENENET/issues), which has now been deprecated. However, we are keeping it active for tracking legacy issues. Please submit any new issues to GitHub.
-  
+
 ## Up For Grabs
 
 There are several [**Open Issues on GitHub**](https://github.com/apache/lucenenet/labels/up-for-grabs) that are marked `up-for-grabs` that we could use help with.

@@ -14,7 +14,7 @@ lucene index fix [<INDEX_DIRECTORY>] [-v|--verbose] [-c|--cross-check-term-vecto
 
 Basic tool to write a new segments file that removes reference to problematic segments. As this tool checks every byte in the index, on a large index it can take quite a long time to run.
 
-> [!WARNING] 
+> [!WARNING]
 > This command should only be used on an emergency basis as it will cause documents (perhaps many) to be permanently removed from the index. Always make a backup copy of your index before running this! Do not run this tool on an index that is actively being written to. You have been warned!
 
 ### Arguments

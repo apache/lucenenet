@@ -20,7 +20,7 @@ summary: *content
  limitations under the License.
 -->
 
-Analyzer for Chinese, Japanese, and Korean, which indexes bigrams. 
+Analyzer for Chinese, Japanese, and Korean, which indexes bigrams.
 This analyzer generates bigram terms, which are overlapping groups of two adjacent Han, Hiragana, Katakana, or Hangul characters.
 
  Three analyzers are provided for Chinese, each of which treats Chinese text in a different way.
@@ -33,4 +33,4 @@ Example phrase： "我是中国人"
 
 1. ChineseAnalyzer: 我－是－中－国－人
 2. CJKAnalyzer: 我是－是中－中国－国人
-3. SmartChineseAnalyzer: 我－是－中国－人 
+3. SmartChineseAnalyzer: 我－是－中国－人

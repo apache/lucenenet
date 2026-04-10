@@ -31,7 +31,7 @@ Codecs API: API for customization of the encoding and structure of the index.
 * FieldInfos - see <xref:Lucene.Net.Codecs.FieldInfosFormat>
 * SegmentInfo - see <xref:Lucene.Net.Codecs.SegmentInfoFormat>
 * Norms - see <xref:Lucene.Net.Codecs.NormsFormat>
-* Live documents - see <xref:Lucene.Net.Codecs.LiveDocsFormat> 
+* Live documents - see <xref:Lucene.Net.Codecs.LiveDocsFormat>
 
 For some concrete implementations beyond Lucene's official index format, see the [Codecs module](../codecs/overview.html).
 
@@ -39,7 +39,7 @@ Codecs are identified by name through the <xref:Lucene.Net.Codecs.ICodecFactory>
 
 ```cs
 // By default, the name will be "My" because the "Codec" suffix is removed
-public class MyCodec : Codec 
+public class MyCodec : Codec
 {
 }
 ```
@@ -110,7 +110,7 @@ Codec.SetCodecFactory(services.GetService<ICodecFactory>());
 If your application is not using dependency injection, you can register a custom codec by adding your codec at start up.
 
 ```cs
-Codec.SetCodecFactory(new DefaultCodecFactory { 
+Codec.SetCodecFactory(new DefaultCodecFactory {
     CustomCodecTypes = new Type[] { typeof(MyCodec) }
 });
 ```
@@ -242,7 +242,7 @@ namespace ExampleLuceneNetTestFramework
 }
 ```
 
-The <xref:Lucene.Net.Index.BasePostingsFormatTestCase> class includes a barrage of 8 tests that can now be run using your favorite test runner, such as Visual Studio Test Explorer. 
+The <xref:Lucene.Net.Index.BasePostingsFormatTestCase> class includes a barrage of 8 tests that can now be run using your favorite test runner, such as Visual Studio Test Explorer.
 
  - TestDocsAndFreqs
  - TestDocsAndFreqsAndPositions

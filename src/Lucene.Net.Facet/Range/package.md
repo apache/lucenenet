@@ -20,4 +20,4 @@ summary: *content
  limitations under the License.
 -->
 
-Provides range faceting capabilities. 
+Provides range faceting capabilities.

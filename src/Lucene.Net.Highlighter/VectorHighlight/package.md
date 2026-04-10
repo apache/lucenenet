@@ -93,7 +93,7 @@ From the sample user query, the following `QueryPhraseMap` will be generated:
     +--------+-+  +-------+-+
     |"Lucene"|o+->|boost=2|*|  * : terminal
     +--------+-+  +-------+-+
-    
+
     +--------+-+  +---------+-+  +-------+------+-+
     |"search"|o+->|"library"|o+->|boost=1|slop=1|*|
     +--------+-+  +---------+-+  +-------+------+-+
@@ -123,7 +123,7 @@ In Step 3, Fast Vector Highlighter generates <xref:Lucene.Net.Search.VectorHighl
     |"search library"|[(12,18),(26,33)]|w=1|
     +----------------+-----------------+---+
 
-The type of each entry is `WeightedPhraseInfo` that consists of an array of terms offsets and weight. 
+The type of each entry is `WeightedPhraseInfo` that consists of an array of terms offsets and weight.
 
 ### Step 4.
 
@@ -162,7 +162,7 @@ public override FieldFragList CreateFieldFragList(FieldPhraseList fieldPhraseLis
 }
 ```
 
-Currently there are basically to approaches available: 
+Currently there are basically to approaches available:
 
 *   `SimpleFragListBuilder using SimpleFieldFragList`: _sum-of-boosts_-approach. The totalBoost is calculated by summarizing the query-boosts per term. Per default a term is boosted by 1.0
 

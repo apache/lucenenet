@@ -67,32 +67,32 @@ an enumeration of token [Attribute](xref:Lucene.Net.Util.Attribute)s. 
 A TokenStream can be composed by applying [TokenFilter](xref:Lucene.Net.Analysis.TokenFilter)s
 to the output of a [Tokenizer](xref:Lucene.Net.Analysis.Tokenizer). 
 Tokenizers and TokenFilters are strung together and applied with an [Analyzer](xref:Lucene.Net.Analysis.Analyzer). 
-[Lucene.Net.Analysis.Common](../analysis-common/overview.html) provides a number of Analyzer implementations, including 
+[Lucene.Net.Analysis.Common](../analysis-common/overview.html) provides a number of Analyzer implementations, including
 [StopAnalyzer](../analysis-common/Lucene.Net.Analysis.Core.StopAnalyzer.html)
-and the grammar-based [StandardAnalyzer](../analysis-common/Lucene.Net.Analysis.Standard.StandardAnalyzer.html).
+and the grammar-based [StandardAnalyzer](../analysis-common/Lucene.Net.Analysis.Standard.StandardAnalyzer.html).
 
 *   __<xref:Lucene.Net.Codecs>__
 provides an abstraction over the encoding and decoding of the inverted index structure,
-as well as different implementations that can be chosen depending upon application needs.
+as well as different implementations that can be chosen depending upon application needs.
 
 *   __<xref:Lucene.Net.Documents>__
 provides a simple [Document](xref:Lucene.Net.Documents.Document)
 class.  A Document is simply a set of named [Field](xref:Lucene.Net.Documents.Field)s,
-whose values may be strings or instances of [System.Text.TextReader](https://docs.microsoft.com/en-us/dotnet/api/system.io.textreader).
+whose values may be strings or instances of [System.Text.TextReader](https://docs.microsoft.com/en-us/dotnet/api/system.io.textreader).
 
 *   __<xref:Lucene.Net.Index>__
 provides two primary classes: [IndexWriter](xref:Lucene.Net.Index.IndexWriter),
 which creates and adds documents to indices; and [IndexReader](xref:Lucene.Net.Index.IndexReader),
-which accesses the data in the index.
+which accesses the data in the index.
 
 *   __<xref:Lucene.Net.Search>__
 provides data structures to represent queries (ie [TermQuery](xref:Lucene.Net.Search.TermQuery)
-for individual words, [PhraseQuery](xref:Lucene.Net.Search.PhraseQuery) 
-for phrases, and [BooleanQuery](xref:Lucene.Net.Search.BooleanQuery) 
+for individual words, [PhraseQuery](xref:Lucene.Net.Search.PhraseQuery)
+for phrases, and [BooleanQuery](xref:Lucene.Net.Search.BooleanQuery)
 for boolean combinations of queries) and the [IndexSearcher](xref:Lucene.Net.Search.IndexSearcher)
 which turns queries into [TopDocs](xref:Lucene.Net.Search.TopDocs).
 A number of [QueryParser](../queryparser/overview.html)s are provided for producing
-query structures from strings or XML.
+query structures from strings or XML.
 
 *   __<xref:Lucene.Net.Store>__
 defines an abstract class for storing persistent data, the [Directory](xref:Lucene.Net.Store.Directory),
@@ -100,7 +100,7 @@ which is a collection of named files written by an [IndexOutput](xref:Lucene.Net
 and read by an [IndexInput](xref:Lucene.Net.Store.IndexInput). 
 Multiple implementations are provided, including [FSDirectory](xref:Lucene.Net.Store.FSDirectory),
 which uses a file system directory to store files, and [RAMDirectory](xref:Lucene.Net.Store.RAMDirectory)
-which implements files as memory-resident data structures.
+which implements files as memory-resident data structures.
 
 *   __<xref:Lucene.Net.Util>__
 contains a few handy data structures and util classes, ie [OpenBitSet](xref:Lucene.Net.Util.OpenBitSet)
@@ -109,13 +109,13 @@ and [PriorityQueue](xref:Lucene.Net.Util.PriorityQueue).
 To use Lucene, an application should:
 
 1.  Create [Document](xref:Lucene.Net.Documents.Document)s by
-adding [Field](xref:Lucene.Net.Documents.Field)s;
+adding [Field](xref:Lucene.Net.Documents.Field)s;
 
 2.  Create an [IndexWriter](xref:Lucene.Net.Index.IndexWriter)
-and add documents to it with [AddDocument()](xref:Lucene.Net.Index.IndexWriter#Lucene_Net_Index_IndexWriter_AddDocument_System_Collections_Generic_IEnumerable_Lucene_Net_Index_IIndexableField__Lucene_Net_Analysis_Analyzer_);
+and add documents to it with [AddDocument()](xref:Lucene.Net.Index.IndexWriter#Lucene_Net_Index_IndexWriter_AddDocument_System_Collections_Generic_IEnumerable_Lucene_Net_Index_IIndexableField__Lucene_Net_Analysis_Analyzer_);
 
 3.  Call [QueryParser.Parse()](../queryparser/Lucene.Net.QueryParsers.Classic.QueryParserBase.html#Lucene_Net_QueryParsers_Classic_QueryParserBase_Parse_System_String_)
-to build a query from a string; and
+to build a query from a string; and
 
 4.  Create an [IndexSearcher](xref:Lucene.Net.Search.IndexSearcher)
 and pass the query to its [Search()](xref:Lucene.Net.Search.IndexSearcher#Lucene_Net_Search_IndexSearcher_Search_Lucene_Net_Search_Query_System_Int32_)
@@ -124,7 +124,7 @@ method.
 Some simple examples of code which does this are:
 
 *    [IndexFiles.cs](../demo/Lucene.Net.Demo.IndexFiles.html) creates an
-index for all the files contained in a directory.
+index for all the files contained in a directory.
 
 *    [SearchFiles.cs](../demo/Lucene.Net.Demo.SearchFiles.html) prompts for
 queries and searches an index.

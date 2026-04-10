@@ -29,7 +29,7 @@ package.
 ## Table Of Contents
 
 1. [Summary of the Ranking Methods](#summary-of-the-ranking-methods)
-2. [Changing the Similarity](#changing-similarity) 
+2. [Changing the Similarity](#changing-similarity)
 
 ## Summary of the Ranking Methods
 
@@ -51,9 +51,9 @@ Since <xref:Lucene.Net.Search.Similarities.SimilarityBase> is not optimized to t
 
 Chances are the available Similarities are sufficient for all your searching needs. However, in some applications it may be necessary to customize your <xref:Lucene.Net.Search.Similarities.Similarity> implementation. For instance, some applications do not need to distinguish between shorter and longer documents (see [a "fair" similarity](http://www.gossamer-threads.com/lists/lucene/java-user/38967#38967)).
 
-To change <xref:Lucene.Net.Search.Similarities.Similarity>, one must do so for both indexing and searching, and the changes must happen before either of these actions take place. Although in theory there is nothing stopping you from changing mid-stream, it just isn't well-defined what is going to happen. 
+To change <xref:Lucene.Net.Search.Similarities.Similarity>, one must do so for both indexing and searching, and the changes must happen before either of these actions take place. Although in theory there is nothing stopping you from changing mid-stream, it just isn't well-defined what is going to happen.
 
-To make this change, implement your own <xref:Lucene.Net.Search.Similarities.Similarity> (likely you'll want to simply subclass an existing method, be it <xref:Lucene.Net.Search.Similarities.DefaultSimilarity> or a descendant of <xref:Lucene.Net.Search.Similarities.SimilarityBase>), and then register the new class by setting [IndexWriterConfig.Similarity](xref:Lucene.Net.Index.IndexWriterConfig#Lucene_Net_Index_IndexWriterConfig_Similarity) before indexing and [IndexSearcher.Similarity](xref:Lucene.Net.Search.IndexSearcher#Lucene_Net_Search_IndexSearcher_Similarity) before searching. 
+To make this change, implement your own <xref:Lucene.Net.Search.Similarities.Similarity> (likely you'll want to simply subclass an existing method, be it <xref:Lucene.Net.Search.Similarities.DefaultSimilarity> or a descendant of <xref:Lucene.Net.Search.Similarities.SimilarityBase>), and then register the new class by setting [IndexWriterConfig.Similarity](xref:Lucene.Net.Index.IndexWriterConfig#Lucene_Net_Index_IndexWriterConfig_Similarity) before indexing and [IndexSearcher.Similarity](xref:Lucene.Net.Search.IndexSearcher#Lucene_Net_Search_IndexSearcher_Similarity) before searching.
 
 ### Extending [SimilarityBase](xref:Lucene.Net.Search.Similarities.SimilarityBase)
 
@@ -69,6 +69,6 @@ If you are interested in use cases for changing your similarity, see the Lucene 
 2. Overriding Tf — In some applications, it doesn't matter what the score of a document is as long as a matching term occurs. In these cases people have overridden Similarity to return 1 from the Tf() method.
 3. Changing Length Normalization — By overriding [State)](xref:Lucene.Net.Search.Similarities.Similarity#methods), it is possible to discount how the length of a field contributes to a score. In <xref:Lucene.Net.Search.Similarities.DefaultSimilarity>, lengthNorm = 1 / (numTerms in field)^0.5, but if one changes this to be 1 / (numTerms in field), all fields will be treated ["fairly"](http://www.gossamer-threads.com/lists/lucene/java-user/38967#38967).
 
-In general, Chris Hostetter sums it up best in saying (from [the Lucene users's mailing list](http://www.gossamer-threads.com/lists/lucene/java-user/39125#39125)): 
+In general, Chris Hostetter sums it up best in saying (from [the Lucene users's mailing list](http://www.gossamer-threads.com/lists/lucene/java-user/39125#39125)):
 
 > [One would override the Similarity in] ... any situation where you know more about your data then just that it's "text" is a situation where it *might* make sense to to override your Similarity method.

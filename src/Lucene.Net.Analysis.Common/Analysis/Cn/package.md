@@ -33,4 +33,4 @@ Example phrase： "我是中国人"
 
 1. StandardAnalyzer: 我－是－中－国－人
 2. CJKAnalyzer: 我是－是中－中国－国人
-3. SmartChineseAnalyzer: 我－是－中国－人 
+3. SmartChineseAnalyzer: 我－是－中国－人

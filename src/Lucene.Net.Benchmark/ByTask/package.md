@@ -23,9 +23,9 @@ summary: *content
 Benchmarking Lucene By Tasks.
 <div>
 
- This package provides "task based" performance benchmarking of Lucene. One can use the predefined benchmarks, or create new ones. 
+ This package provides "task based" performance benchmarking of Lucene. One can use the predefined benchmarks, or create new ones.
 
- Contained packages: 
+ Contained packages:
 
 
 <table border="1" cellpadding="4">
@@ -57,39 +57,39 @@ Benchmarking Lucene By Tasks.
 
 ## Table Of Contents
 
- 1. [Benchmarking By Tasks](#concept) 2. [How to use](#usage) 3. [Benchmark "algorithm"](#algorithm) 4. [Supported tasks/commands](#tasks) 5. [Benchmark properties](#properties) 6. [Example input algorithm and the result benchmark report.](#example) 7. [Results record counting clarified](#recscounting) 
+ 1. [Benchmarking By Tasks](#concept) 2. [How to use](#usage) 3. [Benchmark "algorithm"](#algorithm) 4. [Supported tasks/commands](#tasks) 5. [Benchmark properties](#properties) 6. [Example input algorithm and the result benchmark report.](#example) 7. [Results record counting clarified](#recscounting)
 
 ## Benchmarking By Tasks
 
- Benchmark Lucene using task primitives. 
+ Benchmark Lucene using task primitives.
 
- A benchmark is composed of some predefined tasks, allowing for creating an index, adding documents, optimizing, searching, generating reports, and more. A benchmark run takes an "algorithm" file that contains a description of the sequence of tasks making up the run, and some properties defining a few additional characteristics of the benchmark run. 
+ A benchmark is composed of some predefined tasks, allowing for creating an index, adding documents, optimizing, searching, generating reports, and more. A benchmark run takes an "algorithm" file that contains a description of the sequence of tasks making up the run, and some properties defining a few additional characteristics of the benchmark run.
 
 ## How to use
 
- Easiest way to run a benchmarks is using the predefined ant task: * ant run-task   
-- would run the `micro-standard.alg` "algorithm". * ant run-task -Dtask.alg=conf/compound-penalty.alg   
-- would run the `compound-penalty.alg` "algorithm". * ant run-task -Dtask.alg=[full-path-to-your-alg-file]   
-- would run `your perf test` "algorithm". * java org.apache.lucene.benchmark.byTask.programmatic.Sample   
-- would run a performance test programmatically - without using an alg file. This is less readable, and less convenient, but possible. 
+ Easiest way to run a benchmarks is using the predefined ant task: * ant run-task  
+- would run the `micro-standard.alg` "algorithm". * ant run-task -Dtask.alg=conf/compound-penalty.alg  
+- would run the `compound-penalty.alg` "algorithm". * ant run-task -Dtask.alg=[full-path-to-your-alg-file]  
+- would run `your perf test` "algorithm". * java org.apache.lucene.benchmark.byTask.programmatic.Sample  
+- would run a performance test programmatically - without using an alg file. This is less readable, and less convenient, but possible.
 
- You may find existing tasks sufficient for defining the benchmark _you_ need, otherwise, you can extend the framework to meet your needs, as explained herein. 
+ You may find existing tasks sufficient for defining the benchmark _you_ need, otherwise, you can extend the framework to meet your needs, as explained herein.
 
- Each benchmark run has a DocMaker and a QueryMaker. These two should usually match, so that "meaningful" queries are used for a certain collection. Properties set at the header of the alg file define which "makers" should be used. You can also specify your own makers, extending DocMaker and implementing QueryMaker. 
+ Each benchmark run has a DocMaker and a QueryMaker. These two should usually match, so that "meaningful" queries are used for a certain collection. Properties set at the header of the alg file define which "makers" should be used. You can also specify your own makers, extending DocMaker and implementing QueryMaker.
 
 > __Note:__ since 2.9, DocMaker is a concrete class which accepts a ContentSource. In most cases, you can use the DocMaker class to create Documents, while providing your own ContentSource implementation. For example, the current Benchmark package includes ContentSource implementations for TREC, Enwiki and Reuters collections, as well as others like LineDocSource which reads a 'line' file produced by WriteLineDocTask.
 
- Benchmark .alg file contains the benchmark "algorithm". The syntax is described below. Within the algorithm, you can specify groups of commands, assign them names, specify commands that should be repeated, do commands in serial or in parallel, and also control the speed of "firing" the commands. 
+ Benchmark .alg file contains the benchmark "algorithm". The syntax is described below. Within the algorithm, you can specify groups of commands, assign them names, specify commands that should be repeated, do commands in serial or in parallel, and also control the speed of "firing" the commands.
 
- This allows, for instance, to specify that an index should be opened for update, documents should be added to it one by one but not faster than 20 docs a minute, and, in parallel with this, some N queries should be searched against that index, again, no more than 2 queries a second. You can have the searches all share an index reader, or have them each open its own reader and close it afterwords. 
+ This allows, for instance, to specify that an index should be opened for update, documents should be added to it one by one but not faster than 20 docs a minute, and, in parallel with this, some N queries should be searched against that index, again, no more than 2 queries a second. You can have the searches all share an index reader, or have them each open its own reader and close it afterwords.
 
- If the commands available for use in the algorithm do not meet your needs, you can add commands by adding a new task under org.apache.lucene.benchmark.byTask.tasks - you should extend the PerfTask abstract class. Make sure that your new task class name is suffixed by Task. Assume you added the class "WonderfulTask" - doing so also enables the command "Wonderful" to be used in the algorithm. 
+ If the commands available for use in the algorithm do not meet your needs, you can add commands by adding a new task under org.apache.lucene.benchmark.byTask.tasks - you should extend the PerfTask abstract class. Make sure that your new task class name is suffixed by Task. Assume you added the class "WonderfulTask" - doing so also enables the command "Wonderful" to be used in the algorithm.
 
- <u>External classes</u>: It is sometimes useful to invoke the benchmark package with your external alg file that configures the use of your own doc/query maker and or html parser. You can work this out without modifying the benchmark package code, by passing your class path with the benchmark.ext.classpath property: * ant run-task -Dtask.alg=[full-path-to-your-alg-file] <font color="#FF0000">-Dbenchmark.ext.classpath=/mydir/classes </font> -Dtask.mem=512M <u>External tasks</u>: When writing your own tasks under a package other than __org.apache.lucene.benchmark.byTask.tasks__ specify that package thru the <font color="#FF0000">alt.tasks.packages</font> property. 
+ <u>External classes</u>: It is sometimes useful to invoke the benchmark package with your external alg file that configures the use of your own doc/query maker and or html parser. You can work this out without modifying the benchmark package code, by passing your class path with the benchmark.ext.classpath property: * ant run-task -Dtask.alg=[full-path-to-your-alg-file] <font color="#FF0000">-Dbenchmark.ext.classpath=/mydir/classes </font> -Dtask.mem=512M <u>External tasks</u>: When writing your own tasks under a package other than __org.apache.lucene.benchmark.byTask.tasks__ specify that package thru the <font color="#FF0000">alt.tasks.packages</font> property.
 
 ## Benchmark "algorithm"
 
- The following is an informal description of the supported syntax. 
+ The following is an informal description of the supported syntax.
 
 1.  __Measuring__: When a command is executed, statistics for the elapsed
  execution time and memory consumption are collected.
@@ -229,7 +229,7 @@ Example -  <font color="#FF0066"> -CreateIndex </font> - would count 0 while
 
 ## Supported tasks/commands
 
- Existing tasks can be divided into a few groups: regular index/search work tasks, report tasks, and control tasks. 
+ Existing tasks can be divided into a few groups: regular index/search work tasks, report tasks, and control tasks.
 
 1.  __Report tasks__: There are a few Report commands for generating reports.
  Only task runs that were completed are reported.
@@ -351,14 +351,14 @@ An additional effect of NewRound, is that numeric and boolean
      Notice that each of the 3 search task types maintains
      its own queryMaker instance.
 
-    *   <font color="#FF0066">CommitIndex</font> and 
+    *   <font color="#FF0066">CommitIndex</font> and
 	 <font color="#FF0066">ForceMerge</font> can be used to commit
 	 changes to the index then merge the index segments. The integer
    parameter specifies how many segments to merge down to (default
    1).
 
     *   <font color="#FF0066">WriteLineDoc</font> prepares a 'line'
-	 file where each line holds a document with _title_, 
+	 file where each line holds a document with _title_,
 	 _date_ and _body_ elements, separated by [TAB].
 	 A line file is useful if one wants to measure pure indexing
 	 performance, without the overhead of parsing the data.  
@@ -373,9 +373,9 @@ An additional effect of NewRound, is that numeric and boolean
 
 ## Benchmark properties
 
- Properties are read from the header of the .alg file, and define several parameters of the performance test. As mentioned above for the <font color="#FF0066">NewRound</font> task, numeric and boolean properties that are defined as a sequence of values, e.g. <font color="#FF0066">merge.factor=mrg:10:100:10:100</font> would increment (cyclic) to the next value, when NewRound is called, and would also appear as a named column in the reports (column name would be "mrg" in this example). 
+ Properties are read from the header of the .alg file, and define several parameters of the performance test. As mentioned above for the <font color="#FF0066">NewRound</font> task, numeric and boolean properties that are defined as a sequence of values, e.g. <font color="#FF0066">merge.factor=mrg:10:100:10:100</font> would increment (cyclic) to the next value, when NewRound is called, and would also appear as a named column in the reports (column name would be "mrg" in this example).
 
- Some of the currently defined properties are: 
+ Some of the currently defined properties are:
 
 1.  <font color="#FF0066">analyzer</font> - full
     class name for the analyzer to use.
@@ -402,7 +402,7 @@ Example: max.buffered=buf:10:10:100:100 -
     *   <font color="#FF0066">compound</font> - whether the index is
         using the compound format or not. Valid values are "true" and "false".
 
- Here is a list of currently defined properties: 
+ Here is a list of currently defined properties:
 
 1.  __Root directory for data and indexes:__
 
@@ -472,29 +472,29 @@ Example: max.buffered=buf:10:10:100:100 -
 
     *   alt.tasks.packages
       - comma separated list of additional packages where tasks classes will be looked for
-      when not found in the default package (that of PerfTask).  If the same task class 
+      when not found in the default package (that of PerfTask).  If the same task class
       appears in more than one package, the package indicated first in this list will be used.
 
- For sample use of these properties see the *.alg files under conf. 
+ For sample use of these properties see the *.alg files under conf.
 
 ## Example input algorithm and the result benchmark report
 
- The following example is in conf/sample.alg: <font color="#003333"># -------------------------------------------------------- # # Sample: what is the effect of doc size on indexing time? # # There are two parts in this test: # - PopulateShort adds 2N documents of length L # - PopulateLong adds N documents of length 2L # Which one would be faster? # The comparison is done twice. # # -------------------------------------------------------- </font> <font color="#990066"># ------------------------------------------------------------------------------------- # multi val params are iterated by NewRound's, added to reports, start with column name. merge.factor=mrg:10:20 max.buffered=buf:100:1000 compound=true analyzer=org.apache.lucene.analysis.standard.StandardAnalyzer directory=FSDirectory doc.stored=true doc.tokenized=true doc.term.vector=false doc.add.log.step=500 docs.dir=reuters-out doc.maker=org.apache.lucene.benchmark.byTask.feeds.SimpleDocMaker query.maker=org.apache.lucene.benchmark.byTask.feeds.SimpleQueryMaker # task at this depth or less would print when they start task.max.depth.log=2 log.queries=false # -------------------------------------------------------------------------------------</font> <font color="#3300FF">{ { "PopulateShort" CreateIndex { AddDoc(4000) > : 20000 Optimize CloseIndex > ResetSystemErase { "PopulateLong" CreateIndex { AddDoc(8000) > : 10000 Optimize CloseIndex > ResetSystemErase NewRound } : 2 RepSumByName RepSelectByPref Populate </font> 
+ The following example is in conf/sample.alg: <font color="#003333"># -------------------------------------------------------- # # Sample: what is the effect of doc size on indexing time? # # There are two parts in this test: # - PopulateShort adds 2N documents of length L # - PopulateLong adds N documents of length 2L # Which one would be faster? # The comparison is done twice. # # -------------------------------------------------------- </font> <font color="#990066"># ------------------------------------------------------------------------------------- # multi val params are iterated by NewRound's, added to reports, start with column name. merge.factor=mrg:10:20 max.buffered=buf:100:1000 compound=true analyzer=org.apache.lucene.analysis.standard.StandardAnalyzer directory=FSDirectory doc.stored=true doc.tokenized=true doc.term.vector=false doc.add.log.step=500 docs.dir=reuters-out doc.maker=org.apache.lucene.benchmark.byTask.feeds.SimpleDocMaker query.maker=org.apache.lucene.benchmark.byTask.feeds.SimpleQueryMaker # task at this depth or less would print when they start task.max.depth.log=2 log.queries=false # -------------------------------------------------------------------------------------</font> <font color="#3300FF">{ { "PopulateShort" CreateIndex { AddDoc(4000) > : 20000 Optimize CloseIndex > ResetSystemErase { "PopulateLong" CreateIndex { AddDoc(8000) > : 10000 Optimize CloseIndex > ResetSystemErase NewRound } : 2 RepSumByName RepSelectByPref Populate </font>
 
- The command line for running this sample:   
-`ant run-task -Dtask.alg=conf/sample.alg` 
+ The command line for running this sample:  
+`ant run-task -Dtask.alg=conf/sample.alg`
 
- The output report from running this test contains the following: Operation round mrg buf runCnt recsPerRun rec/s elapsedSec avgUsedMem avgTotalMem PopulateShort 0 10 100 1 20003 119.6 167.26 12,959,120 14,241,792 PopulateLong - - 0 10 100 - - 1 - - 10003 - - - 74.3 - - 134.57 - 17,085,208 - 20,635,648 PopulateShort 1 20 1000 1 20003 143.5 139.39 63,982,040 94,756,864 PopulateLong - - 1 20 1000 - - 1 - - 10003 - - - 77.0 - - 129.92 - 87,309,608 - 100,831,232 
+ The output report from running this test contains the following: Operation round mrg buf runCnt recsPerRun rec/s elapsedSec avgUsedMem avgTotalMem PopulateShort 0 10 100 1 20003 119.6 167.26 12,959,120 14,241,792 PopulateLong - - 0 10 100 - - 1 - - 10003 - - - 74.3 - - 134.57 - 17,085,208 - 20,635,648 PopulateShort 1 20 1000 1 20003 143.5 139.39 63,982,040 94,756,864 PopulateLong - - 1 20 1000 - - 1 - - 10003 - - - 77.0 - - 129.92 - 87,309,608 - 100,831,232
 
 ## Results record counting clarified
 
- Two columns in the results table indicate records counts: records-per-run and records-per-second. What does it mean? 
+ Two columns in the results table indicate records counts: records-per-run and records-per-second. What does it mean?
 
- Almost every task gets 1 in this count just for being executed. Task sequences aggregate the counts of their child tasks, plus their own count of 1. So, a task sequence containing 5 other task sequences, each running a single other task 10 times, would have a count of 1 + 5 * (1 + 10) = 56. 
+ Almost every task gets 1 in this count just for being executed. Task sequences aggregate the counts of their child tasks, plus their own count of 1. So, a task sequence containing 5 other task sequences, each running a single other task 10 times, would have a count of 1 + 5 * (1 + 10) = 56.
 
- The traverse and retrieve tasks "count" more: a traverse task would add 1 for each traversed result (hit), and a retrieve task would additionally add 1 for each retrieved doc. So, regular Search would count 1, SearchTrav that traverses 10 hits would count 11, and a SearchTravRet task that retrieves (and traverses) 10, would count 21. 
+ The traverse and retrieve tasks "count" more: a traverse task would add 1 for each traversed result (hit), and a retrieve task would additionally add 1 for each retrieved doc. So, regular Search would count 1, SearchTrav that traverses 10 hits would count 11, and a SearchTravRet task that retrieves (and traverses) 10, would count 21.
 
- Confusing? this might help: always examine the `elapsedSec` column, and always compare "apples to apples", .i.e. it is interesting to check how the `rec/s` changed for the same task (or sequence) between two different runs, but it is not very useful to know how the `rec/s` differs between `Search` and `SearchTrav` tasks. For the latter, `elapsedSec` would bring more insight. 
+ Confusing? this might help: always examine the `elapsedSec` column, and always compare "apples to apples", .i.e. it is interesting to check how the `rec/s` changed for the same task (or sequence) between two different runs, but it is not very useful to know how the `rec/s` differs between `Search` and `SearchTrav` tasks. For the latter, `elapsedSec` would bring more insight.
 
 
 </div>

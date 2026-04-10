@@ -21,6 +21,6 @@ summary: *content
  limitations under the License.
 -->
 
- This package provides dictionary-driven lemmatization ("accurate stemming") filter and analyzer for the Polish Language, driven by the [Morfologik library](http://morfologik.blogspot.com/) developed by Dawid Weiss and Marcin Miłkowski. 
+ This package provides dictionary-driven lemmatization ("accurate stemming") filter and analyzer for the Polish Language, driven by the [Morfologik library](http://morfologik.blogspot.com/) developed by Dawid Weiss and Marcin Miłkowski.
 
- The MorfologikFilter yields one or more terms for each token. Each of those terms is given the same position in the index. 
+ The MorfologikFilter yields one or more terms for each token. Each of those terms is given the same position in the index.

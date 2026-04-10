@@ -21,5 +21,5 @@ summary: *content
 -->
 
 Uses already seen data (the indexed documents) to classify new documents.
-Currently only contains a (simplistic) Lucene based Naive Bayes classifier 
+Currently only contains a (simplistic) Lucene based Naive Bayes classifier
 and a k-Nearest Neighbor classifier

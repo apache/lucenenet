@@ -34,7 +34,7 @@ In order to use this package you should provide:
 
 *   [Reporting object](utils/SubmissionReport.html).
 
-For benchmarking TREC collections with TREC QRels, take a look at the 
+For benchmarking TREC collections with TREC QRels, take a look at the
 [trec package](trec/package-summary.html).
 
 Here is a sample code used to run the TREC 2006 queries 701-850 on the .Gov2 collection:
@@ -43,12 +43,12 @@ Here is a sample code used to run the TREC 2006 queries 701-850 on the .Gov2 col
         File qrelsFile = new File("qrels-701-850.txt");
         IndexReader ir = DirectoryReader.open(directory):
         IndexSearcher searcher = new IndexSearcher(ir);
-    
-    int maxResults = 1000;
-        String docNameField = "docname"; 
 
-        PrintWriter logger = new PrintWriter(System.out,true); 
-    
+    int maxResults = 1000;
+        String docNameField = "docname";
+
+        PrintWriter logger = new PrintWriter(System.out,true);
+
     // use trec utilities to read trec topics into quality queries
         TrecTopicsReader qReader = new TrecTopicsReader();
         QualityQuery qqs[] = qReader.readQueries(new BufferedReader(new FileReader(topicsFile)));
@@ -73,9 +73,9 @@ Here is a sample code used to run the TREC 2006 queries 701-850 on the .Gov2 col
 
 Some immediate ways to modify this program to your needs are:
 
-*   To run on different formats of queries and judgements provide your own 
-      [Judge](Judge.html) and 
+*   To run on different formats of queries and judgements provide your own
+      [Judge](Judge.html) and
       [Quality queries](QualityQuery.html).
 
-*   Create sophisticated Lucene queries by supplying a different 
+*   Create sophisticated Lucene queries by supplying a different
   [Quality query parser](QualityQueryParser.html).

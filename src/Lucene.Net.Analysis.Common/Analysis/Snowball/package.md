@@ -23,9 +23,9 @@ summary: *content
 <xref:Lucene.Net.Analysis.TokenFilter> and <xref:Lucene.Net.Analysis.Analyzer> implementations that use Snowball
 stemmers.
 
- This project provides pre-compiled version of the Snowball stemmers based on revision 500 of the Tartarus Snowball repository, together with classes integrating them with the Lucene search engine. 
+ This project provides pre-compiled version of the Snowball stemmers based on revision 500 of the Tartarus Snowball repository, together with classes integrating them with the Lucene search engine.
 
- A few changes has been made to the static Snowball code and compiled stemmers: 
+ A few changes has been made to the static Snowball code and compiled stemmers:
 
 *   Class SnowballProgram is made abstract and contains new abstract method stem() to avoid reflection in Lucene filter class SnowballFilter.
 
@@ -33,10 +33,10 @@ stemmers.
 
 *   Snowball BSD license header has been added to the Java classes to avoid having RAT adding ASL headers.
 
- See the Snowball [home page](http://snowball.tartarus.org/) for more information about the algorithms. 
+ See the Snowball [home page](http://snowball.tartarus.org/) for more information about the algorithms.
 
- __IMPORTANT NOTICE ON BACKWARDS COMPATIBILITY!__ 
+ __IMPORTANT NOTICE ON BACKWARDS COMPATIBILITY!__
 
- An index created using the Snowball module in Lucene 2.3.2 and below might not be compatible with the Snowball module in Lucene 2.4 or greater. 
+ An index created using the Snowball module in Lucene 2.3.2 and below might not be compatible with the Snowball module in Lucene 2.4 or greater.
 
- For more information about this issue see: https://issues.apache.org/jira/browse/LUCENE-1142 
+ For more information about this issue see: https://issues.apache.org/jira/browse/LUCENE-1142

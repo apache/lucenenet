@@ -20,4 +20,4 @@ summary: *content
  limitations under the License.
 -->
 
-Comparable object wrappers 
+Comparable object wrappers

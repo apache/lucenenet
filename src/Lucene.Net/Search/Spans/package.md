@@ -31,7 +31,7 @@ The following span query operators are implemented:
 * A [SpanOrQuery](xref:Lucene.Net.Search.Spans.SpanOrQuery) merges spans from a number of other <xref:Lucene.Net.Search.Spans.SpanQuery>s.
 * A [SpanNotQuery](xref:Lucene.Net.Search.Spans.SpanNotQuery) removes spans matching one [SpanQuery](xref:Lucene.Net.Search.Spans.SpanQuery) which overlap (or comes near) another. This can be used, e.g., to implement within-paragraph search.
 * A [SpanFirstQuery](xref:Lucene.Net.Search.Spans.SpanFirstQuery) matches spans matching `q` whose end position is less than `n`. This can be used to constrain matches to the first part of the document.
-* A [SpanPositionRangeQuery](xref:Lucene.Net.Search.Spans.SpanPositionRangeQuery) is a more general form of SpanFirstQuery that can constrain matches to arbitrary portions of the document. In all cases, output spans are minimally inclusive. In other words, a span formed by matching a span in x and y starts at the lesser of the two starts and ends at the greater of the two ends. 
+* A [SpanPositionRangeQuery](xref:Lucene.Net.Search.Spans.SpanPositionRangeQuery) is a more general form of SpanFirstQuery that can constrain matches to arbitrary portions of the document. In all cases, output spans are minimally inclusive. In other words, a span formed by matching a span in x and y starts at the lesser of the two starts and ends at the greater of the two ends.
 
 For example, a span query which matches "John Kerry" within ten
 words of "George Bush" within the first 100 words of the document
@@ -42,16 +42,16 @@ SpanQuery john   = new SpanTermQuery(new Term("content", "john"));
 SpanQuery kerry  = new SpanTermQuery(new Term("content", "kerry"));
 SpanQuery george = new SpanTermQuery(new Term("content", "george"));
 SpanQuery bush   = new SpanTermQuery(new Term("content", "bush"));
-    
+
 SpanQuery johnKerry =
     new SpanNearQuery(new SpanQuery[] { john, kerry }, 0, true);
-    
+
 SpanQuery georgeBush =
    new SpanNearQuery(new SpanQuery[] { george, bush }, 0, true);
-    
+
 SpanQuery johnKerryNearGeorgeBush =
    new SpanNearQuery(new SpanQuery[] { johnKerry, georgeBush }, 10, false);
-    
+
 SpanQuery johnKerryNearGeorgeBushAtStart =
    new SpanFirstQuery(johnKerryNearGeorgeBush, 100);
 ```

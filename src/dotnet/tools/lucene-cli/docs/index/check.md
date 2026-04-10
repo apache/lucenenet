@@ -12,7 +12,7 @@ lucene index check [<INDEX_DIRECTORY>] [-v|--verbose] [-c|--cross-check-term-vec
 
 ### Description
 
-Basic tool to check the health of an index. 
+Basic tool to check the health of an index.
 
 As this tool checks every byte in the index, on a large index it can take quite a long time to run.
 
