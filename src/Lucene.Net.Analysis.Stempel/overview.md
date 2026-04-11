@@ -48,7 +48,7 @@ For an IR system stems are usually sufficient, for a morphological analysis syst
 
 Lemmatization is a process of finding the base, non-inflected form of a word. The result of lemmatization is a correct existing word, often in nominative case for nouns and infinitive form for verbs. A given inflected form may correspond to several lemmas (e.g. "found" -> find, found) - the correct choice depends on the context.  
 
- Stemming is concerned mostly with finding a unique "root" of a word, which not necessarily results in any existing word or lemma. The quality of stemming is measured by the rate of collisions (overstemming - which causes words with different lemmas to be incorrectly conflated into one "root"), and the rate of superfluous word "roots" (understemming - which assigns several "roots" to words with the same lemma).   
+ Stemming is concerned mostly with finding a unique "root" of a word, which not necessarily results in any existing word or lemma. The quality of stemming is measured by the rate of collisions (overstemming - which causes words with different lemmas to be incorrectly conflated into one "root"), and the rate of superfluous word "roots" (understemming - which assigns several "roots" to words with the same lemma).  
 
  Both stemmer and lemmatizer can be implemented in various ways. The two most common approaches are:  
 
@@ -167,15 +167,15 @@ missing from other texts
 
 This step was the most time-consuming - and it would probably be even more tedious and difficult if not for the help of [Python](http://www.python.org/). The source texts had to be brought to a common encoding (UTF-8) - some of them used quite ancient encodings like Mazovia or DHN - and then scripts were written to collect all lemmas and inflected forms from the source texts. In cases when the source text was not tagged, I used the SAM analyzer to produce lemmas. In cases of ambiguous lemmatization I decided to put references to inflected forms from all base forms.  
 
-All grammatical categories were allowed to appear in the corpus, i.e. nouns, verbs, adjectives, numerals, and pronouns. The resulting corpus consisted of roughly 87,000+ inflection sets, i.e. each set consisted of one base form (lemma) and many inflected forms. However, because of the nature of the training method I restricted these sets to include only those where there were at least 4 inflected forms. Sets with 3 or less inflected forms were removed, so that the final corpus consisted of ~69,000 unique sets, which in turn contained ~1.5 mln inflected forms.   
+All grammatical categories were allowed to appear in the corpus, i.e. nouns, verbs, adjectives, numerals, and pronouns. The resulting corpus consisted of roughly 87,000+ inflection sets, i.e. each set consisted of one base form (lemma) and many inflected forms. However, because of the nature of the training method I restricted these sets to include only those where there were at least 4 inflected forms. Sets with 3 or less inflected forms were removed, so that the final corpus consisted of ~69,000 unique sets, which in turn contained ~1.5 mln inflected forms.  
 
 ## Testing
 
-I tested the stemmer tables produced using the implementation described above. The following sections give some details about the testing setup. 
+I tested the stemmer tables produced using the implementation described above. The following sections give some details about the testing setup.
 
 ### Testing procedure
 
-The testing procedure was as follows: 
+The testing procedure was as follows:
 
 *   the whole corpus of ~69,000 unique sets was shuffled, so that the
 input sets were in random order.
@@ -198,7 +198,7 @@ table below.
 
 ### Test results
 
-The following table summarizes test results for varying sizes of training samples. The meaning of the table columns is described below: 
+The following table summarizes test results for varying sizes of training samples. The meaning of the table columns is described below:
 
 *   __training sets:__ the number of training sets. One set
 consists of one lemma and at least 4 and up to ~80 inflected forms
@@ -412,4 +412,4 @@ Zakopane, Poland.
 
 3.  Galambos, L.: Lemmatizer for Document Information Retrieval
 Systems in JAVA.<span style="text-decoration: underline;"> </span>[<http://www.informatik.uni-trier.de/%7Eley/db/conf/sofsem/sofsem2001.html#Galambos01>](http://www.informatik.uni-trier.de/%7Eley/db/conf/sofsem/sofsem2001.html#Galambos01)
-SOFSEM 2001, Piestany, Slovakia.   
+SOFSEM 2001, Piestany, Slovakia.  

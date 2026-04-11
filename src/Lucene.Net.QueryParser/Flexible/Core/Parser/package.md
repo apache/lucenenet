@@ -28,4 +28,4 @@ Necessary interfaces to implement text parsers.
 The namespace <tt>Lucene.Net.QueryParsers.Flexible.Core.Parser</tt> contains interfaces that should be implemented by the parsers. Parsers produce IQueryNode Trees from a string object. This package still needs some work to add support to for multiple parsers. Features that should be supported for the future, related with the parser:
 
 - QueryNode tree should be able convertible to any parser syntax.
-- The query syntax should support calling other parsers. - QueryNode tree created by multiple parsers. 
+- The query syntax should support calling other parsers. - QueryNode tree created by multiple parsers.

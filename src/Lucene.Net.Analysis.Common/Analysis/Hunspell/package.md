@@ -23,4 +23,4 @@ summary: *content
 Stemming TokenFilter using a Java implementation of the [
 Hunspell stemming algorithm.](http://www.ldc.upenn.edu/Catalog/docs/LDC2008T01/acta04.pdf)
 
- Dictionaries can be found on [ OpenOffice's wiki](http://wiki.services.openoffice.org/wiki/Dictionaries) 
+ Dictionaries can be found on [ OpenOffice's wiki](http://wiki.services.openoffice.org/wiki/Dictionaries)

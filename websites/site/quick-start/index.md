@@ -22,7 +22,7 @@ The Introduction page provides a bit of context about Lucene.NET. You'll learn w
 ## Tutorial
 As developers, one of the fastest ways to learn a new technology is to build a toy application with it.  So that's the approach we are going to take to get you up and running with Lucene.NET.
 
-To get started building your first application go to the [Tutorial](xref:quick-start/tutorial) page. 
+To get started building your first application go to the [Tutorial](xref:quick-start/tutorial) page.
 
 
 ## Learning Resources

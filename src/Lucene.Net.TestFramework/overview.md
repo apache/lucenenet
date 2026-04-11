@@ -21,4 +21,4 @@ summary: *content
  limitations under the License.
 -->
 
- The Lucene Test Framework is used by Lucene as the basis for its tests. The framework can also be used for testing third-party code that uses the Lucene API. 
+ The Lucene Test Framework is used by Lucene as the basis for its tests. The framework can also be used for testing third-party code that uses the Lucene API.

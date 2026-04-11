@@ -299,67 +299,67 @@ if (liveDocs != null && !liveDocs.Get(docID))
     // document is deleted...
 }
 ```
-    
+
 ## [LUCENE-2858](https://issues.apache.org/jira/browse/LUCENE-2858), [LUCENE-3733](https://issues.apache.org/jira/browse/LUCENE-3733): `IndexReader` --> `AtomicReader`/`CompositeReader`/`DirectoryReader` refactoring
 
-The abstract class `IndexReader` has been 
-refactored to expose only essential methods to access stored fields 
-during display of search results. It is no longer possible to retrieve 
-terms or postings data from the underlying index, not even deletions are 
-visible anymore. You can still pass `IndexReader` as constructor parameter 
-to `IndexSearcher` and execute your searches; Lucene will automatically 
-delegate procedures like query rewriting and document collection atomic 
-subreaders. 
+The abstract class `IndexReader` has been
+refactored to expose only essential methods to access stored fields
+during display of search results. It is no longer possible to retrieve
+terms or postings data from the underlying index, not even deletions are
+visible anymore. You can still pass `IndexReader` as constructor parameter
+to `IndexSearcher` and execute your searches; Lucene will automatically
+delegate procedures like query rewriting and document collection atomic
+subreaders.
 
-If you want to dive deeper into the index and want to write own queries, 
-take a closer look at the new abstract sub-classes `AtomicReader` and 
-`CompositeReader`: 
+If you want to dive deeper into the index and want to write own queries,
+take a closer look at the new abstract sub-classes `AtomicReader` and
+`CompositeReader`:
 
-`AtomicReader` instances are now the only source of `Terms`, `Postings`, 
-`DocValues` and `FieldCache`. Queries are forced to execute on an `AtomicReader` on a per-segment basis and `FieldCache`s are keyed by 
-`AtomicReader`s. 
+`AtomicReader` instances are now the only source of `Terms`, `Postings`,
+`DocValues` and `FieldCache`. Queries are forced to execute on an `AtomicReader` on a per-segment basis and `FieldCache`s are keyed by
+`AtomicReader`s.
 
-Its counterpart `CompositeReader` exposes a utility method to retrieve 
-its composites. But watch out, composites are not necessarily atomic. 
-Next to the added type-safety we also removed the notion of 
-index-commits and version numbers from the abstract `IndexReader`, the 
-associations with `IndexWriter` were pulled into a specialized 
-`DirectoryReader`. To open `Directory`-based indexes use 
-`DirectoryReader.Open()`, the corresponding method in `IndexReader` is now 
-deprecated for easier migration. Only `DirectoryReader` supports commits, 
-versions, and reopening with `OpenIfChanged()`. Terms, postings, 
-docvalues, and norms can from now on only be retrieved using 
-`AtomicReader`; `DirectoryReader` and `MultiReader` extend `CompositeReader`, 
-only offering stored fields and access to the sub-readers (which may be 
-composite or atomic). 
+Its counterpart `CompositeReader` exposes a utility method to retrieve
+its composites. But watch out, composites are not necessarily atomic.
+Next to the added type-safety we also removed the notion of
+index-commits and version numbers from the abstract `IndexReader`, the
+associations with `IndexWriter` were pulled into a specialized
+`DirectoryReader`. To open `Directory`-based indexes use
+`DirectoryReader.Open()`, the corresponding method in `IndexReader` is now
+deprecated for easier migration. Only `DirectoryReader` supports commits,
+versions, and reopening with `OpenIfChanged()`. Terms, postings,
+docvalues, and norms can from now on only be retrieved using
+`AtomicReader`; `DirectoryReader` and `MultiReader` extend `CompositeReader`,
+only offering stored fields and access to the sub-readers (which may be
+composite or atomic).
 
-If you have more advanced code dealing with custom `Filter`s, you might 
-have noticed another new class hierarchy in Lucene (see [LUCENE-2831](https://issues.apache.org/jira/browse/LUCENE-2831)): 
-`IndexReaderContext` with corresponding Atomic-/`CompositeReaderContext`. 
+If you have more advanced code dealing with custom `Filter`s, you might
+have noticed another new class hierarchy in Lucene (see [LUCENE-2831](https://issues.apache.org/jira/browse/LUCENE-2831)):
+`IndexReaderContext` with corresponding Atomic-/`CompositeReaderContext`.
 
-The move towards per-segment search Lucene 2.9 exposed lots of custom 
-`Query`s and `Filter`s that couldn't handle it. For example, some `Filter` 
-implementations expected the `IndexReader` passed in is identical to the 
-`IndexReader` passed to `IndexSearcher` with all its advantages like 
-absolute document IDs etc. Obviously this "paradigm-shift" broke lots of 
-applications and especially those that utilized cross-segment data 
-structures (like Apache Solr). 
+The move towards per-segment search Lucene 2.9 exposed lots of custom
+`Query`s and `Filter`s that couldn't handle it. For example, some `Filter`
+implementations expected the `IndexReader` passed in is identical to the
+`IndexReader` passed to `IndexSearcher` with all its advantages like
+absolute document IDs etc. Obviously this "paradigm-shift" broke lots of
+applications and especially those that utilized cross-segment data
+structures (like Apache Solr).
 
-In Lucene 4.0, we introduce `IndexReaderContext`s "searcher-private" 
-reader hierarchy. During `Query` or `Filter` execution Lucene no longer 
-passes raw readers down `Query`s, `Filter`s or `Collector`s; instead 
-components are provided an `AtomicReaderContext` (essentially a hierarchy 
-leaf) holding relative properties like the document-basis in relation to 
-the top-level reader. This allows `Query`s and `Filter` to build up logic 
-based on document IDs, albeit the per-segment orientation. 
+In Lucene 4.0, we introduce `IndexReaderContext`s "searcher-private"
+reader hierarchy. During `Query` or `Filter` execution Lucene no longer
+passes raw readers down `Query`s, `Filter`s or `Collector`s; instead
+components are provided an `AtomicReaderContext` (essentially a hierarchy
+leaf) holding relative properties like the document-basis in relation to
+the top-level reader. This allows `Query`s and `Filter` to build up logic
+based on document IDs, albeit the per-segment orientation.
 
-There are still valid use-cases where top-level readers ie. "atomic 
-views" on the index are desirable. Let say you want to iterate all terms 
+There are still valid use-cases where top-level readers ie. "atomic
+views" on the index are desirable. Let say you want to iterate all terms
 of a complete index for auto-completion or faceting, Lucene provides
-utility wrappers like `SlowCompositeReaderWrapper` ([LUCENE-2597](https://issues.apache.org/jira/browse/LUCENE-2597)) emulating 
-an `AtomicReader`. Note: using "atomicity emulators" can cause serious 
-slowdowns due to the need to merge terms, postings, `DocValues`, and 
-`FieldCache`, use them with care! 
+utility wrappers like `SlowCompositeReaderWrapper` ([LUCENE-2597](https://issues.apache.org/jira/browse/LUCENE-2597)) emulating
+an `AtomicReader`. Note: using "atomicity emulators" can cause serious
+slowdowns due to the need to merge terms, postings, `DocValues`, and
+`FieldCache`, use them with care!
 
 ## [LUCENE-4306](https://issues.apache.org/jira/browse/LUCENE-4306): `GetSequentialSubReaders()`, `ReaderUtil.Gather()`
 
@@ -408,10 +408,10 @@ package names have changed, and `ReusableAnalyzerBase` was renamed to
 
 The option to use a Collator's order (instead of binary order) for
 sorting and range queries has been moved to lucene/queries.
-The Collated TermRangeQuery/Filter has been moved to SlowCollatedTermRangeQuery/Filter, 
+The Collated TermRangeQuery/Filter has been moved to SlowCollatedTermRangeQuery/Filter,
 and the collated sorting has been moved to `SlowCollatedStringComparer`.
 
-Note: this functionality isn't very scalable and if you are using it, consider 
+Note: this functionality isn't very scalable and if you are using it, consider
 indexing collation keys with the collation support in the analysis module instead.
 
 To perform collated range queries, use the collating analyzer: `ICUCollationKeyAnalyzer`, and set `qp.AnalyzeRangeTerms = true`.
@@ -648,7 +648,7 @@ together by Lucene.
 
 * [LUCENE-2374](https://issues.apache.org/jira/browse/LUCENE-2374): The backwards layer in `Attribute` was removed. To support correct reflection of `Attribute` instances, where the reflection was done using deprecated `ToString()` parsing, you have to now override `ReflectWith()` to customize output. `ToString()` is no longer implemented by `Attribute`, so if you have overridden `ToString()`, port your customization over to `ReflectWith()`. `ReflectAsString()` would then return what `ToString()` did before.
 
-* [LUCENE-2236](https://issues.apache.org/jira/browse/LUCENE-2236), [LUCENE-2912](https://issues.apache.org/jira/browse/LUCENE-2912): `DefaultSimilarity` can no longer be set statically 
+* [LUCENE-2236](https://issues.apache.org/jira/browse/LUCENE-2236), [LUCENE-2912](https://issues.apache.org/jira/browse/LUCENE-2912): `DefaultSimilarity` can no longer be set statically
   (and dangerously) for the entire `AppDomain`.
   `Similarity` can now be configured on a per-field basis (via `PerFieldSimilarityWrapper`)
   `Similarity` has a lower-level API, if you want the higher-level vector-space API
@@ -661,8 +661,8 @@ together by Lucene.
   during indexing.
 
 * [LUCENE-3722](https://issues.apache.org/jira/browse/LUCENE-3722): `Similarity` methods and collection/term statistics now take
-  `long` instead of `int` (to enable distributed scoring of > 2B docs). 
-  For example, in `TFIDFSimilarity` `Idf(int, int)` is now `Idf(long, long)`. 
+  `long` instead of `int` (to enable distributed scoring of > 2B docs).
+  For example, in `TFIDFSimilarity` `Idf(int, int)` is now `Idf(long, long)`.
 
 * [LUCENE-3559](https://issues.apache.org/jira/browse/LUCENE-3559): The members `DocFreq()` and `MaxDoc` on `IndexSearcher` were removed,
   as these are no longer used by the scoring system.
@@ -681,8 +681,8 @@ together by Lucene.
   `DirectoryReader.OpenIfChanged()` (a static method), and now returns `null`
   (instead of the old reader) if there are no changes to the index, to
   prevent the common pitfall of accidentally closing the old reader.
-  
-* [LUCENE-3687](https://issues.apache.org/jira/browse/LUCENE-3687): `Similarity.ComputeNorm()` now expects a `Norm` object to set the computed 
+
+* [LUCENE-3687](https://issues.apache.org/jira/browse/LUCENE-3687): `Similarity.ComputeNorm()` now expects a `Norm` object to set the computed
   norm value instead of returning a fixed single byte value. Custom similarities can now
   set integer, float and byte values if a single byte is not sufficient.
 
@@ -707,5 +707,5 @@ together by Lucene.
 
 * [LUCENE-4122](https://issues.apache.org/jira/browse/LUCENE-4122): Removed the `Payload` class and replaced with `BytesRef`.
   `PayloadAttribute`'s name is unchanged, it just uses the `BytesRef`
-  class to refer to the payload bytes/start offset/end offset 
+  class to refer to the payload bytes/start offset/end offset
   (or `null` if there is no payload).

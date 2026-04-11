@@ -22,4 +22,4 @@ summary: *content
 
 Support for generating test indexes in the Lucene 3.x index format.
 
- NOTE: This is not a perfect simulation of the 3.x format, but its close. Particularly, indexes generated with this codec cannot actually be read with Lucene 3.x 
+ NOTE: This is not a perfect simulation of the 3.x format, but its close. Particularly, indexes generated with this codec cannot actually be read with Lucene 3.x

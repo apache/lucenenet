@@ -83,7 +83,7 @@ Then in the dialog that comes up pick a place on the computer to save the ISO fi
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box07.png'>
 
-And then it will begin downloading the file and displaying a progress indicator.  Once the file is downloaded, we have now have the ISO file we need for installing the OS inside of VirtualBox. 
+And then it will begin downloading the file and displaying a progress indicator.  Once the file is downloaded, we have now have the ISO file we need for installing the OS inside of VirtualBox.
 
 Once that's done, you can click Finished in the dialog that comes up since we don't need to burn this ISO file to a dvd.  Having it on the hard drive is fine.
 
@@ -103,7 +103,7 @@ The default choice below is fine:<br>
 <br>
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box12.png'>
 
-In the following dialog "Dynamically allocated" is fine.  Then in the dialog after that set the max size. 
+In the following dialog "Dynamically allocated" is fine.  Then in the dialog after that set the max size.
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box13.png'>
  <br>
@@ -115,7 +115,7 @@ In the following dialog "Dynamically allocated" is fine.  Then in the dialog aft
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box15.png'>
 
-Now click the little disk drop down next to the Optical Drive label.  From that menu select "Chose a Disk File…" and select the windows ISO file you previously downloaded. 
+Now click the little disk drop down next to the Optical Drive label.  From that menu select "Chose a Disk File…" and select the windows ISO file you previously downloaded.
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box16.png'>
 
@@ -163,7 +163,7 @@ And then finally we have windows running in the vm, and in the screenshot below 
 
 ## Installing Eclipse 4.6
 
-Source of download https://wiki.eclipse.org/Older_Versions_Of_Eclipse. We want "Eclipse Neon Packages (2016 - v 4.6.0)"  This version goes by the name "neon r"  and it's page is here: https://www.eclipse.org/downloads/packages/release/neon/r 
+Source of download https://wiki.eclipse.org/Older_Versions_Of_Eclipse. We want "Eclipse Neon Packages (2016 - v 4.6.0)"  This version goes by the name "neon r"  and it's page is here: https://www.eclipse.org/downloads/packages/release/neon/r
  
 We want the 2nd package below, "Eclipse IDE for Java Developers"  so download that, in my case the x86_64 link.
 
@@ -180,7 +180,7 @@ So we will need to install "**Java SE Development Kit 8u25**" into our VM which 
 
 > **WARNING**: These older versions of the JRE and JDK are provided to help developers debug issues in older systems. **They are not updated with the latest security patches and are not recommended for use in production.**
 
-You will need to scroll down a ways on the page to find "**Java SE Development Kit 8u25**" or better yet search the page for 8u25. Then download the Windows x64 one jre-8u25-windows-x64.exe 
+You will need to scroll down a ways on the page to find "**Java SE Development Kit 8u25**" or better yet search the page for 8u25. Then download the Windows x64 one jre-8u25-windows-x64.exe
 Download and run that jdk-8u25-windows-x64.exe file that in the VM.
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-java8-01.png'>
@@ -215,7 +215,7 @@ You can get version 1.9.7 here: https://archive.apache.org/dist/ant/binaries/ Th
 
 You'll have to unzip the downloaded `apache-ant-1.9.7-bin.zip` file.  
 
-The unzipped folder will need to be moved to a place of your choosing where you want ant to live.  In my case I created a folder called "Apache Software Foundation" inside the "Program Files" folder and placed it there.  So my path was `c:\Program Files\Apache Software Foundation\apache-ant-1.9.7` Directions for installing Ant are on this page under "The Short Story" https://ant.apache.org/manual/install.html 
+The unzipped folder will need to be moved to a place of your choosing where you want ant to live.  In my case I created a folder called "Apache Software Foundation" inside the "Program Files" folder and placed it there.  So my path was `c:\Program Files\Apache Software Foundation\apache-ant-1.9.7` Directions for installing Ant are on this page under "The Short Story" https://ant.apache.org/manual/install.html
 
 I typed "Environment Variables" into windows search and used that to open the System Properties window. Then clicked the Environment Variables button.
 
@@ -227,8 +227,8 @@ I typed "Environment Variables" into windows search and used that to open the Sy
 
 
 In here we can set the Environment Variables we need.
-See this page for more details of what we need to do: 
-https://ant.apache.org/manual/install.html#setup 
+See this page for more details of what we need to do:
+https://ant.apache.org/manual/install.html#setup
 
 From that Page:
 1.	Add the bin directory to your path.
@@ -265,10 +265,10 @@ Use version 3.8.1.  https://maven.apache.org/download.cgi The installation proce
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-apache-maven02.png'>
 
-We are going to download `apache-maven-3.8.1-bin.zip` 
+We are going to download `apache-maven-3.8.1-bin.zip`
 Move the folder out of the zip and into the location by the apache ant folder.
 
-"install" instructions are here: https://maven.apache.org/install.html 
+"install" instructions are here: https://maven.apache.org/install.html
 
 Add the `bin` directory of  `apache-maven-3.8.1 to` the `PATH` environment variable
 
@@ -280,7 +280,7 @@ Then open a command prompt via cmd.exe and type  mvn –v to confirm that the pa
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-apache-maven04.png'>
 
  
-## Installing Git 
+## Installing Git
 
 https://git-scm.com/download/win
 
@@ -314,7 +314,7 @@ C:\Users\Ron\source\repos\lucene
 ### Why not clone the code directly from Java Lucene Repo?
 It turns out that it's no longer possible to directly compile the Lucene 4.8 code obtained from the Java Lucene Repo without modification.  Unlike NuGet which makes old versions available forever and is always online, Maven has lots of mirrors that may cease to exist at some point, and that is what's happed, so the configuration in the Java Lucene 4.8 Repo is out of date and no longer builds.
 
-In addition, Java 8 (which we need for Eclipse) detects an error in the code that Java 7 did not, so the build doesn't complete. It is due to some fields that are marked final that are disposed at the end of the constructor (so they really don't need to be fields). Taking the final keyword off of the field removes the error. So, the project has to be modified slightly so all of this can happen. 
+In addition, Java 8 (which we need for Eclipse) detects an error in the code that Java 7 did not, so the build doesn't complete. It is due to some fields that are marked final that are disposed at the end of the constructor (so they really don't need to be fields). Taking the final keyword off of the field removes the error. So, the project has to be modified slightly so all of this can happen.
 
 ### Where can we get Java Lucene 4.8 code that compiles?
 There is a fork of the Java Lucene Repo at https://github.com/NightOwl888/lucene that includes modifications to update the Maven and ant files so that the code will still compile.
@@ -341,7 +341,7 @@ Once that completes Lets checkout the branch, in the Bash window type:
 
 `cd lucene-4.8.0`
 
-followed by 
+followed by
 
 `git checkout releases/lucene-solr/4.8.0/update`
 
@@ -367,7 +367,7 @@ In windows, this is what the directory looks like:
 ### Boostrap ant
 First we need to get ant bootstrapped.
 Here is some background on Maven and Ivy from the web:
-> Apache Maven is a software project management and comprehension tool, whereas Apache Ivy is only a dependency management tool, highly integrated with Apache Ant™, the popular build management tool. Source: https://ant.apache.org/ivy/m2comparison.html 
+> Apache Maven is a software project management and comprehension tool, whereas Apache Ivy is only a dependency management tool, highly integrated with Apache Ant™, the popular build management tool. Source: https://ant.apache.org/ivy/m2comparison.html
 
 From inside of the lucene-4.8.0 directory, run this Bash command
 
@@ -420,7 +420,7 @@ Then click the **Create new Java project** in the welcome screen.
 2)	Then uncheck the "Use default location" check box.  
 3)	Then use the browse button to specify the **location of the git repo clone.**  
 
-So the dialog will then look something like this: 
+So the dialog will then look something like this:
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/using-eclipse04.png'>
 
@@ -525,7 +525,7 @@ Zommed in a bit more:
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/clone-local-repo02.png'>
 
 
-When you clone the repository locally, it only shows the default branch that you have pulled (unless you use the switch to pull all of them). But Git keeps track of the remote branches as well as the local ones on your local copy (that is, all of the remote branches that you have called git fetch or git pull on). 
+When you clone the repository locally, it only shows the default branch that you have pulled (unless you use the switch to pull all of them). But Git keeps track of the remote branches as well as the local ones on your local copy (that is, all of the remote branches that you have called git fetch or git pull on).
 
 "git branch -r" shows a list of all of the remote branches that you have pulled.  "git checkout releases/lucene-solr/4.8.1/updated" command is a shortcut for creating a branch based off of the remote. It won't work if you have 2 remotes that have a branch with the same name - in that case you would need to specify the remote name, too. https://stackoverflow.com/questions/24301914/how-to-create-a-local-branch-from-an-existing-remote-branch   Of course, all of the posts on that SO question assume a single folder that is set up to checkout multiple remote branches. We are creating separate clones so it is clearer what version we have in Eclipse and so we don't accidentally break something by switching between git branches.
 

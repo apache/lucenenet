@@ -111,50 +111,50 @@ Each segment index maintains the following:
 
 * [Segment info](xref:Lucene.Net.Codecs.Lucene46.Lucene46SegmentInfoFormat).
    This contains metadata about a segment, such as the number of documents,
-   what files it uses, 
+   what files it uses,
 
-* [Field names](xref:Lucene.Net.Codecs.Lucene46.Lucene46FieldInfosFormat). 
+* [Field names](xref:Lucene.Net.Codecs.Lucene46.Lucene46FieldInfosFormat).
    This contains the set of field names used in the index.
 
-* [Stored Field values](xref:Lucene.Net.Codecs.Lucene41.Lucene41StoredFieldsFormat). 
-This contains, for each document, a list of attribute-value pairs, where the attributes 
-are field names. These are used to store auxiliary information about the document, such as 
-its title, url, or an identifier to access a database. The set of stored fields are what is 
+* [Stored Field values](xref:Lucene.Net.Codecs.Lucene41.Lucene41StoredFieldsFormat).
+This contains, for each document, a list of attribute-value pairs, where the attributes
+are field names. These are used to store auxiliary information about the document, such as
+its title, url, or an identifier to access a database. The set of stored fields are what is
 returned for each hit when searching. This is keyed by document number.
 
-* [Term dictionary](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat). 
+* [Term dictionary](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat).
 A dictionary containing all of the terms used in all of the
 indexed fields of all of the documents. The dictionary also contains the number
 of documents which contain the term, and pointers to the term's frequency and
 proximity data.
 
-* [Term Frequency data](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat). 
+* [Term Frequency data](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat).
 For each term in the dictionary, the numbers of all the
 documents that contain that term, and the frequency of the term in that
 document, unless frequencies are omitted (IndexOptions.DOCS_ONLY)
 
-* [Term Proximity data](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat). 
+* [Term Proximity data](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat).
 For each term in the dictionary, the positions that the
 term occurs in each document. Note that this will not exist if all fields in
 all documents omit position data.
 
-* [Normalization factors](xref:Lucene.Net.Codecs.Lucene42.Lucene42NormsFormat). 
+* [Normalization factors](xref:Lucene.Net.Codecs.Lucene42.Lucene42NormsFormat).
 For each field in each document, a value is stored
 that is multiplied into the score for hits on that field.
 
-* [Term Vectors](xref:Lucene.Net.Codecs.Lucene42.Lucene42TermVectorsFormat). 
+* [Term Vectors](xref:Lucene.Net.Codecs.Lucene42.Lucene42TermVectorsFormat).
 For each field in each document, the term vector (sometimes
 called document vector) may be stored. A term vector consists of term text and
-term frequency. To add Term Vectors to your index see the 
+term frequency. To add Term Vectors to your index see the
 [Field](xref:Lucene.Net.Documents.Field) constructors
 
-* [Per-document values](xref:Lucene.Net.Codecs.Lucene42.Lucene42DocValuesFormat). 
+* [Per-document values](xref:Lucene.Net.Codecs.Lucene42.Lucene42DocValuesFormat).
 Like stored values, these are also keyed by document
 number, but are generally intended to be loaded into main memory for fast
 access. Whereas stored values are generally intended for summary results from
 searches, per-document values are useful for things like scoring factors.
 
-* [Deleted documents](xref:Lucene.Net.Codecs.Lucene40.Lucene40LiveDocsFormat). 
+* [Deleted documents](xref:Lucene.Net.Codecs.Lucene40.Lucene40LiveDocsFormat).
 An optional file indicating which documents are deleted.
 
 Details on each of these are provided in their linked pages.
@@ -310,13 +310,13 @@ was written (due to flush, merge; which OS/JRE was used; etc.). See issue
 
 * In version 3.0, compressed fields are no longer written to the index (they
 can still be read, but on merge the new segment will write them, uncompressed).
-See issue [LUCENE-1960](http://issues.apache.org/jira/browse/LUCENE-1960) 
+See issue [LUCENE-1960](http://issues.apache.org/jira/browse/LUCENE-1960)
 for details.
 
 * In version 3.1, segments records the code version that created them. See
-[LUCENE-2720](http://issues.apache.org/jira/browse/LUCENE-2720) for details. 
-Additionally segments track explicitly whether or not they have term vectors. 
-See [LUCENE-2811](http://issues.apache.org/jira/browse/LUCENE-2811) 
+[LUCENE-2720](http://issues.apache.org/jira/browse/LUCENE-2720) for details.
+Additionally segments track explicitly whether or not they have term vectors.
+See [LUCENE-2811](http://issues.apache.org/jira/browse/LUCENE-2811)
 for details.
 
 * In version 3.2, numeric fields are written as natively to stored fields
@@ -327,27 +327,27 @@ frequencies.
 
 * In version 4.0, the format of the inverted index became extensible via
 the [Codec](xref:Lucene.Net.Codecs.Codec) api. Fast per-document storage
-(`DocValues`) was introduced. Normalization factors need no longer be a 
-single byte, they can be any [NumericDocValues](xref:Lucene.Net.Index.NumericDocValues). 
-Terms need not be unicode strings, they can be any byte sequence. Term offsets 
-can optionally be indexed into the postings lists. Payloads can be stored in the 
+(`DocValues`) was introduced. Normalization factors need no longer be a
+single byte, they can be any [NumericDocValues](xref:Lucene.Net.Index.NumericDocValues).
+Terms need not be unicode strings, they can be any byte sequence. Term offsets
+can optionally be indexed into the postings lists. Payloads can be stored in the
 term vectors.
 
 * In version 4.1, the format of the postings list changed to use either
 of FOR compression or variable-byte encoding, depending upon the frequency
 of the term. Terms appearing only once were changed to inline directly into
-the term dictionary. Stored fields are compressed by default. 
+the term dictionary. Stored fields are compressed by default.
 
-* In version 4.2, term vectors are compressed by default. DocValues has 
+* In version 4.2, term vectors are compressed by default. DocValues has
 a new multi-valued type (SortedSet), that can be used for faceting/grouping/joining
 on multi-valued fields.
 
 * In version 4.5, DocValues were extended to explicitly represent missing values.
 
-* In version 4.6, FieldInfos were extended to support per-field DocValues generation, to 
+* In version 4.6, FieldInfos were extended to support per-field DocValues generation, to
 allow updating NumericDocValues fields.
 
-* In version 4.8, checksum footers were added to the end of each index file 
+* In version 4.8, checksum footers were added to the end of each index file
 for improved data integrity. Specifically, the last 8 bytes of every index file
 contain the zlib-crc32 checksum of the file.
 

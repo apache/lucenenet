@@ -20,9 +20,9 @@ summary: *content
  limitations under the License.
 -->
 
-Support for testing search components. 
+Support for testing search components.
 
 The primary classes are:
 
 * <xref:Lucene.Net.Search.QueryUtils>: Useful methods for testing Query classes.
-* <xref:Lucene.Net.Search.ShardSearchingTestBase>: Base class for simulating distributed search. 
+* <xref:Lucene.Net.Search.ShardSearchingTestBase>: Base class for simulating distributed search.

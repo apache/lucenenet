@@ -20,9 +20,9 @@ summary: *content
  limitations under the License.
 -->
 
-Support for testing of indexes. 
+Support for testing of indexes.
 
 The primary classes are:
 
 * <xref:Lucene.Net.Index.RandomIndexWriter>: Randomizes the indexing experience.
-* <xref:Lucene.Net.Index.MockRandomMergePolicy>: MergePolicy that makes random decisions. 
+* <xref:Lucene.Net.Index.MockRandomMergePolicy>: MergePolicy that makes random decisions.

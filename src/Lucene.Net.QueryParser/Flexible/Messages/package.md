@@ -25,7 +25,7 @@ For Native Language Support (NLS), system of software internationalization.
 
 ## NLS message API
 
-This utility API, adds support for NLS messages in the apache code. It is currently used by the lucene "New Flexible Query PArser". 
+This utility API, adds support for NLS messages in the apache code. It is currently used by the lucene "New Flexible Query PArser".
 
 Features:
 
@@ -34,7 +34,7 @@ Features:
 3. Allows for message IDs to be re-factored using code re-factor tools
 4. Allows for reference count on messages, just like code
 5. Lazy loading of Message Strings
-6. Normal loading Message Strings 
+6. Normal loading Message Strings
 
 
 Prerequisite for these examples: Add a resource file named `MessagesTestBundle.resx` and add messages for each of the public static string fields except for `Q0005E_Message_Not_In_Bundle`.
@@ -82,4 +82,4 @@ string message1 = NLS.GetLocalizedMessage(MessagesTest.Q0004E_Invalid_Syntax_Esc
 string message2 = NLS.GetLocalizedMessage(MessagesTest.Q0004E_Invalid_Syntax_Escape_Unicode_Truncation, new CultureInfo("ja"));
 ```
 
-The `Lucene.Net.QueryParsers.Flexible.Messages.TestNLS` NUnit test contains several other examples. The TestNLS C# code is available from the Apache Lucene.NET code repository. 
+The `Lucene.Net.QueryParsers.Flexible.Messages.TestNLS` NUnit test contains several other examples. The TestNLS C# code is available from the Apache Lucene.NET code repository.

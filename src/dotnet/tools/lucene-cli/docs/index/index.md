@@ -5,7 +5,7 @@
 Utilities to manage specialized analyzers.
 
 > [!WARNING]
-> Many of these operations change an index in ways that cannot be reversed. Always make a backup of your index before running these commands. 
+> Many of these operations change an index in ways that cannot be reversed. Always make a backup of your index before running these commands.
 
 ## Commands
 

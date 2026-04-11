@@ -12,9 +12,9 @@ lucene index upgrade [<INDEX_DIRECTORY>] [-d|--delete-prior-commits] [-v|--verbo
 
 ### Description
 
-This tool keeps only the last commit in an index; for this reason, if the incoming index has more than one commit, the tool refuses to run by default. Specify --delete-prior-commits to override this, allowing the tool to delete all but the last commit. 
+This tool keeps only the last commit in an index; for this reason, if the incoming index has more than one commit, the tool refuses to run by default. Specify --delete-prior-commits to override this, allowing the tool to delete all but the last commit.
 
-Specify an FSDirectory implementation through the --directory-type option to force its use. If not qualified by an AssemblyName, the Lucene.Net.dll assembly will be used. 
+Specify an FSDirectory implementation through the --directory-type option to force its use. If not qualified by an AssemblyName, the Lucene.Net.dll assembly will be used.
 
 > [!WARNING]
 > This tool may reorder document IDs! Be sure to make a backup of your index before you use this. Also, ensure you are using the correct version of this utility to match your application's version of Lucene.NET. This operation cannot be reversed.

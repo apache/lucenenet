@@ -21,9 +21,9 @@ summary: *content
  limitations under the License.
 -->
 
-This module exposes functionality from 
+This module exposes functionality from
 [ICU](http://site.icu-project.org/) to Apache Lucene. ICU4N is a .NET
-library that enhances .NET's internationalization support by improving 
+library that enhances .NET's internationalization support by improving
 performance, keeping current with the Unicode Standard, and providing richer
 APIs.
 
@@ -34,14 +34,14 @@ APIs.
 
 
 
-This module exposes the following functionality: 
+This module exposes the following functionality:
 
 * [Text Analysis](xref:Lucene.Net.Analysis.Icu): For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis> package documentation.
 
-  * [Text Segmentation](xref:Lucene.Net.Analysis.Icu#text-segmentation): Tokenizes text based on 
+  * [Text Segmentation](xref:Lucene.Net.Analysis.Icu#text-segmentation): Tokenizes text based on
   properties and rules defined in Unicode.
 
-  * [Collation](xref:Lucene.Net.Analysis.Icu#collation): Compare strings according to the 
+  * [Collation](xref:Lucene.Net.Analysis.Icu#collation): Compare strings according to the
   conventions and standards of a particular language, region or country.
 
   * [Normalization](xref:Lucene.Net.Analysis.Icu#normalization): Converts text to a unique,

@@ -39,3 +39,11 @@ repos:
         description: check spelling with codespell
         exclude: ^.*Lucene\.Net\.Tests.*$
         args: [--ignore-words=.github/linters/codespell.txt]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        name: run trailing-whitespace
+        description: trims trailing whitespace
+        files: \.(md|xml)$
+        args: [--markdown-linebreak-ext=md]

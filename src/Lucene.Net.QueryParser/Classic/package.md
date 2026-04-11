@@ -72,15 +72,15 @@ enabling substantial customization to how a query is created.
 
 ## Overview
 
-Although Lucene.NET provides the ability to create your own queries through its API, it also provides a rich query language through the Query Parser, a lexer which interprets a string into a Lucene.NET Query using JavaCC. 
+Although Lucene.NET provides the ability to create your own queries through its API, it also provides a rich query language through the Query Parser, a lexer which interprets a string into a Lucene.NET Query using JavaCC.
 
-Generally, the query parser syntax may change from release to release. This page describes the syntax as of the current release. If you are using a different version of Lucene.NET, please consult the copy of this document that was distributed with the version you are using. 
+Generally, the query parser syntax may change from release to release. This page describes the syntax as of the current release. If you are using a different version of Lucene.NET, please consult the copy of this document that was distributed with the version you are using.
 
 Before choosing to use the provided Query Parser, please consider the following:
 
 1. If you are programmatically generating a query string and then parsing it with the query parser then you should seriously consider building your queries directly with the query API. In other words, the query parser is designed for human-entered text, not for program-generated text.
 2. Untokenized fields are best added directly to queries, and not through the query parser. If a field's values are generated programmatically by the application, then so should query clauses for this field. An analyzer, which the query parser uses, is designed to convert human-entered text to terms. Program-generated values, like dates, keywords, etc., should be consistently program-generated.
-3. In a query form, fields which are general text should use the query parser. All others, such as date ranges, keywords, etc. are better added directly through the query API. A field with a limit set of values, that can be specified with a pull-down menu should not be added to a query string which is subsequently parsed, but rather added as a TermQuery clause. 
+3. In a query form, fields which are general text should use the query parser. All others, such as date ranges, keywords, etc. are better added directly through the query API. A field with a limit set of values, that can be specified with a pull-down menu should not be added to a query string which is subsequently parsed, but rather added as a TermQuery clause.
 
 ## Terms
 
@@ -98,9 +98,9 @@ Note: The analyzer used to create the index will be used on the terms and phrase
 
 Lucene supports fielded data. When performing a search you can either specify a field, or use the default field. The field names and default field is implementation specific.
 
-You can search any field by typing the field name followed by a colon ":" and then the term you are looking for. 
+You can search any field by typing the field name followed by a colon ":" and then the term you are looking for.
 
-As an example, let's assume a Lucene index contains two fields, title and text and text is the default field. If you want to find the document entitled "The Right Way" which contains the text "don't go this way", you can enter: 
+As an example, let's assume a Lucene index contains two fields, title and text and text is the default field. If you want to find the document entitled "The Right Way" which contains the text "don't go this way", you can enter:
 
 ```console
 title:"The Right Way" AND text:go
@@ -120,7 +120,7 @@ Note: The field is only valid for the term that it directly precedes, so the que
 title:The Right Way
 ```
 
-Will only find "The" in the title field. It will find "Right" and "Way" in the default field (in this case the text field). 
+Will only find "The" in the title field. It will find "Right" and "Way" in the default field (in this case the text field).
 
 ## Term Modifiers
 
@@ -140,7 +140,7 @@ The single character wildcard search looks for terms that match that with the si
 te?t
 ```
 
-Multiple character wildcard searches looks for 0 or more characters. For example, to search for test, tests or tester, you can use the search: 
+Multiple character wildcard searches looks for 0 or more characters. For example, to search for test, tests or tester, you can use the search:
 
 ```console
 test*
@@ -156,7 +156,7 @@ Note: You cannot use a * or ? symbol as the first character of a search.
 
 ### Regular Expression Searches
 
-Lucene supports regular expression searches matching a pattern between forward slashes "/". The syntax may change across releases, but the current supported syntax is documented in the [RegExp](xref:Lucene.Net.Util.Automaton.RegExp) class. For example to find documents containing "moat" or "boat": 
+Lucene supports regular expression searches matching a pattern between forward slashes "/". The syntax may change across releases, but the current supported syntax is documented in the [RegExp](xref:Lucene.Net.Util.Automaton.RegExp) class. For example to find documents containing "moat" or "boat":
 
 ```console
 /[mb]oat/
@@ -164,7 +164,7 @@ Lucene supports regular expression searches matching a pattern between forward s
 
 ### Fuzzy Searches
 
-Lucene supports fuzzy searches based on Damerau-Levenshtein Distance. To do a fuzzy search use the tilde, "~", symbol at the end of a Single word Term. For example to search for a term similar in spelling to "roam" use the fuzzy search: 
+Lucene supports fuzzy searches based on Damerau-Levenshtein Distance. To do a fuzzy search use the tilde, "~", symbol at the end of a Single word Term. For example to search for a term similar in spelling to "roam" use the fuzzy search:
 
 ```console
 roam~
@@ -184,7 +184,7 @@ Previously, a floating point value was allowed here. This syntax is considered d
 
 ### Proximity Searches
 
-Lucene supports finding words are a within a specific distance away. To do a proximity search use the tilde, "~", symbol at the end of a Phrase. For example to search for a "apache" and "jakarta" within 10 words of each other in a document use the search: 
+Lucene supports finding words are a within a specific distance away. To do a proximity search use the tilde, "~", symbol at the end of a Phrase. For example to search for a "apache" and "jakarta" within 10 words of each other in a document use the search:
 
 ```console
 "jakarta apache"~10
@@ -224,7 +224,7 @@ and you want the term "jakarta" to be more relevant boost it using the ^ symbol 
 jakarta^4 apache
 ```
 
-This will make documents with the term jakarta appear more relevant. You can also boost Phrase Terms as in the example: 
+This will make documents with the term jakarta appear more relevant. You can also boost Phrase Terms as in the example:
 
 ```console
 "jakarta apache"^4 "Apache Lucene"
@@ -256,7 +256,7 @@ or
 
 The AND operator matches documents where both terms exist anywhere in the text of a single document. This is equivalent to an intersection using sets. The symbol && can be used in place of the word AND.
 
-To search for documents that contain "jakarta apache" and "Apache Lucene" use the query: 
+To search for documents that contain "jakarta apache" and "Apache Lucene" use the query:
 
 ```console
 "jakarta apache" AND "Apache Lucene"
@@ -276,7 +276,7 @@ To search for documents that must contain "jakarta" and may contain "lucene" use
 
 The NOT operator excludes documents that contain the term after NOT. This is equivalent to a difference using sets. The symbol ! can be used in place of the word NOT.
 
-To search for documents that contain "jakarta apache" but not "Apache Lucene" use the query: 
+To search for documents that contain "jakarta apache" but not "Apache Lucene" use the query:
 
 ```console
 "jakarta apache" NOT "Apache Lucene"

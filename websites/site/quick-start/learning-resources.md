@@ -11,7 +11,7 @@ uid: quick-start/learning-resources
 
 Lucene.NET has fairly extensive documentation that can be found in the [Lucene.NET Documentation](xref:docs) section of the website.  On that page you will find links to the documentation for various release versions.  Click on the documentation link for the version of interest and you will see that it leads to a wealth of documentation.  The project is organized as a collection of sub-projects, each one corresponding ultimately to a [nuget package](https://www.nuget.org/packages/Lucene.Net/absoluteLatest).  Those projects each have documentation that typically starts with some higher level docs that then link into API or Object/Method level documentations.
 
-Much of this documentation is compiled from the inline documentation comments from the source code and it originated from the Java Lucene code base.  In addition to porting the Lucene code from Java to C# we are also working to convert the docs from Java to C# examples as well.  Some of this work is completed and some of it remains.   
+Much of this documentation is compiled from the inline documentation comments from the source code and it originated from the Java Lucene code base.  In addition to porting the Lucene code from Java to C# we are also working to convert the docs from Java to C# examples as well.  Some of this work is completed and some of it remains.  
 
 
 ## Java Lucene Documentation

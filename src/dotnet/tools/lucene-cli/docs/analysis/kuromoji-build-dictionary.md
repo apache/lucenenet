@@ -26,7 +26,7 @@ Generates the following set of binary files:
 
 If these files are placed into a subdirectory of your application named `kuromoji-data`, they will be used automatically by Lucene.Net.Analysis.Kuromoji features such as the JapaneseAnalyzer or JapaneseTokenizer. To use an alternate directory location, put the path in an environment variable named `kuromoji.data.dir`. The files must be placed in a subdirectory of this location named `kuromoji-data`.
 
-See [this blog post](http://mentaldetritus.blogspot.com/2013/03/compiling-custom-dictionary-for.html) for information about the dictionary format. A sample is available at [https://sourceforge.net/projects/mecab/files/mecab-ipadic/2.7.0-20070801/](https://sourceforge.net/projects/mecab/files/mecab-ipadic/2.7.0-20070801/). The [Kuromoji project documentation](https://github.com/atilika/kuromoji) may also be helpful. 
+See [this blog post](http://mentaldetritus.blogspot.com/2013/03/compiling-custom-dictionary-for.html) for information about the dictionary format. A sample is available at [https://sourceforge.net/projects/mecab/files/mecab-ipadic/2.7.0-20070801/](https://sourceforge.net/projects/mecab/files/mecab-ipadic/2.7.0-20070801/). The [Kuromoji project documentation](https://github.com/atilika/kuromoji) may also be helpful.
 
 ### Arguments
 

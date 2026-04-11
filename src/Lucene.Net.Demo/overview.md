@@ -61,9 +61,9 @@ To __search the index__ type:
 
         java org.apache.lucene.demo.SearchFiles
 
-You'll be prompted for a query. Type in a gibberish or made up word (for example: 
+You'll be prompted for a query. Type in a gibberish or made up word (for example:
 "supercalifragilisticexpialidocious").
-You'll see that there are no maching results in the lucene source code. 
+You'll see that there are no maching results in the lucene source code.
 Now try entering the word "string". That should return a whole bunch
 of documents. The results will page at every tenth result and ask you whether
 you want more results.
@@ -74,7 +74,7 @@ In this section we walk through the sources behind the command-line Lucene demo:
 
 ## Location of the source
 
-The files discussed here are linked into this documentation directly: * [IndexFiles](xref:Lucene.Net.Demo.IndexFiles): code to create a Lucene index. * [SearchFiles](xref:Lucene.Net.Demo.SearchFiles): code to search a Lucene index. 
+The files discussed here are linked into this documentation directly: * [IndexFiles](xref:Lucene.Net.Demo.IndexFiles): code to create a Lucene index. * [SearchFiles](xref:Lucene.Net.Demo.SearchFiles): code to search a Lucene index.
 
 ## IndexFiles
 

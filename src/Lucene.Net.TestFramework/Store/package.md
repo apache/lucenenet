@@ -20,7 +20,7 @@ summary: *content
  limitations under the License.
 -->
 
-Support for testing store mechanisms. 
+Support for testing store mechanisms.
 
 The primary class is <xref:Lucene.Net.Store.MockDirectoryWrapper>, which
 wraps any Directory implementation and provides additional checks.

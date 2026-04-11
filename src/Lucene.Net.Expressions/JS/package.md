@@ -44,6 +44,6 @@ A Javascript expression is a numeric expression specified using an expression sy
 
 *   Arbitrary external variables - see <xref:Lucene.Net.Expressions.Bindings>
 
- JavaScript order of precedence rules apply for operators. Shortcut evaluation is used for logical operators—the second argument is only evaluated if the value of the expression cannot be determined after evaluating the first argument. For example, in the expression `a || b`, `b` is only evaluated if a is not true. 
+ JavaScript order of precedence rules apply for operators. Shortcut evaluation is used for logical operators—the second argument is only evaluated if the value of the expression cannot be determined after evaluating the first argument. For example, in the expression `a || b`, `b` is only evaluated if a is not true.
 
- To compile an expression, use <xref:Lucene.Net.Expressions.JS.JavascriptCompiler>. 
+ To compile an expression, use <xref:Lucene.Net.Expressions.JS.JavascriptCompiler>.

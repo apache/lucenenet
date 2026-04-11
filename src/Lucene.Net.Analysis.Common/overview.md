@@ -23,6 +23,6 @@ summary: *content
 
   Analyzers for indexing content in different languages and domains.
 
- For an introduction to Lucene's analysis API, see the [Lucene.Net.Analysis](../core/Lucene.Net.Analysis.html) namespace documentation. 
+ For an introduction to Lucene's analysis API, see the [Lucene.Net.Analysis](../core/Lucene.Net.Analysis.html) namespace documentation.
 
- This module contains concrete components ([Lucene.Net.Analysis.CharFilter](../core/Lucene.Net.Analysis.CharFilter.html)s, [Lucene.Net.Analysis.Tokenizer](../core/Lucene.Net.Analysis.Tokenizer.html)s, and [Lucene.Net.Analysis.TokenFilter](../core/Lucene.Net.Analysis.TokenFilter.html)s) for analyzing different types of content. It also provides a number of [Lucene.Net.Analysis.Analyzer](../core/Lucene.Net.Analysis.Analyzer.html)s for different languages that you can use to get started quickly. 
+ This module contains concrete components ([Lucene.Net.Analysis.CharFilter](../core/Lucene.Net.Analysis.CharFilter.html)s, [Lucene.Net.Analysis.Tokenizer](../core/Lucene.Net.Analysis.Tokenizer.html)s, and [Lucene.Net.Analysis.TokenFilter](../core/Lucene.Net.Analysis.TokenFilter.html)s) for analyzing different types of content. It also provides a number of [Lucene.Net.Analysis.Analyzer](../core/Lucene.Net.Analysis.Analyzer.html)s for different languages that you can use to get started quickly.
