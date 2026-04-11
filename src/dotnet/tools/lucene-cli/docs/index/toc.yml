@@ -19,8 +19,8 @@
 - name: list-term-info
   href: list-term-info.md
 - name: merge
-  href: merge.md  
+  href: merge.md
 - name: split
-  href: split.md  
+  href: split.md
 - name: upgrade
   href: upgrade.md
