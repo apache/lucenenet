@@ -45,5 +45,5 @@ repos:
       - id: trailing-whitespace
         name: run trailing-whitespace
         description: trims trailing whitespace
-        files: \.(md|xml)$
+        files: \.(md|xml|ya?ml)$
         args: [--markdown-linebreak-ext=md]
