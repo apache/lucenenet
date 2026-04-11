@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 namespace Lucene.Net.Replicator
 {
     /// <summary>
-    /// Async version of <see cref="IReplicator"/> for non-blocking replication operations.
+    /// Async extension of <see cref="IReplicator"/> for non-blocking replication operations.
+    /// Implementations provide both synchronous (inherited from <see cref="IReplicator"/>)
+    /// and asynchronous methods.
     /// </summary>
-    public interface IAsyncReplicator
+    public interface IAsyncReplicator : IReplicator
     {
         /// <summary>
         /// Check whether the given version is up-to-date and returns a

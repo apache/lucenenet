@@ -32,7 +32,7 @@ namespace Lucene.Net.Replicator.Http
     /// <remarks>
     /// @lucene.experimental
     /// </remarks>
-    public class HttpReplicator : HttpClientBase, IReplicator, IAsyncReplicator
+    public class HttpReplicator : HttpClientBase, IAsyncReplicator
     {
         /// <summary>
         /// Creates a new <see cref="HttpReplicator"/> with the given host, port and path.

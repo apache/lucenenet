@@ -153,7 +153,7 @@ namespace Lucene.Net.Replicator.Http
         [LuceneNetSpecific]
         public async Task TestBasicAsync()
         {
-            IAsyncReplicator replicator = new HttpReplicator(host, port, ReplicationService.REPLICATION_CONTEXT + "/s1", server.CreateHandler());
+            IReplicator replicator = new HttpReplicator(host, port, ReplicationService.REPLICATION_CONTEXT + "/s1", server.CreateHandler());
             ReplicationClient client = new ReplicationClient(replicator, new IndexReplicationHandler(handlerIndexDir, null),
                 new PerSessionDirectoryFactory(clientWorkDir.FullName));
 
@@ -209,7 +209,7 @@ namespace Lucene.Net.Replicator.Http
         public async Task TestServerErrorsAsync()
         {
             // tests the behaviour of the client when the server sends an error
-            IAsyncReplicator replicator = new HttpReplicator(host, port, ReplicationService.REPLICATION_CONTEXT + "/s1", server.CreateHandler());
+            IReplicator replicator = new HttpReplicator(host, port, ReplicationService.REPLICATION_CONTEXT + "/s1", server.CreateHandler());
             using ReplicationClient client = new ReplicationClient(replicator, new IndexReplicationHandler(handlerIndexDir, null),
                 new PerSessionDirectoryFactory(clientWorkDir.FullName));
 
