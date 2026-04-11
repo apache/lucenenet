@@ -129,7 +129,7 @@ namespace Lucene.Net.Replicator
         /// </summary>
         public const string INFO_STREAM_COMPONENT = "ReplicationThread";
 
-        private readonly IReplicator? replicator;
+        private readonly IReplicator replicator;
         private readonly IAsyncReplicator? asyncReplicator;
         private readonly IReplicationHandler handler;
         private readonly ISourceDirectoryFactory factory;
@@ -147,26 +147,16 @@ namespace Lucene.Net.Replicator
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="replicator">The <see cref="IReplicator"/> used for checking for updates</param>
+        /// <param name="replicator">The <see cref="IReplicator"/> used for checking for updates.
+        /// If the replicator also implements <see cref="IAsyncReplicator"/>, the async
+        /// methods will use the native async implementation; otherwise, they will fall back
+        /// to wrapping the synchronous methods.</param>
         /// <param name="handler">The <see cref="IReplicationHandler"/> notified when new revisions are ready</param>
         /// <param name="factory">The <see cref="ISourceDirectoryFactory"/> for returning a <see cref="Directory"/> for a given source and session</param>
         public ReplicationClient(IReplicator replicator, IReplicationHandler handler, ISourceDirectoryFactory factory)
         {
             this.replicator = replicator ?? throw new ArgumentNullException(nameof(replicator));
-            this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
-            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
-        }
-
-        /// <summary>
-        /// Constructor for async replicators.
-        /// </summary>
-        /// <param name="asyncReplicator"></param>
-        /// <param name="handler"></param>
-        /// <param name="factory"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public ReplicationClient(IAsyncReplicator asyncReplicator, IReplicationHandler handler, ISourceDirectoryFactory factory)
-        {
-            this.asyncReplicator = asyncReplicator ?? throw new ArgumentNullException(nameof(asyncReplicator));
+            this.asyncReplicator = replicator as IAsyncReplicator;
             this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
             this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
@@ -184,8 +174,6 @@ namespace Lucene.Net.Replicator
         /// <exception cref="IOException"></exception>
         private void DoUpdate()
         {
-            if (replicator is null) throw new InvalidOperationException("Replicator not initialized.");
-
             SessionToken? session = null;
             Dictionary<string, Directory> sourceDirectory = new Dictionary<string, Directory>();
             Dictionary<string, IList<string>> copiedFiles = new Dictionary<string, IList<string>>();
@@ -285,13 +273,13 @@ namespace Lucene.Net.Replicator
         }
 
         /// <summary>
-        /// Performs the async update logic, mirrors DoUpdate but uses IAsyncReplicator.
+        /// Performs the async update logic. When the replicator implements
+        /// <see cref="IAsyncReplicator"/>, native async methods are used;
+        /// otherwise, the synchronous <see cref="IReplicator"/> methods are
+        /// called and their results wrapped.
         /// </summary>
         private async Task DoUpdateAsync(CancellationToken cancellationToken)
         {
-            if (asyncReplicator is null)
-                throw new InvalidOperationException("AsyncReplicator not initialized.");
-
             SessionToken? session = null;
             var sourceDirectory = new Dictionary<string, Directory>();
             var copiedFiles = new Dictionary<string, IList<string>>();
@@ -300,7 +288,10 @@ namespace Lucene.Net.Replicator
             try
             {
                 string? version = handler.CurrentVersion;
-                session = await asyncReplicator.CheckForUpdateAsync(version, cancellationToken).ConfigureAwait(false);
+
+                session = asyncReplicator is not null
+                    ? await asyncReplicator.CheckForUpdateAsync(version, cancellationToken).ConfigureAwait(false)
+                    : replicator.CheckForUpdate(version);
 
                 WriteToInfoStream($"DoUpdateAsync(): handlerVersion={version} session={session}");
 
@@ -308,7 +299,6 @@ namespace Lucene.Net.Replicator
                     return;
 
                 IDictionary<string, IList<RevisionFile>> requiredFiles = RequiredFiles(session.SourceFiles);
-                WriteToInfoStream($"DoUpdateAsync(): handlerVersion={version} session={session}");
 
                 foreach (var pair in requiredFiles)
                 {
@@ -327,7 +317,10 @@ namespace Lucene.Net.Replicator
                         IndexOutput? output = null;
                         try
                         {
-                            input = await asyncReplicator.ObtainFileAsync(session.Id!, source, file.FileName, cancellationToken).ConfigureAwait(false);
+                            input = asyncReplicator is not null
+                                ? await asyncReplicator.ObtainFileAsync(session.Id!, source, file.FileName, cancellationToken).ConfigureAwait(false)
+                                : replicator.ObtainFile(session.Id!, source, file.FileName);
+
                             output = directory.CreateOutput(file.FileName, IOContext.DEFAULT);
 
                             int numBytes;
@@ -354,7 +347,10 @@ namespace Lucene.Net.Replicator
                 {
                     try
                     {
-                        await asyncReplicator.ReleaseAsync(session.Id, cancellationToken).ConfigureAwait(false);
+                        if (asyncReplicator is not null)
+                            await asyncReplicator.ReleaseAsync(session.Id, cancellationToken).ConfigureAwait(false);
+                        else
+                            replicator.Release(session.Id);
                     }
                     finally
                     {
@@ -367,18 +363,28 @@ namespace Lucene.Net.Replicator
                 }
             }
 
-            if (notify && !disposed)
+            // notify outside the try-finally above, so the session is released sooner.
+            // the handler may take time to finish acting on the copied files, but the
+            // session itself is no longer needed.
+            try
             {
-                handler.RevisionReady(session.Version, session.SourceFiles, Collections.AsReadOnly(copiedFiles), sourceDirectory);
+                if (notify && !disposed)
+                {
+                    // no use to notify if we are closed already
+                    // LUCENENET specific - pass the copiedFiles as read only
+                    handler.RevisionReady(session.Version, session.SourceFiles, Collections.AsReadOnly(copiedFiles), sourceDirectory);
+                }
             }
+            finally
+            {
+                IOUtils.Dispose(sourceDirectory.Values);
 
-            IOUtils.Dispose(sourceDirectory.Values);
-
-            // LUCENENET specific: removed redundant check. Code above either ensures it is not null (by returning early) or an exception is thrown.
-            // if (session != null)
-            // {
-                factory.CleanupSession(session.Id);
-            // }
+                // LUCENENET specific: removed redundant check. Code above either ensures it is not null (by returning early) or an exception is thrown.
+                // if (session != null)
+                // {
+                    factory.CleanupSession(session.Id);
+                // }
+            }
         }
 
         /// <summary>Throws <see cref="ObjectDisposedException"/> if the client has already been disposed.</summary>
