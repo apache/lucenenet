@@ -265,7 +265,7 @@ namespace Lucene.Net.Search
         /// entries are passed to the <see cref="IPruner"/> in sorted (newest to
         /// oldest <see cref="IndexSearcher"/>) order.
         ///
-        /// <para/><b>NOTE</b>: you must peridiocally call this, ideally
+        /// <para/><b>NOTE</b>: you must periodically call this, ideally
         /// from the same background thread that opens new
         /// searchers.
         /// </summary>

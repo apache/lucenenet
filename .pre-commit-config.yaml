@@ -32,12 +32,12 @@ repos:
         name: run check hooks apply
         description: check that all the hooks apply to the repository
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
+    rev: v2.4.2
     hooks:
       - id: codespell
         name: run codespell
         description: check spelling with codespell
-        exclude: ^.*Lucene\.Net\.Tests.*$
+        exclude: ^src/Lucene\.Net\.Analysis\.Common/Analysis/../.*\.rslp$|^.*Lucene\.Net\.Tests.*$
         args: [--ignore-words=.github/linters/codespell.txt]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
