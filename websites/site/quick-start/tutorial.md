@@ -20,10 +20,10 @@ In these examples we will use the .NET CLI (Command Line Interface) because it's
 However you are totally free to use [Visual Studio](https://visualstudio.microsoft.com/) (Windows/Mac) or [Visual Studio Code](https://code.visualstudio.com/) (Windows/Unix/Max) to create the console application project and to add references to the Nuget packages. Whichever tool you use, you should end up with the same files and you can compare their contents to the contents that we show in the examples.
 
 ## Download and Install the .NET SDK
-First you must install the .NET Core SDK, if it's not already installed on your machine. The .NET Core SDK contains the .NET runtime, .NET Libraries and the .NET CLI. If you haven't installed it yet, download it from https://dotnet.microsoft.com/en-us/download and run the installer. It's a pretty straightforward process. I'll be using the **.NET 6.0 SDK** in this tutorial.
+First you must install the .NET Core SDK, if it's not already installed on your machine. The .NET Core SDK contains the .NET runtime, .NET Libraries and the .NET CLI. If you haven't installed it yet, download it from https://dotnet.microsoft.com/en-us/download and run the installer. It's a pretty straightforward process. I'll be using the **.NET 8.0 SDK** in this tutorial.
 
 > [!NOTE]
-> The C# code we present **requires the .NET 6.0 SDK or later**.  However, with a few simple modifications it can run on older SDKs including 4.x. To do that, the Program.cs file will need to have a namespace, Program class and a static void main method.  See Microsoft docs [here](https://docs.microsoft.com/en-us/dotnet/core/tutorials/with-visual-studio?pivots=dotnet-5-0#code-try-3) for details.  You will also need to add [braces to the using statements](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/using-statement#example).
+> The C# code we present **requires the .NET 8.0 SDK or later**.  However, with a few simple modifications it can run on older SDKs including 4.x. To do that, the Program.cs file will need to have a namespace, Program class and a static void main method.  See Microsoft docs [here](https://docs.microsoft.com/en-us/dotnet/core/tutorials/with-visual-studio?pivots=dotnet-5-0#code-try-3) for details.  You will also need to add [braces to the using statements](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/using-statement#example).
 
 ## Download and Install PowerShell
 PowerShell is cross platform and runs everywhere .NET runs, so we will be using PowerShell for all of our command line work. If you don't already have PowerShell installed you can download and find instructions for installing it on Window, Unix or Mac on this [Installing PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell) page. In my examples I'm using PowerShell 7.2 but the specific version probably doesn't make a difference.
@@ -35,7 +35,7 @@ Let's use PowerShell now to verify that you have the .NET SDK with the .NET CLI 
 
 This command will show the latest version of the .NET SDK installed and also show a list of all versions installed. If the .NET SDK is not installed this the command will return an error indicating the command was not found.
 
-Below I show the top of the results for the `dotnet --info` command ran on my machine. You can see I'm using .NET SDK 6.0.200 on windows for this demo. In my case I had to scroll the screen up to see this info since I have many versions of the .NET SDK installed and it shows info on each version which scrolled the info about the latest version off the screen. Your latest version will likely be different than mine and perhaps you may be running on Unix or Mac. That's fine. But remember **you need .NET SDK 6 or later**. Or you need to modify the examples according to the note above.
+Below I show the top of the results for the `dotnet --info` command ran on my machine. In my case I had to scroll the screen up to see this info since I have many versions of the .NET SDK installed and it shows info on each version which scrolled the info about the latest version off the screen. Your latest version will likely be different than mine and perhaps you may be running on Unix or Mac. That's fine. But remember **you need .NET SDK 8 or later**. Or you need to modify the examples according to the note above.
 
 <img src='https://lucenenet.apache.org/images/quick-start/tutorial/power-shell01.png'>
 
@@ -94,7 +94,7 @@ Here is that file's contents:
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>lucene_example1</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -215,7 +215,7 @@ using LuceneDirectory indexDir = FSDirectory.Open(indexPath);
 
 Then in the next block we create an `IndexWriter` that will use our `LuceneDirectory`. The `IndexWriter` is a important class in Lucene.NET and is used to write documents to the Index (among other things).
 
-The `IndexWriter` will create our subdirectory for us since it doesn't yet exist and it will create the index since it also doesn't yet exist.  By using  `OpenMode.CREATE` we are telling Lucene.NET that we want to recreate the index if it already exists.  This works great for a demo like this since every time  the console app is ran we will be recreating our LuceneIndex which means we will get the same output each time.  
+The `IndexWriter` will create our subdirectory for us since it doesn't yet exist and it will create the index since it also doesn't yet exist.  By using  `OpenMode.CREATE` we are telling Lucene.NET that we want to recreate the index if it already exists.  This works great for a demo like this since every time  the console app is ran we will be recreating our LuceneIndex which means we will get the same output each time.
 
 ```c#
 //Create an index writer
@@ -347,7 +347,7 @@ Here is that file's contents:
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>lucene_example2</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -466,7 +466,7 @@ Query query = parser.Parse("open source");
 
 These lines allow us to create a query that will perform a full text search. This type of search is similar to what you are use to when doing a google or bing search.
 
-What we are saying in these two lines is that we want to create a query that will search the `title` field of our documents and we want back document that contain "open source" or just "open" or just "source" and we want them sorted by how well they match our "open source" query.  
+What we are saying in these two lines is that we want to create a query that will search the `title` field of our documents and we want back document that contain "open source" or just "open" or just "source" and we want them sorted by how well they match our "open source" query.
 
 So when the line of code below runs, Lucene.NET will score each of our docs that match the query and return the top 3 matching documents sorted by score.
 
