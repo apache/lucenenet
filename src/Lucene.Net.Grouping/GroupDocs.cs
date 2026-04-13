@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Grouping
     ///
     /// @lucene.experimental
     /// </summary>
-    public class GroupDocs<TGroupValue> : IGroupDocs<TGroupValue>
+    public class GroupDocs<TGroupValue> : IGroupDocs
     {
         /// <summary>
         /// The groupField value for all docs in this group; this
@@ -72,20 +72,29 @@ namespace Lucene.Net.Search.Grouping
             GroupValue = groupValue;
             GroupSortValues = groupSortValues;
         }
+
+        #region Explicit interface implementations
+
+        /// <summary>
+        /// LUCENENET specific method to provide an object-based implementation of <see cref="GroupValue"/>.
+        /// </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
+        object IGroupDocs.GroupValue => GroupValue;
+
+        #endregion
     }
 
     /// <summary>
-    /// LUCENENET specific interface used to apply covariance to TGroupValue
-    /// to simulate Java's wildcard generics.
+    /// LUCENENET specific interface to provide a non-generic abstraction
+    /// for <see cref="GroupDocs{TGroupValue}"/>.
     /// </summary>
-    /// <typeparam name="TGroupValue"></typeparam>
-    public interface IGroupDocs<out TGroupValue>
+    public interface IGroupDocs
     {
         /// <summary>
         /// The groupField value for all docs in this group; this
         /// may be null if hits did not have the groupField.
         /// </summary>
-        TGroupValue GroupValue { get; }
+        object GroupValue { get; }
 
         /// <summary>
         /// Max score in this group
