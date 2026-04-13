@@ -9,6 +9,8 @@ using System.Collections;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
+// ReSharper disable VirtualMemberNeverOverridden.Global - justification: this is a public API
+
 namespace Lucene.Net.Search.Grouping
 {
     /*
@@ -113,10 +115,14 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// A grouping search that groups documents by index terms using the <see cref="FieldCache"/>.
-    /// The group field can only have one token per document. This means that the field must not be analysed.
+    /// The group field can only have one token per document. This means that the field must not be analyzed.
     /// </summary>
     /// <seealso cref="GroupingSearch.ByField(string)"/>
-    public class FieldGroupingSearch : AbstractFieldOrFunctionGroupingSearch<BytesRef, FieldGroupingSearch>
+    /// <remarks>
+    /// LUCENENET specific.
+    /// </remarks>
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global - justification: this is a public API
+    public class FieldGroupingSearch : TwoPassGroupingSearch<BytesRef, FieldGroupingSearch>
     {
         private readonly string groupField;
         private int initialSize = 128;
@@ -130,123 +136,51 @@ namespace Lucene.Net.Search.Grouping
             this.groupField = groupField;
         }
 
-        /// <inheritdoc cref="AbstractGroupingSearch{T, TSelf}.Search(IndexSearcher,Filter,Query,int,int)"/>
-        public override TopGroups<BytesRef> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        /// <inheritdoc/>
+        protected override AbstractFirstPassGroupingCollector<BytesRef> CreateFirstPassCollector(Sort groupSort, int topN)
         {
-            int topN = groupOffset + groupLimit;
-            AbstractFirstPassGroupingCollector<BytesRef> firstPassCollector;
-            AbstractAllGroupsCollector<BytesRef> allGroupsCollector;
-            AbstractAllGroupHeadsCollector allGroupHeadsCollector;
-
             if (groupField is null)
             {
                 throw IllegalStateException.Create("groupField must be set via the constructor.");
             }
 
-            firstPassCollector = new TermFirstPassGroupingCollector(groupField, GroupSort, topN);
-            if (AllGroups)
+            return new TermFirstPassGroupingCollector(groupField, groupSort, topN);
+        }
+
+        /// <inheritdoc/>
+        protected override AbstractAllGroupsCollector<BytesRef> CreateAllGroupsCollector()
+        {
+            if (groupField is null)
             {
-                allGroupsCollector = new TermAllGroupsCollector(groupField, initialSize);
-            }
-            else
-            {
-                allGroupsCollector = null;
-            }
-            if (AllGroupHeads)
-            {
-                allGroupHeadsCollector = TermAllGroupHeadsCollector.Create(groupField, SortWithinGroup, initialSize);
-            }
-            else
-            {
-                allGroupHeadsCollector = null;
+                throw IllegalStateException.Create("groupField must be set via the constructor.");
             }
 
-            ICollector firstRound;
-            if (AllGroupHeads || AllGroups)
-            {
-                JCG.List<ICollector> collectors = new JCG.List<ICollector>();
-                collectors.Add(firstPassCollector);
+            return new TermAllGroupsCollector(groupField, initialSize);
+        }
 
-                if (AllGroups)
-                {
-                    collectors.Add(allGroupsCollector);
-                }
-                if (AllGroupHeads)
-                {
-                    collectors.Add(allGroupHeadsCollector);
-                }
-                firstRound = MultiCollector.Wrap(collectors.ToArray(/* new Collector[collectors.size()] */));
-            }
-            else
+        /// <inheritdoc/>
+        protected override AbstractAllGroupHeadsCollector CreateAllGroupHeadsCollector(Sort sortWithinGroup)
+        {
+            if (groupField is null)
             {
-                firstRound = firstPassCollector;
+                throw IllegalStateException.Create("groupField must be set via the constructor.");
             }
 
-            CachingCollector cachedCollector = null;
-            if (MaxCacheRAMMB != null || MaxDocsToCache != null)
+            return TermAllGroupHeadsCollector.Create(groupField, sortWithinGroup, initialSize);
+        }
+
+        /// <inheritdoc/>
+        protected override AbstractSecondPassGroupingCollector<BytesRef> CreateSecondPassCollector(
+            ICollection<SearchGroup<BytesRef>> topSearchGroups, Sort groupSort, Sort sortWithinGroup,
+            int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields)
+        {
+            if (groupField is null)
             {
-                if (MaxCacheRAMMB != null)
-                {
-                    cachedCollector = CachingCollector.Create(firstRound, CacheScores, MaxCacheRAMMB.Value);
-                }
-                else
-                {
-                    cachedCollector = CachingCollector.Create(firstRound, CacheScores, MaxDocsToCache.Value);
-                }
-                searcher.Search(query, filter, cachedCollector);
-            }
-            else
-            {
-                searcher.Search(query, filter, firstRound);
+                throw IllegalStateException.Create("groupField must be set via the constructor.");
             }
 
-            if (AllGroups)
-            {
-                MatchingGroups = allGroupsCollector.Groups;
-            }
-            else
-            {
-                MatchingGroups = Collections.EmptyList<BytesRef>();
-            }
-            if (AllGroupHeads)
-            {
-                MatchingGroupHeads = allGroupHeadsCollector.RetrieveGroupHeads(searcher.IndexReader.MaxDoc);
-            }
-            else
-            {
-                MatchingGroupHeads = new Bits.MatchNoBits(searcher.IndexReader.MaxDoc);
-            }
-
-            ICollection<SearchGroup<BytesRef>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, FillSortFields);
-            if (topSearchGroups is null)
-            {
-                // LUCENENET specific - optimized empty array creation
-                return new TopGroups<BytesRef>(Array.Empty<SortField>(), Array.Empty<SortField>(), 0, 0, Array.Empty<GroupDocs<BytesRef>>(), float.NaN);
-            }
-
-            int topNInsideGroup = GroupDocsOffset + GroupDocsLimit;
-            AbstractSecondPassGroupingCollector<BytesRef> secondPassCollector;
-
-            secondPassCollector = new TermSecondPassGroupingCollector(groupField, topSearchGroups,
-                GroupSort, SortWithinGroup, topNInsideGroup, IncludeScores, IncludeMaxScore, FillSortFields);
-
-            if (cachedCollector != null && cachedCollector.IsCached)
-            {
-                cachedCollector.Replay(secondPassCollector);
-            }
-            else
-            {
-                searcher.Search(query, filter, secondPassCollector);
-            }
-
-            if (AllGroups)
-            {
-                return new TopGroups<BytesRef>(secondPassCollector.GetTopGroups(GroupDocsOffset), MatchingGroups.Count);
-            }
-            else
-            {
-                return secondPassCollector.GetTopGroups(GroupDocsOffset);
-            }
+            return new TermSecondPassGroupingCollector(groupField, topSearchGroups,
+                groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields);
         }
 
         /// <summary>
@@ -254,13 +188,14 @@ namespace Lucene.Net.Search.Grouping
         /// This prevents growing data structures many times. This can improve the performance of the grouping at the cost of
         /// more initial RAM.
         /// <para>
-        /// The <see cref="AbstractFieldOrFunctionGroupingSearch{T, TSelf}.SetAllGroups(bool)"/> and
-        /// <see cref="AbstractFieldOrFunctionGroupingSearch{T, TSelf}.SetAllGroupHeads(bool)"/> features use this option.
+        /// The <see cref="TwoPassGroupingSearch{T, TSelf}.SetAllGroups(bool)"/> and
+        /// <see cref="TwoPassGroupingSearch{T, TSelf}.SetAllGroupHeads(bool)"/> features use this option.
         /// Defaults to 128.
         /// </para>
         /// </summary>
         /// <param name="initialSize">The initial size of some internal used data structures</param>
         /// <returns><c>this</c></returns>
+        // ReSharper disable once ParameterHidesMember - justification: typical upstream Java style
         public virtual FieldGroupingSearch SetInitialSize(int initialSize)
         {
             this.initialSize = initialSize;
@@ -272,8 +207,11 @@ namespace Lucene.Net.Search.Grouping
     /// A grouping search that groups documents by function using a <see cref="ValueSource"/> instance.
     /// </summary>
     /// <typeparam name="T">The type of the mutable value</typeparam>
+    /// <remarks>
+    /// LUCENENET specific.
+    /// </remarks>
     /// <seealso cref="GroupingSearch.ByFunction{TMutableValue}(ValueSource, IDictionary)"/>
-    public class FunctionGroupingSearch<T> : AbstractFieldOrFunctionGroupingSearch<T, FunctionGroupingSearch<T>>
+    public class FunctionGroupingSearch<T> : TwoPassGroupingSearch<T, FunctionGroupingSearch<T>>
         where T : MutableValue
     {
         private readonly ValueSource groupFunction;
@@ -290,37 +228,170 @@ namespace Lucene.Net.Search.Grouping
             this.valueSourceContext = valueSourceContext;
         }
 
-        /// <inheritdoc cref="AbstractGroupingSearch{T, TSelf}.Search(IndexSearcher,Filter,Query,int,int)"/>
-        public override TopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        /// <inheritdoc/>
+        protected override AbstractFirstPassGroupingCollector<T> CreateFirstPassCollector(Sort groupSort, int topN)
         {
-            int topN = groupOffset + groupLimit;
-            FunctionFirstPassGroupingCollector<T> firstPassCollector;
-            FunctionAllGroupsCollector<T> allGroupsCollector;
-            AbstractAllGroupHeadsCollector allGroupHeadsCollector;
-
             if (groupFunction is null)
             {
                 throw IllegalStateException.Create("groupFunction must be set via the constructor by specifying a ValueSource.");
             }
 
-            firstPassCollector = new FunctionFirstPassGroupingCollector<T>(groupFunction, valueSourceContext, GroupSort, topN);
-            if (AllGroups)
+            return new FunctionFirstPassGroupingCollector<T>(groupFunction, valueSourceContext, groupSort, topN);
+        }
+
+        /// <inheritdoc/>
+        protected override AbstractAllGroupsCollector<T> CreateAllGroupsCollector()
+        {
+            if (groupFunction is null)
             {
-                allGroupsCollector = new FunctionAllGroupsCollector<T>(groupFunction, valueSourceContext);
-            }
-            else
-            {
-                allGroupsCollector = null;
-            }
-            if (AllGroupHeads)
-            {
-                allGroupHeadsCollector = new FunctionAllGroupHeadsCollector(groupFunction, valueSourceContext, SortWithinGroup);
-            }
-            else
-            {
-                allGroupHeadsCollector = null;
+                throw IllegalStateException.Create("groupFunction must be set via the constructor by specifying a ValueSource.");
             }
 
+            return new FunctionAllGroupsCollector<T>(groupFunction, valueSourceContext);
+        }
+
+        /// <inheritdoc/>
+        protected override AbstractAllGroupHeadsCollector CreateAllGroupHeadsCollector(Sort sortWithinGroup)
+        {
+            if (groupFunction is null)
+            {
+                throw IllegalStateException.Create("groupFunction must be set via the constructor by specifying a ValueSource.");
+            }
+
+            return new FunctionAllGroupHeadsCollector(groupFunction, valueSourceContext, sortWithinGroup);
+        }
+
+        /// <inheritdoc/>
+        protected override AbstractSecondPassGroupingCollector<T> CreateSecondPassCollector(
+            ICollection<SearchGroup<T>> topSearchGroups, Sort groupSort, Sort sortWithinGroup,
+            int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields)
+        {
+            if (groupFunction is null)
+            {
+                throw IllegalStateException.Create("groupFunction must be set via the constructor by specifying a ValueSource.");
+            }
+
+            return new FunctionSecondPassGroupingCollector<T>(topSearchGroups,
+                groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields, groupFunction, valueSourceContext);
+        }
+    }
+
+#nullable enable
+    /// <summary>
+    /// A grouping search that groups documents by doc block.
+    /// This class can only be used when documents belonging in a group are indexed in one block.
+    /// </summary>
+    /// <remarks>
+    /// LUCENENET specific.
+    /// </remarks>
+    public class DocBlockGroupingSearch : GroupingSearch<object?, DocBlockGroupingSearch>
+    {
+        private readonly Filter groupEndDocs;
+
+        /// <summary>
+        /// Constructs a <see cref="DocBlockGroupingSearch"/> instance that groups documents by doc block.
+        /// This class can only be used when documents belonging in a group are indexed in one block.
+        /// </summary>
+        /// <param name="groupEndDocs">The filter that marks the last document in all doc blocks</param>
+        public DocBlockGroupingSearch(Filter groupEndDocs)
+        {
+            this.groupEndDocs = groupEndDocs;
+        }
+
+        /// <inheritdoc cref="GroupingSearch{T,TSelf}.Search(IndexSearcher,Filter,Query,int,int)"/>
+        public override TopGroups<object?> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        {
+            int topN = groupOffset + groupLimit;
+            BlockGroupingCollector c = new BlockGroupingCollector(GroupSort, topN, IncludeScores, groupEndDocs);
+            searcher.Search(query, filter, c);
+            int topNInsideGroup = GroupDocsOffset + GroupDocsLimit;
+            return c.GetTopGroups<object?>(SortWithinGroup, groupOffset, GroupDocsOffset, topNInsideGroup, FillSortFields);
+        }
+#nullable restore
+    }
+
+    /// <summary>
+    /// Abstract base class for two-pass grouping search implementations. Two-pass grouping search first collects the
+    /// top N groups in the first pass, and then collects the top documents within those top groups in the second pass.
+    /// </summary>
+    /// <typeparam name="T">The type of the group value</typeparam>
+    /// <typeparam name="TSelf">The type of the concrete grouping search implementation, used for fluent method chaining</typeparam>
+    /// <remarks>
+    /// LUCENENET specific.
+    /// <para />
+    /// Notes for implementers:
+    /// <para />
+    /// This abstract class represents a template method pattern for implementing two-pass grouping search.
+    /// To create a custom implementation, you must implement the factory methods provided. See the summaries for each
+    /// one, and refer to <see cref="FieldGroupingSearch"/> and <see cref="FunctionGroupingSearch{T}"/> as reference
+    /// implementations.
+    /// </remarks>
+    /// <seealso cref="GroupingSearch"/>
+    public abstract class TwoPassGroupingSearch<T, TSelf> : GroupingSearch<T, TSelf>
+        where TSelf : TwoPassGroupingSearch<T, TSelf>
+    {
+        // LUCENENET: Converted to protected properties
+        protected bool IncludeMaxScore { get; private set; } = true;
+
+        protected double? MaxCacheRAMMB { get; private set; }
+        protected int? MaxDocsToCache { get; private set; }
+        protected bool CacheScores { get; private set; }
+        protected bool AllGroups { get; private set; }
+        protected bool AllGroupHeads { get; private set; }
+
+        protected ICollection<T> MatchingGroups { get; set; }
+        protected IBits MatchingGroupHeads { get; set; }
+
+        #region Abstract factory methods
+
+        /// <summary>
+        /// Creates the first-pass grouping collector used to determine the top groups.
+        /// </summary>
+        /// <param name="groupSort">The sort to use for ordering groups.</param>
+        /// <param name="topN">The maximum number of top groups to collect.</param>
+        /// <returns>A new <see cref="AbstractFirstPassGroupingCollector{T}"/> instance.</returns>
+        protected abstract AbstractFirstPassGroupingCollector<T> CreateFirstPassCollector(Sort groupSort, int topN);
+
+        /// <summary>
+        /// Creates the collector used to determine all groups matching the query.
+        /// </summary>
+        /// <returns>A new <see cref="AbstractAllGroupsCollector{T}"/> instance.</returns>
+        protected abstract AbstractAllGroupsCollector<T> CreateAllGroupsCollector();
+
+        /// <summary>
+        /// Creates the collector used to determine all group head documents (most relevant document per group).
+        /// </summary>
+        /// <param name="sortWithinGroup">The sort to use within each group.</param>
+        /// <returns>A new <see cref="AbstractAllGroupHeadsCollector"/> instance.</returns>
+        protected abstract AbstractAllGroupHeadsCollector CreateAllGroupHeadsCollector(Sort sortWithinGroup);
+
+        /// <summary>
+        /// Creates the second-pass grouping collector used to collect documents within the top groups.
+        /// </summary>
+        /// <param name="topSearchGroups">The top groups from the first pass.</param>
+        /// <param name="groupSort">The sort to use for ordering groups.</param>
+        /// <param name="sortWithinGroup">The sort to use within each group.</param>
+        /// <param name="maxDocsPerGroup">The maximum number of documents to collect per group.</param>
+        /// <param name="getScores">Whether to include scores for each document.</param>
+        /// <param name="getMaxScores">Whether to include the maximum score per group.</param>
+        /// <param name="fillSortFields">Whether to populate sort field values.</param>
+        /// <returns>A new <see cref="AbstractSecondPassGroupingCollector{T}"/> instance.</returns>
+        protected abstract AbstractSecondPassGroupingCollector<T> CreateSecondPassCollector(
+            ICollection<SearchGroup<T>> topSearchGroups, Sort groupSort, Sort sortWithinGroup,
+            int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields);
+
+        #endregion
+
+        /// <inheritdoc cref="GroupingSearch{T,TSelf}.Search(IndexSearcher,Filter,Query,int,int)"/>
+        public override TopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        {
+            int topN = groupOffset + groupLimit;
+
+            AbstractFirstPassGroupingCollector<T> firstPassCollector = CreateFirstPassCollector(GroupSort, topN);
+
+            AbstractAllGroupsCollector<T> allGroupsCollector = AllGroups ? CreateAllGroupsCollector() : null;
+
+            AbstractAllGroupHeadsCollector allGroupHeadsCollector = AllGroupHeads ? CreateAllGroupHeadsCollector(SortWithinGroup) : null;
 
             ICollector firstRound;
             if (AllGroupHeads || AllGroups)
@@ -346,14 +417,9 @@ namespace Lucene.Net.Search.Grouping
             CachingCollector cachedCollector = null;
             if (MaxCacheRAMMB != null || MaxDocsToCache != null)
             {
-                if (MaxCacheRAMMB != null)
-                {
-                    cachedCollector = CachingCollector.Create(firstRound, CacheScores, MaxCacheRAMMB.Value);
-                }
-                else
-                {
-                    cachedCollector = CachingCollector.Create(firstRound, CacheScores, MaxDocsToCache.Value);
-                }
+                cachedCollector = MaxCacheRAMMB != null
+                    ? CachingCollector.Create(firstRound, CacheScores, MaxCacheRAMMB.Value)
+                    : CachingCollector.Create(firstRound, CacheScores, MaxDocsToCache!.Value);
                 searcher.Search(query, filter, cachedCollector);
             }
             else
@@ -361,22 +427,13 @@ namespace Lucene.Net.Search.Grouping
                 searcher.Search(query, filter, firstRound);
             }
 
-            if (AllGroups)
-            {
-                MatchingGroups = allGroupsCollector.Groups;
-            }
-            else
-            {
-                MatchingGroups = Collections.EmptyList<T>();
-            }
-            if (AllGroupHeads)
-            {
-                MatchingGroupHeads = allGroupHeadsCollector.RetrieveGroupHeads(searcher.IndexReader.MaxDoc);
-            }
-            else
-            {
-                MatchingGroupHeads = new Bits.MatchNoBits(searcher.IndexReader.MaxDoc);
-            }
+            MatchingGroups = AllGroups
+                ? allGroupsCollector!.Groups    // [!]: initialized above when AllGroups is true
+                : Collections.EmptyList<T>();
+
+            MatchingGroupHeads = AllGroupHeads
+                ? allGroupHeadsCollector!.RetrieveGroupHeads(searcher.IndexReader.MaxDoc) // [!]: initialized above when AllGroupHeads is true
+                : new Bits.MatchNoBits(searcher.IndexReader.MaxDoc);
 
             ICollection<SearchGroup<T>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, FillSortFields);
             if (topSearchGroups is null)
@@ -386,11 +443,9 @@ namespace Lucene.Net.Search.Grouping
             }
 
             int topNInsideGroup = GroupDocsOffset + GroupDocsLimit;
-            AbstractSecondPassGroupingCollector<T> secondPassCollector;
 
-            secondPassCollector = new FunctionSecondPassGroupingCollector<T>(topSearchGroups,
-                GroupSort, SortWithinGroup, topNInsideGroup, IncludeScores, IncludeMaxScore, FillSortFields, groupFunction, valueSourceContext);
-
+            AbstractSecondPassGroupingCollector<T> secondPassCollector = CreateSecondPassCollector(topSearchGroups,
+                GroupSort, SortWithinGroup, topNInsideGroup, IncludeScores, IncludeMaxScore, FillSortFields);
 
             if (cachedCollector != null && cachedCollector.IsCached)
             {
@@ -401,71 +456,10 @@ namespace Lucene.Net.Search.Grouping
                 searcher.Search(query, filter, secondPassCollector);
             }
 
-            if (AllGroups)
-            {
-                return new TopGroups<T>(secondPassCollector.GetTopGroups(GroupDocsOffset), MatchingGroups.Count);
-            }
-            else
-            {
-                return secondPassCollector.GetTopGroups(GroupDocsOffset);
-            }
+            return AllGroups
+                ? new TopGroups<T>(secondPassCollector.GetTopGroups(GroupDocsOffset), MatchingGroups.Count)
+                : secondPassCollector.GetTopGroups(GroupDocsOffset);
         }
-    }
-
-#nullable enable
-    /// <summary>
-    /// A grouping search that groups documents by doc block.
-    /// This class can only be used when documents belonging in a group are indexed in one block.
-    /// </summary>
-    public class DocBlockGroupingSearch : AbstractGroupingSearch<object?, DocBlockGroupingSearch>
-    {
-        private readonly Filter groupEndDocs;
-
-        /// <summary>
-        /// Constructs a <see cref="DocBlockGroupingSearch"/> instance that groups documents by doc block.
-        /// This class can only be used when documents belonging in a group are indexed in one block.
-        /// </summary>
-        /// <param name="groupEndDocs">The filter that marks the last document in all doc blocks</param>
-        public DocBlockGroupingSearch(Filter groupEndDocs)
-        {
-            this.groupEndDocs = groupEndDocs;
-        }
-
-        /// <inheritdoc cref="AbstractGroupingSearch{T, TSelf}.Search(IndexSearcher,Filter,Query,int,int)"/>
-        public override TopGroups<object?> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
-        {
-            int topN = groupOffset + groupLimit;
-            BlockGroupingCollector c = new BlockGroupingCollector(GroupSort, topN, IncludeScores, groupEndDocs);
-            searcher.Search(query, filter, c);
-            int topNInsideGroup = GroupDocsOffset + GroupDocsLimit;
-            return c.GetTopGroups<object?>(SortWithinGroup, groupOffset, GroupDocsOffset, topNInsideGroup, FillSortFields);
-        }
-#nullable restore
-    }
-
-    /// <summary>
-    /// Abstract base class for grouping search implementations that groups documents by index terms or function.
-    /// </summary>
-    /// <typeparam name="T">The type of the group value</typeparam>
-    /// <typeparam name="TSelf">The type of the concrete grouping search implementation, used for fluent method chaining</typeparam>
-    /// <remarks>
-    /// LUCENENET specific
-    /// </remarks>
-    /// <seealso cref="GroupingSearch"/>
-    public abstract class AbstractFieldOrFunctionGroupingSearch<T, TSelf> : AbstractGroupingSearch<T, TSelf>
-        where TSelf : AbstractFieldOrFunctionGroupingSearch<T, TSelf>
-    {
-        // LUCENENET: Converted to protected properties
-        protected bool IncludeMaxScore { get; private set; } = true;
-
-        protected double? MaxCacheRAMMB { get; private set; }
-        protected int? MaxDocsToCache { get; private set; }
-        protected bool CacheScores { get; private set; }
-        protected bool AllGroups { get; private set; }
-        protected bool AllGroupHeads { get; private set; }
-
-        protected ICollection<T> MatchingGroups { get; set; }
-        protected IBits MatchingGroupHeads { get; set; }
 
         /// <summary>
         /// Enables caching for the second pass search. The cache will not grow over a specified limit in MB.
@@ -577,11 +571,21 @@ namespace Lucene.Net.Search.Grouping
     /// <typeparam name="T">The type of the group value</typeparam>
     /// <typeparam name="TSelf">The type of the concrete grouping search implementation, used for fluent method chaining</typeparam>
     /// <remarks>
-    /// LUCENENET specific
+    /// LUCENENET specific.
+    /// <para />
+    /// Notes for implementers:
+    /// <para />
+    /// The <typeparamref name="TSelf"/> type parameter creates a "Curiously-Recurring Template Pattern" (CRTP) that
+    /// allows the base class to return the type of the concrete implementation in its fluent API methods.
+    /// This pattern is used to enable method chaining while maintaining the specific type of the concrete
+    /// implementation, which is not possible with a non-generic base class or with a base class that uses a common
+    /// interface for method chaining. By using this pattern, users of the grouping search classes can call
+    /// configuration methods in a fluent manner and still have access to the specific methods of the concrete
+    /// implementation without needing to cast back to the concrete type.
     /// </remarks>
     /// <seealso cref="GroupingSearch"/>
-    public abstract class AbstractGroupingSearch<T, TSelf> : IAbstractGroupingSearch
-        where TSelf : AbstractGroupingSearch<T, TSelf>
+    public abstract class GroupingSearch<T, TSelf> : IGroupingSearch
+        where TSelf : GroupingSearch<T, TSelf>
     {
         // LUCENENET: Converted to protected properties
         protected Sort GroupSort { get; private set; } = Sort.RELEVANCE;
@@ -686,21 +690,24 @@ namespace Lucene.Net.Search.Grouping
 
         #region Explicit interface implementations
 
-        /// <inheritdoc cref="IAbstractGroupingSearch.Search(IndexSearcher, Query, int, int)"/>
-        ITopGroups IAbstractGroupingSearch.Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
+        /// <inheritdoc cref="IGroupingSearch.Search(IndexSearcher, Query, int, int)"/>
+        ITopGroups IGroupingSearch.Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
             => Search(searcher, query, groupOffset, groupLimit);
 
-        /// <inheritdoc cref="IAbstractGroupingSearch.Search(IndexSearcher, Filter, Query, int, int)"/>
-        ITopGroups IAbstractGroupingSearch.Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        /// <inheritdoc cref="IGroupingSearch.Search(IndexSearcher, Filter, Query, int, int)"/>
+        ITopGroups IGroupingSearch.Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
             => Search(searcher, filter, query, groupOffset, groupLimit);
 
         #endregion
     }
 
     /// <summary>
-    /// LUCENENET specific interface for non-generic access to <see cref="AbstractGroupingSearch{T, TSelf}"/>.
+    /// An interface for non-generic access to <see cref="GroupingSearch{T,TSelf}"/>.
     /// </summary>
-    public interface IAbstractGroupingSearch
+    /// <remarks>
+    /// LUCENENET specific. This was introduced to avoid type-erasure differences from the upstream Java code.
+    /// </remarks>
+    public interface IGroupingSearch
     {
         /// <summary>
         /// Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
