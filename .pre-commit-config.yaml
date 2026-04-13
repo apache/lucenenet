@@ -72,3 +72,6 @@ repos:
       - id: forbid-submodules
         name: run forbid-submodules
         description: forbids any submodules in the repository
+      - id: fix-byte-order-marker
+        name: run fix-byte-order-marker
+        description: fixes files with UTF-8 byte order markers
