@@ -56,7 +56,7 @@ namespace Lucene.Net.Search.Grouping
     ///     </item>
     ///     <item>
     ///         <description>
-    ///             <see cref="ByDocBlock{TGroupValue}(Filter)"/> - Constructs a <see cref="DocBlockGroupingSearch{TGroupValue}"/> instance
+    ///             <see cref="ByDocBlock(Filter)"/> - Constructs a <see cref="DocBlockGroupingSearch"/> instance
     ///             that groups documents by doc block. This method can only be used when documents belonging in a group are indexed in one block.
     ///         </description>
     ///     </item>
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search.Grouping
     /// </summary>
     /// <seealso cref="FieldGroupingSearch"/>
     /// <seealso cref="FunctionGroupingSearch{TMutableValue}"/>
-    /// <seealso cref="DocBlockGroupingSearch{TGroupValue}"/>
+    /// <seealso cref="DocBlockGroupingSearch"/>
     public static class GroupingSearch
     {
         /// <summary>
@@ -100,15 +100,14 @@ namespace Lucene.Net.Search.Grouping
         }
 
         /// <summary>
-        /// Constructs a <see cref="DocBlockGroupingSearch{TGroupValue}"/> instance that groups documents by doc block.
+        /// Constructs a <see cref="DocBlockGroupingSearch"/> instance that groups documents by doc block.
         /// This method can only be used when documents belonging in a group are indexed in one block.
         /// </summary>
         /// <param name="groupEndDocs">The filter that marks the last document in all doc blocks</param>
-        /// <typeparam name="TGroupValue">The type of the group value</typeparam>
-        /// <returns>A <see cref="DocBlockGroupingSearch{TGroupValue}"/> instance.</returns>
-        public static DocBlockGroupingSearch<TGroupValue> ByDocBlock<TGroupValue>(Filter groupEndDocs)
+        /// <returns>A <see cref="DocBlockGroupingSearch"/> instance.</returns>
+        public static DocBlockGroupingSearch ByDocBlock(Filter groupEndDocs)
         {
-            return new DocBlockGroupingSearch<TGroupValue>(groupEndDocs);
+            return new DocBlockGroupingSearch(groupEndDocs);
         }
     }
 
@@ -413,17 +412,17 @@ namespace Lucene.Net.Search.Grouping
         }
     }
 
+#nullable enable
     /// <summary>
     /// A grouping search that groups documents by doc block.
     /// This class can only be used when documents belonging in a group are indexed in one block.
     /// </summary>
-    /// <typeparam name="T">The type of the group value</typeparam>
-    public class DocBlockGroupingSearch<T> : AbstractGroupingSearch<T, DocBlockGroupingSearch<T>>
+    public class DocBlockGroupingSearch : AbstractGroupingSearch<object?, DocBlockGroupingSearch>
     {
         private readonly Filter groupEndDocs;
 
         /// <summary>
-        /// Constructs a <see cref="DocBlockGroupingSearch{T}"/> instance that groups documents by doc block.
+        /// Constructs a <see cref="DocBlockGroupingSearch"/> instance that groups documents by doc block.
         /// This class can only be used when documents belonging in a group are indexed in one block.
         /// </summary>
         /// <param name="groupEndDocs">The filter that marks the last document in all doc blocks</param>
@@ -433,14 +432,15 @@ namespace Lucene.Net.Search.Grouping
         }
 
         /// <inheritdoc cref="AbstractGroupingSearch{T, TSelf}.Search(IndexSearcher,Filter,Query,int,int)"/>
-        public override TopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        public override TopGroups<object?> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             int topN = groupOffset + groupLimit;
             BlockGroupingCollector c = new BlockGroupingCollector(GroupSort, topN, IncludeScores, groupEndDocs);
             searcher.Search(query, filter, c);
             int topNInsideGroup = GroupDocsOffset + GroupDocsLimit;
-            return c.GetTopGroups<T>(SortWithinGroup, groupOffset, GroupDocsOffset, topNInsideGroup, FillSortFields);
+            return c.GetTopGroups<object?>(SortWithinGroup, groupOffset, GroupDocsOffset, topNInsideGroup, FillSortFields);
         }
+#nullable restore
     }
 
     /// <summary>

@@ -203,8 +203,8 @@ namespace Lucene.Net.Search.Grouping
         [Test]
         public void TestDocBlockGroupingSearch_SetGroupSort_ReturnsConcrete()
         {
-            DocBlockGroupingSearch<object> result = GroupingSearch
-                .ByDocBlock<object>(null)
+            DocBlockGroupingSearch result = GroupingSearch
+                .ByDocBlock(null)
                 .SetGroupSort(Sort.RELEVANCE);
             Assert.IsNotNull(result);
         }
@@ -212,8 +212,8 @@ namespace Lucene.Net.Search.Grouping
         [Test]
         public void TestDocBlockGroupingSearch_SetIncludeScores_ReturnsConcrete()
         {
-            DocBlockGroupingSearch<object> result = GroupingSearch
-                .ByDocBlock<object>(null)
+            DocBlockGroupingSearch result = GroupingSearch
+                .ByDocBlock(null)
                 .SetIncludeScores(true);
             Assert.IsNotNull(result);
         }
@@ -221,8 +221,8 @@ namespace Lucene.Net.Search.Grouping
         [Test]
         public void TestDocBlockGroupingSearch_FullChaining()
         {
-            DocBlockGroupingSearch<object> result = GroupingSearch
-                .ByDocBlock<object>(null)
+            DocBlockGroupingSearch result = GroupingSearch
+                .ByDocBlock(null)
                 .SetGroupSort(Sort.RELEVANCE)
                 .SetSortWithinGroup(Sort.RELEVANCE)
                 .SetGroupDocsOffset(0)

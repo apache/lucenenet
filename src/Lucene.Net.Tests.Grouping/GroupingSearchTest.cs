@@ -156,7 +156,7 @@ namespace Lucene.Net.Search.Grouping
             // LUCENENET: using SearchDelegate callback to encapsulate non-covariant generic type use
             groupingSearch = (searcher, filter, query, offset, limit) =>
             {
-                var topGroups = GroupingSearch.ByDocBlock<object>(lastDocInBlock).Search(searcher, filter, query, offset, limit);
+                var topGroups = GroupingSearch.ByDocBlock(lastDocInBlock).Search(searcher, filter, query, offset, limit);
 
                 return new GroupingSearchResult
                 {

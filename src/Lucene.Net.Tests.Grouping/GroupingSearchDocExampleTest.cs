@@ -7,6 +7,8 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
 
+#nullable enable
+
 namespace Lucene.Net.Search.Grouping
 {
     /*
@@ -70,12 +72,12 @@ namespace Lucene.Net.Search.Grouping
 
             // --- Code from package.md documentation ---
             Sort groupSort = Sort.RELEVANCE;
-            bool fillFields = true;
-            bool useCache = true;
-            bool requiredTotalGroupCount = true;
-            string searchTerm = "random";
-            int groupOffset = 0;
-            int groupLimit = 10;
+            const bool fillFields = true;
+            const bool useCache = true;
+            const bool requiredTotalGroupCount = true;
+            const string searchTerm = "random";
+            const int groupOffset = 0;
+            const int groupLimit = 10;
 
             FieldGroupingSearch groupingSearch = GroupingSearch.ByField("author");
             groupingSearch.SetGroupSort(groupSort);
@@ -104,7 +106,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 int? totalGroupCount = result.TotalGroupCount;
                 Assert.IsNotNull(totalGroupCount);
-                assertEquals(2, totalGroupCount.Value);
+                assertEquals(2, totalGroupCount!.Value);
             }
 
             indexSearcher.IndexReader.Dispose();
@@ -113,7 +115,7 @@ namespace Lucene.Net.Search.Grouping
 
         /// <summary>
         /// Tests the "GroupingSearch convenience utility" example for doc block grouping
-        /// from the package.md documentation using <see cref="GroupingSearch.ByDocBlock{TGroupValue}(Filter)"/>.
+        /// from the package.md documentation using <see cref="GroupingSearch.ByDocBlock(Filter)"/>.
         /// </summary>
         [Test]
         public void TestDocBlockGroupingSearchDocExample()
@@ -155,20 +157,20 @@ namespace Lucene.Net.Search.Grouping
 
             // --- Search code from package.md documentation ---
             Sort groupSort = Sort.RELEVANCE;
-            bool needsScores = true;
-            string searchTerm = "random";
-            int groupOffset = 0;
-            int groupLimit = 10;
+            const bool needsScores = true;
+            const string searchTerm = "random";
+            const int groupOffset = 0;
+            const int groupLimit = 10;
 
             // Set this once in your app & save away for reusing across all queries:
             Filter groupEndDocs = new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Index.Term("groupEnd", "x"))));
 
             // Per search:
-            DocBlockGroupingSearch<object> groupingSearch = GroupingSearch.ByDocBlock<object>(groupEndDocs);
+            DocBlockGroupingSearch groupingSearch = GroupingSearch.ByDocBlock(groupEndDocs);
             groupingSearch.SetGroupSort(groupSort);
             groupingSearch.SetIncludeScores(needsScores);
             TermQuery query = new TermQuery(new Index.Term("content", searchTerm));
-            TopGroups<object> groupsResult = groupingSearch.Search(indexSearcher, query, groupOffset, groupLimit);
+            TopGroups<object?> groupsResult = groupingSearch.Search(indexSearcher, query, groupOffset, groupLimit);
 
             // Verify results
             Assert.IsNotNull(groupsResult);

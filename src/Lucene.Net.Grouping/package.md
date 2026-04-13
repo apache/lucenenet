@@ -140,11 +140,11 @@ Or alternatively use the `GroupingSearch` convenience utility:
 
 ```cs
 // Per search:
-DocBlockGroupingSearch<object> groupingSearch = GroupingSearch.ByDocBlock<object>(groupEndDocs);
+DocBlockGroupingSearch groupingSearch = GroupingSearch.ByDocBlock(groupEndDocs);
 groupingSearch.SetGroupSort(groupSort);
 groupingSearch.SetIncludeScores(needsScores);
 TermQuery query = new TermQuery(new Term("content", searchTerm));
-TopGroups<object> groupsResult = groupingSearch.Search(indexSearcher, query, groupOffset, groupLimit);
+TopGroups<object?> groupsResult = groupingSearch.Search(indexSearcher, query, groupOffset, groupLimit);
 
 // Render groupsResult...
 ```
