@@ -1,5 +1,6 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Support
 {
@@ -43,25 +44,25 @@ namespace Lucene.Net.Support
 
         void ICollection<U>.Add(U item) => set.Add(((T)item)!);
 
-        public void UnionWith(IEnumerable<U> other) => set.UnionWith((IEnumerable<T>)other);
+        public void UnionWith(IEnumerable<U> other) => set.UnionWith(other.Cast<T>());
 
-        public void IntersectWith(IEnumerable<U> other) => set.IntersectWith((IEnumerable<T>)other);
+        public void IntersectWith(IEnumerable<U> other) => set.IntersectWith(other.Cast<T>());
 
-        public void ExceptWith(IEnumerable<U> other) => set.ExceptWith((IEnumerable<T>)other);
+        public void ExceptWith(IEnumerable<U> other) => set.ExceptWith(other.Cast<T>());
 
-        public void SymmetricExceptWith(IEnumerable<U> other) => set.SymmetricExceptWith((IEnumerable<T>)other);
+        public void SymmetricExceptWith(IEnumerable<U> other) => set.SymmetricExceptWith(other.Cast<T>());
 
-        public bool IsSubsetOf(IEnumerable<U> other) => set.IsSubsetOf((IEnumerable<T>)other);
+        public bool IsSubsetOf(IEnumerable<U> other) => set.IsSubsetOf(other.Cast<T>());
 
-        public bool IsSupersetOf(IEnumerable<U> other) => set.IsSupersetOf((IEnumerable<T>)other);
+        public bool IsSupersetOf(IEnumerable<U> other) => set.IsSupersetOf(other.Cast<T>());
 
-        public bool IsProperSupersetOf(IEnumerable<U> other) => set.IsProperSupersetOf((IEnumerable<T>)other);
+        public bool IsProperSupersetOf(IEnumerable<U> other) => set.IsProperSupersetOf(other.Cast<T>());
 
-        public bool IsProperSubsetOf(IEnumerable<U> other) => set.IsProperSubsetOf((IEnumerable<T>)other);
+        public bool IsProperSubsetOf(IEnumerable<U> other) => set.IsProperSubsetOf(other.Cast<T>());
 
-        public bool Overlaps(IEnumerable<U> other) => set.Overlaps((IEnumerable<T>)other);
+        public bool Overlaps(IEnumerable<U> other) => set.Overlaps(other.Cast<T>());
 
-        public bool SetEquals(IEnumerable<U> other) => set.SetEquals((IEnumerable<T>)other);
+        public bool SetEquals(IEnumerable<U> other) => set.SetEquals(other.Cast<T>());
 
         bool ISet<U>.Add(U item) => set.Add((T)item);
 
