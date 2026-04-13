@@ -85,11 +85,7 @@ namespace Lucene.Net.Search.Grouping
         /// <summary>
         /// LUCENENET specific implementation to provide an object-based implementation of <see cref="GroupValue"/>.
         /// </summary>
-        object ISearchGroup.GroupValue
-        {
-            get => GroupValue;
-            set => GroupValue = (TGroupValue)value;
-        }
+        object ISearchGroup.GroupValue => GroupValue;
 
         #endregion
     }
@@ -496,7 +492,7 @@ namespace Lucene.Net.Search.Grouping
         /// <summary>
         /// The value that defines this group
         /// </summary>
-        object GroupValue { get; set; }
+        object GroupValue { get; }
 
         /// <summary>
         /// The sort values used during sorting. These are the
