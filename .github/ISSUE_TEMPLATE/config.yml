@@ -8,7 +8,7 @@ contact_links:
     about: Please ask usability questions on StackOverflow. Consider including BOTH the lucene.net tag and the lucene tag. Alternatively, join the Lucene.NET user mailing list by sending an email to user-subscribe@lucenenet.apache.org. Once signed up, you can submit your question to user@lucenenet.apache.org.
   - name: Join a Mailing List
     url:  https://lucenenet.apache.org/contributing/mailing-lists.html
-    about: Join a Lucene.NET mailing list to ask user questions, discuss the development or other aspects of Lucene.NET with our team, or to track commits and builds. 
+    about: Join a Lucene.NET mailing list to ask user questions, discuss the development or other aspects of Lucene.NET with our team, or to track commits and builds.
   - name: Issue with J2N
     url:  https://github.com/NightOwl888/J2N/issues/new/choose
     about: Please open issues relating to J2N in NightOwl888/J2N.

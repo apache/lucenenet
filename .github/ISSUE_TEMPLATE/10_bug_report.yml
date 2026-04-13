@@ -8,7 +8,7 @@ body:
       Please keep in mind that the GitHub issue tracker is not intended as a general support forum, but for reporting **non-security** bugs, feature requests, and for general tasks to work on. Since Lucene.NET is mostly a line-by-line port from a **specific version** of Lucene, feature requests should generally be limited to improvements that make Lucene.NET interoperate with .NET better. Bugs that have already been reported and/or fixed in Lucene should generally not be reported again here, as the patch will be carried over to Lucene.NET during the upgrade.
 
       If you believe you have an issue that affects the SECURITY of the platform, please do NOT create an issue and instead follow the [ASF vulnerability reporting process](https://apache.org/security/#reporting-a-vulnerability). This is a project of the [Apache Software Foundation](https://apache.org) and follows the ASF [vulnerability handling process](https://apache.org/security/#vulnerability-handling).
-      
+
       For other types of questions, consider using [StackOverflow](https://stackoverflow.com) and applying the tags `lucene.net` AND `lucene` or join the [Lucene.NET user mailing list](https://lucenenet.apache.org/contributing/index.html#ask-a-question).
 - type: checkboxes
   attributes:
@@ -34,7 +34,7 @@ body:
     label: Steps To Reproduce
     description: |
       We ❤ code! Point us to a minimalistic project which reproduces this issue (repro) hosted in a public GitHub repo or alternatively, fork this repo and add a test that demontstates the issue.
-      
+
       We will close this issue if:
       - The repro project does not contain an index or a way to create one. You must provide some basic test data.
       - The repro project you share with us is complex. We can't investigate custom projects, so don't point us to such, please.
@@ -46,17 +46,17 @@ body:
   attributes:
     label: Exceptions (if any)
     description: Include the exception you get when facing this issue.
-    placeholder: 
+    placeholder:
   validations:
     required: false
 - type: input
   attributes:
-    label: Lucene.NET Version 
+    label: Lucene.NET Version
     description: |
       Please provide the exact version of Lucene.NET you are using. Note that Lucene.NET 3.0.3 and earlier versions are no longer being maintained.
 - type: input
   attributes:
-    label: .NET Version 
+    label: .NET Version
     description: |
       Run `dotnet --version` in .NET Core or provide the version of .NET Framework, MAUI, Xamarin, Unity, UWP, or Mono you are using to run Lucene.NET.
 - type: input
