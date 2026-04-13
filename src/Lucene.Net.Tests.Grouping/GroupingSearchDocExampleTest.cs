@@ -31,6 +31,7 @@ namespace Lucene.Net.Search.Grouping
     /// <summary>
     /// Tests that validate the code examples from the package.md documentation.
     /// </summary>
+    [SuppressCodecs("Lucene3x")]
     [LuceneNetSpecific]
     public class GroupingSearchDocExampleTest : LuceneTestCase
     {
