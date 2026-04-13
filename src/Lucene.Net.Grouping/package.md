@@ -76,7 +76,7 @@ Known limitations:
 Typical usage for the generic two-pass grouping search looks like this using the grouping convenience utility (optionally using caching for the second pass search):
 
 ```cs
-GroupingSearch groupingSearch = new GroupingSearch("author");
+FieldGroupingSearch groupingSearch = GroupingSearch.ByField("author");
 groupingSearch.SetGroupSort(groupSort);
 groupingSearch.SetFillSortFields(fillFields);
 
@@ -140,7 +140,7 @@ Or alternatively use the `GroupingSearch` convenience utility:
 
 ```cs
 // Per search:
-GroupingSearch groupingSearch = new GroupingSearch(groupEndDocs);
+DocBlockGroupingSearch<object> groupingSearch = GroupingSearch.ByDocBlock<object>(groupEndDocs);
 groupingSearch.SetGroupSort(groupSort);
 groupingSearch.SetIncludeScores(needsScores);
 TermQuery query = new TermQuery(new Term("content", searchTerm));

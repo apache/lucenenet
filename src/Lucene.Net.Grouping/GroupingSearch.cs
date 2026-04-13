@@ -117,7 +117,7 @@ namespace Lucene.Net.Search.Grouping
     /// The group field can only have one token per document. This means that the field must not be analysed.
     /// </summary>
     /// <seealso cref="GroupingSearch.ByField(string)"/>
-    public class FieldGroupingSearch : AbstractFieldOrFunctionGroupingSearch<BytesRef>
+    public class FieldGroupingSearch : AbstractFieldOrFunctionGroupingSearch<BytesRef, FieldGroupingSearch>
     {
         private readonly string groupField;
         private int initialSize = 128;
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Grouping
             this.groupField = groupField;
         }
 
-        /// <inheritdoc cref="AbstractGroupingSearch{T}.Search(IndexSearcher,Filter,Query,int,int)"/>
+        /// <inheritdoc cref="AbstractGroupingSearch{T, TSelf}.Search(IndexSearcher,Filter,Query,int,int)"/>
         public override TopGroups<BytesRef> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             int topN = groupOffset + groupLimit;
@@ -255,8 +255,8 @@ namespace Lucene.Net.Search.Grouping
         /// This prevents growing data structures many times. This can improve the performance of the grouping at the cost of
         /// more initial RAM.
         /// <para>
-        /// The <see cref="AbstractFieldOrFunctionGroupingSearch{T}.SetAllGroups(bool)"/> and
-        /// <see cref="AbstractFieldOrFunctionGroupingSearch{T}.SetAllGroupHeads(bool)"/> features use this option.
+        /// The <see cref="AbstractFieldOrFunctionGroupingSearch{T, TSelf}.SetAllGroups(bool)"/> and
+        /// <see cref="AbstractFieldOrFunctionGroupingSearch{T, TSelf}.SetAllGroupHeads(bool)"/> features use this option.
         /// Defaults to 128.
         /// </para>
         /// </summary>
@@ -274,7 +274,7 @@ namespace Lucene.Net.Search.Grouping
     /// </summary>
     /// <typeparam name="T">The type of the mutable value</typeparam>
     /// <seealso cref="GroupingSearch.ByFunction{TMutableValue}(ValueSource, IDictionary)"/>
-    public class FunctionGroupingSearch<T> : AbstractFieldOrFunctionGroupingSearch<T>
+    public class FunctionGroupingSearch<T> : AbstractFieldOrFunctionGroupingSearch<T, FunctionGroupingSearch<T>>
         where T : MutableValue
     {
         private readonly ValueSource groupFunction;
@@ -291,7 +291,7 @@ namespace Lucene.Net.Search.Grouping
             this.valueSourceContext = valueSourceContext;
         }
 
-        /// <inheritdoc cref="AbstractGroupingSearch{T}.Search(IndexSearcher,Filter,Query,int,int)"/>
+        /// <inheritdoc cref="AbstractGroupingSearch{T, TSelf}.Search(IndexSearcher,Filter,Query,int,int)"/>
         public override TopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             int topN = groupOffset + groupLimit;
@@ -418,7 +418,7 @@ namespace Lucene.Net.Search.Grouping
     /// This class can only be used when documents belonging in a group are indexed in one block.
     /// </summary>
     /// <typeparam name="T">The type of the group value</typeparam>
-    public class DocBlockGroupingSearch<T> : AbstractGroupingSearch<T>
+    public class DocBlockGroupingSearch<T> : AbstractGroupingSearch<T, DocBlockGroupingSearch<T>>
     {
         private readonly Filter groupEndDocs;
 
@@ -432,7 +432,7 @@ namespace Lucene.Net.Search.Grouping
             this.groupEndDocs = groupEndDocs;
         }
 
-        /// <inheritdoc cref="AbstractGroupingSearch{T}.Search(IndexSearcher,Filter,Query,int,int)"/>
+        /// <inheritdoc cref="AbstractGroupingSearch{T, TSelf}.Search(IndexSearcher,Filter,Query,int,int)"/>
         public override TopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             int topN = groupOffset + groupLimit;
@@ -447,11 +447,13 @@ namespace Lucene.Net.Search.Grouping
     /// Abstract base class for grouping search implementations that groups documents by index terms or function.
     /// </summary>
     /// <typeparam name="T">The type of the group value</typeparam>
+    /// <typeparam name="TSelf">The type of the concrete grouping search implementation, used for fluent method chaining</typeparam>
     /// <remarks>
     /// LUCENENET specific
     /// </remarks>
     /// <seealso cref="GroupingSearch"/>
-    public abstract class AbstractFieldOrFunctionGroupingSearch<T> : AbstractGroupingSearch<T>
+    public abstract class AbstractFieldOrFunctionGroupingSearch<T, TSelf> : AbstractGroupingSearch<T, TSelf>
+        where TSelf : AbstractFieldOrFunctionGroupingSearch<T, TSelf>
     {
         // LUCENENET: Converted to protected properties
         protected bool IncludeMaxScore { get; private set; } = true;
@@ -473,12 +475,12 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="maxCacheRAMMB">The maximum amount in MB the cache is allowed to hold</param>
         /// <param name="cacheScores">Whether to cache the scores</param>
         /// <returns><c>this</c></returns>
-        public virtual AbstractGroupingSearch<T> SetCachingInMB(double maxCacheRAMMB, bool cacheScores)
+        public virtual TSelf SetCachingInMB(double maxCacheRAMMB, bool cacheScores)
         {
             this.MaxCacheRAMMB = maxCacheRAMMB;
             this.MaxDocsToCache = null;
             this.CacheScores = cacheScores;
-            return this;
+            return (TSelf)this;
         }
 
         /// <summary>
@@ -489,23 +491,23 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="maxDocsToCache">The maximum number of documents the cache is allowed to hold</param>
         /// <param name="cacheScores">Whether to cache the scores</param>
         /// <returns><c>this</c></returns>
-        public virtual AbstractGroupingSearch<T> SetCaching(int maxDocsToCache, bool cacheScores)
+        public virtual TSelf SetCaching(int maxDocsToCache, bool cacheScores)
         {
             this.MaxDocsToCache = maxDocsToCache;
             this.MaxCacheRAMMB = null;
             this.CacheScores = cacheScores;
-            return this;
+            return (TSelf)this;
         }
 
         /// <summary>
         /// Disables any enabled cache.
         /// </summary>
         /// <returns><c>this</c></returns>
-        public virtual AbstractGroupingSearch<T> DisableCaching()
+        public virtual TSelf DisableCaching()
         {
             this.MaxCacheRAMMB = null;
             this.MaxDocsToCache = null;
-            return this;
+            return (TSelf)this;
         }
 
         /// <summary>
@@ -513,10 +515,10 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         /// <param name="includeMaxScore">Whether to include the score of the most relevant document per group</param>
         /// <returns><c>this</c></returns>
-        public virtual AbstractGroupingSearch<T> SetIncludeMaxScore(bool includeMaxScore)
+        public virtual TSelf SetIncludeMaxScore(bool includeMaxScore)
         {
             this.IncludeMaxScore = includeMaxScore;
-            return this;
+            return (TSelf)this;
         }
 
         /// <summary>
@@ -529,10 +531,10 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         /// <param name="allGroups">to also compute all groups matching the query</param>
         /// <returns><c>this</c></returns>
-        public virtual AbstractGroupingSearch<T> SetAllGroups(bool allGroups)
+        public virtual TSelf SetAllGroups(bool allGroups)
         {
             this.AllGroups = allGroups;
-            return this;
+            return (TSelf)this;
         }
 
         /// <summary>
@@ -553,10 +555,10 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         /// <param name="allGroupHeads">Whether to compute all group heads (most relevant document per group) matching the query</param>
         /// <returns><c>this</c></returns>
-        public virtual AbstractGroupingSearch<T> SetAllGroupHeads(bool allGroupHeads)
+        public virtual TSelf SetAllGroupHeads(bool allGroupHeads)
         {
             this.AllGroupHeads = allGroupHeads;
-            return this;
+            return (TSelf)this;
         }
 
         /// <summary>
@@ -573,11 +575,13 @@ namespace Lucene.Net.Search.Grouping
     /// Abstract base class for grouping search implementations.
     /// </summary>
     /// <typeparam name="T">The type of the group value</typeparam>
+    /// <typeparam name="TSelf">The type of the concrete grouping search implementation, used for fluent method chaining</typeparam>
     /// <remarks>
     /// LUCENENET specific
     /// </remarks>
     /// <seealso cref="GroupingSearch"/>
-    public abstract class AbstractGroupingSearch<T> : IAbstractGroupingSearch
+    public abstract class AbstractGroupingSearch<T, TSelf> : IAbstractGroupingSearch
+        where TSelf : AbstractGroupingSearch<T, TSelf>
     {
         // LUCENENET: Converted to protected properties
         protected Sort GroupSort { get; private set; } = Sort.RELEVANCE;
@@ -618,10 +622,10 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         /// <param name="groupSort">The sort for the groups.</param>
         /// <returns><c>this</c></returns>
-        public virtual AbstractGroupingSearch<T> SetGroupSort(Sort groupSort)
+        public virtual TSelf SetGroupSort(Sort groupSort)
         {
             this.GroupSort = groupSort;
-            return this;
+            return (TSelf)this;
         }
 
         /// <summary>
@@ -630,10 +634,10 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         /// <param name="sortWithinGroup">The sort for documents inside a group</param>
         /// <returns><c>this</c></returns>
-        public virtual AbstractGroupingSearch<T> SetSortWithinGroup(Sort sortWithinGroup)
+        public virtual TSelf SetSortWithinGroup(Sort sortWithinGroup)
         {
             this.SortWithinGroup = sortWithinGroup;
-            return this;
+            return (TSelf)this;
         }
 
         /// <summary>
@@ -641,10 +645,10 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         /// <param name="groupDocsOffset">The offset for documents inside a</param>
         /// <returns><c>this</c></returns>
-        public virtual AbstractGroupingSearch<T> SetGroupDocsOffset(int groupDocsOffset)
+        public virtual TSelf SetGroupDocsOffset(int groupDocsOffset)
         {
             this.GroupDocsOffset = groupDocsOffset;
-            return this;
+            return (TSelf)this;
         }
 
         /// <summary>
@@ -652,10 +656,10 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         /// <param name="groupDocsLimit">The number of documents to return inside a group</param>
         /// <returns><c>this</c></returns>
-        public virtual AbstractGroupingSearch<T> SetGroupDocsLimit(int groupDocsLimit)
+        public virtual TSelf SetGroupDocsLimit(int groupDocsLimit)
         {
             this.GroupDocsLimit = groupDocsLimit;
-            return this;
+            return (TSelf)this;
         }
 
         /// <summary>
@@ -663,10 +667,10 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         /// <param name="fillSortFields">Whether to also fill the sort fields per returned group and groups docs</param>
         /// <returns><c>this</c></returns>
-        public virtual AbstractGroupingSearch<T> SetFillSortFields(bool fillSortFields)
+        public virtual TSelf SetFillSortFields(bool fillSortFields)
         {
             this.FillSortFields = fillSortFields;
-            return this;
+            return (TSelf)this;
         }
 
         /// <summary>
@@ -674,10 +678,10 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         /// <param name="includeScores">Whether to include the scores per doc inside a group</param>
         /// <returns><c>this</c></returns>
-        public virtual AbstractGroupingSearch<T> SetIncludeScores(bool includeScores)
+        public virtual TSelf SetIncludeScores(bool includeScores)
         {
             this.IncludeScores = includeScores;
-            return this;
+            return (TSelf)this;
         }
 
         #region Explicit interface implementations
@@ -694,7 +698,7 @@ namespace Lucene.Net.Search.Grouping
     }
 
     /// <summary>
-    /// LUCENENET specific interface for non-generic access to <see cref="AbstractGroupingSearch{T}"/>.
+    /// LUCENENET specific interface for non-generic access to <see cref="AbstractGroupingSearch{T, TSelf}"/>.
     /// </summary>
     public interface IAbstractGroupingSearch
     {

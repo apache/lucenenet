@@ -32,6 +32,23 @@ namespace Lucene.Net.Search.Grouping
     /// <remarks>
     /// The <typeparamref name="TGroupValue"/> type parameter is LUCENENET specific to allow for
     /// strongly-typed group values.
+    /// <para/>
+    /// <b>Migration from 4.8.0-beta00017 and earlier:</b> This class previously had a single type
+    /// parameter <c>GC</c> with a constraint of
+    /// <c>AbstractDistinctValuesCollector.IGroupCount&lt;object&gt;</c>. It now has two type
+    /// parameters: <typeparamref name="GC"/> and <typeparamref name="TGroupValue"/>. When migrating,
+    /// add the group value type (typically <c>BytesRef</c> or <c>MutableValue</c>) as the second
+    /// type argument. For example:
+    /// <code>
+    /// // Before:
+    /// AbstractDistinctValuesCollector&lt;MyGroupCount&gt;
+    ///
+    /// // After:
+    /// AbstractDistinctValuesCollector&lt;MyGroupCount, BytesRef&gt;
+    /// </code>
+    /// Additionally, the <c>GC</c> constraint changed from
+    /// <c>AbstractDistinctValuesCollector.IGroupCount&lt;object&gt;</c> to
+    /// <c>AbstractDistinctValuesCollector.GroupCount&lt;TGroupValue&gt;</c>.
     /// </remarks>
     public abstract class AbstractDistinctValuesCollector<GC, TGroupValue> : IAbstractDistinctValuesCollector
         where GC : AbstractDistinctValuesCollector.GroupCount<TGroupValue>
