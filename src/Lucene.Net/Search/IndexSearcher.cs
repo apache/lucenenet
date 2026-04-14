@@ -76,7 +76,11 @@ namespace Lucene.Net.Search
     /// <see cref="TaskScheduler"/> passed to the constructor will be used to execute the search operations
     /// and the <see cref="CancellationToken"/> will be passed to the awaited tasks. If the <see cref="TaskScheduler"/>
     /// is <c>null</c>, the search operations will be executed synchronously, and the <see cref="CancellationToken"/>
-    /// will throw if cancellation is requested upon entry to each leaf reader.
+    /// will throw an <see cref="OperationCanceledException"/> if cancellation is requested upon entry to each leaf
+    /// reader. Each task in the multithreaded case acts as if it were a single-threaded search, and will do the same.
+    /// <para />
+    /// In both cases, this is a "best effort" attempt at cancellation, and some work may continue to proceed
+    /// after the cancellation has been requested.
     /// </remarks>
     public class IndexSearcher
     {
@@ -289,6 +293,7 @@ namespace Lucene.Net.Search
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, int n, CancellationToken cancellationToken = default)
         {
             return Search(CreateNormalizedWeight(query), after, n, cancellationToken);
@@ -306,6 +311,7 @@ namespace Lucene.Net.Search
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, Filter? filter, int n, CancellationToken cancellationToken = default)
         {
             return Search(CreateNormalizedWeight(WrapFilter(query, filter)), after, n, cancellationToken);
@@ -318,6 +324,7 @@ namespace Lucene.Net.Search
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         public virtual TopDocs Search(Query query, int n, CancellationToken cancellationToken = default)
         {
             return Search(query, filter: null, n, cancellationToken);
@@ -329,6 +336,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         public virtual TopDocs Search(Query query, Filter? filter, int n, CancellationToken cancellationToken = default)
         {
             return Search(CreateNormalizedWeight(WrapFilter(query, filter)), after: null, n, cancellationToken);
@@ -347,6 +355,7 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="results"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         public virtual void Search(Query query, Filter? filter, ICollector results, CancellationToken cancellationToken = default)
         {
             Search(m_leafContexts, CreateNormalizedWeight(WrapFilter(query, filter)), results, cancellationToken);
@@ -361,6 +370,7 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="results"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         public virtual void Search(Query query, ICollector results, CancellationToken cancellationToken = default)
         {
             Search(m_leafContexts, CreateNormalizedWeight(query), results, cancellationToken);
@@ -380,6 +390,7 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         public virtual TopFieldDocs Search(Query query, Filter? filter, int n, Sort sort, CancellationToken cancellationToken = default)
         {
             return Search(CreateNormalizedWeight(WrapFilter(query, filter)), n, sort, false, false, cancellationToken);
@@ -401,6 +412,7 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         public virtual TopFieldDocs Search(Query query, Filter? filter, int n, Sort sort, bool doDocScores, bool doMaxScore, CancellationToken cancellationToken = default)
         {
             return Search(CreateNormalizedWeight(WrapFilter(query, filter)), n, sort, doDocScores, doMaxScore, cancellationToken);
@@ -419,6 +431,7 @@ namespace Lucene.Net.Search
         ///         <seealso cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, Filter? filter, int n, Sort sort, CancellationToken cancellationToken = default)
         {
             FieldDoc? fieldDoc = GetScoreDocAsFieldDocIfNotNull(after);
@@ -449,6 +462,7 @@ namespace Lucene.Net.Search
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         public virtual TopFieldDocs Search(Query query, int n, Sort sort, CancellationToken cancellationToken = default)
         {
             return Search(CreateNormalizedWeight(query), n, sort, false, false, cancellationToken);
@@ -467,6 +481,7 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, int n, Sort sort, CancellationToken cancellationToken = default)
         {
             var fieldDoc = GetScoreDocAsFieldDocIfNotNull(after);
@@ -492,6 +507,7 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, Filter? filter, int n, Sort sort, bool doDocScores, bool doMaxScore, CancellationToken cancellationToken = default)
         {
             var fieldDoc = GetScoreDocAsFieldDocIfNotNull(after);
@@ -508,6 +524,7 @@ namespace Lucene.Net.Search
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="weight"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         protected virtual TopDocs Search(Weight weight, ScoreDoc? after, int nDocs, CancellationToken cancellationToken = default)
         {
             int limit = reader.MaxDoc;
@@ -573,6 +590,7 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="leaves"/> or
         ///         <paramref name="weight"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         protected virtual TopDocs Search(IList<AtomicReaderContext> leaves, Weight weight, ScoreDoc? after, int nDocs, CancellationToken cancellationToken = default)
         {
             // LUCENENET: Added guard clause
@@ -605,6 +623,7 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="weight"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         protected virtual TopFieldDocs Search(Weight weight, int nDocs, Sort sort, bool doDocScores, bool doMaxScore, CancellationToken cancellationToken = default)
         {
             return Search(weight, after: null, nDocs, sort, true, doDocScores, doMaxScore, cancellationToken);
@@ -617,6 +636,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="weight"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         protected virtual TopFieldDocs Search(Weight weight, FieldDoc? after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore, CancellationToken cancellationToken = default)
         {
             if (sort is null)
@@ -676,6 +696,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="leaves"/> or
         ///          <paramref name="weight"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         protected virtual TopFieldDocs Search(IList<AtomicReaderContext> leaves, Weight weight, FieldDoc? after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore, CancellationToken cancellationToken = default)
         {
             // LUCENENET: Added guard clause
@@ -715,6 +736,7 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="leaves"/>, <paramref name="weight"/>,
         ///         or <paramref name="collector"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">If cancellation is requested via the <paramref name="cancellationToken"/>.</exception>
         protected virtual void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector, CancellationToken cancellationToken = default)
         {
             // LUCENENET: Added guard clauses
@@ -756,8 +778,6 @@ namespace Lucene.Net.Search
                     }
                 }
             }
-
-            cancellationToken.ThrowIfCancellationRequested(); // LUCENENET specific - cancellation support
         }
 
         /// <summary>

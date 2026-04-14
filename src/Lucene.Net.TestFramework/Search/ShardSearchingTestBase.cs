@@ -193,7 +193,7 @@ namespace Lucene.Net.Search
         // MOCK: in a real env you have to hit the wire
         // (send this query to all remote nodes
         // concurrently):
-        internal virtual TopDocs SearchNode(int nodeID, long[] nodeVersions, Query q, Sort sort, int numHits, ScoreDoc searchAfter)
+        internal virtual TopDocs SearchNode(int nodeID, long[] nodeVersions, Query q, Sort sort, int numHits, ScoreDoc searchAfter, CancellationToken cancellationToken = default)
         {
             NodeState.ShardIndexSearcher s = m_nodes[nodeID].Acquire(nodeVersions);
             try
@@ -202,17 +202,17 @@ namespace Lucene.Net.Search
                 {
                     if (searchAfter != null)
                     {
-                        return s.LocalSearchAfter(searchAfter, q, numHits);
+                        return s.LocalSearchAfter(searchAfter, q, numHits, cancellationToken);
                     }
                     else
                     {
-                        return s.LocalSearch(q, numHits);
+                        return s.LocalSearch(q, numHits, cancellationToken);
                     }
                 }
                 else
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(searchAfter is null); // not supported yet
-                    return s.LocalSearch(q, numHits, sort);
+                    return s.LocalSearch(q, numHits, sort, cancellationToken);
                 }
             }
             finally
@@ -554,7 +554,7 @@ namespace Lucene.Net.Search
                         }
                         else
                         {
-                            shardHits[nodeID] = outerInstance.outerInstance.SearchNode(nodeID, nodeVersions, query, sort, numHits, null);
+                            shardHits[nodeID] = outerInstance.outerInstance.SearchNode(nodeID, nodeVersions, query, sort, numHits, null, cancellationToken);
                         }
                     }
 

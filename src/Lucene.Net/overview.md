@@ -118,7 +118,7 @@ and add documents to it with [AddDocument()](xref:Lucene.Net.Index.IndexWriter#L
 to build a query from a string; and
 
 4.  Create an [IndexSearcher](xref:Lucene.Net.Search.IndexSearcher)
-and pass the query to its [Search()](xref:Lucene.Net.Search.IndexSearcher#Lucene_Net_Search_IndexSearcher_Search_Lucene_Net_Search_Query_System_Int32_)
+and pass the query to its [Search()](xref:Lucene.Net.Search.IndexSearcher#Lucene_Net_Search_IndexSearcher_Search_Lucene_Net_Search_Query_System_Int32_System_Threading_CancellationToken_)
 method.
 
 Some simple examples of code which does this are:
