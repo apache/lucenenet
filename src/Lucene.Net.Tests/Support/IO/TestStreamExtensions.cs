@@ -78,6 +78,70 @@ namespace Lucene.Net.Support.IO
             Assert.IsTrue(Encoding.UTF8.GetString(buffer).Equals(fileString));
         }
 
+#if !FEATURE_STREAM_READEXACTLY
+        [Test]
+        public void TestReadExactly_ZeroLength()
+        {
+            using var ms = new MemoryStream();
+            Span<byte> buffer = Array.Empty<byte>();
+            ms.ReadExactly(buffer); // should succeed
+        }
+
+        [Test]
+        public void TestReadExactly_Success_FromStart()
+        {
+            var bytes = new byte[] { 1, 2, 3, 4 };
+            using var ms = new MemoryStream(bytes);
+
+            Span<byte> buffer = stackalloc byte[2];
+            ms.ReadExactly(buffer);
+
+            Assert.AreEqual((byte)1, buffer[0]);
+            Assert.AreEqual((byte)2, buffer[1]);
+        }
+
+        [Test]
+        public void TestReadExactly_Success_FromMiddle()
+        {
+            var bytes = new byte[] { 1, 2, 3, 4 };
+            using var ms = new MemoryStream(bytes);
+            ms.Seek(2, SeekOrigin.Begin);
+
+            Span<byte> buffer = stackalloc byte[2];
+            ms.ReadExactly(buffer);
+
+            Assert.AreEqual((byte)3, buffer[0]);
+            Assert.AreEqual((byte)4, buffer[1]);
+        }
+
+        [Test]
+        public void TestReadExactly_Success_IntoMiddle()
+        {
+            var bytes = new byte[] { 1, 2, 3, 4 };
+            using var ms = new MemoryStream(bytes);
+
+            Span<byte> buffer = stackalloc byte[4];
+            ms.ReadExactly(buffer.Slice(2));
+
+            Assert.AreEqual((byte)1, buffer[2]);
+            Assert.AreEqual((byte)2, buffer[3]);
+        }
+
+        [Test]
+        public void TestReadExactly_EndOfStream()
+        {
+            var bytes = new byte[] { 1, 2, 3, 4 };
+
+            Assert.Throws<EndOfStreamException>(() =>
+            {
+                using var ms = new MemoryStream(bytes);
+
+                Span<byte> buffer = stackalloc byte[5];
+                ms.ReadExactly(buffer);
+            });
+        }
+#endif
+
         [Test]
         public void TestWrite_Span()
         {
@@ -237,7 +301,7 @@ namespace Lucene.Net.Support.IO
         /// Helper method to calculate expected UTF stream length for validation
         /// Matches DataOutput.writeUTF() spec (Java)
         /// </summary>
-        private long CalculateExpectedUTFStreamLength(string value)
+        private static long CalculateExpectedUTFStreamLength(string value)
         {
             long utfCount = 0;
             foreach (char ch in value)
