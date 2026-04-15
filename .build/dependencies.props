@@ -70,6 +70,9 @@
     <RandomizedTestingGeneratorsPackageVersion>2.7.8</RandomizedTestingGeneratorsPackageVersion>
     <SharpZipLibPackageVersion>1.4.2</SharpZipLibPackageVersion>
     <Spatial4nPackageVersion>0.4.1.1</Spatial4nPackageVersion>
+    <!-- Pinned to override vulnerable transitive dependency from Microsoft.Extensions.Configuration.Xml 8.0.1.
+         Can be removed when Microsoft.Extensions.Configuration.Xml is upgraded to a version that pulls in >= 8.0.3. -->
+    <SystemSecurityCryptographyXmlPackageVersion>8.0.3</SystemSecurityCryptographyXmlPackageVersion>
     <SystemMemoryPackageVersion>4.6.3</SystemMemoryPackageVersion>
     <SystemNetHttpPackageVersion>4.3.4</SystemNetHttpPackageVersion>
     <SystemReflectionEmitPackageVersion>4.3.0</SystemReflectionEmitPackageVersion>
