@@ -65,6 +65,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     public class AnalyzingInfixSuggester : Lookup, IDisposable
     {
         private readonly object syncLock = new object();            //uses syncLock as substitute for Java's synchronized (method) keyword
+        // LUCENENET specific - Support for LUCENE-7564.
+        // Forces single-threaded access to the SearcherManager when performing an acquire() or reassigning.
+        private readonly object searcherMgrLock = new object();
 
         /// <summary>
         /// Field name used for the indexed text. </summary>
@@ -295,73 +298,81 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         public override void Build(IInputEnumerator enumerator)
         {
-            if (m_searcherMgr != null)
-            {
-                m_searcherMgr.Dispose();
-                m_searcherMgr = null;
-            }
-
-            if (writer != null)
-            {
-                writer.Dispose();
-                writer = null;
-            }
-
-            AtomicReader r = null;
-            bool success = false;
+            UninterruptableMonitor.Enter(searcherMgrLock);
             try
             {
-                // First pass: build a temporary normal Lucene index,
-                // just indexing the suggestions as they iterate:
-                writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
-                //long t0 = System.nanoTime();
-
-                // TODO: use threads?
-                BytesRef text;
-                while (enumerator.MoveNext())
+                if (m_searcherMgr != null)
                 {
-                    text = enumerator.Current;
-                    BytesRef payload;
-                    if (enumerator.HasPayloads)
+                    m_searcherMgr.Dispose();
+                    m_searcherMgr = null;
+                }
+
+                if (writer != null)
+                {
+                    writer.Dispose();
+                    writer = null;
+                }
+
+                AtomicReader r = null;
+                bool success = false;
+                try
+                {
+                    // First pass: build a temporary normal Lucene index,
+                    // just indexing the suggestions as they iterate:
+                    writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
+                    //long t0 = System.nanoTime();
+
+                    // TODO: use threads?
+                    BytesRef text;
+                    while (enumerator.MoveNext())
                     {
-                        payload = enumerator.Payload;
+                        text = enumerator.Current;
+                        BytesRef payload;
+                        if (enumerator.HasPayloads)
+                        {
+                            payload = enumerator.Payload;
+                        }
+                        else
+                        {
+                            payload = null;
+                        }
+
+                        Add(text, enumerator.Contexts, enumerator.Weight, payload);
+                    }
+
+                    //System.out.println("initial indexing time: " + ((System.nanoTime()-t0)/1000000) + " msec");
+                    if (commitOnBuild || closeIndexWriterOnBuild) // LUCENENET specific - Support for LUCENE-5889, LUCENE-7564.
+                    {
+                        Commit();
+                    }
+                    m_searcherMgr = new SearcherManager(writer, true, null);
+                    success = true;
+                }
+                finally
+                {
+                    if (success)
+                    {
+                        if (closeIndexWriterOnBuild)  // LUCENENET specific - Support for LUCENE-7564.
+                        {
+                            writer.Dispose();
+                            writer = null;
+                        }
+                        IOUtils.Dispose(r);
                     }
                     else
                     {
-                        payload = null;
+                        if (writer != null)
+                        {
+                            writer.Rollback();
+                            writer = null;
+                        }
+                        IOUtils.DisposeWhileHandlingException(r);
                     }
-
-                    Add(text, enumerator.Contexts, enumerator.Weight, payload);
                 }
-
-                //System.out.println("initial indexing time: " + ((System.nanoTime()-t0)/1000000) + " msec");
-                if (commitOnBuild || closeIndexWriterOnBuild) // LUCENENET specific - Support for LUCENE-5889, LUCENE-7564.
-                {
-                    Commit();
-                }
-                m_searcherMgr = new SearcherManager(writer, true, null);
-                success = true;
             }
             finally
             {
-                if (success)
-                {
-                    if (closeIndexWriterOnBuild)  // LUCENENET specific - Support for LUCENE-7564.
-                    {
-                        writer.Dispose();
-                        writer = null;
-                    }
-                    IOUtils.Dispose(r);
-                }
-                else
-                {
-                    if (writer != null)
-                    {
-                        writer.Rollback();
-                        writer = null;
-                    }
-                    IOUtils.DisposeWhileHandlingException(r);
-                }
+                UninterruptableMonitor.Exit(searcherMgrLock);
             }
         }
 
@@ -438,11 +449,19 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
                     }
-                    SearcherManager oldSearcherMgr = m_searcherMgr;
-                    m_searcherMgr = new SearcherManager(writer, true, null);
-                    if (oldSearcherMgr != null)
+                    UninterruptableMonitor.Enter(searcherMgrLock);
+                    try
                     {
-                        oldSearcherMgr.Dispose();
+                        SearcherManager oldSearcherMgr = m_searcherMgr;
+                        m_searcherMgr = new SearcherManager(writer, true, null);
+                        if (oldSearcherMgr != null)
+                        {
+                            oldSearcherMgr.Dispose();
+                        }
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(searcherMgrLock);
                     }
                 }
             }
@@ -704,8 +723,19 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // We sorted postings by weight during indexing, so we
             // only retrieve the first num hits now:
             ICollector c2 = new EarlyTerminatingSortingCollector(c, SORT, num);
-            IndexSearcher searcher = m_searcherMgr.Acquire();
             IList<LookupResult> results = null;
+            SearcherManager mgr; // LUCENENET specific - Support for LUCENE-7564: acquire & release on same SearcherManager, via local reference
+            IndexSearcher searcher;
+            UninterruptableMonitor.Enter(searcherMgrLock);
+            try
+            {
+                mgr = m_searcherMgr;
+                searcher = mgr.Acquire();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(searcherMgrLock);
+            }
             try
             {
                 //System.out.println("got searcher=" + searcher);
@@ -719,7 +749,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             finally
             {
-                m_searcherMgr.Release(searcher);
+                mgr.Release(searcher);
             }
 
             //System.out.println(((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - t0) + " msec for infix suggest"); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
@@ -964,7 +994,18 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 if (m_searcherMgr != null)
                 {
-                    IndexSearcher searcher = m_searcherMgr.Acquire();
+                    SearcherManager mgr; // LUCENENET specific - Support for LUCENE-7564: acquire & release on same SearcherManager, via local reference
+                    IndexSearcher searcher;
+                    UninterruptableMonitor.Enter(searcherMgrLock);
+                    try
+                    {
+                        mgr = m_searcherMgr;
+                        searcher = mgr.Acquire();
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(searcherMgrLock);
+                    }
                     try
                     {
                         foreach (AtomicReaderContext context in searcher.IndexReader.Leaves)
@@ -978,7 +1019,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                     finally
                     {
-                        m_searcherMgr.Release(searcher);
+                        mgr.Release(searcher);
                     }
                 }
                 return mem;
@@ -997,14 +1038,25 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     return 0;
                 }
-                IndexSearcher searcher = m_searcherMgr.Acquire();
+                SearcherManager mgr; // LUCENENET specific - Support for LUCENE-7564: acquire & release on same SearcherManager, via local reference
+                IndexSearcher searcher;
+                UninterruptableMonitor.Enter(searcherMgrLock);
+                try
+                {
+                    mgr = m_searcherMgr;
+                    searcher = mgr.Acquire();
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(searcherMgrLock);
+                }
                 try
                 {
                     return searcher.IndexReader.NumDocs;
                 }
                 finally
                 {
-                    m_searcherMgr.Release(searcher);
+                    mgr.Release(searcher);
                 }
             }
         }
