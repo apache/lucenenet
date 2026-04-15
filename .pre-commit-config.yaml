@@ -54,12 +54,24 @@ repos:
         description: trims trailing whitespace
         files: \.(bat|config|json|md|props|ps1|rdf|targets|tmpl|xml|ya?ml)$
         args: [--markdown-linebreak-ext=md]
+      - id: check-ast
+        name: run check-ast
+        description: check Python files for syntax errors
+      - id: check-builtin-literals
+        name: run check-builtin-literals
+        description: check Python files for proper use of built-in literals
       - id: check-case-conflict
         name: run check-case-conflict
         description: check for case conflicts in file names
+      - id: check-executables-have-shebangs
+        name: run check-executables-have-shebangs
+        description: check that executable scripts have shebang lines
       - id: check-illegal-windows-names
         name: run check-illegal-windows-names
         description: check for Windows-illegal file names
+      - id: check-json
+        name: run check-json
+        description: check JSON files for syntax errors
       - id: check-merge-conflict
         name: run check-merge-conflict
         description: check for merge conflict markers
