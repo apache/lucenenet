@@ -205,17 +205,23 @@ namespace Lucene.Net.Support.IO
         }
 
         [Test]
-        public void TestReadExactlyAsync_EndOfStream()
+        public async Task TestReadExactlyAsync_EndOfStream()
         {
             var bytes = new byte[] { 1, 2, 3, 4 };
 
-            Assert.ThrowsAsync<EndOfStreamException>(async () =>
+            try
             {
                 using var ms = new MemoryStream(bytes);
 
                 var buffer = new byte[5];
                 await ms.ReadExactlyAsync(buffer, 0, 5);
-            });
+
+                Assert.Fail("Should have thrown an exception");
+            }
+            catch (EndOfStreamException)
+            {
+                Assert.Pass("Expected EndOfStreamException thrown");
+            }
         }
 
         [Test]
