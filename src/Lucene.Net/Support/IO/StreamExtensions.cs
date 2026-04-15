@@ -173,12 +173,56 @@ namespace Lucene.Net.Support.IO
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            while (buffer.Length > 0)
+            byte[] sharedBuffer = ArrayPool<byte>.Shared.Rent(buffer.Length);
+            try
             {
-                int numRead = stream.Read(buffer);
+                while (buffer.Length > 0)
+                {
+                    int numRead = stream.Read(sharedBuffer, 0, buffer.Length);
+
+                    if (numRead == 0)
+                    {
+                        throw new EndOfStreamException(SR.IO_EOF_ReadBeyondEOF);
+                    }
+
+                    new ReadOnlySpan<byte>(sharedBuffer, 0, numRead).CopyTo(buffer);
+                    buffer = buffer.Slice(numRead);
+                }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(sharedBuffer);
+            }
+        }
+
+        /// <summary>
+        /// Reads bytes asynchronously from the stream into <paramref name="buffer"/> until it is completely filled.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="buffer">The buffer to read into.</param>
+        /// <param name="offset">The byte offset in <paramref name="buffer"/> at which to begin writing data read from the stream.</param>
+        /// <param name="count">The count of bytes to read.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="stream"/> is null.</exception>
+        /// <exception cref="EndOfStreamException">The end of the stream is reached before filling the buffer.</exception>
+        /// <remarks>
+        /// This method is a polyfill for platforms (prior to .NET 7) that do not have the ReadExactlyAsync method.
+        /// </remarks>
+        public static async Task ReadExactlyAsync(this Stream stream, byte[] buffer, int offset, int count, CancellationToken cancellationToken = default)
+        {
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
+            while (count > 0)
+            {
+                int numRead = await stream.ReadAsync(buffer, offset, count, cancellationToken);
+
                 if (numRead == 0)
-                    throw new EndOfStreamException();
-                buffer = buffer.Slice(numRead);
+                {
+                    throw new EndOfStreamException(SR.IO_EOF_ReadBeyondEOF);
+                }
+
+                count -= numRead;
+                offset += numRead;
             }
         }
 #endif
@@ -386,12 +430,7 @@ namespace Lucene.Net.Support.IO
             byte[] buff = ArrayPool<byte>.Shared.Rent(4);
             try
             {
-                int read = await input.ReadAsync(buff, 0, 4, cancellationToken).ConfigureAwait(false);
-
-                if (read < 4)
-                {
-                    throw new EndOfStreamException();
-                }
+                await input.ReadExactlyAsync(buff, 0, 4, cancellationToken).ConfigureAwait(false);
 
                 return (buff[0] << 24) | (buff[1] << 16) | (buff[2] << 8) | buff[3];
             }
@@ -409,12 +448,7 @@ namespace Lucene.Net.Support.IO
             byte[] buff = ArrayPool<byte>.Shared.Rent(8);
             try
             {
-                int read = await input.ReadAsync(buff, 0, 8, cancellationToken).ConfigureAwait(false);
-
-                if (read < 8)
-                {
-                    throw new EndOfStreamException();
-                }
+                await input.ReadExactlyAsync(buff, 0, 8, cancellationToken).ConfigureAwait(false);
 
                 return ((long)buff[0] << 56) |
                        ((long)buff[1] << 48) |
@@ -439,24 +473,14 @@ namespace Lucene.Net.Support.IO
             byte[] lenBuff = ArrayPool<byte>.Shared.Rent(2);
             try
             {
-                int readLen = await input.ReadAsync(lenBuff, 0, 2, cancellationToken).ConfigureAwait(false);
-
-                if (readLen < 2)
-                {
-                    throw new EndOfStreamException("Unexpected end of stream while reading UTF length.");
-                }
+                await input.ReadExactlyAsync(lenBuff, 0, 2, cancellationToken).ConfigureAwait(false);
 
                 int length = (lenBuff[0] << 8) | lenBuff[1];
 
                 byte[] buffer = ArrayPool<byte>.Shared.Rent(length);
                 try
                 {
-                    int read = await input.ReadAsync(buffer, 0, length, cancellationToken).ConfigureAwait(false);
-
-                    if (read < length)
-                    {
-                        throw new EndOfStreamException("Unexpected end of stream while reading UTF string.");
-                    }
+                    await input.ReadExactlyAsync(buffer, 0, length, cancellationToken).ConfigureAwait(false);
 
                     return Encoding.UTF8.GetString(buffer, 0, length);
                 }
@@ -523,7 +547,7 @@ namespace Lucene.Net.Support.IO
         private static class SR
         {
             public const string IO_StreamTooLong = "Stream was too long.";
+            public const string IO_EOF_ReadBeyondEOF = "Unable to read beyond the end of the stream.";
         }
-
     }
 }

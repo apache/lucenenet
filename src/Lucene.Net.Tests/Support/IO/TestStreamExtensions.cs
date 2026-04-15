@@ -140,6 +140,98 @@ namespace Lucene.Net.Support.IO
                 ms.ReadExactly(buffer);
             });
         }
+
+        [Test]
+        public void TestReadExactly_PartialReads()
+        {
+            var bytes = new byte[] { 1, 2, 3, 4 };
+            var partialStream = new MaxBytesPerReadStream(bytes, maxBytesPerRead: 1);
+
+            Span<byte> buffer = stackalloc byte[4];
+            partialStream.ReadExactly(buffer);
+
+            Assert.AreEqual((byte)1, buffer[0]);
+            Assert.AreEqual((byte)2, buffer[1]);
+            Assert.AreEqual((byte)3, buffer[2]);
+            Assert.AreEqual((byte)4, buffer[3]);
+        }
+
+        [Test]
+        public async Task TestReadExactlyAsync_ZeroLength()
+        {
+            using var ms = new MemoryStream();
+            var buffer = Array.Empty<byte>();
+            await ms.ReadExactlyAsync(buffer, 0, 0); // should succeed
+        }
+
+        [Test]
+        public async Task TestReadExactlyAsync_Success_FromStart()
+        {
+            var bytes = new byte[] { 1, 2, 3, 4 };
+            using var ms = new MemoryStream(bytes);
+
+            var buffer = new byte[2];
+            await ms.ReadExactlyAsync(buffer, 0, 2);
+
+            Assert.AreEqual((byte)1, buffer[0]);
+            Assert.AreEqual((byte)2, buffer[1]);
+        }
+
+        [Test]
+        public async Task TestReadExactlyAsync_Success_FromMiddle()
+        {
+            var bytes = new byte[] { 1, 2, 3, 4 };
+            using var ms = new MemoryStream(bytes);
+            ms.Seek(2, SeekOrigin.Begin);
+
+            var buffer = new byte[2];
+            await ms.ReadExactlyAsync(buffer, 0, 2);
+
+            Assert.AreEqual((byte)3, buffer[0]);
+            Assert.AreEqual((byte)4, buffer[1]);
+        }
+
+        [Test]
+        public async Task TestReadExactlyAsync_Success_IntoMiddle()
+        {
+            var bytes = new byte[] { 1, 2, 3, 4 };
+            using var ms = new MemoryStream(bytes);
+
+            var buffer = new byte[4];
+            await ms.ReadExactlyAsync(buffer, 2, 2);
+
+            Assert.AreEqual((byte)1, buffer[2]);
+            Assert.AreEqual((byte)2, buffer[3]);
+        }
+
+        [Test]
+        public void TestReadExactlyAsync_EndOfStream()
+        {
+            var bytes = new byte[] { 1, 2, 3, 4 };
+
+            Assert.ThrowsAsync<EndOfStreamException>(async () =>
+            {
+                using var ms = new MemoryStream(bytes);
+
+                var buffer = new byte[5];
+                await ms.ReadExactlyAsync(buffer, 0, 5);
+            });
+        }
+
+        [Test]
+        public async Task TestReadExactlyAsync_PartialReads()
+        {
+            var bytes = new byte[] { 1, 2, 3, 4 };
+            var partialStream = new MaxBytesPerReadStream(bytes, maxBytesPerRead: 1);
+
+            var buffer = new byte[4];
+            await partialStream.ReadExactlyAsync(buffer, 0, 4);
+
+            Assert.AreEqual((byte)1, buffer[0]);
+            Assert.AreEqual((byte)2, buffer[1]);
+            Assert.AreEqual((byte)3, buffer[2]);
+            Assert.AreEqual((byte)4, buffer[3]);
+        }
 #endif
 
         [Test]
@@ -324,10 +416,71 @@ namespace Lucene.Net.Support.IO
             stream.Position = 0;
         }
 
+        // Partial-read async tests: verify that async read methods handle
+        // streams that return fewer bytes than requested per call.
+
+        [Test]
+        public async Task TestReadInt32BigEndianAsync_PartialReads()
+        {
+            await stream.WriteInt32BigEndianAsync(768347202);
+            var partialStream = new MaxBytesPerReadStream(((MemoryStream)stream).ToArray(), maxBytesPerRead: 1);
+
+            int result = await partialStream.ReadInt32BigEndianAsync();
+            Assert.AreEqual(768347202, result, "Incorrect int read with partial reads (async)");
+        }
+
+        [Test]
+        public async Task TestReadInt64BigEndianAsync_PartialReads()
+        {
+            await stream.WriteInt64BigEndianAsync(9875645283333L);
+            var partialStream = new MaxBytesPerReadStream(((MemoryStream)stream).ToArray(), maxBytesPerRead: 1);
+
+            long result = await partialStream.ReadInt64BigEndianAsync();
+            Assert.AreEqual(9875645283333L, result, "Incorrect long read with partial reads (async)");
+        }
+
+        [Test]
+        public async Task TestReadUTFAsync_PartialReads()
+        {
+            await stream.WriteUTFAsync(unihw);
+            var partialStream = new MaxBytesPerReadStream(((MemoryStream)stream).ToArray(), maxBytesPerRead: 1);
+
+            string result = await partialStream.ReadUTFAsync();
+            Assert.AreEqual(unihw, result, "Incorrect string read with partial reads (async)");
+        }
+
         public override void SetUp()
         {
             base.SetUp();
             stream = new MemoryStream();
+        }
+    }
+
+    /// <summary>
+    /// A stream wrapper that returns at most <c>maxBytesPerRead</c> bytes per
+    /// <see cref="ReadAsync(byte[], int, int, System.Threading.CancellationToken)"/> call,
+    /// simulating partial reads (e.g. network streams).
+    /// </summary>
+    internal sealed class MaxBytesPerReadStream : MemoryStream
+    {
+        private readonly int maxBytesPerRead;
+
+        public MaxBytesPerReadStream(byte[] data, int maxBytesPerRead)
+            : base(data, writable: false)
+        {
+            this.maxBytesPerRead = maxBytesPerRead;
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            int clamped = Math.Min(count, maxBytesPerRead);
+            return base.Read(buffer, offset, clamped);
+        }
+
+        public override Task<int> ReadAsync(byte[] buffer, int offset, int count, System.Threading.CancellationToken cancellationToken)
+        {
+            int clamped = Math.Min(count, maxBytesPerRead);
+            return base.ReadAsync(buffer, offset, clamped, cancellationToken);
         }
     }
 }
