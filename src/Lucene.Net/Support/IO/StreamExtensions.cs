@@ -211,10 +211,18 @@ namespace Lucene.Net.Support.IO
         {
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count));
+            if (buffer.Length - offset < count)
+                throw new ArgumentException("Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection.");
 
             while (count > 0)
             {
-                int numRead = await stream.ReadAsync(buffer, offset, count, cancellationToken);
+                int numRead = await stream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
 
                 if (numRead == 0)
                 {
