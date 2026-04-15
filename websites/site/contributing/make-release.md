@@ -26,7 +26,7 @@ For Package Version, NuGet version and branch naming guidelines see the [Version
 
 The following steps need only to be performed once.
 
-- Install the [Java Runtime Environment](https://www.oracle.com/java/technologies/javase-jre8-downloads.html). This is a dependency of the Release Audit Tool.
+- Install the [Java Runtime Environment](https://learn.microsoft.com/en-us/java/openjdk/install?tabs=exe%2Chomebrew%2Cubuntu) version 21 or later. This is a dependency of the Release Audit Tool.
 
 - Install a subversion command line client, such as [TortoiseSVN](https://tortoisesvn.net/downloads.html)
 
@@ -61,10 +61,10 @@ The following steps need only to be performed once.
 
 - Add Missing License Headers
 
-  - Run the [Apache Release Audit Tool](https://creadur.apache.org/rat/):
+  - Run the [Apache Release Audit Tool](https://creadur.apache.org/rat/) from the repo root:
 
     ```powershell
-    dotnet msbuild -t:AuditRelease
+    ./rat.ps1
     ```
 
   - Review and commit the changes to your local Git clone, adding exclusions to `.rat-excludes` and re-running as necessary

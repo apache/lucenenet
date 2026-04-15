@@ -20,25 +20,6 @@
 -->
 <Project>
 
-  <PropertyGroup Label="Release Audit Tool Settings">
-    <RatDirectory>$(SolutionDir)lib/apache-rat</RatDirectory>
-    <RatFile>$(RatDirectory)/apache-rat-0.13.jar</RatFile>
-    <RatExcludeFile>$(SolutionDir).rat-excludes</RatExcludeFile>
-
-    <RatCommand>java</RatCommand>
-    <RatCommand>$(RatCommand) -jar &quot;$(RatFile)&quot;</RatCommand>
-    <RatCommand>$(RatCommand) --addLicense</RatCommand>
-    <RatCommand>$(RatCommand) --force</RatCommand>
-    <RatCommand>$(RatCommand) --exclude-file &quot;$(RatExcludeFile)&quot;</RatCommand>
-    <RatCommand>$(RatCommand) --dir &quot;$(SolutionDir.TrimEnd('\'))&quot;</RatCommand>
-  </PropertyGroup>
-
-  <Target Name="AuditRelease" Label="Audits the release using Apache Release Audit Tool" Condition="'$(AssemblyName)' == 'Lucene.Net' ">
-    <Message Importance="high" Text="Release Audit Executing..."/>
-    <Exec Command="$(RatCommand)" />
-    <Message Importance="high" Text="Release Audit Complete"/>
-  </Target>
-
   <PropertyGroup Label="Apache Subversion Settings">
     <SvnDevUrl>https://dist.apache.org/repos/dist/dev/lucenenet/</SvnDevUrl>
     <SvnDevDirectory>$(SolutionDir)svn-dev</SvnDevDirectory>
