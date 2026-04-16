@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Represents sorting by computed relevance. Using this sort criteria returns
         /// the same results as calling
-        /// <see cref="IndexSearcher.Search(Query, int, CancellationToken)"/>without a sort criteria,
+        /// <see cref="IndexSearcher.Search(Query, int, CancellationToken)"/> without a sort criteria,
         /// only with slightly more overhead.
         /// </summary>
         public static readonly Sort RELEVANCE = new Sort();

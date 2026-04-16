@@ -166,4 +166,4 @@ int maxDoc = s.MaxDoc;
 FixedBitSet groupHeadsBitSet = c.RetrieveGroupHeads(maxDoc);
 ```
 
-For each of the above collector types there is also a variant that works with `ValueSource` instead of of fields. Concretely this means that these variants can work with functions. These variants are slower than there term based counter parts. These implementations are located in the `Lucene.Net.Search.Grouping.Function` package, but can also be used with the `GroupingSearch` convenience utility
+For each of the above collector types there is also a variant that works with `ValueSource` instead of fields. Concretely, this means that these variants can work with functions. These variants are slower than their term-based counterparts. These implementations are located in the `Lucene.Net.Search.Grouping.Function` package, but can also be used with the `GroupingSearch` convenience utility.
