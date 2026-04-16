@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 
+#nullable enable
+
 namespace Lucene.Net.Replicator
 {
     /*
@@ -61,7 +63,7 @@ namespace Lucene.Net.Replicator
         /// reclaimed, including the revision files.
         /// </remarks>
         /// <exception cref="IOException"></exception>
-        SessionToken CheckForUpdate(string currentVersion);
+        SessionToken? CheckForUpdate(string? currentVersion);
 
         /// <summary>
         /// Notify that the specified <see cref="SessionToken"/> is no longer needed by the caller.
