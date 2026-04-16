@@ -102,7 +102,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Used for ongoing NRT additions/updates. </summary>
         // LUCENENET specific - changed from private to protected internal for LUCENE-7564 test support.
-        protected internal IndexWriter writer;
+        protected internal IndexWriter m_writer;
 
         /// <summary>
         /// <see cref="IndexSearcher"/> used for lookups. </summary>
@@ -307,19 +307,18 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     m_searcherMgr = null;
                 }
 
-                if (writer != null)
+                if (m_writer != null)
                 {
-                    writer.Dispose();
-                    writer = null;
+                    m_writer.Dispose();
+                    m_writer = null;
                 }
 
-                AtomicReader r = null;
                 bool success = false;
                 try
                 {
                     // First pass: build a temporary normal Lucene index,
                     // just indexing the suggestions as they iterate:
-                    writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
+                    m_writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
                     //long t0 = System.nanoTime();
 
                     // TODO: use threads?
@@ -345,7 +344,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         Commit();
                     }
-                    m_searcherMgr = new SearcherManager(writer, true, null);
+                    m_searcherMgr = new SearcherManager(m_writer, true, null);
                     success = true;
                 }
                 finally
@@ -354,19 +353,17 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         if (closeIndexWriterOnBuild)  // LUCENENET specific - Support for LUCENE-7564.
                         {
-                            writer.Dispose();
-                            writer = null;
+                            m_writer.Dispose();
+                            m_writer = null;
                         }
-                        IOUtils.Dispose(r);
                     }
                     else
                     {
-                        if (writer != null)
+                        if (m_writer != null)
                         {
-                            writer.Rollback();
-                            writer = null;
+                            m_writer.Rollback();
+                            m_writer = null;
                         }
-                        IOUtils.DisposeWhileHandlingException(r);
                     }
                 }
             }
@@ -379,17 +376,17 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         // LUCENENET specific - Support for LUCENE-5889, LUCENE-7564.
         public void Commit()
         {
-            if (writer is null)
+            if (m_writer is null)
             {
                 if (m_searcherMgr is null || closeIndexWriterOnBuild == false)
                 {
-                    throw IllegalStateException.Create("Cannot commit on an closed writer. Add documents first");
+                    throw IllegalStateException.Create("Cannot commit on a closed writer. Add documents first");
                 }
                 // else no-op: writer was committed and closed after the index was built, so commit is unnecessary
             }
             else
             {
-                writer.Commit();
+                m_writer.Commit();
             }
         }
 
@@ -432,28 +429,28 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         // LUCENENET specific - Support for LUCENE-5889, LUCENE-7564.
         private void EnsureOpen()
         {
-            if (writer != null)
+            if (m_writer != null)
                 return;
 
             UninterruptableMonitor.Enter(syncLock);
             try
             {
-                if (writer is null)
+                if (m_writer is null)
                 {
                     if (DirectoryReader.IndexExists(dir))
                     {
                         // Already built; open it:
-                        writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.APPEND));
+                        m_writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.APPEND));
                     }
                     else
                     {
-                        writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
+                        m_writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
                     }
                     UninterruptableMonitor.Enter(searcherMgrLock);
                     try
                     {
                         SearcherManager oldSearcherMgr = m_searcherMgr;
-                        m_searcherMgr = new SearcherManager(writer, true, null);
+                        m_searcherMgr = new SearcherManager(m_writer, true, null);
                         if (oldSearcherMgr != null)
                         {
                             oldSearcherMgr.Dispose();
@@ -481,7 +478,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public virtual void Add(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {
             EnsureOpen();    // LUCENENET specific - Support for LUCENE-5889.
-            writer.AddDocument(BuildDocument(text, contexts, weight, payload));
+            m_writer.AddDocument(BuildDocument(text, contexts, weight, payload));
         }
 
         /// <summary>
@@ -496,7 +493,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public virtual void Update(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {
             EnsureOpen();    // LUCENENET specific - Support for LUCENE-5889.
-            writer.UpdateDocument(new Term(EXACT_TEXT_FIELD_NAME, text.Utf8ToString()), BuildDocument(text, contexts, weight, payload));
+            m_writer.UpdateDocument(new Term(EXACT_TEXT_FIELD_NAME, text.Utf8ToString()), BuildDocument(text, contexts, weight, payload));
         }
 
         private Document BuildDocument(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
@@ -539,7 +536,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 throw IllegalStateException.Create("suggester was not built");
             }
-            if (writer != null) // LUCENENET specific - Support for LUCENE-7564.
+            if (m_writer != null) // LUCENENET specific - Support for LUCENE-7564.
             {
                 m_searcherMgr.MaybeRefreshBlocking();
             }
@@ -975,10 +972,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     m_searcherMgr.Dispose();
                     m_searcherMgr = null;
                 }
-                if (writer != null)
+                if (m_writer != null)
                 {
-                    writer.Dispose();
-                    writer = null;
+                    m_writer.Dispose();
+                    m_writer = null;
                 }
                 if (dir != null) // LUCENENET specific - Support for LUCENE-7564. Close dir even when writer is null.
                 {

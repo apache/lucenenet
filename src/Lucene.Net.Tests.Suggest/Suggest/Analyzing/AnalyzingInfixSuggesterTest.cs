@@ -1047,7 +1047,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             public IndexWriter GetIndexWriter()
             {
-                return writer;
+                return m_writer;
             }
 
             public SearcherManager GetSearcherManager()
@@ -1070,7 +1070,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // * The IndexWriter should be null
             // * The SearcherManager should be non-null
             // * SearcherManager's IndexWriter reference should be closed
-            //   (as evidenced by MaybeRefreshBlocking() throwing AlreadyClosedException)
+            //   (as evidenced by MaybeRefreshBlocking() throwing AlreadyClosedException/ObjectDisposedException)
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
             DirectoryInfo tempDir = CreateTempDir("analyzingInfixContext");
             MyAnalyzingInfixSuggester suggester = new MyAnalyzingInfixSuggester(NewFSDirectory(tempDir), a, a, 3, false, true);
