@@ -1,11 +1,14 @@
-using Lucene.Net.Support.Threading;
 using System;
 using System.Buffers;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
+#if !FEATURE_RANDOMACCESS_READ
+using Lucene.Net.Support.Threading;
+using System.Runtime.CompilerServices;
+#endif
 
 namespace Lucene.Net.Support.IO
 {
@@ -154,6 +157,84 @@ namespace Lucene.Net.Support.IO
             }
         }
 
+#if !FEATURE_STREAM_READEXACTLY
+        /// <summary>
+        /// Reads bytes from the stream into <paramref name="buffer"/> until it is completely filled.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="buffer">The buffer to read into.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="stream"/> is null.</exception>
+        /// <exception cref="EndOfStreamException">The end of the stream is reached before filling the buffer.</exception>
+        /// <remarks>
+        /// This method is a polyfill for platforms (prior to .NET 7) that do not have the ReadExactly method.
+        /// </remarks>
+        public static void ReadExactly(this Stream stream, Span<byte> buffer)
+        {
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
+            byte[] sharedBuffer = ArrayPool<byte>.Shared.Rent(buffer.Length);
+            try
+            {
+                while (buffer.Length > 0)
+                {
+                    int numRead = stream.Read(sharedBuffer, 0, buffer.Length);
+
+                    if (numRead == 0)
+                    {
+                        throw new EndOfStreamException(SR.IO_EOF_ReadBeyondEOF);
+                    }
+
+                    new ReadOnlySpan<byte>(sharedBuffer, 0, numRead).CopyTo(buffer);
+                    buffer = buffer.Slice(numRead);
+                }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(sharedBuffer);
+            }
+        }
+
+        /// <summary>
+        /// Reads bytes asynchronously from the stream into <paramref name="buffer"/> until it is completely filled.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="buffer">The buffer to read into.</param>
+        /// <param name="offset">The byte offset in <paramref name="buffer"/> at which to begin writing data read from the stream.</param>
+        /// <param name="count">The count of bytes to read.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="stream"/> is null.</exception>
+        /// <exception cref="EndOfStreamException">The end of the stream is reached before filling the buffer.</exception>
+        /// <remarks>
+        /// This method is a polyfill for platforms (prior to .NET 7) that do not have the ReadExactlyAsync method.
+        /// </remarks>
+        public static async Task ReadExactlyAsync(this Stream stream, byte[] buffer, int offset, int count, CancellationToken cancellationToken = default)
+        {
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count));
+            if (buffer.Length - offset < count)
+                throw new ArgumentException("Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection.");
+
+            while (count > 0)
+            {
+                int numRead = await stream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
+
+                if (numRead == 0)
+                {
+                    throw new EndOfStreamException(SR.IO_EOF_ReadBeyondEOF);
+                }
+
+                count -= numRead;
+                offset += numRead;
+            }
+        }
+#endif
+
         /// <summary>
         /// Writes a sequence of bytes to the current stream and advances the current
         /// position within this stream by the number of bytes written.
@@ -186,14 +267,23 @@ namespace Lucene.Net.Support.IO
             if (chars is null)
                 throw new ArgumentNullException(nameof(chars));
 
-            byte[] newBytes = new byte[chars.Length * 2];
-            for (int index = 0; index < chars.Length; index++)
+            int byteCount = chars.Length * 2;
+            byte[] newBytes = ArrayPool<byte>.Shared.Rent(byteCount);
+            try
             {
-                int newIndex = index == 0 ? index : index * 2;
-                newBytes[newIndex] = (byte)chars[index];
-                newBytes[newIndex + 1] = (byte)(chars[index] >> 8);
+                for (int index = 0; index < chars.Length; index++)
+                {
+                    int newIndex = index == 0 ? index : index * 2;
+                    newBytes[newIndex] = (byte)chars[index];
+                    newBytes[newIndex + 1] = (byte)(chars[index] >> 8);
+                }
+
+                stream.Write(newBytes, 0, byteCount);
             }
-            stream.Write(newBytes, 0, newBytes.Length);
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(newBytes);
+            }
         }
 
         public static char[] ReadChars(this Stream stream, int count)
@@ -203,11 +293,11 @@ namespace Lucene.Net.Support.IO
             if (count < 0)
                 throw new ArgumentOutOfRangeException(nameof(count));
 
-            byte[] buff = new byte[2];
+            Span<byte> buff = stackalloc byte[2];
             char[] newChars = new char[count];
             for (int i = 0; i < count; i++)
             {
-                stream.Read(buff, 0, 2);
+                stream.ReadExactly(buff);
                 newChars[i] = (char)((buff[0] & 0xff) | ((buff[1] & 0xff) << 8));
             }
             return newChars;
@@ -218,12 +308,12 @@ namespace Lucene.Net.Support.IO
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            byte[] buff = new byte[4];
+            Span<byte> buff = stackalloc byte[4];
             buff[0] = (byte)(value);
             buff[1] = (byte)(value >> 8);
             buff[2] = (byte)(value >> 16);
             buff[3] = (byte)(value >> 24);
-            stream.Write(buff, 0, buff.Length);
+            stream.Write(buff);
         }
 
         public static int ReadInt32(this Stream stream)
@@ -231,8 +321,8 @@ namespace Lucene.Net.Support.IO
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            byte[] buff = new byte[4];
-            stream.Read(buff, 0, buff.Length);
+            Span<byte> buff = stackalloc byte[4];
+            stream.ReadExactly(buff);
             return (buff[0] & 0xff) | ((buff[1] & 0xff) << 8) |
                 ((buff[2] & 0xff) << 16) | ((buff[3] & 0xff) << 24);
         }
@@ -242,7 +332,7 @@ namespace Lucene.Net.Support.IO
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            byte[] buff = new byte[8];
+            Span<byte> buff = stackalloc byte[8];
             buff[0] = (byte)value;
             buff[1] = (byte)(value >> 8);
             buff[2] = (byte)(value >> 16);
@@ -251,7 +341,7 @@ namespace Lucene.Net.Support.IO
             buff[5] = (byte)(value >> 40);
             buff[6] = (byte)(value >> 48);
             buff[7] = (byte)(value >> 56);
-            stream.Write(buff, 0, buff.Length);
+            stream.Write(buff);
         }
 
         public static long ReadInt64(this Stream stream)
@@ -259,8 +349,8 @@ namespace Lucene.Net.Support.IO
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            byte[] buff = new byte[8];
-            stream.Read(buff, 0, buff.Length);
+            Span<byte> buff = stackalloc byte[8];
+            stream.ReadExactly(buff);
             uint lo = (uint)(buff[0] | buff[1] << 8 |
                              buff[2] << 16 | buff[3] << 24);
             uint hi = (uint)(buff[4] | buff[5] << 8 |
@@ -268,19 +358,26 @@ namespace Lucene.Net.Support.IO
             return (long)((ulong)hi) << 32 | lo;
         }
 
-        //async versions of the above methods
+        // async versions of the above methods
         public static async Task WriteInt32BigEndianAsync(this Stream output, int value, CancellationToken cancellationToken = default)
         {
             if (output is null)
                 throw new ArgumentNullException(nameof(output));
 
-            byte[] buff = new byte[4];
-            buff[0] = (byte)(value >> 24);
-            buff[1] = (byte)(value >> 16);
-            buff[2] = (byte)(value >> 8);
-            buff[3] = (byte)value;
+            byte[] buff = ArrayPool<byte>.Shared.Rent(4);
+            try
+            {
+                buff[0] = (byte)(value >> 24);
+                buff[1] = (byte)(value >> 16);
+                buff[2] = (byte)(value >> 8);
+                buff[3] = (byte)value;
 
-            await output.WriteAsync(buff, 0, buff.Length, cancellationToken).ConfigureAwait(false);
+                await output.WriteAsync(buff, 0, 4, cancellationToken).ConfigureAwait(false);
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buff);
+            }
         }
 
         public static async Task WriteInt64BigEndianAsync(this Stream output, long value, CancellationToken cancellationToken = default)
@@ -288,17 +385,24 @@ namespace Lucene.Net.Support.IO
             if (output is null)
                 throw new ArgumentNullException(nameof(output));
 
-            byte[] buff = new byte[8];
-            buff[0] = (byte)(value >> 56);
-            buff[1] = (byte)(value >> 48);
-            buff[2] = (byte)(value >> 40);
-            buff[3] = (byte)(value >> 32);
-            buff[4] = (byte)(value >> 24);
-            buff[5] = (byte)(value >> 16);
-            buff[6] = (byte)(value >> 8);
-            buff[7] = (byte)value;
+            byte[] buff = ArrayPool<byte>.Shared.Rent(8);
+            try
+            {
+                buff[0] = (byte)(value >> 56);
+                buff[1] = (byte)(value >> 48);
+                buff[2] = (byte)(value >> 40);
+                buff[3] = (byte)(value >> 32);
+                buff[4] = (byte)(value >> 24);
+                buff[5] = (byte)(value >> 16);
+                buff[6] = (byte)(value >> 8);
+                buff[7] = (byte)value;
 
-            await output.WriteAsync(buff, 0, buff.Length, cancellationToken).ConfigureAwait(false);
+                await output.WriteAsync(buff, 0, 8, cancellationToken).ConfigureAwait(false);
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buff);
+            }
         }
 
         public static async Task WriteUTFAsync(this Stream output, string value, CancellationToken cancellationToken = default)
@@ -317,7 +421,7 @@ namespace Lucene.Net.Support.IO
             {
                 int offset = 0;
                 offset = WriteInt16BigEndianToBuffer((int)utfCount, buffer, offset);
-                offset = WriteUTFBytesToBuffer(value, (int)utfCount, buffer, offset);
+                offset = WriteUTFBytesToBuffer(value, buffer, offset);
 
                 await output.WriteAsync(buffer, 0, offset, cancellationToken).ConfigureAwait(false);
             }
@@ -331,11 +435,17 @@ namespace Lucene.Net.Support.IO
             if (input is null)
                 throw new ArgumentNullException(nameof(input));
 
-            byte[] buff = new byte[4];
-            int read = await input.ReadAsync(buff, 0, buff.Length, cancellationToken).ConfigureAwait(false);
-            if (read < buff.Length) throw new EndOfStreamException();
+            byte[] buff = ArrayPool<byte>.Shared.Rent(4);
+            try
+            {
+                await input.ReadExactlyAsync(buff, 0, 4, cancellationToken).ConfigureAwait(false);
 
-            return (buff[0] << 24) | (buff[1] << 16) | (buff[2] << 8) | buff[3];
+                return (buff[0] << 24) | (buff[1] << 16) | (buff[2] << 8) | buff[3];
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buff);
+            }
         }
 
         public static async Task<long> ReadInt64BigEndianAsync(this Stream input, CancellationToken cancellationToken = default)
@@ -343,18 +453,24 @@ namespace Lucene.Net.Support.IO
             if (input is null)
                 throw new ArgumentNullException(nameof(input));
 
-            byte[] buff = new byte[8];
-            int read = await input.ReadAsync(buff, 0, buff.Length, cancellationToken).ConfigureAwait(false);
-            if (read < buff.Length) throw new EndOfStreamException();
+            byte[] buff = ArrayPool<byte>.Shared.Rent(8);
+            try
+            {
+                await input.ReadExactlyAsync(buff, 0, 8, cancellationToken).ConfigureAwait(false);
 
-            return ((long)buff[0] << 56) |
-                   ((long)buff[1] << 48) |
-                   ((long)buff[2] << 40) |
-                   ((long)buff[3] << 32) |
-                   ((long)buff[4] << 24) |
-                   ((long)buff[5] << 16) |
-                   ((long)buff[6] << 8) |
-                   buff[7];
+                return ((long)buff[0] << 56) |
+                       ((long)buff[1] << 48) |
+                       ((long)buff[2] << 40) |
+                       ((long)buff[3] << 32) |
+                       ((long)buff[4] << 24) |
+                       ((long)buff[5] << 16) |
+                       ((long)buff[6] << 8) |
+                       buff[7];
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buff);
+            }
         }
 
         public static async Task<string> ReadUTFAsync(this Stream input, CancellationToken cancellationToken = default)
@@ -365,18 +481,14 @@ namespace Lucene.Net.Support.IO
             byte[] lenBuff = ArrayPool<byte>.Shared.Rent(2);
             try
             {
-                int readLen = await input.ReadAsync(lenBuff, 0, 2, cancellationToken).ConfigureAwait(false);
-                if (readLen < 2)
-                    throw new EndOfStreamException("Unexpected end of stream while reading UTF length.");
+                await input.ReadExactlyAsync(lenBuff, 0, 2, cancellationToken).ConfigureAwait(false);
 
                 int length = (lenBuff[0] << 8) | lenBuff[1];
 
                 byte[] buffer = ArrayPool<byte>.Shared.Rent(length);
                 try
                 {
-                    int read = await input.ReadAsync(buffer, 0, length, cancellationToken).ConfigureAwait(false);
-                    if (read < length)
-                        throw new EndOfStreamException("Unexpected end of stream while reading UTF string.");
+                    await input.ReadExactlyAsync(buffer, 0, length, cancellationToken).ConfigureAwait(false);
 
                     return Encoding.UTF8.GetString(buffer, 0, length);
                 }
@@ -410,14 +522,14 @@ namespace Lucene.Net.Support.IO
             return utfCount;
         }
 
-        private static int WriteInt16BigEndianToBuffer(int value, byte[] buffer, int offset)
+        private static int WriteInt16BigEndianToBuffer(int value, Span<byte> buffer, int offset)
         {
             buffer[offset++] = (byte)(value >> 8);
             buffer[offset++] = (byte)value;
             return offset;
         }
 
-        private static int WriteUTFBytesToBuffer(string value, long count, byte[] buffer, int offset)
+        private static int WriteUTFBytesToBuffer(string value, Span<byte> buffer, int offset)
         {
             foreach (char ch in value)
             {
@@ -443,7 +555,7 @@ namespace Lucene.Net.Support.IO
         private static class SR
         {
             public const string IO_StreamTooLong = "Stream was too long.";
+            public const string IO_EOF_ReadBeyondEOF = "Unable to read beyond the end of the stream.";
         }
-
     }
 }

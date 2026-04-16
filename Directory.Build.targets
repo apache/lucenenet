@@ -38,17 +38,17 @@
     <PublishDir Condition="'$(AlternatePublishRootDirectory)' != ''">$(AlternatePublishRootDirectory)/$(TargetFramework)/$(MSBuildProjectName)/</PublishDir>
   </PropertyGroup>
 
-  <!-- Features in .NET 9.x+ only -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
-
-    <DefineConstants>$(DefineConstants);FEATURE_STREAM_READEXACTLY</DefineConstants>
-
-  </PropertyGroup>
-
   <!-- Features in .NET 8.x+ only -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ASPNETCORE_TESTHOST</DefineConstants>
+
+  </PropertyGroup>
+
+  <!-- Features in .NET 7.x+ only -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
+
+    <DefineConstants>$(DefineConstants);FEATURE_STREAM_READEXACTLY</DefineConstants>
 
   </PropertyGroup>
 
