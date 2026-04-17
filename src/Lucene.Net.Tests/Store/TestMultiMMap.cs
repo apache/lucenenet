@@ -3,8 +3,10 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Store
@@ -414,6 +416,115 @@ namespace Lucene.Net.Store
             dir.Dispose();
         }
 
+
+        // LUCENENET: Regression test for GitHub #1090. A background thread
+        // extends a file on disk while the foreground thread repeatedly
+        // opens it with MMapDirectory.OpenInput. Before the fix, the
+        // file's length could grow between the caller capturing fc.Length
+        // and MemoryMappedFile.CreateFromFile performing its internal
+        // stat, causing ArgumentOutOfRangeException (paramName="capacity")
+        // with the message "The capacity may not be smaller than the
+        // file size."
+        [Test, LuceneNetSpecific, Slow]
+        public void TestOpenInputConcurrentFileExtension_Issue1090()
+        {
+            var dir = CreateTempDir("testOpenInputConcurrentFileExtension");
+            const string name = "data.bin";
+            string filePath = Path.Combine(dir.FullName, name);
+
+            // Seed with a small initial payload.
+            File.WriteAllBytes(filePath, new byte[64]);
+
+            using var mmapDir = new MMapDirectory(dir);
+
+            const long maxFileSize = 1L * 1024 * 1024; // 1 MiB cap
+            var stop = new ManualResetEventSlim(false);
+            Exception writerError = null;
+
+            var writer = new Thread(() =>
+            {
+                var chunk = new byte[64];
+                try
+                {
+                    while (!stop.IsSet)
+                    {
+                        using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
+                        fs.Seek(0, SeekOrigin.End);
+                        if (fs.Length < maxFileSize)
+                        {
+                            fs.Write(chunk, 0, chunk.Length);
+                        }
+                        else
+                        {
+                            // Keep the file bounded: truncate back and grow again.
+                            fs.SetLength(64);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    writerError = e;
+                }
+            })
+            { IsBackground = true, Name = "mmap-issue1090-extender" };
+            writer.Start();
+
+            // Snapshot counters so this test's assertion is not affected by
+            // any earlier test's activity on MMapDirectory.
+            long baselineRetries = Interlocked.Read(ref MMapDirectory.s_capacityRetryCount);
+
+            try
+            {
+                var sw = Stopwatch.StartNew();
+                int iterations = 0;
+                // Keep stretching the window until either the race fires or we
+                // hit a hard deadline. On most machines this takes < 1 second.
+                const int maxSeconds = 15;
+                while (sw.Elapsed < TimeSpan.FromSeconds(maxSeconds))
+                {
+                    using (var _ = mmapDir.OpenInput(name, NewIOContext(Random)))
+                    {
+                        // Just open and dispose; the race occurs during construction.
+                    }
+                    iterations++;
+
+                    if (Interlocked.Read(ref MMapDirectory.s_capacityRetryCount) > baselineRetries)
+                    {
+                        break; // race reproduced and handled by the retry loop
+                    }
+                }
+
+                long retries = Interlocked.Read(ref MMapDirectory.s_capacityRetryCount) - baselineRetries;
+                int maxAttempts = Volatile.Read(ref MMapDirectory.s_maxCapacityAttemptsObserved);
+
+                // Surface what was observed for diagnostics when run with -v normal.
+                TestContext.Progress.WriteLine(
+                    $"TestOpenInputConcurrentFileExtension: iterations={iterations}, retries={retries}, maxAttemptsObserved={maxAttempts}");
+
+                // The real check: the race must have fired and our retry loop
+                // must have swallowed it. Without the fix, the exception
+                // escapes OpenInput and the test fails with ArgumentOutOfRangeException
+                // (as seen in #1090). If the race never fires during this run
+                // (timing-dependent), mark the test inconclusive rather than
+                // silently passing — we haven't actually exercised the fix.
+                if (retries == 0)
+                {
+                    NUnit.Framework.Assert.Inconclusive(
+                        $"The concurrent-extension race was not reproduced within {maxSeconds}s " +
+                        $"({iterations} OpenInput iterations). The fix was therefore not exercised on this run.");
+                }
+            }
+            finally
+            {
+                stop.Set();
+                writer.Join();
+            }
+
+            if (writerError != null)
+            {
+                throw new Exception("Writer thread failed", writerError);
+            }
+        }
 
         [Test, LuceneNetSpecific]
         public void TestDisposeIndexInput()
