@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Int64 = J2N.Numerics.Int64;
 
@@ -139,7 +140,11 @@ namespace Lucene.Net.Search.Suggest.Fst
             return true;
         }
 
-        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override IList<LookupResult> DoLookup(string key,
+            IEnumerable<BytesRef> contexts,
+            bool onlyMorePopular,
+            int num,
+            CancellationToken cancellationToken = default)
         {
             // LUCENENET: Added guard clause for null
             if (key is null)

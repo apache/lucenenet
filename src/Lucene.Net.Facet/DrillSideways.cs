@@ -6,7 +6,7 @@ using Lucene.Net.Facet.Taxonomy;
 using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Threading;
 
 namespace Lucene.Net.Facet
 {
@@ -147,7 +147,9 @@ namespace Lucene.Net.Facet
         /// Search, collecting hits with a <see cref="ICollector"/>, and
         /// computing drill down and sideways counts.
         /// </summary>
-        public virtual DrillSidewaysResult Search(DrillDownQuery query, ICollector hitCollector)
+        public virtual DrillSidewaysResult Search(DrillDownQuery query,
+            ICollector hitCollector,
+            CancellationToken cancellationToken = default)
         {
 
             IDictionary<string, int> drillDownDims = query.Dims;
@@ -158,7 +160,7 @@ namespace Lucene.Net.Facet
             {
                 // There are no drill-down dims, so there is no
                 // drill-sideways to compute:
-                m_searcher.Search(query, MultiCollector.Wrap(hitCollector, drillDownCollector));
+                m_searcher.Search(query, MultiCollector.Wrap(hitCollector, drillDownCollector), cancellationToken);
                 return new DrillSidewaysResult(BuildFacetsResult(drillDownCollector, null, null), null);
             }
 
@@ -193,7 +195,7 @@ namespace Lucene.Net.Facet
                 drillDownQueries[i - startClause] = clauses[i].Query;
             }
             DrillSidewaysQuery dsq = new DrillSidewaysQuery(baseQuery, drillDownCollector, drillSidewaysCollectors, drillDownQueries, ScoreSubDocsAtOnce);
-            m_searcher.Search(dsq, hitCollector);
+            m_searcher.Search(dsq, hitCollector, cancellationToken);
 
             return new DrillSidewaysResult(BuildFacetsResult(drillDownCollector, drillSidewaysCollectors, drillDownDims.Keys.ToArray()), null);
         }
@@ -202,7 +204,14 @@ namespace Lucene.Net.Facet
         /// Search, sorting by <see cref="Sort"/>, and computing
         /// drill down and sideways counts.
         /// </summary>
-        public virtual DrillSidewaysResult Search(DrillDownQuery query, Filter filter, FieldDoc after, int topN, Sort sort, bool doDocScores, bool doMaxScore)
+        public virtual DrillSidewaysResult Search(DrillDownQuery query,
+            Filter filter,
+            FieldDoc after,
+            int topN,
+            Sort sort,
+            bool doDocScores,
+            bool doMaxScore,
+            CancellationToken cancellationToken = default)
         {
             if (filter != null)
             {
@@ -213,11 +222,11 @@ namespace Lucene.Net.Facet
                 int limit = m_searcher.IndexReader.MaxDoc;
                 if (limit == 0)
                 {
-                    limit = 1; // the collector does not alow numHits = 0
+                    limit = 1; // the collector does not allow numHits = 0
                 }
                 topN = Math.Min(topN, limit);
                 TopFieldCollector hitCollector = TopFieldCollector.Create(sort, topN, after, true, doDocScores, doMaxScore, true);
-                DrillSidewaysResult r = Search(query, hitCollector);
+                DrillSidewaysResult r = Search(query, hitCollector, cancellationToken);
                 return new DrillSidewaysResult(r.Facets, hitCollector.GetTopDocs());
             }
             else
@@ -230,25 +239,28 @@ namespace Lucene.Net.Facet
         /// Search, sorting by score, and computing
         /// drill down and sideways counts.
         /// </summary>
-        public virtual DrillSidewaysResult Search(DrillDownQuery query, int topN)
+        public virtual DrillSidewaysResult Search(DrillDownQuery query, int topN, CancellationToken cancellationToken = default)
         {
-            return Search(null, query, topN);
+            return Search(null, query, topN, cancellationToken);
         }
 
         /// <summary>
         /// Search, sorting by score, and computing
         /// drill down and sideways counts.
         /// </summary>
-        public virtual DrillSidewaysResult Search(ScoreDoc after, DrillDownQuery query, int topN)
+        public virtual DrillSidewaysResult Search(ScoreDoc after,
+            DrillDownQuery query,
+            int topN,
+            CancellationToken cancellationToken = default)
         {
             int limit = m_searcher.IndexReader.MaxDoc;
             if (limit == 0)
             {
-                limit = 1; // the collector does not alow numHits = 0
+                limit = 1; // the collector does not allow numHits = 0
             }
             topN = Math.Min(topN, limit);
             TopScoreDocCollector hitCollector = TopScoreDocCollector.Create(topN, after, true);
-            DrillSidewaysResult r = Search(query, hitCollector);
+            DrillSidewaysResult r = Search(query, hitCollector, cancellationToken);
             return new DrillSidewaysResult(r.Facets, hitCollector.GetTopDocs());
         }
 

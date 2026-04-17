@@ -1,5 +1,6 @@
 // Lucene version compatibility level 4.8.1 + LUCENE-6001
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Attributes;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
@@ -1329,6 +1331,76 @@ namespace Lucene.Net.Facet
 
             writer.Dispose();
             IOUtils.Dispose(searcher.IndexReader, taxoReader, taxoWriter, dir, taxoDir);
+        }
+
+        // LUCENENET specific - tests for the CancellationToken support
+        // added to DrillSideways and FacetsCollector. See #922.
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestCancellation_DrillSideways_PreCanceledToken_ThrowsOperationCanceledException()
+        {
+            using Directory dir = NewDirectory();
+            using Directory taxoDir = NewDirectory();
+            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
+            FacetsConfig config = new FacetsConfig();
+
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
+            Document doc = new Document();
+            doc.Add(new FacetField("Author", "Bob"));
+            writer.AddDocument(config.Build(taxoWriter, doc));
+            doc = new Document();
+            doc.Add(new FacetField("Author", "Lisa"));
+            writer.AddDocument(config.Build(taxoWriter, doc));
+
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
+            var taxoReader = new DirectoryTaxonomyReader(taxoWriter);
+            DrillSideways ds = new DrillSideways(searcher, config, taxoReader);
+
+            DrillDownQuery ddq = new DrillDownQuery(config);
+            ddq.Add("Author", "Lisa");
+
+            using CancellationTokenSource cts = new CancellationTokenSource();
+            cts.Cancel();
+
+            Assert.Throws<OperationCanceledException>(
+                () => ds.Search(null, ddq, 10, cts.Token));
+
+            Assert.Throws<OperationCanceledException>(
+                () => ds.Search(ddq, 10, cts.Token));
+
+            Assert.Throws<OperationCanceledException>(
+                () => ds.Search(ddq, new TotalHitCountCollector(), cts.Token));
+
+            writer.Dispose();
+            IOUtils.Dispose(searcher.IndexReader, taxoReader, taxoWriter);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestCancellation_FacetsCollector_PreCanceledToken_ThrowsOperationCanceledException()
+        {
+            using Directory dir = NewDirectory();
+            using Directory taxoDir = NewDirectory();
+            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
+            FacetsConfig config = new FacetsConfig();
+
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
+            Document doc = new Document();
+            doc.Add(new FacetField("Author", "Bob"));
+            writer.AddDocument(config.Build(taxoWriter, doc));
+
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
+            FacetsCollector fc = new FacetsCollector();
+
+            using CancellationTokenSource cts = new CancellationTokenSource();
+            cts.Cancel();
+
+            Assert.Throws<OperationCanceledException>(
+                () => FacetsCollector.Search(searcher, new MatchAllDocsQuery(), 10, fc, cts.Token));
+
+            writer.Dispose();
+            IOUtils.Dispose(searcher.IndexReader, taxoWriter);
         }
     }
 }

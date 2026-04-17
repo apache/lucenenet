@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Search.Suggest
 {
@@ -302,10 +303,14 @@ namespace Lucene.Net.Search.Suggest
         /// a prefix, misspelling, or even infix. </param>
         /// <param name="onlyMorePopular"> return only more popular results </param>
         /// <param name="num"> maximum number of results to return </param>
+        /// <param name="cancellationToken"> token to monitor for cancellation requests. LUCENENET specific. Note that not all implementations support cancellation. </param>
         /// <returns> a list of possible completions, with their relative weight (e.g. popularity) </returns>
-        public virtual IList<LookupResult> DoLookup(string key, bool onlyMorePopular, int num)
+        public virtual IList<LookupResult> DoLookup(string key,
+            bool onlyMorePopular,
+            int num,
+            CancellationToken cancellationToken = default)
         {
-            return DoLookup(key, null, onlyMorePopular, num);
+            return DoLookup(key, null, onlyMorePopular, num, cancellationToken);
         }
 
         /// <summary>
@@ -315,8 +320,13 @@ namespace Lucene.Net.Search.Suggest
         /// <param name="contexts"> contexts to filter the lookup by, or null if all contexts are allowed; if the suggestion contains any of the contexts, it's a match </param>
         /// <param name="onlyMorePopular"> return only more popular results </param>
         /// <param name="num"> maximum number of results to return </param>
+        /// <param name="cancellationToken"> token to monitor for cancellation requests. LUCENENET specific. Note that not all implementations support cancellation. </param>
         /// <returns> a list of possible completions, with their relative weight (e.g. popularity) </returns>
-        public abstract IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num);
+        public abstract IList<LookupResult> DoLookup(string key,
+            IEnumerable<BytesRef> contexts,
+            bool onlyMorePopular,
+            int num,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Persist the constructed lookup data to a directory. Optional operation. </summary>

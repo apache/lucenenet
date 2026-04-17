@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet
@@ -31,7 +32,7 @@ namespace Lucene.Net.Facet
     /// Collects hits for subsequent faceting.  Once you've run
     /// a search and collect hits into this, instantiate one of
     /// the <see cref="ICollector"/> subclasses to do the facet
-    /// counting.  Use the Search utility methods (such as <see cref="Search(IndexSearcher, Query, int, ICollector)"/>) to
+    /// counting.  Use the Search utility methods (such as <see cref="Search(IndexSearcher, Query, int, ICollector, CancellationToken)"/>) to
     /// perform an "ordinary" search but also collect into a
     /// <see cref="Facets"/>.
     /// </summary>
@@ -218,93 +219,154 @@ namespace Lucene.Net.Facet
         /// Utility method, to search and also collect all hits
         /// into the provided <see cref="ICollector"/>.
         /// </summary>
-        public static TopDocs Search(IndexSearcher searcher, Query q, int n, ICollector fc)
+        public static TopDocs Search(IndexSearcher searcher,
+            Query q,
+            int n,
+            ICollector fc,
+            CancellationToken cancellationToken = default)
         {
-            return DoSearch(searcher, null, q, null, n, null, false, false, fc);
+            return DoSearch(searcher, null, q, null, n, null, false, false, fc, cancellationToken);
         }
 
         /// <summary>
         /// Utility method, to search and also collect all hits
         /// into the provided <see cref="ICollector"/>.
         /// </summary>
-        public static TopDocs Search(IndexSearcher searcher, Query q, Filter filter, int n, ICollector fc)
+        public static TopDocs Search(IndexSearcher searcher,
+            Query q,
+            Filter filter,
+            int n,
+            ICollector fc,
+            CancellationToken cancellationToken = default)
         {
-            return DoSearch(searcher, null, q, filter, n, null, false, false, fc);
+            return DoSearch(searcher, null, q, filter, n, null, false, false, fc, cancellationToken);
         }
 
         /// <summary>
         /// Utility method, to search and also collect all hits
         /// into the provided <see cref="ICollector"/>.
         /// </summary>
-        public static TopFieldDocs Search(IndexSearcher searcher, Query q, Filter filter, int n, Sort sort, ICollector fc)
+        public static TopFieldDocs Search(IndexSearcher searcher,
+            Query q,
+            Filter filter,
+            int n,
+            Sort sort,
+            ICollector fc,
+            CancellationToken cancellationToken = default)
         {
             if (sort is null)
             {
                 throw new ArgumentNullException(nameof(sort), "sort must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            return (TopFieldDocs)DoSearch(searcher, null, q, filter, n, sort, false, false, fc);
+
+            return (TopFieldDocs)DoSearch(searcher, null, q, filter, n, sort, false, false, fc, cancellationToken);
         }
 
         /// <summary>
         /// Utility method, to search and also collect all hits
         /// into the provided <see cref="ICollector"/>.
         /// </summary>
-        public static TopFieldDocs Search(IndexSearcher searcher, Query q, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore, ICollector fc)
+        public static TopFieldDocs Search(IndexSearcher searcher,
+            Query q,
+            Filter filter,
+            int n,
+            Sort sort,
+            bool doDocScores,
+            bool doMaxScore,
+            ICollector fc,
+            CancellationToken cancellationToken = default)
         {
             if (sort is null)
             {
                 throw new ArgumentNullException(nameof(sort), "sort must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            return (TopFieldDocs)DoSearch(searcher, null, q, filter, n, sort, doDocScores, doMaxScore, fc);
+
+            return (TopFieldDocs)DoSearch(searcher, null, q, filter, n, sort, doDocScores, doMaxScore, fc, cancellationToken);
         }
 
         /// <summary>
         /// Utility method, to search and also collect all hits
         /// into the provided <see cref="ICollector"/>.
         /// </summary>
-        public virtual TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, int n, ICollector fc)
+        public virtual TopDocs SearchAfter(IndexSearcher searcher,
+            ScoreDoc after,
+            Query q,
+            int n,
+            ICollector fc,
+            CancellationToken cancellationToken = default)
         {
-            return DoSearch(searcher, after, q, null, n, null, false, false, fc);
+            return DoSearch(searcher, after, q, null, n, null, false, false, fc, cancellationToken);
         }
 
         /// <summary>
         /// Utility method, to search and also collect all hits
         /// into the provided <see cref="ICollector"/>.
         /// </summary>
-        public static TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, ICollector fc)
+        public static TopDocs SearchAfter(IndexSearcher searcher,
+            ScoreDoc after,
+            Query q,
+            Filter filter,
+            int n,
+            ICollector fc,
+            CancellationToken cancellationToken = default)
         {
-            return DoSearch(searcher, after, q, filter, n, null, false, false, fc);
+            return DoSearch(searcher, after, q, filter, n, null, false, false, fc, cancellationToken);
         }
 
         /// <summary>
         /// Utility method, to search and also collect all hits
         /// into the provided <see cref="ICollector"/>.
         /// </summary>
-        public static TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, Sort sort, ICollector fc)
+        public static TopDocs SearchAfter(IndexSearcher searcher,
+            ScoreDoc after,
+            Query q,
+            Filter filter,
+            int n,
+            Sort sort,
+            ICollector fc,
+            CancellationToken cancellationToken = default)
         {
             if (sort is null)
             {
                 throw new ArgumentNullException(nameof(sort), "sort must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            return DoSearch(searcher, after, q, filter, n, sort, false, false, fc);
+
+            return DoSearch(searcher, after, q, filter, n, sort, false, false, fc, cancellationToken);
         }
 
         /// <summary>
         /// Utility method, to search and also collect all hits
         /// into the provided <see cref="ICollector"/>.
         /// </summary>
-        public static TopDocs SearchAfter(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore, ICollector fc)
+        public static TopDocs SearchAfter(IndexSearcher searcher,
+            ScoreDoc after,
+            Query q,
+            Filter filter,
+            int n,
+            Sort sort,
+            bool doDocScores,
+            bool doMaxScore,
+            ICollector fc,
+            CancellationToken cancellationToken = default)
         {
             if (sort is null)
             {
                 throw new ArgumentNullException(nameof(sort), "sort must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            return DoSearch(searcher, after, q, filter, n, sort, doDocScores, doMaxScore, fc);
+            return DoSearch(searcher, after, q, filter, n, sort, doDocScores, doMaxScore, fc, cancellationToken);
         }
 
-        private static TopDocs DoSearch(IndexSearcher searcher, ScoreDoc after, Query q, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore, ICollector fc)
+        private static TopDocs DoSearch(IndexSearcher searcher,
+            ScoreDoc after,
+            Query q,
+            Filter filter,
+            int n,
+            Sort sort,
+            bool doDocScores,
+            bool doMaxScore,
+            ICollector fc,
+            CancellationToken cancellationToken)
         {
-
             if (filter != null)
             {
                 q = new FilteredQuery(q, filter);
@@ -333,7 +395,7 @@ namespace Lucene.Net.Facet
                 }
                 const bool fillFields = true;
                 var hitsCollector = TopFieldCollector.Create(sort, n, (FieldDoc)after, fillFields, doDocScores, doMaxScore, false);
-                searcher.Search(q, MultiCollector.Wrap(hitsCollector, fc));
+                searcher.Search(q, MultiCollector.Wrap(hitsCollector, fc), cancellationToken);
                 return hitsCollector.GetTopDocs();
             }
             else
@@ -343,7 +405,7 @@ namespace Lucene.Net.Facet
                 // need access to the protected IS.search methods
                 // taking Weight... could use reflection...
                 var hitsCollector = TopScoreDocCollector.Create(n, after, false);
-                searcher.Search(q, MultiCollector.Wrap(hitsCollector, fc));
+                searcher.Search(q, MultiCollector.Wrap(hitsCollector, fc), cancellationToken);
                 return hitsCollector.GetTopDocs();
             }
         }

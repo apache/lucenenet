@@ -4,11 +4,11 @@ using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
 using Lucene.Net.Diagnostics;
+using System.Threading;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -132,16 +132,25 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             this.numFactor = numFactor;
         }
 
-        public override IList<Lookup.LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override IList<Lookup.LookupResult> DoLookup(string key,
+            IEnumerable<BytesRef> contexts,
+            bool onlyMorePopular,
+            int num,
+            CancellationToken cancellationToken = default)
         {
             // here we multiply the number of searched element by the defined factor
-            return base.DoLookup(key, contexts, onlyMorePopular, num * numFactor);
+            return base.DoLookup(key, contexts, onlyMorePopular, num * numFactor, cancellationToken);
         }
 
-        public override IList<Lookup.LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num, bool allTermsRequired, bool doHighlight)
+        public override IList<Lookup.LookupResult> DoLookup(string key,
+            IEnumerable<BytesRef> contexts,
+            int num,
+            bool allTermsRequired,
+            bool doHighlight,
+            CancellationToken cancellationToken = default)
         {
             // here we multiply the number of searched element by the defined factor
-            return base.DoLookup(key, contexts, num * numFactor, allTermsRequired, doHighlight);
+            return base.DoLookup(key, contexts, num * numFactor, allTermsRequired, doHighlight, cancellationToken);
         }
 
         protected override FieldType GetTextFieldType()

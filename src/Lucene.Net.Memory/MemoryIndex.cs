@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace Lucene.Net.Index.Memory
 {
@@ -569,11 +570,12 @@ namespace Lucene.Net.Index.Memory
         /// matching this index against the given Lucene query expression.
         /// </summary>
         /// <param name="query"> an arbitrary Lucene query to run against this index </param>
+        /// <param name="cancellationToken"> A cancellation token used to cancel the search. LUCENENET specific. </param>
         /// <returns> the relevance score of the matchmaking; A number in the range
         ///         [0.0 .. 1.0], with 0.0 indicating no match. The higher the number
         ///         the better the match.
         ///  </returns>
-        public virtual float Search(Query query)
+        public virtual float Search(Query query, CancellationToken cancellationToken = default)
         {
             if (query is null)
             {
@@ -584,7 +586,7 @@ namespace Lucene.Net.Index.Memory
             try
             {
                 float[] scores = new float[1]; // inits to 0.0f (no match)
-                searcher.Search(query, new CollectorAnonymousClass(scores));
+                searcher.Search(query, new CollectorAnonymousClass(scores), cancellationToken);
                 float score = scores[0];
                 return score;
             } // can never happen (RAMDirectory)

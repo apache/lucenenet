@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -11,6 +12,7 @@ using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Linq;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
@@ -331,6 +333,47 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(1, gs.GetAllMatchingGroups().Count);
             indexSearcher.IndexReader.Dispose();
             dir.Dispose();
+        }
+
+        // LUCENENET specific - tests for the CancellationToken support
+        // added to GroupingSearch. See #922.
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestCancellation_PreCanceledToken_ThrowsOperationCanceledException()
+        {
+            using Directory dir = NewDirectory();
+            RandomIndexWriter w = new RandomIndexWriter(
+                Random,
+                dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT,
+                    new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
+
+            Document doc = new Document();
+            doc.Add(new StringField("group", "foo", Field.Store.NO));
+            doc.Add(new TextField("content", "random text", Field.Store.NO));
+            w.AddDocument(doc);
+
+            doc = new Document();
+            doc.Add(new StringField("group", "bar", Field.Store.NO));
+            doc.Add(new TextField("content", "random words", Field.Store.NO));
+            w.AddDocument(doc);
+
+            IndexSearcher indexSearcher = NewSearcher(w.GetReader());
+            w.Dispose();
+
+            var gs = GroupingSearch.ByField("group");
+
+            using CancellationTokenSource cts = new CancellationTokenSource();
+            cts.Cancel();
+
+            Assert.Throws<OperationCanceledException>(
+                () => gs.Search(indexSearcher, new MatchAllDocsQuery(), 0, 10, cts.Token));
+
+            Assert.Throws<OperationCanceledException>(
+                () => gs.Search(indexSearcher, null, new MatchAllDocsQuery(), 0, 10, cts.Token));
+
+            indexSearcher.IndexReader.Dispose();
         }
     }
 }

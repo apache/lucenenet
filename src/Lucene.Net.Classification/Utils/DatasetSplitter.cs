@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Classification.Utils
@@ -57,13 +58,44 @@ namespace Lucene.Net.Classification.Utils
         /// <param name="analyzer"><see cref="Analyzer"/> used to create the new docs</param>
         /// <param name="fieldNames">names of fields that need to be put in the new indexes or <c>null</c> if all should be used</param>
         /// <exception cref="IOException">if any writing operation fails on any of the indexes</exception>
-        public virtual void Split(AtomicReader originalIndex, Directory trainingIndex, Directory testIndex, Directory crossValidationIndex, Analyzer analyzer, params string[] fieldNames)
+        public virtual void Split(AtomicReader originalIndex,
+            Directory trainingIndex,
+            Directory testIndex,
+            Directory crossValidationIndex,
+            Analyzer analyzer,
+            params string[] fieldNames)
+        {
+            Split(originalIndex, trainingIndex, testIndex, crossValidationIndex, analyzer, CancellationToken.None, fieldNames);
+        }
+
+        /// <summary>
+        /// Split a given index into 3 indexes for training, test and cross validation tasks respectively
+        /// </summary>
+        /// <param name="originalIndex">an <see cref="AtomicReader"/> on the source index</param>
+        /// <param name="trainingIndex">a <see cref="Directory"/> used to write the training index</param>
+        /// <param name="testIndex">a <see cref="Directory"/> used to write the test index</param>
+        /// <param name="crossValidationIndex">a <see cref="Directory"/> used to write the cross validation index</param>
+        /// <param name="analyzer"><see cref="Analyzer"/> used to create the new docs</param>
+        /// <param name="cancellationToken">A cancellation token to cancel the split operation.</param>
+        /// <param name="fieldNames">names of fields that need to be put in the new indexes or <c>null</c> if all should be used</param>
+        /// <exception cref="IOException">if any writing operation fails on any of the indexes</exception>
+        /// <exception cref="OperationCanceledException">if the <paramref name="cancellationToken"/> requested cancellation</exception>
+        /// <remarks>
+        /// LUCENENET specific overload to add cancellation support.
+        /// </remarks>
+        public virtual void Split(AtomicReader originalIndex,
+            Directory trainingIndex,
+            Directory testIndex,
+            Directory crossValidationIndex,
+            Analyzer analyzer,
+            CancellationToken cancellationToken,
+            params string[] fieldNames)
         {
 #pragma warning disable 612, 618
             // create IWs for train / test / cv IDXs
-            IndexWriter testWriter = new IndexWriter(testIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
-            IndexWriter cvWriter = new IndexWriter(crossValidationIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
-            IndexWriter trainingWriter = new IndexWriter(trainingIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
+            using IndexWriter testWriter = new IndexWriter(testIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
+            using IndexWriter cvWriter = new IndexWriter(crossValidationIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
+            using IndexWriter trainingWriter = new IndexWriter(trainingIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
 #pragma warning restore 612, 618
 
             try
@@ -71,7 +103,7 @@ namespace Lucene.Net.Classification.Utils
                 int size = originalIndex.MaxDoc;
 
                 IndexSearcher indexSearcher = new IndexSearcher(originalIndex);
-                TopDocs topDocs = indexSearcher.Search(new MatchAllDocsQuery(), int.MaxValue);
+                TopDocs topDocs = indexSearcher.Search(new MatchAllDocsQuery(), int.MaxValue, cancellationToken);
 
                 // set the type to be indexed, stored, with term vectors
                 FieldType ft = new FieldType(TextField.TYPE_STORED);
@@ -132,19 +164,25 @@ namespace Lucene.Net.Classification.Utils
                     b++;
                 }
             }
+            catch (OperationCanceledException) { throw; } // LUCENENET: Don't wrap cancellation in IOException
             catch (Exception e) when (e.IsException())
             {
-                throw new IOException("Exceptio in DatasetSplitter", e);
+                throw new IOException("Exception in DatasetSplitter", e);
             }
             finally
             {
-                testWriter.Commit();
-                cvWriter.Commit();
-                trainingWriter.Commit();
-                // close IWs
-                testWriter.Dispose();
-                cvWriter.Dispose();
-                trainingWriter.Dispose();
+                // LUCENENET Specific - if cancellation was requested, don't commit.
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    testWriter.Commit();
+                    cvWriter.Commit();
+                    trainingWriter.Commit();
+                }
+
+                // close IWs - LUCENENET specific: disposed via `using` declaration
+                // testWriter.Dispose();
+                // cvWriter.Dispose();
+                // trainingWriter.Dispose();
             }
         }
     }

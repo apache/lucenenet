@@ -12,8 +12,8 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using Directory = Lucene.Net.Store.Directory;
 using JCG = J2N.Collections.Generic;
 using Int64 = J2N.Numerics.Int64;
@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// <summary>
     /// Builds an ngram model from the text sent to <see cref="Build(IInputEnumerator, double)"/>
     /// and predicts based on the last grams-1 tokens in
-    /// the request sent to <see cref="DoLookup(string, IEnumerable{BytesRef}, bool, int)"/>.  This tries to
+    /// the request sent to <see cref="DoLookup(string, IEnumerable{BytesRef}, bool, int, CancellationToken)"/>.  This tries to
     /// handle the "long tail" of suggestions for when the
     /// incoming query is a never before seen query string.
     ///
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// "Large language models in machine translation"</a> for details.
     ///
     /// </para>
-    /// <para> From <see cref="DoLookup(string, IEnumerable{BytesRef}, bool, int)"/>, the key of each result is the
+    /// <para> From <see cref="DoLookup(string, IEnumerable{BytesRef}, bool, int, CancellationToken)"/>, the key of each result is the
     /// ngram token; the value is <see cref="long.MaxValue"/> * score (fixed
     /// point, cast to long).  Divide by <see cref="long.MaxValue"/> to get
     /// the score back, which ranges from 0.0 to 1.0.
@@ -433,23 +433,30 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return true;
         }
 
-        public override IList<LookupResult> DoLookup(string key, bool onlyMorePopular, int num) // ignored
+        public override IList<LookupResult> DoLookup(string key,
+            bool onlyMorePopular,
+            int num,
+            CancellationToken cancellationToken = default) // ignored
         {
-            return DoLookup(key, null, onlyMorePopular, num);
+            return DoLookup(key, null, onlyMorePopular, num, cancellationToken);
         }
 
         /// <summary>
         /// Lookup, without any context. </summary>
-        public virtual IList<LookupResult> DoLookup(string key, int num)
+        public virtual IList<LookupResult> DoLookup(string key, int num, CancellationToken cancellationToken = default)
         {
-            return DoLookup(key, null, true, num);
+            return DoLookup(key, null, true, num, cancellationToken);
         }
 
-        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, /* ignored */ bool onlyMorePopular, int num)
+        public override IList<LookupResult> DoLookup(string key,
+            IEnumerable<BytesRef> contexts, /* ignored */
+            bool onlyMorePopular,
+            int num,
+            CancellationToken cancellationToken = default)
         {
             try
             {
-                return DoLookup(key, contexts, num);
+                return DoLookup(key, contexts, num, cancellationToken);
             }
             catch (Exception ioe) when (ioe.IsIOException())
             {
@@ -477,7 +484,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Retrieve suggestions.
         /// </summary>
-        public virtual IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num)
+        public virtual IList<LookupResult> DoLookup(string key,
+            IEnumerable<BytesRef> contexts,
+            int num,
+            CancellationToken cancellationToken = default)
         {
             // LUCENENET: Added guard clause for null
             if (key is null)

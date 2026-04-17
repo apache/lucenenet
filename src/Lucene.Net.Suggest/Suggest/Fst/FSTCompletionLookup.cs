@@ -1,5 +1,4 @@
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
@@ -7,6 +6,7 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Fst
@@ -257,7 +257,11 @@ namespace Lucene.Net.Search.Suggest.Fst
             return (int)value;
         }
 
-        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool higherWeightsFirst, int num)
+        public override IList<LookupResult> DoLookup(string key,
+            IEnumerable<BytesRef> contexts,
+            bool higherWeightsFirst,
+            int num,
+            CancellationToken cancellationToken = default)
         {
             // LUCENENET: Added guard clause for null
             if (key is null)

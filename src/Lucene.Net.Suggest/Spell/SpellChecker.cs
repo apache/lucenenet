@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Directory = Lucene.Net.Store.Directory;
 using JCG = J2N.Collections.Generic;
 
@@ -51,7 +52,7 @@ namespace Lucene.Net.Search.Spell
     {
         /// <summary>
         /// The default minimum score to use, if not specified by setting <see cref="Accuracy"/>
-        /// or overriding with <see cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/> .
+        /// or overriding with <see cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float, CancellationToken)"/> .
         /// </summary>
         public const float DEFAULT_ACCURACY = 0.5f;
 
@@ -190,7 +191,7 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Gets or sets the accuracy (minimum score) to be used, unless overridden in
-        /// <see cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>,
+        /// <see cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float, CancellationToken)"/>,
         /// to decide whether a suggestion is included or not.
         /// Sets the accuracy 0 &lt; minScore &lt; 1; default <see cref="DEFAULT_ACCURACY"/>
         /// </summary>
@@ -221,7 +222,7 @@ namespace Lucene.Net.Search.Spell
         /// <returns>string[] the sorted list of the suggest words with these 2 criteria:
         /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
         /// of the suggest words in the field of the user index</returns>
-        /// <seealso cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>
+        /// <seealso cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float, CancellationToken)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual string[] SuggestSimilar(string word, int numSug)
         {
@@ -249,7 +250,7 @@ namespace Lucene.Net.Search.Spell
         /// <returns>string[] the sorted list of the suggest words with these 2 criteria:
         /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
         /// of the suggest words in the field of the user index</returns>
-        /// <seealso cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>
+        /// <seealso cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float, CancellationToken)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual string[] SuggestSimilar(string word, int numSug, float accuracy)
         {
@@ -257,7 +258,7 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// Calls <see cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>
+        /// Calls <see cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float, CancellationToken)"/>
         ///       SuggestSimilar(word, numSug, ir, suggestMode, field, this.accuracy)
         ///
         /// </summary>
@@ -288,13 +289,21 @@ namespace Lucene.Net.Search.Spell
         /// <param name="suggestMode">
         /// (NOTE: if indexReader==null and/or field==null, then this is overridden with SuggestMode.SUGGEST_ALWAYS) </param>
         /// <param name="accuracy"> The minimum score a suggestion must have in order to qualify for inclusion in the results </param>
+        /// <param name="cancellationToken"> A cancellation token to cancel the search. LUCENENET specific. </param>
         /// <exception cref="IOException"> if the underlying index throws an <see cref="IOException"/> </exception>
         /// <exception cref="ObjectDisposedException"> if the <see cref="SpellChecker"/> is already disposed </exception>
+        /// <exception cref="OperationCanceledException"> if the <paramref name="cancellationToken"/> requested cancellation </exception>
         /// <returns> string[] the sorted list of the suggest words with these 2 criteria:
         /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
         /// of the suggest words in the field of the user index
         ///  </returns>
-        public virtual string[] SuggestSimilar(string word, int numSug, IndexReader ir, string field, SuggestMode suggestMode, float accuracy)
+        public virtual string[] SuggestSimilar(string word,
+            int numSug,
+            IndexReader ir,
+            string field,
+            SuggestMode suggestMode,
+            float accuracy,
+            CancellationToken cancellationToken = default)
         {
             // obtainSearcher calls ensureOpen
             IndexSearcher indexSearcher = ObtainSearcher();
@@ -355,7 +364,7 @@ namespace Lucene.Net.Search.Spell
                 int maxHits = 10 * numSug;
 
                 //    System.out.println("Q: " + query);
-                ScoreDoc[] hits = indexSearcher.Search(query, null, maxHits).ScoreDocs;
+                ScoreDoc[] hits = indexSearcher.Search(query, null, maxHits, cancellationToken).ScoreDocs;
                 //    System.out.println("HITS: " + hits.length());
                 SuggestWordQueue sugQueue = new SuggestWordQueue(numSug, comparer);
 

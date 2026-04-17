@@ -1,5 +1,6 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -11,6 +12,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Join
@@ -1073,6 +1075,48 @@ namespace Lucene.Net.Search.Join
                 }
                 throw new ArgumentException("Unsupported ScoreMode: " + mode);
             }
+        }
+
+        // LUCENENET specific - tests for the CancellationToken support
+        // added to JoinUtil.CreateJoinQuery. See #922.
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestCancellation_PreCanceledToken_ThrowsOperationCanceledException()
+        {
+            string idField = "id";
+            string toField = "productId";
+
+            using Directory dir = NewDirectory();
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMergePolicy(NewLogMergePolicy()));
+
+            Document doc = new Document();
+            doc.Add(new TextField("name", "name1", Field.Store.NO));
+            doc.Add(new TextField(idField, "1", Field.Store.NO));
+            w.AddDocument(doc);
+
+            doc = new Document();
+            doc.Add(new TextField(idField, "2", Field.Store.NO));
+            doc.Add(new TextField(toField, "1", Field.Store.NO));
+            w.AddDocument(doc);
+
+            IndexSearcher indexSearcher = new IndexSearcher(w.GetReader());
+            w.Dispose();
+
+            using CancellationTokenSource cts = new CancellationTokenSource();
+            cts.Cancel();
+
+            Assert.Throws<OperationCanceledException>(
+                () => JoinUtil.CreateJoinQuery(idField, false, toField,
+                    new TermQuery(new Term("name", "name1")), indexSearcher, ScoreMode.None, cts.Token));
+
+            Assert.Throws<OperationCanceledException>(
+                () => JoinUtil.CreateJoinQuery(idField, false, toField,
+                    new TermQuery(new Term("name", "name1")), indexSearcher, ScoreMode.Total, cts.Token));
+
+            indexSearcher.IndexReader.Dispose();
         }
     }
 }

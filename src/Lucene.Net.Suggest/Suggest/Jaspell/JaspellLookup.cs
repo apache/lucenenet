@@ -3,6 +3,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Jaspell
@@ -113,7 +114,11 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             return trie.Get(key);
         }
 
-        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override IList<LookupResult> DoLookup(string key,
+            IEnumerable<BytesRef> contexts,
+            bool onlyMorePopular,
+            int num,
+            CancellationToken cancellationToken = default)
         {
             if (contexts != null)
             {
@@ -167,7 +172,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         private const sbyte HI_KID = 0x04;
         private const sbyte HAS_VALUE = 0x08;
 
-        private void ReadRecursively(DataInput @in, JaspellTernarySearchTrie.TSTNode node)
+        private static void ReadRecursively(DataInput @in, JaspellTernarySearchTrie.TSTNode node)
         {
             node.splitchar = @in.ReadString()[0];
             sbyte mask = (sbyte)@in.ReadByte();
@@ -195,7 +200,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             }
         }
 
-        private void WriteRecursively(DataOutput @out, JaspellTernarySearchTrie.TSTNode node)
+        private static void WriteRecursively(DataOutput @out, JaspellTernarySearchTrie.TSTNode node)
         {
             if (node is null)
             {

@@ -1,6 +1,7 @@
 // Lucene version compatibility level 4.8.1
 using System;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Search.Join
 {
@@ -56,24 +57,31 @@ namespace Lucene.Net.Search.Join
         /// <param name="fromQuery">                 The query to match documents on the from side </param>
         /// <param name="fromSearcher">              The searcher that executed the specified <paramref name="fromQuery"/> </param>
         /// <param name="scoreMode">                 Instructs how scores from the <paramref name="fromQuery"/> are mapped to the returned query </param>
+        /// <param name="cancellationToken">         A cancellation token used to cancel the search. LUCENENET specific. </param>
         /// <returns>A <see cref="Query"/> instance that can be used to join documents based on the terms in the from and to field</returns>
         /// <exception cref="IOException"> If I/O related errors occur </exception>
-        public static Query CreateJoinQuery(string fromField, bool multipleValuesPerDocument, string toField, Query fromQuery, IndexSearcher fromSearcher, ScoreMode scoreMode)
+        public static Query CreateJoinQuery(string fromField,
+            bool multipleValuesPerDocument,
+            string toField,
+            Query fromQuery,
+            IndexSearcher fromSearcher,
+            ScoreMode scoreMode,
+            CancellationToken cancellationToken = default)
         {
             switch (scoreMode)
             {
                 case ScoreMode.None:
                     TermsCollector termsCollector = TermsCollector.Create(fromField, multipleValuesPerDocument);
-                    fromSearcher.Search(fromQuery, termsCollector);
+                    fromSearcher.Search(fromQuery, termsCollector, cancellationToken);
                     return new TermsQuery(toField, fromQuery, termsCollector.CollectorTerms);
                 case ScoreMode.Total:
                 case ScoreMode.Max:
                 case ScoreMode.Avg:
                     TermsWithScoreCollector termsWithScoreCollector = TermsWithScoreCollector.Create(fromField, multipleValuesPerDocument, scoreMode);
-                    fromSearcher.Search(fromQuery, termsWithScoreCollector);
+                    fromSearcher.Search(fromQuery, termsWithScoreCollector, cancellationToken);
                     return new TermsIncludingScoreQuery(toField, multipleValuesPerDocument, termsWithScoreCollector.CollectedTerms, termsWithScoreCollector.ScoresPerTerm, fromQuery);
                 default:
-                    throw new ArgumentException(string.Format("Score mode {0} isn't supported.", scoreMode));
+                    throw new ArgumentException($"Score mode {scoreMode} isn't supported.");
             }
         }
     }
