@@ -1,4 +1,5 @@
 using J2N.Text;
+using Lucene.Net.Attributes;
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
@@ -1158,6 +1159,31 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         suggester.Dispose();
                 }
             }
+        }
+
+        // LUCENENET specific - tests for the CancellationToken support
+        // added to AnalyzingInfixSuggester.DoLookup. See #922.
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestCancellation_PreCanceledToken_ThrowsOperationCanceledException()
+        {
+            Input[] keys = new Input[] {
+                new Input("lend me your ear", 8, new BytesRef("foobar")),
+                new Input("a penny saved is a penny earned", 10, new BytesRef("foobaz")),
+            };
+
+            Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
+            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3);
+            suggester.Build(new InputArrayEnumerator(keys));
+
+            using CancellationTokenSource cts = new CancellationTokenSource();
+            cts.Cancel();
+
+            Assert.Throws<OperationCanceledException>(
+                () => suggester.DoLookup(
+                    TestUtil.StringToCharSequence("ear", Random).ToString(),
+                    10, true, true, cts.Token));
         }
     }
 }

@@ -1,6 +1,7 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -627,6 +628,27 @@ namespace Lucene.Net.Search.Spell
                     terminated = true;
                 }
             }
+        }
+
+        // LUCENENET specific - tests for the CancellationToken support
+        // added to SpellChecker.SuggestSimilar. See #922.
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestCancellation_PreCanceledToken_ThrowsOperationCanceledException()
+        {
+            using IndexReader r = DirectoryReader.Open(userindex);
+            spellChecker.ClearIndex();
+            Addwords(r, spellChecker, "field1");
+
+            using CancellationTokenSource cts = new CancellationTokenSource();
+            cts.Cancel();
+
+            // Use SUGGEST_ALWAYS to ensure we reach the internal IndexSearcher.Search call
+            // (other modes may short-circuit before searching if the word is found in the reader).
+            Assert.Throws<OperationCanceledException>(
+                () => spellChecker.SuggestSimilar("eighty", 2, r, "field1",
+                    SuggestMode.SUGGEST_ALWAYS, 0.5f, cts.Token));
         }
 
         internal class SpellCheckerMock : SpellChecker

@@ -20,6 +20,7 @@
 */
 
 using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Documents;
@@ -35,6 +36,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index.Memory
@@ -457,6 +459,34 @@ namespace Lucene.Net.Index.Memory
             assertEquals(0, mindex.Search(query), 0.00001f);
             query.Slop = (10);
             assertTrue("posGap" + mockAnalyzer.GetPositionIncrementGap("field"), mindex.Search(query) > 0.0001);
+        }
+
+        // LUCENENET specific - tests for the CancellationToken support
+        // added to MemoryIndex.Search. See #922.
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestCancellation_PreCanceledToken_ThrowsOperationCanceledException()
+        {
+            MemoryIndex mindex = new MemoryIndex(Random.nextBoolean(), Random.nextInt(50) * 1024 * 1024);
+            mindex.AddField("field", "the quick brown fox", new MockAnalyzer(Random));
+
+            using CancellationTokenSource cts = new CancellationTokenSource();
+            cts.Cancel();
+
+            Assert.Throws<OperationCanceledException>(
+                () => mindex.Search(new TermQuery(new Term("field", "fox")), cts.Token));
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestCancellation_DefaultToken_SearchCompletesNormally()
+        {
+            MemoryIndex mindex = new MemoryIndex(Random.nextBoolean(), Random.nextInt(50) * 1024 * 1024);
+            mindex.AddField("field", "the quick brown fox", new MockAnalyzer(Random));
+
+            float score = mindex.Search(new TermQuery(new Term("field", "fox")), CancellationToken.None);
+            assertTrue("Expected a match", score > 0.0f);
         }
 
         [Test]
