@@ -5,6 +5,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Classification
 {
@@ -34,7 +35,6 @@ namespace Lucene.Net.Classification
     /// </summary>
     public class KNearestNeighborClassifier : IClassifier<BytesRef>
     {
-
         private MoreLikeThis mlt;
         private string[] textFieldNames;
         private string classFieldName;
@@ -67,8 +67,9 @@ namespace Lucene.Net.Classification
         /// Assign a class (with score) to the given text string
         /// </summary>
         /// <param name="text">a string containing text to be classified</param>
+        /// <param name="cancellationToken">a cancellation token to cancel the search. LUCENENET specific.</param>
         /// <returns>a <see cref="ClassificationResult{BytesRef}"/> holding assigned class of type <see cref="BytesRef"/> and score</returns>
-        public virtual ClassificationResult<BytesRef> AssignClass(string text)
+        public virtual ClassificationResult<BytesRef> AssignClass(string text, CancellationToken cancellationToken = default)
         {
             if (mlt is null)
             {
@@ -86,7 +87,7 @@ namespace Lucene.Net.Classification
             {
                 mltQuery.Add(query, Occur.MUST);
             }
-            TopDocs topDocs = indexSearcher.Search(mltQuery, k);
+            TopDocs topDocs = indexSearcher.Search(mltQuery, k, cancellationToken);
             return SelectClassFromNeighbors(topDocs);
         }
 
@@ -129,9 +130,14 @@ namespace Lucene.Net.Classification
         /// <param name="atomicReader">the reader to use to access the Lucene index</param>
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="textFieldName">the name of the field used to compare documents</param>
-        public virtual void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer)
+        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.</param>
+        public virtual void Train(AtomicReader atomicReader,
+            string textFieldName,
+            string classFieldName,
+            Analyzer analyzer,
+            CancellationToken cancellationToken = default)
         {
-            Train(atomicReader, textFieldName, classFieldName, analyzer, null);
+            Train(atomicReader, textFieldName, classFieldName, analyzer, null, cancellationToken);
         }
 
         /// <summary>Train the classifier using the underlying Lucene index</summary>
@@ -140,9 +146,15 @@ namespace Lucene.Net.Classification
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="query">the query to filter which documents use for training</param>
         /// <param name="textFieldName">the name of the field used to compare documents</param>
-        public virtual void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer, Query query)
+        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.</param>
+        public virtual void Train(AtomicReader atomicReader,
+            string textFieldName,
+            string classFieldName,
+            Analyzer analyzer,
+            Query query,
+            CancellationToken cancellationToken = default)
         {
-            Train(atomicReader, new string[] { textFieldName }, classFieldName, analyzer, query);
+            Train(atomicReader, new[] { textFieldName }, classFieldName, analyzer, query, cancellationToken);
         }
 
         /// <summary>Train the classifier using the underlying Lucene index</summary>
@@ -151,7 +163,13 @@ namespace Lucene.Net.Classification
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="query">the query to filter which documents use for training</param>
         /// <param name="textFieldNames">the names of the fields to be used to compare documents</param>
-        public virtual void Train(AtomicReader atomicReader, string[] textFieldNames, string classFieldName, Analyzer analyzer, Query query)
+        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.</param>
+        public virtual void Train(AtomicReader atomicReader,
+            string[] textFieldNames,
+            string classFieldName,
+            Analyzer analyzer,
+            Query query,
+            CancellationToken cancellationToken = default)
         {
             this.textFieldNames = textFieldNames;
             this.classFieldName = classFieldName;

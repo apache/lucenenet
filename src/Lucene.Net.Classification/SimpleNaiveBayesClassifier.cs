@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Classification
 {
@@ -44,7 +45,7 @@ namespace Lucene.Net.Classification
 
         /// <summary>
         /// Creates a new NaiveBayes classifier.
-        /// Note that you must call <see cref="Train(AtomicReader, string, string, Analyzer)"/> before you can
+        /// Note that you must call <see cref="Train(AtomicReader, string, string, Analyzer, CancellationToken)"/> before you can
         /// classify any documents.
         /// </summary>
         public SimpleNaiveBayesClassifier()
@@ -58,9 +59,14 @@ namespace Lucene.Net.Classification
         /// <param name="atomicReader">the reader to use to access the Lucene index</param>
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="textFieldName">the name of the field used to compare documents</param>
-        public virtual void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer)
+        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.</param>
+        public virtual void Train(AtomicReader atomicReader,
+            string textFieldName,
+            string classFieldName,
+            Analyzer analyzer,
+            CancellationToken cancellationToken = default)
         {
-            Train(atomicReader, textFieldName, classFieldName, analyzer, null);
+            Train(atomicReader, textFieldName, classFieldName, analyzer, null, cancellationToken);
         }
 
         /// <summary>Train the classifier using the underlying Lucene index</summary>
@@ -69,9 +75,15 @@ namespace Lucene.Net.Classification
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="query">the query to filter which documents use for training</param>
         /// <param name="textFieldName">the name of the field used to compare documents</param>
-        public virtual void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer, Query query)
+        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.</param>
+        public virtual void Train(AtomicReader atomicReader,
+            string textFieldName,
+            string classFieldName,
+            Analyzer analyzer,
+            Query query,
+            CancellationToken cancellationToken = default)
         {
-            Train(atomicReader, new string[] { textFieldName }, classFieldName, analyzer, query);
+            Train(atomicReader, new[] { textFieldName }, classFieldName, analyzer, query, cancellationToken);
         }
 
         /// <summary>Train the classifier using the underlying Lucene index</summary>
@@ -80,7 +92,13 @@ namespace Lucene.Net.Classification
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="query">the query to filter which documents use for training</param>
         /// <param name="textFieldNames">the names of the fields to be used to compare documents</param>
-        public virtual void Train(AtomicReader atomicReader, string[] textFieldNames, string classFieldName, Analyzer analyzer, Query query)
+        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.</param>
+        public virtual void Train(AtomicReader atomicReader,
+            string[] textFieldNames,
+            string classFieldName,
+            Analyzer analyzer,
+            Query query,
+            CancellationToken cancellationToken = default)
         {
             this.atomicReader = atomicReader;
             indexSearcher = new IndexSearcher(this.atomicReader);
@@ -88,10 +106,10 @@ namespace Lucene.Net.Classification
             this.classFieldName = classFieldName;
             this.analyzer = analyzer;
             this.query = query;
-            docsWithClassSize = CountDocsWithClass();
+            docsWithClassSize = CountDocsWithClass(cancellationToken);
         }
 
-        private int CountDocsWithClass()
+        private int CountDocsWithClass(CancellationToken cancellationToken)
         {
             int docCount = MultiFields.GetTerms(atomicReader, classFieldName).DocCount;
             if (docCount == -1)
@@ -105,7 +123,7 @@ namespace Lucene.Net.Classification
                 {
                     q.Add(query, Occur.MUST);
                 }
-                indexSearcher.Search(q, totalHitCountCollector);
+                indexSearcher.Search(q, totalHitCountCollector, cancellationToken);
                 docCount = totalHitCountCollector.TotalHits;
             }
             return docCount;
@@ -141,8 +159,9 @@ namespace Lucene.Net.Classification
         /// Assign a class (with score) to the given text string
         /// </summary>
         /// <param name="inputDocument">a string containing text to be classified</param>
+        /// <param name="cancellationToken">a cancellation token to cancel the search. LUCENENET specific.</param>
         /// <returns>a <see cref="ClassificationResult{BytesRef}"/> holding assigned class of type <see cref="BytesRef"/> and score</returns>
-        public virtual ClassificationResult<BytesRef> AssignClass(string inputDocument)
+        public virtual ClassificationResult<BytesRef> AssignClass(string inputDocument, CancellationToken cancellationToken = default)
         {
             if (atomicReader is null)
             {
@@ -158,7 +177,7 @@ namespace Lucene.Net.Classification
             while (termsEnum.MoveNext())
             {
                 next = termsEnum.Term;
-                double clVal = CalculateLogPrior(next) + CalculateLogLikelihood(tokenizedDoc, next);
+                double clVal = CalculateLogPrior(next) + CalculateLogLikelihood(tokenizedDoc, next, cancellationToken);
                 if (clVal > max)
                 {
                     max = clVal;
@@ -170,14 +189,14 @@ namespace Lucene.Net.Classification
         }
 
 
-        private double CalculateLogLikelihood(string[] tokenizedDoc, BytesRef c)
+        private double CalculateLogLikelihood(string[] tokenizedDoc, BytesRef c, CancellationToken cancellationToken)
         {
             // for each word
             double result = 0d;
             foreach (string word in tokenizedDoc)
             {
                 // search with text:word AND class:c
-                int hits = GetWordFreqForClass(word, c);
+                int hits = GetWordFreqForClass(word, c, cancellationToken);
 
                 // num : count the no of times the word appears in documents of class c (+1)
                 double num = hits + 1; // +1 is added because of add 1 smoothing
@@ -207,7 +226,7 @@ namespace Lucene.Net.Classification
             return avgNumberOfUniqueTerms * docsWithC; // avg # of unique terms in text fields per doc * # docs with c
         }
 
-        private int GetWordFreqForClass(string word, BytesRef c)
+        private int GetWordFreqForClass(string word, BytesRef c, CancellationToken cancellationToken)
         {
             BooleanQuery booleanQuery = new BooleanQuery();
             BooleanQuery subQuery = new BooleanQuery();
@@ -222,7 +241,7 @@ namespace Lucene.Net.Classification
                 booleanQuery.Add(query, Occur.MUST);
             }
             TotalHitCountCollector totalHitCountCollector = new TotalHitCountCollector();
-            indexSearcher.Search(booleanQuery, totalHitCountCollector);
+            indexSearcher.Search(booleanQuery, totalHitCountCollector, cancellationToken);
             return totalHitCountCollector.TotalHits;
         }
 

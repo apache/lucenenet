@@ -1,3 +1,5 @@
+using System.Threading;
+
 namespace Lucene.Net.Classification
 {
     /*
@@ -18,7 +20,7 @@ namespace Lucene.Net.Classification
      */
 
     /// <summary>
-    /// The result of a call to <see cref="IClassifier{T}.AssignClass(string)"/> holding an assigned class of type <typeparam name="T"/> and a score.
+    /// The result of a call to <see cref="IClassifier{T}.AssignClass(string, CancellationToken)"/> holding an assigned class of type <typeparam name="T"/> and a score.
     /// @lucene.experimental
     /// </summary>
     public class ClassificationResult<T>

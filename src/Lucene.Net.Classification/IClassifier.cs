@@ -1,6 +1,7 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
+using System.Threading;
 
 namespace Lucene.Net.Classification
 {
@@ -33,8 +34,9 @@ namespace Lucene.Net.Classification
         /// Assign a class (with score) to the given text string
         /// </summary>
         /// <param name="text">a string containing text to be classified</param>
+        /// <param name="cancellationToken">a cancellation token to cancel the classification operation. LUCENENET specific.</param>
         /// <returns>a <see cref="ClassificationResult{T}"/> holding assigned class of type <typeparamref name="T"/> and score</returns>
-        ClassificationResult<T> AssignClass(string text);
+        ClassificationResult<T> AssignClass(string text, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Train the classifier using the underlying Lucene index
@@ -43,7 +45,12 @@ namespace Lucene.Net.Classification
         /// <param name="atomicReader">the reader to use to access the Lucene index</param>
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="textFieldName">the name of the field used to compare documents</param>
-        void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer);
+        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.</param>
+        void Train(AtomicReader atomicReader,
+            string textFieldName,
+            string classFieldName,
+            Analyzer analyzer,
+            CancellationToken cancellationToken = default);
 
         /// <summary>Train the classifier using the underlying Lucene index</summary>
         /// <param name="analyzer">the analyzer used to tokenize / filter the unseen text</param>
@@ -51,7 +58,13 @@ namespace Lucene.Net.Classification
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="query">the query to filter which documents use for training</param>
         /// <param name="textFieldName">the name of the field used to compare documents</param>
-        void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer, Query query);
+        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.</param>
+        void Train(AtomicReader atomicReader,
+            string textFieldName,
+            string classFieldName,
+            Analyzer analyzer,
+            Query query,
+            CancellationToken cancellationToken = default);
 
         /// <summary>Train the classifier using the underlying Lucene index</summary>
         /// <param name="analyzer">the analyzer used to tokenize / filter the unseen text</param>
@@ -59,7 +72,12 @@ namespace Lucene.Net.Classification
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="query">the query to filter which documents use for training</param>
         /// <param name="textFieldNames">the names of the fields to be used to compare documents</param>
-        void Train(AtomicReader atomicReader, string[] textFieldNames, string classFieldName, Analyzer analyzer,
-                   Query query);
+        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.</param>
+        void Train(AtomicReader atomicReader,
+            string[] textFieldNames,
+            string classFieldName,
+            Analyzer analyzer,
+            Query query,
+            CancellationToken cancellationToken = default);
     }
 }
