@@ -2,6 +2,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Support.IO
 {
@@ -59,6 +60,34 @@ namespace Lucene.Net.Support.IO
             Assert.DoesNotThrow(() => safe.WriteLine('a'));
             Assert.DoesNotThrow(() => safe.WriteLine("Testing"));
             Assert.DoesNotThrow(() => safe.WriteLine("Testing"));
+        }
+
+        /// <summary>
+        /// LUCENENET specific. When <see cref="SafeTextWriterWrapper"/> wraps a
+        /// non-thread-safe <see cref="TextWriter"/> (such as <see cref="StringWriter"/>),
+        /// concurrent writes from multiple threads must not throw. This reproduces
+        /// https://github.com/apache/lucenenet/issues/1246 where the <see cref="FieldCache"/>
+        /// info stream was written concurrently from <see cref="Search.IndexSearcher"/>'s
+        /// executor threads, causing <see cref="ArgumentException"/> ("Destination is too
+        /// short") from <see cref="System.Text.StringBuilder"/>.
+        /// </summary>
+        [Test]
+        public void TestConcurrentWrites()
+        {
+            using var wrapped = new StringWriter();
+            using var safe = new SafeTextWriterWrapper(wrapped);
+
+            const int threadCount = 8;
+            const int iterationsPerThread = 2000;
+            const string line = "WARNING: new FieldCache insanity created. Details: some long-ish message for buffer growth.";
+
+            Parallel.For(0, threadCount, _ =>
+            {
+                for (int i = 0; i < iterationsPerThread; i++)
+                {
+                    safe.WriteLine(line);
+                }
+            });
         }
     }
 }
