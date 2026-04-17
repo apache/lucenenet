@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Search
 {
@@ -196,7 +197,7 @@ namespace Lucene.Net.Search
     /// <para/>
     /// @lucene.experimental
     /// @since 2.9 </summary>
-    /// <seealso cref="IndexSearcher.Search(Query,Filter,int,Sort)"/>
+    /// <seealso cref="IndexSearcher.Search(Query,Filter,int,Sort,CancellationToken)"/>
     /// <seealso cref="FieldCache"/>
     public abstract class FieldValueHitQueue<T> : PriorityQueue<T>
         where T : FieldValueHitQueue.Entry
@@ -259,7 +260,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="entry"> The <see cref="FieldValueHitQueue.Entry"/> used to create a <see cref="FieldDoc"/> </param>
         /// <returns> The newly created <see cref="FieldDoc"/> </returns>
-        /// <seealso cref="IndexSearcher.Search(Query,Filter,int,Sort)"/>
+        /// <seealso cref="IndexSearcher.Search(Query,Filter,int,Sort,CancellationToken)"/>
         internal virtual FieldDoc FillFields(FieldValueHitQueue.Entry entry)
         {
             int n = m_comparers.Length;
