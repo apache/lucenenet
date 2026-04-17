@@ -65,6 +65,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     public class AnalyzingInfixSuggester : Lookup, IDisposable
     {
         private readonly object syncLock = new object();            //uses syncLock as substitute for Java's synchronized (method) keyword
+        // LUCENENET specific - Support for LUCENE-7564.
+        // Forces single-threaded access to the SearcherManager when performing an acquire() or reassigning.
+        private readonly object searcherMgrLock = new object();
 
         /// <summary>
         /// Field name used for the indexed text. </summary>
@@ -92,12 +95,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private readonly Directory dir;
         internal readonly int minPrefixChars;
         private readonly bool commitOnBuild;
+        private readonly bool closeIndexWriterOnBuild; // LUCENENET specific - Support for LUCENE-7564.
         // LUCENENET specific - index writer config factory for extending classes
         private readonly IAnalyzingInfixSuggesterIndexWriterConfigFactory indexWriterConfigFactory;
 
         /// <summary>
         /// Used for ongoing NRT additions/updates. </summary>
-        private IndexWriter writer;
+        // LUCENENET specific - changed from private to protected internal for LUCENE-7564 test support.
+        protected internal IndexWriter m_writer;
 
         /// <summary>
         /// <see cref="IndexSearcher"/> used for lookups. </summary>
@@ -108,6 +113,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///  PrefixQuery is used (4).
         /// </summary>
         public const int DEFAULT_MIN_PREFIX_CHARS = 4;
+
+        /// <summary>
+        /// Default option to close the <see cref="IndexWriter"/> once the index has been built.
+        /// </summary>
+        // LUCENENET specific - Support for LUCENE-7564.
+        protected const bool DEFAULT_CLOSE_INDEXWRITER_ON_BUILD = true;
 
         /// <summary>
         /// How we sort the postings and search results. </summary>
@@ -138,8 +149,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///     Prefixes shorter than this are indexed as character
         ///     ngrams (increasing index size but making lookups
         ///     faster). </param>
-        // LUCENENET specific - LUCENE-5889, a 4.11.0 feature. calls new constructor with extra param.
-        // LUCENENET UPGRADE TODO: Remove method at version 4.11.0. Was retained for perfect 4.8 compatibility
+        // LUCENENET specific - backported from LUCENE-5889 (4.11.0), LUCENE-7564 (6.4.0), LUCENE-7670 (6.4.1).
+        // Calls new constructor with default values for commitOnBuild and closeIndexWriterOnBuild.
+        // Retained for backwards compatibility.
         public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer,
             Analyzer queryAnalyzer, int minPrefixChars)
             : this(matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild: false)
@@ -165,7 +177,33 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         // LUCENENET specific - LUCENE-5889, a 4.11.0 feature. (Code moved from other constructor to here.)
         public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer,
             Analyzer queryAnalyzer, int minPrefixChars, bool commitOnBuild)
-            : this(new AnalyzingInfixSuggesterIndexWriterConfigFactory(SORT), matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild)
+            : this(matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild, DEFAULT_CLOSE_INDEXWRITER_ON_BUILD)
+        {
+        }
+
+        /// <summary>
+        /// Create a new instance, loading from a previously built
+        /// <see cref="AnalyzingInfixSuggester"/> directory, if it exists.  This directory must be
+        /// private to the infix suggester (i.e., not an external
+        /// Lucene index).  Note that <see cref="Dispose()"/>
+        /// will also dispose the provided directory.
+        /// </summary>
+        ///  <param name="minPrefixChars"> Minimum number of leading characters
+        ///     before <see cref="PrefixQuery"/> is used (default 4).
+        ///     Prefixes shorter than this are indexed as character
+        ///     ngrams (increasing index size but making lookups
+        ///     faster). </param>
+        ///  <param name="commitOnBuild"> Call commit after the index has finished building. This
+        ///  would persist the suggester index to disk and future instances of this suggester can
+        ///  use this pre-built dictionary. </param>
+        ///  <param name="closeIndexWriterOnBuild"> If <c>true</c>, the <see cref="IndexWriter"/> will be closed
+        ///  after the index has finished building. </param>
+        // LUCENENET specific - closeIndexWriterOnBuild backported from LUCENE-7564.
+        // Note: Java's equivalent constructor also has allTermsRequired and highlight parameters, which
+        // are not present here because those are method-level parameters in this version of Lucene.NET.
+        public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer,
+            Analyzer queryAnalyzer, int minPrefixChars, bool commitOnBuild, bool closeIndexWriterOnBuild)
+            : this(new AnalyzingInfixSuggesterIndexWriterConfigFactory(SORT), matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild, closeIndexWriterOnBuild)
         {
         }
 
@@ -186,14 +224,41 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///  use this pre-built dictionary. </param>
         /// <param name="indexWriterConfigFactory"> Factory for creating the <see cref="IndexWriterConfig"/>. </param>
         // LUCENENET specific - added indexWriterConfigFactory parameter to allow for customizing the index writer config.
+        // Retained for backwards compatibility.
         public AnalyzingInfixSuggester(IAnalyzingInfixSuggesterIndexWriterConfigFactory indexWriterConfigFactory, LuceneVersion matchVersion,
             Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer, int minPrefixChars, bool commitOnBuild)
+            : this(indexWriterConfigFactory, matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild, DEFAULT_CLOSE_INDEXWRITER_ON_BUILD)
+        {
+        }
+
+        /// <summary>
+        /// Create a new instance, loading from a previously built
+        /// <see cref="AnalyzingInfixSuggester"/> directory, if it exists.  This directory must be
+        /// private to the infix suggester (i.e., not an external
+        /// Lucene index).  Note that <see cref="Dispose()"/>
+        /// will also dispose the provided directory.
+        /// </summary>
+        ///  <param name="minPrefixChars"> Minimum number of leading characters
+        ///     before <see cref="PrefixQuery"/> is used (default 4).
+        ///     Prefixes shorter than this are indexed as character
+        ///     ngrams (increasing index size but making lookups
+        ///     faster). </param>
+        ///  <param name="commitOnBuild"> Call commit after the index has finished building. This
+        ///  would persist the suggester index to disk and future instances of this suggester can
+        ///  use this pre-built dictionary. </param>
+        ///  <param name="closeIndexWriterOnBuild"> If <c>true</c>, the <see cref="IndexWriter"/> will be closed
+        ///  after the index has finished building. </param>
+        /// <param name="indexWriterConfigFactory"> Factory for creating the <see cref="IndexWriterConfig"/>. </param>
+        // LUCENENET specific - added indexWriterConfigFactory and closeIndexWriterOnBuild parameters.
+        public AnalyzingInfixSuggester(IAnalyzingInfixSuggesterIndexWriterConfigFactory indexWriterConfigFactory, LuceneVersion matchVersion,
+            Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer, int minPrefixChars, bool commitOnBuild, bool closeIndexWriterOnBuild)
         {
             if (minPrefixChars < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(minPrefixChars), "minPrefixChars must be >= 0; got: " + minPrefixChars);// LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
+            // LUCENENET specific - moved IndexWriterConfig to AnalyzingInfixSuggesterIndexWriterConfigFactory
             if (indexWriterConfigFactory is null) throw new ArgumentNullException(nameof(indexWriterConfigFactory));
 
             this.m_queryAnalyzer = queryAnalyzer;
@@ -202,14 +267,19 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             this.dir = dir;
             this.minPrefixChars = minPrefixChars;
             this.commitOnBuild = commitOnBuild;
+            this.closeIndexWriterOnBuild = closeIndexWriterOnBuild;
             this.indexWriterConfigFactory = indexWriterConfigFactory;
 
             if (DirectoryReader.IndexExists(dir))
             {
                 // Already built; open it:
-                var config = indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.APPEND);
-                writer = new IndexWriter(dir, config);
-                m_searcherMgr = new SearcherManager(writer, true, null);
+
+                // LUCENENET specific - backported fix from Lucene 6.4.1 to fix #1242. previously was:
+                // var config = indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.APPEND);
+                // writer = new IndexWriter(dir, config);
+                // m_searcherMgr = new SearcherManager(writer, true, null);
+
+                m_searcherMgr = new SearcherManager(dir, null);
             }
         }
 
@@ -228,75 +298,96 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         public override void Build(IInputEnumerator enumerator)
         {
-            if (m_searcherMgr != null)
-            {
-                m_searcherMgr.Dispose();
-                m_searcherMgr = null;
-            }
-
-            if (writer != null)
-            {
-                writer.Dispose();
-                writer = null;
-            }
-
-            AtomicReader r = null;
-            bool success = false;
+            UninterruptableMonitor.Enter(searcherMgrLock);
             try
             {
-                // First pass: build a temporary normal Lucene index,
-                // just indexing the suggestions as they iterate:
-                writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
-                //long t0 = System.nanoTime();
-
-                // TODO: use threads?
-                BytesRef text;
-                while (enumerator.MoveNext())
+                if (m_searcherMgr != null)
                 {
-                    text = enumerator.Current;
-                    BytesRef payload;
-                    if (enumerator.HasPayloads)
+                    m_searcherMgr.Dispose();
+                    m_searcherMgr = null;
+                }
+
+                if (m_writer != null)
+                {
+                    m_writer.Dispose();
+                    m_writer = null;
+                }
+
+                bool success = false;
+                try
+                {
+                    // First pass: build a temporary normal Lucene index,
+                    // just indexing the suggestions as they iterate:
+                    m_writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
+                    //long t0 = System.nanoTime();
+
+                    // TODO: use threads?
+                    BytesRef text;
+                    while (enumerator.MoveNext())
                     {
-                        payload = enumerator.Payload;
+                        text = enumerator.Current;
+                        BytesRef payload;
+                        if (enumerator.HasPayloads)
+                        {
+                            payload = enumerator.Payload;
+                        }
+                        else
+                        {
+                            payload = null;
+                        }
+
+                        Add(text, enumerator.Contexts, enumerator.Weight, payload);
+                    }
+
+                    //System.out.println("initial indexing time: " + ((System.nanoTime()-t0)/1000000) + " msec");
+                    if (commitOnBuild || closeIndexWriterOnBuild) // LUCENENET specific - Support for LUCENE-5889, LUCENE-7564.
+                    {
+                        Commit();
+                    }
+                    m_searcherMgr = new SearcherManager(m_writer, true, null);
+                    success = true;
+                }
+                finally
+                {
+                    if (success)
+                    {
+                        if (closeIndexWriterOnBuild)  // LUCENENET specific - Support for LUCENE-7564.
+                        {
+                            m_writer.Dispose();
+                            m_writer = null;
+                        }
                     }
                     else
                     {
-                        payload = null;
+                        if (m_writer != null)
+                        {
+                            m_writer.Rollback();
+                            m_writer = null;
+                        }
                     }
-
-                    Add(text, enumerator.Contexts, enumerator.Weight, payload);
                 }
-
-                //System.out.println("initial indexing time: " + ((System.nanoTime()-t0)/1000000) + " msec");
-                if (commitOnBuild)                      //LUCENENET specific -Support for LUCENE - 5889.
-                {
-                    Commit();
-                }
-                m_searcherMgr = new SearcherManager(writer, true, null);
-                success = true;
             }
             finally
             {
-                if (success)
-                {
-                    IOUtils.Dispose(r);
-                }
-                else
-                {
-                    IOUtils.DisposeWhileHandlingException(writer, r);
-                    writer = null;
-                }
+                UninterruptableMonitor.Exit(searcherMgrLock);
             }
         }
 
-        // LUCENENET specific -Support for LUCENE-5889.
+        // LUCENENET specific - Support for LUCENE-5889, LUCENE-7564.
         public void Commit()
         {
-            if (writer is null)
+            if (m_writer is null)
             {
-                throw IllegalStateException.Create("Cannot commit on an closed writer. Add documents first");
+                if (m_searcherMgr is null || closeIndexWriterOnBuild == false)
+                {
+                    throw IllegalStateException.Create("Cannot commit on a closed writer. Add documents first");
+                }
+                // else no-op: writer was committed and closed after the index was built, so commit is unnecessary
             }
-            writer.Commit();
+            else
+            {
+                m_writer.Commit();
+            }
         }
 
         private Analyzer GetGramAnalyzer()
@@ -335,24 +426,40 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        //LUCENENET specific -Support for LUCENE - 5889.
+        // LUCENENET specific - Support for LUCENE-5889, LUCENE-7564.
         private void EnsureOpen()
         {
-            if (writer != null)
+            if (m_writer != null)
                 return;
 
             UninterruptableMonitor.Enter(syncLock);
             try
             {
-                if (writer is null)
+                if (m_writer is null)
                 {
-                    if (m_searcherMgr != null)
+                    if (DirectoryReader.IndexExists(dir))
                     {
-                        m_searcherMgr.Dispose();
-                        m_searcherMgr = null;
+                        // Already built; open it:
+                        m_writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.APPEND));
                     }
-                    writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
-                    m_searcherMgr = new SearcherManager(writer, true, null);
+                    else
+                    {
+                        m_writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
+                    }
+                    UninterruptableMonitor.Enter(searcherMgrLock);
+                    try
+                    {
+                        SearcherManager oldSearcherMgr = m_searcherMgr;
+                        m_searcherMgr = new SearcherManager(m_writer, true, null);
+                        if (oldSearcherMgr != null)
+                        {
+                            oldSearcherMgr.Dispose();
+                        }
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(searcherMgrLock);
+                    }
                 }
             }
             finally
@@ -370,14 +477,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual void Add(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {
-            EnsureOpen();    //LUCENENET specific -Support for LUCENE - 5889.
-            writer.AddDocument(BuildDocument(text, contexts, weight, payload));
+            EnsureOpen();    // LUCENENET specific - Support for LUCENE-5889.
+            m_writer.AddDocument(BuildDocument(text, contexts, weight, payload));
         }
 
         /// <summary>
         /// Updates a previous suggestion, matching the exact same
         /// text as before.  Use this to change the weight or
-        /// payload of an already added suggstion.  If you know
+        /// payload of an already added suggestion.  If you know
         /// this text is not already present you can use <see cref="Add"/>
         /// instead.  After adding or updating a batch of
         /// new suggestions, you must call <see cref="Refresh()"/> in the
@@ -385,7 +492,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual void Update(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {
-            writer.UpdateDocument(new Term(EXACT_TEXT_FIELD_NAME, text.Utf8ToString()), BuildDocument(text, contexts, weight, payload));
+            EnsureOpen();    // LUCENENET specific - Support for LUCENE-5889.
+            m_writer.UpdateDocument(new Term(EXACT_TEXT_FIELD_NAME, text.Utf8ToString()), BuildDocument(text, contexts, weight, payload));
         }
 
         private Document BuildDocument(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
@@ -424,11 +532,16 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public virtual void Refresh()
         {
-            if (m_searcherMgr is null) // LUCENENET specific -Support for LUCENE-5889.
+            if (m_searcherMgr is null) // LUCENENET specific - Support for LUCENE-5889.
             {
                 throw IllegalStateException.Create("suggester was not built");
             }
-            m_searcherMgr.MaybeRefreshBlocking();
+            if (m_writer != null) // LUCENENET specific - Support for LUCENE-7564.
+            {
+                m_searcherMgr.MaybeRefreshBlocking();
+            }
+            // else no-op: writer was committed and closed after the index was built
+            //             and before searcherMgr was constructed, so refresh is unnecessary
         }
 
         /// <summary>
@@ -607,8 +720,19 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // We sorted postings by weight during indexing, so we
             // only retrieve the first num hits now:
             ICollector c2 = new EarlyTerminatingSortingCollector(c, SORT, num);
-            IndexSearcher searcher = m_searcherMgr.Acquire();
             IList<LookupResult> results = null;
+            SearcherManager mgr; // LUCENENET specific - Support for LUCENE-7564: acquire & release on same SearcherManager, via local reference
+            IndexSearcher searcher;
+            UninterruptableMonitor.Enter(searcherMgrLock);
+            try
+            {
+                mgr = m_searcherMgr;
+                searcher = mgr.Acquire();
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(searcherMgrLock);
+            }
             try
             {
                 //System.out.println("got searcher=" + searcher);
@@ -622,7 +746,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             finally
             {
-                m_searcherMgr.Release(searcher);
+                mgr.Release(searcher);
             }
 
             //System.out.println(((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - t0) + " msec for infix suggest"); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
@@ -848,11 +972,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     m_searcherMgr.Dispose();
                     m_searcherMgr = null;
                 }
-                if (writer != null)
+                if (m_writer != null)
                 {
-                    writer.Dispose();
+                    m_writer.Dispose();
+                    m_writer = null;
+                }
+                if (dir != null) // LUCENENET specific - Support for LUCENE-7564. Close dir even when writer is null.
+                {
                     dir.Dispose();
-                    writer = null;
                 }
             }
         }
@@ -864,7 +991,18 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 if (m_searcherMgr != null)
                 {
-                    IndexSearcher searcher = m_searcherMgr.Acquire();
+                    SearcherManager mgr; // LUCENENET specific - Support for LUCENE-7564: acquire & release on same SearcherManager, via local reference
+                    IndexSearcher searcher;
+                    UninterruptableMonitor.Enter(searcherMgrLock);
+                    try
+                    {
+                        mgr = m_searcherMgr;
+                        searcher = mgr.Acquire();
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(searcherMgrLock);
+                    }
                     try
                     {
                         foreach (AtomicReaderContext context in searcher.IndexReader.Leaves)
@@ -878,7 +1016,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                     finally
                     {
-                        m_searcherMgr.Release(searcher);
+                        mgr.Release(searcher);
                     }
                 }
                 return mem;
@@ -897,14 +1035,25 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     return 0;
                 }
-                IndexSearcher searcher = m_searcherMgr.Acquire();
+                SearcherManager mgr; // LUCENENET specific - Support for LUCENE-7564: acquire & release on same SearcherManager, via local reference
+                IndexSearcher searcher;
+                UninterruptableMonitor.Enter(searcherMgrLock);
+                try
+                {
+                    mgr = m_searcherMgr;
+                    searcher = mgr.Acquire();
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(searcherMgrLock);
+                }
                 try
                 {
                     return searcher.IndexReader.NumDocs;
                 }
                 finally
                 {
-                    m_searcherMgr.Release(searcher);
+                    mgr.Release(searcher);
                 }
             }
         }

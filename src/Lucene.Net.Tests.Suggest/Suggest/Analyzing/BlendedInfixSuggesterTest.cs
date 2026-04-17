@@ -48,7 +48,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             BlendedInfixSuggester suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a,
                                                                         AnalyzingInfixSuggester.DEFAULT_MIN_PREFIX_CHARS,
                                                                         BlendedInfixSuggester.BlenderType.POSITION_LINEAR,
-                                                                        BlendedInfixSuggester.DEFAULT_NUM_FACTOR);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+                                                                        BlendedInfixSuggester.DEFAULT_NUM_FACTOR, false);
             suggester.Build(new InputArrayEnumerator(keys));
 
             // we query for star wars and check that the weight
@@ -99,7 +99,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // BlenderType.RECIPROCAL is using 1/(1+p) * w where w is weight and p the position of the word
             suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a,
                                                   AnalyzingInfixSuggester.DEFAULT_MIN_PREFIX_CHARS,
-                                                  BlendedInfixSuggester.BlenderType.POSITION_RECIPROCAL, 1);    //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+                                                  BlendedInfixSuggester.BlenderType.POSITION_RECIPROCAL, 1, false);
             suggester.Build(new InputArrayEnumerator(keys));
 
             assertEquals(w, GetInResults(suggester, "top", pl, 1));
@@ -133,7 +133,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // if factor is small, we don't get the expected element
             BlendedInfixSuggester suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a,
                                                                         AnalyzingInfixSuggester.DEFAULT_MIN_PREFIX_CHARS,
-                                                                        BlendedInfixSuggester.BlenderType.POSITION_RECIPROCAL, 1);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+                                                                        BlendedInfixSuggester.BlenderType.POSITION_RECIPROCAL, 1, false);
 
             suggester.Build(new InputArrayEnumerator(keys));
 
@@ -153,7 +153,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // if we increase the factor we have it
             suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a,
                                                   AnalyzingInfixSuggester.DEFAULT_MIN_PREFIX_CHARS,
-                                                  BlendedInfixSuggester.BlenderType.POSITION_RECIPROCAL, 2);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+                                                  BlendedInfixSuggester.BlenderType.POSITION_RECIPROCAL, 2, false);
             suggester.Build(new InputArrayEnumerator(keys));
 
             // we have it
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             BlendedInfixSuggester suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a,
                                                                         AnalyzingInfixSuggester.DEFAULT_MIN_PREFIX_CHARS,
                                                                         BlendedInfixSuggester.BlenderType.POSITION_LINEAR,
-                                                                        BlendedInfixSuggester.DEFAULT_NUM_FACTOR);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+                                                                        BlendedInfixSuggester.DEFAULT_NUM_FACTOR, false);
             suggester.Build(new InputArrayEnumerator(keys));
 
             GetInResults(suggester, "of ", payload, 1);
@@ -216,7 +216,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             BlendedInfixSuggester suggester = new BlendedInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a,
                                                                         AnalyzingInfixSuggester.DEFAULT_MIN_PREFIX_CHARS,
                                                                         BlendedInfixSuggester.BlenderType.POSITION_RECIPROCAL,
-                                                                        BlendedInfixSuggester.DEFAULT_NUM_FACTOR);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+                                                                        BlendedInfixSuggester.DEFAULT_NUM_FACTOR, false);
             suggester.Build(new InputArrayEnumerator(keys));
 
 

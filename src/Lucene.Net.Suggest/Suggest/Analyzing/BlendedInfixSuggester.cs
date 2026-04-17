@@ -105,8 +105,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <param name="blenderType"> Type of blending strategy, see BlenderType for more precisions </param>
         /// <param name="numFactor">   Factor to multiply the number of searched elements before ponderate </param>
         /// <exception cref="IOException"> If there are problems opening the underlying Lucene index. </exception>
-        // LUCENENET specific - LUCENE-5889, a 4.11.0 feature. calls new constructor with extra param.
-        // LUCENENET UPGRADE TODO: Remove method at version 4.11.0. Was retained for perfect 4.8 compatibility
+        // LUCENENET specific - retained for backwards compatibility. Calls new constructor with default
+        // commitOnBuild value. Java does not have this overload without commitOnBuild post-LUCENE-5889.
         public BlendedInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer, int minPrefixChars,
                                      BlenderType blenderType, int numFactor)
             : this(matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars, blenderType, numFactor, commitOnBuild: false)

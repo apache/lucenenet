@@ -4,6 +4,7 @@ using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
+using Lucene.Net.Index;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support.Threading;
@@ -52,7 +53,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             };
 
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3, false);
             suggester.Build(new InputArrayEnumerator(keys));
 
             IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
@@ -95,14 +96,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             DirectoryInfo tempDir = CreateTempDir("AnalyzingInfixSuggesterTest");
 
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-            AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, 3);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+            AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, 3, false);
             try
             {
                 suggester.Build(new InputArrayEnumerator(keys));
                 assertEquals(2, suggester.Count);
                 suggester.Dispose();
 
-                suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, 3);                            //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+                suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, 3, false);
                 IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
                 assertEquals(2, results.size());
                 assertEquals("a penny saved is a penny <b>ear</b>ned", results[0].Key);
@@ -145,7 +146,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         internal class TestHighlightAnalyzingInfixSuggester : AnalyzingInfixSuggester
         {
             public TestHighlightAnalyzingInfixSuggester(AnalyzingInfixSuggesterTest outerInstance, Analyzer a)
-                : base(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3)                                                               //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+                : base(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3, false)
             {
             }
 
@@ -254,7 +255,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
             int minPrefixLength = Random.nextInt(10);
-            AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, minPrefixLength);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+            AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, minPrefixLength, false);
             try
             {
                 suggester.Build(new InputArrayEnumerator(keys));
@@ -330,7 +331,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                     // Make sure things still work after close and reopen:
                     suggester.Dispose();
-                    suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, minPrefixLength);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+                    suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, minPrefixLength, false);
                 }
             }
             finally
@@ -348,7 +349,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             };
 
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3, false);
             suggester.Build(new InputArrayEnumerator(keys));
             IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("penn", Random).ToString(), 10, true, true);
             assertEquals(1, results.size());
@@ -359,7 +360,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             private readonly AnalyzingInfixSuggesterTest outerInstance;
             public TestHighlightChangeCaseAnalyzingInfixSuggester(AnalyzingInfixSuggesterTest outerInstance, Analyzer a)
-                : base(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3)                                                               //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+                : base(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3, false)
             {
                 this.outerInstance = outerInstance;
             }
@@ -381,7 +382,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true);
             IList<Lookup.LookupResult> results;
-            using (AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3))                  //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+            using (AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3, false))
             {
                 suggester.Build(new InputArrayEnumerator(keys));
                 results = suggester.DoLookup(TestUtil.StringToCharSequence("penn", Random).ToString(), 10, true, true);
@@ -445,7 +446,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public void TestEmptyAtStart()
         {
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3);                       //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3, false);
             suggester.Build(new InputArrayEnumerator(new Input[0]));
             suggester.Add(new BytesRef("a penny saved is a penny earned"), null, 10, new BytesRef("foobaz"));
             suggester.Add(new BytesRef("lend me your ear"), null, 8, new BytesRef("foobar"));
@@ -483,7 +484,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public void TestBothExactAndPrefix()
         {
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3, false);
             suggester.Build(new InputArrayEnumerator(new Input[0]));
             suggester.Add(new BytesRef("the pen is pretty"), null, 10, new BytesRef("foobaz"));
             suggester.Refresh();
@@ -595,7 +596,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 Console.WriteLine("  minPrefixChars=" + minPrefixChars);
             }
 
-            AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, minPrefixChars);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+            AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, minPrefixChars, false);
             try
             {
 
@@ -692,7 +693,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         }
                         lookupThread.Finish();
                         suggester.Dispose();
-                        suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, minPrefixChars);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+                        suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, minPrefixChars, false);
                         lookupThread = new LookupThread(this, suggester);
                         lookupThread.Start();
 
@@ -896,7 +897,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             };
 
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3, false);
             suggester.Build(new InputArrayEnumerator(keys));
 
             IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
@@ -1034,6 +1035,145 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return result;
         }
 
+        // LUCENENET specific - helper subclass for LUCENE-7564 tests.
+        // Exposes writer and searcherMgr for assertions.
+        internal class MyAnalyzingInfixSuggester : AnalyzingInfixSuggester
+        {
+            public MyAnalyzingInfixSuggester(Store.Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer,
+                int minPrefixChars, bool commitOnBuild, bool closeIndexWriterOnBuild)
+                : base(TEST_VERSION_CURRENT, dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild, closeIndexWriterOnBuild)
+            {
+            }
+
+            public IndexWriter GetIndexWriter()
+            {
+                return m_writer;
+            }
+
+            public SearcherManager GetSearcherManager()
+            {
+                return m_searcherMgr;
+            }
+        }
+
+        // LUCENENET specific - backported from LUCENE-7564, with additions from LUCENE-7670.
+        [Test]
+        public void TestCloseIndexWriterOnBuild()
+        {
+            Input[] sharedInputs = new Input[]
+            {
+                new Input("lend me your ear", 8, new BytesRef("foobar")),
+                new Input("a penny saved is a penny earned", 10, new BytesRef("foobaz")),
+            };
+
+            // After Build(), when closeIndexWriterOnBuild = true:
+            // * The IndexWriter should be null
+            // * The SearcherManager should be non-null
+            // * SearcherManager's IndexWriter reference should be closed
+            //   (as evidenced by MaybeRefreshBlocking() throwing AlreadyClosedException/ObjectDisposedException)
+            Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
+            DirectoryInfo tempDir = CreateTempDir("analyzingInfixContext");
+            MyAnalyzingInfixSuggester suggester = new MyAnalyzingInfixSuggester(NewFSDirectory(tempDir), a, a, 3, false, true);
+            suggester.Build(new InputArrayEnumerator(sharedInputs));
+            assertNull(suggester.GetIndexWriter());
+            assertNotNull(suggester.GetSearcherManager());
+            Assert.Throws<ObjectDisposedException>(() => suggester.GetSearcherManager().MaybeRefreshBlocking());
+
+            suggester.Dispose();
+
+            // LUCENENET specific - backported from LUCENE-7670.
+            // After instantiating from an already-built suggester dir:
+            // * The IndexWriter should be null
+            // * The SearcherManager should be non-null
+            MyAnalyzingInfixSuggester suggester2 = new MyAnalyzingInfixSuggester(NewFSDirectory(tempDir), a, a, 3, false, true);
+            assertNull(suggester2.GetIndexWriter());
+            assertNotNull(suggester2.GetSearcherManager());
+
+            suggester2.Dispose();
+        }
+
+        // LUCENENET specific - backported from LUCENE-7564.
+        [Test]
+        public void TestCommitAfterBuild()
+        {
+            PerformOperationWithAllOptionCombinations(suggester =>
+            {
+                suggester.Build(new InputArrayEnumerator(SharedInputs));
+                suggester.Commit();
+            });
+        }
+
+        // LUCENENET specific - backported from LUCENE-7564.
+        [Test]
+        public void TestRefreshAfterBuild()
+        {
+            PerformOperationWithAllOptionCombinations(suggester =>
+            {
+                suggester.Build(new InputArrayEnumerator(SharedInputs));
+                suggester.Refresh();
+            });
+        }
+
+        // LUCENENET specific - backported from LUCENE-7564.
+        [Test]
+        public void TestDisallowCommitBeforeBuild()
+        {
+            PerformOperationWithAllOptionCombinations(suggester =>
+                Assert.Throws<InvalidOperationException>(() => suggester.Commit()));
+        }
+
+        // LUCENENET specific - backported from LUCENE-7564.
+        [Test]
+        public void TestDisallowRefreshBeforeBuild()
+        {
+            PerformOperationWithAllOptionCombinations(suggester =>
+                Assert.Throws<InvalidOperationException>(() => suggester.Refresh()));
+        }
+
+        private static readonly Input[] SharedInputs = new Input[]
+        {
+            new Input("lend me your ear", 8, new BytesRef("foobar")),
+            new Input("a penny saved is a penny earned", 10, new BytesRef("foobaz")),
+        };
+
+        /// <summary>
+        /// Perform the given operation on suggesters constructed with all combinations of options
+        /// commitOnBuild and closeIndexWriterOnBuild, including defaults.
+        /// </summary>
+        // LUCENENET specific - backported from LUCENE-7564.
+        private static void PerformOperationWithAllOptionCombinations(Action<AnalyzingInfixSuggester> operation)
+        {
+            Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
+
+            AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a);
+            operation(suggester);
+            suggester.Dispose();
+
+            suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3, false);
+            operation(suggester);
+            suggester.Dispose();
+
+            suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3, true);
+            operation(suggester);
+            suggester.Dispose();
+
+            suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3, true, true);
+            operation(suggester);
+            suggester.Dispose();
+
+            suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3, true, false);
+            operation(suggester);
+            suggester.Dispose();
+
+            suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3, false, true);
+            operation(suggester);
+            suggester.Dispose();
+
+            suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3, false, false);
+            operation(suggester);
+            suggester.Dispose();
+        }
+
         // LUCENE-5528
         [Test]
         public void TestBasicContext()
@@ -1053,13 +1193,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
                     if (iter == 0)
                     {
-                        suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, 3);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+                        suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, 3, false);
                         suggester.Build(new InputArrayEnumerator(keys));
                     }
                     else
                     {
                         // Test again, after close/reopen:
-                        suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, 3);     //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
+                        suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, 3, false);
                     }
 
                     // No context provided, all results returned
