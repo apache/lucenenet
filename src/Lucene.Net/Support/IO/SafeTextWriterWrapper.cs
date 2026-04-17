@@ -44,7 +44,16 @@ namespace Lucene.Net.Support.IO
 
         public SafeTextWriterWrapper(TextWriter textWriter)
         {
-            this.textWriter = textWriter ?? throw new ArgumentNullException(nameof(textWriter));
+            if (textWriter is null)
+                throw new ArgumentNullException(nameof(textWriter));
+
+            // LUCENENET specific: Wrap in a synchronized TextWriter so that concurrent
+            // writes from multiple threads (e.g., IndexSearcher executor threads writing
+            // to FieldCache.InfoStream) do not corrupt non-thread-safe writers such as
+            // StringWriter. This matches the thread-safety of Java's PrintStream, which
+            // synchronizes at the println boundary. See
+            // https://github.com/apache/lucenenet/issues/1246.
+            this.textWriter = TextWriter.Synchronized(textWriter);
         }
 
         public override Encoding Encoding => Run(() => textWriter.Encoding);
