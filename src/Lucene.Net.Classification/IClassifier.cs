@@ -45,7 +45,8 @@ namespace Lucene.Net.Classification
         /// <param name="atomicReader">the reader to use to access the Lucene index</param>
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="textFieldName">the name of the field used to compare documents</param>
-        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.</param>
+        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.
+        /// Note that not all implementations are actually cancelable.</param>
         void Train(AtomicReader atomicReader,
             string textFieldName,
             string classFieldName,
@@ -58,7 +59,8 @@ namespace Lucene.Net.Classification
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="query">the query to filter which documents use for training</param>
         /// <param name="textFieldName">the name of the field used to compare documents</param>
-        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.</param>
+        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.
+        /// Note that not all implementations are actually cancelable.</param>
         void Train(AtomicReader atomicReader,
             string textFieldName,
             string classFieldName,
@@ -72,7 +74,8 @@ namespace Lucene.Net.Classification
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="query">the query to filter which documents use for training</param>
         /// <param name="textFieldNames">the names of the fields to be used to compare documents</param>
-        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.</param>
+        /// <param name="cancellationToken">a cancellation token to cancel the training operation. LUCENENET specific.
+        /// Note that not all implementations are actually cancelable.</param>
         void Train(AtomicReader atomicReader,
             string[] textFieldNames,
             string classFieldName,
