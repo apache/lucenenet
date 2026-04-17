@@ -76,7 +76,7 @@ namespace Lucene.Net.Classification.Utils
         /// <param name="testIndex">a <see cref="Directory"/> used to write the test index</param>
         /// <param name="crossValidationIndex">a <see cref="Directory"/> used to write the cross validation index</param>
         /// <param name="analyzer"><see cref="Analyzer"/> used to create the new docs</param>
-        /// <param name="cancellationToken">A cancellation token to cancel the search.</param>
+        /// <param name="cancellationToken">A cancellation token to cancel the split operation.</param>
         /// <param name="fieldNames">names of fields that need to be put in the new indexes or <c>null</c> if all should be used</param>
         /// <exception cref="IOException">if any writing operation fails on any of the indexes</exception>
         /// <exception cref="OperationCanceledException">if the <paramref name="cancellationToken"/> requested cancellation</exception>
@@ -164,20 +164,22 @@ namespace Lucene.Net.Classification.Utils
                     b++;
                 }
             }
+            catch (OperationCanceledException) { throw; } // LUCENENET: Don't wrap cancellation in IOException
             catch (Exception e) when (e.IsException())
             {
                 throw new IOException("Exception in DatasetSplitter", e);
             }
             finally
             {
-                // LUCENENET Specific - if we've gotten this far and cancellation was requested, don't commit
-                cancellationToken.ThrowIfCancellationRequested();
+                // LUCENENET Specific - if cancellation was requested, don't commit.
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    testWriter.Commit();
+                    cvWriter.Commit();
+                    trainingWriter.Commit();
+                }
 
-                testWriter.Commit();
-                cvWriter.Commit();
-                trainingWriter.Commit();
-
-                // close IWs - LUCENENET specific removal: disposed via `using` declaration
+                // close IWs - LUCENENET specific: disposed via `using` declaration
                 // testWriter.Dispose();
                 // cvWriter.Dispose();
                 // trainingWriter.Dispose();
