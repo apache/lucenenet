@@ -3,6 +3,7 @@ using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Tst
@@ -48,7 +49,7 @@ namespace Lucene.Net.Search.Suggest.Tst
 
         public override void Build(IInputEnumerator enumerator)
         {
-            // LUCENENT: Added guard clause for null
+            // LUCENENET: Added guard clause for null
             if (enumerator is null)
                 throw new ArgumentNullException(nameof(enumerator));
 
@@ -137,7 +138,11 @@ namespace Lucene.Net.Search.Suggest.Tst
             return true;
         }
 
-        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override IList<LookupResult> DoLookup(string key,
+            IEnumerable<BytesRef> contexts,
+            bool onlyMorePopular,
+            int num,
+            CancellationToken cancellationToken = default)
         {
             if (contexts != null)
             {
@@ -181,7 +186,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         private const sbyte HAS_VALUE = 0x10;
 
         // pre-order traversal
-        private void ReadRecursively(DataInput @in, TernaryTreeNode node)
+        private static void ReadRecursively(DataInput @in, TernaryTreeNode node)
         {
             node.splitchar = @in.ReadString()[0];
             sbyte mask = (sbyte)@in.ReadByte();
@@ -211,7 +216,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         }
 
         // pre-order traversal
-        private void WriteRecursively(DataOutput @out, TernaryTreeNode node)
+        private static void WriteRecursively(DataOutput @out, TernaryTreeNode node)
         {
             // write out the current node
             @out.WriteString(new string(new char[] { node.splitchar }, 0, 1));

@@ -13,6 +13,7 @@ using System.Text;
 using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
 using Lucene.Net.Support.Threading;
+using System.Threading;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -365,7 +366,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// instead if you want to replace a previous suggestion.
         /// After adding or updating a batch of new suggestions,
         /// you must call <see cref="Refresh()"/> in the end in order to
-        /// see the suggestions in <see cref="DoLookup(string, IEnumerable{BytesRef}, int, bool, bool)"/>
+        /// see the suggestions in <see cref="DoLookup(string, IEnumerable{BytesRef}, int, bool, bool, CancellationToken)"/>
         /// </summary>
         public virtual void Add(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {
@@ -380,7 +381,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// this text is not already present you can use <see cref="Add"/>
         /// instead.  After adding or updating a batch of
         /// new suggestions, you must call <see cref="Refresh()"/> in the
-        /// end in order to see the suggestions in <see cref="DoLookup(string, IEnumerable{BytesRef}, int, bool, bool)"/>
+        /// end in order to see the suggestions in <see cref="DoLookup(string, IEnumerable{BytesRef}, int, bool, bool, CancellationToken)"/>
         /// </summary>
         public virtual void Update(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {
@@ -443,17 +444,25 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return ft;
         }
 
-        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override IList<LookupResult> DoLookup(string key,
+            IEnumerable<BytesRef> contexts,
+            bool onlyMorePopular,
+            int num,
+            CancellationToken cancellationToken = default)
         {
-            return DoLookup(key, contexts, num, true, true);
+            return DoLookup(key, contexts, num, true, true, cancellationToken);
         }
 
         /// <summary>
         /// Lookup, without any context.
         /// </summary>
-        public virtual IList<LookupResult> DoLookup(string key, int num, bool allTermsRequired, bool doHighlight)
+        public virtual IList<LookupResult> DoLookup(string key,
+            int num,
+            bool allTermsRequired,
+            bool doHighlight,
+            CancellationToken cancellationToken = default)
         {
-            return DoLookup(key, null, num, allTermsRequired, doHighlight);
+            return DoLookup(key, null, num, allTermsRequired, doHighlight, cancellationToken);
         }
 
         /// <summary>
@@ -477,9 +486,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///  must match (<paramref name="allTermsRequired"/>) and whether the hits
         ///  should be highlighted (<paramref name="doHighlight"/>).
         /// </summary>
-        public virtual IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num, bool allTermsRequired, bool doHighlight)
+        public virtual IList<LookupResult> DoLookup(string key,
+            IEnumerable<BytesRef> contexts,
+            int num,
+            bool allTermsRequired,
+            bool doHighlight,
+            CancellationToken cancellationToken = default)
         {
-
             if (m_searcherMgr is null)
             {
                 throw IllegalStateException.Create("suggester was not built");
@@ -599,7 +612,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             try
             {
                 //System.out.println("got searcher=" + searcher);
-                searcher.Search(finalQuery, c2);
+                searcher.Search(finalQuery, c2, cancellationToken);
 
                 TopFieldDocs hits = (TopFieldDocs)c.GetTopDocs();
 

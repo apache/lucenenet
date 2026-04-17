@@ -9,6 +9,7 @@ using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Int64 = J2N.Numerics.Int64;
 using JCG = J2N.Collections.Generic;
 
@@ -712,7 +713,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override IList<LookupResult> DoLookup(string key,
+            IEnumerable<BytesRef> contexts,
+            bool onlyMorePopular,
+            int num,
+            CancellationToken cancellationToken = default)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(num > 0);
 
@@ -751,7 +756,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             var utf8Key = new BytesRef(key);
             try
             {
-
                 Automaton lookupAutomaton = ToLookupAutomaton(key);
 
                 var spare = new CharsRef();
