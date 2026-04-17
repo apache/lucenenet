@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -23,6 +24,8 @@ namespace Lucene.Net.Support.IO
      * limitations under the License.
      */
 
+    [TestFixture]
+    [LuceneNetSpecific]
     public class TestSafeTextWriterWrapper : LuceneTestCase
     {
         [Test]
