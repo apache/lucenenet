@@ -171,6 +171,8 @@ namespace Lucene.Net.Classification
             Query query,
             CancellationToken cancellationToken = default)
         {
+            // LUCENENET: cancellationToken is present for IClassifier interface compliance;
+            // can be utilized here if a suitable cancellation point is added in the future.
             this.textFieldNames = textFieldNames;
             this.classFieldName = classFieldName;
             mlt = new MoreLikeThis(atomicReader);

@@ -93,9 +93,9 @@ namespace Lucene.Net.Classification.Utils
         {
 #pragma warning disable 612, 618
             // create IWs for train / test / cv IDXs
-            IndexWriter testWriter = new IndexWriter(testIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
-            IndexWriter cvWriter = new IndexWriter(crossValidationIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
-            IndexWriter trainingWriter = new IndexWriter(trainingIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
+            using IndexWriter testWriter = new IndexWriter(testIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
+            using IndexWriter cvWriter = new IndexWriter(crossValidationIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
+            using IndexWriter trainingWriter = new IndexWriter(trainingIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
 #pragma warning restore 612, 618
 
             try
@@ -176,10 +176,11 @@ namespace Lucene.Net.Classification.Utils
                 testWriter.Commit();
                 cvWriter.Commit();
                 trainingWriter.Commit();
-                // close IWs
-                testWriter.Dispose();
-                cvWriter.Dispose();
-                trainingWriter.Dispose();
+
+                // close IWs - LUCENENET specific removal: disposed via `using` declaration
+                // testWriter.Dispose();
+                // cvWriter.Dispose();
+                // trainingWriter.Dispose();
             }
         }
     }

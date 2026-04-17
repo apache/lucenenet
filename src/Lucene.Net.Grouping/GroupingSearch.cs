@@ -714,13 +714,13 @@ namespace Lucene.Net.Search.Grouping
 
         #region Explicit interface implementations
 
-        /// <inheritdoc cref="IGroupingSearch.Search(IndexSearcher, Query, int, int)"/>
-        ITopGroups IGroupingSearch.Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
-            => Search(searcher, query, groupOffset, groupLimit);
+        /// <inheritdoc cref="IGroupingSearch.Search(IndexSearcher, Query, int, int, CancellationToken)"/>
+        ITopGroups IGroupingSearch.Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit, CancellationToken cancellationToken)
+            => Search(searcher, query, groupOffset, groupLimit, cancellationToken);
 
-        /// <inheritdoc cref="IGroupingSearch.Search(IndexSearcher, Filter, Query, int, int)"/>
-        ITopGroups IGroupingSearch.Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
-            => Search(searcher, filter, query, groupOffset, groupLimit);
+        /// <inheritdoc cref="IGroupingSearch.Search(IndexSearcher, Filter, Query, int, int, CancellationToken)"/>
+        ITopGroups IGroupingSearch.Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit, CancellationToken cancellationToken)
+            => Search(searcher, filter, query, groupOffset, groupLimit, cancellationToken);
 
         #endregion
     }
@@ -740,8 +740,9 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="query">The query to execute with the grouping</param>
         /// <param name="groupOffset">The group offset</param>
         /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <param name="cancellationToken">A cancellation token to cancel the search.</param>
         /// <returns>the grouped result as an <see cref="ITopGroups"/> instance</returns>
-        ITopGroups Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit);
+        ITopGroups Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
@@ -751,7 +752,8 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="query">The query to execute with the grouping</param>
         /// <param name="groupOffset">The group offset</param>
         /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <param name="cancellationToken">A cancellation token to cancel the search.</param>
         /// <returns>the grouped result as an <see cref="ITopGroups"/> instance</returns>
-        ITopGroups Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit);
+        ITopGroups Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit, CancellationToken cancellationToken = default);
     }
 }
