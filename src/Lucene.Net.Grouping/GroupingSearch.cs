@@ -7,6 +7,7 @@ using Lucene.Net.Util.Mutable;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 // ReSharper disable VirtualMemberNeverOverridden.Global - justification: this is a public API
@@ -298,12 +299,17 @@ namespace Lucene.Net.Search.Grouping
             this.groupEndDocs = groupEndDocs;
         }
 
-        /// <inheritdoc cref="GroupingSearch{T,TSelf}.Search(IndexSearcher,Filter,Query,int,int)"/>
-        public override TopGroups<object?> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        /// <inheritdoc cref="GroupingSearch{T,TSelf}.Search(IndexSearcher,Filter,Query,int,int,CancellationToken)"/>
+        public override TopGroups<object?> Search(IndexSearcher searcher,
+            Filter filter,
+            Query query,
+            int groupOffset,
+            int groupLimit,
+            CancellationToken cancellationToken = default)
         {
             int topN = groupOffset + groupLimit;
             BlockGroupingCollector c = new BlockGroupingCollector(GroupSort, topN, IncludeScores, groupEndDocs);
-            searcher.Search(query, filter, c);
+            searcher.Search(query, filter, c, cancellationToken);
             int topNInsideGroup = GroupDocsOffset + GroupDocsLimit;
             return c.GetTopGroups<object?>(SortWithinGroup, groupOffset, GroupDocsOffset, topNInsideGroup, FillSortFields);
         }
@@ -382,8 +388,13 @@ namespace Lucene.Net.Search.Grouping
 
         #endregion
 
-        /// <inheritdoc cref="GroupingSearch{T,TSelf}.Search(IndexSearcher,Filter,Query,int,int)"/>
-        public override TopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        /// <inheritdoc cref="GroupingSearch{T,TSelf}.Search(IndexSearcher,Filter,Query,int,int,CancellationToken)"/>
+        public override TopGroups<T> Search(IndexSearcher searcher,
+            Filter filter,
+            Query query,
+            int groupOffset,
+            int groupLimit,
+            CancellationToken cancellationToken = default)
         {
             int topN = groupOffset + groupLimit;
 
@@ -420,11 +431,11 @@ namespace Lucene.Net.Search.Grouping
                 cachedCollector = MaxCacheRAMMB != null
                     ? CachingCollector.Create(firstRound, CacheScores, MaxCacheRAMMB.Value)
                     : CachingCollector.Create(firstRound, CacheScores, MaxDocsToCache!.Value);
-                searcher.Search(query, filter, cachedCollector);
+                searcher.Search(query, filter, cachedCollector, cancellationToken);
             }
             else
             {
-                searcher.Search(query, filter, firstRound);
+                searcher.Search(query, filter, firstRound, cancellationToken);
             }
 
             MatchingGroups = AllGroups
@@ -453,7 +464,7 @@ namespace Lucene.Net.Search.Grouping
             }
             else
             {
-                searcher.Search(query, filter, secondPassCollector);
+                searcher.Search(query, filter, secondPassCollector, cancellationToken);
             }
 
             return AllGroups
@@ -603,10 +614,16 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="query">The query to execute with the grouping</param>
         /// <param name="groupOffset">The group offset</param>
         /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <param name="cancellationToken">The cancellation token to cancel the search. LUCENENET specific.</param>
+        /// <exception cref="OperationCanceledException">if the <paramref name="cancellationToken"/> requests cancellation</exception>
         /// <returns>the grouped result as a <see cref="TopGroups"/> instance</returns>
-        public TopGroups<T> Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
+        public TopGroups<T> Search(IndexSearcher searcher,
+            Query query,
+            int groupOffset,
+            int groupLimit,
+            CancellationToken cancellationToken = default)
         {
-            return Search(searcher, null, query, groupOffset, groupLimit);
+            return Search(searcher, null, query, groupOffset, groupLimit, cancellationToken);
         }
 
         /// <summary>
@@ -617,8 +634,15 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="query">The query to execute with the grouping</param>
         /// <param name="groupOffset">The group offset</param>
         /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <param name="cancellationToken">The cancellation token to cancel the search. LUCENENET specific.</param>
+        /// <exception cref="OperationCanceledException">if the <paramref name="cancellationToken"/> requests cancellation</exception>
         /// <returns>the grouped result as a <see cref="TopGroups"/> instance</returns>
-        public abstract TopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit);
+        public abstract TopGroups<T> Search(IndexSearcher searcher,
+            Filter filter,
+            Query query,
+            int groupOffset,
+            int groupLimit,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Specifies how groups are sorted.
