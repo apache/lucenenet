@@ -26,6 +26,8 @@ For Package Version, NuGet version and branch naming guidelines see the [Version
 
 The following steps need only to be performed once.
 
+- Install [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell) version 7 or later. This is required to run the release scripts, and is supported cross-platform on Windows, macOS, and Linux.
+
 - Install the [Java Runtime Environment](https://learn.microsoft.com/en-us/java/openjdk/install?tabs=exe%2Chomebrew%2Cubuntu) version 21 or later. This is a dependency of the Release Audit Tool.
 
 - Install a subversion command line client, such as [TortoiseSVN](https://tortoisesvn.net/downloads.html)
