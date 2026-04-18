@@ -350,7 +350,7 @@ namespace Lucene.Net.Store
                             leaveOpen: true); // LUCENENET: We explicitly dispose the FileStream separately.
                         break;
                     }
-                    catch (ArgumentOutOfRangeException) when (attempt < maxAttempts - 1)
+                    catch (ArgumentOutOfRangeException e) when (e.ParamName == "capacity" && attempt < maxAttempts - 1)
                     {
                         Interlocked.Increment(ref s_capacityRetryCount);
                         capacity = Math.Max(capacity, fc.Length);

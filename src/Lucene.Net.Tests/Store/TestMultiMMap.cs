@@ -425,7 +425,10 @@ namespace Lucene.Net.Store
         // stat, causing ArgumentOutOfRangeException (paramName="capacity")
         // with the message "The capacity may not be smaller than the
         // file size."
-        [Test, LuceneNetSpecific, Slow]
+        // NonParallelizable: the retry-path assertion reads static counters on
+        // MMapDirectory, so any other test exercising MMapDirectory in parallel
+        // could skew the observed retry count.
+        [Test, LuceneNetSpecific, Slow, NonParallelizable]
         public void TestOpenInputConcurrentFileExtension_Issue1090()
         {
             var dir = CreateTempDir("testOpenInputConcurrentFileExtension");
