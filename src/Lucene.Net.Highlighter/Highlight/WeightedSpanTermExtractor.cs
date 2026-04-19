@@ -222,7 +222,7 @@ namespace Lucene.Net.Search.Highlight
                 Query rewritten = origQuery.Rewrite(reader);
                 if (rewritten != origQuery)
                 {
-                    // only rewrite once and then flatten again - the rewritten query could have a speacial treatment
+                    // only rewrite once and then flatten again - the rewritten query could have a special treatment
                     // if this method is overwritten in a subclass or above in the next recursion
                     Extract(rewritten, terms);
                 }

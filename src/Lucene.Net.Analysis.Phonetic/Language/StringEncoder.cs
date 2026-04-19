@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="source">the <see cref="string"/> to encode</param>
         /// <returns>the encoded <see cref="string"/></returns>
-        // LUCENENET specific - EncoderException not ported, as it was only thrown on a coversion from object to string type
+        // LUCENENET specific - EncoderException not ported, as it was only thrown on a conversion from object to string type
         // <exception cref="EncoderException">thrown if there is an error condition during the encoding process.</exception>
         string Encode(string source);
     }

@@ -308,7 +308,7 @@ namespace Lucene.Net.Analysis.Synonym
             {
                 if (!"something.txt".Equals(resource, StringComparison.Ordinal))
                 {
-                    throw RuntimeException.Create("should not get a differnt resource");
+                    throw RuntimeException.Create("should not get a different resource");
                 }
                 else
                 {

@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
     /// <para/>
     /// <see cref="SmartChineseAnalyzer"/> has a built-in dictionary and stopword list out-of-box.
     /// <para/>
-    /// NOTE: To use an alternate dicationary than the built-in one, put the "bigramdict.dct" and
+    /// NOTE: To use an alternate dictionary than the built-in one, put the "bigramdict.dct" and
     /// "coredict.dct" files in a subdirectory of your application named "smartcn-data". This subdirectory
     /// can be placed in any directory up to and including the root directory (if the OS permission allows).
     /// To place the files in an alternate location, set an environment variable named "smartcn.data.dir"

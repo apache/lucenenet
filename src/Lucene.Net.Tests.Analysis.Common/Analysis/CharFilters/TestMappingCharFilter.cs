@@ -484,7 +484,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         }
                     }
 
-                    // Finish mappping offsets
+                    // Finish mapping offsets
                     while (actualInputOffsets.Count < actualBuilder.Length)
                     {
                         actualInputOffsets.Add(mapFilter.CorrectOffset(actualInputOffsets.Count));

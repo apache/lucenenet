@@ -1308,9 +1308,9 @@ namespace Lucene.Net.Util
         /// Convenience method for logging an enumerator.
         /// </summary>
         /// <param name="label">  String logged before/after the items in the enumerator. </param>
-        /// <param name="iter">   Each element is ToString()ed and logged on it's own line. If iter is null this is logged differnetly then an empty enumerator. </param>
+        /// <param name="iter">   Each element is ToString()ed and logged on it's own line. If iter is null this is logged differently then an empty enumerator. </param>
         /// <param name="stream"> Stream to log messages to. </param>
-        public static void DumpEnumerator(string label, IEnumerator iter, TextWriter stream) // LUCENENET specifc - renamed from DumpIterator
+        public static void DumpEnumerator(string label, IEnumerator iter, TextWriter stream) // LUCENENET specific - renamed from DumpIterator
         {
             stream.WriteLine("*** BEGIN " + label + " ***");
             if (null == iter)

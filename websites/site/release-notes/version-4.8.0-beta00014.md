@@ -175,7 +175,7 @@ IterationCount=15  LaunchCount=2  WarmupCount=10
 * [#444](https://github.com/apache/lucenenet/pull/444), [#272](https://github.com/apache/lucenenet/pull/272) - **PERFORMANCE:** `Lucene.Net.Search.FieldCacheImpl`: Reverted locking back to the state of Lucene 4.8.0.
 * [#445](https://github.com/apache/lucenenet/pull/445) - Removed `FEATURE_THREAD_INTERRUPT` since all supported targets now support thread interrupts. Note also that Lucene *depends* on thread interrupts to function properly, so disabling this feature would be invalid.
 * [#448](https://github.com/apache/lucenenet/pull/448) - **DOCS:** Added migration guide for users migrating from Lucene.NET 3.0.3 to Lucene.NET 4.8.0.
-* [#396](https://github.com/apache/lucenenet/pull/396) - **DOCS:** Create branching scheme to track changes in docuentation between different Lucene versions and removed the `JavaDocToMarkdownConverter` tool from the normal build workflow of the API docs. This frees us up to update the "namespace" documentation with .NET-specific information and code examples.
+* [#396](https://github.com/apache/lucenenet/pull/396) - **DOCS:** Create branching scheme to track changes in documentation between different Lucene versions and removed the `JavaDocToMarkdownConverter` tool from the normal build workflow of the API docs. This frees us up to update the "namespace" documentation with .NET-specific information and code examples.
 * Upgraded J2N NuGet package dependency to 2.0.0-beta-0012
 * Upgraded ICU4N NuGet package dependency to 60.1.0-alpha.254
 * Upgraded Morfologik.Stemming package dependency to 2.1.7-beta-0002

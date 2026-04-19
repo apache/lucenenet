@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.Wikipedia
             untoks.Add(WikipediaTokenizer.CATEGORY);
             untoks.Add(WikipediaTokenizer.ITALICS);
             string test = "[[Category:a b c d]] [[Category:e f g]] [[link here]] [[link there]] ''italics here'' something ''more italics'' [[Category:h   i   j]]";
-            //should output all the indivual tokens plus the untokenized tokens as well.  Untokenized tokens
+            //should output all the individual tokens plus the untokenized tokens as well.  Untokenized tokens
             WikipediaTokenizer tf = new WikipediaTokenizer(new StringReader(test), WikipediaTokenizer.BOTH, untoks);
             AssertTokenStreamContents(tf, new string[] { "a b c d", "a", "b", "c", "d", "e f g", "e", "f", "g", "link", "here", "link", "there", "italics here", "italics", "here", "something", "more italics", "more", "italics", "h   i   j", "h", "i", "j" }, new int[] { 11, 11, 13, 15, 17, 32, 32, 34, 36, 42, 47, 56, 61, 71, 71, 79, 86, 98, 98, 103, 124, 124, 128, 132 }, new int[] { 18, 12, 14, 16, 18, 37, 33, 35, 37, 46, 51, 60, 66, 83, 78, 83, 95, 110, 102, 110, 133, 125, 129, 133 }, new int[] { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1 });
 

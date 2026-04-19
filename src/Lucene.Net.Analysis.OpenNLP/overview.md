@@ -115,7 +115,7 @@ public class CustomOpenNLPAnalyzer : OpenNLPTokenizerFactory
 }
 ```
 
-In the above example, `CustomOpenNLPAnalyzer` extends `OpenNLPTokenizerFactory` (assuming that's the analyzer you're using), and it wraps the OpenNLP tokenizer with UIMA annotators. You'll need to replace the placeholder methods (`CreateUIMASentenceAnnotator` and `CreateUIMATokenAnnotator`) with the actual code to create and configure your UIMA annotators. Please note that configuring NLP can be complex. See the [OpenNLP 1.9.4 Manual](https://opennlp.apache.org/docs/1.9.4/manual/opennlp.html) and [OpenNLP UIMA 1.9.4 API Documention](https://opennlp.apache.org/docs/1.9.4/apidocs/opennlp-uima/index.html) for details.
+In the above example, `CustomOpenNLPAnalyzer` extends `OpenNLPTokenizerFactory` (assuming that's the analyzer you're using), and it wraps the OpenNLP tokenizer with UIMA annotators. You'll need to replace the placeholder methods (`CreateUIMASentenceAnnotator` and `CreateUIMATokenAnnotator`) with the actual code to create and configure your UIMA annotators. Please note that configuring NLP can be complex. See the [OpenNLP 1.9.4 Manual](https://opennlp.apache.org/docs/1.9.4/manual/opennlp.html) and [OpenNLP UIMA 1.9.4 API Documentation](https://opennlp.apache.org/docs/1.9.4/apidocs/opennlp-uima/index.html) for details.
 
 > [!NOTE]
 > IKVM (and `<MavenReference>`) does not support Java SE higher than version 8. So it will not be possible to add a `<MavenReference>` to OpenNLP 2.x until support is added for it in IKVM.

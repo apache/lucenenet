@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.In
     /// </summary>
     public class IndicNormalizer
     {
-        // LUCENENET NOTE: This class was refactored from its Java couterpart,
+        // LUCENENET NOTE: This class was refactored from its Java counterpart,
         // favoring the .NET Regex class to determine the "Unicode Block" rather than
         // porting over that part of the Java Character class.
         // References:

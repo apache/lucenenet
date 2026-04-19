@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
     /// <summary>
     /// Base class for a binary-encoded in-memory dictionary.
     /// <para/>
-    /// NOTE: To use an alternate dicationary than the built-in one, put the data files in a subdirectory of
+    /// NOTE: To use an alternate dictionary than the built-in one, put the data files in a subdirectory of
     /// your application named "kuromoji-data". This subdirectory
     /// can be placed in any directory up to and including the root directory (if the OS permission allows).
     /// To place the files in an alternate location, set an environment variable named "kuromoji.data.dir"
