@@ -103,9 +103,9 @@ namespace Lucene.Net.Analysis
         {
             int ret;
             // LUCENENET NOTE: TryGetPredecessor is equivalent to TreeMap.lowerEntry() in Java
-            if (corrections.TryGetPredecessor(currentOff + 1, out KeyValuePair<int, int> lastEntry))
+            if (corrections.TryGetPredecessor(currentOff + 1, out _, out int lastEntryValue))
             {
-                ret = currentOff + lastEntry.Value;
+                ret = currentOff + lastEntryValue;
             }
             else
             {
