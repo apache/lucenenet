@@ -149,7 +149,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 Query rewritten = query.Rewrite(reader);
                 if (rewritten != query)
                 {
-                    // only rewrite once and then flatten again - the rewritten query could have a speacial treatment
+                    // only rewrite once and then flatten again - the rewritten query could have a special treatment
                     // if this method is overwritten in a subclass.
                     Flatten(rewritten, reader, flatQueries);
 

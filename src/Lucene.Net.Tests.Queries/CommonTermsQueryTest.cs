@@ -333,7 +333,7 @@ namespace Lucene.Net.Tests.Queries
             try
             {
                 new CommonTermsQuery(Occur.MUST_NOT, RandomOccur(random), Random.NextSingle());
-                Assert.Fail(@"MUST_NOT is not supproted");
+                Assert.Fail(@"MUST_NOT is not supported");
             }
             catch (Exception ex) when (ex.IsIllegalArgumentException())
             {
@@ -342,7 +342,7 @@ namespace Lucene.Net.Tests.Queries
             try
             {
                 new CommonTermsQuery(RandomOccur(random), Occur.MUST_NOT, Random.NextSingle());
-                Assert.Fail(@"MUST_NOT is not supproted");
+                Assert.Fail(@"MUST_NOT is not supported");
             }
             catch (Exception ex) when (ex.IsIllegalArgumentException())
             {

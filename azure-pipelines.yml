@@ -296,7 +296,7 @@ stages:
       displayName: 'Generate Documentation'
 
     - task: ArchiveFiles@2
-      displayName: 'Zip Documenation Files'
+      displayName: 'Zip Documentation Files'
       inputs:
         rootFolderOrFile: '$(Build.SourcesDirectory)/websites/apidocs/_site'
         includeRootFolder: false
