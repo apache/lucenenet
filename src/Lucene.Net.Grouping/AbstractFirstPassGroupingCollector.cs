@@ -1,11 +1,9 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
@@ -241,18 +239,7 @@ namespace Lucene.Net.Search.Grouping
 
                 // We already tested that the document is competitive, so replace
                 // the bottom group with this new group.
-                //CollectedSearchGroup<TGroupValue> bottomGroup = orderedGroups.PollLast();
-                CollectedSearchGroup<TGroupValue> bottomGroup;
-                UninterruptableMonitor.Enter(m_orderedGroups);
-                try
-                {
-                    bottomGroup = m_orderedGroups.Last();
-                    m_orderedGroups.Remove(bottomGroup);
-                }
-                finally
-                {
-                    UninterruptableMonitor.Exit(m_orderedGroups);
-                }
+                m_orderedGroups.RemoveLast(out CollectedSearchGroup<TGroupValue> bottomGroup);
                 if (Debugging.AssertsEnabled) Debugging.Assert(m_orderedGroups.Count == topNGroups - 1);
 
                 groupMap.Remove(bottomGroup.GroupValue);
@@ -270,7 +257,9 @@ namespace Lucene.Net.Search.Grouping
                 m_orderedGroups.Add(bottomGroup);
                 if (Debugging.AssertsEnabled) Debugging.Assert(m_orderedGroups.Count == topNGroups);
 
-                int lastComparerSlot = m_orderedGroups.Last().ComparerSlot;
+                // LUCENENET: We know this call cannot fail because we just added a group, so we can safely ignore the return value.
+                m_orderedGroups.TryGetLast(out CollectedSearchGroup<TGroupValue> lastGroup);
+                int lastComparerSlot = lastGroup.ComparerSlot;
                 foreach (FieldComparer fc in comparers)
                 {
                     fc.SetBottom(lastComparerSlot);
@@ -315,16 +304,8 @@ namespace Lucene.Net.Search.Grouping
             CollectedSearchGroup<TGroupValue> prevLast;
             if (m_orderedGroups != null)
             {
-                UninterruptableMonitor.Enter(m_orderedGroups);
-                try
-                {
-                    prevLast = m_orderedGroups.Last();
-                    m_orderedGroups.Remove(group);
-                }
-                finally
-                {
-                    UninterruptableMonitor.Exit(m_orderedGroups);
-                }
+                m_orderedGroups.TryGetLast(out prevLast);
+                m_orderedGroups.Remove(group);
                 if (Debugging.AssertsEnabled) Debugging.Assert(m_orderedGroups.Count == topNGroups - 1);
             }
             else
@@ -344,7 +325,11 @@ namespace Lucene.Net.Search.Grouping
             {
                 m_orderedGroups.Add(group);
                 if (Debugging.AssertsEnabled) Debugging.Assert(m_orderedGroups.Count == topNGroups);
-                var newLast = m_orderedGroups.Last();
+                if (!m_orderedGroups.TryGetLast(out CollectedSearchGroup<TGroupValue> newLast))
+                {
+                    // LUCENENET: Added because Java would throw NoSuchElementException if orderedGroups is empty.
+                    throw new InvalidOperationException("orderedGroups must not be empty");
+                }
                 // If we changed the value of the last group, or changed which group was last, then update bottom:
                 if (group == newLast || prevLast != newLast)
                 {
@@ -390,7 +375,10 @@ namespace Lucene.Net.Search.Grouping
 
             foreach (FieldComparer fc in comparers)
             {
-                fc.SetBottom(m_orderedGroups.Last().ComparerSlot);
+                if (!m_orderedGroups.TryGetLast(out CollectedSearchGroup<TGroupValue> lastGroup))
+                    // LUCENENET: Added because Java would throw NoSuchElementException if orderedGroups is empty.
+                    throw new InvalidOperationException("orderedGroups must not be empty");
+                fc.SetBottom(lastGroup.ComparerSlot);
             }
         }
 
