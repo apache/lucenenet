@@ -472,7 +472,14 @@ namespace Lucene.Net.Codecs.Compressing
 
             int numDistinctFields = fieldNums.Count;
             if (Debugging.AssertsEnabled) Debugging.Assert(numDistinctFields > 0);
-            int bitsRequired = PackedInt32s.BitsRequired(fieldNums.Max);
+            // LUCENENET specific - Java would throw a NoSuchElementException, but in .NET we throw an
+            // InvalidOperationException instead, since the collection is empty and .NET doesn't throw
+            // in this case. In practice, this exception should never happen.
+            if (!fieldNums.TryGetLast(out int last))
+            {
+                throw new InvalidOperationException("fieldNums must not be empty");
+            }
+            int bitsRequired = PackedInt32s.BitsRequired(last);
             int token = (Math.Min(numDistinctFields - 1, 0x07) << 5) | bitsRequired;
             vectorsStream.WriteByte((byte)token);
             if (numDistinctFields - 1 >= 0x07)
