@@ -436,8 +436,8 @@ namespace Lucene.Net.Search.PostingsHighlight
                 Term floor = new Term(field, "");
                 Term ceiling = new Term(field, UnicodeUtil.BIG_TERM);
 
-                // LUCENENET: Call custom GetViewBetween overload to mimic Java's exclusive upper bound behavior.
-                var fieldTerms = queryTerms.GetViewBetween(floor, lowerValueInclusive: true, ceiling, upperValueInclusive: false);
+                // LUCENENET: Call J2N's GetView overload to mimic Java's exclusive upper bound behavior.
+                var fieldTerms = queryTerms.GetView(floor, fromInclusive: true, ceiling, toInclusive: false);
 
                 // TODO: should we have some reasonable defaults for term pruning? (e.g. stopwords)
 
