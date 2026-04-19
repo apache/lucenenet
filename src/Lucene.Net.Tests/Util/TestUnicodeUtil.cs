@@ -3,6 +3,7 @@ using J2N.Text;
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
+using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -339,7 +340,7 @@ namespace Lucene.Net.Util
 
             if (shouldThrow)
             {
-                Assert.Throws<FormatException>(() => UnicodeUtil.UTF8toUTF16(invalidUtf8, scratch));
+                Assert.Throws<DecoderFallbackException>(() => UnicodeUtil.UTF8toUTF16(invalidUtf8, scratch));
             }
             else
             {
@@ -372,6 +373,25 @@ namespace Lucene.Net.Util
             var scratch = new CharsRef();
 
             UnicodeUtil.UTF8toUTF16WithFallback(utf8, scratch);
+
+            Assert.AreEqual(expected, scratch.ToString());
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        [TestCase(new byte[] { 0x63, 0x61, 0xc3 }, "ca\ufffd")] // ca�, start of 2-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xe3 }, "ca\ufffd")] // ca�, start of 3-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xf3 }, "ca\ufffd")] // ca�, start of 4-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xc3, 0xb1, 0x6f, 0x6e }, "cañon")]
+        public void TestUTF8toUTF16WithFallback_ByteArrayOverload(byte[] utf8, string expected)
+        {
+            // Regression: the 4-arg byte[] overload must delegate to the fallback implementation,
+            // not the throwing one. Exercise it via a non-zero offset to confirm the arguments flow through.
+            var scratch = new CharsRef();
+            var padded = new byte[utf8.Length + 2];
+            Array.Copy(utf8, 0, padded, 2, utf8.Length);
+
+            UnicodeUtil.UTF8toUTF16WithFallback(padded, 2, utf8.Length, scratch);
 
             Assert.AreEqual(expected, scratch.ToString());
         }
