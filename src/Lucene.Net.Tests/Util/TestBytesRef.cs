@@ -3,6 +3,8 @@ using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -609,6 +611,65 @@ namespace Lucene.Net.Util
 
             string decoded = System.Text.Encoding.UTF8.GetString(br.AsSpan());
             Assert.AreEqual("\uFFFD", decoded);
+        }
+
+        #endregion
+
+        #region DebuggerDisplay
+
+        private static string GetDebuggerDisplay(BytesRef br)
+        {
+            var prop = typeof(BytesRef).GetProperty("DebuggerDisplay", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(prop, "BytesRef.DebuggerDisplay private property not found");
+            return (string)prop.GetValue(br);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public static void Test_DebuggerDisplayAttribute_ReferencesExistingMember()
+        {
+            // Guards against typos/renames in the [DebuggerDisplay] expression.
+            var attr = typeof(BytesRef).GetCustomAttribute<DebuggerDisplayAttribute>();
+            Assert.IsNotNull(attr);
+            Assert.AreEqual("{DebuggerDisplay,nq}", attr.Value);
+
+            var prop = typeof(BytesRef).GetProperty("DebuggerDisplay", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(prop);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public static void Test_DebuggerDisplay_ValidUtf8_ShowsStringThenBytes()
+        {
+            var br = new BytesRef("abc");
+            Assert.AreEqual("abc [61 62 63]", GetDebuggerDisplay(br));
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public static void Test_DebuggerDisplay_InvalidUtf8_ShowsInvalidLabel()
+        {
+            // 0xC3 starts a 2-byte UTF-8 sequence but the continuation byte is missing.
+            var br = new BytesRef(new byte[] { 0xC3 });
+            Assert.AreEqual("Invalid UTF-8 [c3]", GetDebuggerDisplay(br));
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public static void Test_DebuggerDisplay_EmbeddedFFFD_IsNotMistakenForInvalid()
+        {
+            // U+FFFD encoded as legitimate UTF-8 (EF BF BD) must round-trip, not be reported as invalid.
+            var br = new BytesRef("\uFFFD");
+            Assert.AreEqual("\uFFFD [ef bf bd]", GetDebuggerDisplay(br));
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public static void Test_DebuggerDisplay_RespectsOffsetAndLength()
+        {
+            var bytes = new[] { (byte)'a', (byte)'b', (byte)'c', (byte)'d' };
+            var br = new BytesRef(bytes, 1, 2); // "bc"
+            Assert.AreEqual("bc [62 63]", GetDebuggerDisplay(br));
         }
 
         #endregion

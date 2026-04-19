@@ -45,7 +45,7 @@ namespace Lucene.Net.Util
     [Serializable]
 #endif
     // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
-    [DebuggerDisplay("{ToString()} {Utf8ToStringWithFallback()}")]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public sealed class BytesRef : IComparable<BytesRef>, IComparable, IEquatable<BytesRef> // LUCENENET specific - implemented IComparable for FieldComparator, IEquatable<BytesRef>
     {
         /// <summary>
@@ -316,6 +316,11 @@ namespace Lucene.Net.Util
             return false;
         }
         #nullable restore
+
+        // LUCENENET specific: "Invalid UTF-8" disambiguates a decode failure from a legitimate U+FFFD in the data.
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Referenced by DebuggerDisplay attribute")]
+        private string DebuggerDisplay
+            => $"{(TryUtf8ToString(out var s) ? s : "Invalid UTF-8")} {ToString()}";
 
         /// <summary>
         /// Returns hex encoded bytes, eg [0x6c 0x75 0x63 0x65 0x6e 0x65] </summary>
