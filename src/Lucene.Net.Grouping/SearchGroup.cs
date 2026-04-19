@@ -392,8 +392,7 @@ namespace Lucene.Net.Search.Grouping
                 // Prune un-competitive groups:
                 while (queue.Count > topN)
                 {
-                    MergedGroup<T> group = queue.Max;
-                    queue.Remove(group);
+                    queue.RemoveLast(out MergedGroup<T> group);
                     //System.out.println("PRUNE: " + group);
                     group.IsInQueue = false;
                 }
@@ -401,7 +400,6 @@ namespace Lucene.Net.Search.Grouping
 
             public virtual ICollection<SearchGroup<T>> Merge(IList<ICollection<SearchGroup<T>>> shards, int offset, int topN)
             {
-
                 int maxQueueSize = offset + topN;
 
                 //System.out.println("merge");
@@ -423,8 +421,7 @@ namespace Lucene.Net.Search.Grouping
 
                 while (queue.Count != 0)
                 {
-                    MergedGroup<T> group = queue.Min;
-                    queue.Remove(group);
+                    queue.RemoveFirst(out MergedGroup<T> group);
                     group.IsProcessed = true;
                     //System.out.println("  pop: shards=" + group.shards + " group=" + (group.groupValue is null ? "null" : (((BytesRef) group.groupValue).utf8ToString())) + " sortValues=" + Arrays.toString(group.topValues));
                     if (count++ >= offset)
