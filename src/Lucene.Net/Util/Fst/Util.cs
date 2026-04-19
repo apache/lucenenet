@@ -393,7 +393,9 @@ namespace Lucene.Net.Util.Fst
 
                 if (queue.Count == maxQueueDepth)
                 {
-                    FSTPath<T> bottom = queue.Max;
+                    if (!queue.TryGetLast(out FSTPath<T> bottom))
+                        // LUCENENET: Java would throw NoSuchElementException in this case, so we are throwing also.
+                        throw new InvalidOperationException("Expected the queue to contain an element, but it was empty.");
                     int comp = comparer.Compare(cost, bottom.Cost);
                     if (comp > 0)
                     {
@@ -436,7 +438,7 @@ namespace Lucene.Net.Util.Fst
 
                 if (queue.Count == maxQueueDepth + 1)
                 {
-                    queue.Remove(queue.Max);
+                    queue.RemoveLast(out _);
                 }
             }
 
@@ -505,12 +507,7 @@ namespace Lucene.Net.Util.Fst
 
                     // Remove top path since we are now going to
                     // pursue it:
-                    path = queue.Min;
-                    if (path != null)
-                    {
-                        queue.Remove(path);
-                    }
-                    else
+                    if (!queue.RemoveFirst(out path) || path is null)
                     {
                         // There were less than topN paths available:
                         //System.out.println("  break no more paths");
