@@ -63,6 +63,15 @@ namespace Lucene.Net.Store
 
         private readonly int chunkSizePower;
 
+        // LUCENENET specific BEGIN: test-only counters for the capacity-retry
+        // path in Map() — see #1090. Internal (exposed via InternalsVisibleTo
+        // to the test assemblies) so regression tests can assert that the
+        // race was actually exercised during a run, and to gather data on how
+        // many retries are typically needed. Not intended for production use.
+        internal static long s_capacityRetryCount;
+        internal static int s_maxCapacityAttemptsObserved;
+        // LUCENENET specific END
+
         /// <summary>
         /// Create a new <see cref="MMapDirectory"/> for the named location.
         /// </summary>
@@ -311,16 +320,52 @@ namespace Lucene.Net.Store
 
             if (input.memoryMappedFile is null)
             {
-                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(
-                    fileStream: fc,
-                    mapName: null,
-                    capacity: length,
-                    access: MemoryMappedFileAccess.Read,
+                // LUCENENET specific BEGIN: MemoryMappedFile.CreateFromFile
+                // performs an internal stat and throws
+                // ArgumentOutOfRangeException("capacity") if the on-disk file
+                // size exceeds the requested capacity. When another
+                // process/thread is appending to this file (e.g. an
+                // IndexWriter that still holds a write handle), the file can
+                // grow between when we capture fc.Length and when
+                // CreateFromFile reads the size. Retry with the latest
+                // observed length on that specific failure; we only map the
+                // bytes the caller requested via the buffer-sizing loop
+                // below, so an oversized capacity is harmless. See #1090.
+                long capacity = Math.Max(length, fc.Length);
+                const int maxAttempts = 5;
+                int attempt = 0;
+                while (true)
+                {
+                    try
+                    {
+                        input.memoryMappedFile = MemoryMappedFile.CreateFromFile(
+                            fileStream: fc,
+                            mapName: null,
+                            capacity: capacity,
+                            access: MemoryMappedFileAccess.Read,
 #if FEATURE_MEMORYMAPPEDFILESECURITY
-                    memoryMappedFileSecurity: null,
+                            memoryMappedFileSecurity: null,
 #endif
-                    inheritability: HandleInheritability.Inheritable,
-                    leaveOpen: true); // LUCENENET: We explicitly dispose the FileStream separately.
+                            inheritability: HandleInheritability.Inheritable,
+                            leaveOpen: true); // LUCENENET: We explicitly dispose the FileStream separately.
+                        break;
+                    }
+                    catch (ArgumentOutOfRangeException e) when (e.ParamName == "capacity" && attempt < maxAttempts - 1)
+                    {
+                        Interlocked.Increment(ref s_capacityRetryCount);
+                        capacity = Math.Max(capacity, fc.Length);
+                        attempt++;
+                    }
+                }
+                // Record the highest total attempts observed (1 = first try succeeded).
+                int attemptsTaken = attempt + 1;
+                int prior;
+                do
+                {
+                    prior = Volatile.Read(ref s_maxCapacityAttemptsObserved);
+                    if (attemptsTaken <= prior) break;
+                } while (Interlocked.CompareExchange(ref s_maxCapacityAttemptsObserved, attemptsTaken, prior) != prior);
+                // LUCENENET specific END
             }
 
             long bufferStart = 0L;
