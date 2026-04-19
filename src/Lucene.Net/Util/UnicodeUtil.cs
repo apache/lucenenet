@@ -1065,7 +1065,7 @@ namespace Lucene.Net.Util
         // TODO: broken if chars.offset != 0
         public static void UTF8toUTF16WithFallback(byte[] utf8, int offset, int length, CharsRef chars)
         {
-            UTF8toUTF16(utf8.AsSpan(offset, length), chars);
+            UTF8toUTF16WithFallback(utf8.AsSpan(offset, length), chars);
         }
 
         /// <summary>
