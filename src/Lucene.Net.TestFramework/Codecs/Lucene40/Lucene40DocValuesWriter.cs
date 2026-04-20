@@ -389,7 +389,10 @@ namespace Lucene.Net.Codecs.Lucene40
                 {
                     brefDummy = new BytesRef();
                 }
-                //int ord = dictionary.HeadSet(brefDummy).Size();
+                // LUCENENET: This LINQ call will actually be less overhead than the
+                // equivalent check using dictionary.GetViewBefore(brefDummy, false).Count
+                // due to all of the range checks during the tree walk to determine the count.
+                // In this case, LINQ doesn't allocate anything so will always be faster.
                 int ord = dictionary.Count(@ref => @ref.CompareTo(brefDummy) < 0);
                 w.Add(ord);
             }
