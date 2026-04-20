@@ -227,7 +227,7 @@ namespace Lucene.Net.Facet
 
                 // TODO: for the "non-costly Bits" we really should
                 // have passed them down as acceptDocs, but
-                // unfortunately we cannot distinguish today betwen
+                // unfortunately we cannot distinguish today between
                 // "bits() is so costly that you should apply it last"
                 // from "bits() is so cheap that you should apply it
                 // everywhere down low"

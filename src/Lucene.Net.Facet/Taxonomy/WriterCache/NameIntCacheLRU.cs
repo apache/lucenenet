@@ -90,7 +90,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
     }
 
-    // LUCENENET specific - defined interface so we can share public and internal members betwen cache
+    // LUCENENET specific - defined interface so we can share public and internal members between cache
     // instances.
     internal interface IInternalNameInt32CacheLru : INameInt32CacheLru
     {

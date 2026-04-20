@@ -320,7 +320,7 @@ namespace Lucene.Net.Documents
                 if (indexOptions != IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
                     result.Append(",indexOptions=");
-                    // LUCENENET: duplcate what would happen if you print a null indexOptions in Java
+                    // LUCENENET: duplicate what would happen if you print a null indexOptions in Java
                     result.Append(indexOptions != IndexOptions.NONE ? indexOptions.ToString() : string.Empty);
                 }
                 if (numericType != NumericType.NONE)

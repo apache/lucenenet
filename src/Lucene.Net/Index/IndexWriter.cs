@@ -2615,7 +2615,7 @@ namespace Lucene.Net.Index
                 MergePolicy.MergeSpecification spec;
                 if (maxNumSegments != UNBOUNDED_MAX_MERGE_SEGMENTS)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(trigger == MergeTrigger.EXPLICIT || trigger == MergeTrigger.MERGE_FINISHED, "Expected EXPLICT or MERGE_FINISHED as trigger even with maxNumSegments set but was: {0}", trigger);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(trigger == MergeTrigger.EXPLICIT || trigger == MergeTrigger.MERGE_FINISHED, "Expected EXPLICIT or MERGE_FINISHED as trigger even with maxNumSegments set but was: {0}", trigger);
                     spec = mergePolicy.FindForcedMerges(segmentInfos, maxNumSegments, segmentsToMerge);
                     newMergesFound = spec != null;
                     if (newMergesFound)

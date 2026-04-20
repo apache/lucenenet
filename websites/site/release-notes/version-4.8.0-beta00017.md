@@ -11,7 +11,7 @@ version: 4.8.0-beta00017
 >
 > [J2N 2.1](https://github.com/NightOwl888/J2N/releases/tag/v2.1.0) and [ICU4N 60.1.0-alpha.436](https://github.com/NightOwl888/ICU4N/releases/tag/v60.1.0-alpha.436) have had major updates which will lay the groundwork for supporting System.Memory types in Lucene.NET, but those updates will be included in a later release. However, both libraries have had a significant reduction in the number of heap allocations used across their codebases and those improvements have a direct impact on how Lucene.NET performs.
 >
-> We are including .NET Core support for Lucene.Net.OpenNLP for the first time using the IKVM `MavenRefernence` feature. The IKVM distribution is quite large and due to disk space limitations of our CI enviornment we had to reference an older version of both IKVM and IKVM.Maven.Sdk. These package references may be upgraded by end users to use a newer version without any risk of breaking changes.
+> We are including .NET Core support for Lucene.Net.OpenNLP for the first time using the IKVM `MavenRefernence` feature. The IKVM distribution is quite large and due to disk space limitations of our CI environment we had to reference an older version of both IKVM and IKVM.Maven.Sdk. These package references may be upgraded by end users to use a newer version without any risk of breaking changes.
 
 ## Change Log
 

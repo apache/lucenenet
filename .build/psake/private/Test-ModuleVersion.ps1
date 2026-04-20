@@ -24,7 +24,7 @@
     should be accepted.
 .PARAMETER lessThanVersion
     The upper bound of the version that will be accepted. This comparison should
-    be exlusive. Meaning an input version that is less than only, not equal to
+    be exclusive. Meaning an input version that is less than only, not equal to
     this version, will be accepted.
 .INPUTS
     A $currentVersion of type [System.Version] or a convertable string.

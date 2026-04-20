@@ -48,7 +48,7 @@ namespace Lucene.Net.Util.Packed
     ///     are the
     ///     <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">zigzag-encoded</a>
     ///     packed (<see cref="PackedInt32s"/>) deltas from the expected value (computed from
-    ///     the function) using exaclty BitsPerValue bits per value</description></item>
+    ///     the function) using exactly BitsPerValue bits per value</description></item>
     /// </list>
     /// <para/>
     /// @lucene.internal

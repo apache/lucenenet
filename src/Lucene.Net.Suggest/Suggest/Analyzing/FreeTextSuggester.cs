@@ -542,7 +542,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
 
                 // Carefully fill last tokens with _ tokens;
-                // ShingleFilter appraently won't emit "only hole"
+                // ShingleFilter apparently won't emit "only hole"
                 // tokens:
                 int endPosInc = posIncAtt.PositionIncrement;
 

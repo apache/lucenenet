@@ -149,7 +149,7 @@ namespace Lucene.Net.Store
             catch (Exception e) // LUCENENET: Some of the exceptions that can happen are not IOException, so we catch everything
             {
                 // On Windows, on concurrent createNewFile, the 2nd process gets "access denied".
-                // In that case, the lock was not aquired successfully, so return false.
+                // In that case, the lock was not acquired successfully, so return false.
                 // We record the failure reason here; the obtain with timeout (usually the
                 // one calling us) will use this as "root cause" if it fails to get the lock.
                 FailureReason = e;

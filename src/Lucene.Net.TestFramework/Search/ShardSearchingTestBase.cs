@@ -457,7 +457,7 @@ namespace Lucene.Net.Search
                         if (nodeID == MyNodeID)
                         {
                             // My node; run using local shard searcher we
-                            // already aquired:
+                            // already acquired:
                             shardHits[nodeID] = LocalSearch(query, numHits, cancellationToken);
                         }
                         else
@@ -521,7 +521,7 @@ namespace Lucene.Net.Search
                         if (nodeID == MyNodeID)
                         {
                             // My node; run using local shard searcher we
-                            // already aquired:
+                            // already acquired:
                             shardHits[nodeID] = LocalSearchAfter(shardAfter, query, numHits, cancellationToken);
                         }
                         else
@@ -549,7 +549,7 @@ namespace Lucene.Net.Search
                         if (nodeID == MyNodeID)
                         {
                             // My node; run using local shard searcher we
-                            // already aquired:
+                            // already acquired:
                             shardHits[nodeID] = LocalSearch(query, numHits, sort, cancellationToken);
                         }
                         else

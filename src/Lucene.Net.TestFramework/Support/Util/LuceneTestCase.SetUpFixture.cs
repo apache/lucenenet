@@ -60,7 +60,7 @@ namespace Lucene.Net.Util
 
                 // Allow the factories to be instantiated first. We do this to allow a
                 // dependency injection step, which can only be done once. No random context
-                // is availble here because we need to load the SystemProperties setup here before
+                // is available here because we need to load the SystemProperties setup here before
                 // we can read them.
                 initializer.DoInitialize();
 
