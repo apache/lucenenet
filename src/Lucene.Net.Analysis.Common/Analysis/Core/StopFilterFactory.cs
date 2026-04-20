@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Core
     /// <list type="bullet">
     ///  <item><description><c>wordset</c> - This is the default format, which supports one word per
     ///      line (including any intra-word whitespace) and allows whole line comments
-    ///      begining with the "#" character.  Blank lines are ignored.  See
+    ///      beginning with the "#" character.  Blank lines are ignored.  See
     ///      <see cref="WordlistLoader.GetLines"/> for details.
     ///  </description></item>
     ///  <item><description><c>snowball</c> - This format allows for multiple words specified on each

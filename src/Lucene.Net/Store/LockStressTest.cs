@@ -70,7 +70,7 @@ namespace Lucene.Net.Store
                 //    "  verifierPort = port that LockVerifyServer is listening on\n" +
                 //    "  lockFactoryClassName = primary LockFactory class that we will use\n" +
                 //    "  lockDirName = path to the lock directory (only set for Simple/NativeFSLockFactory\n" +
-                //    "  sleepTimeMS = milliseconds to pause betweeen each lock obtain/release\n" +
+                //    "  sleepTimeMS = milliseconds to pause between each lock obtain/release\n" +
                 //    "  count = number of locking tries\n" +
                 //    "\n" +
                 //    "You should run multiple instances of this process, each with its own\n" +

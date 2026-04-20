@@ -169,7 +169,7 @@ namespace Lucene.Net.Search.Spans
 
         public override int GetHashCode()
         {
-            //If this doesn't work, hash all elemnts together instead. This version was used to reduce time complexity
+            //If this doesn't work, hash all elements together instead. This version was used to reduce time complexity
             int h = clauses.GetHashCode();
             h ^= (h << 10) | (h >>> 23);
             h ^= J2N.BitConversion.SingleToRawInt32Bits(Boost);

@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     }
                     catch (Exception t) when (t.IsThrowable())
                     {
-                        //Esnure we throw original exeception
+                        //Ensure we throw original exception
                     }
                 }
                 else

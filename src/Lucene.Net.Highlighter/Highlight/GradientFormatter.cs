@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.Highlight
         /// <summary> Sets the color range for the IDF scores</summary>
         /// <param name="maxScore">
         /// The score (and above) displayed as maxColor (See <see cref="QueryScorer.MaxTermWeight"/>
-        /// which can be used to callibrate scoring scale)
+        /// which can be used to calibrate scoring scale)
         /// </param>
         /// <param name="minForegroundColor">
         /// The hex color used for representing IDF scores of zero eg

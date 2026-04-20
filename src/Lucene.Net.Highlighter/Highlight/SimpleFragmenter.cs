@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Highlight
         public SimpleFragmenter(int fragmentSize)
         {
             // LUCENENET NOTE: Must not set the property directly
-            // in case the user decides to override it and produce an excepetion.
+            // in case the user decides to override it and produce an exception.
             // Therefore, an auto-implemented property is unacceptable.
             this.fragmentSize = fragmentSize;
         }

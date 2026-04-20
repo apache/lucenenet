@@ -32,7 +32,7 @@ namespace Lucene.Net.Cli.SourceCode
 
         /// <summary>
         /// Reads the provided source code <paramref name="files"/> from the
-        /// embeded resources within this assembly
+        /// embedded resources within this assembly
         /// and writes them out to the <paramref name="outputPath"/>.
         /// </summary>
         /// <param name="files">An <see cref="IEnumerable{T}"/> of files to export.</param>

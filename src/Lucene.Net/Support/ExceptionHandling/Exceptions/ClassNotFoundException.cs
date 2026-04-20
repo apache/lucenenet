@@ -43,7 +43,7 @@ namespace Lucene
     /// may throw <see cref="TypeLoadException"/> if a static initializer fails, but usually returns <c>null</c> if
     /// the type is not resolved. So, for compatibility the logic should be adjusted to treat <c>null</c> like a
     /// <see cref="ClassNotFoundException"/> in Java. If the method is expected to throw <see cref="ClassNotFoundException"/>
-    /// when the type cannot be resolved, then we must explictly throw it when <see cref="Type.GetType(string)"/> returns <c>null</c>.
+    /// when the type cannot be resolved, then we must explicitly throw it when <see cref="Type.GetType(string)"/> returns <c>null</c>.
     /// </summary>
     // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568

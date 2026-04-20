@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Util
         /// token is incremented.
         /// </summary>
         // LUCENENET NOTE: Intentionally made this a setter method instead of a property
-        // because it is obsolete and there is no way to add the attibute to the setter but not
+        // because it is obsolete and there is no way to add the attribute to the setter but not
         // the getter of a property. Since it is obsolete, this method will eventually be removed
         // anyway.
         [Obsolete("enablePositionIncrements=false is not supported anymore as of Lucene 4.4")]

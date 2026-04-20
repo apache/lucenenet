@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
         private static readonly Regex MethodParameterName = new Regex("^[a-z](?:[a-zA-Z0-9_]*[a-zA-Z0-9])?$", RegexOptions.Compiled);
 
         /// <summary>
-        /// Interfaces must begin with "I" followed by another captial letter. Note this includes a
+        /// Interfaces must begin with "I" followed by another capital letter. Note this includes a
         /// fix for generic interface names, that end with `{number}.
         /// </summary>
         private static readonly Regex InterfaceName = new Regex("^I[A-Z][a-zA-Z0-9_]*(?:`\\d+)?$", RegexOptions.Compiled);
@@ -201,7 +201,7 @@ namespace Lucene.Net.Util
 
             Assert.IsFalse(names.Any(), names.Count() + " invalid class names detected. " +
                 "Class names must be Pascal case, but may not follow the interface naming " +
-                "convention of captial 'I' followed by another capital letter.");
+                "convention of capital 'I' followed by another capital letter.");
         }
 
         //[Test, LuceneNetSpecific]

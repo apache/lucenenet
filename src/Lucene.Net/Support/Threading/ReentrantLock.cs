@@ -24,11 +24,11 @@ namespace Lucene.Net.Support.Threading
 
     /// <summary>
     /// A lock that uses an unfair locking strategy, similar to how it works in Java. This lock is unfair
-    /// in that it will aquire the lock even if there are any threads waiting on <see cref="Lock()"/>.
+    /// in that it will acquire the lock even if there are any threads waiting on <see cref="Lock()"/>.
     /// <para/>
     /// This implementation also does not use FIFO order when waiting on <see cref="Lock()"/>. Each queued thread will continue
     /// to acquire the lock continually, but yield between each iteration. So, any waiting thread could be next to
-    /// aquire the lock. This differs from how it works in Java, but the overhead of fixing this behavior with a queue
+    /// acquire the lock. This differs from how it works in Java, but the overhead of fixing this behavior with a queue
     /// is probably not worth the cost.
     /// </summary>
     internal class ReentrantLock
@@ -36,7 +36,7 @@ namespace Lucene.Net.Support.Threading
         private readonly object _lock = new object();
 
         /// <summary>
-        /// Tries to aquire the lock. If the lock is not available, the thread will block
+        /// Tries to acquire the lock. If the lock is not available, the thread will block
         /// until it can obtain the lock.
         /// <para/>
         /// FIFO order is not respected on waiting locks. Also, threads that are waiting
@@ -79,7 +79,7 @@ namespace Lucene.Net.Support.Threading
         }
 
         /// <summary>
-        /// Tries to aquire the lock and immediately returns a boolean value indicating
+        /// Tries to acquire the lock and immediately returns a boolean value indicating
         /// whether the lock was obtained.
         /// <para/>
         /// Threads that call <see cref="Lock()"/> and <see cref="TryLock()"/> are

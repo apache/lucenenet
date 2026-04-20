@@ -498,7 +498,7 @@ namespace Lucene.Net.Store
         /// Writes output with <see cref="FileStream.Write(byte[], int, int)"/>
         /// </summary>
         // LUCENENET specific: Since FileStream does its own buffering, this class was refactored
-        // to do all checksum operations as well as writing to the FileStream. By doing this we elminate
+        // to do all checksum operations as well as writing to the FileStream. By doing this we eliminate
         // the extra set of buffers that were only creating unnecessary memory allocations and copy operations.
         protected class FSIndexOutput : BufferedIndexOutput
         {

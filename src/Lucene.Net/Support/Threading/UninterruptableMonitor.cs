@@ -23,13 +23,13 @@ namespace Lucene.Net.Support.Threading
 
     /// <summary>
     /// A drop-in replacement for <see cref="Monitor"/> that doesn't throw <see cref="ThreadInterruptedException"/>
-    /// when entering locks, but defers the excepetion until a wait or sleep occurs. This is to mimic the behavior in Java,
+    /// when entering locks, but defers the exception until a wait or sleep occurs. This is to mimic the behavior in Java,
     /// which does not throw when entering a lock.
     /// <para/>
     /// <b>NOTE:</b> this is just a best effort. The BCL and other libraries we depend
     /// on don't take such measures, so any call to an API that we don't own could result
     /// in a <see cref="System.Threading.ThreadInterruptedException"/> if it attempts to
-    /// aquire a lock. It is not practical to put a try/catch block around every 3rd party
+    /// acquire a lock. It is not practical to put a try/catch block around every 3rd party
     /// API call that attempts to lock. As such, Lucene.NET does not support
     /// <see cref="Thread.Interrupt()"/> and using it is discouraged.
     /// See https://github.com/apache/lucenenet/issues/526.
@@ -47,13 +47,13 @@ namespace Lucene.Net.Support.Threading
         /// <c>synchronized</c> keyword in Java, which never throws when the current
         /// thread is in an interrupted state. It allows us to catch
         /// <see cref="System.Threading.ThreadInterruptedException"/> in a specific part
-        /// of the application, rather than allowing it to be thrown anywhere we atempt
+        /// of the application, rather than allowing it to be thrown anywhere we attempt
         /// to lock.
         /// <para/>
         /// <b>NOTE:</b> this is just a best effort. The BCL and other libraries we depend
         /// on don't take such measures, so any call to an API that we don't own could result
         /// in a <see cref="System.Threading.ThreadInterruptedException"/> if it attempts to
-        /// aquire a lock. It is not practical to put a try/catch block around every 3rd party
+        /// acquire a lock. It is not practical to put a try/catch block around every 3rd party
         /// API call that attempts to lock. As such, Lucene.NET does not support
         /// <see cref="Thread.Interrupt()"/> and using it is discouraged.
         /// See https://github.com/apache/lucenenet/issues/526.
@@ -99,13 +99,13 @@ namespace Lucene.Net.Support.Threading
         /// <c>synchronized</c> keyword in Java, which never throws when the current
         /// thread is in an interrupted state. It allows us to catch
         /// <see cref="System.Threading.ThreadInterruptedException"/> in a specific part
-        /// of the application, rather than allowing it to be thrown anywhere we atempt
+        /// of the application, rather than allowing it to be thrown anywhere we attempt
         /// to lock.
         /// <para/>
         /// <b>NOTE:</b> this is just a best effort. The BCL and other libraries we depend
         /// on don't take such measures, so any call to an API that we don't own could result
         /// in a <see cref="System.Threading.ThreadInterruptedException"/> if it attempts to
-        /// aquire a lock. It is not practical to put a try/catch block around every 3rd party
+        /// acquire a lock. It is not practical to put a try/catch block around every 3rd party
         /// API call that attempts to lock. As such, Lucene.NET does not support
         /// <see cref="Thread.Interrupt()"/> and using it is discouraged.
         /// See https://github.com/apache/lucenenet/issues/526.
