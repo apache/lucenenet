@@ -103,13 +103,6 @@ namespace Lucene.Net.Store
         /// <param name="maxChunkSize"> maximum chunk size (default is 1 GiBytes for
         /// 64 bit runtimes and 256 MiBytes for 32 bit runtimes) used for memory mapping.
         /// <para/>
-        /// <b>LUCENENET note:</b> this parameter is retained for API compatibility
-        /// but is effectively a no-op in the current implementation. Each file is
-        /// mapped as a single <see cref="System.IO.MemoryMappedFiles.MemoryMappedViewAccessor"/>
-        /// regardless of <paramref name="maxChunkSize"/>; see the class remarks for
-        /// the rationale (issues #1013 and #1151). The value is still validated and
-        /// retained so that <see cref="MaxChunkSize"/> reflects what the caller passed.
-        /// <para/>
         /// Especially on 32 bit platform, the address space can be very fragmented,
         /// so large index files cannot be mapped. Using a lower chunk size makes
         /// the directory implementation a little bit slower (as the correct chunk
@@ -169,13 +162,6 @@ namespace Lucene.Net.Store
         /// <param name="maxChunkSize"> maximum chunk size (default is 1 GiBytes for
         /// 64 bit runtimes and 256 MiBytes for 32 bit runtimes) used for memory mapping.
         /// <para/>
-        /// <b>LUCENENET note:</b> this parameter is retained for API compatibility
-        /// but is effectively a no-op in the current implementation. Each file is
-        /// mapped as a single <see cref="System.IO.MemoryMappedFiles.MemoryMappedViewAccessor"/>
-        /// regardless of <paramref name="maxChunkSize"/>; see the class remarks for
-        /// the rationale (issues #1013 and #1151). The value is still validated and
-        /// retained so that <see cref="MaxChunkSize"/> reflects what the caller passed.
-        /// <para/>
         /// Especially on 32 bit platform, the address space can be very fragmented,
         /// so large index files cannot be mapped. Using a lower chunk size makes
         /// the directory implementation a little bit slower (as the correct chunk
@@ -197,13 +183,6 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns the current mmap chunk size.
-        /// <para/>
-        /// <b>LUCENENET note:</b> this value is retained for API compatibility
-        /// but does not affect runtime behavior in the current implementation.
-        /// Each file is mapped as a single
-        /// <see cref="System.IO.MemoryMappedFiles.MemoryMappedViewAccessor"/>
-        /// regardless of this setting; see the class remarks (issues #1013 and
-        /// #1151) for the rationale.
         /// </summary>
         /// <seealso cref="MMapDirectory(DirectoryInfo, LockFactory, int)"/>
         public int MaxChunkSize => 1 << chunkSizePower;
@@ -219,7 +198,7 @@ namespace Lucene.Net.Store
             // LUCENENET specific: the new MemoryMappedViewAccessorIndexInput
             // path replaces the upstream ByteBufferIndexInput-based approach.
             // See #1013 + #1151 and the class doc comment for rationale.
-            return new MemoryMappedViewAccessorIndexInput("MMapIndexInput(path=\"" + file + "\")", fc, context);
+            return new MemoryMappedViewAccessorIndexInput("MMapIndexInput(path=\"" + file + "\")", fc, context, chunkSizePower);
         }
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
@@ -266,7 +245,7 @@ namespace Lucene.Net.Store
                 var fc = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 var input = new MemoryMappedViewAccessorIndexInput(
                     "MMapIndexInput(" + sliceDescription + " in path=\"" + file + "\" slice=" + offset + ":" + (offset + length) + ")",
-                    fc, offset, length, BufferedIndexInput.GetBufferSize(context));
+                    fc, offset, length, BufferedIndexInput.GetBufferSize(context), outerInstance.chunkSizePower);
                 lock (issuedSlicesLock)
                 {
                     if (Volatile.Read(ref disposed) != 0)
