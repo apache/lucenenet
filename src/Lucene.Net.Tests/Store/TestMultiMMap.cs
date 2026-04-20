@@ -3,8 +3,10 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -527,6 +529,541 @@ namespace Lucene.Net.Store
             {
                 throw new Exception("Writer thread failed", writerError);
             }
+        }
+
+        // Regression test for issue #1013: sporadic AccessViolationException
+        // during concurrent search with SearcherManager on MMapDirectory.
+        //
+        // Strategy: spin many reader threads cloning + reading a shared
+        // IndexInput while another thread disposes it mid-flight. The
+        // invariant under test: concurrent Clone/read against a Dispose
+        // must only ever surface AlreadyClosed-style exceptions — never an
+        // AVE (which crashes the test host), never an NRE, never an IOE
+        // from a half-torn-down mapping.
+        //
+        // Under the new MemoryMappedViewAccessorIndexInput design, clones
+        // observe the shared View's closed flag and throw AlreadyClosed
+        // promptly after the root is disposed. A successful pass here is
+        // therefore a *positive* result — not Inconclusive — because the
+        // expected behavior is that the invariant holds throughout.
+        [Test, LuceneNetSpecific, Slow, NonParallelizable]
+        public void TestConcurrentCloneReadVsDispose_Issue1013()
+        {
+            var dirPath = CreateTempDir("testIssue1013");
+            using var mmapDir = new MMapDirectory(dirPath);
+
+            const string name = "bytes";
+            const int fileSize = 1 << 20; // 1 MiB
+            using (var io = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            {
+                var buf = new byte[4096];
+                new Random(42).NextBytes(buf);
+                for (int written = 0; written < fileSize; written += buf.Length)
+                {
+                    io.WriteBytes(buf, 0, buf.Length);
+                }
+            }
+
+            const int readerThreads = 8;
+            const int maxSeconds = 30;
+
+            var sw = Stopwatch.StartNew();
+            int iteration = 0;
+            int raceObserved = 0;
+            var unexpectedExceptions = new ConcurrentBag<Exception>();
+
+            while (sw.Elapsed < TimeSpan.FromSeconds(maxSeconds) && raceObserved == 0)
+            {
+                iteration++;
+
+                var master = mmapDir.OpenInput(name, NewIOContext(Random));
+                var start = new ManualResetEventSlim(false);
+                var threads = new Thread[readerThreads];
+                long totalReads = 0;
+
+                for (int i = 0; i < readerThreads; i++)
+                {
+                    threads[i] = new Thread(() =>
+                    {
+                        start.Wait();
+                        try
+                        {
+                            while (true)
+                            {
+                                IndexInput clone;
+                                try
+                                {
+                                    clone = (IndexInput)master.Clone();
+                                }
+                                catch (Exception e) when (e.IsAlreadyClosedException())
+                                {
+                                    return;
+                                }
+
+                                try
+                                {
+                                    for (int p = 0; p < fileSize; p++)
+                                    {
+                                        clone.ReadByte();
+                                        Interlocked.Increment(ref totalReads);
+                                    }
+                                }
+                                catch (Exception e) when (e.IsAlreadyClosedException())
+                                {
+                                    return;
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            unexpectedExceptions.Add(e);
+                            Interlocked.Exchange(ref raceObserved, 1);
+                        }
+                    })
+                    { IsBackground = true, Name = $"issue1013-reader-{i}" };
+                    threads[i].Start();
+                }
+
+                start.Set();
+
+                Thread.Sleep(Random.Next(1, 5));
+                master.Dispose();
+
+                // Join every reader. The View's drain barrier ensures Dispose
+                // only returns after in-flight reads complete, and clones
+                // then observe view.IsClosed via TryEnterRead and exit via
+                // the expected-AlreadyClosed catch. So Join timing out would
+                // itself be a defect — either the drain barrier is leaking
+                // or a reader is stuck in a broken state. Record that and
+                // fail rather than silently abandoning the thread.
+                foreach (var t in threads)
+                {
+                    if (!t.Join(TimeSpan.FromSeconds(10)))
+                    {
+                        unexpectedExceptions.Add(new TimeoutException(
+                            $"Reader thread {t.Name} did not exit within 10s after master.Dispose(); " +
+                            "expected AlreadyClosed to propagate out of ReadInternal/TryEnterRead."));
+                        Interlocked.Exchange(ref raceObserved, 1);
+                        // Continue joining the rest so we don't leak live
+                        // threads holding IndexInput clones into later
+                        // iterations or subsequent tests.
+                    }
+                }
+
+                if (iteration % 50 == 0)
+                {
+                    TestContext.Progress.WriteLine(
+                        $"issue1013 repro: iteration={iteration}, elapsed={sw.Elapsed.TotalSeconds:0.0}s, reads={totalReads}");
+                }
+            }
+
+            if (raceObserved != 0)
+            {
+                var example = unexpectedExceptions.FirstOrDefault();
+                Assert.Fail(
+                    $"Issue #1013 invariant violated on iteration {iteration}: " +
+                    $"concurrent clone/read vs Dispose produced an unexpected exception type. " +
+                    $"Example: {example?.GetType().FullName}: {example?.Message}\n{example}");
+            }
+
+            Assert.Pass(
+                $"Issue #1013 invariant held across {iteration} iterations in " +
+                $"{sw.Elapsed.TotalSeconds:0.0}s — no AVE / NRE / unexpected exception " +
+                "under concurrent clone/read vs Dispose.");
+        }
+
+        // LUCENENET-specific: race-condition coverage for the new
+        // MemoryMappedViewAccessorIndexInput. These tests complement the
+        // single-threaded TestCloneClose / TestCloneSliceSafety /
+        // TestCloneSliceClose tests by exercising concurrent Dispose vs.
+        // read, Dispose vs. Clone, and slicer-cascade scenarios.
+
+        // Concurrent Clone during Dispose: the root is disposed while many
+        // threads repeatedly call Clone() + ReadByte(). Invariants:
+        //   - No AVE / NRE / memory corruption.
+        //   - Once master.Dispose has returned and the cloner thread has
+        //     observed that (via TryEnterRead), subsequent reads on its
+        //     current clone throw AlreadyClosed.
+        //   - After join, calling Clone() + read on the disposed master
+        //     from the main thread throws AlreadyClosed — pinning that a
+        //     disposed root cannot silently hand out a working clone.
+        [Test, LuceneNetSpecific, Slow, NonParallelizable]
+        public void TestConcurrentCloneVsDispose_RaceScenario()
+        {
+            var dirPath = CreateTempDir("testCloneVsDispose");
+            using var mmapDir = new MMapDirectory(dirPath);
+            const string name = "bytes";
+            const int fileSize = 64 * 1024;
+            using (var io = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            {
+                var buf = new byte[4096];
+                new Random(7).NextBytes(buf);
+                for (int w = 0; w < fileSize; w += buf.Length)
+                    io.WriteBytes(buf, 0, buf.Length);
+            }
+
+            var unexpected = new ConcurrentBag<Exception>();
+            int iterations = 0;
+            var sw = Stopwatch.StartNew();
+            while (sw.Elapsed < TimeSpan.FromSeconds(15))
+            {
+                iterations++;
+                var master = mmapDir.OpenInput(name, NewIOContext(Random));
+                var start = new ManualResetEventSlim(false);
+                var cloners = new Thread[6];
+                for (int i = 0; i < cloners.Length; i++)
+                {
+                    cloners[i] = new Thread(() =>
+                    {
+                        start.Wait();
+                        try
+                        {
+                            while (true)
+                            {
+                                IndexInput c;
+                                try { c = (IndexInput)master.Clone(); }
+                                catch (Exception e) when (e.IsAlreadyClosedException()) { return; }
+                                // Touch a byte on the clone — but don't read past dispose to keep the test focused on Clone itself.
+                                try { c.ReadByte(); }
+                                catch (Exception e) when (e.IsAlreadyClosedException()) { return; }
+                            }
+                        }
+                        catch (Exception e) { unexpected.Add(e); }
+                    }) { IsBackground = true };
+                    cloners[i].Start();
+                }
+                start.Set();
+                Thread.Sleep(Random.Next(0, 3));
+                master.Dispose();
+                foreach (var t in cloners)
+                {
+                    if (!t.Join(TimeSpan.FromSeconds(5)))
+                    {
+                        unexpected.Add(new TimeoutException(
+                            "Cloner thread did not exit within 5s after master.Dispose()."));
+                    }
+                }
+
+                // Positive contract check: after Dispose, Clone() on the
+                // disposed root either throws AlreadyClosed or produces a
+                // clone whose first read throws AlreadyClosed. The failure
+                // mode we want to catch is a clone that silently hands back
+                // bytes from a released mapping.
+                try
+                {
+                    var postDisposeClone = (IndexInput)master.Clone();
+                    try
+                    {
+                        postDisposeClone.ReadByte();
+                        unexpected.Add(new InvalidOperationException(
+                            "Clone() + ReadByte() on disposed master returned without throwing AlreadyClosed."));
+                    }
+                    catch (Exception e) when (e.IsAlreadyClosedException())
+                    {
+                        // expected
+                    }
+                }
+                catch (Exception e) when (e.IsAlreadyClosedException())
+                {
+                    // also acceptable: Clone() itself refused
+                }
+            }
+
+            if (!unexpected.IsEmpty)
+            {
+                var ex = unexpected.First();
+                Assert.Fail($"Concurrent Clone-vs-Dispose produced unexpected exception after {iterations} iterations: {ex.GetType().FullName}: {ex.Message}\n{ex}");
+            }
+        }
+
+        // Concurrent read of the SAME instance during Dispose of that
+        // instance. Drain-barrier must prevent the disposer from releasing
+        // the pointer while a reader is mid-CopyBlockUnaligned.
+        [Test, LuceneNetSpecific, Slow, NonParallelizable]
+        public void TestConcurrentReadVsSelfDispose_RaceScenario()
+        {
+            var dirPath = CreateTempDir("testReadVsSelfDispose");
+            using var mmapDir = new MMapDirectory(dirPath);
+            const string name = "bytes";
+            const int fileSize = 1 << 18; // 256 KiB — enough for several buffer refills
+            using (var io = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            {
+                var buf = new byte[4096];
+                new Random(11).NextBytes(buf);
+                for (int w = 0; w < fileSize; w += buf.Length)
+                    io.WriteBytes(buf, 0, buf.Length);
+            }
+
+            var unexpected = new ConcurrentBag<Exception>();
+            int iterations = 0;
+            var sw = Stopwatch.StartNew();
+            while (sw.Elapsed < TimeSpan.FromSeconds(15) && unexpected.IsEmpty)
+            {
+                iterations++;
+                var input = mmapDir.OpenInput(name, NewIOContext(Random));
+                var start = new ManualResetEventSlim(false);
+                var readers = new Thread[4];
+                for (int i = 0; i < readers.Length; i++)
+                {
+                    readers[i] = new Thread(() =>
+                    {
+                        // Each reader uses its OWN clone — contract says
+                        // IndexInput isn't thread-safe. We want to stress
+                        // the drain barrier on the shared View, not on the
+                        // single IndexInput.
+                        IndexInput clone;
+                        try { clone = (IndexInput)input.Clone(); }
+                        catch (Exception e) when (e.IsAlreadyClosedException()) { return; }
+
+                        start.Wait();
+                        try
+                        {
+                            while (true)
+                            {
+                                clone.Seek(0);
+                                for (int p = 0; p < fileSize; p++)
+                                {
+                                    clone.ReadByte();
+                                }
+                            }
+                        }
+                        catch (Exception e) when (e.IsAlreadyClosedException()) { return; }
+                        catch (Exception e) { unexpected.Add(e); }
+                    }) { IsBackground = true };
+                    readers[i].Start();
+                }
+                start.Set();
+                Thread.Sleep(Random.Next(1, 5));
+                input.Dispose();
+                foreach (var t in readers) t.Join(TimeSpan.FromSeconds(5));
+            }
+
+            if (!unexpected.IsEmpty)
+            {
+                var ex = unexpected.First();
+                Assert.Fail($"Concurrent read-vs-self-dispose produced unexpected exception after {iterations} iterations: {ex.GetType().FullName}: {ex.Message}\n{ex}");
+            }
+        }
+
+        // Slicer Dispose while slices are being read concurrently. The
+        // slicer cascades Dispose to all issued slices; every in-flight
+        // reader must either finish its current CopyBlockUnaligned or
+        // observe the closed state cleanly (no AVE).
+        [Test, LuceneNetSpecific, Slow, NonParallelizable]
+        public void TestConcurrentSliceReadVsSlicerDispose_RaceScenario()
+        {
+            var dirPath = CreateTempDir("testSliceVsSlicerDispose");
+            using var mmapDir = new MMapDirectory(dirPath);
+            const string name = "bytes";
+            const int fileSize = 1 << 18;
+            using (var io = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            {
+                var buf = new byte[4096];
+                new Random(13).NextBytes(buf);
+                for (int w = 0; w < fileSize; w += buf.Length)
+                    io.WriteBytes(buf, 0, buf.Length);
+            }
+
+            var unexpected = new ConcurrentBag<Exception>();
+            int iterations = 0;
+            var sw = Stopwatch.StartNew();
+            while (sw.Elapsed < TimeSpan.FromSeconds(15) && unexpected.IsEmpty)
+            {
+                iterations++;
+                var slicer = mmapDir.CreateSlicer(name, NewIOContext(Random));
+                var start = new ManualResetEventSlim(false);
+                var readers = new Thread[4];
+                for (int i = 0; i < readers.Length; i++)
+                {
+                    int sliceIndex = i;
+                    readers[i] = new Thread(() =>
+                    {
+                        IndexInput slice;
+                        try
+                        {
+                            slice = slicer.OpenSlice("slice" + sliceIndex, 0, fileSize);
+                        }
+                        catch (Exception e) when (e.IsAlreadyClosedException()) { return; }
+
+                        start.Wait();
+                        try
+                        {
+                            while (true)
+                            {
+                                slice.Seek(0);
+                                for (int p = 0; p < fileSize; p++)
+                                    slice.ReadByte();
+                            }
+                        }
+                        catch (Exception e) when (e.IsAlreadyClosedException()) { return; }
+                        catch (Exception e) { unexpected.Add(e); }
+                    }) { IsBackground = true };
+                    readers[i].Start();
+                }
+                start.Set();
+                Thread.Sleep(Random.Next(1, 5));
+                slicer.Dispose();
+                foreach (var t in readers) t.Join(TimeSpan.FromSeconds(5));
+            }
+
+            if (!unexpected.IsEmpty)
+            {
+                var ex = unexpected.First();
+                Assert.Fail($"Concurrent slice-read-vs-slicer-dispose produced unexpected exception after {iterations} iterations: {ex.GetType().FullName}: {ex.Message}\n{ex}");
+            }
+        }
+
+        // Empty (zero-byte) file edge case: OpenInput/Clone/Dispose must not
+        // AVE or throw. Zero-length files take a different MapAndAcquire
+        // path (no MMF, no AcquirePointer), so ReadInternal hits the
+        // basePtr==null branch and must handle a zero-byte read cleanly
+        // while rejecting a non-zero read with EOF.
+        [Test, LuceneNetSpecific]
+        public void TestZeroLengthFile_ReadsAndCloneAndDispose()
+        {
+            var dirPath = CreateTempDir("testZeroLengthFile");
+            using var mmapDir = new MMapDirectory(dirPath);
+            using (var io = mmapDir.CreateOutput("empty", NewIOContext(Random))) { }
+
+            using var input = mmapDir.OpenInput("empty", NewIOContext(Random));
+            Assert.AreEqual(0L, input.Length);
+            using var clone = (IndexInput)input.Clone();
+            Assert.AreEqual(0L, clone.Length);
+            Assert.AreEqual(0L, input.Position);
+            Assert.AreEqual(0L, clone.Position);
+
+            // Exercise the ReadInternal basePtr==null, destination.Length==0
+            // branch. This should succeed silently.
+            input.ReadBytes(Array.Empty<byte>(), 0, 0);
+            clone.ReadBytes(Array.Empty<byte>(), 0, 0);
+
+            // Any non-zero read must throw EOF (we can't satisfy it from 0
+            // bytes of mapped data).
+            try
+            {
+                input.ReadByte();
+                Assert.Fail("ReadByte on zero-length file must throw EOF");
+            }
+            catch (EndOfStreamException)
+            {
+                // expected
+            }
+        }
+
+        // Read-after-Dispose on a single instance (not concurrent): the new
+        // class must throw AlreadyClosedException rather than reading stale
+        // bytes from the unmapped region. This is the single-threaded
+        // correctness analogue of #1013.
+        [Test, LuceneNetSpecific]
+        public void TestReadAfterDispose_ThrowsAlreadyClosed()
+        {
+            var dirPath = CreateTempDir("testReadAfterDispose");
+            using var mmapDir = new MMapDirectory(dirPath);
+            using (var io = mmapDir.CreateOutput("bytes", NewIOContext(Random)))
+            {
+                io.WriteInt32(42);
+            }
+
+            var input = mmapDir.OpenInput("bytes", NewIOContext(Random));
+            input.Dispose();
+            try
+            {
+                input.ReadInt32();
+                Assert.Fail("Must throw AlreadyClosedException after Dispose");
+            }
+            catch (Exception e) when (e.IsAlreadyClosedException())
+            {
+                // pass
+            }
+        }
+
+        // Clone-after-Dispose: pins the current contract that Clone() on a
+        // disposed root does NOT throw (MemberwiseClone is just a managed
+        // object copy), but the cloned IndexInput observes the shared
+        // View's closed flag on its first read and throws AlreadyClosed.
+        // Likewise, disposing a clone does not close the shared View, so
+        // the root + sibling clones stay alive.
+        [Test, LuceneNetSpecific]
+        public void TestCloneAfterDispose_ReadsThrowAlreadyClosed()
+        {
+            var dirPath = CreateTempDir("testCloneAfterDispose");
+            using var mmapDir = new MMapDirectory(dirPath);
+            using (var io = mmapDir.CreateOutput("bytes", NewIOContext(Random)))
+            {
+                io.WriteInt32(1);
+                io.WriteInt32(2);
+            }
+
+            var root = mmapDir.OpenInput("bytes", NewIOContext(Random));
+
+            // Clone taken BEFORE the root is disposed: must fail on read
+            // after the root is disposed, because the shared View is closed.
+            var preDisposeClone = (IndexInput)root.Clone();
+
+            root.Dispose();
+
+            try
+            {
+                preDisposeClone.ReadInt32();
+                Assert.Fail("Pre-dispose clone must throw AlreadyClosed after root Dispose");
+            }
+            catch (Exception e) when (e.IsAlreadyClosedException())
+            {
+                // expected
+            }
+
+            // Clone taken AFTER the root is disposed. MemberwiseClone still
+            // succeeds (no synchronization in object Clone), but the first
+            // read must observe view.IsClosed via TryEnterRead and throw.
+            var postDisposeClone = (IndexInput)root.Clone();
+            try
+            {
+                postDisposeClone.ReadInt32();
+                Assert.Fail("Post-dispose clone must throw AlreadyClosed on first read");
+            }
+            catch (Exception e) when (e.IsAlreadyClosedException())
+            {
+                // expected
+            }
+        }
+
+        // Sibling isolation: disposing one clone does NOT close the shared
+        // View, so the root and other clones continue to read. Counterpart
+        // to TestCloneAfterDispose — covers the case where a clone is
+        // disposed first, rather than the root.
+        [Test, LuceneNetSpecific]
+        public void TestDisposingCloneDoesNotAffectRootOrSiblings()
+        {
+            var dirPath = CreateTempDir("testCloneSiblingIsolation");
+            using var mmapDir = new MMapDirectory(dirPath);
+            using (var io = mmapDir.CreateOutput("bytes", NewIOContext(Random)))
+            {
+                io.WriteInt32(1);
+                io.WriteInt32(2);
+            }
+
+            using var root = mmapDir.OpenInput("bytes", NewIOContext(Random));
+            var cloneA = (IndexInput)root.Clone();
+            var cloneB = (IndexInput)root.Clone();
+
+            cloneA.Dispose();
+
+            // Root and sibling clone must still work.
+            Assert.AreEqual(1, root.ReadInt32());
+            Assert.AreEqual(1, cloneB.ReadInt32());
+
+            // Disposed clone must throw on read.
+            try
+            {
+                cloneA.ReadInt32();
+                Assert.Fail("Disposed clone must throw AlreadyClosed");
+            }
+            catch (Exception e) when (e.IsAlreadyClosedException())
+            {
+                // expected
+            }
+
+            cloneB.Dispose();
         }
 
         [Test, LuceneNetSpecific]
