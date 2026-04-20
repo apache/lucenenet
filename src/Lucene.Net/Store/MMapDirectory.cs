@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Threading;
+using SCG = System.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -216,8 +217,8 @@ namespace Lucene.Net.Store
             // Track issued slices so that Dispose cascades. Lucene's
             // contract is that after slicer.Dispose, reads from any slice
             // (or clone of a slice) throw AlreadyClosedException.
-            private readonly System.Collections.Generic.List<MemoryMappedViewAccessorIndexInput> issuedSlices
-                = new System.Collections.Generic.List<MemoryMappedViewAccessorIndexInput>();
+            private readonly SCG.List<MemoryMappedViewAccessorIndexInput> issuedSlices
+                = new SCG.List<MemoryMappedViewAccessorIndexInput>();
             private readonly object issuedSlicesLock = new object();
 
             public IndexInputSlicerAnonymousClass(MMapDirectory outerInstance, IOContext context, string file, FileStream descriptor)

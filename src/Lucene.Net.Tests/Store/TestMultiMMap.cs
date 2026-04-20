@@ -1,3 +1,4 @@
+using J2N;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -1064,6 +1065,268 @@ namespace Lucene.Net.Store
             }
 
             cloneB.Dispose();
+        }
+
+        // Multiple slices over the same file must each see their own region
+        // of data, not stale bytes from a neighboring slice. Each OpenSlice
+        // in the new design opens its own MemoryMappedFile+view over the
+        // given (offset, length) window, so bounds are enforced per-slice
+        // and reads are independent.
+        [Test, LuceneNetSpecific]
+        public void TestMultipleSlicesReadDistinctData()
+        {
+            var dirPath = CreateTempDir("testMultipleSlicesDistinct");
+            using var mmapDir = new MMapDirectory(dirPath);
+            const string name = "bytes";
+            const int regionSize = 4096;
+            const int regions = 4;
+
+            // Write four contiguous 4KiB regions, each filled with a distinct
+            // byte pattern (0x11, 0x22, 0x33, 0x44). Later we open a slice
+            // over each region and check that reads return the right pattern.
+            using (var io = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            {
+                var buf = new byte[regionSize];
+                for (int r = 0; r < regions; r++)
+                {
+                    byte fill = (byte)(0x11 * (r + 1));
+                    for (int i = 0; i < buf.Length; i++) buf[i] = fill;
+                    io.WriteBytes(buf, 0, buf.Length);
+                }
+            }
+
+            using var slicer = mmapDir.CreateSlicer(name, NewIOContext(Random));
+
+            var slices = new IndexInput[regions];
+            try
+            {
+                for (int r = 0; r < regions; r++)
+                {
+                    slices[r] = slicer.OpenSlice("slice" + r, r * regionSize, regionSize);
+                    Assert.AreEqual(regionSize, slices[r].Length, $"slice {r} length");
+                }
+
+                // Each slice sees only its own pattern.
+                for (int r = 0; r < regions; r++)
+                {
+                    byte expected = (byte)(0x11 * (r + 1));
+                    for (int i = 0; i < regionSize; i++)
+                    {
+                        byte b = slices[r].ReadByte();
+                        if (b != expected)
+                        {
+                            Assert.Fail(
+                                $"slice {r} at offset {i}: expected 0x{expected:X2}, got 0x{b:X2}");
+                        }
+                    }
+
+                    // Reading past the slice's length must fail with EOF.
+                    try
+                    {
+                        slices[r].ReadByte();
+                        Assert.Fail($"slice {r}: read past end of slice must throw EOF");
+                    }
+                    catch (EndOfStreamException)
+                    {
+                        // expected
+                    }
+                }
+
+                // Concurrent reads across sibling slices: each worker scans
+                // its own slice fully and asserts the pattern. If the slices
+                // were accidentally aliased to the same underlying view,
+                // racing Seek() calls would cross-contaminate.
+                var errors = new System.Collections.Concurrent.ConcurrentBag<string>();
+                var tasks = new System.Threading.Tasks.Task[regions];
+                for (int r = 0; r < regions; r++)
+                {
+                    int idx = r;
+                    byte expected = (byte)(0x11 * (idx + 1));
+                    var clone = (IndexInput)slices[idx].Clone();
+                    tasks[idx] = System.Threading.Tasks.Task.Run(() =>
+                    {
+                        for (int pass = 0; pass < 50; pass++)
+                        {
+                            clone.Seek(0);
+                            for (int i = 0; i < regionSize; i++)
+                            {
+                                byte b = clone.ReadByte();
+                                if (b != expected)
+                                {
+                                    errors.Add($"slice {idx} pass {pass} offset {i}: expected 0x{expected:X2}, got 0x{b:X2}");
+                                    return;
+                                }
+                            }
+                        }
+                    });
+                }
+                System.Threading.Tasks.Task.WaitAll(tasks);
+                if (!errors.IsEmpty)
+                {
+                    Assert.Fail("Cross-slice contamination detected:\n" + string.Join("\n", errors));
+                }
+            }
+            finally
+            {
+                foreach (var s in slices) s?.Dispose();
+            }
+        }
+
+        // Disposing a single slice must not affect its sibling slices from
+        // the same slicer. In the new design each OpenSlice has its own
+        // View, so slice.Dispose closes that slice's view only. Slicer
+        // cascade Dispose is covered by TestCloneSliceSafety.
+        [Test, LuceneNetSpecific]
+        public void TestDisposingOneSliceDoesNotAffectSiblings()
+        {
+            var dirPath = CreateTempDir("testSliceSiblingIsolation");
+            using var mmapDir = new MMapDirectory(dirPath);
+            const string name = "bytes";
+            using (var io = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            {
+                for (int i = 0; i < 8; i++) io.WriteInt32(i);
+            }
+
+            using var slicer = mmapDir.CreateSlicer(name, NewIOContext(Random));
+            var sliceA = slicer.OpenSlice("sliceA", 0, 16);
+            var sliceB = slicer.OpenSlice("sliceB", 16, 16);
+
+            sliceA.Dispose();
+
+            // Sibling must continue to work and return its own data.
+            Assert.AreEqual(4, sliceB.ReadInt32());
+            Assert.AreEqual(5, sliceB.ReadInt32());
+
+            // Disposed slice must throw on read.
+            try
+            {
+                sliceA.ReadInt32();
+                Assert.Fail("Disposed slice must throw AlreadyClosed");
+            }
+            catch (Exception e) when (e.IsAlreadyClosedException())
+            {
+                // expected
+            }
+
+            sliceB.Dispose();
+        }
+
+        // Open a 3.0 CFS index with MMapDirectory and read it end-to-end
+        // through DirectoryReader. 3.0 (pre-3.1) CFS files are the only
+        // remaining caller of IndexInputSlicer.OpenFullSlice, which in our
+        // new slicer requires a disposed-state check before it can trust
+        // descriptor.Length. If that path is broken, DirectoryReader.Open
+        // will throw while reading segment headers.
+        [Test, LuceneNetSpecific]
+        public void TestRead3xCfsIndex_ViaMMap()
+        {
+            var indexDir = CreateTempDir("test3xCfsIndex");
+            using (var zip = GetType().FindAndGetManifestResourceStream("index.30.cfs.zip"))
+            {
+                Assert.IsNotNull(zip, "expected index.30.cfs.zip to be embedded");
+                TestUtil.Unzip(zip, indexDir);
+            }
+
+            using var mmapDir = new MMapDirectory(indexDir);
+            using var reader = Index.DirectoryReader.Open(mmapDir);
+
+            Assert.IsTrue(reader.MaxDoc > 0, "3.0 index should contain documents");
+
+            // Touch each leaf to force real reads through the CFS +
+            // OpenFullSlice path. This will throw AVE on a broken mmap
+            // teardown or on a bad OpenFullSlice.
+            int totalDocs = 0;
+            foreach (var leaf in reader.Leaves)
+            {
+                var atomic = leaf.AtomicReader;
+                for (int i = 0; i < atomic.MaxDoc; i++)
+                {
+                    if (atomic.LiveDocs != null && !atomic.LiveDocs.Get(i))
+                        continue;
+                    var doc = atomic.Document(i);
+                    Assert.IsNotNull(doc, $"doc {i} in leaf {leaf} should not be null");
+                    totalDocs++;
+                }
+            }
+            Assert.IsTrue(totalDocs > 0, "at least one live 3.0 document should be readable");
+        }
+
+        // Directly exercise the OpenFullSlice entry point on a 3.0 .cfs
+        // file. OpenFullSlice is [Obsolete("Only for reading CFS files
+        // from 3.x indexes.")] — the test pins that it still produces an
+        // IndexInput spanning the whole file and that its bytes match the
+        // plain OpenInput read of the same file.
+        [Test, LuceneNetSpecific]
+        public void TestOpenFullSlice_On3xCfsFile_MatchesOpenInput()
+        {
+            var indexDir = CreateTempDir("test3xOpenFullSlice");
+            using (var zip = GetType().FindAndGetManifestResourceStream("index.30.cfs.zip"))
+            {
+                Assert.IsNotNull(zip, "expected index.30.cfs.zip to be embedded");
+                TestUtil.Unzip(zip, indexDir);
+            }
+
+            // Pick the first .cfs file in the unzipped 3.0 index.
+            string cfsName = null;
+            foreach (var f in indexDir.GetFiles("*.cfs"))
+            {
+                cfsName = f.Name;
+                break;
+            }
+            Assert.IsNotNull(cfsName, "expected at least one .cfs file in the 3.0 index");
+
+            using var mmapDir = new MMapDirectory(indexDir);
+
+            byte[] viaOpenInput;
+            using (var input = mmapDir.OpenInput(cfsName, NewIOContext(Random)))
+            {
+                viaOpenInput = new byte[input.Length];
+                input.ReadBytes(viaOpenInput, 0, viaOpenInput.Length);
+            }
+
+            byte[] viaFullSlice;
+            using (var slicer = mmapDir.CreateSlicer(cfsName, NewIOContext(Random)))
+            {
+#pragma warning disable 612, 618
+                using var full = slicer.OpenFullSlice();
+#pragma warning restore 612, 618
+                Assert.AreEqual(viaOpenInput.Length, full.Length,
+                    "OpenFullSlice length must match OpenInput length");
+                viaFullSlice = new byte[full.Length];
+                full.ReadBytes(viaFullSlice, 0, viaFullSlice.Length);
+            }
+
+            Assert.AreEqual(viaOpenInput, viaFullSlice,
+                "OpenFullSlice bytes must match OpenInput bytes for the same CFS file");
+        }
+
+        // OpenFullSlice on a slicer that has been disposed must throw
+        // AlreadyClosedException, not ObjectDisposedException leaking from
+        // the underlying FileStream. Part of the review-item-6 fix.
+        [Test, LuceneNetSpecific]
+        public void TestOpenFullSlice_AfterDispose_ThrowsAlreadyClosed()
+        {
+            var dirPath = CreateTempDir("testFullSliceAfterDispose");
+            using var mmapDir = new MMapDirectory(dirPath);
+            using (var io = mmapDir.CreateOutput("bytes", NewIOContext(Random)))
+            {
+                io.WriteInt32(42);
+            }
+
+            var slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random));
+            slicer.Dispose();
+
+            try
+            {
+#pragma warning disable 612, 618
+                slicer.OpenFullSlice();
+#pragma warning restore 612, 618
+                Assert.Fail("OpenFullSlice on disposed slicer must throw AlreadyClosed");
+            }
+            catch (Exception e) when (e.IsAlreadyClosedException())
+            {
+                // expected
+            }
         }
 
         [Test, LuceneNetSpecific]
