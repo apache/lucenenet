@@ -113,7 +113,7 @@ $DocFxJsonContent._luceneNetRel = $BaseUrl + "/"
 #$DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
 $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
 
-# NOTE: The order of these depends on if one of the projects requries the xref map of another, normally all require the core xref map
+# NOTE: The order of these depends on if one of the projects requires the xref map of another, normally all require the core xref map
 # Some might also be duplicated; this is intentional - do not remove duplicates!
 # This is because of circular dependencies between projects' xref maps.
 $DocFxJsonMeta = @(

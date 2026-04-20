@@ -215,7 +215,7 @@ namespace Lucene.Net.Search
         protected override void UpdateDocument(Term id, IEnumerable<IIndexableField> doc)
         {
             long gen = genWriter.UpdateDocument(id, doc);
-            // Randomly verify the udpate "took":
+            // Randomly verify the update "took":
             if (Random.Next(20) == 2)
             {
                 if (Verbose)
@@ -730,9 +730,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// This test was purposely written in a way that demonstrates how to use the
-        /// ControlledRealTimeReopenThread.  It contains seperate Asserts for each of
+        /// ControlledRealTimeReopenThread.  It contains separate Asserts for each of
         /// several use cases rather then trying to brake these use cases up into
-        /// seperate unit tests.  This combined approach makes the behavior of
+        /// separate unit tests.  This combined approach makes the behavior of
         /// ControlledRealTimeReopenThread easier to understand.
         /// </summary>
         // LUCENENET specific - An extra test to demonstrate use of ControlledRealTimeReopen.
@@ -759,7 +759,7 @@ namespace Lucene.Net.Search
             //Reopen SearcherManager after .2 secs if another thread IS waiting on a newer generation.
             var controlledRealTimeReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(trackingWriter, searcherManager, 1, 0.2);
 
-            //Start() will start a seperate thread that will invoke the object's Run(). However,
+            //Start() will start a separate thread that will invoke the object's Run(). However,
             //calling Run() directly would execute that code on the current thread rather then a new thread
             //which would defeat the purpose of using controlledRealTimeReopenThread. This aspect of the API
             //is not as intuitive as it could be. ie. Call Start() not Run().
@@ -965,7 +965,7 @@ namespace Lucene.Net.Search
             double minRefreshSecs = .2;
             var controlledRealTimeReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(trackingWriter, searcherManager, maxRefreshSecs, minRefreshSecs);
 
-            //Start() will start a seperate thread that will invoke the object's Run(). However,
+            //Start() will start a separate thread that will invoke the object's Run(). However,
             //calling Run() directly would execute that code on the current thread rather then a new thread
             //which would defeat the purpose of using controlledRealTimeReopenThread. This aspect of the API
             //is not as intuitive as it could be. ie. Call Start() not Run().
@@ -995,7 +995,7 @@ namespace Lucene.Net.Search
             }
 
             //Now make sure that no thread waited longer then our min refresh time
-            //plus a small fudge factor. Also verify that all threads resported back and
+            //plus a small fudge factor. Also verify that all threads reported back and
             //each saw 2 records.
 
             //Verify all threads reported back a result.

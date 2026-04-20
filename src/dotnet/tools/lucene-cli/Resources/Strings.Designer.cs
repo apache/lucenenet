@@ -369,7 +369,7 @@ namespace Lucene.Net.Cli.Resources {
         }
 
         /// <summary>
-        ///    Looks up a localized string similar to Sample of a performance test written programatically instead of using an algorithm file..
+        ///    Looks up a localized string similar to Sample of a performance test written programmatically instead of using an algorithm file..
         /// </summary>
         public static string BenchmarkSampleCommandDescription {
             get {

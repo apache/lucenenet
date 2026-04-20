@@ -47,7 +47,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
     /// <code>
     /// queryParserHelper.Analyzer = new WhitespaceAnalyzer();
     /// queryParserHelper.AllowLeadingWildcard = true;
-    /// // Or alternativley use the query config handler returned by StandardQueryParser which is a
+    /// // Or alternatively use the query config handler returned by StandardQueryParser which is a
     /// // StandardQueryConfigHandler:
     /// queryParserHelper.QueryConfigHandler.Set(ConfigurationKeys.ALLOW_LEADING_WILDCARD, true);
     /// </code>

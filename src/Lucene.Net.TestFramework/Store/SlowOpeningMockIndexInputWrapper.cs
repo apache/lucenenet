@@ -39,7 +39,7 @@ namespace Lucene.Net.Store
                 try
                 {
                     base.Dispose();
-                } // we didnt open successfully
+                } // we didn't open successfully
                 catch (Exception ignore) when (ignore.IsThrowable())
                 {
                 }

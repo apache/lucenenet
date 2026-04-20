@@ -248,7 +248,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 for (int i = 0; i < comparers.Length; i++)
                 {
-                    // TODO: would be better if copy() didnt cause a term lookup in TermOrdVal & co,
+                    // TODO: would be better if copy() didn't cause a term lookup in TermOrdVal & co,
                     // the segments are always the same here...
                     comparers[i].Copy(0, docID1);
                     comparers[i].SetBottom(0);

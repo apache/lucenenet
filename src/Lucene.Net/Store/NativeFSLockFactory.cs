@@ -32,7 +32,7 @@ namespace Lucene.Net.Store
     /// could be left when the runtime exits abnormally.</para>
     ///
     /// <para>The primary benefit of <see cref="NativeFSLockFactory"/> is
-    /// that locks (not the lock file itsself) will be properly
+    /// that locks (not the lock file itself) will be properly
     /// removed (by the OS) if the runtime has an abnormal exit.</para>
     ///
     /// <para>Note that, unlike <see cref="SimpleFSLockFactory"/>, the existence of
@@ -176,7 +176,7 @@ namespace Lucene.Net.Store
             SetLockDir(lockDir);
         }
 
-        // LUCENENET: NativeFSLocks in Java are infact singletons; this is how we mimick that to track instances and make sure
+        // LUCENENET: NativeFSLocks in Java are in fact singletons; this is how we mimic that to track instances and make sure
         // IW.Unlock and IW.IsLocked works correctly
         internal static readonly Dictionary<string, Lock> _locks = new Dictionary<string, Lock>();
 

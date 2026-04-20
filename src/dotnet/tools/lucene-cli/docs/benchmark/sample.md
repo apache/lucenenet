@@ -2,7 +2,7 @@
 
 ### Name
 
-`benchmark-sample` - Sample of a performance test written programatically instead of using an algorithm file.
+`benchmark-sample` - Sample of a performance test written programmatically instead of using an algorithm file.
 
 ### Synopsis
 
