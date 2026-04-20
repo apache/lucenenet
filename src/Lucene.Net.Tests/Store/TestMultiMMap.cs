@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Store
@@ -31,19 +32,19 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Document = Documents.Document;
+    using BytesRef = Util.BytesRef;
+    using Document = Document;
     using Field = Field;
-    using IndexInputSlicer = Lucene.Net.Store.Directory.IndexInputSlicer;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using TestUtil = Lucene.Net.Util.TestUtil;
+    using IndexInputSlicer = Directory.IndexInputSlicer;
+    using IndexReader = Index.IndexReader;
+    using LuceneTestCase = Util.LuceneTestCase;
+    using MockAnalyzer = Analysis.MockAnalyzer;
+    using RandomIndexWriter = Index.RandomIndexWriter;
+    using TestUtil = Util.TestUtil;
 
     /// <summary>
     /// Tests MMapDirectory's MultiMMapIndexInput
-    /// <p>
+    /// <para/>
     /// Because Java's ByteBuffer uses an int to address the
     /// values, it's necessary to access a file >
     /// Integer.MAX_VALUE in size using multiple byte buffers.
@@ -558,10 +559,12 @@ namespace Lucene.Net.Store
 
             const string name = "bytes";
             const int fileSize = 1 << 20; // 1 MiB
-            using (var io = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            var random = Random;
+
+            using (var io = mmapDir.CreateOutput(name, NewIOContext(random)))
             {
                 var buf = new byte[4096];
-                new Random(42).NextBytes(buf);
+                random.NextBytes(buf);
                 for (int written = 0; written < fileSize; written += buf.Length)
                 {
                     io.WriteBytes(buf, 0, buf.Length);
@@ -580,7 +583,7 @@ namespace Lucene.Net.Store
             {
                 iteration++;
 
-                var master = mmapDir.OpenInput(name, NewIOContext(Random));
+                var master = mmapDir.OpenInput(name, NewIOContext(random));
                 var start = new ManualResetEventSlim(false);
                 var threads = new Thread[readerThreads];
                 long totalReads = 0;
@@ -630,7 +633,7 @@ namespace Lucene.Net.Store
 
                 start.Set();
 
-                Thread.Sleep(Random.Next(1, 5));
+                Thread.Sleep(random.Next(1, 5));
                 master.Dispose();
 
                 // Join every reader. The View's drain barrier ensures Dispose
@@ -699,10 +702,11 @@ namespace Lucene.Net.Store
             using var mmapDir = new MMapDirectory(dirPath);
             const string name = "bytes";
             const int fileSize = 64 * 1024;
-            using (var io = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            var random = Random;
+            using (var io = mmapDir.CreateOutput(name, NewIOContext(random)))
             {
                 var buf = new byte[4096];
-                new Random(7).NextBytes(buf);
+                random.NextBytes(buf);
                 for (int w = 0; w < fileSize; w += buf.Length)
                     io.WriteBytes(buf, 0, buf.Length);
             }
@@ -713,7 +717,7 @@ namespace Lucene.Net.Store
             while (sw.Elapsed < TimeSpan.FromSeconds(15))
             {
                 iterations++;
-                var master = mmapDir.OpenInput(name, NewIOContext(Random));
+                var master = mmapDir.OpenInput(name, NewIOContext(random));
                 var start = new ManualResetEventSlim(false);
                 var cloners = new Thread[6];
                 for (int i = 0; i < cloners.Length; i++)
@@ -738,7 +742,7 @@ namespace Lucene.Net.Store
                     cloners[i].Start();
                 }
                 start.Set();
-                Thread.Sleep(Random.Next(0, 3));
+                Thread.Sleep(random.Next(0, 3));
                 master.Dispose();
                 foreach (var t in cloners)
                 {
@@ -792,10 +796,11 @@ namespace Lucene.Net.Store
             using var mmapDir = new MMapDirectory(dirPath);
             const string name = "bytes";
             const int fileSize = 1 << 18; // 256 KiB — enough for several buffer refills
-            using (var io = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            var random = Random;
+            using (var io = mmapDir.CreateOutput(name, NewIOContext(random)))
             {
                 var buf = new byte[4096];
-                new Random(11).NextBytes(buf);
+                random.NextBytes(buf);
                 for (int w = 0; w < fileSize; w += buf.Length)
                     io.WriteBytes(buf, 0, buf.Length);
             }
@@ -806,7 +811,7 @@ namespace Lucene.Net.Store
             while (sw.Elapsed < TimeSpan.FromSeconds(15) && unexpected.IsEmpty)
             {
                 iterations++;
-                var input = mmapDir.OpenInput(name, NewIOContext(Random));
+                var input = mmapDir.OpenInput(name, NewIOContext(random));
                 var start = new ManualResetEventSlim(false);
                 var readers = new Thread[4];
                 for (int i = 0; i < readers.Length; i++)
@@ -839,7 +844,7 @@ namespace Lucene.Net.Store
                     readers[i].Start();
                 }
                 start.Set();
-                Thread.Sleep(Random.Next(1, 5));
+                Thread.Sleep(random.Next(1, 5));
                 input.Dispose();
                 foreach (var t in readers) t.Join(TimeSpan.FromSeconds(5));
             }
@@ -863,10 +868,11 @@ namespace Lucene.Net.Store
             using var mmapDir = new MMapDirectory(dirPath);
             const string name = "bytes";
             const int fileSize = 1 << 18;
-            using (var io = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            var random = Random;
+            using (var io = mmapDir.CreateOutput(name, NewIOContext(random)))
             {
                 var buf = new byte[4096];
-                new Random(13).NextBytes(buf);
+                random.NextBytes(buf);
                 for (int w = 0; w < fileSize; w += buf.Length)
                     io.WriteBytes(buf, 0, buf.Length);
             }
@@ -877,7 +883,7 @@ namespace Lucene.Net.Store
             while (sw.Elapsed < TimeSpan.FromSeconds(15) && unexpected.IsEmpty)
             {
                 iterations++;
-                var slicer = mmapDir.CreateSlicer(name, NewIOContext(Random));
+                var slicer = mmapDir.CreateSlicer(name, NewIOContext(random));
                 var start = new ManualResetEventSlim(false);
                 var readers = new Thread[4];
                 for (int i = 0; i < readers.Length; i++)
@@ -908,7 +914,7 @@ namespace Lucene.Net.Store
                     readers[i].Start();
                 }
                 start.Set();
-                Thread.Sleep(Random.Next(1, 5));
+                Thread.Sleep(random.Next(1, 5));
                 slicer.Dispose();
                 foreach (var t in readers) t.Join(TimeSpan.FromSeconds(5));
             }
@@ -1142,14 +1148,14 @@ namespace Lucene.Net.Store
                 // its own slice fully and asserts the pattern. If the slices
                 // were accidentally aliased to the same underlying view,
                 // racing Seek() calls would cross-contaminate.
-                var errors = new System.Collections.Concurrent.ConcurrentBag<string>();
-                var tasks = new System.Threading.Tasks.Task[regions];
+                var errors = new ConcurrentBag<string>();
+                var tasks = new Task[regions];
                 for (int r = 0; r < regions; r++)
                 {
                     int idx = r;
                     byte expected = (byte)(0x11 * (idx + 1));
                     var clone = (IndexInput)slices[idx].Clone();
-                    tasks[idx] = System.Threading.Tasks.Task.Run(() =>
+                    tasks[idx] = Task.Run(() =>
                     {
                         for (int pass = 0; pass < 50; pass++)
                         {
@@ -1166,7 +1172,7 @@ namespace Lucene.Net.Store
                         }
                     });
                 }
-                System.Threading.Tasks.Task.WaitAll(tasks);
+                Task.WaitAll(tasks);
                 if (!errors.IsEmpty)
                 {
                     Assert.Fail("Cross-slice contamination detected:\n" + string.Join("\n", errors));
@@ -1233,15 +1239,16 @@ namespace Lucene.Net.Store
             // enough that the test finishes in well under a second per
             // iteration.
             const int fileSize = 2 * 1024 * 1024;
+            var random = Random;
             var expected = new byte[fileSize];
-            new Random(0xC0FFEE).NextBytes(expected);
+            random.NextBytes(expected);
 
-            using (var io = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            using (var io = mmapDir.CreateOutput(name, NewIOContext(random)))
             {
                 io.WriteBytes(expected, 0, expected.Length);
             }
 
-            using var root = mmapDir.OpenInput(name, NewIOContext(Random));
+            using var root = mmapDir.OpenInput(name, NewIOContext(random));
 
             const int numWorkers = 8;
             const int passesPerWorker = 20;
