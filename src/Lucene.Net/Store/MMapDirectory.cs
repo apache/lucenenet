@@ -103,6 +103,13 @@ namespace Lucene.Net.Store
         /// <param name="maxChunkSize"> maximum chunk size (default is 1 GiBytes for
         /// 64 bit runtimes and 256 MiBytes for 32 bit runtimes) used for memory mapping.
         /// <para/>
+        /// <b>LUCENENET note:</b> this parameter is retained for API compatibility
+        /// but is effectively a no-op in the current implementation. Each file is
+        /// mapped as a single <see cref="System.IO.MemoryMappedFiles.MemoryMappedViewAccessor"/>
+        /// regardless of <paramref name="maxChunkSize"/>; see the class remarks for
+        /// the rationale (issues #1013 and #1151). The value is still validated and
+        /// retained so that <see cref="MaxChunkSize"/> reflects what the caller passed.
+        /// <para/>
         /// Especially on 32 bit platform, the address space can be very fragmented,
         /// so large index files cannot be mapped. Using a lower chunk size makes
         /// the directory implementation a little bit slower (as the correct chunk
@@ -162,6 +169,13 @@ namespace Lucene.Net.Store
         /// <param name="maxChunkSize"> maximum chunk size (default is 1 GiBytes for
         /// 64 bit runtimes and 256 MiBytes for 32 bit runtimes) used for memory mapping.
         /// <para/>
+        /// <b>LUCENENET note:</b> this parameter is retained for API compatibility
+        /// but is effectively a no-op in the current implementation. Each file is
+        /// mapped as a single <see cref="System.IO.MemoryMappedFiles.MemoryMappedViewAccessor"/>
+        /// regardless of <paramref name="maxChunkSize"/>; see the class remarks for
+        /// the rationale (issues #1013 and #1151). The value is still validated and
+        /// retained so that <see cref="MaxChunkSize"/> reflects what the caller passed.
+        /// <para/>
         /// Especially on 32 bit platform, the address space can be very fragmented,
         /// so large index files cannot be mapped. Using a lower chunk size makes
         /// the directory implementation a little bit slower (as the correct chunk
@@ -182,7 +196,15 @@ namespace Lucene.Net.Store
         // indeed "release all resources". Therefore unmap hack is not needed in .NET.
 
         /// <summary>
-        /// Returns the current mmap chunk size. </summary>
+        /// Returns the current mmap chunk size.
+        /// <para/>
+        /// <b>LUCENENET note:</b> this value is retained for API compatibility
+        /// but does not affect runtime behavior in the current implementation.
+        /// Each file is mapped as a single
+        /// <see cref="System.IO.MemoryMappedFiles.MemoryMappedViewAccessor"/>
+        /// regardless of this setting; see the class remarks (issues #1013 and
+        /// #1151) for the rationale.
+        /// </summary>
         /// <seealso cref="MMapDirectory(DirectoryInfo, LockFactory, int)"/>
         public int MaxChunkSize => 1 << chunkSizePower;
 
@@ -204,7 +226,10 @@ namespace Lucene.Net.Store
             EnsureOpen();
             var file = Path.Combine(Directory.FullName, name);
             var descriptor = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            return new IndexInputSlicerAnonymousClass(this, context, file, descriptor);
+            // Cache the length eagerly so OpenFullSlice never has to touch
+            // the FileStream — which would race with Dispose closing it.
+            long descriptorLength = descriptor.Length;
+            return new IndexInputSlicerAnonymousClass(this, context, file, descriptor, descriptorLength);
         }
 
         private sealed class IndexInputSlicerAnonymousClass : IndexInputSlicer
@@ -213,6 +238,7 @@ namespace Lucene.Net.Store
             private readonly IOContext context;
             private readonly string file;
             private readonly FileStream descriptor;
+            private readonly long descriptorLength;
             private int disposed = 0; // LUCENENET specific - allow double-dispose
             // Track issued slices so that Dispose cascades. Lucene's
             // contract is that after slicer.Dispose, reads from any slice
@@ -221,12 +247,13 @@ namespace Lucene.Net.Store
                 = new SCG.List<MemoryMappedViewAccessorIndexInput>();
             private readonly object issuedSlicesLock = new object();
 
-            public IndexInputSlicerAnonymousClass(MMapDirectory outerInstance, IOContext context, string file, FileStream descriptor)
+            public IndexInputSlicerAnonymousClass(MMapDirectory outerInstance, IOContext context, string file, FileStream descriptor, long descriptorLength)
             {
                 this.outerInstance = outerInstance;
                 this.context = context;
                 this.file = file;
                 this.descriptor = descriptor;
+                this.descriptorLength = descriptorLength;
             }
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
@@ -257,16 +284,11 @@ namespace Lucene.Net.Store
             public override IndexInput OpenFullSlice()
             {
                 outerInstance.EnsureOpen();
-                // Check disposed before touching descriptor. Without this,
-                // a concurrent Dispose could close the FileStream between
-                // EnsureOpen and the descriptor.Length read, and the user
-                // would see an ObjectDisposedException from FileStream
-                // instead of the conventional AlreadyClosedException.
-                if (Volatile.Read(ref disposed) != 0)
-                {
-                    throw AlreadyClosedException.Create(nameof(IndexInputSlicer), "this IndexInputSlicer is closed");
-                }
-                return OpenSlice("full-slice", 0, descriptor.Length);
+                // File length is captured eagerly in the slicer ctor, so we
+                // never touch the descriptor FileStream here. OpenSlice does
+                // its own disposed-check under the lock, which will throw
+                // AlreadyClosed deterministically if we raced with Dispose.
+                return OpenSlice("full-slice", 0, descriptorLength);
             }
 
             protected override void Dispose(bool disposing)

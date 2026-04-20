@@ -110,49 +110,76 @@ namespace Lucene.Net.Store
                 // another process/thread is appending to this file, the file
                 // can grow between when we capture fc.Length and when
                 // CreateFromFile reads the size.
-                long capacity = Math.Max(offset + length, fc.Length);
-                const int maxAttempts = 5;
-                int attempt = 0;
-                while (true)
-                {
-                    try
-                    {
-                        this.memoryMappedFile = MemoryMappedFile.CreateFromFile(
-                            fileStream: fc,
-                            mapName: null,
-                            capacity: capacity,
-                            access: MemoryMappedFileAccess.Read,
-#if FEATURE_MEMORYMAPPEDFILESECURITY
-                            memoryMappedFileSecurity: null,
-#endif
-                            inheritability: HandleInheritability.Inheritable,
-                            leaveOpen: true); // We dispose the FileStream explicitly.
-                        break;
-                    }
-                    catch (ArgumentOutOfRangeException e) when (e.ParamName == "capacity" && attempt < maxAttempts - 1)
-                    {
-                        Interlocked.Increment(ref MMapDirectory.s_capacityRetryCount);
-                        capacity = Math.Max(capacity, fc.Length);
-                        attempt++;
-                    }
-                }
-                int attemptsTaken = attempt + 1;
-                int prior;
-                do
-                {
-                    prior = Volatile.Read(ref MMapDirectory.s_maxCapacityAttemptsObserved);
-                    if (attemptsTaken <= prior) break;
-                } while (Interlocked.CompareExchange(ref MMapDirectory.s_maxCapacityAttemptsObserved, attemptsTaken, prior) != prior);
-                // LUCENENET specific END
-
-                this.accessor = memoryMappedFile.CreateViewAccessor(offset, length, MemoryMappedFileAccess.Read);
-
+                MemoryMappedFile localMmf = null;
+                MemoryMappedViewAccessor localAccessor = null;
                 byte* ptr = null;
-                accessor.SafeMemoryMappedViewHandle.AcquirePointer(ref ptr);
-                // The accessor may be mapped at an offset inside the OS page,
-                // in which case PointerOffset is the distance from the
-                // SafeBuffer's base to the first byte of the requested view.
-                this.basePtr = ptr + accessor.PointerOffset;
+                bool pointerAcquired = false;
+                try
+                {
+                    long capacity = Math.Max(offset + length, fc.Length);
+                    const int maxAttempts = 5;
+                    int attempt = 0;
+                    while (true)
+                    {
+                        try
+                        {
+                            localMmf = MemoryMappedFile.CreateFromFile(
+                                fileStream: fc,
+                                mapName: null,
+                                capacity: capacity,
+                                access: MemoryMappedFileAccess.Read,
+#if FEATURE_MEMORYMAPPEDFILESECURITY
+                                memoryMappedFileSecurity: null,
+#endif
+                                inheritability: HandleInheritability.Inheritable,
+                                leaveOpen: true); // We dispose the FileStream explicitly.
+                            break;
+                        }
+                        catch (ArgumentOutOfRangeException e) when (e.ParamName == "capacity" && attempt < maxAttempts - 1)
+                        {
+                            Interlocked.Increment(ref MMapDirectory.s_capacityRetryCount);
+                            capacity = Math.Max(capacity, fc.Length);
+                            attempt++;
+                        }
+                    }
+                    int attemptsTaken = attempt + 1;
+                    int prior;
+                    do
+                    {
+                        prior = Volatile.Read(ref MMapDirectory.s_maxCapacityAttemptsObserved);
+                        if (attemptsTaken <= prior) break;
+                    } while (Interlocked.CompareExchange(ref MMapDirectory.s_maxCapacityAttemptsObserved, attemptsTaken, prior) != prior);
+                    // LUCENENET specific END
+
+                    localAccessor = localMmf.CreateViewAccessor(offset, length, MemoryMappedFileAccess.Read);
+
+                    localAccessor.SafeMemoryMappedViewHandle.AcquirePointer(ref ptr);
+                    pointerAcquired = true;
+
+                    this.memoryMappedFile = localMmf;
+                    this.accessor = localAccessor;
+                    // The accessor may be mapped at an offset inside the OS page,
+                    // in which case PointerOffset is the distance from the
+                    // SafeBuffer's base to the first byte of the requested view.
+                    this.basePtr = ptr + localAccessor.PointerOffset;
+                }
+                catch
+                {
+                    // The View ctor owns fc (the caller passes ownership). If
+                    // any step above fails we must release everything we
+                    // partially acquired — including fc — before rethrowing,
+                    // or we leak the FileStream/MMF/view handle.
+                    if (pointerAcquired && localAccessor != null)
+                    {
+                        try { localAccessor.SafeMemoryMappedViewHandle.ReleasePointer(); }
+                        catch { /* never propagate from cleanup */ }
+                    }
+                    localAccessor?.Dispose();
+                    localMmf?.Dispose();
+                    try { fc.Dispose(); } catch { /* never propagate from cleanup */ }
+                    this.fc = null;
+                    throw;
+                }
             }
 
             /// <summary>

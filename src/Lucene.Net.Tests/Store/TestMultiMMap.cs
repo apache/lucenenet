@@ -547,7 +547,10 @@ namespace Lucene.Net.Store
         // promptly after the root is disposed. A successful pass here is
         // therefore a *positive* result — not Inconclusive — because the
         // expected behavior is that the invariant holds throughout.
-        [Test, LuceneNetSpecific, Slow, NonParallelizable]
+        // [Nightly]: wall-clock stress loop (up to ~30s). Kept out of the
+        // default run so CI isn't lengthened, but exercised in nightly runs
+        // where catching regressions in the #1013 race path is worth the time.
+        [Test, LuceneNetSpecific, Slow, Nightly, NonParallelizable]
         public void TestConcurrentCloneReadVsDispose_Issue1013()
         {
             var dirPath = CreateTempDir("testIssue1013");
@@ -688,7 +691,8 @@ namespace Lucene.Net.Store
         //   - After join, calling Clone() + read on the disposed master
         //     from the main thread throws AlreadyClosed — pinning that a
         //     disposed root cannot silently hand out a working clone.
-        [Test, LuceneNetSpecific, Slow, NonParallelizable]
+        // [Nightly]: wall-clock stress loop (~15s). See Issue1013 rationale.
+        [Test, LuceneNetSpecific, Slow, Nightly, NonParallelizable]
         public void TestConcurrentCloneVsDispose_RaceScenario()
         {
             var dirPath = CreateTempDir("testCloneVsDispose");
@@ -780,7 +784,8 @@ namespace Lucene.Net.Store
         // Concurrent read of the SAME instance during Dispose of that
         // instance. Drain-barrier must prevent the disposer from releasing
         // the pointer while a reader is mid-CopyBlockUnaligned.
-        [Test, LuceneNetSpecific, Slow, NonParallelizable]
+        // [Nightly]: wall-clock stress loop (~15s). See Issue1013 rationale.
+        [Test, LuceneNetSpecific, Slow, Nightly, NonParallelizable]
         public void TestConcurrentReadVsSelfDispose_RaceScenario()
         {
             var dirPath = CreateTempDir("testReadVsSelfDispose");
@@ -850,7 +855,8 @@ namespace Lucene.Net.Store
         // slicer cascades Dispose to all issued slices; every in-flight
         // reader must either finish its current CopyBlockUnaligned or
         // observe the closed state cleanly (no AVE).
-        [Test, LuceneNetSpecific, Slow, NonParallelizable]
+        // [Nightly]: wall-clock stress loop (~15s). See Issue1013 rationale.
+        [Test, LuceneNetSpecific, Slow, Nightly, NonParallelizable]
         public void TestConcurrentSliceReadVsSlicerDispose_RaceScenario()
         {
             var dirPath = CreateTempDir("testSliceVsSlicerDispose");
@@ -1209,6 +1215,78 @@ namespace Lucene.Net.Store
             }
 
             sliceB.Dispose();
+        }
+
+        // Concurrent-clone read correctness. N workers each take a Clone()
+        // of the same root input, seek independently, and read the full
+        // file; every worker must observe the exact bytes that were
+        // written. Existing concurrent tests only check that reads don't
+        // throw — this test pins that readers also don't observe torn or
+        // stale bytes under contention over the shared View.basePtr.
+        [Test, LuceneNetSpecific, Slow]
+        public void TestConcurrentClonesReadIdenticalBytes()
+        {
+            var dirPath = CreateTempDir("testConcurrentClonesIntegrity");
+            using var mmapDir = new MMapDirectory(dirPath);
+            const string name = "bytes";
+            // 2 MiB — large enough that readers overlap in time, small
+            // enough that the test finishes in well under a second per
+            // iteration.
+            const int fileSize = 2 * 1024 * 1024;
+            var expected = new byte[fileSize];
+            new Random(0xC0FFEE).NextBytes(expected);
+
+            using (var io = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            {
+                io.WriteBytes(expected, 0, expected.Length);
+            }
+
+            using var root = mmapDir.OpenInput(name, NewIOContext(Random));
+
+            const int numWorkers = 8;
+            const int passesPerWorker = 20;
+            var errors = new ConcurrentBag<string>();
+            var clones = new IndexInput[numWorkers];
+            for (int i = 0; i < numWorkers; i++)
+            {
+                clones[i] = (IndexInput)root.Clone();
+            }
+
+            var start = new ManualResetEventSlim(false);
+            var threads = new Thread[numWorkers];
+            for (int i = 0; i < numWorkers; i++)
+            {
+                int idx = i;
+                threads[i] = new Thread(() =>
+                {
+                    var buf = new byte[fileSize];
+                    start.Wait();
+                    for (int pass = 0; pass < passesPerWorker && errors.IsEmpty; pass++)
+                    {
+                        clones[idx].Seek(0);
+                        clones[idx].ReadBytes(buf, 0, buf.Length);
+                        // Byte-equal check: any deviation means the read
+                        // path observed torn or stale data.
+                        for (int j = 0; j < buf.Length; j++)
+                        {
+                            if (buf[j] != expected[j])
+                            {
+                                errors.Add(
+                                    $"worker {idx} pass {pass}: byte at {j} expected 0x{expected[j]:X2}, got 0x{buf[j]:X2}");
+                                return;
+                            }
+                        }
+                    }
+                }) { IsBackground = true, Name = "concurrent-integrity-" + i };
+                threads[i].Start();
+            }
+            start.Set();
+            foreach (var t in threads) t.Join(TimeSpan.FromSeconds(30));
+
+            if (!errors.IsEmpty)
+            {
+                Assert.Fail("Concurrent-clone read corruption detected:\n" + string.Join("\n", errors));
+            }
         }
 
         // Open a 3.0 CFS index with MMapDirectory and read it end-to-end
