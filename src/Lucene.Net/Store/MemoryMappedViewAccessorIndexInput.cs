@@ -24,9 +24,9 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// LUCENENET-specific <see cref="IndexInput"/> that reads from a
-    /// <see cref="MemoryMappedViewAccessor"/> via a cached raw pointer obtained
-    /// once per instance from
+    /// LUCENENET-specific <see cref="IndexInput"/> that reads from an array of
+    /// <see cref="MemoryMappedViewAccessor"/> chunks via cached raw pointers
+    /// obtained once per chunk from
     /// <see cref="System.Runtime.InteropServices.SafeBuffer.AcquirePointer(ref byte*)"/>.
     /// This diverges from the upstream Java implementation (which uses
     /// <c>ByteBufferIndexInput</c> + <c>ByteBufferGuard</c>) in order to address
@@ -40,7 +40,7 @@ namespace Lucene.Net.Store
     ///     <c>munmap</c>/<c>UnmapViewOfFile</c> until every outstanding pointer
     ///     ref is released, which structurally prevents a reader from
     ///     dereferencing a freed mapping while any clone is still alive.
-    ///     A shared closed-flag checked on each refill observes in-flight
+    ///     A per-chunk closed-flag checked on each refill observes in-flight
     ///     Dispose so clones throw <see cref="AlreadyClosedException"/>
     ///     instead of reading stale bytes.
     ///   </description></item>
@@ -50,10 +50,21 @@ namespace Lucene.Net.Store
     ///     <c>MemoryMappedViewAccessor.ReadByte</c>/<c>ReadArray</c> call does
     ///     its own <c>AcquirePointer</c>/<c>ReleasePointer</c> + range check;
     ///     that per-call overhead is the hot spot in LZ4 decompression and
-    ///     other one-byte-at-a-time readers. Caching the pointer once and
-    ///     using <c>Unsafe.CopyBlockUnaligned</c> eliminates that overhead.
+    ///     other one-byte-at-a-time readers. Caching the pointer once per
+    ///     chunk and using <c>Unsafe.CopyBlockUnaligned</c> eliminates that
+    ///     overhead.
     ///   </description></item>
     /// </list>
+    ///
+    /// <para/>
+    /// The file is mapped as an array of fixed-size <see cref="Chunk"/>s of
+    /// <c>1 &lt;&lt; chunkSizePower</c> bytes (the last chunk may be smaller),
+    /// mirroring the upstream Java <c>ByteBufferIndexInput</c> shape. Chunking
+    /// avoids huge contiguous virtual-address reservations (helpful on 32-bit
+    /// runtimes and on long-running 64-bit processes where address space can
+    /// fragment), keeps each native mapping small enough to be reclaimed
+    /// predictably, and aligns with Lucene's typical small-working-set access
+    /// patterns.
     ///
     /// <para/>
     /// The class inherits from <see cref="BufferedIndexInput"/> so that
@@ -64,27 +75,26 @@ namespace Lucene.Net.Store
     public sealed unsafe class MemoryMappedViewAccessorIndexInput : BufferedIndexInput
     {
         /// <summary>
-        /// Shared, refcounted owner of the <see cref="MemoryMappedFile"/> +
-        /// <see cref="MemoryMappedViewAccessor"/> + cached base pointer. A
-        /// single instance is shared by the root <see cref="IndexInput"/>
-        /// returned from <c>OpenInput</c>/<c>OpenSlice</c> and every
-        /// <see cref="Clone"/> derived from it, so that disposing the root
-        /// closes all clones as Lucene's contract requires.
+        /// Shared, refcounted owner of a single chunk's
+        /// <see cref="MemoryMappedViewAccessor"/> + cached base pointer.
+        /// One <see cref="Chunk"/> per chunk-sized region of the file. The
+        /// chunk array is shared by the root <see cref="IndexInput"/> returned
+        /// from <c>OpenInput</c>/<c>OpenSlice</c> and every <see cref="Clone"/>
+        /// derived from it, so that disposing the root closes all clones as
+        /// Lucene's contract requires.
         /// </summary>
-        private sealed class View
+        internal sealed class Chunk
         {
-            private MemoryMappedFile memoryMappedFile;
             private MemoryMappedViewAccessor accessor;
-            private FileStream fc;
             internal readonly long length;
             internal readonly byte* basePtr;
             private int closed;
 
             // Reader count / closed flag: a minimal drain barrier so that
-            // Dispose waits for in-flight reads to finish before calling
+            // Close waits for in-flight reads to finish before calling
             // ReleasePointer + disposing the accessor. Without this, a reader
-            // that has already read Closed==false can still be dereferencing
-            // BasePtr when the parent's Dispose unmaps the view.
+            // that has already read closed==false can still be dereferencing
+            // basePtr when the parent's Dispose unmaps the view.
             private int inFlight;
 
             public bool IsClosed
@@ -93,99 +103,18 @@ namespace Lucene.Net.Store
                 get => Volatile.Read(ref closed) != 0;
             }
 
-            public View(FileStream fc, long offset, long length)
+            internal Chunk(MemoryMappedViewAccessor accessor, byte* basePtr, long length)
             {
-                this.fc = fc;
+                this.accessor = accessor;
+                this.basePtr = basePtr;
                 this.length = length;
-
-                if (length == 0)
-                {
-                    return;
-                }
-
-                // LUCENENET specific BEGIN: retry on capacity race (#1090).
-                // MemoryMappedFile.CreateFromFile performs an internal stat
-                // and throws ArgumentOutOfRangeException("capacity") if the
-                // on-disk file size exceeds the requested capacity. When
-                // another process/thread is appending to this file, the file
-                // can grow between when we capture fc.Length and when
-                // CreateFromFile reads the size.
-                MemoryMappedFile localMmf = null;
-                MemoryMappedViewAccessor localAccessor = null;
-                byte* ptr = null;
-                bool pointerAcquired = false;
-                try
-                {
-                    long capacity = Math.Max(offset + length, fc.Length);
-                    const int maxAttempts = 5;
-                    int attempt = 0;
-                    while (true)
-                    {
-                        try
-                        {
-                            localMmf = MemoryMappedFile.CreateFromFile(
-                                fileStream: fc,
-                                mapName: null,
-                                capacity: capacity,
-                                access: MemoryMappedFileAccess.Read,
-#if FEATURE_MEMORYMAPPEDFILESECURITY
-                                memoryMappedFileSecurity: null,
-#endif
-                                inheritability: HandleInheritability.Inheritable,
-                                leaveOpen: true); // We dispose the FileStream explicitly.
-                            break;
-                        }
-                        catch (ArgumentOutOfRangeException e) when (e.ParamName == "capacity" && attempt < maxAttempts - 1)
-                        {
-                            Interlocked.Increment(ref MMapDirectory.s_capacityRetryCount);
-                            capacity = Math.Max(capacity, fc.Length);
-                            attempt++;
-                        }
-                    }
-                    int attemptsTaken = attempt + 1;
-                    int prior;
-                    do
-                    {
-                        prior = Volatile.Read(ref MMapDirectory.s_maxCapacityAttemptsObserved);
-                        if (attemptsTaken <= prior) break;
-                    } while (Interlocked.CompareExchange(ref MMapDirectory.s_maxCapacityAttemptsObserved, attemptsTaken, prior) != prior);
-                    // LUCENENET specific END
-
-                    localAccessor = localMmf.CreateViewAccessor(offset, length, MemoryMappedFileAccess.Read);
-
-                    localAccessor.SafeMemoryMappedViewHandle.AcquirePointer(ref ptr);
-                    pointerAcquired = true;
-
-                    this.memoryMappedFile = localMmf;
-                    this.accessor = localAccessor;
-                    // The accessor may be mapped at an offset inside the OS page,
-                    // in which case PointerOffset is the distance from the
-                    // SafeBuffer's base to the first byte of the requested view.
-                    this.basePtr = ptr + localAccessor.PointerOffset;
-                }
-                catch
-                {
-                    // The View ctor owns fc (the caller passes ownership). If
-                    // any step above fails we must release everything we
-                    // partially acquired — including fc — before rethrowing,
-                    // or we leak the FileStream/MMF/view handle.
-                    if (pointerAcquired && localAccessor != null)
-                    {
-                        try { localAccessor.SafeMemoryMappedViewHandle.ReleasePointer(); }
-                        catch { /* never propagate from cleanup */ }
-                    }
-                    localAccessor?.Dispose();
-                    localMmf?.Dispose();
-                    try { fc.Dispose(); } catch { /* never propagate from cleanup */ }
-                    this.fc = null;
-                    throw;
-                }
             }
 
             /// <summary>
-            /// Enter a read. Returns false if the view is closed; the caller
-            /// must throw AlreadyClosed. Otherwise returns true and the
-            /// caller must call <see cref="ExitRead"/> in a finally block.
+            /// Enter a read. Returns false if the chunk is closed; the caller
+            /// must throw <see cref="AlreadyClosedException"/>. Otherwise
+            /// returns true and the caller must call <see cref="ExitRead"/> in
+            /// a finally block.
             /// </summary>
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool TryEnterRead()
@@ -206,7 +135,7 @@ namespace Lucene.Net.Store
             }
 
             /// <summary>
-            /// Mark the view closed and release all resources, waiting for
+            /// Mark the chunk closed and release its accessor, waiting for
             /// any in-flight reader to exit its copy first.
             /// </summary>
             public void Close()
@@ -225,35 +154,19 @@ namespace Lucene.Net.Store
                     spin.SpinOnce();
                 }
 
-                try
-                {
-                    if (accessor != null)
-                    {
-                        try
-                        {
-                            accessor.SafeMemoryMappedViewHandle.ReleasePointer();
-                        }
-                        catch
-                        {
-                            // Guard against double-release in odd failure
-                            // paths. Never propagate from dispose.
-                        }
-                        accessor.Dispose();
-                        accessor = null;
-                    }
-                }
-                finally
+                if (accessor != null)
                 {
                     try
                     {
-                        memoryMappedFile?.Dispose();
-                        memoryMappedFile = null;
+                        accessor.SafeMemoryMappedViewHandle.ReleasePointer();
                     }
-                    finally
+                    catch
                     {
-                        fc?.Dispose();
-                        fc = null;
+                        // Guard against double-release in odd failure paths.
+                        // Never propagate from dispose.
                     }
+                    accessor.Dispose();
+                    accessor = null;
                 }
             }
         }
@@ -264,38 +177,183 @@ namespace Lucene.Net.Store
         private bool isRoot = true;
 
         // Per-instance closed flag: tracks whether THIS IndexInput
-        // instance has been disposed. Independent of the shared View's
-        // closed flag, so that disposing a clone does not affect the root
+        // instance has been disposed. Independent of the per-chunk
+        // closed flags, so that disposing a clone does not affect the root
         // or sibling clones.
         private int instanceClosed;
 
-        private readonly View view;
+        // Shared chunk array + the MemoryMappedFile that owns them. All
+        // clones share the same references; only the root disposes them.
+        private readonly Chunk[] chunks;
+        private readonly MemoryMappedFile memoryMappedFile;
+        private readonly FileStream fc;
+
+        private readonly long length;
+        private readonly int chunkSizePower;
+        private readonly long chunkSizeMask;
 
         /// <summary>
-        /// Opens the entire file as a new memory-mapped view. Called from
+        /// Opens the entire file as a chunked memory-mapped view. Called from
         /// <see cref="MMapDirectory.OpenInput"/>.
         /// </summary>
-        internal MemoryMappedViewAccessorIndexInput(string resourceDescription, FileStream fc, IOContext context)
+        internal MemoryMappedViewAccessorIndexInput(string resourceDescription, FileStream fc, IOContext context, int chunkSizePower)
             : base(resourceDescription, context)
         {
             if (fc is null) throw new ArgumentNullException(nameof(fc));
-            this.view = new View(fc, 0, fc.Length);
+            this.chunkSizePower = chunkSizePower;
+            this.chunkSizeMask = (1L << chunkSizePower) - 1L;
+            this.length = fc.Length;
+            this.fc = fc;
+
+            try
+            {
+                this.memoryMappedFile = CreateMemoryMappedFile(fc, this.length);
+                this.chunks = MapChunks(this.memoryMappedFile, 0, this.length, chunkSizePower);
+            }
+            catch
+            {
+                // We took ownership of fc from the caller; on failure we
+                // must dispose what we managed to allocate and the FileStream.
+                DisposeChunks(this.chunks);
+                this.memoryMappedFile?.Dispose();
+                try { fc.Dispose(); } catch { /* never propagate from cleanup */ }
+                throw;
+            }
         }
 
         /// <summary>
-        /// Opens a slice of <paramref name="fc"/> as an independent memory-mapped
-        /// view. Each slice creates its own <see cref="MemoryMappedFile"/>/<see cref="MemoryMappedViewAccessor"/>
-        /// so slices never share view handles with one another.
+        /// Opens a slice <c>[offset, offset+length)</c> of <paramref name="fc"/>
+        /// as a chunked memory-mapped view. Each slice creates its own
+        /// <see cref="MemoryMappedFile"/> + chunk array so slices never share
+        /// view handles with one another.
         /// </summary>
         internal MemoryMappedViewAccessorIndexInput(string resourceDescription, FileStream fc,
-            long offset, long length, int bufferSize)
+            long offset, long length, int bufferSize, int chunkSizePower)
             : base(resourceDescription, bufferSize)
         {
             if (fc is null) throw new ArgumentNullException(nameof(fc));
-            this.view = new View(fc, offset, length);
+            this.chunkSizePower = chunkSizePower;
+            this.chunkSizeMask = (1L << chunkSizePower) - 1L;
+            this.length = length;
+            this.fc = fc;
+
+            try
+            {
+                this.memoryMappedFile = CreateMemoryMappedFile(fc, offset + length);
+                this.chunks = MapChunks(this.memoryMappedFile, offset, length, chunkSizePower);
+            }
+            catch
+            {
+                DisposeChunks(this.chunks);
+                this.memoryMappedFile?.Dispose();
+                try { fc.Dispose(); } catch { /* never propagate from cleanup */ }
+                throw;
+            }
         }
 
-        public override long Length => view.length;
+        public override long Length => length;
+
+        private static MemoryMappedFile CreateMemoryMappedFile(FileStream fc, long requiredCapacity)
+        {
+            if (requiredCapacity == 0)
+            {
+                return null;
+            }
+
+            // LUCENENET specific BEGIN: retry on capacity race (#1090).
+            // MemoryMappedFile.CreateFromFile performs an internal stat
+            // and throws ArgumentOutOfRangeException("capacity") if the
+            // on-disk file size exceeds the requested capacity. When
+            // another process/thread is appending to this file, the file
+            // can grow between when we capture fc.Length and when
+            // CreateFromFile reads the size.
+            long capacity = Math.Max(requiredCapacity, fc.Length);
+            const int maxAttempts = 5;
+            int attempt = 0;
+            while (true)
+            {
+                try
+                {
+                    var mmf = MemoryMappedFile.CreateFromFile(
+                        fileStream: fc,
+                        mapName: null,
+                        capacity: capacity,
+                        access: MemoryMappedFileAccess.Read,
+#if FEATURE_MEMORYMAPPEDFILESECURITY
+                        memoryMappedFileSecurity: null,
+#endif
+                        inheritability: HandleInheritability.Inheritable,
+                        leaveOpen: true); // We dispose the FileStream explicitly.
+                    int attemptsTaken = attempt + 1;
+                    int prior;
+                    do
+                    {
+                        prior = Volatile.Read(ref MMapDirectory.s_maxCapacityAttemptsObserved);
+                        if (attemptsTaken <= prior) break;
+                    } while (Interlocked.CompareExchange(ref MMapDirectory.s_maxCapacityAttemptsObserved, attemptsTaken, prior) != prior);
+                    return mmf;
+                }
+                catch (ArgumentOutOfRangeException e) when (e.ParamName == "capacity" && attempt < maxAttempts - 1)
+                {
+                    Interlocked.Increment(ref MMapDirectory.s_capacityRetryCount);
+                    capacity = Math.Max(capacity, fc.Length);
+                    attempt++;
+                }
+            }
+            // LUCENENET specific END
+        }
+
+        private static Chunk[] MapChunks(MemoryMappedFile mmf, long offset, long length, int chunkSizePower)
+        {
+            if (length == 0)
+            {
+                return Array.Empty<Chunk>();
+            }
+
+            long chunkSize = 1L << chunkSizePower;
+            int nChunks = (int)((length + chunkSize - 1) >> chunkSizePower);
+            var result = new Chunk[nChunks];
+
+            try
+            {
+                for (int i = 0; i < nChunks; i++)
+                {
+                    long chunkOffset = offset + ((long)i << chunkSizePower);
+                    long thisChunkLen = Math.Min(chunkSize, length - ((long)i << chunkSizePower));
+
+                    var accessor = mmf.CreateViewAccessor(chunkOffset, thisChunkLen, MemoryMappedFileAccess.Read);
+                    byte* ptr = null;
+                    try
+                    {
+                        accessor.SafeMemoryMappedViewHandle.AcquirePointer(ref ptr);
+                    }
+                    catch
+                    {
+                        accessor.Dispose();
+                        throw;
+                    }
+                    // The accessor may be mapped at an offset inside the OS page,
+                    // in which case PointerOffset is the distance from the
+                    // SafeBuffer's base to the first byte of the requested view.
+                    result[i] = new Chunk(accessor, ptr + accessor.PointerOffset, thisChunkLen);
+                }
+                return result;
+            }
+            catch
+            {
+                DisposeChunks(result);
+                throw;
+            }
+        }
+
+        private static void DisposeChunks(Chunk[] chunks)
+        {
+            if (chunks == null) return;
+            foreach (var c in chunks)
+            {
+                try { c?.Close(); } catch { /* never propagate from cleanup */ }
+            }
+        }
 
         protected override void ReadInternal(Span<byte> destination)
         {
@@ -303,45 +361,64 @@ namespace Lucene.Net.Store
             {
                 throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
             }
-            if (!view.TryEnterRead())
+
+            int len = destination.Length;
+            if (len == 0) return;
+
+            long pos = Position;
+            if (pos + len > length)
             {
-                throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
+                throw EOFException.Create("read past EOF: " + this);
             }
-            try
+
+            // Walk one chunk at a time; a single ReadInternal can span chunks.
+            int chunkIdx = (int)(pos >> chunkSizePower);
+            int chunkOff = (int)(pos & chunkSizeMask);
+            int dstOff = 0;
+
+            while (len > 0)
             {
-                if (view.basePtr == null)
+                Chunk chunk = chunks[chunkIdx];
+                int avail = (int)(chunk.length - chunkOff);
+                int toCopy = avail < len ? avail : len;
+
+                if (!chunk.TryEnterRead())
                 {
-                    if (destination.Length == 0)
-                    {
-                        return;
-                    }
-                    throw EOFException.Create("read past EOF: " + this);
+                    throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
+                }
+                try
+                {
+                    ref byte src = ref Unsafe.AsRef<byte>(chunk.basePtr + chunkOff);
+                    ref byte dst = ref System.Runtime.InteropServices.MemoryMarshal.GetReference(destination.Slice(dstOff));
+                    Unsafe.CopyBlockUnaligned(ref dst, ref src, (uint)toCopy);
+                }
+                finally
+                {
+                    chunk.ExitRead();
                 }
 
-                long pos = Position;
-                int len = destination.Length;
-                if (pos + len > view.length)
-                {
-                    throw EOFException.Create("read past EOF: " + this);
-                }
-
-                ref byte src = ref Unsafe.AsRef<byte>(view.basePtr + pos);
-                ref byte dst = ref System.Runtime.InteropServices.MemoryMarshal.GetReference(destination);
-                Unsafe.CopyBlockUnaligned(ref dst, ref src, (uint)len);
-            }
-            finally
-            {
-                view.ExitRead();
+                dstOff += toCopy;
+                len -= toCopy;
+                chunkIdx++;
+                chunkOff = 0;
             }
         }
 
         protected override void SeekInternal(long pos)
         {
-            if (pos < 0 || pos > view.length)
+            if (pos < 0 || pos > length)
             {
                 throw new IOException("Seek position is out of bounds: " + pos);
             }
-            if (Volatile.Read(ref instanceClosed) != 0 || view.IsClosed)
+            if (Volatile.Read(ref instanceClosed) != 0)
+            {
+                throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
+            }
+            // A clone may observe one of its chunks closed before its own
+            // instanceClosed flag flips (the cascade from the root is not
+            // atomic across all clones); surface that here too so a Seek
+            // that won't be servable by a subsequent ReadInternal fails fast.
+            if (chunks.Length > 0 && chunks[0].IsClosed)
             {
                 throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
             }
@@ -349,8 +426,8 @@ namespace Lucene.Net.Store
 
         public override object Clone()
         {
-            // Share the same View with the parent so that disposing the
-            // parent (the root IndexInput returned from OpenInput/OpenSlice)
+            // Share the same chunk array with the parent so that disposing
+            // the parent (the root IndexInput returned from OpenInput/OpenSlice)
             // closes this clone too, matching Lucene's contract.
             var clone = (MemoryMappedViewAccessorIndexInput)base.Clone();
             clone.isRoot = false;
@@ -369,13 +446,15 @@ namespace Lucene.Net.Store
             {
                 return;
             }
-            // Only the root instance owns the shared View. Clones never
-            // close the shared View, so disposing a clone does not affect
-            // the root or sibling clones. The root's Dispose cascades
-            // through the View's closed flag which all clones observe.
+            // Only the root instance owns the shared chunks. Clones never
+            // close shared chunks, so disposing a clone does not affect the
+            // root or sibling clones. The root's Dispose cascades through
+            // each chunk's closed flag which all clones observe.
             if (isRoot)
             {
-                view.Close();
+                DisposeChunks(chunks);
+                memoryMappedFile?.Dispose();
+                try { fc?.Dispose(); } catch { /* never propagate from cleanup */ }
             }
         }
     }
