@@ -6,6 +6,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -134,7 +135,7 @@ namespace Lucene.Net.Replicator
         private readonly IReplicationHandler handler;
         private readonly ISourceDirectoryFactory factory;
 
-        private readonly byte[] copyBuffer = new byte[16384];
+        private const int CopyBufferSize = 16384;
         private readonly SemaphoreSlim updateLock = new SemaphoreSlim(1, 1);
         private readonly object syncLock = new object(); // LUCENENET specific to avoid lock (this)
 
@@ -162,12 +163,38 @@ namespace Lucene.Net.Replicator
         }
 
         /// <exception cref="IOException"></exception>
-        private void CopyBytes(IndexOutput output, Stream input)
+        private static void CopyBytes(IndexOutput output, Stream input)
         {
-            int numBytes;
-            while ((numBytes = input.Read(copyBuffer, 0, copyBuffer.Length)) > 0)
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(CopyBufferSize);
+            try
             {
-                output.WriteBytes(copyBuffer, 0, numBytes);
+                int numBytes;
+                while ((numBytes = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    output.WriteBytes(buffer, 0, numBytes);
+                }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
+            }
+        }
+
+        /// <exception cref="IOException"></exception>
+        private static async Task CopyBytesAsync(IndexOutput output, Stream input, CancellationToken cancellationToken)
+        {
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(CopyBufferSize);
+            try
+            {
+                int numBytes;
+                while ((numBytes = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
+                {
+                    output.WriteBytes(buffer, 0, numBytes);
+                }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
             }
         }
 
@@ -323,12 +350,7 @@ namespace Lucene.Net.Replicator
 
                             output = directory.CreateOutput(file.FileName, IOContext.DEFAULT);
 
-                            int numBytes;
-                            byte[] buffer = new byte[16384];
-                            while ((numBytes = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
-                            {
-                                output.WriteBytes(buffer, 0, numBytes);
-                            }
+                            await CopyBytesAsync(output, input, cancellationToken).ConfigureAwait(false);
 
                             cpFiles.Add(file.FileName);
                         }
@@ -347,8 +369,10 @@ namespace Lucene.Net.Replicator
                 {
                     try
                     {
+                        // Release must run even when the caller cancelled: we need to
+                        // release the server-side session regardless.
                         if (asyncReplicator is not null)
-                            await asyncReplicator.ReleaseAsync(session.Id, cancellationToken).ConfigureAwait(false);
+                            await asyncReplicator.ReleaseAsync(session.Id, CancellationToken.None).ConfigureAwait(false);
                         else
                             replicator.Release(session.Id);
                     }
@@ -460,10 +484,19 @@ namespace Lucene.Net.Replicator
 
         protected virtual void Dispose(bool disposing)
         {
+            // LUCENENET: do not call the async-loop cleanup while holding syncLock —
+            // StopAsyncUpdateLoop needs to acquire it internally, and awaiting under
+            // a monitor would deadlock. We block on the async cleanup to keep sync
+            // Dispose semantics consistent with StopUpdateThread's behavior.
+            if (disposed || !disposing)
+                return;
+
+            StopAsyncUpdateLoop().ConfigureAwait(false).GetAwaiter().GetResult();
+
             UninterruptableMonitor.Enter(syncLock);
             try
             {
-                if (disposed || !disposing)
+                if (disposed)
                     return;
 
                 StopUpdateThread();
@@ -497,6 +530,8 @@ namespace Lucene.Net.Replicator
                 EnsureOpen();
                 if (updateThread is not null && updateThread.IsAlive)
                     throw IllegalStateException.Create("cannot start an update thread when one is running, must first call 'stopUpdateThread()'");
+                if (asyncUpdateTask is not null && !asyncUpdateTask.IsCompleted)
+                    throw IllegalStateException.Create("cannot start an update thread while the async update loop is running, must first call 'StopAsyncUpdateLoop()'");
 
                 threadName = threadName is null ? INFO_STREAM_COMPONENT : "ReplicationThread-" + threadName;
                 updateThread = new ReplicationThread(intervalInMilliseconds, threadName, DoUpdate, HandleUpdateException, updateLock);
@@ -521,9 +556,8 @@ namespace Lucene.Net.Replicator
             {
                 if (updateThread is not null)
                 {
-                    // this will trigger the thread to terminate if it awaits the lock.
-                    // otherwise, if it's in the middle of replication, we wait for it to
-                    // stop.
+                    // this will unblock the thread if it is sleeping between intervals.
+                    // if it is in the middle of replication, we wait for it to finish below.
                     updateThread.stop.Signal();
                     try
                     {
@@ -579,6 +613,8 @@ namespace Lucene.Net.Replicator
 
                 if (asyncUpdateTask != null && !asyncUpdateTask.IsCompleted)
                     throw IllegalStateException.Create("Async update loop is already running. Stop it first.");
+                if (updateThread is not null && updateThread.IsAlive)
+                    throw IllegalStateException.Create("cannot start the async update loop while the sync update thread is running, must first call 'StopUpdateThread()'");
 
                 asyncUpdateCts = new CancellationTokenSource();
                 CancellationToken ct = asyncUpdateCts.Token;
@@ -631,37 +667,58 @@ namespace Lucene.Net.Replicator
         /// </summary>
         public virtual async Task StopAsyncUpdateLoop()
         {
+            // Capture the fields under the lock, then release the lock before
+            // awaiting — awaiting under a monitor can deadlock if a continuation
+            // resumes on a different thread.
+            CancellationTokenSource? localCts;
+            Task? localTask;
             UninterruptableMonitor.Enter(syncLock);
             try
             {
-                if (asyncUpdateCts != null)
-                {
-#if FEATURE_CANCELLATIONTOKENSOURCE_CANCELASYNC
-                    await asyncUpdateCts.CancelAsync().ConfigureAwait(false);
-#else
-                    asyncUpdateCts.Cancel();
-#endif
-                    try
-                    {
-                        if (asyncUpdateTask != null)
-                        {
-                            await asyncUpdateTask.ConfigureAwait(false);
-                        }
-                    }
-                    catch (TaskCanceledException)
-                    {
-                    }
-                    finally
-                    {
-                        asyncUpdateTask = null;
-                        asyncUpdateCts.Dispose();
-                        asyncUpdateCts = null;
-                    }
-                }
+                localCts = asyncUpdateCts;
+                localTask = asyncUpdateTask;
             }
             finally
             {
                 UninterruptableMonitor.Exit(syncLock);
+            }
+
+            if (localCts is null)
+                return;
+
+#if FEATURE_CANCELLATIONTOKENSOURCE_CANCELASYNC
+            await localCts.CancelAsync().ConfigureAwait(false);
+#else
+            localCts.Cancel();
+#endif
+            try
+            {
+                if (localTask is not null)
+                {
+                    await localTask.ConfigureAwait(false);
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // expected when the loop observes cancellation
+            }
+            finally
+            {
+                localCts.Dispose();
+
+                UninterruptableMonitor.Enter(syncLock);
+                try
+                {
+                    // Only clear if another caller has not already started a new loop.
+                    if (ReferenceEquals(asyncUpdateCts, localCts))
+                        asyncUpdateCts = null;
+                    if (ReferenceEquals(asyncUpdateTask, localTask))
+                        asyncUpdateTask = null;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(syncLock);
+                }
             }
         }
 

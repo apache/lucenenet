@@ -158,28 +158,38 @@ namespace Lucene.Net.Replicator.Http
         {
             var response = await ExecuteGetAsync(
                 nameof(ReplicationService.ReplicationAction.OBTAIN),
-                ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
-                ReplicationService.REPLICATE_SOURCE_PARAM, source,
-                ReplicationService.REPLICATE_FILENAME_PARAM, fileName,
-                cancellationToken: cancellationToken).ConfigureAwait(false);
+                new[]
+                {
+                    ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
+                    ReplicationService.REPLICATE_SOURCE_PARAM, source,
+                    ReplicationService.REPLICATE_FILENAME_PARAM, fileName,
+                },
+                cancellationToken).ConfigureAwait(false);
 
-            return await DoActionAsync(response, false,
-                    async () => await GetResponseStreamWithOwnershipAsync(response, cancellationToken).ConfigureAwait(false))
-                .ConfigureAwait(false);
+            // On success, ownership of the response transfers to the returned stream
+            // (which disposes the response when the stream is disposed). On failure,
+            // we must dispose the response ourselves.
+            try
+            {
+                return await DoActionAsync(response, false,
+                        async () => await GetResponseStreamWithOwnershipAsync(response, cancellationToken).ConfigureAwait(false))
+                    .ConfigureAwait(false);
+            }
+            catch
+            {
+                response.Dispose();
+                throw;
+            }
         }
 
         /// <summary>
-        /// Publishes a new <see cref="IRevision"/> asynchronously.
-        /// Not supported in this implementation.
+        /// Not supported.
         /// </summary>
-        /// <param name="revision">The revision to publish.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns>A <see cref="Task"/> representing the operation.</returns>
-        /// <exception cref="NotSupportedException">Always thrown.</exception>
+        /// <exception cref="NotSupportedException">this replicator implementation does not support remote publishing of revisions</exception>
         public Task PublishAsync(IRevision revision, CancellationToken cancellationToken = default)
         {
-            throw UnsupportedOperationException.Create(
-                "this replicator implementation does not support remote publishing of revisions");
+            return Task.FromException(UnsupportedOperationException.Create(
+                "this replicator implementation does not support remote publishing of revisions"));
         }
 
         /// <summary>
@@ -192,8 +202,8 @@ namespace Lucene.Net.Replicator.Http
         {
             using var response = await ExecuteGetAsync(
                 nameof(ReplicationService.ReplicationAction.RELEASE),
-                ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
-                cancellationToken: cancellationToken).ConfigureAwait(false);
+                new[] { ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId },
+                cancellationToken).ConfigureAwait(false);
 
             await DoActionAsync(response, () =>
             {

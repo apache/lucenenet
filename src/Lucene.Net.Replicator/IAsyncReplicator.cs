@@ -33,9 +33,9 @@ namespace Lucene.Net.Replicator
         Task ReleaseAsync(string sessionId, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Publishing revisions is not supported in HttpReplicator; throw if called.
+        /// Publish a new <see cref="IRevision"/> for consumption by clients asynchronously.
+        /// See <see cref="IReplicator.Publish(IRevision)"/> for details.
         /// </summary>
         Task PublishAsync(IRevision revision, CancellationToken cancellationToken = default);
     }
 }
-#nullable restore

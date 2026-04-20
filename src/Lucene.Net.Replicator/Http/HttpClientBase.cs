@@ -194,7 +194,7 @@ namespace Lucene.Net.Replicator.Http
         /// <b>Internal:</b> Execute a POST request asynchronously with custom HttpContent.
         /// The <paramref name="parameters"/> argument is treated as: name1,value1,name2,value2,...
         /// </summary>
-        protected virtual async Task<HttpResponseMessage> ExecutePostAsync(string request, HttpContent content, params string[]? parameters)
+        protected virtual async Task<HttpResponseMessage> ExecutePostAsync(string request, HttpContent content, CancellationToken cancellationToken, params string[]? parameters)
         {
             EnsureOpen();
 
@@ -203,9 +203,7 @@ namespace Lucene.Net.Replicator.Http
                 Content = content
             };
 
-            var resp = await httpc.SendAsync(req).ConfigureAwait(false); // Async call
-            VerifyStatus(resp);
-            return resp;
+            return await ExecuteAsync(req, cancellationToken).ConfigureAwait(false);
         }
 
 
@@ -225,31 +223,11 @@ namespace Lucene.Net.Replicator.Http
         /// <summary>
         /// Execute a GET request asynchronously with an array of parameters.
         /// </summary>
-        protected Task<HttpResponseMessage> ExecuteGetAsync(string action, string[]? parameters, CancellationToken cancellationToken)
+        protected virtual async Task<HttpResponseMessage> ExecuteGetAsync(string action, string[]? parameters, CancellationToken cancellationToken)
         {
             EnsureOpen();
-            var url = QueryString(action, parameters);
-            return httpc.GetAsync(url, cancellationToken);
-        }
-
-        /// <summary>
-        /// Execute a GET request asynchronously with up to 3 name/value parameters.
-        /// </summary>
-        protected Task<HttpResponseMessage> ExecuteGetAsync(
-            string action,
-            string param1, string value1,
-            string? param2 = null, string? value2 = null,
-            string? param3 = null, string? value3 = null,
-            CancellationToken cancellationToken = default)
-        {
-            EnsureOpen();
-            var url = (param2 == null && param3 == null)
-                ? QueryString(action, param1, value1)
-                : QueryString(action,
-                    param1, value1,
-                    param2 ?? string.Empty, value2 ?? string.Empty,
-                    param3 ?? string.Empty, value3 ?? string.Empty);
-            return httpc.GetAsync(url, cancellationToken);
+            var req = new HttpRequestMessage(HttpMethod.Get, QueryString(action, parameters));
+            return await ExecuteAsync(req, cancellationToken).ConfigureAwait(false);
         }
 
         private HttpResponseMessage Execute(HttpRequestMessage request)
@@ -257,6 +235,16 @@ namespace Lucene.Net.Replicator.Http
             //.NET Note: Bridging from Async to Sync, this is not ideal and we could consider changing the interface to be Async or provide Async overloads
             //      and have these Sync methods with their caveats.
             var response = httpc.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false).GetAwaiter().GetResult();
+            VerifyStatus(response);
+            return response;
+        }
+
+        // LUCENENET specific - async counterpart to Execute used by ExecuteGetAsync/ExecutePostAsync.
+        // Uses ResponseHeadersRead so callers can stream large response bodies (e.g. replication files)
+        // rather than buffering them into memory, and verifies status (matching sync Execute).
+        private async Task<HttpResponseMessage> ExecuteAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var response = await httpc.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
             VerifyStatus(response);
             return response;
         }
@@ -446,7 +434,6 @@ namespace Lucene.Net.Replicator.Http
             Exception? th /* = null */;
             try
             {
-                VerifyStatus(response);
                 return await call().ConfigureAwait(false);
             }
             catch (Exception t) when (t.IsThrowable())
@@ -463,14 +450,7 @@ namespace Lucene.Net.Replicator.Http
                 {
                     if (consume)
                     {
-                        try
-                        {
-                            ConsumeQuietly(response);
-                        }
-                        catch
-                        {
-                            // ignore on purpose
-                        }
+                        ConsumeQuietly(response);
                     }
                 }
             }
