@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
     /// searcher:
     ///
     /// <code>
-    ///     // Record the current searcher, and save the returend
+    ///     // Record the current searcher, and save the returned
     ///     // token into user's search results (eg as a  hidden
     ///     // HTML form field):
     ///     long token = mgr.Record(searcher);

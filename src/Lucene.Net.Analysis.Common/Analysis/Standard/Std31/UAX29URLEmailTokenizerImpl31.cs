@@ -3157,7 +3157,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
 
         /// <summary>error messages for the codes above</summary>
         private static readonly string[] ZZ_ERROR_MSG = {
-            "Unkown internal scanner error",
+            "Unknown internal scanner error",
             "Error: could not match input",
             "Error: pushback value was too large"
         };

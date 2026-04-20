@@ -20,18 +20,18 @@
 
 -->
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -46,36 +46,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -251,7 +251,7 @@ See this blog post (http://mentaldetritus.blogspot.com/2013/03/compiling-custom-
     <value>Input file containing queries.</value>
   </data>
   <data name="BenchmarkSampleCommandDescription" xml:space="preserve">
-    <value>Sample of a performance test written programatically instead of using an algorithm file.</value>
+    <value>Sample of a performance test written programmatically instead of using an algorithm file.</value>
   </data>
   <data name="CrossCheckTermVectorsDescription" xml:space="preserve">
     <value>Cross check term vectors.</value>
@@ -335,7 +335,7 @@ See this blog post (http://mentaldetritus.blogspot.com/2013/03/compiling-custom-
     <value>Checks an index for problematic segments.</value>
   </data>
   <data name="IndexCheckCommandExtendedHelpText" xml:space="preserve">
-    <value>Basic tool to check the health of an index. 
+    <value>Basic tool to check the health of an index.
 
 As this tool checks every byte in the index, on a large index it can take quite a long time to run.</value>
   </data>
@@ -395,7 +395,7 @@ In order to make the extracted version of the index work, you have to copy the s
   <data name="IndexFixCommandExtendedHelpText" xml:space="preserve">
     <value>Basic tool to check and fix the health of an index and write a new segments file that removes reference to problematic segments.
 
-As this tool checks every byte in the index, on a large index it can take quite a long time to run. 
+As this tool checks every byte in the index, on a large index it can take quite a long time to run.
 
 WARNING: This command should only be used on an emergency basis as it will cause documents (perhaps many) to be permanently removed from the index. Always make a backup copy of your index before running this! Do not run this tool on an index that is actively being written to. You have been warned!</value>
   </data>
@@ -493,9 +493,9 @@ NOTE: This tool is unaware of documents added automatically via IndexWriter.AddD
     <value>Upgrades all segments of an index from previous Lucene.Net versions to the current segment file format.</value>
   </data>
   <data name="IndexUpgradeCommandExtendedHelpText" xml:space="preserve">
-    <value>This tool keeps only the last commit in an index; for this reason, if the incoming index has more than one commit, the tool refuses to run by default. Specify --delete-prior-commits to override this, allowing the tool to delete all but the last commit. 
+    <value>This tool keeps only the last commit in an index; for this reason, if the incoming index has more than one commit, the tool refuses to run by default. Specify --delete-prior-commits to override this, allowing the tool to delete all but the last commit.
 
-Specify an FSDirectory implementation through the --directory-type option to force its use. If not qualified by an AssemblyName, the Lucene.Net.dll assembly will be used. 
+Specify an FSDirectory implementation through the --directory-type option to force its use. If not qualified by an AssemblyName, the Lucene.Net.dll assembly will be used.
 
 WARNING: This tool may reorder document IDs! Be sure to make a backup of your index before you use this. Also, ensure you are using the correct version of this utility to match your application's version of Lucene.Net. This operation cannot be reversed.</value>
   </data>

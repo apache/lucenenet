@@ -59,7 +59,7 @@ namespace Lucene.Net.Replicator
 
         /// <summary>
         /// Returns a <see cref="Stream"/> for the given <paramref name="fileName"/> and <paramref name="source"/>. It is the
-        /// caller's respnsibility to dispose the <see cref="Stream"/> when it has been
+        /// caller's responsibility to dispose the <see cref="Stream"/> when it has been
         /// consumed.
         /// </summary>
         /// <exception cref="IOException"></exception>

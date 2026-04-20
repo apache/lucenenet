@@ -1095,7 +1095,7 @@ namespace Lucene.Net.Util.Packed
             }
             else
             {
-                throw AssertionError.Create("Unknwown format: " + format);
+                throw AssertionError.Create("Unknown format: " + format);
             }
         }
 

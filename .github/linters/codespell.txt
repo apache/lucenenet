@@ -27,7 +27,6 @@ alow
 alpha-numeric
 alredy
 als
-alternativley
 ambiguos
 ameba
 americ
@@ -331,7 +330,6 @@ previoulsy
 probablistic
 profissional
 profund
-programatically
 programer
 pronounciation
 properies
@@ -356,11 +354,6 @@ releae
 repot
 reproducability
 reproducable
-requries
-resoruces
-respnsibility
-returend
-returing
 re-use
 re-used
 re-uses
@@ -405,7 +398,6 @@ sting
 straightaway
 stye
 subseqence
-succesfully
 sucess
 suppresed
 supress
@@ -438,10 +430,7 @@ tthe
 udo
 udpate
 ue
-ugprade
 unexpexted
-unknwown
-unkown
 unser
 unter
 useable

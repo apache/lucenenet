@@ -1174,7 +1174,7 @@ namespace Lucene.Net.Index
         /// then return. </param>
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
         /// <c>false</c> to release only unmanaged resources. </param>
-        // LUCENENET specific - Added this overload to allow subclasses to dispose resoruces
+        // LUCENENET specific - Added this overload to allow subclasses to dispose resources
         // in one place without also having to override Dispose(bool).
         [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler and TestIndexWriterWithThreads
         protected virtual void Dispose(bool disposing, bool waitForMerges)

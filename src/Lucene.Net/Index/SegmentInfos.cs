@@ -694,7 +694,7 @@ namespace Lucene.Net.Index
                     if (Debugging.AssertsEnabled) Debugging.Assert(si.Dir == directory);
 
                     // If this segment is pre-4.x, perform a one-time
-                    // "ugprade" to write the .si file for it:
+                    // "upgrade" to write the .si file for it:
                     string version = si.Version;
                     if (version is null || StringHelper.VersionComparer.Compare(version, "4.0") < 0)
                     {
@@ -880,7 +880,7 @@ namespace Lucene.Net.Index
         public long Generation => generation;
 
         /// <summary>
-        /// Returns last succesfully read or written generation. </summary>
+        /// Returns last successfully read or written generation. </summary>
         public long LastGeneration => lastGeneration;
 
         /// <summary>
@@ -1509,7 +1509,7 @@ namespace Lucene.Net.Index
             segments.RemoveRange(newSegIdx, segments.Count - newSegIdx); // LUCENENET: Converted end index to length
 
             // Either we found place to insert segment, or, we did
-            // not, but only because all segments we merged becamee
+            // not, but only because all segments we merged became
             // deleted while we are merging, in which case it should
             // be the case that the new segment is also all deleted,
             // we insert it at the beginning if it should not be dropped:

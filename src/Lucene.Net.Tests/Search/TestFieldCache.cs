@@ -354,7 +354,7 @@ namespace Lucene.Net.Search
             // getDocTermOrds
             SortedSetDocValues termOrds = cache.GetDocTermOrds(reader, "theRandomUnicodeMultiValuedField");
             int numEntries = cache.GetCacheEntries().Length;
-            // ask for it again, and check that we didnt create any additional entries:
+            // ask for it again, and check that we didn't create any additional entries:
             termOrds = cache.GetDocTermOrds(reader, "theRandomUnicodeMultiValuedField");
             Assert.AreEqual(numEntries, cache.GetCacheEntries().Length);
 

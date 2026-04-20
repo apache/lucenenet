@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.En
        See also http://www.tartarus.org/~martin/PorterStemmer/index.html
 
        Bug 1 (reported by Gonzalo Parra 16/10/99) fixed as marked below.
-       Tthe words 'aed', 'eed', 'oed' leave k at 'a' for step 3, and b[k-1]
+       The words 'aed', 'eed', 'oed' leave k at 'a' for step 3, and b[k-1]
        is then out outside the bounds of b.
 
        Similarly,
