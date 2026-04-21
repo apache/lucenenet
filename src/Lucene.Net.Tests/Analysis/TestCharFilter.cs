@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using System.IO;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis
 {

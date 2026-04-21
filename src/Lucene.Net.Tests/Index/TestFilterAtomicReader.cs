@@ -3,7 +3,6 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Reflection;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {

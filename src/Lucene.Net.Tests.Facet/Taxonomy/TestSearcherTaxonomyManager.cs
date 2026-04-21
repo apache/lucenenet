@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -55,7 +54,19 @@ namespace Lucene.Net.Facet.Taxonomy
             private readonly int ordLimit;
             private readonly AtomicBoolean stop;
 
-            public IndexerThread(IndexWriter w, FacetsConfig config, ITaxonomyWriter tw, ReferenceManager<SearcherAndTaxonomy> mgr, int ordLimit, AtomicBoolean stop)
+            /// <summary>
+            /// LUCENENET-specific cancellation token for CancelAfter support.
+            /// This will be invoked if the test run exceeds the time set in the CancelAfter attribute.
+            /// </summary>
+            private readonly CancellationToken cancellationToken;
+
+            public IndexerThread(IndexWriter w,
+                FacetsConfig config,
+                ITaxonomyWriter tw,
+                ReferenceManager<SearcherAndTaxonomy> mgr,
+                int ordLimit,
+                AtomicBoolean stop,
+                CancellationToken cancellationToken)
             {
                 this.w = w;
                 this.config = config;
@@ -63,6 +74,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 this.mgr = mgr;
                 this.ordLimit = ordLimit;
                 this.stop = stop;
+                this.cancellationToken = cancellationToken;
             }
 
             public override void Run()
@@ -73,6 +85,8 @@ namespace Lucene.Net.Facet.Taxonomy
                     IList<string> paths = new JCG.List<string>();
                     while (true)
                     {
+                        cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
+
                         Document doc = new Document();
                         int numPaths = TestUtil.NextInt32(Random, 1, 5);
                         for (int i = 0; i < numPaths; i++)
@@ -160,7 +174,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // the 1 hour free limit of Azure DevOps, this was reduced to 30000.
             int ordLimit = TestNightly ? 30000 : 6000;
 
-            var indexer = new IndexerThread(w, config, tw, null, ordLimit, stop);
+            var indexer = new IndexerThread(w, config, tw, null, ordLimit, stop, CancellationToken.None);
 
             var mgr = new SearcherTaxonomyManager(w, true, null, tw);
 
@@ -258,8 +272,8 @@ namespace Lucene.Net.Facet.Taxonomy
 
         [Test]
         [Slow]
-        [Timeout(2_400_000)] // 40 minutes
-        public virtual void Test_Directory() // LUCENENET specific - name collides with property of LuceneTestCase
+        [CancelAfter(2_400_000)] // 40 minutes
+        public virtual void Test_Directory(CancellationToken cancellationToken) // LUCENENET specific - name collides with property of LuceneTestCase
         {
             Store.Directory indexDir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
@@ -279,19 +293,21 @@ namespace Lucene.Net.Facet.Taxonomy
             // the 1 hour free limit of Azure DevOps, this was reduced to 30000.
             int ordLimit = TestNightly ? 30000 : 6000;
 
-            var indexer = new IndexerThread(w, config, tw, mgr, ordLimit, stop);
+            var indexer = new IndexerThread(w, config, tw, mgr, ordLimit, stop, cancellationToken);
             indexer.Start();
 
             try
             {
                 while (!stop)
                 {
+                    cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
+
                     SearcherAndTaxonomy pair = mgr.Acquire();
                     try
                     {
                         //System.out.println("search maxOrd=" + pair.taxonomyReader.getSize());
                         FacetsCollector sfc = new FacetsCollector();
-                        pair.Searcher.Search(new MatchAllDocsQuery(), sfc);
+                        pair.Searcher.Search(new MatchAllDocsQuery(), sfc, cancellationToken);
                         Facets facets = GetTaxonomyFacetCounts(pair.TaxonomyReader, config, sfc);
                         FacetResult result = facets.GetTopChildren(10, "field");
                         if (pair.Searcher.IndexReader.NumDocs > 0)

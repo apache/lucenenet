@@ -2,7 +2,7 @@ using J2N.Threading;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
-using Assert = Lucene.Net.TestFramework.Assert;
+using System.Threading;
 
 namespace Lucene.Net.Search
 {

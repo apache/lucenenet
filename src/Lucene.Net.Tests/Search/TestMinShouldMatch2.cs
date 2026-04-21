@@ -5,7 +5,6 @@ using Lucene.Net.Index;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
-using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search

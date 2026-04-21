@@ -336,7 +336,7 @@ namespace Lucene.Net.Analysis
             CheckOneTerm(analyzer, "foo", "foo");
             CheckOneTerm(analyzer, "bar", "bar");
 
-            LuceneSystemException ex = Assert.Throws<LuceneSystemException>(analyzer.Dispose)!;
+            LuceneSystemException ex = NUnitAssert.Throws<LuceneSystemException>(analyzer.Dispose)!;
             Assert.AreEqual(1, ex.GetSuppressed().Length);
         }
 
@@ -364,7 +364,7 @@ namespace Lucene.Net.Analysis
             CheckOneTerm(analyzer, "foo", "foo");
             CheckOneTerm(analyzer, "bar", "bar");
 
-            LuceneSystemException ex = Assert.Throws<LuceneSystemException>(analyzer.Dispose)!;
+            LuceneSystemException ex = NUnitAssert.Throws<LuceneSystemException>(analyzer.Dispose)!;
             Assert.AreEqual(2, ex.GetSuppressed().Length);
         }
 

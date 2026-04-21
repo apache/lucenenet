@@ -8,7 +8,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using Assert = Lucene.Net.TestFramework.Assert;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
@@ -262,8 +262,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         [Test]
         [Slow]
-        [Timeout(1_200_000)] // 20 minutes
-        public virtual void TestConcurrency()
+        [CancelAfter(1_200_000)] // 20 minutes
+        public virtual void TestConcurrency(CancellationToken cancellationToken)
         {
             int ncats = AtLeast(100000); // add many categories
             int range = ncats * 3; // affects the categories selection
@@ -297,7 +297,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             ThreadJob[] addThreads = new ThreadJob[AtLeast(4)];
             for (int z = 0; z < addThreads.Length; z++)
             {
-                addThreads[z] = new ThreadAnonymousClass(range, numCats, values, tw);
+                addThreads[z] = new ThreadAnonymousClass(range, numCats, values, tw, cancellationToken);
             }
 
             foreach (var t in addThreads)
@@ -306,6 +306,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
             foreach (var t in addThreads)
             {
+                cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
                 t.Join();
             }
             tw.Dispose();
@@ -352,12 +353,23 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             private readonly ConcurrentDictionary<string, string> values;
             private readonly DirectoryTaxonomyWriter tw;
 
-            public ThreadAnonymousClass(int range, AtomicInt32 numCats, ConcurrentDictionary<string, string> values, DirectoryTaxonomyWriter tw)
+            /// <summary>
+            /// LUCENENET-specific cancellation token for CancelAfter support.
+            /// This will be invoked if the test run exceeds the configured time of the CancelAfter attribute.
+            /// </summary>
+            private readonly CancellationToken cancellationToken;
+
+            public ThreadAnonymousClass(int range,
+                AtomicInt32 numCats,
+                ConcurrentDictionary<string, string> values,
+                DirectoryTaxonomyWriter tw,
+                CancellationToken cancellationToken)
             {
                 this.range = range;
                 this.numCats = numCats;
                 this.values = values;
                 this.tw = tw;
+                this.cancellationToken = cancellationToken;
             }
 
             public override void Run()
@@ -365,6 +377,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 Random random = Random;
                 while (numCats.DecrementAndGet() > 0)
                 {
+                    cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
+
                     try
                     {
                         int value = random.Next(range);

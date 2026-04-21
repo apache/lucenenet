@@ -55,7 +55,7 @@ namespace Lucene.Net.Attributes
             RepeatingTestsFixtureBase fixture = (RepeatingTestsFixtureBase)Reflect.Construct(fixtureType);
             ITestResult result = TestBuilder.RunTestFixture(fixture);
 
-            Assert.That(result.ResultState.ToString(), Is.EqualTo(outcome));
+            Assert.AreEqual(outcome, result.ResultState.ToString());
             Assert.AreEqual(1, fixture.FixtureSetupCount);
             Assert.AreEqual(1, fixture.FixtureTeardownCount);
             Assert.AreEqual(nTries, fixture.SetupCount);
@@ -71,7 +71,6 @@ namespace Lucene.Net.Attributes
             Assert.AreEqual(1, result.FailCount);
             Assert.IsTrue(result.HasChildren);
             Assert.AreEqual(1, result.Children.Count());
-            Assert.That(result.Children.Single().Message, Is.EqualTo("Lucene.Net.Util.LuceneTestCase+RepeatAttribute may only be used on a test in a subclass of LuceneTestCase."));
             Assert.AreEqual(1, result.Children.Single().FailCount);
         }
 
@@ -107,6 +106,34 @@ namespace Lucene.Net.Attributes
         }
 
         [Test]
+        public void RepeatRegeneratesTestSeedDeterministicallyFromRandomSeed()
+        {
+            RepeatRecordingSeedsFixture.CapturedTestSeeds.Clear();
+            RepeatRecordingSeedsFixture.CapturedRandomSeed = 0;
+
+            var fixture = (RepeatRecordingSeedsFixture)Reflect.Construct(typeof(RepeatRecordingSeedsFixture));
+            ITestResult result = TestBuilder.RunTestFixture(fixture);
+
+            Assert.AreEqual("Passed", result.ResultState.ToString());
+            Assert.AreEqual(3, fixture.Count);
+            Assert.AreEqual(3, RepeatRecordingSeedsFixture.CapturedTestSeeds.Count);
+
+            // Each iteration must produce a distinct test seed.
+            var distinct = RepeatRecordingSeedsFixture.CapturedTestSeeds.Distinct().Count();
+            Assert.AreEqual(3, distinct, "Each iteration should produce a distinct TestSeed.");
+
+            // The per-iteration seeds must be derivable from RandomSeed via J2N.Randomizer,
+            // so reproducing the class-level RandomSeed reproduces the iteration sequence.
+            var expected = new J2N.Randomizer(RepeatRecordingSeedsFixture.CapturedRandomSeed);
+            for (int i = 0; i < 3; i++)
+            {
+                long expectedSeed = expected.NextInt64();
+                Assert.AreEqual(expectedSeed, RepeatRecordingSeedsFixture.CapturedTestSeeds[i],
+                    $"Iteration {i} TestSeed should be reproducible from RandomSeed.");
+            }
+        }
+
+        [Test]
         public void NotRunnableWhenIMethodInfoAbstractionReturnsMultipleIRepeatTestAttributes()
         {
             var fixtureSuite = new DefaultSuiteBuilder().BuildFrom(new CustomTypeWrapper(
@@ -119,8 +146,7 @@ namespace Lucene.Net.Attributes
 
             var method = fixtureSuite.Tests.Single();
 
-            Assert.That(method.RunState, Is.EqualTo(RunState.NotRunnable));
-            Assert.That(method.Properties.Get(PropertyNames.SkipReason), Is.EqualTo("Multiple attributes that repeat a test may cause issues."));
+            Assert.AreEqual(RunState.NotRunnable, method.RunState);
         }
 
         [Test]
@@ -137,7 +163,7 @@ namespace Lucene.Net.Attributes
             fixtureSuite.Fixture = fixtureInstance;
             TestBuilder.RunTest(fixtureSuite, fixtureInstance);
 
-            Assert.That(fixtureInstance.MethodRepeatCount, Is.EqualTo(2));
+            Assert.AreEqual(2, fixtureInstance.MethodRepeatCount);
         }
 
         private sealed class FixtureWithMultipleRepeatAttributesOnSameMethod

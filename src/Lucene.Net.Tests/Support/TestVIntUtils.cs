@@ -3,7 +3,6 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Support
 {

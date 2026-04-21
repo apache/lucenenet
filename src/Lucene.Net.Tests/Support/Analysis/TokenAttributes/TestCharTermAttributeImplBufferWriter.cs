@@ -216,7 +216,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             var output = new CharTermAttribute();
             Span<char> span = output.GetSpan(sizeHint);
             // LUCENENET specific: due to our oversize logic, changed to GreaterOrEqual
-            Assert.GreaterOrEqual(span.Length, sizeHint <= DefaultBufferSize ? DefaultBufferSize : sizeHint);
+            NUnitAssert.GreaterOrEqual(span.Length, sizeHint <= DefaultBufferSize ? DefaultBufferSize : sizeHint);
         }
 
         [Test]
@@ -234,7 +234,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             var output = new CharTermAttribute();
             Memory<char> memory = output.GetMemory(sizeHint);
             // LUCENENET specific: due to our oversize logic, changed to GreaterOrEqual
-            Assert.GreaterOrEqual(memory.Length, sizeHint <= DefaultBufferSize ? DefaultBufferSize : sizeHint);
+            NUnitAssert.GreaterOrEqual(memory.Length, sizeHint <= DefaultBufferSize ? DefaultBufferSize : sizeHint);
         }
 
         [Test]

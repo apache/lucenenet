@@ -1,7 +1,6 @@
 using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using NUnit.Framework;
 using System.Globalization;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.QueryParsers.Support.Flexible.Core.Messages
 {

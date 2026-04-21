@@ -27,4 +27,9 @@
   </ItemGroup>
 
   <Import Label="Binary Serialization Support for Tests" Project="$(SolutionDir).build/TestSerialization.targets" />
+
+  <ItemGroup Label="Global Usings for Tests">
+    <Compile Include="$(SolutionDir)src/GlobalTestUsings.cs" />
+  </ItemGroup>
+
 </Project>

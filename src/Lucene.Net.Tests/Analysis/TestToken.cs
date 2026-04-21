@@ -4,7 +4,6 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis

@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using Assert = Lucene.Net.TestFramework.Assert;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index

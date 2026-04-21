@@ -1,5 +1,6 @@
 // Source: https://github.com/nunit/nunit/blob/v3.14.0/src/NUnitFramework/testdata/RepeatedTestFixture.cs
 
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -92,7 +93,7 @@ namespace Lucene.Net.TestData.RepeatingTests
         public void Test()
         {
             Count++;
-            Assert.Ignore("Ignoring");
+            NUnitAssert.Ignore("Ignoring");
         }
     }
 
@@ -104,7 +105,7 @@ namespace Lucene.Net.TestData.RepeatingTests
             Count++;
 
             if (Count == 2)
-                Assert.Ignore("Ignoring");
+                NUnitAssert.Ignore("Ignoring");
         }
     }
 
@@ -116,7 +117,7 @@ namespace Lucene.Net.TestData.RepeatingTests
             Count++;
 
             if (Count == 3)
-                Assert.Ignore("Ignoring");
+                NUnitAssert.Ignore("Ignoring");
         }
     }
 
@@ -175,7 +176,7 @@ namespace Lucene.Net.TestData.RepeatingTests
         [Test, Repeat(3)]
         public void PassesTwoTimes()
         {
-            Assert.That(Count, Is.EqualTo(TestContext.CurrentContext.CurrentRepeatCount), "expected CurrentRepeatCount to be incremented only after first two attempts");
+            NUnitAssert.That(Count, Is.EqualTo(TestContext.CurrentContext.CurrentRepeatCount), "expected CurrentRepeatCount to be incremented only after first two attempts");
             if (Count > 1)
             {
                 Assert.Fail("forced failure on 3rd repetition");
@@ -190,6 +191,21 @@ namespace Lucene.Net.TestData.RepeatingTests
         public void AlwaysFails()
         {
             // Intentionally empty
+        }
+    }
+
+    public class RepeatRecordingSeedsFixture : RepeatingTestsFixtureBase
+    {
+        public static readonly List<long> CapturedTestSeeds = new List<long>();
+        public static long CapturedRandomSeed;
+
+        [Test, Repeat(3)]
+        public void RecordSeeds()
+        {
+            var ctx = RandomizedContext.CurrentContext;
+            CapturedRandomSeed = ctx.RandomSeed;
+            CapturedTestSeeds.Add(ctx.TestSeed);
+            Count++;
         }
     }
 }

@@ -2,13 +2,13 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
 using System.Text;
-using Assert = Lucene.Net.TestFramework.Assert;
 using BitSet = Lucene.Net.Util.OpenBitSet;
 
 namespace Lucene.Net.Search

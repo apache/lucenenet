@@ -4,7 +4,6 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
