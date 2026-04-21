@@ -47,6 +47,9 @@
     <LibraryTargetFrameworks>net10.0;net8.0;netstandard2.0;net462</LibraryTargetFrameworks>
     <LibraryTargetFrameworks Condition=" '$(IsLegacyVisualStudioVersion)' == 'true' ">net8.0</LibraryTargetFrameworks>
 
+    <TestFrameworkTargetFrameworks>net10.0;net8.0;net462</TestFrameworkTargetFrameworks>
+    <TestFrameworkTargetFrameworks Condition=" '$(IsLegacyVisualStudioVersion)' == 'true' ">net8.0</TestFrameworkTargetFrameworks>
+
     <NetCoreOnlyTargetFrameworks>net10.0;net8.0</NetCoreOnlyTargetFrameworks>
     <NetCoreOnlyTargetFrameworks Condition=" '$(IsLegacyVisualStudioVersion)' == 'true' ">net8.0</NetCoreOnlyTargetFrameworks>
   </PropertyGroup>

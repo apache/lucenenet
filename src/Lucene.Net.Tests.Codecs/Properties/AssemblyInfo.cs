@@ -36,13 +36,14 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("39e5e0c8-c1d3-4583-b9f7-8fbd695e5601")]
 
-
-
-
 // LUCENENET specific - only allow tests in this assembly to run one at a time
 // to prevent polluting shared state.
 [assembly: LevelOfParallelism(1)]
 
+#if FEATURE_NUNIT_TIMEOUTATTRIBUTE
 // LUCENENET specific - time out this test project at 50 minutes to allow for time before this
 // test runs and the results to be uploaded before the 60 minute Azure DevOps job cutoff for easier troubleshooting
+#pragma warning disable CS0618 // Type or member is obsolete
 [assembly: Timeout(3000000)]
+#pragma warning restore CS0618 // Type or member is obsolete
+#endif

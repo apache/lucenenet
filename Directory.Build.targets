@@ -157,6 +157,10 @@
 
     <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONROOT_PROVIDERS</DefineConstants>
 
+    <!-- NUnit's TimeoutAttribute does not work on modern .NET, and now errors at runtime.
+         See docs here: https://docs.nunit.org/articles/nunit/writing-tests/attributes/timeout.html -->
+    <DefineConstants>$(DefineConstants);FEATURE_NUNIT_TIMEOUTATTRIBUTE</DefineConstants>
+
   </PropertyGroup>
 
   <!-- Features in .NET Framework 4.5+ -->

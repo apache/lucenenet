@@ -19,7 +19,9 @@
  *
 */
 
+#if FEATURE_NUNIT_TIMEOUTATTRIBUTE
 using NUnit.Framework;
+#endif
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -37,6 +39,10 @@ using System.Runtime.InteropServices;
 [assembly: Guid("a6511598-3008-4a3b-ae68-2d1da792ca8a")]
 
 
+#if FEATURE_NUNIT_TIMEOUTATTRIBUTE
 // LUCENENET specific - time out this test project at 47 minutes to allow for time before this
 // test runs and the results to be uploaded before the 60 minute Azure DevOps job cutoff for easier troubleshooting
+#pragma warning disable CS0618 // Type or member is obsolete
 [assembly: Timeout(2820000)]
+#pragma warning restore CS0618 // Type or member is obsolete
+#endif

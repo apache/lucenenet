@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using JCG = J2N.Collections.Generic;
-using Assert = Lucene.Net.TestFramework.Assert;
 using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index

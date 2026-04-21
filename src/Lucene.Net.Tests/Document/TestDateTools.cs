@@ -5,7 +5,6 @@ using NUnit.Framework;
 using System;
 using System.Globalization;
 using TimeZoneConverter;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Documents
 {

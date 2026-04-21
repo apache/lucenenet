@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
 {

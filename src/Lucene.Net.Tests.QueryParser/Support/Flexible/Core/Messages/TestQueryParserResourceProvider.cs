@@ -2,7 +2,6 @@ using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Globalization;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.QueryParsers.Support.Flexible.Core.Messages // LUCENENET: There is no control over the namespace for code generation other than the folder, so we must use this namespace
 {

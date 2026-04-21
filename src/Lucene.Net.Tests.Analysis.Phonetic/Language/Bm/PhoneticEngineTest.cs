@@ -2,7 +2,6 @@ using J2N.Text;
 using NUnit.Framework;
 using System;
 using System.Text.RegularExpressions;
-using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Phonetic.Language.Bm

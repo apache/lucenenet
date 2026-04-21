@@ -5,7 +5,6 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
@@ -32,11 +31,11 @@ namespace Lucene.Net.Index
     /// Tests for <see cref="DocumentsWriterStallControl"/>
     /// </summary>
     [TestFixture]
-    [Timeout(900_000)] // 15 minutes
+    [CancelAfter(900_000)] // 15 minutes
     public class TestDocumentsWriterStallControl : LuceneTestCase
     {
         [Test]
-        public virtual void TestSimpleStall()
+        public virtual void TestSimpleStall(CancellationToken cancellationToken)
         {
             DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
 
@@ -45,7 +44,7 @@ namespace Lucene.Net.Index
             Start(waitThreads);
             Assert.IsFalse(ctrl.HasBlocked);
             Assert.IsFalse(ctrl.AnyStalledThreads());
-            Join(waitThreads);
+            Join(waitThreads, cancellationToken);
 
             // now stall threads and wake them up again
             ctrl.UpdateStalled(true);
@@ -56,11 +55,11 @@ namespace Lucene.Net.Index
             Assert.IsTrue(ctrl.AnyStalledThreads());
             ctrl.UpdateStalled(false);
             Assert.IsFalse(ctrl.AnyStalledThreads());
-            Join(waitThreads);
+            Join(waitThreads, cancellationToken);
         }
 
         [Test]
-        public virtual void TestRandom()
+        public virtual void TestRandom(CancellationToken cancellationToken)
         {
             DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
             ctrl.UpdateStalled(false);
@@ -89,7 +88,7 @@ namespace Lucene.Net.Index
                     Thread.Sleep(1);
                 }
             }
-            Join(stallThreads);
+            Join(stallThreads, cancellationToken);
         }
 
         private sealed class ThreadAnonymousClass : ThreadJob
@@ -118,7 +117,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestAccquireReleaseRace()
+        public virtual void TestAcquireReleaseRace(CancellationToken cancellationToken)
         {
             DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
             ctrl.UpdateStalled(false);
@@ -133,22 +132,22 @@ namespace Lucene.Net.Index
             IList<Exception> exceptions = new SynchronizedList<Exception>();
             for (int i = 0; i < numReleasers; i++)
             {
-                threads[i] = new Updater(stop, checkPoint, ctrl, sync, true, exceptions);
+                threads[i] = new Updater(stop, checkPoint, ctrl, sync, true, exceptions, cancellationToken);
             }
             for (int i = numReleasers; i < numReleasers + numStallers; i++)
             {
-                threads[i] = new Updater(stop, checkPoint, ctrl, sync, false, exceptions);
+                threads[i] = new Updater(stop, checkPoint, ctrl, sync, false, exceptions, cancellationToken);
             }
             for (int i = numReleasers + numStallers; i < numReleasers + numStallers + numWaiters; i++)
             {
-                threads[i] = new Waiter(stop, checkPoint, ctrl, sync, exceptions);
+                threads[i] = new Waiter(stop, checkPoint, ctrl, sync, exceptions, cancellationToken);
             }
 
             Start(threads);
             int iters = AtLeast(10000);
             //float checkPointProbability = TestNightly ? 0.5f : 0.1f;
             // LUCENENET specific - reduced probability on x86 to prevent it from timing out.
-            float checkPointProbability = TestNightly ? (Lucene.Net.Util.Constants.RUNTIME_IS_64BIT ? 0.5f : 0.25f) : 0.1f;
+            float checkPointProbability = TestNightly ? (Util.Constants.RUNTIME_IS_64BIT ? 0.5f : 0.25f) : 0.1f;
             for (int i = 0; i < iters; i++)
             {
                 if (checkPoint)
@@ -170,7 +169,7 @@ namespace Lucene.Net.Index
 
                     checkPoint.Value = false;
                     sync.waiter.Signal();
-                    sync.leftCheckpoint.Wait();
+                    sync.leftCheckpoint.Wait(cancellationToken);
                 }
                 Assert.IsFalse(checkPoint);
                 Assert.AreEqual(0, sync.waiter.CurrentCount);
@@ -191,7 +190,7 @@ namespace Lucene.Net.Index
             checkPoint.Value = false;
             stop.Value = true;
             sync.waiter.Signal();
-            sync.leftCheckpoint.Wait();
+            sync.leftCheckpoint.Wait(cancellationToken);
 
             for (int i = 0; i < threads.Length; i++)
             {
@@ -207,7 +206,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void AssertState(int numReleasers, int numStallers, int numWaiters, ThreadJob[] threads, DocumentsWriterStallControl ctrl)
+        private static void AssertState(int numReleasers, int numStallers, int numWaiters, ThreadJob[] threads, DocumentsWriterStallControl ctrl)
         {
             int millisToSleep = 100;
             while (true)
@@ -247,7 +246,18 @@ namespace Lucene.Net.Index
             internal AtomicBoolean stop;
             internal IList<Exception> exceptions;
 
-            public Waiter(AtomicBoolean stop, AtomicBoolean checkPoint, DocumentsWriterStallControl ctrl, Synchronizer sync, IList<Exception> exceptions)
+            /// <summary>
+            /// LUCENENET-specific cancellation token for CancelAfter support.
+            /// This will be invoked if the test run exceeds the timeout configured in the attribute.
+            /// </summary>
+            private readonly CancellationToken cancellationToken;
+
+            public Waiter(AtomicBoolean stop,
+                AtomicBoolean checkPoint,
+                DocumentsWriterStallControl ctrl,
+                Synchronizer sync,
+                IList<Exception> exceptions,
+                CancellationToken cancellationToken)
                 : base("waiter")
             {
                 this.stop = stop;
@@ -255,6 +265,7 @@ namespace Lucene.Net.Index
                 this.ctrl = ctrl;
                 this.sync = sync;
                 this.exceptions = exceptions;
+                this.cancellationToken = cancellationToken;
             }
 
             public override void Run()
@@ -263,6 +274,8 @@ namespace Lucene.Net.Index
                 {
                     while (!stop)
                     {
+                        cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
+
                         ctrl.WaitIfStalled();
                         if (checkPoint)
                         {
@@ -295,7 +308,19 @@ namespace Lucene.Net.Index
             internal bool release;
             internal IList<Exception> exceptions;
 
-            public Updater(AtomicBoolean stop, AtomicBoolean checkPoint, DocumentsWriterStallControl ctrl, Synchronizer sync, bool release, IList<Exception> exceptions)
+            /// <summary>
+            /// LUCENENET-specific cancellation token for CancelAfter support.
+            /// This will be invoked if the test run exceeds the timeout configured in the attribute.
+            /// </summary>
+            private readonly CancellationToken cancellationToken;
+
+            public Updater(AtomicBoolean stop,
+                AtomicBoolean checkPoint,
+                DocumentsWriterStallControl ctrl,
+                Synchronizer sync,
+                bool release,
+                IList<Exception> exceptions,
+                CancellationToken cancellationToken)
                 : base("updater")
             {
                 this.stop = stop;
@@ -312,6 +337,8 @@ namespace Lucene.Net.Index
                 {
                     while (!stop)
                     {
+                        cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
+
                         int internalIters = release && Random.NextBoolean() ? AtLeast(5) : 1;
                         for (int i = 0; i < internalIters; i++)
                         {
@@ -379,10 +406,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        public static void Join(ThreadJob[] toJoin)
+        public static void Join(ThreadJob[] toJoin, CancellationToken token)
         {
             foreach (ThreadJob thread in toJoin)
             {
+                token.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
                 thread.Join();
             }
         }

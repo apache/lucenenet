@@ -1,12 +1,12 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
+using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System.Collections.Generic;
 using RandomizedTesting.Generators;
 using JCG = J2N.Collections.Generic;
-using Assert = Lucene.Net.TestFramework.Assert;
 using Test = NUnit.Framework.TestAttribute;
 
 namespace Lucene.Net.Index

@@ -8,6 +8,7 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
@@ -15,7 +16,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using static Lucene.Net.Index.TermsEnum;
-using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 using Test = NUnit.Framework.TestAttribute;
 

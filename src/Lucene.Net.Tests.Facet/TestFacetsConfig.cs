@@ -1,7 +1,6 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
 using NUnit.Framework;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet
 {

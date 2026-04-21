@@ -11,7 +11,6 @@ using System.Globalization;
 using System.Text;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {

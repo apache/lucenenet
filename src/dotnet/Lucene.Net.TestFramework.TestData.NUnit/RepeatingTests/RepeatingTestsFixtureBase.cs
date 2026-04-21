@@ -3,7 +3,6 @@
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.TestData.RepeatingTests
 {

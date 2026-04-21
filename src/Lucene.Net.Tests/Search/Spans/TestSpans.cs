@@ -6,7 +6,6 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Spans
 {

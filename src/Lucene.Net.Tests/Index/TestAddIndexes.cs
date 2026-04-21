@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -793,10 +792,12 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal virtual void JoinThreads()
+            internal virtual void JoinThreads(CancellationToken cancellationToken = default)
             {
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
+                    cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
+
                     threads[i].Join();
                 }
             }
@@ -894,8 +895,8 @@ namespace Lucene.Net.Index
         // LUCENE-1335: test simultaneous addIndexes & commits
         // from multiple threads
         [Test]
-        [Timeout(300_000)] // 5 minutes
-        public virtual void TestAddIndexesWithThreads()
+        [CancelAfter(300_000)] // 5 minutes
+        public virtual void TestAddIndexesWithThreads(CancellationToken cancellationToken)
         {
             int NUM_ITER = TestNightly ? 15 : 5;
             const int NUM_COPY = 3;
@@ -907,7 +908,7 @@ namespace Lucene.Net.Index
                 AddDoc(c.writer2);
             }
 
-            c.JoinThreads();
+            c.JoinThreads(cancellationToken);
 
             int expectedNumDocs = 100 + NUM_COPY * (4 * NUM_ITER / 5) * RunAddIndexesThreads.NUM_THREADS * RunAddIndexesThreads.NUM_INIT_DOCS;
             Assert.AreEqual(expectedNumDocs, c.writer2.NumDocs, "expected num docs don't match - failures: " + Environment.NewLine
@@ -1090,8 +1091,8 @@ namespace Lucene.Net.Index
 
         // LUCENE-1335: test simultaneous addIndexes & close
         [Test]
-        [Timeout(300_000)] // 5 minutes
-        public virtual void TestAddIndexesWithRollback()
+        [CancelAfter(300_000)] // 5 minutes
+        public virtual void TestAddIndexesWithRollback(CancellationToken cancellationToken)
         {
             int NUM_COPY = TestNightly ? 50 : 5;
             CommitAndAddIndexes3 c = new CommitAndAddIndexes3(NUM_COPY);
@@ -1107,7 +1108,7 @@ namespace Lucene.Net.Index
             c.didClose = true;
             c.writer2.Rollback();
 
-            c.JoinThreads();
+            c.JoinThreads(cancellationToken);
 
             c.CloseDir();
 

@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
-using Assert = Lucene.Net.TestFramework.Assert;
 using RandomizedTesting.Generators;
 
 namespace Lucene.Net.Index
@@ -177,8 +176,8 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        [Timeout(600_000)] // 10 minutes
-        public virtual void Test2()
+        [CancelAfter(600_000)] // 10 minutes
+        public virtual void Test2(CancellationToken cancellationToken)
         {
             Random random = Random;
             int NUM_DOCS = AtLeast(100);
@@ -230,6 +229,8 @@ namespace Lucene.Net.Index
 
                 if (random.Next(40) == 17)
                 {
+                    cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
+
                     // force flush
                     writer.GetReader().Dispose();
                 }
@@ -253,6 +254,8 @@ namespace Lucene.Net.Index
 
             foreach (ThreadJob thread in threads)
             {
+                cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
+
                 thread.Join();
             }
 
