@@ -12,7 +12,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Store
 {

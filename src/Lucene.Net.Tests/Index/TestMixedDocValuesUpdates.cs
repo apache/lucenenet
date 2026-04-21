@@ -7,7 +7,7 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
-using Assert = Lucene.Net.TestFramework.Assert;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index

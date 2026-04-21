@@ -4,7 +4,6 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using NUnit.Framework;
-using Assert = Lucene.Net.TestFramework.Assert;
 using J2N.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory

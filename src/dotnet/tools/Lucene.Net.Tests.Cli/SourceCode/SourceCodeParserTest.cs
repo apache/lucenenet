@@ -2,8 +2,6 @@ using J2N;
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System.IO;
-using System.Reflection;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Cli.SourceCode
 {

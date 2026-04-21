@@ -22,7 +22,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(LibraryTargetFrameworks)</TargetFrameworks>
+    <TargetFrameworks>$(TestFrameworkTargetFrameworks)</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.TestFramework.TestData.NUnit</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
@@ -47,6 +47,10 @@
 
   <ItemGroup>
     <PackageReference Include="NUnit" Version="$(NUnitPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Label="Global Usings for Tests">
+    <Compile Include="$(SolutionDir)src\GlobalTestUsings.cs" />
   </ItemGroup>
 
 </Project>

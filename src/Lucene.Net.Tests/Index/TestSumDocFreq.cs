@@ -1,7 +1,6 @@
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {

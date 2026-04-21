@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JCG = J2N.Collections.Generic;
-using Assert = Lucene.Net.TestFramework.Assert;
 using RandomizedTesting.Generators;
 
 namespace Lucene.Net.Search

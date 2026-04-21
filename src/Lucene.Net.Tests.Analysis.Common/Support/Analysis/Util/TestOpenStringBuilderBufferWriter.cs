@@ -237,14 +237,14 @@ namespace Lucene.Net.Analysis.Util
                 var output = new OpenStringBuilder(256);
                 Span<char> span = output.GetSpan(sizeHint);
                 // LUCENENET specific: due to our oversize logic, changed to GreaterOrEqual and removed sizeHint addend
-                Assert.GreaterOrEqual(span.Length, sizeHint <= 256 ? 256 : sizeHint);
+                NUnitAssert.GreaterOrEqual(span.Length, sizeHint <= 256 ? 256 : sizeHint);
             }
 
             {
                 var output = new OpenStringBuilder(1000);
                 Span<char> span = output.GetSpan(sizeHint);
                 // LUCENENET specific: due to our oversize logic, changed to GreaterOrEqual and removed sizeHint addend
-                Assert.GreaterOrEqual(span.Length, sizeHint <= 1000 ? 1000 : sizeHint);
+                NUnitAssert.GreaterOrEqual(span.Length, sizeHint <= 1000 ? 1000 : sizeHint);
             }
         }
 
@@ -288,14 +288,14 @@ namespace Lucene.Net.Analysis.Util
                 var output = new OpenStringBuilder(256);
                 Memory<char> memory = output.GetMemory(sizeHint);
                 // LUCENENET specific: due to our oversize logic, changed to GreaterOrEqual and removed sizeHint addend
-                Assert.GreaterOrEqual(memory.Length, sizeHint <= 256 ? 256 : sizeHint);
+                NUnitAssert.GreaterOrEqual(memory.Length, sizeHint <= 256 ? 256 : sizeHint);
             }
 
             {
                 var output = new OpenStringBuilder(1000);
                 Memory<char> memory = output.GetMemory(sizeHint);
                 // LUCENENET specific: due to our oversize logic, changed to GreaterOrEqual and removed sizeHint addend
-                Assert.GreaterOrEqual(memory.Length, sizeHint <= 1000 ? 1000 : sizeHint);
+                NUnitAssert.GreaterOrEqual(memory.Length, sizeHint <= 1000 ? 1000 : sizeHint);
             }
         }
 

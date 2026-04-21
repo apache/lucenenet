@@ -2,7 +2,6 @@ using Lucene.Net.Expressions.JS;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Expressions
 {

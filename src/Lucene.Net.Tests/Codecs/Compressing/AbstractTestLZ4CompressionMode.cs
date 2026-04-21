@@ -2,7 +2,6 @@ using J2N.Text;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System.Text;
-using Assert = Lucene.Net.TestFramework.Assert;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
 namespace Lucene.Net.Codecs.Compressing

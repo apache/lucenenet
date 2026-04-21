@@ -8,7 +8,6 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 #endif
 using System;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Codecs.PerField
 {

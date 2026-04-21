@@ -1,8 +1,8 @@
 using J2N.Text;
+using Lucene.Net.TestFramework;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis
 {

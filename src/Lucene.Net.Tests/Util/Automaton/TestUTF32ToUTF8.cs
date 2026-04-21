@@ -5,7 +5,6 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Text;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util.Automaton
 {

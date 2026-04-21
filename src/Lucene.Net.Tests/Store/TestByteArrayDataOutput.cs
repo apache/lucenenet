@@ -1,7 +1,6 @@
 using System;
 using Lucene.Net.Attributes;
 using NUnit.Framework;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Store
 {

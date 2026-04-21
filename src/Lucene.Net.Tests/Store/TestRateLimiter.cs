@@ -4,7 +4,6 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using Assert = Lucene.Net.TestFramework.Assert;
 using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
 namespace Lucene.Net.Store

@@ -14,7 +14,6 @@ using System.Reflection;
 using System.Resources;
 using System.Security;
 using System.Text;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Support.ExceptionHandling
 {
@@ -556,6 +555,12 @@ namespace Lucene.Net.Support.ExceptionHandling
             public int TotalCount => throw new NotImplementedException();
 
             public int AssertCount => throw new NotImplementedException();
+
+            public int AssertionResultCount => throw new NotImplementedException();
+
+            public int CompletedCount => throw new NotImplementedException();
+
+            public int InitiatedCount => throw new NotImplementedException();
 
             public int FailCount => throw new NotImplementedException();
 

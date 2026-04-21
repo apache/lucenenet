@@ -4,7 +4,7 @@ using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Text;
-using Assert = Lucene.Net.TestFramework.Assert;
+using System.Text.RegularExpressions;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.TokenAttributes

@@ -3,7 +3,7 @@ using J2N.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Assert = Lucene.Net.TestFramework.Assert;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search

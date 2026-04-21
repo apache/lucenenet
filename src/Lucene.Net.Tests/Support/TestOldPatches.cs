@@ -3,7 +3,6 @@ using Lucene.Net.Index;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.IO;
-using Assert = Lucene.Net.TestFramework.Assert;
 using Version = Lucene.Net.Util.LuceneVersion;
 
 #pragma warning disable 612, 618

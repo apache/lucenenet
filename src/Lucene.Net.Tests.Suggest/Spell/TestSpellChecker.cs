@@ -455,8 +455,8 @@ namespace Lucene.Net.Search.Spell
         // LUCENENET: In Java, awaitTermination kills all of the threads forcefully after 60 seconds, which would cause a failure.
         // We attempt to cancel the tasks gracefully after 60 seconds, but if they don't respond within 300 seconds it is a failure.
         // This prevents us from hanging during testing, but still effectively gives us the same result.
-        [Timeout(300_000)] // 5 minutes
-        public async Task TestConcurrentAccess()
+        [CancelAfter(300_000)] // 5 minutes
+        public async Task TestConcurrentAccess(CancellationToken cancellationToken)
         {
             assertEquals(1, searchers.Count);
             using IndexReader r = DirectoryReader.Open(userindex);
@@ -479,17 +479,18 @@ namespace Lucene.Net.Search.Spell
             using var executorShutdown = new CancellationTokenSource();
             var executor = new LimitedConcurrencyLevelTaskScheduler(numThreads, executorShutdown.Token);
 
-            using var shutdown = new CancellationTokenSource();
-            var cancellationToken = shutdown.Token;
+            // LUCENENET-specific: cancellation support with either shutdown or CancelAfter resulting in cancellation
+            var shutdown = new CancellationTokenSource();
+            var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(shutdown.Token, cancellationToken);
 
             var stop = new AtomicBoolean(false);
             var taskFactory = new TaskFactory(executor);
 
             for (int i = 0; i < numThreads; i++)
             {
-                SpellCheckWorker spellCheckWorker = new SpellCheckWorker(this, r, stop, cancellationToken, taskNum: i);
+                SpellCheckWorker spellCheckWorker = new SpellCheckWorker(this, r, stop, linkedCts.Token, taskNum: i);
                 workers[i] = spellCheckWorker;
-                tasks.Add(taskFactory.StartNew(() => spellCheckWorker.Run(), cancellationToken));
+                tasks.Add(taskFactory.StartNew(() => spellCheckWorker.Run(), linkedCts.Token));
             }
 
             int iterations = 5 + Random.nextInt(5);
@@ -522,6 +523,7 @@ namespace Lucene.Net.Search.Spell
             }
             finally
             {
+                linkedCts.Dispose();
                 shutdown.Dispose();
                 spellChecker.Dispose(); // In Lucene, this was the line that did "stop" and the running task responded to the AlreadyClosedException to break out of the loop, but we are using AtomicBoolean to signal instead.
             }

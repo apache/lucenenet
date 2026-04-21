@@ -6,7 +6,6 @@ using Lucene.Net.Util;
 using Lucene.Net.Support;
 using System;
 
-using Assert = Lucene.Net.TestFramework.Assert;
 
 
 namespace Lucene.Net
