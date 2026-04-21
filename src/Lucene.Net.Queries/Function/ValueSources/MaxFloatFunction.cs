@@ -1,4 +1,6 @@
 // Lucene version compatibility level 4.8.1
+
+using Lucene.Net.Reflection;
 using System;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -21,10 +23,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <see cref="MaxSingleFunction"/> returns the max of it's components.
+    /// <see cref="MaxSingleFunction"/> returns the max of its components.
     /// <para/>
     /// NOTE: This was MaxFloatFunction in Lucene
     /// </summary>
+    [LuceneType("org.apache.lucene.queries.function.valuesource", "MaxFloatFunction")]
     public class MaxSingleFunction : MultiSingleFunction
     {
         public MaxSingleFunction(ValueSource[] sources)

@@ -1,4 +1,5 @@
 using Lucene.Net.Index;
+using Lucene.Net.Reflection;
 using System;
 using Single = J2N.Numerics.Single;
 
@@ -113,6 +114,7 @@ namespace Lucene.Net.Documents
     /// </para>
     /// @since 2.9
     /// </summary>
+    [LuceneType("org.apache.lucene.document", "FloatField")]
     public sealed class SingleField : Field
     {
         /// <summary>

@@ -1,4 +1,6 @@
 // Lucene version compatibility level 4.8.1
+
+using Lucene.Net.Reflection;
 using Lucene.Net.Support;
 using System.Globalization;
 
@@ -33,6 +35,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <para/>
     /// @lucene.experimental
     /// </summary>
+    [LuceneType("org.apache.lucene.facet.taxonomy", "FloatAssociationFacetField")]
     public class SingleAssociationFacetField : AssociationFacetField
     {
         /// <summary>

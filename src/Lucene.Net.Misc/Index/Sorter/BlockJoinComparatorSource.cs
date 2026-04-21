@@ -1,3 +1,4 @@
+using Lucene.Net.Reflection;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
@@ -38,6 +39,7 @@ namespace Lucene.Net.Index.Sorter
     /// </summary>
     // TODO: can/should we clean this thing up (e.g. return a proper sort value)
     // and move to the join/ module?
+    [LuceneType("org.apache.lucene.index.sorter", "BlockJoinComparatorSource", Justification = ".NET naming conventions")]
     public class BlockJoinComparerSource : FieldComparerSource
     {
         internal readonly Filter parentsFilter;

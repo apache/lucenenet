@@ -1,3 +1,4 @@
+using Lucene.Net.Reflection;
 using Lucene.Net.Store;
 using System;
 
@@ -33,6 +34,7 @@ namespace Lucene.Net.Codecs.Sep
     /// <para/>
     /// @lucene.experimental
     /// </summary>
+    [LuceneType("org.apache.lucene.codecs.sep", "IntIndexOutput")]
     public abstract class Int32IndexOutput : IDisposable
     {
         /// <summary>

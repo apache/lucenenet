@@ -1,4 +1,6 @@
 // Lucene version compatibility level 4.8.1
+
+using Lucene.Net.Reflection;
 using System;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -21,10 +23,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <see cref="MinSingleFunction"/> returns the min of it's components.
+    /// <see cref="MinSingleFunction"/> returns the min of its components.
     /// <para/>
     /// NOTE: This was MinFloatFunction in Lucene
     /// </summary>
+    [LuceneType("org.apache.lucene.queries.function.valuesource", "MinFloatFunction")]
     public class MinSingleFunction : MultiSingleFunction
     {
         public MinSingleFunction(ValueSource[] sources)

@@ -1,4 +1,6 @@
 // Lucene version compatibility level 4.8.1
+
+using Lucene.Net.Reflection;
 using Lucene.Net.Util;
 using System;
 using System.Buffers;
@@ -32,6 +34,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <para/>
     /// NOTE: This was IntTaxonomyFacets in Lucene
     /// </summary>
+    [LuceneType("org.apache.lucene.facet.taxonomy", "IntTaxonomyFacets")]
     public abstract class Int32TaxonomyFacets : TaxonomyFacets
     {
         private const int OrdAndInt32ByteSize = sizeof(int) + sizeof(int); // LUCENENET specific - so we can calculate stack size
