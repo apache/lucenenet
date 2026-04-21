@@ -1,4 +1,6 @@
 // Lucene version compatibility level 4.8.1
+
+using Lucene.Net.Reflection;
 using Lucene.Net.Support;
 using System;
 
@@ -36,6 +38,7 @@ namespace Lucene.Net.Facet.Range
     ///
     /// @lucene.experimental
     /// </summary>
+    [LuceneType("org.apache.lucene.facet.range", "LongRange")]
     public sealed class Int64Range : Range
     {
         internal readonly long minIncl;

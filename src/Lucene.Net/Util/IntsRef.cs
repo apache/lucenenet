@@ -1,4 +1,5 @@
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Reflection;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -36,6 +37,7 @@ namespace Lucene.Net.Util
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
+    [LuceneType("org.apache.lucene.util", "IntsRef")]
     public sealed class Int32sRef : IComparable<Int32sRef> // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         /// <summary>

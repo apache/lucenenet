@@ -19,6 +19,7 @@
  *
 */
 
+using Lucene.Net.Reflection;
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -38,3 +39,5 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("ca052094-4c45-44d7-9dcf-3d46ae6930fe")]
+
+[assembly: LuceneMavenMapping("org.apache.lucene", "lucene-memory", "4.8.1")]

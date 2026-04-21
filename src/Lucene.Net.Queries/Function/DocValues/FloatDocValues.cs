@@ -1,4 +1,6 @@
 // Lucene version compatibility level 4.8.1
+
+using Lucene.Net.Reflection;
 using Lucene.Net.Util.Mutable;
 using System;
 using System.Globalization;
@@ -28,6 +30,7 @@ namespace Lucene.Net.Queries.Function.DocValues
     /// <para/>
     /// NOTE: This was FloatDocValues in Lucene
     /// </summary>
+    [LuceneType("org.apache.lucene.queries.function.docvalues", "FloatDocValues")]
     public abstract class SingleDocValues : FunctionValues
     {
         protected readonly ValueSource m_vs;

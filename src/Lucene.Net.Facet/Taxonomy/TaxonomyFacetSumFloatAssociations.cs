@@ -1,4 +1,6 @@
 // Lucene version compatibility level 4.8.1
+
+using Lucene.Net.Reflection;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -34,6 +36,7 @@ namespace Lucene.Net.Facet.Taxonomy
     ///
     /// @lucene.experimental
     /// </summary>
+    [LuceneType("org.apache.lucene.facet.taxonomy", "TaxonomyFacetSumFloatAssociations")]
     public class TaxonomyFacetSumSingleAssociations : SingleTaxonomyFacets
     {
         /// <summary>

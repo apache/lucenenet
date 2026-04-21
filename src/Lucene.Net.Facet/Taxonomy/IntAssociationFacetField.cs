@@ -1,4 +1,6 @@
 // Lucene version compatibility level 4.8.1
+
+using Lucene.Net.Reflection;
 using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -32,6 +34,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <para/>
     /// @lucene.experimental
     /// </summary>
+    [LuceneType("org.apache.lucene.facet.taxonomy", "IntAssociationFacetField")]
     public class Int32AssociationFacetField : AssociationFacetField
     {
         /// <summary>
