@@ -135,7 +135,7 @@ namespace Lucene.Net.Replicator
         private readonly IReplicationHandler handler;
         private readonly ISourceDirectoryFactory factory;
 
-        private const int CopyBufferSize = 16384;
+        private const int copyBufferSize = 16384;
         private readonly SemaphoreSlim updateLock = new SemaphoreSlim(1, 1);
         private readonly object syncLock = new object(); // LUCENENET specific to avoid lock (this)
 
@@ -165,7 +165,7 @@ namespace Lucene.Net.Replicator
         /// <exception cref="IOException"></exception>
         private static void CopyBytes(IndexOutput output, Stream input)
         {
-            byte[] buffer = ArrayPool<byte>.Shared.Rent(CopyBufferSize);
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(copyBufferSize);
             try
             {
                 int numBytes;
@@ -183,7 +183,7 @@ namespace Lucene.Net.Replicator
         /// <exception cref="IOException"></exception>
         private static async Task CopyBytesAsync(IndexOutput output, Stream input, CancellationToken cancellationToken)
         {
-            byte[] buffer = ArrayPool<byte>.Shared.Rent(CopyBufferSize);
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(copyBufferSize);
             try
             {
                 int numBytes;
@@ -291,11 +291,11 @@ namespace Lucene.Net.Replicator
             {
                 IOUtils.Dispose(sourceDirectory.Values);
 
-                // LUCENENET specific: removed redundant check. Code above either ensures it is not null (by returning early) or an exception is thrown.
-                // if (session != null)
-                // {
+                // Guard required because finally executes even if session was never assigned
+                if (session != null)
+                {
                     factory.CleanupSession(session.Id);
-                // }
+                }
             }
         }
 
@@ -403,11 +403,11 @@ namespace Lucene.Net.Replicator
             {
                 IOUtils.Dispose(sourceDirectory.Values);
 
-                // LUCENENET specific: removed redundant check. Code above either ensures it is not null (by returning early) or an exception is thrown.
-                // if (session != null)
-                // {
+                // Guard required because finally executes even if session was never assigned
+                if (session != null)
+                {
                     factory.CleanupSession(session.Id);
-                // }
+                }
             }
         }
 
