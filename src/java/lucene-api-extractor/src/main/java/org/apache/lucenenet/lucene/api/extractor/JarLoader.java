@@ -22,7 +22,7 @@ import java.net.URLClassLoader;
 import java.util.stream.Stream;
 
 public class JarLoader {
-    public static ClassLoader loadJars(ExtractContext context) throws Exception {
+    public static URLClassLoader loadJars(ExtractContext context) {
         var jarUrls = Stream.concat(
                         Stream.of(context.getLibraries()),
                         Stream.of(context.getDependencies()))

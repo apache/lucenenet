@@ -34,13 +34,14 @@ import java.util.stream.Stream;
 public class JarReflector {
 
     public static List<LibraryResult> reflectOverJars(ExtractContext context) throws Exception {
-        var classLoader = JarLoader.loadJars(context);
         var libraries = context.getLibraries();
         var results = new ArrayList<LibraryResult>();
 
-        for (MavenCoordinates library : libraries) {
-            var types = reflectOverJar(context, classLoader, library);
-            results.add(new LibraryResult(library, types));
+        try (var classLoader = JarLoader.loadJars(context)) {
+            for (MavenCoordinates library : libraries) {
+                var types = reflectOverJar(context, classLoader, library);
+                results.add(new LibraryResult(library, types));
+            }
         }
 
         results.sort(LibraryResult::compareTo);

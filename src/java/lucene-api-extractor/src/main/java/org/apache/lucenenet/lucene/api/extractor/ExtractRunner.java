@@ -21,12 +21,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.text.MessageFormat;
+import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ExtractRunner {
     public static void extract(ExtractContext context) throws Exception {
-        var json = extractJson(context);
+        var libraries = reflect(context);
+        var json = JsonSerializer.serialize(libraries);
 
         if (context.getOutputFile() != null) {
             Files.writeString(Path.of(context.getOutputFile()), json);
@@ -37,13 +39,24 @@ public class ExtractRunner {
     }
 
     public static void printHash(ExtractContext context) throws Exception {
-        var hashString = getHash(context);
-
-        System.out.println(hashString);
+        System.out.println(getHash(context));
     }
 
+    /**
+     * Produces a SHA-256 of the API surface, keyed by artifactId rather than the full
+     * Maven coordinates. The group and version are deliberately excluded so that upgrading
+     * from e.g. 4.8.1 → 4.8.2 with identical APIs yields the same hash.
+     */
     public static String getHash(ExtractContext context) throws Exception {
-        var json = extractJson(context);
+        var libraries = reflect(context);
+
+        // Hash payload: artifactId -> types. Version and groupId are excluded so the hash
+        // reflects only the API surface.
+        var payload = new LinkedHashMap<String, Object>();
+        for (var lib : libraries) {
+            payload.put(lib.library().artifactId(), lib.types());
+        }
+        var json = JsonSerializer.serialize(payload);
 
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hash = digest.digest(json.getBytes());
@@ -52,7 +65,7 @@ public class ExtractRunner {
         for (byte b : hash) {
             String hex = Integer.toHexString(0xff & b);
             if (hex.length() == 1) {
-                hexString.append('0'); // Add leading zero for single digit hex values
+                hexString.append('0');
             }
             hexString.append(hex);
         }
@@ -60,7 +73,7 @@ public class ExtractRunner {
         return hexString.toString();
     }
 
-    private static String extractJson(ExtractContext context) throws Exception {
+    private static java.util.List<LibraryResult> reflect(ExtractContext context) throws Exception {
         if (context.getOutputFile() != null) {
             System.out.println("Extracting API");
             System.out.println(MessageFormat.format("Libraries: {0}",
@@ -75,8 +88,6 @@ public class ExtractRunner {
             JarDownloader.downloadMavenDependency(context, dependency, context.isForce());
         }
 
-        var loadedLibraries = JarReflector.reflectOverJars(context);
-
-        return JsonSerializer.serialize(loadedLibraries);
+        return JarReflector.reflectOverJars(context);
     }
 }
