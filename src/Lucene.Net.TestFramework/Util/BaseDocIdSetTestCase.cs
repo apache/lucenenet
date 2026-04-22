@@ -1,6 +1,5 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
-using Lucene.Net.TestFramework;
 using RandomizedTesting.Generators;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
