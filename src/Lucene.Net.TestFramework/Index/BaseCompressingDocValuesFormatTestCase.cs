@@ -1,7 +1,6 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
-using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System.Collections.Generic;

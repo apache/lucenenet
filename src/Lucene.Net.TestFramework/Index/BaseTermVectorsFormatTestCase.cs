@@ -8,7 +8,6 @@ using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
-using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
