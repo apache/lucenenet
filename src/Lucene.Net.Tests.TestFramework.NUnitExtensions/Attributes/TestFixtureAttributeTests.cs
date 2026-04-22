@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Tests.TestFramework.NUnitExtensions.Attributes
 {

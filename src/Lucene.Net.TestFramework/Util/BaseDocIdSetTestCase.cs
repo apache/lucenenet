@@ -3,6 +3,7 @@ using Lucene.Net.Search;
 using Lucene.Net.TestFramework;
 using RandomizedTesting.Generators;
 using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 using BitSet = J2N.Collections.BitSet;
 using Test = NUnit.Framework.TestAttribute;
 

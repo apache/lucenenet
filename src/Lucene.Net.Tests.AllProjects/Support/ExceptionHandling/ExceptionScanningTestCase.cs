@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Resources;
 using System.Security;
 using System.Text;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Support.ExceptionHandling
 {

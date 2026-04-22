@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Replicator
 {

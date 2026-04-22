@@ -17,6 +17,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 #endif
 
 namespace Lucene.Net.Index

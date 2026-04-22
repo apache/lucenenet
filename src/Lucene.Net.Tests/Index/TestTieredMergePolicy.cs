@@ -6,6 +6,7 @@ using Lucene.Net.Store;
 using NUnit.Framework;
 using System;
 using System.Globalization;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 #if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
 using RandomizedTesting.Generators; // for Random.NextInt64 extension method

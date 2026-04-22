@@ -3,6 +3,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Field = Lucene.Net.Documents.Field;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 

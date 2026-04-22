@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Globalization;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Documents.Extensions
 {

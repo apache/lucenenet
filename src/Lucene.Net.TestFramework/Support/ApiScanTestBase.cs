@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
 {

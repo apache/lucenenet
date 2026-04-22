@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace TestHelper
 {

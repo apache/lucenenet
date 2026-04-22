@@ -1,6 +1,7 @@
 // Lucene version compatibility level 4.8.1
 using System.Collections.Generic;
 using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet

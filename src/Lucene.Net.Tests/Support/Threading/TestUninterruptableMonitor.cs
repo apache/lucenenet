@@ -7,6 +7,7 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Threading;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Support
 {

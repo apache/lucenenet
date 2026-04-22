@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
 // ReSharper disable once RedundantUsingDirective - keep until we have an analyzer to look out for accidental NUnit asserts
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
@@ -37,6 +38,7 @@ namespace Lucene.Net.Index
      */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using Assert = Lucene.Net.TestFramework.Assert;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {

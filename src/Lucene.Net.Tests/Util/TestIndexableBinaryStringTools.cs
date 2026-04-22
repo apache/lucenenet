@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Globalization;
 using System.Text;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
 {

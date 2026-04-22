@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Tests.Cli
 {

@@ -2,6 +2,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 using BitSet = J2N.Collections.BitSet;
 
 namespace Lucene.Net.Search

@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Threading;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
