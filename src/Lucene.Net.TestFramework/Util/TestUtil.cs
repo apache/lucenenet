@@ -1,4 +1,3 @@
-using J2N;
 using J2N.IO;
 using J2N.Text;
 using Lucene.Net.Codecs;
@@ -8,7 +7,6 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Support.IO;
-using Lucene.Net.TestFramework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;

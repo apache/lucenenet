@@ -1,5 +1,4 @@
 using Lucene.Net.Index;
-using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
