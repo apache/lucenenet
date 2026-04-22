@@ -19,7 +19,13 @@ package org.apache.lucenenet.lucene.api.extractor;
 
 import java.util.List;
 
-public record FieldMetadata(String name, String type, List<String> modifiers, boolean isStatic) {
+public record FieldMetadata(String name,
+                            String type,
+                            String genericType,
+                            List<String> modifiers,
+                            List<AnnotationMetadata> annotations,
+                            boolean isStatic) implements Comparable<FieldMetadata> {
+    @Override
     public int compareTo(FieldMetadata other) {
         return this.name.compareTo(other.name);
     }

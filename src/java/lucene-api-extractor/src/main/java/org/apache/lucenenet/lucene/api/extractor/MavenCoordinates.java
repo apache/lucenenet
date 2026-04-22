@@ -19,7 +19,8 @@ package org.apache.lucenenet.lucene.api.extractor;
 
 import java.io.File;
 
-public record MavenCoordinates(String groupId, String artifactId, String version) {
+public record MavenCoordinates(String groupId, String artifactId, String version)
+        implements Comparable<MavenCoordinates> {
     public String getJarName() {
         return "%s-%s.jar".formatted(artifactId, version);
     }
@@ -28,6 +29,7 @@ public record MavenCoordinates(String groupId, String artifactId, String version
         return new File(context.getDownloadsDir(), getJarName());
     }
 
+    @Override
     public int compareTo(MavenCoordinates other) {
         int result = this.groupId.compareTo(other.groupId);
         if (result == 0) {

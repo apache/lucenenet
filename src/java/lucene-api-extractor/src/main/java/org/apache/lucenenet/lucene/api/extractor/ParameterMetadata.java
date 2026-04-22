@@ -17,15 +17,19 @@
 
 package org.apache.lucenenet.lucene.api.extractor;
 
-public record ParameterMetadata(String name, String type) {
-    public int compareTo(ParameterMetadata other) {
-        var nameComparison = this.name.compareTo(other.name);
-        var typeComparison = this.type.compareTo(other.type);
+import java.util.List;
 
-        if (nameComparison == 0) {
+public record ParameterMetadata(String name,
+                                String type,
+                                String genericType,
+                                List<AnnotationMetadata> annotations)
+        implements Comparable<ParameterMetadata> {
+    @Override
+    public int compareTo(ParameterMetadata other) {
+        var typeComparison = this.type.compareTo(other.type);
+        if (typeComparison != 0) {
             return typeComparison;
         }
-
-        return nameComparison;
+        return this.name.compareTo(other.name);
     }
 }

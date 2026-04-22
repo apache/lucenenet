@@ -17,10 +17,13 @@
 
 package org.apache.lucenenet.lucene.api.extractor;
 
-import java.lang.reflect.AccessFlag;
-import java.lang.reflect.Method;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -49,117 +52,249 @@ public class JarReflector {
             System.out.println("Reflecting over jar: " + library.getJarName());
         }
 
-        JarFile jarFile = new JarFile(library.getFullJarPath(context));
-        Enumeration<JarEntry> entries = jarFile.entries();
         var types = new ArrayList<TypeMetadata>();
 
-        while (entries.hasMoreElements()) {
-            JarEntry entry = entries.nextElement();
-            String entryName = entry.getName();
+        try (JarFile jarFile = new JarFile(library.getFullJarPath(context))) {
+            Enumeration<JarEntry> entries = jarFile.entries();
 
-            // Process only class files
-            if (entryName.endsWith(".class")) {
-                // Convert "com/example/MyClass.class" to "com.example.MyClass"
-                String packageName = entryName.substring(0, entryName.lastIndexOf("/")).replace("/", ".");
-                String className = entryName.substring(packageName.length() + 1, entryName.length() - 6);
-                String fullClassName = packageName + "." + className;
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                String entryName = entry.getName();
+
+                if (!entryName.endsWith(".class")) {
+                    continue;
+                }
+
+                int lastSlash = entryName.lastIndexOf("/");
+                String packageName = lastSlash < 0 ? "" : entryName.substring(0, lastSlash).replace("/", ".");
+                String fullClassName = entryName.substring(0, entryName.length() - 6).replace("/", ".");
 
                 try {
-                    // Load the class
-                    Class<?> clazz = Class.forName(fullClassName, true, classLoader);
-                    var superClass = clazz.getSuperclass();
-                    var modifiers = getModifiers(clazz.getModifiers());
-                    modifiers.sort(String::compareTo);
+                    Class<?> clazz = Class.forName(fullClassName, false, classLoader);
 
-                    var methodList = new ArrayList<MethodMetadata>();
-                    for (Method method : clazz.getDeclaredMethods()) {
-                        if (method.getDeclaringClass().equals(clazz) && !method.isBridge()) {
-                            var methodModifiers = getModifiers(method.getModifiers());
-                            methodModifiers.sort(String::compareTo);
-                            var parameterTypes = Stream.of(method.getParameterTypes()).map(p -> new ParameterMetadata(p.getName(), p.getTypeName())).toList();
-                            var returnType = method.getReturnType().getName();
-                            var methodMetadata = new MethodMetadata(
-                                    method.getName(),
-                                    returnType,
-                                    parameterTypes,
-                                    methodModifiers,
-                                    method.isVarArgs()
-                            );
-                            methodList.add(methodMetadata);
-                        }
+                    // Filter to API-visible types only: public or protected.
+                    int typeMods = clazz.getModifiers();
+                    if (!Modifier.isPublic(typeMods) && !Modifier.isProtected(typeMods)) {
+                        continue;
                     }
-                    methodList.sort(MethodMetadata::compareTo);
 
-                    var fieldList = new ArrayList<FieldMetadata>();
-                    for (Field field : clazz.getDeclaredFields()) {
-                        if (field.getDeclaringClass().equals(clazz)) {
-                            var fieldModifiers = getModifiers(field.getModifiers());
-                            if (fieldModifiers.contains("public")
-                                || fieldModifiers.contains("protected")) {
-                                fieldModifiers.sort(String::compareTo);
-                                var fieldMetadata = new FieldMetadata(
-                                        field.getName(),
-                                        field.getType().getTypeName(),
-                                        fieldModifiers,
-                                        fieldModifiers.contains("static")
-                                );
-                                fieldList.add(fieldMetadata);
-                            }
-                        }
-                    }
-                    fieldList.sort(FieldMetadata::compareTo);
-
-                    var type = new TypeMetadata(
-                            packageName,
-                            Modifier.isInterface(clazz.getModifiers()) ? "interface" : "class",
-                            clazz.getSimpleName(),
-                            clazz.getTypeName(),
-                            superClass != null ? superClass.getTypeName() : null,
-                            Stream.of(clazz.getInterfaces()).map(Class::getTypeName).sorted().toList(),
-                            modifiers,
-                            methodList,
-                            fieldList
-                    );
-
-                    types.add(type);
+                    types.add(buildTypeMetadata(clazz, packageName));
                 } catch (UnsatisfiedLinkError e) {
                     System.err.println("UnsatisfiedLinkError loading class: " + fullClassName + " - " + e.getMessage());
                 } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                    throw new RuntimeException("Failed to load class: " + fullClassName, e);
+                    System.err.println("Failed to load class: " + fullClassName + " - " + e.getMessage());
                 }
             }
         }
-
-        jarFile.close();
 
         types.sort(TypeMetadata::compareTo);
 
         return types;
     }
 
-    private static ArrayList<String> getModifiers(int value) {
+    static TypeMetadata buildTypeMetadata(Class<?> clazz, String packageName) {
+        int typeMods = clazz.getModifiers();
+        var modifiers = getModifiers(typeMods, clazz);
+        modifiers.sort(String::compareTo);
+
+        var constructors = new ArrayList<ConstructorMetadata>();
+        for (Constructor<?> ctor : clazz.getDeclaredConstructors()) {
+            int cMods = ctor.getModifiers();
+            if (!Modifier.isPublic(cMods) && !Modifier.isProtected(cMods)) {
+                continue;
+            }
+            if (ctor.isSynthetic()) {
+                continue;
+            }
+            var ctorModifiers = getModifiers(cMods, null);
+            ctorModifiers.sort(String::compareTo);
+            constructors.add(new ConstructorMetadata(
+                    buildParameters(ctor.getParameters(), ctor.getGenericParameterTypes()),
+                    ctorModifiers,
+                    getTypeNames(ctor.getGenericExceptionTypes()),
+                    getAnnotations(ctor.getDeclaredAnnotations()),
+                    ctor.isVarArgs()
+            ));
+        }
+        constructors.sort(ConstructorMetadata::compareTo);
+
+        var methodList = new ArrayList<MethodMetadata>();
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (!method.getDeclaringClass().equals(clazz)) {
+                continue;
+            }
+            if (method.isBridge() || method.isSynthetic()) {
+                continue;
+            }
+            int mMods = method.getModifiers();
+            if (!Modifier.isPublic(mMods) && !Modifier.isProtected(mMods)) {
+                continue;
+            }
+            var methodModifiers = getModifiers(mMods, null);
+            methodModifiers.sort(String::compareTo);
+            methodList.add(new MethodMetadata(
+                    method.getName(),
+                    method.getReturnType().getTypeName(),
+                    method.getGenericReturnType().getTypeName(),
+                    buildParameters(method.getParameters(), method.getGenericParameterTypes()),
+                    methodModifiers,
+                    getTypeParameterNames(method.getTypeParameters()),
+                    getTypeNames(method.getGenericExceptionTypes()),
+                    getAnnotations(method.getDeclaredAnnotations()),
+                    method.isVarArgs()
+            ));
+        }
+        methodList.sort(MethodMetadata::compareTo);
+
+        var fieldList = new ArrayList<FieldMetadata>();
+        for (Field field : clazz.getDeclaredFields()) {
+            if (!field.getDeclaringClass().equals(clazz)) {
+                continue;
+            }
+            if (field.isSynthetic()) {
+                continue;
+            }
+            int fMods = field.getModifiers();
+            if (!Modifier.isPublic(fMods) && !Modifier.isProtected(fMods)) {
+                continue;
+            }
+            var fieldModifiers = getModifiers(fMods, null);
+            fieldModifiers.sort(String::compareTo);
+            fieldList.add(new FieldMetadata(
+                    field.getName(),
+                    field.getType().getTypeName(),
+                    field.getGenericType().getTypeName(),
+                    fieldModifiers,
+                    getAnnotations(field.getDeclaredAnnotations()),
+                    Modifier.isStatic(fMods)
+            ));
+        }
+        fieldList.sort(FieldMetadata::compareTo);
+
+        var superClass = clazz.getSuperclass();
+        var enclosing = clazz.getEnclosingClass();
+
+        return new TypeMetadata(
+                packageName,
+                kindOf(clazz),
+                clazz.getSimpleName(),
+                clazz.getTypeName(),
+                enclosing != null ? enclosing.getTypeName() : null,
+                superClass != null ? superClass.getTypeName() : null,
+                clazz.getGenericSuperclass() != null ? clazz.getGenericSuperclass().getTypeName() : null,
+                Stream.of(clazz.getInterfaces()).map(Class::getTypeName).sorted().toList(),
+                Stream.of(clazz.getGenericInterfaces()).map(Type::getTypeName).sorted().toList(),
+                modifiers,
+                getTypeParameterNames(clazz.getTypeParameters()),
+                getAnnotations(clazz.getDeclaredAnnotations()),
+                constructors,
+                methodList,
+                fieldList
+        );
+    }
+
+    static String kindOf(Class<?> clazz) {
+        if (clazz.isAnnotation()) {
+            return "annotation";
+        }
+        if (clazz.isEnum()) {
+            return "enum";
+        }
+        if (clazz.isRecord()) {
+            return "record";
+        }
+        if (clazz.isInterface()) {
+            return "interface";
+        }
+        return "class";
+    }
+
+    private static List<ParameterMetadata> buildParameters(java.lang.reflect.Parameter[] params, Type[] genericTypes) {
+        var result = new ArrayList<ParameterMetadata>(params.length);
+        for (int i = 0; i < params.length; i++) {
+            var p = params[i];
+            var genericType = i < genericTypes.length ? genericTypes[i].getTypeName() : p.getType().getTypeName();
+            result.add(new ParameterMetadata(
+                    p.getName(),
+                    p.getType().getTypeName(),
+                    genericType,
+                    getAnnotations(p.getDeclaredAnnotations())
+            ));
+        }
+        return result;
+    }
+
+    private static List<String> getTypeNames(Type[] types) {
+        var result = new ArrayList<String>(types.length);
+        for (var t : types) {
+            result.add(t.getTypeName());
+        }
+        result.sort(String::compareTo);
+        return result;
+    }
+
+    private static List<String> getTypeParameterNames(TypeVariable<?>[] typeParameters) {
+        var result = new ArrayList<String>(typeParameters.length);
+        for (var tp : typeParameters) {
+            var bounds = tp.getBounds();
+            if (bounds.length == 0 || (bounds.length == 1 && bounds[0].getTypeName().equals("java.lang.Object"))) {
+                result.add(tp.getName());
+            } else {
+                var sb = new StringBuilder(tp.getName()).append(" extends ");
+                for (int i = 0; i < bounds.length; i++) {
+                    if (i > 0) {
+                        sb.append(" & ");
+                    }
+                    sb.append(bounds[i].getTypeName());
+                }
+                result.add(sb.toString());
+            }
+        }
+        return result;
+    }
+
+    private static List<AnnotationMetadata> getAnnotations(Annotation[] annotations) {
+        var result = new ArrayList<AnnotationMetadata>(annotations.length);
+        for (var a : annotations) {
+            result.add(new AnnotationMetadata(a.annotationType().getTypeName()));
+        }
+        result.sort(AnnotationMetadata::compareTo);
+        return result;
+    }
+
+    static ArrayList<String> getModifiers(int value, Class<?> typeContext) {
         var modifiers = new ArrayList<String>();
 
         if (Modifier.isPublic(value)) {
             modifiers.add("public");
         }
-        if (Modifier.isAbstract(value) && !Modifier.isInterface(value)) {
-            modifiers.add("abstract");
-        }
-        if (Modifier.isFinal(value)) {
-            modifiers.add("final");
+        if (Modifier.isProtected(value)) {
+            modifiers.add("protected");
         }
         if (Modifier.isPrivate(value)) {
             modifiers.add("private");
         }
-        if (Modifier.isProtected(value)) {
-            modifiers.add("protected");
+        // For types, suppress redundant "abstract" on interfaces/annotations.
+        // For members, "abstract" is always meaningful.
+        boolean suppressAbstract = typeContext != null
+                && (Modifier.isInterface(value) || typeContext.isAnnotation());
+        if (Modifier.isAbstract(value) && !suppressAbstract) {
+            modifiers.add("abstract");
+        }
+        if (Modifier.isFinal(value)) {
+            modifiers.add("final");
         }
         if (Modifier.isStatic(value)) {
             modifiers.add("static");
         }
         if (Modifier.isSynchronized(value)) {
             modifiers.add("synchronized");
+        }
+        if (Modifier.isNative(value)) {
+            modifiers.add("native");
+        }
+        if (Modifier.isStrict(value)) {
+            modifiers.add("strictfp");
         }
         if (Modifier.isTransient(value)) {
             modifiers.add("transient");
@@ -170,4 +305,3 @@ public class JarReflector {
         return modifiers;
     }
 }
-
