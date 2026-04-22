@@ -28,16 +28,6 @@ using System.Reflection;
 [assembly: AssemblyDefaultAlias("Lucene.Net.Tests")]
 [assembly: AssemblyCulture("")]
 
-
-
 // LUCENENET specific - only allow tests in this assembly to run one at a time
 // to prevent polluting shared state.
 [assembly: LevelOfParallelism(1)]
-
-#if FEATURE_NUNIT_TIMEOUTATTRIBUTE
-// LUCENENET specific - time out test projects at 55 minutes to allow the results
-// to be uploaded before the 60 minute Azure DevOps job cutoff for easier troubleshooting
-#pragma warning disable CS0618 // Type or member is obsolete
-[assembly: Timeout(3300000)]
-#pragma warning restore CS0618 // Type or member is obsolete
-#endif
