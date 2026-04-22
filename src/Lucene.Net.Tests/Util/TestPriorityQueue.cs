@@ -8,6 +8,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 #endif
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
 {

@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Mutable;
 using NUnit.Framework;
 using System.Collections;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Grouping
 {

@@ -4,6 +4,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Store;
 using NUnit.Framework;
 using System.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Cli.Commands
 {

@@ -8,6 +8,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 #nullable enable
 

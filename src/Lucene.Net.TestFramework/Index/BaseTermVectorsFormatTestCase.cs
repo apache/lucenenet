@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Lucene.Net.Index.TermsEnum;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Attribute = Lucene.Net.Util.Attribute;
 using JCG = J2N.Collections.Generic;
 using Test = NUnit.Framework.TestAttribute;

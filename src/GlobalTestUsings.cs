@@ -1,6 +1,3 @@
-// alias Assert to Lucene.Net.TestFramework.Assert by default
-global using Assert = Lucene.Net.TestFramework.Assert;
-
 // add NUnit 3 compat shim with NUnit prefix
 global using NUnitAssert = NUnit.Framework.Legacy.ClassicAssert;
 

@@ -4,6 +4,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 using System.Threading;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 

@@ -4,6 +4,7 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {

@@ -3,6 +3,7 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet
 {
