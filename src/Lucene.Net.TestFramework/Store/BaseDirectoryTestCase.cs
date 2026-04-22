@@ -4,7 +4,6 @@ using J2N.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
-using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;

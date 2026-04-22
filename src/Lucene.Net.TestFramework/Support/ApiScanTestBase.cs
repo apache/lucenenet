@@ -1,5 +1,4 @@
 using Lucene.Net.Support;
-using Lucene.Net.TestFramework;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
