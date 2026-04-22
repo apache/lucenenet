@@ -1,6 +1,7 @@
 using J2N.Threading;
 using NUnit.Framework;
 using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
 {

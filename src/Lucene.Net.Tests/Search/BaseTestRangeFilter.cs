@@ -4,6 +4,7 @@ using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.Text;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {

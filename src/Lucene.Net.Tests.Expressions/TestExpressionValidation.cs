@@ -3,6 +3,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Expressions
 {

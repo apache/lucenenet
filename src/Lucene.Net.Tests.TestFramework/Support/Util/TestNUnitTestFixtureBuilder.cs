@@ -4,6 +4,7 @@ using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Tests.TestFramework.Support.Util
 {

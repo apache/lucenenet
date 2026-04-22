@@ -9,6 +9,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
 using System.Text;
+using Assert = Lucene.Net.TestFramework.Assert;
 using BitSet = Lucene.Net.Util.OpenBitSet;
 
 namespace Lucene.Net.Search

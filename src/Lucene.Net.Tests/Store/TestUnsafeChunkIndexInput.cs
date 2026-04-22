@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 #nullable enable
 

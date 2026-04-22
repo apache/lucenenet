@@ -1,5 +1,6 @@
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {

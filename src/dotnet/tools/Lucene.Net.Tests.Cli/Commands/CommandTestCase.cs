@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Cli.Commands
 {

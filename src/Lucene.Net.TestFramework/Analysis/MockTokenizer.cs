@@ -7,6 +7,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
 using System.IO;
+using Assert = Lucene.Net.TestFramework.Assert;
 using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
 using RegExp = Lucene.Net.Util.Automaton.RegExp;
 

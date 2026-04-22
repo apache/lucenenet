@@ -40,6 +40,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
+    using Assert = Lucene.Net.TestFramework.Assert;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;

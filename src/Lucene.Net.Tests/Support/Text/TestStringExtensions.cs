@@ -1,6 +1,7 @@
 using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 #if !FEATURE_STRING_CONTAINS_STRINGCOMPARISON
 using System;
 #endif

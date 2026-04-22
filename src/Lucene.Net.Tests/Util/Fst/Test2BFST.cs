@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Int64 = J2N.Numerics.Int64;
 
 #if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE

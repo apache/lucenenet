@@ -30,6 +30,7 @@ using System.Threading;
 using static Lucene.Net.Search.FieldCache;
 using static Lucene.Net.Util.FieldCacheSanityChecker;
 using After = NUnit.Framework.TearDownAttribute;
+using Assert = Lucene.Net.TestFramework.Assert;
 using AssumptionViolatedException = NUnit.Framework.InconclusiveException;
 using Before = NUnit.Framework.SetUpAttribute;
 using Directory = Lucene.Net.Store.Directory;

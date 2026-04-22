@@ -9,6 +9,7 @@ using System;
 using Lucene.Net.NUnit.TestUtilities;
 using Lucene.Net.TestData.RepeatingTests;
 using System.Linq;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Attributes
 {

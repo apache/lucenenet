@@ -27,6 +27,7 @@ namespace Lucene.Net.Util.Packed
      * limitations under the License.
      */
 
+    using Assert = Lucene.Net.TestFramework.Assert;
     using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
     using CodecUtil = Lucene.Net.Codecs.CodecUtil;
     using DataInput = Lucene.Net.Store.DataInput;

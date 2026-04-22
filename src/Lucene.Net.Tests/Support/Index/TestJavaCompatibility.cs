@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index

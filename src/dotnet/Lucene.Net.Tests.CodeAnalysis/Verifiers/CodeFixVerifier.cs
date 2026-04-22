@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.Formatting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace TestHelper
 {

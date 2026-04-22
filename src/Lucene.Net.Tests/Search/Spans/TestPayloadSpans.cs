@@ -8,6 +8,7 @@ using Lucene.Net.Documents;
 using NUnit.Framework;
 using System.IO;
 using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Spans
 {
