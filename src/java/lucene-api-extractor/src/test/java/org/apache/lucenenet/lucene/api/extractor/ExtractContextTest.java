@@ -77,4 +77,32 @@ class ExtractContextTest {
         assertEquals("my-dir", context.getDownloadsDir());
         assertTrue(context.isForce());
     }
+
+    @Test
+    void rejectsMalformedCoordinateWithTooFewParts() {
+        var ex = assertThrows(IllegalArgumentException.class,
+                () -> new ExtractContext("download", new String[]{"no-colons-here"}, false, null, new String[0]));
+        assertTrue(ex.getMessage().contains("no-colons-here"));
+    }
+
+    @Test
+    void rejectsMalformedCoordinateWithTooManyParts() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new ExtractContext("download", new String[]{"a:b:c:d"}, false, null, new String[0]));
+    }
+
+    @Test
+    void defaultsStrictFalseAndVerifyChecksumTrue() {
+        var context = new ExtractContext("download", new String[]{"g:a:v"}, false, null, new String[0]);
+        assertFalse(context.isStrict());
+        assertTrue(context.isVerifyChecksum());
+    }
+
+    @Test
+    void extendedConstructorExposesStrictAndVerifyChecksum() {
+        var context = new ExtractContext(
+                "download", new String[]{"g:a:v"}, false, null, new String[0], true, false);
+        assertTrue(context.isStrict());
+        assertFalse(context.isVerifyChecksum());
+    }
 }

@@ -32,7 +32,7 @@ public class ExtractRunner {
 
         if (context.getOutputFile() != null) {
             Files.writeString(Path.of(context.getOutputFile()), json);
-            System.out.println(MessageFormat.format("API extracted to: {0}", context.getOutputFile()));
+            System.err.println(MessageFormat.format("API extracted to: {0}", context.getOutputFile()));
         } else {
             System.out.println(json);
         }
@@ -74,11 +74,9 @@ public class ExtractRunner {
     }
 
     private static java.util.List<LibraryResult> reflect(ExtractContext context) throws Exception {
-        if (context.getOutputFile() != null) {
-            System.out.println("Extracting API");
-            System.out.println(MessageFormat.format("Libraries: {0}",
-                    Stream.of(context.getLibraries()).map(MavenCoordinates::artifactId).collect(Collectors.joining(", "))));
-        }
+        System.err.println("Extracting API");
+        System.err.println(MessageFormat.format("Libraries: {0}",
+                Stream.of(context.getLibraries()).map(MavenCoordinates::artifactId).collect(Collectors.joining(", "))));
 
         for (var library : context.getLibraries()) {
             JarDownloader.downloadMavenDependency(context, library, context.isForce());

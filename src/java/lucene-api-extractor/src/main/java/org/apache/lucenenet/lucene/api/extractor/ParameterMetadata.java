@@ -24,6 +24,10 @@ public record ParameterMetadata(String name,
                                 String genericType,
                                 List<AnnotationMetadata> annotations)
         implements Comparable<ParameterMetadata> {
+    public ParameterMetadata {
+        annotations = List.copyOf(annotations);
+    }
+
     @Override
     public int compareTo(ParameterMetadata other) {
         var typeComparison = this.type.compareTo(other.type);
