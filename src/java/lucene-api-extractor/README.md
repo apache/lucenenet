@@ -55,7 +55,7 @@ java -jar target/lucene-api-extractor-1.0-SNAPSHOT.jar extract \
 
 ### Hash
 
-This action runs the same extraction and prints a SHA-256 hash of the resulting JSON. Useful for quickly detecting API drift between two versions of the same set of libraries.
+This action runs the same extraction and prints a SHA-256 hash of the API surface. Useful for quickly detecting API drift between two versions of the same set of libraries.
 
 ```bash
 java -jar target/lucene-api-extractor-<version>.jar hash [options]
@@ -65,4 +65,4 @@ java -jar target/lucene-api-extractor-<version>.jar hash [options]
 
 Same as `extract`, minus `-o`/`--output`. The hash is always printed to standard output.
 
-Note: the hashed JSON currently includes the Maven coordinates (with version) of each library, so two different versions will always produce different hashes. Use it to detect *unexpected* changes within a single version, or to verify that two sets of coordinates produce the API you expect.
+The hash covers the extracted API keyed by `artifactId` only — the `groupId` and `version` parts of each Maven coordinate are deliberately excluded. This means upgrading `lucene-core` from `4.8.1` → `4.8.2` with an identical API produces the same hash; any change to public/protected types, constructors, methods, fields, or their signatures produces a different hash.
