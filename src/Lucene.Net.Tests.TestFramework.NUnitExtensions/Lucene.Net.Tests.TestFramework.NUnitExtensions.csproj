@@ -29,9 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\dotnet\Lucene.Net.TestFramework.TestData.NUnit\Lucene.Net.TestFramework.TestData.NUnit.csproj">
-      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
-    </ProjectReference>
+    <ProjectReference Include="..\dotnet\Lucene.Net.TestFramework.TestData.NUnit\Lucene.Net.TestFramework.TestData.NUnit.csproj" />
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
       <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
     </ProjectReference>
