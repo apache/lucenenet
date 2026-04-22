@@ -35,6 +35,17 @@ public record TypeMetadata(
         List<ConstructorMetadata> constructors,
         List<MethodMetadata> methods,
         List<FieldMetadata> fields) implements Comparable<TypeMetadata> {
+    public TypeMetadata {
+        interfaces = List.copyOf(interfaces);
+        genericInterfaces = List.copyOf(genericInterfaces);
+        modifiers = List.copyOf(modifiers);
+        typeParameters = List.copyOf(typeParameters);
+        annotations = List.copyOf(annotations);
+        constructors = List.copyOf(constructors);
+        methods = List.copyOf(methods);
+        fields = List.copyOf(fields);
+    }
+
     @Override
     public int compareTo(TypeMetadata other) {
         var packageCompare = this.packageName.compareTo(other.packageName);

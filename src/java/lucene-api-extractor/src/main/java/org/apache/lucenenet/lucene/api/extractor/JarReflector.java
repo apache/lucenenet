@@ -22,6 +22,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
@@ -49,9 +50,7 @@ public class JarReflector {
     }
 
     public static List<TypeMetadata> reflectOverJar(ExtractContext context, ClassLoader classLoader, MavenCoordinates library) throws Exception {
-        if (!context.isStandardOutput()) {
-            System.out.println("Reflecting over jar: " + library.getJarName());
-        }
+        System.err.println("Reflecting over jar: " + library.getJarName());
 
         var types = new ArrayList<TypeMetadata>();
 
@@ -83,6 +82,9 @@ public class JarReflector {
                 } catch (UnsatisfiedLinkError e) {
                     System.err.println("UnsatisfiedLinkError loading class: " + fullClassName + " - " + e.getMessage());
                 } catch (ClassNotFoundException | NoClassDefFoundError e) {
+                    if (context.isStrict()) {
+                        throw new RuntimeException("Failed to load class: " + fullClassName, e);
+                    }
                     System.err.println("Failed to load class: " + fullClassName + " - " + e.getMessage());
                 }
             }
@@ -94,84 +96,7 @@ public class JarReflector {
     }
 
     static TypeMetadata buildTypeMetadata(Class<?> clazz, String packageName) {
-        int typeMods = clazz.getModifiers();
-        var modifiers = getModifiers(typeMods, clazz);
-        modifiers.sort(String::compareTo);
-
-        var constructors = new ArrayList<ConstructorMetadata>();
-        for (Constructor<?> ctor : clazz.getDeclaredConstructors()) {
-            int cMods = ctor.getModifiers();
-            if (!Modifier.isPublic(cMods) && !Modifier.isProtected(cMods)) {
-                continue;
-            }
-            if (ctor.isSynthetic()) {
-                continue;
-            }
-            var ctorModifiers = getModifiers(cMods, null);
-            ctorModifiers.sort(String::compareTo);
-            constructors.add(new ConstructorMetadata(
-                    buildParameters(ctor.getParameters(), ctor.getGenericParameterTypes()),
-                    ctorModifiers,
-                    getTypeNames(ctor.getGenericExceptionTypes()),
-                    getAnnotations(ctor.getDeclaredAnnotations()),
-                    ctor.isVarArgs()
-            ));
-        }
-        constructors.sort(ConstructorMetadata::compareTo);
-
-        var methodList = new ArrayList<MethodMetadata>();
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (!method.getDeclaringClass().equals(clazz)) {
-                continue;
-            }
-            if (method.isBridge() || method.isSynthetic()) {
-                continue;
-            }
-            int mMods = method.getModifiers();
-            if (!Modifier.isPublic(mMods) && !Modifier.isProtected(mMods)) {
-                continue;
-            }
-            var methodModifiers = getModifiers(mMods, null);
-            methodModifiers.sort(String::compareTo);
-            methodList.add(new MethodMetadata(
-                    method.getName(),
-                    method.getReturnType().getTypeName(),
-                    method.getGenericReturnType().getTypeName(),
-                    buildParameters(method.getParameters(), method.getGenericParameterTypes()),
-                    methodModifiers,
-                    getTypeParameterNames(method.getTypeParameters()),
-                    getTypeNames(method.getGenericExceptionTypes()),
-                    getAnnotations(method.getDeclaredAnnotations()),
-                    method.isVarArgs()
-            ));
-        }
-        methodList.sort(MethodMetadata::compareTo);
-
-        var fieldList = new ArrayList<FieldMetadata>();
-        for (Field field : clazz.getDeclaredFields()) {
-            if (!field.getDeclaringClass().equals(clazz)) {
-                continue;
-            }
-            if (field.isSynthetic()) {
-                continue;
-            }
-            int fMods = field.getModifiers();
-            if (!Modifier.isPublic(fMods) && !Modifier.isProtected(fMods)) {
-                continue;
-            }
-            var fieldModifiers = getModifiers(fMods, null);
-            fieldModifiers.sort(String::compareTo);
-            fieldList.add(new FieldMetadata(
-                    field.getName(),
-                    field.getType().getTypeName(),
-                    field.getGenericType().getTypeName(),
-                    fieldModifiers,
-                    getAnnotations(field.getDeclaredAnnotations()),
-                    Modifier.isStatic(fMods)
-            ));
-        }
-        fieldList.sort(FieldMetadata::compareTo);
-
+        var typeModifiers = sorted(getModifiers(clazz.getModifiers(), clazz));
         var superClass = clazz.getSuperclass();
         var enclosing = clazz.getEnclosingClass();
 
@@ -185,13 +110,78 @@ public class JarReflector {
                 clazz.getGenericSuperclass() != null ? clazz.getGenericSuperclass().getTypeName() : null,
                 Stream.of(clazz.getInterfaces()).map(Class::getTypeName).sorted().toList(),
                 Stream.of(clazz.getGenericInterfaces()).map(Type::getTypeName).sorted().toList(),
-                modifiers,
+                typeModifiers,
                 getTypeParameterNames(clazz.getTypeParameters()),
                 getAnnotations(clazz.getDeclaredAnnotations()),
-                constructors,
-                methodList,
-                fieldList
+                extractConstructors(clazz),
+                extractMethods(clazz),
+                extractFields(clazz)
         );
+    }
+
+    static List<ConstructorMetadata> extractConstructors(Class<?> clazz) {
+        var result = new ArrayList<ConstructorMetadata>();
+        for (Constructor<?> ctor : clazz.getDeclaredConstructors()) {
+            if (ctor.isSynthetic() || !isApiVisible(ctor.getModifiers())) {
+                continue;
+            }
+            result.add(new ConstructorMetadata(
+                    buildParameters(ctor.getParameters(), ctor.getGenericParameterTypes()),
+                    sorted(getModifiers(ctor.getModifiers(), null)),
+                    getTypeNames(ctor.getGenericExceptionTypes()),
+                    getAnnotations(ctor.getDeclaredAnnotations()),
+                    ctor.isVarArgs()
+            ));
+        }
+        result.sort(ConstructorMetadata::compareTo);
+        return result;
+    }
+
+    static List<MethodMetadata> extractMethods(Class<?> clazz) {
+        var result = new ArrayList<MethodMetadata>();
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (!method.getDeclaringClass().equals(clazz)) {
+                continue;
+            }
+            if (method.isBridge() || method.isSynthetic() || !isApiVisible(method.getModifiers())) {
+                continue;
+            }
+            result.add(new MethodMetadata(
+                    method.getName(),
+                    method.getReturnType().getTypeName(),
+                    method.getGenericReturnType().getTypeName(),
+                    buildParameters(method.getParameters(), method.getGenericParameterTypes()),
+                    sorted(getModifiers(method.getModifiers(), null)),
+                    getTypeParameterNames(method.getTypeParameters()),
+                    getTypeNames(method.getGenericExceptionTypes()),
+                    getAnnotations(method.getDeclaredAnnotations()),
+                    method.isVarArgs()
+            ));
+        }
+        result.sort(MethodMetadata::compareTo);
+        return result;
+    }
+
+    static List<FieldMetadata> extractFields(Class<?> clazz) {
+        var result = new ArrayList<FieldMetadata>();
+        for (Field field : clazz.getDeclaredFields()) {
+            if (!field.getDeclaringClass().equals(clazz)) {
+                continue;
+            }
+            if (field.isSynthetic() || !isApiVisible(field.getModifiers())) {
+                continue;
+            }
+            result.add(new FieldMetadata(
+                    field.getName(),
+                    field.getType().getTypeName(),
+                    field.getGenericType().getTypeName(),
+                    sorted(getModifiers(field.getModifiers(), null)),
+                    getAnnotations(field.getDeclaredAnnotations()),
+                    Modifier.isStatic(field.getModifiers())
+            ));
+        }
+        result.sort(FieldMetadata::compareTo);
+        return result;
     }
 
     static String kindOf(Class<?> clazz) {
@@ -210,7 +200,16 @@ public class JarReflector {
         return "class";
     }
 
-    private static List<ParameterMetadata> buildParameters(java.lang.reflect.Parameter[] params, Type[] genericTypes) {
+    private static boolean isApiVisible(int modifiers) {
+        return Modifier.isPublic(modifiers) || Modifier.isProtected(modifiers);
+    }
+
+    private static List<String> sorted(List<String> list) {
+        list.sort(String::compareTo);
+        return list;
+    }
+
+    private static List<ParameterMetadata> buildParameters(Parameter[] params, Type[] genericTypes) {
         var result = new ArrayList<ParameterMetadata>(params.length);
         for (int i = 0; i < params.length; i++) {
             var p = params[i];

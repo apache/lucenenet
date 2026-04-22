@@ -350,4 +350,56 @@ class JarReflectorTest {
             }
         }
     }
+
+    @Nested
+    class ExtractHelpers {
+        @Test
+        void extractConstructorsMatchesBuildTypeMetadata() {
+            var ctors = JarReflector.extractConstructors(PublicClass.class);
+            var fromType = JarReflector.buildTypeMetadata(PublicClass.class, FIXTURES_PACKAGE).constructors();
+            assertEquals(fromType, ctors);
+        }
+
+        @Test
+        void extractMethodsMatchesBuildTypeMetadata() {
+            var methods = JarReflector.extractMethods(PublicClass.class);
+            var fromType = JarReflector.buildTypeMetadata(PublicClass.class, FIXTURES_PACKAGE).methods();
+            assertEquals(fromType, methods);
+        }
+
+        @Test
+        void extractFieldsMatchesBuildTypeMetadata() {
+            var fields = JarReflector.extractFields(PublicClass.class);
+            var fromType = JarReflector.buildTypeMetadata(PublicClass.class, FIXTURES_PACKAGE).fields();
+            assertEquals(fromType, fields);
+        }
+
+        @Test
+        void extractConstructorsOnInterfaceReturnsEmpty() {
+            assertTrue(JarReflector.extractConstructors(PublicInterface.class).isEmpty());
+        }
+    }
+
+    @Nested
+    class Immutability {
+        @Test
+        void typeMetadataListsAreUnmodifiable() {
+            var md = JarReflector.buildTypeMetadata(PublicClass.class, FIXTURES_PACKAGE);
+            assertThrows(UnsupportedOperationException.class, () -> md.methods().clear());
+            assertThrows(UnsupportedOperationException.class, () -> md.fields().clear());
+            assertThrows(UnsupportedOperationException.class, () -> md.constructors().clear());
+            assertThrows(UnsupportedOperationException.class, () -> md.modifiers().clear());
+            assertThrows(UnsupportedOperationException.class, () -> md.annotations().clear());
+        }
+
+        @Test
+        void methodParametersAreUnmodifiable() {
+            var md = JarReflector.buildTypeMetadata(PublicClass.class, FIXTURES_PACKAGE);
+            var m = md.methods().stream()
+                    .filter(x -> x.name().equals("publicMethod"))
+                    .findFirst().orElseThrow();
+            assertThrows(UnsupportedOperationException.class, () -> m.parameters().clear());
+            assertThrows(UnsupportedOperationException.class, () -> m.throwsTypes().clear());
+        }
+    }
 }

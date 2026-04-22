@@ -25,27 +25,44 @@ public class ExtractContext {
     private final boolean force;
     private final String outputFile;
     private final MavenCoordinates[] dependencies;
+    private final boolean strict;
+    private final boolean verifyChecksum;
 
     public ExtractContext(String downloadsDir,
                           String[] libraryNames,
                           boolean force,
                           String outputFile,
                           String[] dependencies) {
+        this(downloadsDir, libraryNames, force, outputFile, dependencies, false, true);
+    }
+
+    public ExtractContext(String downloadsDir,
+                          String[] libraryNames,
+                          boolean force,
+                          String outputFile,
+                          String[] dependencies,
+                          boolean strict,
+                          boolean verifyChecksum) {
         this.downloadsDir = downloadsDir;
         this.libraries = Stream.of(libraryNames)
-                .map(libraryName -> {
-                    var parts = libraryName.split(":");
-                    return new MavenCoordinates(parts[0], parts[1], parts[2]);
-                })
+                .map(ExtractContext::parseCoordinates)
                 .toArray(MavenCoordinates[]::new);
         this.force = force;
         this.outputFile = outputFile;
         this.dependencies = Stream.of(dependencies)
-                .map(dependency -> {
-                    var parts = dependency.split(":");
-                    return new MavenCoordinates(parts[0], parts[1], parts[2]);
-                })
+                .map(ExtractContext::parseCoordinates)
                 .toArray(MavenCoordinates[]::new);
+        this.strict = strict;
+        this.verifyChecksum = verifyChecksum;
+    }
+
+    private static MavenCoordinates parseCoordinates(String coord) {
+        var parts = coord.split(":");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException(
+                    "Maven coordinate must be groupId:artifactId:version, got: " + coord);
+        }
+        return new MavenCoordinates(parts[0], parts[1], parts[2]);
     }
 
     public String getDownloadsDir() {
@@ -70,5 +87,13 @@ public class ExtractContext {
 
     public MavenCoordinates[] getDependencies() {
         return dependencies;
+    }
+
+    public boolean isStrict() {
+        return strict;
+    }
+
+    public boolean isVerifyChecksum() {
+        return verifyChecksum;
     }
 }

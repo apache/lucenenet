@@ -43,6 +43,10 @@ java -jar target/lucene-api-extractor-<version>.jar extract [options]
 | `-f, --force`                                     | Re-download any libraries even if they already exist in the download directory.                                                                                          | `false`          |
 | `-dd <path>, --download-dir <path>`               | The directory to download the Lucene libraries to.                                                                                                                       | `download`       |
 | `-o <path>, --output <path>`                      | The file to write the extracted API JSON to. If not provided, prints to standard output.                                                                                 | (stdout)         |
+| `--strict`                                        | Fail fast when a class cannot be loaded (e.g. missing transitive types). By default such classes are logged to stderr and skipped.                                       | `false`          |
+| `--no-verify-checksum`                            | Skip SHA-1 verification of downloaded jars against Maven Central's published `.sha1` sidecar.                                                                            | (verify on)      |
+
+All progress and diagnostic logs are written to standard error; only the extracted JSON (or, for `hash`, the hex digest) is written to standard output, so `java -jar … extract … | jq .` works out of the box.
 
 #### Example
 

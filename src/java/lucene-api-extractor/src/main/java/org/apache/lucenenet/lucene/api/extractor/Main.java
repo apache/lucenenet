@@ -26,7 +26,7 @@ public class Main {
             .hasArg()
             .argName("library")
             .numberOfArgs(Option.UNLIMITED_VALUES)
-            .desc("(Required) Lucene library to extract. Should be in the Maven Coordinates format groupId:artifactId:version")
+            .desc("(Required) Lucene library to extract. Maven coordinate groupId:artifactId:version")
             .build();
 
     private static final Option force = Option.builder("f")
@@ -48,8 +48,20 @@ public class Main {
             .required(false)
             .hasArg()
             .argName("dependency")
-            .desc("Additional Maven dependencies to include in the classpath. Should be in the Maven Coordinates format groupId:artifactId:version")
+            .desc("Additional Maven dependency to include on the classpath. Maven coordinate groupId:artifactId:version")
             .numberOfArgs(Option.UNLIMITED_VALUES)
+            .build();
+
+    private static final Option strict = Option.builder()
+            .longOpt("strict")
+            .required(false)
+            .desc("Fail fast on classes that cannot be loaded (missing transitive types). Default: log and continue.")
+            .build();
+
+    private static final Option noVerifyChecksum = Option.builder()
+            .longOpt("no-verify-checksum")
+            .required(false)
+            .desc("Skip SHA-1 checksum verification against Maven Central's published .sha1 sidecar.")
             .build();
 
     public static void main(String[] args) {
@@ -94,32 +106,9 @@ public class Main {
                 .build();
         options.addOption(output);
 
-        var parser = new DefaultParser();
+        var cmd = parseOrExit(args, options, "extract");
 
-        var formatter = new HelpFormatter();
-        CommandLine cmd;
-
-        try {
-            cmd = parser.parse(options, args);
-        } catch (ParseException e) {
-            System.err.println(e.getMessage());
-            formatter.printHelp("java -jar lucene-api-extractor.jar extract [options]", options);
-
-            System.exit(1);
-            return;
-        }
-
-        var librariesValue = cmd.getOptionValues(library);
-        var forceValue = cmd.hasOption(force);
-        var downloadDirValue = cmd.getOptionValue(downloadDir, "download");
-        var outputValue = cmd.getOptionValue(output);
-        var dependencyValues = cmd.getOptionValues(dependency);
-
-        var context = new ExtractContext(downloadDirValue,
-                librariesValue,
-                forceValue,
-                outputValue,
-                dependencyValues);
+        var context = buildContext(cmd, cmd.getOptionValue(output));
 
         try {
             ExtractRunner.extract(context);
@@ -130,37 +119,38 @@ public class Main {
 
     private static void hash(String[] args) {
         var options = getCommonOptions();
-        var parser = new DefaultParser();
+        var cmd = parseOrExit(args, options, "hash");
 
-        var formatter = new HelpFormatter();
-        CommandLine cmd;
-
-        try {
-            cmd = parser.parse(options, args);
-        } catch (ParseException e) {
-            System.err.println(e.getMessage());
-            formatter.printHelp("java -jar lucene-api-extractor.jar hash [options]", options);
-
-            System.exit(1);
-            return;
-        }
-
-        var librariesValue = cmd.getOptionValues(library);
-        var forceValue = cmd.hasOption(force);
-        var downloadDirValue = cmd.getOptionValue(downloadDir, "download");
-        var dependencyValues = cmd.getOptionValues(dependency);
-
-        var context = new ExtractContext(downloadDirValue,
-                librariesValue,
-                forceValue,
-                null,
-                dependencyValues);
+        var context = buildContext(cmd, null);
 
         try {
             ExtractRunner.printHash(context);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static CommandLine parseOrExit(String[] args, Options options, String command) {
+        try {
+            return new DefaultParser().parse(options, args);
+        } catch (ParseException e) {
+            System.err.println(e.getMessage());
+            new HelpFormatter().printHelp(
+                    "java -jar lucene-api-extractor.jar " + command + " [options]", options);
+            System.exit(1);
+            throw new IllegalStateException("unreachable");
+        }
+    }
+
+    private static ExtractContext buildContext(CommandLine cmd, String outputValue) {
+        return new ExtractContext(
+                cmd.getOptionValue(downloadDir, "download"),
+                cmd.getOptionValues(library),
+                cmd.hasOption(force),
+                outputValue,
+                cmd.getOptionValues(dependency) == null ? new String[0] : cmd.getOptionValues(dependency),
+                cmd.hasOption(strict),
+                !cmd.hasOption(noVerifyChecksum));
     }
 
     private static Options getCommonOptions() {
@@ -170,6 +160,8 @@ public class Main {
         options.addOption(force);
         options.addOption(downloadDir);
         options.addOption(dependency);
+        options.addOption(strict);
+        options.addOption(noVerifyChecksum);
 
         return options;
     }

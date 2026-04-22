@@ -25,6 +25,13 @@ public record ConstructorMetadata(
         List<String> throwsTypes,
         List<AnnotationMetadata> annotations,
         boolean isVarArgs) implements Comparable<ConstructorMetadata> {
+    public ConstructorMetadata {
+        parameters = List.copyOf(parameters);
+        modifiers = List.copyOf(modifiers);
+        throwsTypes = List.copyOf(throwsTypes);
+        annotations = List.copyOf(annotations);
+    }
+
     @Override
     public int compareTo(ConstructorMetadata other) {
         if (this.parameters.size() != other.parameters.size()) {
