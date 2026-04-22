@@ -31,7 +31,7 @@ namespace Lucene.Net.Support.ExceptionHandling
         public void TestCanSerialize([ValueSource("LuceneExceptionTypes")] Type luceneException)
         {
             var instance = TryInstantiate(luceneException);
-            Assert.IsTrue(TypeCanSerialize(instance, out SerializationException se), $"Unable to serialize {luceneException.FullName}:\n\n{{0}}", se);
+            Assert.IsTrue(TypeCanSerialize(instance, out SerializationException se), $"Unable to serialize {luceneException.FullName}:\n\n{se}");
         }
     }
 }
