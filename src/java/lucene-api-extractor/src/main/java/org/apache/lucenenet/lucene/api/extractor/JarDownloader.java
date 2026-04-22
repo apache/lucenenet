@@ -27,10 +27,8 @@ public class JarDownloader {
     public static void downloadMavenDependency(ExtractContext context, MavenCoordinates dependency, boolean force) {
         // check if download directory exists
         var downloadDir = new File(context.getDownloadsDir());
-        if (!downloadDir.exists()) {
-            if (!downloadDir.mkdir()) {
-                throw new RuntimeException("Failed to create download directory");
-            }
+        if (!downloadDir.exists() && !downloadDir.mkdirs()) {
+            throw new RuntimeException("Failed to create download directory: " + downloadDir.getAbsolutePath());
         }
 
         var jarName = dependency.getJarName();

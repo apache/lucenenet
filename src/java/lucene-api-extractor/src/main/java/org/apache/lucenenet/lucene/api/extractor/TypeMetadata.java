@@ -24,26 +24,27 @@ public record TypeMetadata(
         String kind,
         String name,
         String fullName,
+        String enclosingType,
         String baseType,
+        String genericBaseType,
         List<String> interfaces,
+        List<String> genericInterfaces,
         List<String> modifiers,
+        List<String> typeParameters,
+        List<AnnotationMetadata> annotations,
+        List<ConstructorMetadata> constructors,
         List<MethodMetadata> methods,
-        List<FieldMetadata> fields) {
+        List<FieldMetadata> fields) implements Comparable<TypeMetadata> {
+    @Override
     public int compareTo(TypeMetadata other) {
         var packageCompare = this.packageName.compareTo(other.packageName);
-        var kindCompare = this.kind.compareTo(other.kind);
-        var nameCompare = this.name.compareTo(other.name);
-
-        if (packageCompare == 0) {
-            if (kindCompare == 0) {
-                if (nameCompare == 0 && this.baseType != null) {
-                    return this.baseType.compareTo(other.baseType);
-                }
-                return nameCompare;
-            }
-            return kindCompare;
+        if (packageCompare != 0) {
+            return packageCompare;
         }
-
-        return packageCompare;
+        var fullNameCompare = this.fullName.compareTo(other.fullName);
+        if (fullNameCompare != 0) {
+            return fullNameCompare;
+        }
+        return this.kind.compareTo(other.kind);
     }
 }

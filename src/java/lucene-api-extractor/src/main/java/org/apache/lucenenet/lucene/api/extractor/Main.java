@@ -38,19 +38,23 @@ public class Main {
     private static final Option downloadDir = Option.builder("dd")
             .longOpt("download-dir")
             .required(false)
-            .desc("Directory to download the jar files to (default: ./downloads)")
+            .hasArg()
+            .argName("path")
+            .desc("Directory to download the jar files to (default: ./download)")
             .build();
 
     private static final Option dependency = Option.builder("dep")
             .longOpt("dependency")
             .required(false)
+            .hasArg()
+            .argName("dependency")
             .desc("Additional Maven dependencies to include in the classpath. Should be in the Maven Coordinates format groupId:artifactId:version")
             .numberOfArgs(Option.UNLIMITED_VALUES)
             .build();
 
     public static void main(String[] args) {
         if (args.length == 0) {
-            printUsage();
+            printUsage(System.out);
             return;
         }
 
@@ -65,17 +69,17 @@ public class Main {
                 break;
             default:
                 System.err.println("Unknown command: " + command);
-                printUsage();
+                printUsage(System.err);
+                System.exit(1);
                 break;
         }
     }
 
-    private static void printUsage() {
-        System.out.println("Usage: java -jar lucene-api-extractor.jar [command] [options]");
-        System.out.println("Commands:");
-        System.out.println("  extract: Extracts the API from the Lucene libraries");
-        System.out.println("  hash: Extracts the API and then hashes the output");
-        System.exit(1);
+    private static void printUsage(java.io.PrintStream out) {
+        out.println("Usage: java -jar lucene-api-extractor.jar [command] [options]");
+        out.println("Commands:");
+        out.println("  extract: Extracts the API from the Lucene libraries");
+        out.println("  hash: Extracts the API and then hashes the output");
     }
 
     private static void extract(String[] args) {
