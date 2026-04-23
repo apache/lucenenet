@@ -192,7 +192,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     // LUCENENET: We can safely ignore the return value of TryGetLast() here, because we
                     // know that the collection is not empty (we just added an entry to it).
-                    facetEntries.TryGetLast(out FacetEntry last);
+                    _ = facetEntries.TryGetLast(out FacetEntry last);
                     currentMin = last.Count;
                 }
             }
