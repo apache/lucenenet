@@ -240,10 +240,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             if (results.Count >= num)
             {
-                var first = results.Min; // "get" our first object so we don't cross threads
+                if (!results.TryGetFirst(out Lookup.LookupResult first)) // "get" our first object so we don't cross threads
+                    // LUCENENET: Java would throw NoSuchElementException here, so we are also throwing in this case.
+                    throw new InvalidOperationException("Expected at least one result in the set, but there were none.");
                 if (first.Value < result.Value)
                     // Code similar to the java TreeMap class
-                    results.Remove(first);
+                    results.Remove(first); // LUCENENET: Calling RemoveFirst() would be redundant here, since we already have the value.
                 else
                     return;
             }

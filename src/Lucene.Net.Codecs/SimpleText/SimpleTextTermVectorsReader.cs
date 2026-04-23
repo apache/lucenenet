@@ -362,12 +362,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override SeekStatus SeekCeil(BytesRef text)
             {
-                var newTerms = new JCG.SortedDictionary<BytesRef, SimpleTVPostings>(_terms.Comparer);
-                foreach (var p in _terms)
-                    if (p.Key.CompareTo(text) >= 0)
-                        newTerms.Add(p.Key, p.Value);
-
-                _iterator = newTerms.GetEnumerator();
+                _iterator = _terms.GetViewAfter(text).GetEnumerator();
 
                 // LUCENENET specific: Since in .NET we don't have a HasNext() method, we need
                 // to call MoveNext(). Since we need

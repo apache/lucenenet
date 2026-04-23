@@ -184,16 +184,16 @@ namespace Lucene.Net.Search.Grouping
                     {
                         return;
                     }
-                    var max = facetEntries.Max;
-                    if (max != null)
-                        facetEntries.Remove(max);
+                    facetEntries.RemoveLast(out _);
                 }
                 facetEntries.Add(facetEntry);
 
                 if (facetEntries.Count == maxSize)
                 {
-                    var max = facetEntries.Max;
-                    currentMin = max != null ? max.Count : 0;
+                    // LUCENENET: We can safely ignore the return value of TryGetLast() here, because we
+                    // know that the collection is not empty (we just added an entry to it).
+                    _ = facetEntries.TryGetLast(out FacetEntry last);
+                    currentMin = last.Count;
                 }
             }
 
