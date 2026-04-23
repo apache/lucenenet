@@ -258,7 +258,7 @@ namespace Lucene.Net.Search.Grouping
                 if (Debugging.AssertsEnabled) Debugging.Assert(m_orderedGroups.Count == topNGroups);
 
                 // LUCENENET: We know this call cannot fail because we just added a group, so we can safely ignore the return value.
-                m_orderedGroups.TryGetLast(out CollectedSearchGroup<TGroupValue> lastGroup);
+                _ = m_orderedGroups.TryGetLast(out CollectedSearchGroup<TGroupValue> lastGroup);
                 int lastComparerSlot = lastGroup.ComparerSlot;
                 foreach (FieldComparer fc in comparers)
                 {
