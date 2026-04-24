@@ -532,7 +532,7 @@ namespace Lucene.Net.Store
             }
 
             /// <summary>
-            /// Slice-bufferSize overload used by <see cref="IndexInputSlicer"/>.
+            /// Slice-bufferSize overload used by <see cref="Directory.IndexInputSlicer"/>.
             /// </summary>
             internal MMapIndexInput(string resourceDescription, MMapDirectory directory, string file,
                 Lazy<SharedMapping>? mappingLazy, SharedMapping mapping,
