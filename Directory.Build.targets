@@ -75,6 +75,7 @@
   <!-- Features in .NET 5.x+ only -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
+    <DefineConstants>$(DefineConstants);FEATURE_CONCURRENTDICTIONARY_TRYREMOVE_KEYVALUEPAIR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_READONLYSET</DefineConstants>
     <!-- CompareInfo.GetSortKey(ReadOnlySpan<char>, Span<byte>, CompareOptions) and GetSortKeyLength(ReadOnlySpan<char>, CompareOptions) -->

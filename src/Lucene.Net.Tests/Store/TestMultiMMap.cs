@@ -229,6 +229,79 @@ namespace Lucene.Net.Store
             mmapDir.Dispose();
         }
 
+        // LUCENENET specific: exercises the shared MemoryMappedFile refactor
+        // where OpenInput, CreateSlicer, its slices, and clones all piggyback
+        // on a single MemoryMappedFile per file (per directory instance).
+        // Verifies that (a) concurrent IndexInputs all see correct bytes,
+        // (b) disposing in arbitrary order keeps siblings functional, and
+        // (c) once the last referrer is disposed the OS handle is released
+        // (on Windows a still-open mapping would prevent the file delete).
+        [Test]
+        public virtual void TestSharedMappingLifecycle()
+        {
+            var tempDir = CreateTempDir("testSharedMappingLifecycle");
+            MMapDirectory mmapDir = new MMapDirectory(tempDir);
+            const string name = "bytes";
+            using (IndexOutput io = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            {
+                // 4 ints at offsets 0, 4, 8, 12 — each slice reads a known value.
+                io.WriteInt32(10);
+                io.WriteInt32(20);
+                io.WriteInt32(30);
+                io.WriteInt32(40);
+            }
+
+            // Open several IndexInputs for the same file through both
+            // OpenInput and CreateSlicer. All should share one mapping.
+            IndexInput root = mmapDir.OpenInput(name, IOContext.DEFAULT);
+            IndexInput rootClone = (IndexInput)root.Clone();
+
+            IndexInputSlicer slicer = mmapDir.CreateSlicer(name, NewIOContext(Random));
+            IndexInput sliceA = slicer.OpenSlice("a", 0, 4);
+            IndexInput sliceB = slicer.OpenSlice("b", 8, 4);
+            IndexInput sliceAClone = (IndexInput)sliceA.Clone();
+
+            // Reads across all instances must be independent and correct.
+            Assert.AreEqual(10, root.ReadInt32());
+            Assert.AreEqual(10, rootClone.ReadInt32());
+            Assert.AreEqual(10, sliceA.ReadInt32());
+            Assert.AreEqual(30, sliceB.ReadInt32());
+            Assert.AreEqual(10, sliceAClone.ReadInt32());
+
+            // Dispose a clone first; the root and siblings must keep working.
+            rootClone.Dispose();
+            root.Seek(4);
+            Assert.AreEqual(20, root.ReadInt32());
+            sliceB.Seek(0);
+            Assert.AreEqual(30, sliceB.ReadInt32());
+
+            // Dispose a slice; its siblings from the same slicer must keep working.
+            sliceAClone.Dispose();
+            sliceA.Seek(0);
+            Assert.AreEqual(10, sliceA.ReadInt32());
+
+            // Dispose the remaining slice-side instances. The root IndexInput
+            // still holds a refcount, so the underlying mapping must stay alive.
+            sliceA.Dispose();
+            sliceB.Dispose();
+            slicer.Dispose();
+
+            root.Seek(12);
+            Assert.AreEqual(40, root.ReadInt32());
+
+            // Final referrer — this should bring the refcount to zero, tear
+            // down the MemoryMappedFile, and remove the dictionary entry.
+            root.Dispose();
+
+            // If any OS file handle is still open, this delete will fail on
+            // Windows. On Unix it silently unlinks but the test still proves
+            // the read-phase invariants above.
+            mmapDir.DeleteFile(name);
+            Assert.IsFalse(File.Exists(Path.Combine(tempDir.FullName, name)));
+
+            mmapDir.Dispose();
+        }
+
         [Test]
         public virtual void TestSeekZero()
         {
