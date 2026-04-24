@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            // LUCENENET: .NET doesn't have a way to shut down the TaskScheduler explicitly
+            // LUCENENET: shutdown not needed here since all searches above run synchronously
             //TestUtil.ShutdownExecutorService(service);
         }
 
@@ -361,7 +361,7 @@ namespace Lucene.Net.Search
                 Assume.That(r.Leaves.Count >= 2, "Test requires a multi-segment index");
 
                 using CancellationTokenSource cts = new CancellationTokenSource();
-                TaskScheduler service = new LimitedConcurrencyLevelTaskScheduler(4);
+                TaskScheduler service = new LimitedConcurrencyLevelTaskScheduler(4); // LUCENENET NOTE: intentionally NOT passing cts.Token here since that parameter is for shutdown only, and that's not what we're testing
                 IndexSearcher searcher = new CancelAfterFirstLeafSearcher(r, service, cts);
 
                 Exception ex = Assert.Catch(() => searcher.Search(new MatchAllDocsQuery(), 10, cts.Token));

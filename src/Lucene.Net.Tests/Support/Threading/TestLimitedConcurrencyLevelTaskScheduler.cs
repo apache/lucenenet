@@ -135,7 +135,6 @@ namespace Lucene.Net.Support.Threading
             AssumeTrue($"Expected 1, but got {p2.GetCompletedTaskCount()} - this may be a timing issue.", p2.GetCompletedTaskCount() == 1);
 
             // LUCENENET NOTE: not catching SecurityException because that's not relevant here
-            p2.Shutdown();
             joinPool(p2);
         }
 
@@ -191,15 +190,32 @@ namespace Lucene.Net.Support.Threading
         }
 
         /// <summary>
-        /// <see cref="LimitedConcurrencyLevelTaskScheduler.IsShutdown"/> is false before shutdown, true after
+        /// Tests that a canceled token does not queue new tasks
         /// </summary>
         [Test]
-        public void TestIsShutdown()
+        public void TestCancellation()
         {
-            var p1 = new LimitedConcurrencyLevelTaskScheduler(1);
-            assertFalse(p1.IsShutdown);
-            p1.Shutdown(); // LUCENENET NOTE: not catching SecurityException because that's not relevant here
-            assertTrue(p1.IsShutdown);
+            using var cts = new CancellationTokenSource();
+            TaskScheduler p1 = new LimitedConcurrencyLevelTaskScheduler(1, cts.Token);
+
+            assertEquals(0, p1.GetTaskCount());
+
+            try
+            {
+                p1.Execute(MediumRunnable); // queue first task, not yet canceled
+                // NOTE: no need to sleep here, we're just checking if tasks got queued
+                assertEquals(1, p1.GetTaskCount());
+
+                cts.Cancel();
+                p1.Execute(MediumRunnable); // queue second task (or try to)
+                assertEquals(1, p1.GetTaskCount()); // cancellation should prevent queueing new tasks
+            }
+            catch (Exception)
+            {
+                unexpectedException();
+            }
+
+            assertTrue(cts.Token.IsCancellationRequested);
             joinPool(p1);
         }
 
@@ -215,7 +231,8 @@ namespace Lucene.Net.Support.Threading
         [Test]
         public void TestIsTerminated()
         {
-            TaskScheduler p1 = new LimitedConcurrencyLevelTaskScheduler(1);
+            using var cts = new CancellationTokenSource();
+            TaskScheduler p1 = new LimitedConcurrencyLevelTaskScheduler(1, cts.Token);
             assertFalse(p1.IsTerminated());
 
             try
@@ -224,7 +241,9 @@ namespace Lucene.Net.Support.Threading
             }
             finally
             {
-                p1.Shutdown(); // LUCENENET NOTE: not catching SecurityException because that's not relevant here
+                // LUCENENET NOTE: not catching SecurityException because that's not relevant here
+                // LUCENENET NOTE: canceling here is of questionable utility, since no more tasks are queued
+                cts.Cancel();
             }
 
             try
