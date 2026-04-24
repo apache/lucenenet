@@ -808,6 +808,18 @@ namespace Lucene.Net.Store
                 }
 
                 long chunkSize = 1L << chunkSizePower;
+                // LUCENENET specific: ceiling-divide, so nChunks covers exactly
+                // the requested range with no trailing empty slot. Upstream
+                // Java (MMapDirectory.map) instead allocates nrBuffers = floor + 1
+                // and tolerates a final 0-byte ByteBuffer — a sentinel required
+                // because ByteBufferIndexInput's read loop unconditionally
+                // advances the buffer cursor past the end of each buffer, so
+                // indexing `buffers[N]` must be valid after the last byte of a
+                // file whose length is a whole multiple of chunkSize. We don't
+                // need that here: ReadInternal bounds-checks `pos + len` before
+                // indexing and only advances `chunkIdx` while `len > 0`. Also,
+                // MemoryMappedFile.CreateViewAccessor rejects a zero-length view,
+                // so a sentinel would require a special-case code path anyway.
                 int nChunks = (int)((length + chunkSize - 1) >> chunkSizePower);
                 var result = new Chunk[nChunks];
 
