@@ -506,7 +506,8 @@ namespace Lucene.Net.Search.Spell
 
             // LUCENENET NOTE: This is technically pointless, since by this point we've already queued all the tasks.
             // Leaving this here for compatibility and possible future test changes that might use it properly.
-            await executorShutdown.CancelAsync(); // Stop queueing new tasks
+            // ReSharper disable once MethodHasAsyncOverload - not available in .NET Framework
+            executorShutdown.Cancel(); // Stop queueing new tasks
 
             try
             {
