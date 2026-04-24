@@ -6,9 +6,12 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using SCG = System.Collections.Generic;
+
+#nullable enable
 
 namespace Lucene.Net.Store
 {
@@ -28,8 +31,6 @@ namespace Lucene.Net.Store
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Constants = Lucene.Net.Util.Constants;
 
     /// <summary>
     /// File-based <see cref="Directory"/> implementation that uses
@@ -91,7 +92,7 @@ namespace Lucene.Net.Store
         /// <param name="lockFactory"> the lock factory to use, or null for the default
         /// (<see cref="NativeFSLockFactory"/>); </param>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public MMapDirectory(DirectoryInfo path, LockFactory lockFactory)
+        public MMapDirectory(DirectoryInfo path, LockFactory? lockFactory)
             : this(path, lockFactory, DEFAULT_MAX_BUFF)
         {
         }
@@ -126,7 +127,7 @@ namespace Lucene.Net.Store
         /// <b>Please note:</b> The chunk size is always rounded down to a power of 2.
         /// </param>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public MMapDirectory(DirectoryInfo path, LockFactory lockFactory, int maxChunkSize)
+        public MMapDirectory(DirectoryInfo path, LockFactory? lockFactory, int maxChunkSize)
             : base(path, lockFactory)
         {
             if (maxChunkSize <= 0)
@@ -146,7 +147,7 @@ namespace Lucene.Net.Store
         /// <param name="lockFactory"> the lock factory to use, or null for the default
         /// (<see cref="NativeFSLockFactory"/>); </param>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public MMapDirectory(string path, LockFactory lockFactory)
+        public MMapDirectory(string path, LockFactory? lockFactory)
             : this(path, lockFactory, DEFAULT_MAX_BUFF)
         {
         }
@@ -185,7 +186,7 @@ namespace Lucene.Net.Store
         /// <b>Please note:</b> The chunk size is always rounded down to a power of 2.
         /// </param>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public MMapDirectory(string path, LockFactory lockFactory, int maxChunkSize)
+        public MMapDirectory(string path, LockFactory? lockFactory, int maxChunkSize)
             : this(new DirectoryInfo(path), lockFactory, maxChunkSize)
         {
         }
@@ -297,7 +298,6 @@ namespace Lucene.Net.Store
         // refcount reaches zero.
         internal void ReleaseMapping(string file, Lazy<SharedMapping> lazy)
         {
-            if (lazy == null) return;
             SharedMapping mapping;
             try
             {
@@ -352,7 +352,7 @@ namespace Lucene.Net.Store
             // issued from it piggyback on that ref (they do not increment).
             private readonly Lazy<SharedMapping> mappingLazy;
             private readonly SharedMapping mapping;
-            private int disposed = 0; // LUCENENET specific - allow double-dispose
+            private int disposed /* = 0 */; // LUCENENET specific - allow double-dispose
             // Track issued slices so that Dispose cascades. Lucene's
             // contract is that after slicer.Dispose, reads from any slice
             // (or clone of a slice) throw AlreadyClosedException.
@@ -409,12 +409,13 @@ namespace Lucene.Net.Store
 
                 if (disposing)
                 {
-                    MMapIndexInput[] toDispose;
+                    IDisposable[] toDispose;
                     lock (issuedSlicesLock)
                     {
-                        toDispose = issuedSlices.ToArray();
+                        toDispose = issuedSlices.OfType<IDisposable>().ToArray();
                         issuedSlices.Clear();
                     }
+
                     IOUtils.DisposeWhileHandlingException(toDispose);
 
                     // Release the slicer's refcount on the shared mapping.
@@ -498,7 +499,7 @@ namespace Lucene.Net.Store
             private readonly SharedMapping mapping;
             private readonly MMapDirectory directory;
             private readonly string file;
-            private readonly Lazy<SharedMapping> mappingLazy;
+            private readonly Lazy<SharedMapping>? mappingLazy;
 
             // The window into the shared mapping that this IndexInput sees.
             // For OpenInput this is [0, mapping.Length); for OpenSlice it is
@@ -535,7 +536,7 @@ namespace Lucene.Net.Store
             /// Slice-bufferSize overload used by <see cref="IndexInputSlicer"/>.
             /// </summary>
             internal MMapIndexInput(string resourceDescription, MMapDirectory directory, string file,
-                Lazy<SharedMapping> mappingLazy, SharedMapping mapping,
+                Lazy<SharedMapping>? mappingLazy, SharedMapping mapping,
                 long offset, long length, int bufferSize, int chunkSizePower)
                 : base(resourceDescription, bufferSize)
             {
@@ -665,16 +666,18 @@ namespace Lucene.Net.Store
         /// </summary>
         internal sealed unsafe class SharedMapping
         {
-            private readonly MemoryMappedFile memoryMappedFile;
+            /// <summary>
+            /// The memory-mapped file reference for this mapping.
+            /// Note that this can be null in the edge case of a zero-length mapping.
+            /// </summary>
+            private readonly MemoryMappedFile? memoryMappedFile;
             private readonly FileStream fileStream;
-            internal readonly Chunk[] Chunks;
-            internal readonly long Length;
 
             // 1 for the initial creator (held by AcquireMapping until the
             // caller transfers it to the returned IndexInput/Slicer).
             private int refCount = 1;
 
-            private SharedMapping(MemoryMappedFile mmf, FileStream fs, Chunk[] chunks, long length)
+            private SharedMapping(MemoryMappedFile? mmf, FileStream fs, Chunk[] chunks, long length)
             {
                 this.memoryMappedFile = mmf;
                 this.fileStream = fs;
@@ -689,12 +692,11 @@ namespace Lucene.Net.Store
                 // a 4 KiB buffer that would immediately be discarded.
                 var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite,
                     bufferSize: 1, FileOptions.RandomAccess | FileOptions.Asynchronous);
-                MemoryMappedFile mmf = null;
-                Chunk[] chunks = null;
-                long length;
+                MemoryMappedFile? mmf = null;
+                Chunk[]? chunks = null;
                 try
                 {
-                    length = fs.Length;
+                    long length = fs.Length;
                     mmf = CreateMemoryMappedFile(fs, length);
                     chunks = MapChunks(mmf, 0, length, chunkSizePower);
                     return new SharedMapping(mmf, fs, chunks, length);
@@ -703,7 +705,7 @@ namespace Lucene.Net.Store
                 {
                     DisposeChunks(chunks);
                     mmf?.Dispose();
-                    try { fs.Dispose(); } catch { /* never propagate from cleanup */ }
+                    IOUtils.DisposeWhileHandlingException(fs);
                     throw;
                 }
             }
@@ -742,13 +744,16 @@ namespace Lucene.Net.Store
             internal void DisposeResources()
             {
                 DisposeChunks(Chunks);
-                try { memoryMappedFile?.Dispose(); } catch { /* never propagate from cleanup */ }
-                try { fileStream?.Dispose(); } catch { /* never propagate from cleanup */ }
+                IOUtils.DisposeWhileHandlingException(memoryMappedFile, fileStream);
             }
 
-            private static MemoryMappedFile CreateMemoryMappedFile(FileStream fc, long requiredCapacity)
+            internal Chunk[] Chunks { get; }
+
+            internal long Length { get; }
+
+            private static MemoryMappedFile? CreateMemoryMappedFile(FileStream fc, long requiredCapacity)
             {
-                if (requiredCapacity == 0)
+                if (requiredCapacity <= 0)
                 {
                     return null;
                 }
@@ -781,14 +786,14 @@ namespace Lucene.Net.Store
                         int prior;
                         do
                         {
-                            prior = Volatile.Read(ref MMapDirectory.s_maxCapacityAttemptsObserved);
+                            prior = Volatile.Read(ref s_maxCapacityAttemptsObserved);
                             if (attemptsTaken <= prior) break;
-                        } while (Interlocked.CompareExchange(ref MMapDirectory.s_maxCapacityAttemptsObserved, attemptsTaken, prior) != prior);
+                        } while (Interlocked.CompareExchange(ref s_maxCapacityAttemptsObserved, attemptsTaken, prior) != prior);
                         return mmf;
                     }
                     catch (ArgumentOutOfRangeException e) when (e.ParamName == "capacity" && attempt < maxAttempts - 1)
                     {
-                        Interlocked.Increment(ref MMapDirectory.s_capacityRetryCount);
+                        Interlocked.Increment(ref s_capacityRetryCount);
                         capacity = Math.Max(capacity, fc.Length);
                         attempt++;
                     }
@@ -796,9 +801,9 @@ namespace Lucene.Net.Store
                 // LUCENENET specific END
             }
 
-            private static Chunk[] MapChunks(MemoryMappedFile mmf, long offset, long length, int chunkSizePower)
+            private static Chunk[] MapChunks(MemoryMappedFile? mmf, long offset, long length, int chunkSizePower)
             {
-                if (length == 0)
+                if (length == 0 || mmf == null)
                 {
                     return Array.Empty<Chunk>();
                 }
@@ -839,12 +844,19 @@ namespace Lucene.Net.Store
                 }
             }
 
-            private static void DisposeChunks(Chunk[] chunks)
+            private static void DisposeChunks(Chunk[]? chunks)
             {
                 if (chunks == null) return;
                 foreach (var c in chunks)
                 {
-                    try { c?.Close(); } catch { /* never propagate from cleanup */ }
+                    try
+                    {
+                        c.Close();
+                    }
+                    catch
+                    {
+                         /* never propagate from cleanup */
+                    }
                 }
             }
         }
@@ -857,7 +869,7 @@ namespace Lucene.Net.Store
         /// </summary>
         internal sealed unsafe class Chunk
         {
-            private MemoryMappedViewAccessor accessor;
+            private MemoryMappedViewAccessor? accessor;
             internal readonly long length;
             internal readonly byte* basePtr;
             private int closed;
