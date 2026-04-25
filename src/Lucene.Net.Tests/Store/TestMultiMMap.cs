@@ -1505,5 +1505,179 @@ namespace Lucene.Net.Store
             // Now it should be possible to delete the file. This is the condition we are testing for.
             File.Delete(fileName);
         }
+
+        // LUCENENET specific: tests written to investigate the concern raised
+        // in PR #1267 (review comment r3137038502) that the per-file shared
+        // mapping cache, keyed only by file name with a fixed Length captured
+        // at first-open time, could silently corrupt reads or return wrong
+        // data when a file grows after its mapping is first cached.
+        //
+        // The Lucene directory contract is that a file is write-once: an
+        // IndexOutput is opened, written, closed, and only then may any
+        // IndexInput open it. Once read, the file is never extended by
+        // Lucene — a new commit writes new segment files, it does not append
+        // to existing ones. Readers capture the file length at open time and
+        // never read past it (EOFException otherwise). These tests document
+        // and pin that contract against the current design.
+
+        /// <summary>
+        /// After a reader opens an IndexInput, a concurrent (non-Lucene)
+        /// writer extending the same file must NOT change what the reader
+        /// observes: the IndexInput's Length is a snapshot, reads within
+        /// [0, Length) return the bytes that were present at open time, and
+        /// reads past Length throw EOFException. This is the "snapshot
+        /// length at open time" invariant — the same behavior Java Lucene
+        /// relies on.
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public void TestGrowthAfterOpen_IsSnapshotAtOpenTime()
+        {
+            var dirPath = CreateTempDir("testGrowthAfterOpen");
+            const string name = "data.bin";
+            string filePath = Path.Combine(dirPath.FullName, name);
+
+            // Seed with a known pattern of 64 bytes.
+            var initial = new byte[64];
+            for (int i = 0; i < initial.Length; i++) initial[i] = (byte)i;
+            File.WriteAllBytes(filePath, initial);
+
+            using var mmapDir = new MMapDirectory(dirPath);
+            using var input = mmapDir.OpenInput(name, NewIOContext(Random));
+
+            Assert.AreEqual(64L, input.Length, "IndexInput.Length must be the snapshot taken at open time.");
+
+            // Extend the file externally by another 64 bytes of different data.
+            using (var fs = new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+            {
+                var extra = new byte[64];
+                for (int i = 0; i < extra.Length; i++) extra[i] = (byte)(0xFF - i);
+                fs.Write(extra, 0, extra.Length);
+            }
+
+            // Length must not change — the IndexInput is pinned to its
+            // snapshot. This is the "do not track live file length"
+            // contract: the mapping reflects the state at open time.
+            Assert.AreEqual(64L, input.Length,
+                "Growth of the underlying file must NOT be reflected in a previously-opened IndexInput.");
+
+            // Reads within the captured window must return the original bytes.
+            input.Seek(0);
+            var buf = new byte[64];
+            input.ReadBytes(buf, 0, buf.Length);
+            for (int i = 0; i < buf.Length; i++)
+            {
+                Assert.AreEqual((byte)i, buf[i], $"byte[{i}] must be the original value");
+            }
+
+            // Reads past the captured Length must throw EOFException, not
+            // return stale/new bytes. This is what protects Lucene readers
+            // from reading partially-written data in a file that a writer
+            // is still extending.
+            input.Seek(60);
+            Assert.Throws<EndOfStreamException>(() =>
+            {
+                var overflow = new byte[8];
+                input.ReadBytes(overflow, 0, overflow.Length);
+            }, "Reading past the snapshot Length must throw EOFException.");
+        }
+
+        /// <summary>
+        /// If the file has grown on disk between two separate OpenInput
+        /// calls (even for the same file name), the second caller must
+        /// observe the CURRENT file length, not the length cached from
+        /// the first open.
+        /// <para/>
+        /// This is the concern ChatGPT actually articulated in review
+        /// comment r3137038502: a per-file cache keyed only by file name,
+        /// with a fixed Length captured at first mapping time, cannot
+        /// serve a later OpenInput that needs to see bytes the first
+        /// mapping doesn't know about.
+        /// <para/>
+        /// Note: this is NOT a scenario that arises under normal Lucene
+        /// operation — Lucene never extends a segment file once it has
+        /// been closed and referenced by a commit. Lucene writes a new
+        /// file for a new commit. This test documents the edge case for
+        /// non-Lucene callers (and for potential future Lucene behaviors
+        /// that might reuse file names) so that the contract is explicit.
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public void TestSecondOpenAfterGrowth_ObservesCurrentLength()
+        {
+            var dirPath = CreateTempDir("testSecondOpenAfterGrowth");
+            const string name = "data.bin";
+            string filePath = Path.Combine(dirPath.FullName, name);
+
+            File.WriteAllBytes(filePath, new byte[64]);
+
+            using var mmapDir = new MMapDirectory(dirPath);
+
+            // First open — mapping is created with length=64 and cached.
+            using (var first = mmapDir.OpenInput(name, NewIOContext(Random)))
+            {
+                Assert.AreEqual(64L, first.Length);
+
+                // Grow the file while the first IndexInput is still open.
+                using (var fs = new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+                {
+                    fs.Write(new byte[64], 0, 64);
+                }
+
+                // Second open of the same file, with the first still live,
+                // hits the cached SharedMapping. Under the current design
+                // the cache entry's Length is still 64, so the second
+                // IndexInput sees Length=64 rather than 128.
+                //
+                // This test asserts what we believe the CORRECT behavior
+                // should be. If the current implementation returns 64, the
+                // test fails and we have a real (if Lucene-irrelevant) gap
+                // in the contract to discuss. If it returns 128, the cache
+                // refreshes on length mismatch and no gap exists.
+                using (var second = mmapDir.OpenInput(name, NewIOContext(Random)))
+                {
+                    Assert.AreEqual(128L, second.Length,
+                        "A second OpenInput after the file grew must see the current file length, " +
+                        "not the length cached from the first open. This is the ChatGPT-flagged " +
+                        "concern from PR #1267 review r3137038502.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// After the last reference to a cached mapping is dropped, the
+        /// cache entry is removed. A subsequent OpenInput then creates a
+        /// fresh mapping that reflects the current file length. This test
+        /// documents the "cache entry reaped, fresh mapping next time"
+        /// path — the primary mechanism by which the Lucene.NET cache is
+        /// correct under Lucene's actual write-once/read-many semantics.
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public void TestReopenAfterGrowthWhenCacheDrained_ObservesCurrentLength()
+        {
+            var dirPath = CreateTempDir("testReopenAfterGrowth");
+            const string name = "data.bin";
+            string filePath = Path.Combine(dirPath.FullName, name);
+
+            File.WriteAllBytes(filePath, new byte[64]);
+
+            using var mmapDir = new MMapDirectory(dirPath);
+
+            using (var first = mmapDir.OpenInput(name, NewIOContext(Random)))
+            {
+                Assert.AreEqual(64L, first.Length);
+            } // Dispose drops the last ref, cache entry is reaped.
+
+            // Grow the file after all references are gone.
+            using (var fs = new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+            {
+                fs.Write(new byte[64], 0, 64);
+            }
+
+            using (var second = mmapDir.OpenInput(name, NewIOContext(Random)))
+            {
+                Assert.AreEqual(128L, second.Length,
+                    "After the cache entry was reaped, a new OpenInput must create a fresh " +
+                    "mapping reflecting the current file length.");
+            }
+        }
     }
 }

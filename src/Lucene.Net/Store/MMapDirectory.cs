@@ -3,7 +3,6 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
-using System.Collections.Concurrent;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
@@ -76,14 +75,14 @@ namespace Lucene.Net.Store
         internal static int s_maxCapacityAttemptsObserved;
         // LUCENENET specific END
 
-        // LUCENENET specific: per-file shared mapping cache. Each entry holds
-        // a single MemoryMappedFile + chunk array shared across OpenInput,
-        // CreateSlicer's slices, and clones for the same file. Refcounted so
-        // that the mapping is torn down when the last referencing IndexInput
-        // (or slicer) is disposed. Lazy<T> guards against two threads racing
-        // to create a mapping for the same key.
-        private readonly ConcurrentDictionary<string, Lazy<SharedMapping>> _mappings
-            = new ConcurrentDictionary<string, Lazy<SharedMapping>>(StringComparer.Ordinal);
+        // LUCENENET specific: no per-file mapping cache. Each OpenInput /
+        // CreateSlicer call creates a fresh SharedMapping, matching upstream
+        // Java Lucene behavior where every openInput opens a new FileChannel
+        // and calls fc.map(). Sharing is scoped to one MMapIndexInput family
+        // (the root returned from OpenInput plus its clones) or to one
+        // slicer (the slicer + its issued slices + their clones) so that
+        // Length is always captured at the moment of the actual OpenInput
+        // / CreateSlicer call, never stale from a prior call.
 
         /// <summary>
         /// Create a new <see cref="MMapDirectory"/> for the named location.
@@ -207,18 +206,18 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             var file = Path.Combine(Directory.FullName, name); // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
-            // LUCENENET specific: the new MMapIndexInput path (nested class
-            // below) replaces the upstream ByteBufferIndexInput-based approach.
-            // See #1013 + #1151 and the class doc comment for rationale.
-            var (mapping, lazy) = AcquireMapping(file);
+            // LUCENENET specific: a fresh SharedMapping per OpenInput call.
+            // Matches upstream Java (openInput creates a new FileChannel +
+            // fc.map()) and ensures Length reflects the file's current size.
+            SharedMapping mapping = SharedMapping.Create(file, chunkSizePower);
             try
             {
                 return new MMapIndexInput("MMapIndexInput(path=\"" + file + "\")",
-                    this, file, lazy, mapping, 0, mapping.Length, context, chunkSizePower);
+                    this, file, ownsMapping: true, mapping, 0, mapping.Length, context, chunkSizePower);
             }
             catch
             {
-                ReleaseMapping(file, lazy);
+                mapping.DisposeResources();
                 throw;
             }
         }
@@ -227,118 +226,22 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             var file = Path.Combine(Directory.FullName, name);
-            var (mapping, lazy) = AcquireMapping(file);
+            SharedMapping mapping = SharedMapping.Create(file, chunkSizePower);
             try
             {
-                return new IndexInputSlicerAnonymousClass(this, context, file, lazy, mapping);
+                return new IndexInputSlicerAnonymousClass(this, context, file, mapping);
             }
             catch
             {
-                ReleaseMapping(file, lazy);
-                throw;
-            }
-        }
-
-        // LUCENENET specific: acquire or create the shared mapping for the
-        // given file path. Increments the mapping's refcount and returns both
-        // the SharedMapping and the Lazy<SharedMapping> handle used for
-        // Release. The Lazy<T> wrapper ensures that if two threads race on
-        // the same key, only one MemoryMappedFile is created.
-        internal (SharedMapping mapping, Lazy<SharedMapping> lazy) AcquireMapping(string file)
-        {
-            while (true)
-            {
-                // Was the Lazy already in the dict? If so, we need to
-                // TryAcquire (an existing mapping can be mid-teardown and
-                // should reject new acquirers). If we're the thread that
-                // just added the Lazy, SharedMapping.Create returns refCount=1
-                // and we own that ref — no further acquire needed.
-                bool createdHere = false;
-                var lazy = _mappings.GetOrAdd(file, f =>
-                {
-                    createdHere = true;
-                    return new Lazy<SharedMapping>(
-                        () => SharedMapping.Create(f, chunkSizePower),
-                        LazyThreadSafetyMode.ExecutionAndPublication);
-                });
-                SharedMapping mapping;
-                try
-                {
-                    mapping = lazy.Value;
-                }
-                catch
-                {
-                    // Creation failed — remove the poisoned Lazy so a retry
-                    // on a different thread can try again, then rethrow.
-                    _mappings.TryRemove(new SCG.KeyValuePair<string, Lazy<SharedMapping>>(file, lazy));
-                    throw;
-                }
-
-                if (createdHere)
-                {
-                    // We own the initial refCount=1 that SharedMapping.Create
-                    // returned.
-                    return (mapping, lazy);
-                }
-
-                // Existing mapping. TryAcquire returns false if the mapping
-                // was already released (refcount hit zero between GetOrAdd
-                // and our Increment). In that case a concurrent Release is
-                // about to remove the entry; loop and create a new one.
-                if (mapping.TryAcquire())
-                {
-                    return (mapping, lazy);
-                }
-            }
-        }
-
-        // LUCENENET specific: release one ref on the given mapping. Removes
-        // the dictionary entry and disposes underlying resources when the
-        // refcount reaches zero.
-        internal void ReleaseMapping(string file, Lazy<SharedMapping> lazy)
-        {
-            SharedMapping mapping;
-            try
-            {
-                mapping = lazy.Value;
-            }
-            catch
-            {
-                return;
-            }
-            if (mapping.Release())
-            {
-                _mappings.TryRemove(new SCG.KeyValuePair<string, Lazy<SharedMapping>>(file, lazy));
                 mapping.DisposeResources();
+                throw;
             }
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                // Forcibly tear down any mappings still in the dictionary.
-                // Well-behaved callers should have disposed all IndexInputs
-                // and slicers before disposing the directory, but Lucene
-                // tests (and some callers) rely on directory Dispose
-                // cleaning up dangling resources.
-                var pairs = _mappings.ToArray();
-                _mappings.Clear();
-                foreach (var pair in pairs)
-                {
-                    try
-                    {
-                        if (pair.Value.IsValueCreated)
-                        {
-                            pair.Value.Value.DisposeResources();
-                        }
-                    }
-                    catch
-                    {
-                        // never propagate from cleanup
-                    }
-                }
-            }
+            // No per-directory mapping cache; each IndexInput/slicer owns
+            // its SharedMapping and tears it down on its own Dispose.
             base.Dispose(disposing);
         }
 
@@ -347,9 +250,9 @@ namespace Lucene.Net.Store
             private readonly MMapDirectory outerInstance;
             private readonly IOContext context;
             private readonly string file;
-            // The slicer holds one refcount on the shared mapping; all slices
-            // issued from it piggyback on that ref (they do not increment).
-            private readonly Lazy<SharedMapping> mappingLazy;
+            // The slicer owns the shared mapping; all slices issued from it
+            // piggyback on the slicer's ownership. Disposing the slicer
+            // tears the mapping down once issued slices have been disposed.
             private readonly SharedMapping mapping;
             private int disposed /* = 0 */; // LUCENENET specific - allow double-dispose
             // Track issued slices so that Dispose cascades. Lucene's
@@ -360,23 +263,22 @@ namespace Lucene.Net.Store
             private readonly object issuedSlicesLock = new object();
 
             public IndexInputSlicerAnonymousClass(MMapDirectory outerInstance, IOContext context, string file,
-                Lazy<SharedMapping> mappingLazy, SharedMapping mapping)
+                SharedMapping mapping)
             {
                 this.outerInstance = outerInstance;
                 this.context = context;
                 this.file = file;
-                this.mappingLazy = mappingLazy;
                 this.mapping = mapping;
             }
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
                 outerInstance.EnsureOpen();
-                // Slices share the slicer's mapping ref; the MMapIndexInput
-                // instance does NOT own a refcount on the shared mapping.
+                // Slices reference the slicer's mapping; only the slicer
+                // itself owns the mapping and will dispose it.
                 var input = new MMapIndexInput(
                     "MMapIndexInput(" + sliceDescription + " in path=\"" + file + "\" slice=" + offset + ":" + (offset + length) + ")",
-                    outerInstance, file, mappingLazy: null, mapping,
+                    outerInstance, file, ownsMapping: false, mapping,
                     offset, length,
                     BufferedIndexInput.GetBufferSize(context), outerInstance.chunkSizePower);
                 lock (issuedSlicesLock)
@@ -417,8 +319,8 @@ namespace Lucene.Net.Store
 
                     IOUtils.DisposeWhileHandlingException(toDispose);
 
-                    // Release the slicer's refcount on the shared mapping.
-                    outerInstance.ReleaseMapping(file, mappingLazy);
+                    // Slicer owns the mapping; tear it down.
+                    mapping.DisposeResources();
                 }
             }
         }
@@ -481,9 +383,9 @@ namespace Lucene.Net.Store
         {
             // Non-readonly so that Clone() can mark the cloned instance as a
             // non-root (see Clone()). A "root" instance is one returned from
-            // OpenInput (it owns a refcount on the shared mapping). Clones
-            // and slices from IndexInputSlicer are non-root.
-            private bool isRoot = true;
+            // OpenInput (it owns the shared mapping). Clones and slices from
+            // IndexInputSlicer are non-root.
+            private bool isRoot;
 
             // Per-instance closed flag: tracks whether THIS IndexInput
             // instance has been disposed. Independent of the shared mapping's
@@ -492,13 +394,13 @@ namespace Lucene.Net.Store
             private int instanceClosed;
 
             // Shared mapping used by this IndexInput. The same SharedMapping
-            // is shared by OpenInput's root, every OpenSlice, and every
-            // Clone. Only instances where mappingLazy != null own a refcount
-            // and are responsible for releasing the mapping in Dispose.
+            // is shared by the root returned from OpenInput and its clones,
+            // OR by a slicer + its issued slices + their clones. Only root
+            // instances (ownsMapping == true) dispose the underlying mapping
+            // on Dispose. Slices and clones do not own it.
             private readonly SharedMapping mapping;
             private readonly MMapDirectory directory;
             private readonly string file;
-            private readonly Lazy<SharedMapping>? mappingLazy;
 
             // The window into the shared mapping that this IndexInput sees.
             // For OpenInput this is [0, mapping.Length); for OpenSlice it is
@@ -510,20 +412,18 @@ namespace Lucene.Net.Store
 
             /// <summary>
             /// Creates an <see cref="IndexInput"/> viewing <c>[offset, offset+length)</c>
-            /// of the given shared mapping. Pass a non-null <paramref name="mappingLazy"/>
-            /// only for instances that own a refcount on the mapping (i.e. the
-            /// root returned from <see cref="MMapDirectory.OpenInput(string, IOContext)"/>);
-            /// slices issued from a slicer and clones piggyback on their
-            /// parent's ref and must pass <c>null</c>.
+            /// of the given shared mapping. Pass <c>ownsMapping: true</c> only for
+            /// the root returned from <see cref="MMapDirectory.OpenInput(string, IOContext)"/>;
+            /// slices issued from a slicer and clones must pass <c>false</c>.
             /// </summary>
             internal MMapIndexInput(string resourceDescription, MMapDirectory directory, string file,
-                Lazy<SharedMapping> mappingLazy, SharedMapping mapping,
+                bool ownsMapping, SharedMapping mapping,
                 long offset, long length, IOContext context, int chunkSizePower)
                 : base(resourceDescription, context)
             {
                 this.directory = directory;
                 this.file = file;
-                this.mappingLazy = mappingLazy;
+                this.isRoot = ownsMapping;
                 this.mapping = mapping ?? throw new ArgumentNullException(nameof(mapping));
                 this.baseOffset = offset;
                 this.length = length;
@@ -535,13 +435,13 @@ namespace Lucene.Net.Store
             /// Slice-bufferSize overload used by <see cref="Directory.IndexInputSlicer"/>.
             /// </summary>
             internal MMapIndexInput(string resourceDescription, MMapDirectory directory, string file,
-                Lazy<SharedMapping>? mappingLazy, SharedMapping mapping,
+                bool ownsMapping, SharedMapping mapping,
                 long offset, long length, int bufferSize, int chunkSizePower)
                 : base(resourceDescription, bufferSize)
             {
                 this.directory = directory;
                 this.file = file;
-                this.mappingLazy = mappingLazy;
+                this.isRoot = ownsMapping;
                 this.mapping = mapping ?? throw new ArgumentNullException(nameof(mapping));
                 this.baseOffset = offset;
                 this.length = length;
@@ -646,22 +546,25 @@ namespace Lucene.Net.Store
                 {
                     return;
                 }
-                // Only root instances hold a refcount on the shared mapping.
-                // Clones and slices share their parent's ref, so disposing
-                // them only flips this instance's closed flag.
-                if (isRoot && mappingLazy != null)
+                // Only root instances own the shared mapping.
+                // Clones and slices do not own it, so disposing them only
+                // flips this instance's closed flag.
+                if (isRoot)
                 {
-                    directory.ReleaseMapping(file, mappingLazy);
+                    mapping.DisposeResources();
                 }
             }
         }
 
         /// <summary>
         /// LUCENENET specific: a single memory-mapped file plus its chunk
-        /// array, shared across <see cref="MMapIndexInput"/> instances that
-        /// reference the same file (including slices and clones).
-        /// Refcounted so that the underlying native resources are torn down
-        /// when the last referencing IndexInput or slicer is disposed.
+        /// array, owned by exactly one <see cref="MMapIndexInput"/> root or
+        /// one <see cref="IndexInputSlicer"/>. Clones and slices reference
+        /// it without owning it. The owner calls <see cref="DisposeResources"/>
+        /// exactly once on Dispose; per-chunk drain barriers in <see cref="Chunk"/>
+        /// ensure in-flight reads from non-owning clones/slices see a closed
+        /// flag and throw <see cref="AlreadyClosedException"/> rather than
+        /// dereferencing a freed mapping.
         /// </summary>
         internal sealed unsafe class SharedMapping
         {
@@ -671,10 +574,7 @@ namespace Lucene.Net.Store
             /// </summary>
             private readonly MemoryMappedFile? memoryMappedFile;
             private readonly FileStream fileStream;
-
-            // 1 for the initial creator (held by AcquireMapping until the
-            // caller transfers it to the returned IndexInput/Slicer).
-            private int refCount = 1;
+            private int disposed;
 
             private SharedMapping(MemoryMappedFile? mmf, FileStream fs, Chunk[] chunks, long length)
             {
@@ -710,38 +610,11 @@ namespace Lucene.Net.Store
             }
 
             /// <summary>
-            /// Attempt to increment the refcount. Returns false if the
-            /// mapping has already been released (refcount was zero).
-            /// </summary>
-            internal bool TryAcquire()
-            {
-                while (true)
-                {
-                    int current = Volatile.Read(ref refCount);
-                    if (current <= 0) return false;
-                    if (Interlocked.CompareExchange(ref refCount, current + 1, current) == current)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Decrement the refcount. Returns true when this call brought
-            /// it to zero, meaning the caller owns disposal.
-            /// </summary>
-            internal bool Release()
-            {
-                return Interlocked.Decrement(ref refCount) == 0;
-            }
-
-            /// <summary>
-            /// Dispose the underlying native resources. Must be called at
-            /// most once, only by the caller whose Release returned true
-            /// (or by the directory's own forced cleanup on Dispose).
+            /// Dispose the underlying native resources. Idempotent.
             /// </summary>
             internal void DisposeResources()
             {
+                if (Interlocked.CompareExchange(ref disposed, 1, 0) != 0) return;
                 DisposeChunks(Chunks);
                 IOUtils.DisposeWhileHandlingException(memoryMappedFile, fileStream);
             }
