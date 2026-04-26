@@ -1679,5 +1679,456 @@ namespace Lucene.Net.Store
                     "mapping reflecting the current file length.");
             }
         }
+
+        // LUCENENET specific: regression tests for the direct-pointer
+        // MMapIndexInput. These exercise multi-byte reads that straddle
+        // chunk boundaries, EOF behavior at exact file end, and seek/skip
+        // interactions with the cached chunk pointer.
+
+        private static byte[] WriteFile(MMapDirectory dir, string name, int length)
+        {
+            var bytes = new byte[length];
+            // Deterministic, non-trivial pattern so off-by-one is detectable.
+            for (int i = 0; i < length; i++)
+            {
+                bytes[i] = (byte)((i * 31 + 7) & 0xFF);
+            }
+            using (var io = dir.CreateOutput(name, NewIOContext(Random)))
+            {
+                io.WriteBytes(bytes, 0, bytes.Length);
+            }
+            return bytes;
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestReadInt16AcrossChunkBoundary()
+        {
+            // chunkSize = 4 bytes; write 8 bytes; the int16 at position 3
+            // starts in chunk 0 (offset 3) and ends in chunk 1 (offset 0).
+            using var mmapDir = new MMapDirectory(CreateTempDir("readInt16AcrossChunk"), null, 1 << 2);
+            var bytes = WriteFile(mmapDir, "f", 8);
+            using var ii = mmapDir.OpenInput("f", NewIOContext(Random));
+            for (int pos = 0; pos <= bytes.Length - 2; pos++)
+            {
+                ii.Seek(pos);
+                short actual = ii.ReadInt16();
+                short expected = (short)(((bytes[pos] & 0xFF) << 8) | (bytes[pos + 1] & 0xFF));
+                Assert.AreEqual(expected, actual, "ReadInt16 mismatch at position " + pos);
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestReadInt32AcrossChunkBoundary()
+        {
+            using var mmapDir = new MMapDirectory(CreateTempDir("readInt32AcrossChunk"), null, 1 << 2);
+            var bytes = WriteFile(mmapDir, "f", 16);
+            using var ii = mmapDir.OpenInput("f", NewIOContext(Random));
+            for (int pos = 0; pos <= bytes.Length - 4; pos++)
+            {
+                ii.Seek(pos);
+                int actual = ii.ReadInt32();
+                int expected = ((bytes[pos] & 0xFF) << 24) | ((bytes[pos + 1] & 0xFF) << 16)
+                             | ((bytes[pos + 2] & 0xFF) << 8) | (bytes[pos + 3] & 0xFF);
+                Assert.AreEqual(expected, actual, "ReadInt32 mismatch at position " + pos);
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestReadInt64AcrossChunkBoundary()
+        {
+            using var mmapDir = new MMapDirectory(CreateTempDir("readInt64AcrossChunk"), null, 1 << 2);
+            var bytes = WriteFile(mmapDir, "f", 24);
+            using var ii = mmapDir.OpenInput("f", NewIOContext(Random));
+            for (int pos = 0; pos <= bytes.Length - 8; pos++)
+            {
+                ii.Seek(pos);
+                long actual = ii.ReadInt64();
+                long expected = 0;
+                for (int b = 0; b < 8; b++)
+                {
+                    expected = (expected << 8) | (bytes[pos + b] & 0xFFL);
+                }
+                Assert.AreEqual(expected, actual, "ReadInt64 mismatch at position " + pos);
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestEofThrowsAtExactLength()
+        {
+            using var mmapDir = new MMapDirectory(CreateTempDir("eofExact"), null, 1 << 2);
+            WriteFile(mmapDir, "f", 7);
+            using var ii = mmapDir.OpenInput("f", NewIOContext(Random));
+
+            ii.Seek(7);
+            Assert.Throws<EndOfStreamException>(() => ii.ReadByte(), "ReadByte at Length must EOF");
+
+            ii.Seek(6);
+            Assert.Throws<EndOfStreamException>(() => ii.ReadInt16(), "ReadInt16 at Length-1 must EOF");
+
+            ii.Seek(4);
+            Assert.Throws<EndOfStreamException>(() => ii.ReadInt32(), "ReadInt32 at Length-3 must EOF");
+
+            ii.Seek(0);
+            Assert.Throws<EndOfStreamException>(() => ii.ReadInt64(), "ReadInt64 with Length<8 must EOF");
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestBackwardSeekInvalidatesChunkCache()
+        {
+            using var mmapDir = new MMapDirectory(CreateTempDir("backSeek"), null, 1 << 2);
+            var bytes = WriteFile(mmapDir, "f", 16);
+            using var ii = mmapDir.OpenInput("f", NewIOContext(Random));
+            // Read into chunk 3 to populate cache.
+            ii.Seek(13);
+            Assert.AreEqual(bytes[13], ii.ReadByte());
+            // Backward seek to chunk 0 must invalidate the cache.
+            ii.Seek(1);
+            Assert.AreEqual(bytes[1], ii.ReadByte());
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestSliceWithBaseOffsetAcrossChunkBoundary()
+        {
+            using var mmapDir = new MMapDirectory(CreateTempDir("sliceBaseOffset"), null, 1 << 2);
+            var bytes = WriteFile(mmapDir, "f", 16);
+            using var slicer = mmapDir.CreateSlicer("f", NewIOContext(Random));
+            // Slice that starts mid-chunk and spans 3 chunk boundaries.
+            using var slice = slicer.OpenSlice("s", 3, 11);
+            Assert.AreEqual(11L, slice.Length);
+            var actual = new byte[11];
+            slice.ReadBytes(actual, 0, 11);
+            for (int i = 0; i < 11; i++)
+            {
+                Assert.AreEqual(bytes[3 + i], actual[i], "slice byte mismatch at " + i);
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestSkipBytesAcrossChunks()
+        {
+            using var mmapDir = new MMapDirectory(CreateTempDir("skipBytes"), null, 1 << 2);
+            var bytes = WriteFile(mmapDir, "f", 32);
+            using var ii = mmapDir.OpenInput("f", NewIOContext(Random));
+            ii.Seek(1);
+            ii.SkipBytes(20);
+            Assert.AreEqual(21L, ii.Position);
+            Assert.AreEqual(bytes[21], ii.ReadByte());
+            // Skip 0 is a no-op.
+            long before = ii.Position;
+            ii.SkipBytes(0);
+            Assert.AreEqual(before, ii.Position);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestCloneIndependentChunkRent()
+        {
+            using var mmapDir = new MMapDirectory(CreateTempDir("cloneIndep"), null, 1 << 2);
+            var bytes = WriteFile(mmapDir, "f", 32);
+            using var parent = mmapDir.OpenInput("f", NewIOContext(Random));
+            // Parent reads chunk 0.
+            parent.Seek(2);
+            Assert.AreEqual(bytes[2], parent.ReadByte());
+            // Clone: independent position, independent chunk rent.
+            var clone = (IndexInput)parent.Clone();
+            try
+            {
+                clone.Seek(20);
+                Assert.AreEqual(bytes[20], clone.ReadByte());
+                // Parent position is unaffected by clone reads.
+                Assert.AreEqual(3L, parent.Position);
+                Assert.AreEqual(bytes[3], parent.ReadByte());
+            }
+            finally
+            {
+                clone.Dispose();
+            }
+            // Parent still works after clone disposed.
+            Assert.AreEqual(bytes[4], parent.ReadByte());
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestEmptySliceAndEmptyReadBytes()
+        {
+            using var mmapDir = new MMapDirectory(CreateTempDir("emptySlice"), null, 1 << 2);
+            WriteFile(mmapDir, "f", 8);
+            using var slicer = mmapDir.CreateSlicer("f", NewIOContext(Random));
+            using var slice = slicer.OpenSlice("s", 4, 0);
+            Assert.AreEqual(0L, slice.Length);
+            // Empty span read on empty slice is a no-op.
+            slice.ReadBytes(System.Array.Empty<byte>(), 0, 0);
+            // Any non-empty read must EOF.
+            Assert.Throws<EndOfStreamException>(() => slice.ReadByte());
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestPositionTracksReads()
+        {
+            // Verifies Position is accurate after each read primitive.
+            using var mmapDir = new MMapDirectory(CreateTempDir("positionTracks"), null, 1 << 2);
+            var bytes = WriteFile(mmapDir, "f", 32);
+            using var ii = mmapDir.OpenInput("f", NewIOContext(Random));
+            Assert.AreEqual(0L, ii.Position);
+            ii.ReadByte();   Assert.AreEqual(1L, ii.Position);
+            ii.ReadInt16();  Assert.AreEqual(3L, ii.Position);
+            ii.ReadInt32();  Assert.AreEqual(7L, ii.Position);
+            ii.ReadInt64();  Assert.AreEqual(15L, ii.Position);
+            ii.SkipBytes(5); Assert.AreEqual(20L, ii.Position);
+            ii.Seek(2);      Assert.AreEqual(2L, ii.Position);
+            var buf = new byte[4];
+            ii.ReadBytes(buf, 0, 4);
+            Assert.AreEqual(6L, ii.Position);
+            for (int i = 0; i < 4; i++) Assert.AreEqual(bytes[2 + i], buf[i]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestReadVInt32AcrossChunkBoundary()
+        {
+            // VInt parsing inherits from DataInput and walks via ReadByte;
+            // verify the variable-length encoding survives chunk crossings
+            // without corruption.
+            using var mmapDir = new MMapDirectory(CreateTempDir("readVInt32"), null, 1 << 2);
+            // Write known VInt values that span chunk boundaries.
+            int[] values = { 0, 1, 127, 128, 16383, 16384, int.MaxValue / 2, int.MaxValue };
+            using (var io = mmapDir.CreateOutput("f", NewIOContext(Random)))
+            {
+                foreach (int v in values) io.WriteVInt32(v);
+            }
+            using var ii = mmapDir.OpenInput("f", NewIOContext(Random));
+            foreach (int expected in values)
+            {
+                Assert.AreEqual(expected, ii.ReadVInt32());
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestReadVInt64AcrossChunkBoundary()
+        {
+            using var mmapDir = new MMapDirectory(CreateTempDir("readVInt64"), null, 1 << 2);
+            long[] values = { 0L, 1L, 127L, 128L, 16383L, 16384L, long.MaxValue / 2, long.MaxValue };
+            using (var io = mmapDir.CreateOutput("f", NewIOContext(Random)))
+            {
+                foreach (long v in values) io.WriteVInt64(v);
+            }
+            using var ii = mmapDir.OpenInput("f", NewIOContext(Random));
+            foreach (long expected in values)
+            {
+                Assert.AreEqual(expected, ii.ReadVInt64());
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestReadInt32AcrossChunkBoundary_ColdCache()
+        {
+            // The "cold cache" variant: open, immediately seek to a chunk
+            // seam, ReadInt32. The fast path is only taken if the cached
+            // chunk is already populated, which it isn't on the first call,
+            // so this exercises the slow path explicitly.
+            using var mmapDir = new MMapDirectory(CreateTempDir("readInt32Cold"), null, 1 << 2);
+            var bytes = WriteFile(mmapDir, "f", 16);
+            for (int pos = 1; pos <= bytes.Length - 4; pos++)
+            {
+                using var ii = mmapDir.OpenInput("f", NewIOContext(Random));
+                ii.Seek(pos);
+                int actual = ii.ReadInt32();
+                int expected = ((bytes[pos] & 0xFF) << 24) | ((bytes[pos + 1] & 0xFF) << 16)
+                             | ((bytes[pos + 2] & 0xFF) << 8) | (bytes[pos + 3] & 0xFF);
+                Assert.AreEqual(expected, actual, "cold-cache ReadInt32 mismatch at position " + pos);
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestDoubleDisposeIsIdempotent()
+        {
+            using var mmapDir = new MMapDirectory(CreateTempDir("doubleDispose"), null, 1 << 2);
+            WriteFile(mmapDir, "f", 16);
+            var ii = mmapDir.OpenInput("f", NewIOContext(Random));
+            ii.ReadByte(); // populate chunk rent
+            ii.Dispose();
+            ii.Dispose(); // must not throw
+            try
+            {
+                ii.ReadByte();
+                Assert.Fail("expected AlreadyClosedException after Dispose");
+            }
+            catch (Exception e) when (e.IsAlreadyClosedException() || e is ObjectDisposedException)
+            {
+                // pass
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestCrossThreadCloneDisposeWhileReading()
+        {
+            // Regression: clone is being read on thread A; thread B disposes
+            // it. Reader thread must observe close cleanly (AlreadyClosed)
+            // without AVE. This is the targeted same-design analog of the
+            // slicer-vs-slice nightly stress test, but explicit and quick.
+            using var mmapDir = new MMapDirectory(CreateTempDir("xthreadClone"), null, 1 << 4);
+            // 4 KB file, 16-byte chunks → 256 chunks, lots of crossings.
+            WriteFile(mmapDir, "f", 4096);
+            using var parent = mmapDir.OpenInput("f", NewIOContext(Random));
+
+            for (int trial = 0; trial < 20; trial++)
+            {
+                var clone = (IndexInput)parent.Clone();
+                int observedAve = 0;
+                int observedAcceptable = 0;
+
+                var reader = new System.Threading.Thread(() =>
+                {
+                    try
+                    {
+                        clone.Seek(0);
+                        long len = clone.Length;
+                        long sum = 0;
+                        for (long i = 0; i < len; i++) sum += clone.ReadByte();
+                        if (sum == long.MinValue) System.Console.WriteLine("never");
+                    }
+                    catch (Exception e) when (e.IsAlreadyClosedException() || e is ObjectDisposedException || e is EndOfStreamException)
+                    {
+                        System.Threading.Interlocked.Increment(ref observedAcceptable);
+                    }
+                    catch (System.AccessViolationException)
+                    {
+                        System.Threading.Interlocked.Increment(ref observedAve);
+                    }
+                });
+                reader.Start();
+                System.Threading.Thread.Sleep(0); // let reader start
+                clone.Dispose();
+                reader.Join();
+                Assert.AreEqual(0, observedAve, "AVE observed on trial " + trial);
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestSlicedReadInt32AcrossOffsets()
+        {
+            // Item 6: exhaustive sweep of slice (offset, length) with
+            // ReadInt32 — exercises the fast-path multi-byte read code with
+            // a non-zero baseOffset that may straddle a chunk boundary at
+            // any offset, including offsets that don't align with any chunk.
+            for (int chunkPower = 0; chunkPower < 5; chunkPower++)
+            {
+                using var mmapDir = new MMapDirectory(CreateTempDir("slicedReadInt32"), null, 1 << chunkPower);
+                int fileLen = 1 << (chunkPower + 2);
+                var bytes = WriteFile(mmapDir, "f", fileLen);
+                using var slicer = mmapDir.CreateSlicer("f", NewIOContext(Random));
+                for (int sliceStart = 0; sliceStart <= fileLen - 4; sliceStart++)
+                {
+                    int maxSliceLen = fileLen - sliceStart;
+                    for (int sliceLen = 4; sliceLen <= maxSliceLen; sliceLen++)
+                    {
+                        using var slice = slicer.OpenSlice("s", sliceStart, sliceLen);
+                        for (int innerPos = 0; innerPos <= sliceLen - 4; innerPos++)
+                        {
+                            slice.Seek(innerPos);
+                            int actual = slice.ReadInt32();
+                            int abs = sliceStart + innerPos;
+                            int expected = ((bytes[abs] & 0xFF) << 24) | ((bytes[abs + 1] & 0xFF) << 16)
+                                         | ((bytes[abs + 2] & 0xFF) << 8) | (bytes[abs + 3] & 0xFF);
+                            Assert.AreEqual(expected, actual,
+                                "chunkPower=" + chunkPower + " sliceStart=" + sliceStart +
+                                " sliceLen=" + sliceLen + " innerPos=" + innerPos);
+                        }
+                    }
+                }
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestSlicedReadInt64AcrossOffsets()
+        {
+            for (int chunkPower = 0; chunkPower < 4; chunkPower++)
+            {
+                using var mmapDir = new MMapDirectory(CreateTempDir("slicedReadInt64"), null, 1 << chunkPower);
+                int fileLen = 1 << (chunkPower + 3);
+                var bytes = WriteFile(mmapDir, "f", fileLen);
+                using var slicer = mmapDir.CreateSlicer("f", NewIOContext(Random));
+                for (int sliceStart = 0; sliceStart <= fileLen - 8; sliceStart++)
+                {
+                    int maxSliceLen = fileLen - sliceStart;
+                    for (int sliceLen = 8; sliceLen <= maxSliceLen; sliceLen++)
+                    {
+                        using var slice = slicer.OpenSlice("s", sliceStart, sliceLen);
+                        for (int innerPos = 0; innerPos <= sliceLen - 8; innerPos++)
+                        {
+                            slice.Seek(innerPos);
+                            long actual = slice.ReadInt64();
+                            int abs = sliceStart + innerPos;
+                            long expected = 0L;
+                            for (int b = 0; b < 8; b++)
+                                expected = (expected << 8) | (bytes[abs + b] & 0xFFL);
+                            Assert.AreEqual(expected, actual,
+                                "chunkPower=" + chunkPower + " sliceStart=" + sliceStart +
+                                " sliceLen=" + sliceLen + " innerPos=" + innerPos);
+                        }
+                    }
+                }
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestPostXThreadDisposeReadPathsThrow()
+        {
+            // Item 8: after Dispose runs from a different thread (reader is
+            // idle, not mid-deref), every read entry point must observe the
+            // closed state and throw cleanly. Covers ReadByte (fast path
+            // and slow path), ReadInt16/32/64 (fast and slow), ReadBytes,
+            // SkipBytes, and Seek.
+            using var mmapDir = new MMapDirectory(CreateTempDir("postXDispose"), null, 1 << 2);
+            WriteFile(mmapDir, "f", 32);
+
+            void DisposeFromOtherThread(IndexInput target)
+            {
+                var t = new System.Threading.Thread(() => target.Dispose());
+                t.Start();
+                t.Join();
+            }
+
+            // Each scenario opens a fresh input, optionally primes the
+            // chunk-rent cache, disposes from another thread, and verifies
+            // the named operation throws AlreadyClosed on the original
+            // (reader) thread.
+            void Scenario(string name, bool primeCache, Action<IndexInput> op)
+            {
+                var ii = mmapDir.OpenInput("f", NewIOContext(Random));
+                if (primeCache) ii.ReadByte(); // populate currentChunk on the reader thread
+                DisposeFromOtherThread(ii);
+                try
+                {
+                    op(ii);
+                    Assert.Fail(name + " did not throw after cross-thread Dispose");
+                }
+                catch (Exception e) when (e.IsAlreadyClosedException() || e is ObjectDisposedException)
+                {
+                    // pass
+                }
+                catch (Exception e)
+                {
+                    Assert.Fail(name + " threw unexpected " + e.GetType().Name + ": " + e.Message);
+                }
+            }
+
+            // Cold cache (no rent held when Dispose ran).
+            Scenario("ReadByte cold", false, ii => ii.ReadByte());
+            Scenario("ReadInt16 cold", false, ii => ii.ReadInt16());
+            Scenario("ReadInt32 cold", false, ii => ii.ReadInt32());
+            Scenario("ReadInt64 cold", false, ii => ii.ReadInt64());
+            Scenario("ReadBytes cold", false, ii => { var b = new byte[4]; ii.ReadBytes(b, 0, 4); });
+            Scenario("Seek cold", false, ii => ii.Seek(8));
+            Scenario("SkipBytes cold", false, ii => ii.SkipBytes(4));
+
+            // Warm cache (reader had a rent at Dispose time; the reader
+            // observes instanceClosed on its next op and must release the
+            // rent on its own thread before throwing).
+            Scenario("ReadByte warm", true, ii => { for (int i = 0; i < 100; i++) ii.ReadByte(); });
+            Scenario("ReadInt16 warm", true, ii => ii.ReadInt16());
+            Scenario("ReadInt32 warm", true, ii => ii.ReadInt32());
+            Scenario("ReadInt64 warm", true, ii => ii.ReadInt64());
+            Scenario("ReadBytes warm", true, ii => { var b = new byte[16]; ii.ReadBytes(b, 0, 16); });
+            Scenario("Seek warm", true, ii => ii.Seek(8));
+            Scenario("SkipBytes warm", true, ii => ii.SkipBytes(4));
+        }
     }
 }
