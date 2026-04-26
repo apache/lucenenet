@@ -1,8 +1,8 @@
 using J2N.Numerics;
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
+using System.Buffers.Binary;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
@@ -40,9 +40,9 @@ namespace Lucene.Net.Store
     /// virtual memory address space in your process equal to the
     /// size of the file being mapped.  Before using this class,
     /// be sure your have plenty of virtual address space, e.g. by
-    /// using a 64 bit runtime, or a 32 bit runtime with indexes that are
+    /// using a 64-bit runtime, or a 32-bit runtime with indexes that are
     /// guaranteed to fit within the address space.
-    /// On 32 bit platforms also consult <see cref="MMapDirectory(DirectoryInfo, LockFactory, int)"/>
+    /// On 32-bit platforms also consult <see cref="MMapDirectory(DirectoryInfo, LockFactory, int)"/>
     /// if you have problems with mmap failing because of fragmented
     /// address space. If you get an <see cref="OutOfMemoryException"/>, it is recommended
     /// to reduce the chunk size, until it works.
@@ -66,23 +66,13 @@ namespace Lucene.Net.Store
 
         private readonly int chunkSizePower;
 
-        // LUCENENET specific BEGIN: test-only counters for the capacity-retry
+        // LUCENENET specific: test-only counters for the capacity-retry
         // path in Map() — see #1090. Internal (exposed via InternalsVisibleTo
         // to the test assemblies) so regression tests can assert that the
         // race was actually exercised during a run, and to gather data on how
         // many retries are typically needed. Not intended for production use.
         internal static long s_capacityRetryCount;
         internal static int s_maxCapacityAttemptsObserved;
-        // LUCENENET specific END
-
-        // LUCENENET specific: no per-file mapping cache. Each OpenInput /
-        // CreateSlicer call creates a fresh SharedMapping, matching upstream
-        // Java Lucene behavior where every openInput opens a new FileChannel
-        // and calls fc.map(). Sharing is scoped to one MMapIndexInput family
-        // (the root returned from OpenInput plus its clones) or to one
-        // slicer (the slicer + its issued slices + their clones) so that
-        // Length is always captured at the moment of the actual OpenInput
-        // / CreateSlicer call, never stale from a prior call.
 
         /// <summary>
         /// Create a new <see cref="MMapDirectory"/> for the named location.
@@ -192,7 +182,7 @@ namespace Lucene.Net.Store
 
         // LUCENENET specific - Some JREs had a bug that didn't allow them to unmap.
         // But according to MSDN, the MemoryMappedFile.Dispose() method will
-        // indeed "release all resources". Therefore unmap hack is not needed in .NET.
+        // indeed "release all resources". Therefore, unmap hack is not needed in .NET.
 
         /// <summary>
         /// Returns the current mmap chunk size.
@@ -212,12 +202,11 @@ namespace Lucene.Net.Store
             SharedMapping mapping = SharedMapping.Create(file, chunkSizePower);
             try
             {
-                return new MMapIndexInput("MMapIndexInput(path=\"" + file + "\")",
-                    this, file, ownsMapping: true, mapping, 0, mapping.Length, context, chunkSizePower);
+                return new MMapIndexInput("MMapIndexInput(path=\"" + file + "\")", ownsMapping: true, mapping, 0, mapping.Length, chunkSizePower);
             }
             catch
             {
-                mapping.DisposeResources();
+                mapping.Dispose();
                 throw;
             }
         }
@@ -229,44 +218,36 @@ namespace Lucene.Net.Store
             SharedMapping mapping = SharedMapping.Create(file, chunkSizePower);
             try
             {
-                return new IndexInputSlicerAnonymousClass(this, context, file, mapping);
+                return new IndexInputSlicerAnonymousClass(this, file, mapping);
             }
             catch
             {
-                mapping.DisposeResources();
+                mapping.Dispose();
                 throw;
             }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            // No per-directory mapping cache; each IndexInput/slicer owns
-            // its SharedMapping and tears it down on its own Dispose.
-            base.Dispose(disposing);
         }
 
         private sealed class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly MMapDirectory outerInstance;
-            private readonly IOContext context;
             private readonly string file;
+
             // The slicer owns the shared mapping; all slices issued from it
             // piggyback on the slicer's ownership. Disposing the slicer
             // tears the mapping down once issued slices have been disposed.
             private readonly SharedMapping mapping;
+
             private int disposed /* = 0 */; // LUCENENET specific - allow double-dispose
+
             // Track issued slices so that Dispose cascades. Lucene's
             // contract is that after slicer.Dispose, reads from any slice
             // (or clone of a slice) throw AlreadyClosedException.
-            private readonly SCG.List<MMapIndexInput> issuedSlices
-                = new SCG.List<MMapIndexInput>();
+            private readonly SCG.List<MMapIndexInput> issuedSlices = new SCG.List<MMapIndexInput>();
             private readonly object issuedSlicesLock = new object();
 
-            public IndexInputSlicerAnonymousClass(MMapDirectory outerInstance, IOContext context, string file,
-                SharedMapping mapping)
+            public IndexInputSlicerAnonymousClass(MMapDirectory outerInstance, string file, SharedMapping mapping)
             {
                 this.outerInstance = outerInstance;
-                this.context = context;
                 this.file = file;
                 this.mapping = mapping;
             }
@@ -277,10 +258,9 @@ namespace Lucene.Net.Store
                 // Slices reference the slicer's mapping; only the slicer
                 // itself owns the mapping and will dispose it.
                 var input = new MMapIndexInput(
-                    "MMapIndexInput(" + sliceDescription + " in path=\"" + file + "\" slice=" + offset + ":" + (offset + length) + ")",
-                    outerInstance, file, ownsMapping: false, mapping,
+                    "MMapIndexInput(" + sliceDescription + " in path=\"" + file + "\" slice=" + offset + ":" + (offset + length) + ")", ownsMapping: false, mapping,
                     offset, length,
-                    BufferedIndexInput.GetBufferSize(context), outerInstance.chunkSizePower);
+                    outerInstance.chunkSizePower);
                 lock (issuedSlicesLock)
                 {
                     if (Volatile.Read(ref disposed) != 0)
@@ -320,13 +300,13 @@ namespace Lucene.Net.Store
                     IOUtils.DisposeWhileHandlingException(toDispose);
 
                     // Slicer owns the mapping; tear it down.
-                    mapping.DisposeResources();
+                    mapping.Dispose();
                 }
             }
         }
 
         // LUCENENET specific: nested IndexInput implementation. This replaces
-        // the upstream ByteBufferIndexInput + ByteBufferGuard approach with an
+        // the upstream ByteBufferIndexInput approach with an
         // array of MemoryMappedViewAccessor chunks whose raw pointers are
         // acquired once per chunk. See the class doc for rationale (#1013,
         // #1151).
@@ -374,12 +354,30 @@ namespace Lucene.Net.Store
         /// patterns.
         ///
         /// <para/>
-        /// The class inherits from <see cref="BufferedIndexInput"/> so that
-        /// <c>ReadByte</c>, <c>ReadInt16</c>, <c>ReadVInt32</c> etc. are all
-        /// served from the small managed buffer after a single bulk refill from
-        /// the mapped region.
+        /// Reads go directly through cached chunk pointers. <c>ReadByte</c>,
+        /// <c>ReadInt16</c>, <c>ReadInt32</c>, and <c>ReadInt64</c> are
+        /// specialized fast paths that read straight from the cached chunk
+        /// pointer with a single bounds check, avoiding any managed-buffer
+        /// indirection. <c>ReadVInt32</c>, <c>ReadVInt64</c>, <c>ReadString</c>
+        /// etc. inherit from <see cref="DataInput"/> and call our fast
+        /// <c>ReadByte</c>, so they pick up the speed-up automatically. This
+        /// mirrors upstream Java's <c>ByteBufferIndexInput</c>, which derives
+        /// directly from <c>IndexInput</c> rather than via a buffered base.
+        ///
+        /// <para/>
+        /// Concurrency: the per-chunk rent (<see cref="Chunk.TryAcquire"/>/
+        /// <see cref="Chunk.Release"/>) is held for as long as this
+        /// <see cref="IndexInput"/> caches a chunk's pointer (i.e., from one
+        /// chunk crossing to the next, or until <see cref="Seek"/>/
+        /// <see cref="Dispose(bool)"/>). <see cref="Chunk.Close"/> sets the
+        /// closed flag immediately and lazily defers <c>UnmapViewOfFile</c>/
+        /// <c>munmap</c> until every outstanding rent has been released. A
+        /// reader that has already entered a chunk completes its reads
+        /// safely on the still-mapped view; any subsequent chunk crossing
+        /// or read after the parent has been disposed fails with
+        /// <see cref="AlreadyClosedException"/>.
         /// </summary>
-        internal sealed unsafe class MMapIndexInput : BufferedIndexInput
+        internal sealed unsafe class MMapIndexInput : IndexInput
         {
             // Non-readonly so that Clone() can mark the cloned instance as a
             // non-root (see Clone()). A "root" instance is one returned from
@@ -399,16 +397,44 @@ namespace Lucene.Net.Store
             // instances (ownsMapping == true) dispose the underlying mapping
             // on Dispose. Slices and clones do not own it.
             private readonly SharedMapping mapping;
-            private readonly MMapDirectory directory;
-            private readonly string file;
 
             // The window into the shared mapping that this IndexInput sees.
             // For OpenInput this is [0, mapping.Length); for OpenSlice it is
-            // the requested slice range.
+            // the requested slice range. All offsets in the cached chunk
+            // fields below are slice-relative; chunk lookup translates via
+            // baseOffset.
             private readonly long baseOffset;
             private readonly long length;
             private readonly int chunkSizePower;
-            private readonly long chunkSizeMask;
+
+            // Slice-relative read cursor. 0 <= position <= length.
+            private long position;
+
+            // Cached current-chunk state. Valid iff currentChunk != null.
+            // currentChunk holds a TryAcquire rent; we Release when switching
+            // chunks, on Seek to a different chunk, or on Dispose.
+            //
+            // The fast path needs only TWO fields beyond `position` to compute
+            // the load address:
+            //   readBase: a precomputed pointer such that the file byte at
+            //             slice-relative position `pos` is `*(readBase + pos)`.
+            //             This collapses chunkBasePtr + baseOffset -
+            //             chunkFileStart into a single value, removing two
+            //             field loads from the per-byte hot path.
+            //   currentEnd: slice-relative end of the cached chunk's
+            //             intersection with [0, length); fast path is
+            //             `pos < currentEnd`.
+            // currentStart is kept only for backward-seek cache validation
+            // in Seek(); it isn't read by ReadByte/ReadInt*.
+            private Chunk? currentChunk;
+            private byte* readBase;        // = chunkBasePtr + baseOffset - chunkFileStart
+            private long currentStart;     // slice-relative start of the cached chunk's intersection with [0, length)
+            private long currentEnd;       // slice-relative end of the cached chunk's intersection with [0, length)
+            // ManagedThreadId of the thread that acquired currentChunk's rent.
+            // Used to keep cross-thread Dispose (e.g., slicer.Dispose disposing
+            // slices being read on other threads) from releasing a rent it
+            // doesn't own — see Dispose for the lifecycle rationale.
+            private int currentChunkOwnerThreadId;
 
             /// <summary>
             /// Creates an <see cref="IndexInput"/> viewing <c>[offset, offset+length)</c>
@@ -416,94 +442,23 @@ namespace Lucene.Net.Store
             /// the root returned from <see cref="MMapDirectory.OpenInput(string, IOContext)"/>;
             /// slices issued from a slicer and clones must pass <c>false</c>.
             /// </summary>
-            internal MMapIndexInput(string resourceDescription, MMapDirectory directory, string file,
+            internal MMapIndexInput(string resourceDescription,
                 bool ownsMapping, SharedMapping mapping,
-                long offset, long length, IOContext context, int chunkSizePower)
-                : base(resourceDescription, context)
+                long offset, long length, int chunkSizePower)
+                : base(resourceDescription)
             {
-                this.directory = directory;
-                this.file = file;
                 this.isRoot = ownsMapping;
                 this.mapping = mapping ?? throw new ArgumentNullException(nameof(mapping));
                 this.baseOffset = offset;
                 this.length = length;
                 this.chunkSizePower = chunkSizePower;
-                this.chunkSizeMask = (1L << chunkSizePower) - 1L;
-            }
-
-            /// <summary>
-            /// Slice-bufferSize overload used by <see cref="Directory.IndexInputSlicer"/>.
-            /// </summary>
-            internal MMapIndexInput(string resourceDescription, MMapDirectory directory, string file,
-                bool ownsMapping, SharedMapping mapping,
-                long offset, long length, int bufferSize, int chunkSizePower)
-                : base(resourceDescription, bufferSize)
-            {
-                this.directory = directory;
-                this.file = file;
-                this.isRoot = ownsMapping;
-                this.mapping = mapping ?? throw new ArgumentNullException(nameof(mapping));
-                this.baseOffset = offset;
-                this.length = length;
-                this.chunkSizePower = chunkSizePower;
-                this.chunkSizeMask = (1L << chunkSizePower) - 1L;
             }
 
             public override long Length => length;
 
-            protected override void ReadInternal(Span<byte> destination)
-            {
-                if (Volatile.Read(ref instanceClosed) != 0)
-                {
-                    throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
-                }
+            public override long Position => position;
 
-                int len = destination.Length;
-                if (len == 0) return;
-
-                long pos = Position;
-                if (pos + len > length)
-                {
-                    throw EOFException.Create("read past EOF: " + this);
-                }
-
-                // Translate to absolute file position, then walk the shared
-                // chunks one at a time. A single ReadInternal can span chunks.
-                long globalPos = baseOffset + pos;
-                Chunk[] chunks = mapping.Chunks;
-                int chunkIdx = (int)(globalPos >> chunkSizePower);
-                int chunkOff = (int)(globalPos & chunkSizeMask);
-                int dstOff = 0;
-
-                while (len > 0)
-                {
-                    Chunk chunk = chunks[chunkIdx];
-                    int avail = (int)(chunk.length - chunkOff);
-                    int toCopy = avail < len ? avail : len;
-
-                    if (!chunk.TryEnterRead())
-                    {
-                        throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
-                    }
-                    try
-                    {
-                        ref byte src = ref Unsafe.AsRef<byte>(chunk.basePtr + chunkOff);
-                        ref byte dst = ref System.Runtime.InteropServices.MemoryMarshal.GetReference(destination.Slice(dstOff));
-                        Unsafe.CopyBlockUnaligned(ref dst, ref src, (uint)toCopy);
-                    }
-                    finally
-                    {
-                        chunk.ExitRead();
-                    }
-
-                    dstOff += toCopy;
-                    len -= toCopy;
-                    chunkIdx++;
-                    chunkOff = 0;
-                }
-            }
-
-            protected override void SeekInternal(long pos)
+            public override void Seek(long pos)
             {
                 if (pos < 0 || pos > length)
                 {
@@ -513,25 +468,221 @@ namespace Lucene.Net.Store
                 {
                     throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
                 }
-                // Fail fast if the shared mapping has already been torn down
-                // by a concurrent Dispose of the last ref-holder.
-                Chunk[] chunks = mapping.Chunks;
-                if (chunks.Length > 0 && chunks[0].IsClosed)
+                // If the seek lands inside the currently-rented chunk, we
+                // can keep the rent and just move the cursor. Otherwise,
+                // invalidate the cache so the next read takes the slow path
+                // and acquires the new chunk.
+                if (currentChunk != null && pos >= currentStart && pos < currentEnd)
+                {
+                    position = pos;
+                    return;
+                }
+                ReleaseCurrentChunk();
+                position = pos;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public override byte ReadByte()
+            {
+                long pos = position;
+                if (pos < currentEnd)
+                {
+                    byte b = *(readBase + pos);
+                    position = pos + 1;
+                    return b;
+                }
+                return ReadByteSlow();
+            }
+
+            // Slow path: cache miss, EOF, or instance disposed. Acquires the
+            // chunk that contains `position` (or throws), then retries the
+            // single-byte read.
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            private byte ReadByteSlow()
+            {
+                long pos = position;
+                if (pos >= length)
+                {
+                    throw EOFException.Create("read past EOF: " + this);
+                }
+                EnsureCurrentChunk(pos);
+                byte b = *(readBase + pos);
+                position = pos + 1;
+                return b;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public override short ReadInt16()
+            {
+                long pos = position;
+                if (pos + 2 <= currentEnd)
+                {
+                    ushort raw = Unsafe.ReadUnaligned<ushort>(readBase + pos);
+                    short v = (short)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
+                    position = pos + 2;
+                    return v;
+                }
+                return base.ReadInt16();
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public override int ReadInt32()
+            {
+                long pos = position;
+                if (pos + 4 <= currentEnd)
+                {
+                    uint raw = Unsafe.ReadUnaligned<uint>(readBase + pos);
+                    int v = (int)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
+                    position = pos + 4;
+                    return v;
+                }
+                return base.ReadInt32();
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public override long ReadInt64()
+            {
+                long pos = position;
+                if (pos + 8 <= currentEnd)
+                {
+                    ulong raw = Unsafe.ReadUnaligned<ulong>(readBase + pos);
+                    long v = (long)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
+                    position = pos + 8;
+                    return v;
+                }
+                return base.ReadInt64();
+            }
+
+            public override void ReadBytes(byte[] b, int offset, int len)
+            {
+                ReadBytes(new Span<byte>(b, offset, len));
+            }
+
+            public override void ReadBytes(Span<byte> destination)
+            {
+                if (Volatile.Read(ref instanceClosed) != 0)
                 {
                     throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
+                }
+
+                int len = destination.Length;
+                if (len == 0) return;
+
+                long pos = position;
+                if (pos + len > length)
+                {
+                    throw EOFException.Create("read past EOF: " + this);
+                }
+
+                int dstOff = 0;
+                while (len > 0)
+                {
+                    if (pos >= currentEnd)
+                    {
+                        EnsureCurrentChunk(pos);
+                    }
+                    int inChunk = (int)Math.Min(currentEnd - pos, (long)len);
+                    ref byte src = ref Unsafe.AsRef<byte>(readBase + pos);
+                    ref byte dst = ref System.Runtime.InteropServices.MemoryMarshal.GetReference(destination.Slice(dstOff));
+                    Unsafe.CopyBlockUnaligned(ref dst, ref src, (uint)inChunk);
+                    pos += inChunk;
+                    dstOff += inChunk;
+                    len -= inChunk;
+                }
+                position = pos;
+            }
+
+            public override void SkipBytes(long numBytes)
+            {
+                if (numBytes < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(numBytes), "numBytes must not be negative");
+                }
+                long newPos = position + numBytes;
+                if (newPos < 0 || newPos > length)
+                {
+                    throw EOFException.Create("skip past EOF: " + this);
+                }
+                Seek(newPos);
+            }
+
+            // Acquire the chunk containing `slicePos` (slice-relative). Releases
+            // any currently-rented chunk first. Sets currentChunkBasePtr,
+            // currentChunkFileStart, currentStart, and currentEnd. Throws
+            // AlreadyClosedException if this instance or the chunk is closed.
+            private void EnsureCurrentChunk(long slicePos)
+            {
+                if (Volatile.Read(ref instanceClosed) != 0)
+                {
+                    throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
+                }
+                ReleaseCurrentChunk();
+
+                long globalPos = baseOffset + slicePos;
+                Chunk[] chunks = mapping.Chunks;
+                int chunkIdx = (int)(globalPos >> chunkSizePower);
+                Chunk chunk = chunks[chunkIdx];
+                if (!chunk.TryAcquire())
+                {
+                    throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
+                }
+
+                long chunkFileStart = (long)chunkIdx << chunkSizePower;
+                long chunkFileEnd = chunkFileStart + chunk.length;
+                // Slice-relative interval = chunk's file interval clipped to
+                // [baseOffset, baseOffset + length] and translated.
+                long sliceFileEnd = baseOffset + length;
+                long start = Math.Max(chunkFileStart, baseOffset) - baseOffset;
+                long end = Math.Min(chunkFileEnd, sliceFileEnd) - baseOffset;
+
+                currentChunk = chunk;
+                // Precompute readBase so ReadByte/ReadInt* fast-path is
+                // a single load: *(readBase + pos). Algebraically, the
+                // file address of slice byte `pos` is
+                //   chunk.basePtr + (baseOffset + pos - chunkFileStart)
+                // = (chunk.basePtr + baseOffset - chunkFileStart) + pos
+                //                ^------- readBase ----^
+                readBase = chunk.basePtr + (baseOffset - chunkFileStart);
+                currentStart = start;
+                currentEnd = end;
+                currentChunkOwnerThreadId = Environment.CurrentManagedThreadId;
+            }
+
+            // Release the rent on the currently-cached chunk. Must only be
+            // called from the thread that acquired the rent; cross-thread
+            // Dispose paths must not call this. Idempotent if no rent is
+            // currently held.
+            private void ReleaseCurrentChunk()
+            {
+                Chunk? c = currentChunk;
+                if (c != null)
+                {
+                    currentChunk = null;
+                    readBase = null;
+                    currentStart = 0;
+                    currentEnd = 0;
+                    currentChunkOwnerThreadId = 0;
+                    c.Release();
                 }
             }
 
             public override object Clone()
             {
                 // Share the same SharedMapping with the parent. The clone
-                // does NOT acquire its own refcount; it piggybacks on the
-                // parent's lifetime. Matching Lucene's contract, disposing
-                // the root (the IndexInput returned from OpenInput) tears
-                // down the underlying mapping for all clones.
+                // does NOT acquire its own refcount on the mapping; it
+                // piggybacks on the parent's lifetime. The clone enters
+                // its own chunk rent on first read.
                 var clone = (MMapIndexInput)base.Clone();
                 clone.isRoot = false;
                 clone.instanceClosed = 0;
+                // Critical: do NOT inherit the parent's chunk rent. Otherwise
+                // disposing the clone would ExitRead a rent the parent still
+                // depends on (and vice versa).
+                clone.currentChunk = null;
+                clone.readBase = null;
+                clone.currentStart = 0;
+                clone.currentEnd = 0;
+                clone.currentChunkOwnerThreadId = 0;
                 return clone;
             }
 
@@ -546,12 +697,38 @@ namespace Lucene.Net.Store
                 {
                     return;
                 }
-                // Only root instances own the shared mapping.
-                // Clones and slices do not own it, so disposing them only
-                // flips this instance's closed flag.
+                // Cross-thread Dispose safety: only release the chunk rent
+                // if Dispose runs on the same thread that acquired it.
+                // Otherwise (e.g. slicer.Dispose disposing slices being read
+                // on other threads — #1013) the rent is owned by the reader
+                // and we must not touch it. The reader's next Read* call
+                // observes instanceClosed at the start of EnsureCurrentChunk
+                // (and via ReadBytes' guard) and throws AlreadyClosedException
+                // — its slow path ReleaseCurrentChunk runs on the reader's
+                // own thread, releasing the rent safely. If the reader stops
+                // reading entirely without disposing, the rent is released
+                // when the MMapIndexInput is garbage-collected (the chunk
+                // is reachable via SharedMapping → Chunks[i] until then).
+                //
+                // We DO clear currentEnd from any thread, so the reader's
+                // fast path (`pos < currentEnd`) takes the slow path on its
+                // next call and observes the instanceClosed flag. This
+                // single 64-bit write is atomic on all supported runtimes;
+                // a reader that has already loaded currentEnd into a
+                // register completes its current load safely (the rent
+                // keeps the mapping alive), and its next call reloads zero
+                // and falls into the slow path.
+                Volatile.Write(ref currentEnd, 0);
+                if (currentChunkOwnerThreadId == Environment.CurrentManagedThreadId)
+                {
+                    ReleaseCurrentChunk();
+                }
+                // Only root instances own the shared mapping. Clones and
+                // slices do not own it; disposing them only flips this
+                // instance's closed flag.
                 if (isRoot)
                 {
-                    mapping.DisposeResources();
+                    mapping.Dispose();
                 }
             }
         }
@@ -559,14 +736,15 @@ namespace Lucene.Net.Store
         /// <summary>
         /// LUCENENET specific: a single memory-mapped file plus its chunk
         /// array, owned by exactly one <see cref="MMapIndexInput"/> root or
-        /// one <see cref="IndexInputSlicer"/>. Clones and slices reference
-        /// it without owning it. The owner calls <see cref="DisposeResources"/>
-        /// exactly once on Dispose; per-chunk drain barriers in <see cref="Chunk"/>
-        /// ensure in-flight reads from non-owning clones/slices see a closed
-        /// flag and throw <see cref="AlreadyClosedException"/> rather than
-        /// dereferencing a freed mapping.
+        /// one <see cref="Directory.IndexInputSlicer"/>. Clones and slices
+        /// reference it without owning it. The owner calls
+        /// <see cref="SharedMapping.Dispose"/> exactly once; the per-chunk
+        /// rent in <see cref="Chunk"/> ensures in-flight reads from
+        /// non-owning clones/slices either complete safely against the
+        /// still-mapped view or fail with <see cref="AlreadyClosedException"/>
+        /// rather than dereferencing a freed mapping.
         /// </summary>
-        internal sealed unsafe class SharedMapping
+        internal sealed unsafe class SharedMapping : IDisposable
         {
             /// <summary>
             /// The memory-mapped file reference for this mapping.
@@ -612,7 +790,7 @@ namespace Lucene.Net.Store
             /// <summary>
             /// Dispose the underlying native resources. Idempotent.
             /// </summary>
-            internal void DisposeResources()
+            public void Dispose()
             {
                 if (Interlocked.CompareExchange(ref disposed, 1, 0) != 0) return;
                 DisposeChunks(Chunks);
@@ -746,29 +924,55 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Shared, refcounted owner of a single chunk's
-        /// <see cref="MemoryMappedViewAccessor"/> + cached base pointer.
+        /// Owner of a single chunk's <see cref="MemoryMappedViewAccessor"/>.
         /// One <see cref="Chunk"/> per chunk-sized region of the file; they
         /// live inside a <see cref="SharedMapping"/>.
+        ///
+        /// <para/>
+        /// Concurrency model: a reader holds a "rent" on the chunk via
+        /// <see cref="TryAcquire"/>/<see cref="Release"/> for as long as it
+        /// caches the chunk's pointer (i.e., from one chunk crossing to the
+        /// next, or until the owning <see cref="IndexInput"/> is sought to
+        /// a different chunk or disposed). <see cref="Close"/> flips the
+        /// closed flag immediately, so any subsequent <see cref="TryAcquire"/>
+        /// fails. The actual <c>ReleasePointer</c> + <c>accessor.Dispose</c>
+        /// are deferred until the per-chunk in-flight count reaches zero,
+        /// either at <see cref="Close"/> time (no readers) or whenever the
+        /// last reader calls <see cref="Release"/>. This is the "lazy
+        /// unmap" pattern: <see cref="Close"/> never blocks waiting for
+        /// readers, and a reader's cached pointer stays valid for as long
+        /// as it hasn't released. AVEs are structurally impossible because
+        /// <c>UnmapViewOfFile</c>/<c>munmap</c> can't run while any rent is
+        /// outstanding.
         /// </summary>
         internal sealed unsafe class Chunk
         {
             private MemoryMappedViewAccessor? accessor;
             internal readonly long length;
+            // The chunk's base pointer (already adjusted for PointerOffset).
+            // Stays valid until the last rent has been released AND Close
+            // has run (whichever is later). Per-rent acquisition does NOT
+            // require a fresh AcquirePointer because the mapping's own
+            // AcquirePointer (taken once in MapChunks) keeps the SafeBuffer
+            // alive; the per-chunk inFlight count below is what defers the
+            // matching ReleasePointer.
             internal readonly byte* basePtr;
-            private int closed;
 
-            // Reader count / closed flag: a minimal drain barrier so that
-            // Close waits for in-flight reads to finish before calling
-            // ReleasePointer + disposing the accessor. Without this, a reader
-            // that has already read closed==false can still be dereferencing
-            // basePtr when the parent's Dispose unmaps the view.
-            private int inFlight;
+            // Bit 0: closed flag. Bits 1..31: in-flight rent count. Packed
+            // into a single int so closed-then-zero-rent can be observed
+            // atomically and the actual unmap done exactly once.
+            // closed=1, inFlight=0 is the "ready to release native resources"
+            // terminal state; whoever observes that transition does the
+            // ReleasePointer + accessor.Dispose.
+            private int state;
+
+            private const int CLOSED_BIT = 1;
+            private const int RENT_INC = 2;
 
             public bool IsClosed
             {
                 [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get => Volatile.Read(ref closed) != 0;
+                get => (Volatile.Read(ref state) & CLOSED_BIT) != 0;
             }
 
             internal Chunk(MemoryMappedViewAccessor accessor, byte* basePtr, long length)
@@ -779,63 +983,79 @@ namespace Lucene.Net.Store
             }
 
             /// <summary>
-            /// Enter a read. Returns false if the chunk is closed; the caller
-            /// must throw <see cref="AlreadyClosedException"/>. Otherwise
-            /// returns true and the caller must call <see cref="ExitRead"/> in
-            /// a finally block.
+            /// Acquire a rent on this chunk. Returns false if the chunk is
+            /// closed; otherwise the caller may dereference <see cref="basePtr"/>
+            /// until it calls <see cref="Release"/>.
             /// </summary>
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public bool TryEnterRead()
+            public bool TryAcquire()
             {
-                Interlocked.Increment(ref inFlight);
-                if (Volatile.Read(ref closed) != 0)
+                // CAS-loop: increment rent count iff closed bit is clear.
+                while (true)
                 {
-                    Interlocked.Decrement(ref inFlight);
-                    return false;
+                    int s = Volatile.Read(ref state);
+                    if ((s & CLOSED_BIT) != 0) return false;
+                    int next = s + RENT_INC;
+                    if (Interlocked.CompareExchange(ref state, next, s) == s) return true;
                 }
-                return true;
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void ExitRead()
-            {
-                Interlocked.Decrement(ref inFlight);
             }
 
             /// <summary>
-            /// Mark the chunk closed and release its accessor, waiting for
-            /// any in-flight reader to exit its copy first.
+            /// Release a previously-acquired rent. If this was the last
+            /// outstanding rent and the chunk is closed, releases the native
+            /// resources here.
+            /// </summary>
+            public void Release()
+            {
+                int s = Interlocked.Add(ref state, -RENT_INC);
+                if (s == CLOSED_BIT)
+                {
+                    // closed && inFlight==0: we observed the terminal state.
+                    ReleaseNative();
+                }
+            }
+
+            /// <summary>
+            /// Mark the chunk closed. New <see cref="TryAcquire"/> calls fail.
+            /// If no rents are outstanding, releases native resources
+            /// immediately; otherwise the last <see cref="Release"/> will.
             /// </summary>
             public void Close()
             {
-                if (Interlocked.CompareExchange(ref closed, 1, 0) != 0)
+                // CAS-loop: set the closed bit if not already set.
+                while (true)
                 {
-                    return;
-                }
-
-                // Drain in-flight readers. Reads are bounded by the small
-                // BufferedIndexInput buffer size (1 KiB / 4 KiB for merges),
-                // so this spin is very short in practice.
-                var spin = new SpinWait();
-                while (Volatile.Read(ref inFlight) != 0)
-                {
-                    spin.SpinOnce();
-                }
-
-                if (accessor != null)
-                {
-                    try
+                    int s = Volatile.Read(ref state);
+                    if ((s & CLOSED_BIT) != 0) return; // already closed
+                    int next = s | CLOSED_BIT;
+                    if (Interlocked.CompareExchange(ref state, next, s) == s)
                     {
-                        accessor.SafeMemoryMappedViewHandle.ReleasePointer();
+                        if (next == CLOSED_BIT)
+                        {
+                            // No rents outstanding; we own the unmap.
+                            ReleaseNative();
+                        }
+                        return;
                     }
-                    catch
-                    {
-                        // Guard against double-release in odd failure paths.
-                        // Never propagate from dispose.
-                    }
-                    accessor.Dispose();
-                    accessor = null;
                 }
+            }
+
+            // Releases the SafeBuffer's mapping-level reference and disposes
+            // the accessor. Must be called exactly once, by whichever thread
+            // observes the (closed=1, inFlight=0) transition.
+            private void ReleaseNative()
+            {
+                MemoryMappedViewAccessor? acc = accessor;
+                if (acc is null) return;
+                accessor = null;
+                try
+                {
+                    acc.SafeMemoryMappedViewHandle.ReleasePointer();
+                }
+                catch
+                {
+                    // Never propagate from cleanup.
+                }
+                acc.Dispose();
             }
         }
     }
