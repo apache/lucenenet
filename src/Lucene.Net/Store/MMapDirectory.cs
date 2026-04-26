@@ -765,44 +765,70 @@ namespace Lucene.Net.Store
 
             internal static SharedMapping Create(string file, int chunkSizePower)
             {
-                // We don't track a separate FileStream: the path-based
-                // CreateFromFile overload opens its own handle and
-                // disposes it with the MemoryMappedFile. We capture the
-                // file length once via FileInfo for our own snapshot
-                // (used as the slice/range upper bound). Any divergence
-                // between this snapshot and the framework's internal
-                // stat — e.g. the file growing in between, formerly the
-                // #1090 race — is harmless: the mmap itself is sized by
-                // the framework's own stat, and our `length` is treated
-                // as a snapshot at open time (matching upstream Java's
-                // fc.size() snapshot semantics).
-                long length = new FileInfo(file).Length;
-                if (length == 0)
-                {
-                    return new SharedMapping(mmf: null, chunks: Array.Empty<Chunk>(), length: 0);
-                }
-
+                // We open our own FileStream so we control the FileShare
+                // flags. The path-based CreateFromFile overload internally
+                // opens with FileShare.Read, which on Windows blocks
+                // attempts to delete or write to this file while we have
+                // it mapped — breaking callers (e.g. FreeTextSuggester)
+                // that build a temp index, dispose the directory, and
+                // immediately recursively delete the directory. We need
+                // FileShare.Delete in particular: on Windows, a delete
+                // attempt against an open file fails unless the open
+                // share-mode permits FILE_SHARE_DELETE.
+                //
+                // bufferSize: 1 because MemoryMappedFile uses only the
+                // file handle and bypasses the FileStream buffer, so a
+                // 4 KiB default buffer would just be allocated and
+                // immediately discarded.
+                FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read,
+                    FileShare.ReadWrite | FileShare.Delete,
+                    bufferSize: 1, FileOptions.RandomAccess);
                 MemoryMappedFile? mmf = null;
                 Chunk[]? chunks = null;
                 try
                 {
+                    long length = fs.Length;
+                    if (length == 0)
+                    {
+                        // CreateViewAccessor rejects zero-length views and
+                        // CreateFromFile rejects capacity 0 on an empty file,
+                        // so handle this edge case ourselves. Dispose the
+                        // FileStream eagerly since there's no MMF to own it.
+                        fs.Dispose();
+                        return new SharedMapping(mmf: null, chunks: Array.Empty<Chunk>(), length: 0);
+                    }
+
                     // capacity: 0 -> the framework uses the file's
                     // current size on disk, atomically with mapping
                     // creation. This eliminates the #1090 race window
                     // we previously had to retry around.
+                    // leaveOpen: false -> the MMF takes ownership of the
+                    // FileStream and disposes it on its own Dispose, so
+                    // we don't need to track it ourselves.
                     mmf = MemoryMappedFile.CreateFromFile(
-                        path: file,
-                        mode: FileMode.Open,
+                        fileStream: fs,
                         mapName: null,
                         capacity: 0,
-                        access: MemoryMappedFileAccess.Read);
+                        access: MemoryMappedFileAccess.Read,
+#if FEATURE_MEMORYMAPPEDFILESECURITY
+                        memoryMappedFileSecurity: null,
+#endif
+                        inheritability: HandleInheritability.None,
+                        leaveOpen: false);
                     chunks = MapChunks(mmf, 0, length, chunkSizePower);
                     return new SharedMapping(mmf, chunks, length);
                 }
                 catch
                 {
                     DisposeChunks(chunks);
-                    mmf?.Dispose();
+                    if (mmf != null)
+                    {
+                        mmf.Dispose(); // disposes fs (leaveOpen: false)
+                    }
+                    else
+                    {
+                        IOUtils.DisposeWhileHandlingException(fs);
+                    }
                     throw;
                 }
             }
