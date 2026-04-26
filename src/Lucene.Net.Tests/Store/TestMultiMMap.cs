@@ -496,16 +496,17 @@ namespace Lucene.Net.Store
 
         // LUCENENET: Regression test for GitHub #1090. A background thread
         // extends a file on disk while the foreground thread repeatedly
-        // opens it with MMapDirectory.OpenInput. Before the fix, the
-        // file's length could grow between the caller capturing fc.Length
-        // and MemoryMappedFile.CreateFromFile performing its internal
-        // stat, causing ArgumentOutOfRangeException (paramName="capacity")
-        // with the message "The capacity may not be smaller than the
-        // file size."
-        // NonParallelizable: the retry-path assertion reads static counters on
-        // MMapDirectory, so any other test exercising MMapDirectory in parallel
-        // could skew the observed retry count.
-        [Test, LuceneNetSpecific, Slow, NonParallelizable]
+        // opens it with MMapDirectory.OpenInput. The original failure
+        // mode was ArgumentOutOfRangeException(paramName="capacity")
+        // from MemoryMappedFile.CreateFromFile, because we were passing
+        // a caller-computed capacity (fc.Length) that could be smaller
+        // than the actual file size by the time the framework did its
+        // internal stat. The current design passes capacity: 0, which
+        // tells the framework to size the mapping from the file's
+        // current on-disk length atomically — there is no caller-side
+        // capacity to disagree with the file. This test asserts that
+        // OpenInput continues to succeed under concurrent file extension.
+        [Test, LuceneNetSpecific, Slow]
         public void TestOpenInputConcurrentFileExtension_Issue1090()
         {
             var dir = CreateTempDir("testOpenInputConcurrentFileExtension");
@@ -549,50 +550,25 @@ namespace Lucene.Net.Store
             { IsBackground = true, Name = "mmap-issue1090-extender" };
             writer.Start();
 
-            // Snapshot counters so this test's assertion is not affected by
-            // any earlier test's activity on MMapDirectory.
-            long baselineRetries = Interlocked.Read(ref MMapDirectory.s_capacityRetryCount);
-
             try
             {
                 var sw = Stopwatch.StartNew();
                 int iterations = 0;
-                // Keep stretching the window until either the race fires or we
-                // hit a hard deadline. On most machines this takes < 1 second.
-                const int maxSeconds = 15;
+                // Stress OpenInput while the background thread extends/truncates the
+                // file. Each call must succeed cleanly. A short window is plenty:
+                // before the capacity:0 fix this race fired in well under a second.
+                const int maxSeconds = 5;
                 while (sw.Elapsed < TimeSpan.FromSeconds(maxSeconds))
                 {
                     using (var _ = mmapDir.OpenInput(name, NewIOContext(Random)))
                     {
-                        // Just open and dispose; the race occurs during construction.
+                        // Just open and dispose; the race occurred during construction.
                     }
                     iterations++;
-
-                    if (Interlocked.Read(ref MMapDirectory.s_capacityRetryCount) > baselineRetries)
-                    {
-                        break; // race reproduced and handled by the retry loop
-                    }
                 }
 
-                long retries = Interlocked.Read(ref MMapDirectory.s_capacityRetryCount) - baselineRetries;
-                int maxAttempts = Volatile.Read(ref MMapDirectory.s_maxCapacityAttemptsObserved);
-
-                // Surface what was observed for diagnostics when run with -v normal.
                 TestContext.Progress.WriteLine(
-                    $"TestOpenInputConcurrentFileExtension: iterations={iterations}, retries={retries}, maxAttemptsObserved={maxAttempts}");
-
-                // The real check: the race must have fired and our retry loop
-                // must have swallowed it. Without the fix, the exception
-                // escapes OpenInput and the test fails with ArgumentOutOfRangeException
-                // (as seen in #1090). If the race never fires during this run
-                // (timing-dependent), mark the test inconclusive rather than
-                // silently passing — we haven't actually exercised the fix.
-                if (retries == 0)
-                {
-                    NUnit.Framework.Assert.Inconclusive(
-                        $"The concurrent-extension race was not reproduced within {maxSeconds}s " +
-                        $"({iterations} OpenInput iterations). The fix was therefore not exercised on this run.");
-                }
+                    $"TestOpenInputConcurrentFileExtension: completed {iterations} OpenInput calls in {sw.Elapsed.TotalSeconds:F1}s");
             }
             finally
             {
