@@ -66,14 +66,6 @@ namespace Lucene.Net.Store
 
         private readonly int chunkSizePower;
 
-        // LUCENENET specific: test-only counters for the capacity-retry
-        // path in Map() — see #1090. Internal (exposed via InternalsVisibleTo
-        // to the test assemblies) so regression tests can assert that the
-        // race was actually exercised during a run, and to gather data on how
-        // many retries are typically needed. Not intended for production use.
-        internal static long s_capacityRetryCount;
-        internal static int s_maxCapacityAttemptsObserved;
-
         /// <summary>
         /// Create a new <see cref="MMapDirectory"/> for the named location.
         /// </summary>
@@ -763,38 +755,55 @@ namespace Lucene.Net.Store
             /// Note that this can be null in the edge case of a zero-length mapping.
             /// </summary>
             private readonly MemoryMappedFile? memoryMappedFile;
-            private readonly FileStream fileStream;
             private int disposed;
 
-            private SharedMapping(MemoryMappedFile? mmf, FileStream fs, Chunk[] chunks, long length)
+            private SharedMapping(MemoryMappedFile? mmf, Chunk[] chunks, long length)
             {
                 this.memoryMappedFile = mmf;
-                this.fileStream = fs;
                 this.Chunks = chunks;
                 this.Length = length;
             }
 
             internal static SharedMapping Create(string file, int chunkSizePower)
             {
-                // MemoryMappedFile uses only the file handle and bypasses
-                // the FileStream buffer, so bufferSize: 1 avoids allocating
-                // a 4 KiB buffer that would immediately be discarded.
-                var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite,
-                    bufferSize: 1, FileOptions.RandomAccess | FileOptions.Asynchronous);
+                // We don't track a separate FileStream: the path-based
+                // CreateFromFile overload opens its own handle and
+                // disposes it with the MemoryMappedFile. We capture the
+                // file length once via FileInfo for our own snapshot
+                // (used as the slice/range upper bound). Any divergence
+                // between this snapshot and the framework's internal
+                // stat — e.g. the file growing in between, formerly the
+                // #1090 race — is harmless: the mmap itself is sized by
+                // the framework's own stat, and our `length` is treated
+                // as a snapshot at open time (matching upstream Java's
+                // fc.size() snapshot semantics).
+                long length = new FileInfo(file).Length;
+                if (length == 0)
+                {
+                    return new SharedMapping(mmf: null, chunks: Array.Empty<Chunk>(), length: 0);
+                }
+
                 MemoryMappedFile? mmf = null;
                 Chunk[]? chunks = null;
                 try
                 {
-                    long length = fs.Length;
-                    mmf = CreateMemoryMappedFile(fs, length);
+                    // capacity: 0 -> the framework uses the file's
+                    // current size on disk, atomically with mapping
+                    // creation. This eliminates the #1090 race window
+                    // we previously had to retry around.
+                    mmf = MemoryMappedFile.CreateFromFile(
+                        path: file,
+                        mode: FileMode.Open,
+                        mapName: null,
+                        capacity: 0,
+                        access: MemoryMappedFileAccess.Read);
                     chunks = MapChunks(mmf, 0, length, chunkSizePower);
-                    return new SharedMapping(mmf, fs, chunks, length);
+                    return new SharedMapping(mmf, chunks, length);
                 }
                 catch
                 {
                     DisposeChunks(chunks);
                     mmf?.Dispose();
-                    IOUtils.DisposeWhileHandlingException(fs);
                     throw;
                 }
             }
@@ -806,62 +815,12 @@ namespace Lucene.Net.Store
             {
                 if (Interlocked.CompareExchange(ref disposed, 1, 0) != 0) return;
                 DisposeChunks(Chunks);
-                IOUtils.DisposeWhileHandlingException(memoryMappedFile, fileStream);
+                IOUtils.DisposeWhileHandlingException(memoryMappedFile);
             }
 
             internal Chunk[] Chunks { get; }
 
             internal long Length { get; }
-
-            private static MemoryMappedFile? CreateMemoryMappedFile(FileStream fc, long requiredCapacity)
-            {
-                if (requiredCapacity <= 0)
-                {
-                    return null;
-                }
-
-                // LUCENENET specific BEGIN: retry on capacity race (#1090).
-                // MemoryMappedFile.CreateFromFile performs an internal stat
-                // and throws ArgumentOutOfRangeException("capacity") if the
-                // on-disk file size exceeds the requested capacity. When
-                // another process/thread is appending to this file, the file
-                // can grow between when we capture fc.Length and when
-                // CreateFromFile reads the size.
-                long capacity = Math.Max(requiredCapacity, fc.Length);
-                const int maxAttempts = 5;
-                int attempt = 0;
-                while (true)
-                {
-                    try
-                    {
-                        var mmf = MemoryMappedFile.CreateFromFile(
-                            fileStream: fc,
-                            mapName: null,
-                            capacity: capacity,
-                            access: MemoryMappedFileAccess.Read,
-#if FEATURE_MEMORYMAPPEDFILESECURITY
-                            memoryMappedFileSecurity: null,
-#endif
-                            inheritability: HandleInheritability.Inheritable,
-                            leaveOpen: true); // We dispose the FileStream explicitly.
-                        int attemptsTaken = attempt + 1;
-                        int prior;
-                        do
-                        {
-                            prior = Volatile.Read(ref s_maxCapacityAttemptsObserved);
-                            if (attemptsTaken <= prior) break;
-                        } while (Interlocked.CompareExchange(ref s_maxCapacityAttemptsObserved, attemptsTaken, prior) != prior);
-                        return mmf;
-                    }
-                    catch (ArgumentOutOfRangeException e) when (e.ParamName == "capacity" && attempt < maxAttempts - 1)
-                    {
-                        Interlocked.Increment(ref s_capacityRetryCount);
-                        capacity = Math.Max(capacity, fc.Length);
-                        attempt++;
-                    }
-                }
-                // LUCENENET specific END
-            }
 
             private static Chunk[] MapChunks(MemoryMappedFile? mmf, long offset, long length, int chunkSizePower)
             {
