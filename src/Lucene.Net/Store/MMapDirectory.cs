@@ -255,6 +255,12 @@ namespace Lucene.Net.Store
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
                 outerInstance.EnsureOpen();
+                if (offset < 0 || length < 0 || offset + length > mapping.Length)
+                {
+                    throw new ArgumentException(
+                        "slice() " + sliceDescription + " out of bounds: offset=" + offset
+                        + ",length=" + length + ",fileLength=" + mapping.Length + ": " + this);
+                }
                 // Slices reference the slicer's mapping; only the slicer
                 // itself owns the mapping and will dispose it.
                 var input = new MMapIndexInput(
@@ -668,6 +674,10 @@ namespace Lucene.Net.Store
 
             public override object Clone()
             {
+                if (Volatile.Read(ref instanceClosed) != 0)
+                {
+                    throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
+                }
                 // Share the same SharedMapping with the parent. The clone
                 // does NOT acquire its own refcount on the mapping; it
                 // piggybacks on the parent's lifetime. The clone enters
@@ -712,13 +722,14 @@ namespace Lucene.Net.Store
                 //
                 // We DO clear currentEnd from any thread, so the reader's
                 // fast path (`pos < currentEnd`) takes the slow path on its
-                // next call and observes the instanceClosed flag. This
-                // single 64-bit write is atomic on all supported runtimes;
-                // a reader that has already loaded currentEnd into a
-                // register completes its current load safely (the rent
-                // keeps the mapping alive), and its next call reloads zero
-                // and falls into the slow path.
-                Volatile.Write(ref currentEnd, 0);
+                // next call and observes the instanceClosed flag. Use
+                // Interlocked.Exchange so the 64-bit write is atomic on
+                // 32-bit runtimes too (a torn write could otherwise produce
+                // a value that accidentally satisfies pos < currentEnd, so
+                // a disposed reader could return one extra byte before
+                // throwing — the rent keeps the mapping alive, so this is
+                // a correctness nit rather than a memory-safety issue).
+                Interlocked.Exchange(ref currentEnd, 0L);
                 if (currentChunkOwnerThreadId == Environment.CurrentManagedThreadId)
                 {
                     ReleaseCurrentChunk();
@@ -968,12 +979,6 @@ namespace Lucene.Net.Store
 
             private const int CLOSED_BIT = 1;
             private const int RENT_INC = 2;
-
-            public bool IsClosed
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get => (Volatile.Read(ref state) & CLOSED_BIT) != 0;
-            }
 
             internal Chunk(MemoryMappedViewAccessor accessor, byte* basePtr, long length)
             {

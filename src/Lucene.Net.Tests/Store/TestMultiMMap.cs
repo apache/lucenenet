@@ -1098,14 +1098,14 @@ namespace Lucene.Net.Store
                 // expected
             }
 
-            // Clone taken AFTER the root is disposed. MemberwiseClone still
-            // succeeds (no synchronization in object Clone), but the first
-            // read must observe view.IsClosed via TryEnterRead and throw.
-            var postDisposeClone = (IndexInput)root.Clone();
+            // Clone taken AFTER the root is disposed: Clone() itself must
+            // throw AlreadyClosed (we check the parent's instanceClosed
+            // flag at the top of Clone, matching upstream Java's behavior
+            // of failing fast rather than deferring to the first read).
             try
             {
-                postDisposeClone.ReadInt32();
-                Assert.Fail("Post-dispose clone must throw AlreadyClosed on first read");
+                root.Clone();
+                Assert.Fail("Clone of disposed root must throw AlreadyClosed");
             }
             catch (Exception e) when (e.IsAlreadyClosedException())
             {
@@ -2129,6 +2129,82 @@ namespace Lucene.Net.Store
             Scenario("ReadBytes warm", true, ii => { var b = new byte[16]; ii.ReadBytes(b, 0, 16); });
             Scenario("Seek warm", true, ii => ii.Seek(8));
             Scenario("SkipBytes warm", true, ii => ii.SkipBytes(4));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestOpenSlice_OutOfBounds_Throws()
+        {
+            using var mmapDir = new MMapDirectory(CreateTempDir("sliceBounds"), null, 1 << 2);
+            WriteFile(mmapDir, "f", 16);
+            using var slicer = mmapDir.CreateSlicer("f", NewIOContext(Random));
+
+            // Negative offset.
+            Assert.Throws<ArgumentException>(() => slicer.OpenSlice("neg-off", -1, 4));
+            // Negative length.
+            Assert.Throws<ArgumentException>(() => slicer.OpenSlice("neg-len", 0, -1));
+            // offset + length past end of file.
+            Assert.Throws<ArgumentException>(() => slicer.OpenSlice("past-end", 8, 10));
+            // offset alone past end of file.
+            Assert.Throws<ArgumentException>(() => slicer.OpenSlice("off-past-end", 17, 0));
+
+            // Edge: offset == length == 0 is fine on a non-empty file.
+            using (var s = slicer.OpenSlice("empty", 0, 0)) { Assert.AreEqual(0L, s.Length); }
+            // Edge: offset == fileLength, length == 0 is fine.
+            using (var s = slicer.OpenSlice("end-empty", 16, 0)) { Assert.AreEqual(0L, s.Length); }
+            // Edge: full file.
+            using (var s = slicer.OpenSlice("full", 0, 16)) { Assert.AreEqual(16L, s.Length); }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestCloneAfterRootDispose_ThrowsAlreadyClosed()
+        {
+            using var mmapDir = new MMapDirectory(CreateTempDir("cloneAfterRootDispose"), null, 1 << 2);
+            WriteFile(mmapDir, "f", 32);
+            var root = mmapDir.OpenInput("f", NewIOContext(Random));
+            root.Dispose();
+            try
+            {
+                root.Clone();
+                Assert.Fail("Clone of disposed root should throw AlreadyClosedException");
+            }
+            catch (Exception e) when (e.IsAlreadyClosedException() || e is ObjectDisposedException)
+            {
+                // pass
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestSliceNonZeroOffset_SeekToZero_ReadsSliceStart()
+        {
+            // Slice offset lands mid-chunk. After reading some bytes,
+            // Seek(0) must reposition to the slice's first byte (which is
+            // mid-chunk in the underlying file), not to file byte 0.
+            using var mmapDir = new MMapDirectory(CreateTempDir("sliceSeekZero"), null, 1 << 2);
+            var bytes = WriteFile(mmapDir, "f", 32);
+            using var slicer = mmapDir.CreateSlicer("f", NewIOContext(Random));
+            // offset=5 lands inside chunk 1 (chunk size = 4); slice spans
+            // multiple chunks.
+            using var slice = slicer.OpenSlice("s", 5, 20);
+
+            // Drain a few bytes so currentChunk/readBase are populated.
+            for (int i = 0; i < 6; i++)
+            {
+                Assert.AreEqual(bytes[5 + i], slice.ReadByte(), "pre-seek mismatch at " + i);
+            }
+
+            // Seek to slice-relative 0 -> file byte 5.
+            slice.Seek(0);
+            Assert.AreEqual(0L, slice.Position);
+            Assert.AreEqual(bytes[5], slice.ReadByte(), "slice[0] after Seek(0) should equal file[offset]");
+
+            // Read across the slice (covers multiple chunk crossings).
+            slice.Seek(0);
+            var actual = new byte[20];
+            slice.ReadBytes(actual, 0, 20);
+            for (int i = 0; i < 20; i++)
+            {
+                Assert.AreEqual(bytes[5 + i], actual[i], "slice byte mismatch at " + i);
+            }
         }
     }
 }
