@@ -1,6 +1,7 @@
 // Lucene version compatibility level 4.8.1
 
 using System;
+using System.Buffers.Binary;
 
 namespace Lucene.Net.Analysis.Payloads
 {
@@ -55,10 +56,14 @@ namespace Lucene.Net.Analysis.Payloads
         /// </summary>
         public static byte[] EncodeInt32(int payload, byte[] data, int offset)
         {
-            data[offset] = (byte)(payload >> 24);
-            data[offset + 1] = (byte)(payload >> 16);
-            data[offset + 2] = (byte)(payload >> 8);
-            data[offset + 3] = (byte)payload;
+            // data[offset] = (byte)(payload >> 24);
+            // data[offset + 1] = (byte)(payload >> 16);
+            // data[offset + 2] = (byte)(payload >> 8);
+            // data[offset + 3] = (byte)payload;
+            // return data;
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            BinaryPrimitives.WriteInt32BigEndian(data.AsSpan(offset), payload);
             return data;
         }
 
@@ -94,7 +99,10 @@ namespace Lucene.Net.Analysis.Payloads
         /// </summary>
         public static int DecodeInt32(ReadOnlySpan<byte> bytes, int offset)
         {
-            return ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
+            // return ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            return BinaryPrimitives.ReadInt32BigEndian(bytes.Slice(offset, sizeof(int)));
         }
     }
 }

@@ -73,11 +73,16 @@ FOOTER="""
         /// </summary>
         protected virtual int WriteInt64(long block, byte[] blocks, int blocksOffset)
         {
-            for (int j = 1; j <= 8; ++j)
-            {
-                blocks[blocksOffset++] = (byte)(block >>> (64 - (j << 3)));
-            }
-            return blocksOffset;
+            // for (int j = 1; j <= 8; ++j)
+            // {
+            //     blocks[blocksOffset++] = (byte)(block >>> (64 - (j << 3)));
+            // }
+            // return blocksOffset;
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            BinaryPrimitives.WriteInt64BigEndian(blocks.AsSpan(blocksOffset, sizeof(long)), block);
+
+            return blocksOffset + sizeof(long);
         }
 
         /// <summary>
@@ -317,7 +322,8 @@ if __name__ == '__main__':
 
   # LUCENENET specific - we write the usings before the header, see top of file
   f.write('using Lucene.Net.Diagnostics;\n')
-  f.write('using System;\n\n')
+  f.write('using System;\n')
+  f.write('using System.Buffers.Binary;\n\n')
 
   f.write(HEADER)
   #f.write('\n') // LUCENENET: Not needed

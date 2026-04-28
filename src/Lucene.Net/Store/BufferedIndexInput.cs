@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Buffers.Binary;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -227,7 +228,12 @@ namespace Lucene.Net.Store
         {
             if (2 <= (bufferLength - bufferPosition))
             {
-                return (short)(((m_buffer[bufferPosition++] & 0xFF) << 8) | (m_buffer[bufferPosition++] & 0xFF));
+                // return (short)(((m_buffer[bufferPosition++] & 0xFF) << 8) | (m_buffer[bufferPosition++] & 0xFF));
+
+                // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+                short value = BinaryPrimitives.ReadInt16BigEndian(m_buffer.AsSpan(bufferPosition, sizeof(short)));
+                bufferPosition += sizeof(short);
+                return value;
             }
             else
             {
@@ -242,8 +248,13 @@ namespace Lucene.Net.Store
         {
             if (4 <= (bufferLength - bufferPosition))
             {
-                return ((m_buffer[bufferPosition++] & 0xFF) << 24) | ((m_buffer[bufferPosition++] & 0xFF) << 16)
-                    | ((m_buffer[bufferPosition++] & 0xFF) << 8) | (m_buffer[bufferPosition++] & 0xFF);
+                // return ((m_buffer[bufferPosition++] & 0xFF) << 24) | ((m_buffer[bufferPosition++] & 0xFF) << 16)
+                //     | ((m_buffer[bufferPosition++] & 0xFF) << 8) | (m_buffer[bufferPosition++] & 0xFF);
+
+                // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+                int value = BinaryPrimitives.ReadInt32BigEndian(m_buffer.AsSpan(bufferPosition, sizeof(int)));
+                bufferPosition += sizeof(int);
+                return value;
             }
             else
             {
@@ -258,11 +269,16 @@ namespace Lucene.Net.Store
         {
             if (8 <= (bufferLength - bufferPosition))
             {
-                int i1 = ((m_buffer[bufferPosition++] & 0xff) << 24) | ((m_buffer[bufferPosition++] & 0xff) << 16)
-                    | ((m_buffer[bufferPosition++] & 0xff) << 8) | (m_buffer[bufferPosition++] & 0xff);
-                int i2 = ((m_buffer[bufferPosition++] & 0xff) << 24) | ((m_buffer[bufferPosition++] & 0xff) << 16)
-                    | ((m_buffer[bufferPosition++] & 0xff) << 8) | (m_buffer[bufferPosition++] & 0xff);
-                return (((long)i1) << 32) | (i2 & 0xFFFFFFFFL);
+                // int i1 = ((m_buffer[bufferPosition++] & 0xff) << 24) | ((m_buffer[bufferPosition++] & 0xff) << 16)
+                //     | ((m_buffer[bufferPosition++] & 0xff) << 8) | (m_buffer[bufferPosition++] & 0xff);
+                // int i2 = ((m_buffer[bufferPosition++] & 0xff) << 24) | ((m_buffer[bufferPosition++] & 0xff) << 16)
+                //     | ((m_buffer[bufferPosition++] & 0xff) << 8) | (m_buffer[bufferPosition++] & 0xff);
+                // return (((long)i1) << 32) | (i2 & 0xFFFFFFFFL);
+
+                // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+                long value = BinaryPrimitives.ReadInt64BigEndian(m_buffer.AsSpan(bufferPosition, sizeof(long)));
+                bufferPosition += sizeof(long);
+                return value;
             }
             else
             {
@@ -277,38 +293,14 @@ namespace Lucene.Net.Store
         {
             if (5 <= (bufferLength - bufferPosition))
             {
-                byte b = m_buffer[bufferPosition++];
-                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
+                // LUCENENET: unify logic in VIntUtils. Note that existing code was not checking bytes length.
+                bool ok = VIntUtils.TryReadVInt32(m_buffer.AsSpan(bufferPosition), out int value, out int count);
+                bufferPosition += count;
+                if (!ok)
                 {
-                    return b;
+                    throw new IOException("Invalid VInt32 detected (too many bits)");
                 }
-                int i = b & 0x7F;
-                b = m_buffer[bufferPosition++];
-                i |= (b & 0x7F) << 7;
-                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-                {
-                    return i;
-                }
-                b = m_buffer[bufferPosition++];
-                i |= (b & 0x7F) << 14;
-                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-                {
-                    return i;
-                }
-                b = m_buffer[bufferPosition++];
-                i |= (b & 0x7F) << 21;
-                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-                {
-                    return i;
-                }
-                b = m_buffer[bufferPosition++];
-                // Warning: the next ands use 0x0F / 0xF0 - beware copy/paste errors:
-                i |= (b & 0x0F) << 28;
-                if ((b & 0xF0) == 0)
-                {
-                    return i;
-                }
-                throw new IOException("Invalid VInt32 detected (too many bits)");
+                return value;
             }
             else
             {
@@ -323,61 +315,14 @@ namespace Lucene.Net.Store
         {
             if (9 <= bufferLength - bufferPosition)
             {
-                byte b = m_buffer[bufferPosition++];
-                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
+                // LUCENENET: unify logic in VIntUtils. Note that existing code was not checking bytes length.
+                bool ok = VIntUtils.TryReadVInt64(m_buffer.AsSpan(bufferPosition), out long value, out int count);
+                bufferPosition += count;
+                if (!ok)
                 {
-                    return b;
+                    throw new IOException("Invalid VInt64 detected (negative values disallowed)");
                 }
-                long i = b & 0x7FL;
-                b = m_buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 7;
-                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-                {
-                    return i;
-                }
-                b = m_buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 14;
-                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-                {
-                    return i;
-                }
-                b = m_buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 21;
-                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-                {
-                    return i;
-                }
-                b = m_buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 28;
-                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-                {
-                    return i;
-                }
-                b = m_buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 35;
-                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-                {
-                    return i;
-                }
-                b = m_buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 42;
-                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-                {
-                    return i;
-                }
-                b = m_buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 49;
-                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-                {
-                    return i;
-                }
-                b = m_buffer[bufferPosition++];
-                i |= (b & 0x7FL) << 56;
-                if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-                {
-                    return i;
-                }
-                throw new IOException("Invalid VInt64 detected (negative values disallowed)");
+                return value;
             }
             else
             {

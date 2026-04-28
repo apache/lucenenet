@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System;
+using System.Buffers.Binary;
 
 namespace Lucene.Net.Store
 {
@@ -94,7 +95,12 @@ namespace Lucene.Net.Store
         /// </summary>
         public override short ReadInt16()
         {
-            return (short)(((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF));
+            // return (short)(((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF));
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            short value = BinaryPrimitives.ReadInt16BigEndian(bytes.AsSpan(pos, sizeof(short)));
+            pos += sizeof(short);
+            return value;
         }
 
         /// <summary>
@@ -102,8 +108,13 @@ namespace Lucene.Net.Store
         /// </summary>
         public override int ReadInt32()
         {
-            return ((bytes[pos++] & 0xFF) << 24) | ((bytes[pos++] & 0xFF) << 16)
-                | ((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF);
+            // return ((bytes[pos++] & 0xFF) << 24) | ((bytes[pos++] & 0xFF) << 16)
+            //     | ((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF);
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            int value = BinaryPrimitives.ReadInt32BigEndian(bytes.AsSpan(pos, sizeof(int)));
+            pos += sizeof(int);
+            return value;
         }
 
         /// <summary>
@@ -111,11 +122,16 @@ namespace Lucene.Net.Store
         /// </summary>
         public override long ReadInt64()
         {
-            int i1 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16)
-                | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
-            int i2 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16)
-                | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
-            return (((long)i1) << 32) | (i2 & 0xFFFFFFFFL);
+            // int i1 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16)
+            //     | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
+            // int i2 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16)
+            //     | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
+            // return (((long)i1) << 32) | (i2 & 0xFFFFFFFFL);
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            long value = BinaryPrimitives.ReadInt64BigEndian(bytes.AsSpan(pos, sizeof(long)));
+            pos += sizeof(long);
+            return value;
         }
 
         /// <summary>
@@ -123,38 +139,14 @@ namespace Lucene.Net.Store
         /// </summary>
         public override int ReadVInt32()
         {
-            byte b = bytes[pos++];
-            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
+            // LUCENENET: unify logic in VIntUtils. Note that existing code was not checking bytes length.
+            bool ok = VIntUtils.TryReadVInt32(bytes.AsSpan(pos), out int value, out int count);
+            pos += count;
+            if (!ok)
             {
-                return b;
+                throw RuntimeException.Create("Invalid VInt32 detected (too many bits)");
             }
-            int i = b & 0x7F;
-            b = bytes[pos++];
-            i |= (b & 0x7F) << 7;
-            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-            {
-                return i;
-            }
-            b = bytes[pos++];
-            i |= (b & 0x7F) << 14;
-            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-            {
-                return i;
-            }
-            b = bytes[pos++];
-            i |= (b & 0x7F) << 21;
-            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-            {
-                return i;
-            }
-            b = bytes[pos++];
-            // Warning: the next ands use 0x0F / 0xF0 - beware copy/paste errors:
-            i |= (b & 0x0F) << 28;
-            if ((b & 0xF0) == 0)
-            {
-                return i;
-            }
-            throw RuntimeException.Create("Invalid VInt32 detected (too many bits)");
+            return value;
         }
 
         /// <summary>
@@ -162,61 +154,14 @@ namespace Lucene.Net.Store
         /// </summary>
         public override long ReadVInt64()
         {
-            byte b = bytes[pos++];
-            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
+            // LUCENENET: unify logic in VIntUtils. Note that existing code was not checking bytes length.
+            bool ok = VIntUtils.TryReadVInt64(bytes.AsSpan(pos), out long value, out int count);
+            pos += count;
+            if (!ok)
             {
-                return b;
+                throw RuntimeException.Create("Invalid VInt64 detected (negative values disallowed)");
             }
-            long i = b & 0x7FL;
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 7;
-            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-            {
-                return i;
-            }
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 14;
-            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-            {
-                return i;
-            }
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 21;
-            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-            {
-                return i;
-            }
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 28;
-            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-            {
-                return i;
-            }
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 35;
-            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-            {
-                return i;
-            }
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 42;
-            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-            {
-                return i;
-            }
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 49;
-            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-            {
-                return i;
-            }
-            b = bytes[pos++];
-            i |= (b & 0x7FL) << 56;
-            if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
-            {
-                return i;
-            }
-            throw RuntimeException.Create("Invalid VInt64 detected (negative values disallowed)");
+            return value;
         }
 
         // NOTE: AIOOBE not EOF if you read too much

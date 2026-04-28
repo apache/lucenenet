@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using System.Buffers.Binary;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -274,8 +275,12 @@ namespace Lucene.Net.Support.IO
                 for (int index = 0; index < chars.Length; index++)
                 {
                     int newIndex = index == 0 ? index : index * 2;
-                    newBytes[newIndex] = (byte)chars[index];
-                    newBytes[newIndex + 1] = (byte)(chars[index] >> 8);
+
+                    // newBytes[newIndex] = (byte)chars[index];
+                    // newBytes[newIndex + 1] = (byte)(chars[index] >> 8);
+
+                    // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+                    BinaryPrimitives.WriteUInt16LittleEndian(newBytes.AsSpan(newIndex), chars[index]);
                 }
 
                 stream.Write(newBytes, 0, byteCount);
@@ -298,7 +303,11 @@ namespace Lucene.Net.Support.IO
             for (int i = 0; i < count; i++)
             {
                 stream.ReadExactly(buff);
-                newChars[i] = (char)((buff[0] & 0xff) | ((buff[1] & 0xff) << 8));
+
+                // newChars[i] = (char)((buff[0] & 0xff) | ((buff[1] & 0xff) << 8));
+
+                // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+                newChars[i] = (char)BinaryPrimitives.ReadUInt16LittleEndian(buff);
             }
             return newChars;
         }
@@ -309,10 +318,15 @@ namespace Lucene.Net.Support.IO
                 throw new ArgumentNullException(nameof(stream));
 
             Span<byte> buff = stackalloc byte[4];
-            buff[0] = (byte)(value);
-            buff[1] = (byte)(value >> 8);
-            buff[2] = (byte)(value >> 16);
-            buff[3] = (byte)(value >> 24);
+
+            // buff[0] = (byte)(value);
+            // buff[1] = (byte)(value >> 8);
+            // buff[2] = (byte)(value >> 16);
+            // buff[3] = (byte)(value >> 24);
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            BinaryPrimitives.WriteInt32LittleEndian(buff, value);
+
             stream.Write(buff);
         }
 
@@ -323,8 +337,12 @@ namespace Lucene.Net.Support.IO
 
             Span<byte> buff = stackalloc byte[4];
             stream.ReadExactly(buff);
-            return (buff[0] & 0xff) | ((buff[1] & 0xff) << 8) |
-                ((buff[2] & 0xff) << 16) | ((buff[3] & 0xff) << 24);
+
+            // return (buff[0] & 0xff) | ((buff[1] & 0xff) << 8) |
+            //     ((buff[2] & 0xff) << 16) | ((buff[3] & 0xff) << 24);
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            return BinaryPrimitives.ReadInt32LittleEndian(buff);
         }
 
         public static void Write(this Stream stream, long value)
@@ -333,14 +351,19 @@ namespace Lucene.Net.Support.IO
                 throw new ArgumentNullException(nameof(stream));
 
             Span<byte> buff = stackalloc byte[8];
-            buff[0] = (byte)value;
-            buff[1] = (byte)(value >> 8);
-            buff[2] = (byte)(value >> 16);
-            buff[3] = (byte)(value >> 24);
-            buff[4] = (byte)(value >> 32);
-            buff[5] = (byte)(value >> 40);
-            buff[6] = (byte)(value >> 48);
-            buff[7] = (byte)(value >> 56);
+
+            // buff[0] = (byte)value;
+            // buff[1] = (byte)(value >> 8);
+            // buff[2] = (byte)(value >> 16);
+            // buff[3] = (byte)(value >> 24);
+            // buff[4] = (byte)(value >> 32);
+            // buff[5] = (byte)(value >> 40);
+            // buff[6] = (byte)(value >> 48);
+            // buff[7] = (byte)(value >> 56);
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            BinaryPrimitives.WriteInt64LittleEndian(buff, value);
+
             stream.Write(buff);
         }
 
@@ -351,11 +374,15 @@ namespace Lucene.Net.Support.IO
 
             Span<byte> buff = stackalloc byte[8];
             stream.ReadExactly(buff);
-            uint lo = (uint)(buff[0] | buff[1] << 8 |
-                             buff[2] << 16 | buff[3] << 24);
-            uint hi = (uint)(buff[4] | buff[5] << 8 |
-                             buff[6] << 16 | buff[7] << 24);
-            return (long)((ulong)hi) << 32 | lo;
+
+            // uint lo = (uint)(buff[0] | buff[1] << 8 |
+            //                  buff[2] << 16 | buff[3] << 24);
+            // uint hi = (uint)(buff[4] | buff[5] << 8 |
+            //                  buff[6] << 16 | buff[7] << 24);
+            // return (long)((ulong)hi) << 32 | lo;
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            return BinaryPrimitives.ReadInt64LittleEndian(buff);
         }
 
         // async versions of the above methods
@@ -367,10 +394,13 @@ namespace Lucene.Net.Support.IO
             byte[] buff = ArrayPool<byte>.Shared.Rent(4);
             try
             {
-                buff[0] = (byte)(value >> 24);
-                buff[1] = (byte)(value >> 16);
-                buff[2] = (byte)(value >> 8);
-                buff[3] = (byte)value;
+                // buff[0] = (byte)(value >> 24);
+                // buff[1] = (byte)(value >> 16);
+                // buff[2] = (byte)(value >> 8);
+                // buff[3] = (byte)value;
+
+                // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+                BinaryPrimitives.WriteInt32BigEndian(buff, value);
 
                 await output.WriteAsync(buff, 0, 4, cancellationToken).ConfigureAwait(false);
             }
@@ -388,14 +418,17 @@ namespace Lucene.Net.Support.IO
             byte[] buff = ArrayPool<byte>.Shared.Rent(8);
             try
             {
-                buff[0] = (byte)(value >> 56);
-                buff[1] = (byte)(value >> 48);
-                buff[2] = (byte)(value >> 40);
-                buff[3] = (byte)(value >> 32);
-                buff[4] = (byte)(value >> 24);
-                buff[5] = (byte)(value >> 16);
-                buff[6] = (byte)(value >> 8);
-                buff[7] = (byte)value;
+                // buff[0] = (byte)(value >> 56);
+                // buff[1] = (byte)(value >> 48);
+                // buff[2] = (byte)(value >> 40);
+                // buff[3] = (byte)(value >> 32);
+                // buff[4] = (byte)(value >> 24);
+                // buff[5] = (byte)(value >> 16);
+                // buff[6] = (byte)(value >> 8);
+                // buff[7] = (byte)value;
+
+                // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+                BinaryPrimitives.WriteInt64BigEndian(buff, value);
 
                 await output.WriteAsync(buff, 0, 8, cancellationToken).ConfigureAwait(false);
             }
@@ -420,7 +453,7 @@ namespace Lucene.Net.Support.IO
             try
             {
                 int offset = 0;
-                offset = WriteInt16BigEndianToBuffer((int)utfCount, buffer, offset);
+                offset = WriteUInt16BigEndianToBuffer((ushort)utfCount, buffer, offset);
                 offset = WriteUTFBytesToBuffer(value, buffer, offset);
 
                 await output.WriteAsync(buffer, 0, offset, cancellationToken).ConfigureAwait(false);
@@ -440,7 +473,10 @@ namespace Lucene.Net.Support.IO
             {
                 await input.ReadExactlyAsync(buff, 0, 4, cancellationToken).ConfigureAwait(false);
 
-                return (buff[0] << 24) | (buff[1] << 16) | (buff[2] << 8) | buff[3];
+                // return (buff[0] << 24) | (buff[1] << 16) | (buff[2] << 8) | buff[3];
+
+                // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+                return BinaryPrimitives.ReadInt32BigEndian(buff);
             }
             finally
             {
@@ -458,14 +494,17 @@ namespace Lucene.Net.Support.IO
             {
                 await input.ReadExactlyAsync(buff, 0, 8, cancellationToken).ConfigureAwait(false);
 
-                return ((long)buff[0] << 56) |
-                       ((long)buff[1] << 48) |
-                       ((long)buff[2] << 40) |
-                       ((long)buff[3] << 32) |
-                       ((long)buff[4] << 24) |
-                       ((long)buff[5] << 16) |
-                       ((long)buff[6] << 8) |
-                       buff[7];
+                // return ((long)buff[0] << 56) |
+                //        ((long)buff[1] << 48) |
+                //        ((long)buff[2] << 40) |
+                //        ((long)buff[3] << 32) |
+                //        ((long)buff[4] << 24) |
+                //        ((long)buff[5] << 16) |
+                //        ((long)buff[6] << 8) |
+                //        buff[7];
+
+                // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+                return BinaryPrimitives.ReadInt64BigEndian(buff);
             }
             finally
             {
@@ -522,11 +561,15 @@ namespace Lucene.Net.Support.IO
             return utfCount;
         }
 
-        private static int WriteInt16BigEndianToBuffer(int value, Span<byte> buffer, int offset)
+        private static int WriteUInt16BigEndianToBuffer(ushort value, Span<byte> buffer, int offset)
         {
-            buffer[offset++] = (byte)(value >> 8);
-            buffer[offset++] = (byte)value;
-            return offset;
+            // buffer[offset++] = (byte)(value >> 8);
+            // buffer[offset++] = (byte)value;
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            BinaryPrimitives.WriteUInt16BigEndian(buffer.Slice(offset), value);
+
+            return offset + sizeof(ushort);
         }
 
         private static int WriteUTFBytesToBuffer(string value, Span<byte> buffer, int offset)

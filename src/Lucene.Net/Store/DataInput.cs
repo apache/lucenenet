@@ -5,6 +5,7 @@ using Lucene.Net.Support.Buffers;
 using Lucene.Net.Util;
 using System;
 using System.Buffers;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -127,7 +128,13 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataOutput.WriteInt16(short)"/>
         public virtual short ReadInt16()
         {
-            return (short)(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
+            // LUCENENET specific: optimize for single ReadBytes call and JIT-intrinsics, was:
+            // return (short)(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
+            // Also note: the 0xFF mask is not needed in C# since bytes are unsigned.
+
+            Span<byte> b = stackalloc byte[2];
+            ReadBytes(b);
+            return BinaryPrimitives.ReadInt16BigEndian(b);
         }
 
         /// <summary>
@@ -138,8 +145,14 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataOutput.WriteInt32(int)"/>
         public virtual int ReadInt32()
         {
-            return ((ReadByte() & 0xFF) << 24) | ((ReadByte() & 0xFF) << 16)
-                | ((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF);
+            // LUCENENET specific: optimize for single ReadBytes call, was:
+            // return ((ReadByte() & 0xFF) << 24) | ((ReadByte() & 0xFF) << 16)
+            //     | ((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF);
+            // Also note: the 0xFF mask is not needed in C# since bytes are unsigned.
+
+            Span<byte> b = stackalloc byte[4];
+            ReadBytes(b);
+            return BinaryPrimitives.ReadInt32BigEndian(b);
         }
 
         /// <summary>
@@ -196,7 +209,13 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataOutput.WriteInt64(long)"/>
         public virtual long ReadInt64()
         {
-            return (((long)ReadInt32()) << 32) | (ReadInt32() & 0xFFFFFFFFL);
+            // LUCENENET specific: optimize for single ReadBytes call, was:
+            // return (((long)ReadInt32()) << 32) | (ReadInt32() & 0xFFFFFFFFL);
+            // Also note: the 0xFF mask is not needed in C# since bytes are unsigned.
+
+            Span<byte> b = stackalloc byte[8];
+            ReadBytes(b);
+            return BinaryPrimitives.ReadInt64BigEndian(b);
         }
 
         /// <summary>
