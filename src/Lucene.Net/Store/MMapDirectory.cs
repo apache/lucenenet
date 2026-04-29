@@ -194,7 +194,7 @@ namespace Lucene.Net.Store
             SharedMapping mapping = SharedMapping.Create(file, chunkSizePower);
             try
             {
-                return new MMapIndexInput("MMapIndexInput(path=\"" + file + "\")", ownsMapping: true, mapping, 0, mapping.Length, chunkSizePower);
+                return new MMapIndexInput($"MMapIndexInput(path=\"{file}\")", ownsMapping: true, mapping, 0, mapping.Length, chunkSizePower);
             }
             catch
             {
@@ -256,7 +256,7 @@ namespace Lucene.Net.Store
                 // Slices reference the slicer's mapping; only the slicer
                 // itself owns the mapping and will dispose it.
                 var input = new MMapIndexInput(
-                    "MMapIndexInput(" + sliceDescription + " in path=\"" + file + "\" slice=" + offset + ":" + (offset + length) + ")", ownsMapping: false, mapping,
+                    $"MMapIndexInput({sliceDescription} in path=\"{file}\" slice={offset}:{offset + length})", ownsMapping: false, mapping,
                     offset, length,
                     outerInstance.chunkSizePower);
                 lock (issuedSlicesLock)
