@@ -282,7 +282,7 @@ namespace Lucene.Net.Index
         public virtual void TestTransactions_Mem()
         {
             Console.WriteLine("start test");
-            // we cant use non-ramdir on windows, because this test needs to double-write.
+            // we can't use non-ramdir on windows, because this test needs to double-write.
             MockDirectoryWrapper dir1 = new MockDirectoryWrapper(Random, new RAMDirectory());
             MockDirectoryWrapper dir2 = new MockDirectoryWrapper(Random, new RAMDirectory());
             dir1.PreventDoubleWrite = false;

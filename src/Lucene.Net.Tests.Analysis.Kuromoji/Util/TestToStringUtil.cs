@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         }
 
         // see http://en.wikipedia.org/wiki/Hepburn_romanization,
-        // but this isnt even thorough or really probably what we want!
+        // but this isn't even thorough or really probably what we want!
         [Test]
         public void TestHepburnTable()
         {

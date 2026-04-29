@@ -923,7 +923,7 @@ namespace Lucene.Net.Analysis.Hunspell
                             continue;
                         }
                         line = UnescapeEntry(line);
-                        // if we havent seen any stem exceptions, try to parse one
+                        // if we haven't seen any stem exceptions, try to parse one
                         if (hasStemExceptions == false)
                         {
                             int morphStart = line.IndexOf(MORPH_SEPARATOR);

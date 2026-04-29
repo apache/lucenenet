@@ -720,7 +720,7 @@ namespace Lucene.Net.Analysis.Br
                 return false;
             }
 
-            // suffix lenght = 7
+            // suffix length = 7
             if (RV.Length >= 7)
             {
                 if (Suffix(RV, "issemos"))

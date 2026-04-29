@@ -202,7 +202,7 @@ namespace Lucene.Net.Codecs.Bloom
             output.WriteInt32(bits.Length);
             foreach (var t in bits)
             {
-                // Can't used VLong encoding because cant cope with negative numbers
+                // Can't used VLong encoding because can't cope with negative numbers
                 // output by FixedBitSet
                 output.WriteInt64(t);
             }

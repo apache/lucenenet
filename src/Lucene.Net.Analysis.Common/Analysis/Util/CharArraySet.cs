@@ -537,7 +537,7 @@ namespace Lucene.Net.Analysis.Util
 
             return new CharArraySet(matchVersion, collection.Select(text =>
             {
-                // We cannot capture Span<T> from outside of the lambda, so we just re-alocate the
+                // We cannot capture Span<T> from outside of the lambda, so we just re-allocate the
                 // stack on every loop.
                 var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
                 if (returnType == CharArrayDictionary.CharReturnType.String)
