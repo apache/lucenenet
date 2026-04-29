@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using SCG = System.Collections.Generic;
 
@@ -521,7 +522,13 @@ namespace Lucene.Net.Store
                     position = pos + 2;
                     return v;
                 }
-                return base.ReadInt16();
+                // Slow path: 2 bytes straddle a chunk boundary. Fill via
+                // ReadBytes (which handles the crossing) and decode big-endian
+                // to match the fast path. Avoids the 2× virtcall round-trip
+                // through base.ReadInt16 -> ReadByte.
+                Span<byte> buf = stackalloc byte[2];
+                ReadBytes(buf);
+                return BinaryPrimitives.ReadInt16BigEndian(buf);
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -535,7 +542,10 @@ namespace Lucene.Net.Store
                     position = pos + 4;
                     return v;
                 }
-                return base.ReadInt32();
+                // Slow path: see ReadInt16.
+                Span<byte> buf = stackalloc byte[4];
+                ReadBytes(buf);
+                return BinaryPrimitives.ReadInt32BigEndian(buf);
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -549,44 +559,109 @@ namespace Lucene.Net.Store
                     position = pos + 8;
                     return v;
                 }
-                return base.ReadInt64();
+                // Slow path: see ReadInt16.
+                Span<byte> buf = stackalloc byte[8];
+                ReadBytes(buf);
+                return BinaryPrimitives.ReadInt64BigEndian(buf);
             }
 
             public override void ReadBytes(byte[] b, int offset, int len)
             {
-                ReadBytes(new Span<byte>(b, offset, len));
+                if (b is null)
+                {
+                    throw new ArgumentNullException(nameof(b));
+                }
+                if ((uint)offset > (uint)b.Length || (uint)len > (uint)(b.Length - offset))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(offset),
+                        $"offset/len out of range: offset={offset}, len={len}, b.Length={b.Length}");
+                }
+                if (len == 0) return;
+
+                ReadBytesCore(ref b[offset], len);
             }
 
             public override void ReadBytes(Span<byte> destination)
+            {
+                int len = destination.Length;
+                if (len == 0) return;
+
+                ReadBytesCore(ref MemoryMarshal.GetReference(destination), len);
+            }
+
+            // Shared inner loop for both ReadBytes overloads. Takes a raw
+            // ref + length so the byte[] path doesn't pay for a Span ctor +
+            // GetReference round-trip, and the per-iteration slice/GetReference
+            // pair is replaced with a single Unsafe.Add.
+            //
+            // The byte[] overload is responsible for its own bounds checking
+            // (Span's ctor checks for free; here we have to do it manually).
+            private void ReadBytesCore(ref byte destination, int length)
             {
                 if (Volatile.Read(ref instanceClosed) != 0)
                 {
                     throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
                 }
 
-                int len = destination.Length;
-                if (len == 0) return;
-
                 long pos = position;
-                if (pos + len > length)
+                if (pos + length > this.length)
                 {
                     throw EOFException.Create("read past EOF: " + this);
                 }
 
+                int remaining = length;
                 int dstOff = 0;
-                while (len > 0)
+
+                while (remaining > 0)
                 {
                     if (pos >= currentEnd)
                     {
                         EnsureCurrentChunk(pos);
                     }
-                    int inChunk = (int)Math.Min(currentEnd - pos, (long)len);
+
+                    long available = currentEnd - pos;
+                    int inChunk = (int)(available < remaining ? available : remaining);
+
                     ref byte src = ref Unsafe.AsRef<byte>(readBase + pos);
-                    ref byte dst = ref System.Runtime.InteropServices.MemoryMarshal.GetReference(destination.Slice(dstOff));
-                    Unsafe.CopyBlockUnaligned(ref dst, ref src, (uint)inChunk);
+                    ref byte dst = ref Unsafe.Add(ref destination, dstOff);
+
+                    // Small-copy fast path (≤ 8 bytes). Unsafe.CopyBlockUnaligned
+                    // has nontrivial entry overhead for tiny copies; using a
+                    // sized read/write avoids it for the common short-read case
+                    // (e.g., the slow path of ReadInt16/Int32/Int64).
+                    if (inChunk <= 8)
+                    {
+                        switch (inChunk)
+                        {
+                            case 8:
+                                Unsafe.WriteUnaligned(ref dst, Unsafe.ReadUnaligned<ulong>(ref src));
+                                break;
+                            case 4:
+                                Unsafe.WriteUnaligned(ref dst, Unsafe.ReadUnaligned<uint>(ref src));
+                                break;
+                            case 2:
+                                Unsafe.WriteUnaligned(ref dst, Unsafe.ReadUnaligned<ushort>(ref src));
+                                break;
+                            case 1:
+                                dst = src;
+                                break;
+                            default:
+                                // 3, 5, 6, 7 — uncommon; fall through to byte loop.
+                                for (int i = 0; i < inChunk; i++)
+                                {
+                                    Unsafe.Add(ref dst, i) = Unsafe.Add(ref src, i);
+                                }
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Unsafe.CopyBlockUnaligned(ref dst, ref src, (uint)inChunk);
+                    }
+
                     pos += inChunk;
                     dstOff += inChunk;
-                    len -= inChunk;
+                    remaining -= inChunk;
                 }
                 position = pos;
             }
