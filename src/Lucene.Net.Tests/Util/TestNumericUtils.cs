@@ -1,5 +1,6 @@
 #if FEATURE_UTIL_TESTS
 using J2N.Text;
+using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -165,6 +166,74 @@ namespace Lucene.Net.Util
                     int mask = (1 << j) - 1;
                     Assert.AreEqual(vals[i] & mask, vals[i] - prefixVal, "difference between prefix val and original value for " + vals[i] + " with shift=" + j);
                 }
+            }
+        }
+
+        // LUCENENET-specific: verifies PrefixCodedToInt64/Int32 reject bytes with the high bit
+        // set, matching upstream Java's `if (b < 0)` guard on signed bytes. In .NET byte is
+        // unsigned, so the equivalent C# check is `b > 127`. Asserting this behavior protects
+        // against future "optimization" that drops the check thinking it's dead code.
+        [Test, LuceneNetSpecific]
+        public virtual void TestPrefixCodedDecodeRejectsHighBitBytes()
+        {
+            // Build a valid encoding, then corrupt one of the data bytes to have the high bit set.
+            BytesRef encoded = new BytesRef(NumericUtils.BUF_SIZE_INT64);
+
+            // Int64 path: encode 12345L at shift=0 -> 10 bytes (1 shift byte + 9 data bytes).
+            NumericUtils.Int64ToPrefixCodedBytes(12345L, 0, encoded);
+            // Sanity: the round-trip works as-is.
+            Assert.AreEqual(12345L, NumericUtils.PrefixCodedToInt64(encoded));
+            // Corrupt the second-to-last data byte with the high bit set (0x80 = -128 as signed byte).
+            // Skip index 0 (the shift byte) and pick an index with a real data byte.
+            int corruptIndex = encoded.Offset + encoded.Length - 2;
+            byte original = encoded.Bytes[corruptIndex];
+            encoded.Bytes[corruptIndex] = 0x80;
+            try
+            {
+                NumericUtils.PrefixCodedToInt64(encoded);
+                Assert.Fail("PrefixCodedToInt64 should reject a data byte with the high bit set (matches Java's signed `b < 0` guard)");
+            }
+            catch (Exception e) when (e.IsNumberFormatException())
+            {
+                // expected
+            }
+            encoded.Bytes[corruptIndex] = original; // restore
+
+            // Int32 path: encode 12345 at shift=0 -> 6 bytes (1 shift byte + 5 data bytes).
+            NumericUtils.Int32ToPrefixCodedBytes(12345, 0, encoded);
+            Assert.AreEqual(12345, NumericUtils.PrefixCodedToInt32(encoded));
+            corruptIndex = encoded.Offset + encoded.Length - 2;
+            original = encoded.Bytes[corruptIndex];
+            encoded.Bytes[corruptIndex] = 0xFF; // any value > 127
+            try
+            {
+                NumericUtils.PrefixCodedToInt32(encoded);
+                Assert.Fail("PrefixCodedToInt32 should reject a data byte with the high bit set (matches Java's signed `b < 0` guard)");
+            }
+            catch (Exception e) when (e.IsNumberFormatException())
+            {
+                // expected
+            }
+            encoded.Bytes[corruptIndex] = original;
+
+            // Boundary: byte == 127 (0x7F) is valid (high bit clear), should NOT throw.
+            NumericUtils.Int64ToPrefixCodedBytes(12345L, 0, encoded);
+            corruptIndex = encoded.Offset + encoded.Length - 2;
+            encoded.Bytes[corruptIndex] = 0x7F;
+            // We don't assert the decoded value here — just that it doesn't throw.
+            // (0x7F is a valid 7-bit-data byte; it just produces a different encoded value.)
+            NumericUtils.PrefixCodedToInt64(encoded);
+
+            // Boundary: byte == 128 (0x80) is the smallest invalid value; verify it throws.
+            encoded.Bytes[corruptIndex] = 0x80;
+            try
+            {
+                NumericUtils.PrefixCodedToInt64(encoded);
+                Assert.Fail("byte == 0x80 (smallest with high bit set) should throw");
+            }
+            catch (Exception e) when (e.IsNumberFormatException())
+            {
+                // expected
             }
         }
 
