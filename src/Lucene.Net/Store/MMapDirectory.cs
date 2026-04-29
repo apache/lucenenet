@@ -785,6 +785,7 @@ namespace Lucene.Net.Store
                     bufferSize: 1, FileOptions.RandomAccess);
                 MemoryMappedFile? mmf = null;
                 Chunk[]? chunks = null;
+                Exception? priorException = null;
                 try
                 {
                     long length = fs.Length;
@@ -794,7 +795,11 @@ namespace Lucene.Net.Store
                         // CreateFromFile rejects capacity 0 on an empty file,
                         // so handle this edge case ourselves. Dispose the
                         // FileStream eagerly since there's no MMF to own it.
-                        fs.Dispose();
+                        // Route through DisposeWhileHandlingException so a
+                        // throwing Dispose doesn't escape this success path
+                        // (it would be misleading — we successfully built a
+                        // zero-length mapping).
+                        IOUtils.DisposeWhileHandlingException(fs);
                         return new SharedMapping(mmf: null, chunks: Array.Empty<Chunk>(), length: 0);
                     }
 
@@ -818,18 +823,25 @@ namespace Lucene.Net.Store
                     chunks = MapChunks(mmf, 0, length, chunkSizePower);
                     return new SharedMapping(mmf, chunks, length);
                 }
-                catch
+                catch (Exception e) when (e.IsThrowable())
                 {
-                    DisposeChunks(chunks);
-                    if (mmf != null)
-                    {
-                        mmf.Dispose(); // disposes fs (leaveOpen: false)
-                    }
-                    else
-                    {
-                        IOUtils.DisposeWhileHandlingException(fs);
-                    }
+                    priorException = e;
                     throw;
+                }
+                finally
+                {
+                    if (priorException != null)
+                    {
+                        // Cleanup must not mask priorException. DisposeChunks
+                        // swallows internally, so chunk teardown is safe.
+                        // For the mmf/fs the priorException overload attaches
+                        // any Dispose failure as a suppressed exception and
+                        // rethrows the original.
+                        // mmf owns fs once CreateFromFile returned (leaveOpen:
+                        // false); if mmf is null, fs ownership is still ours.
+                        DisposeChunks(chunks);
+                        IOUtils.DisposeWhileHandlingException(priorException, (IDisposable?)mmf ?? fs);
+                    }
                 }
             }
 
@@ -877,16 +889,28 @@ namespace Lucene.Net.Store
                         long chunkOffset = offset + ((long)i << chunkSizePower);
                         long thisChunkLen = Math.Min(chunkSize, length - ((long)i << chunkSizePower));
 
-                        var accessor = mmf.CreateViewAccessor(chunkOffset, thisChunkLen, MemoryMappedFileAccess.Read);
+                        MemoryMappedViewAccessor accessor = mmf.CreateViewAccessor(chunkOffset, thisChunkLen, MemoryMappedFileAccess.Read);
                         byte* ptr = null;
+                        Exception? acquireException = null;
                         try
                         {
                             accessor.SafeMemoryMappedViewHandle.AcquirePointer(ref ptr);
                         }
-                        catch
+                        catch (Exception e) when (e.IsThrowable())
                         {
-                            accessor.Dispose();
+                            // Don't let accessor.Dispose() mask the original
+                            // AcquirePointer failure — route through the
+                            // priorException overload so any Dispose throw
+                            // becomes a suppressed exception on the original.
+                            acquireException = e;
                             throw;
+                        }
+                        finally
+                        {
+                            if (acquireException != null)
+                            {
+                                IOUtils.DisposeWhileHandlingException(acquireException, accessor);
+                            }
                         }
                         // The accessor may be mapped at an offset inside the OS page,
                         // in which case PointerOffset is the distance from the
@@ -1043,9 +1067,12 @@ namespace Lucene.Net.Store
                 }
                 catch
                 {
-                    // Never propagate from cleanup.
+                    // Never propagate from cleanup. ReleaseNative runs from
+                    // the last reader's path or from Close, neither of which
+                    // has a meaningful way to surface a teardown failure
+                    // without masking real errors elsewhere.
                 }
-                acc.Dispose();
+                IOUtils.DisposeWhileHandlingException(acc);
             }
         }
     }
