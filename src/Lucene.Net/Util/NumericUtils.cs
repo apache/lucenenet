@@ -265,18 +265,22 @@ namespace Lucene.Net.Util
             int offset = val.Offset;
             int length = val.Length;
 
+            // LUCENENET specific: branchless invalid-byte detection. Upstream Java throws
+            // inside the loop on signed `b < 0`; we OR each byte into a sign accumulator and
+            // validate once after the loop, keeping the hot path branch-free. (Equivalent
+            // C# check is `b > 127` since `byte` is unsigned — see ThrowInvalidPrefixCodedByte.)
             long sortableBits = 0L;
+            int signAccum = 0;
             for (int i = offset + 1, limit = offset + length; i < limit; i++)
             {
                 sortableBits <<= 7;
-                var b = bytes[i];
-                // LUCENENET: upstream Java tests `b < 0` (signed byte). In C# byte is unsigned,
-                // so the equivalent high-bit-set check is `b > 127`.
-                if (b > 127)
-                {
-                    throw NumberFormatException.Create("Invalid prefixCoded numerical value representation (byte " + b.ToString("x") + " at position " + (i - offset) + " is invalid)");
-                }
+                byte b = bytes[i];
+                signAccum |= b;
                 sortableBits |= b;
+            }
+            if ((signAccum & 0x80) != 0)
+            {
+                ThrowInvalidPrefixCodedByte(bytes, offset, length);
             }
             return (long)((ulong)(sortableBits << GetPrefixCodedInt64Shift(val)) ^ 0x8000000000000000L); // LUCENENET TODO: Is the casting here necessary?
         }
@@ -300,11 +304,11 @@ namespace Lucene.Net.Util
             int length = val.Length;
 
             long sortableBits = 0;
-            // LUCENENET: start at offset+1 (skip the leading shift byte), matching Java's upstream
-            // prefixCodedToInt(). The previous code started at offset, doing one extra iteration
-            // per call. The extra byte's bits always get shifted past bit 31 and truncated by the
-            // final (int) cast for any valid (shift, nChars) combo, so the result is unchanged —
-            // but the iteration is wasted work.
+
+            // LUCENENET: unlike PrefixCodedToInt64, we use the in-loop branch (not the sign
+            // accumulator). The Int32 loop is 1-5 iterations; the per-iteration `if (b > 127)`
+            // is cheaper than the accumulator's extra OR + post-loop check at this size,
+            // confirmed via benchmarks.
             for (int i = offset + 1, limit = offset + length; i < limit; i++)
             {
                 sortableBits <<= 7;
@@ -608,6 +612,23 @@ namespace Lucene.Net.Util
         public static TermsEnum FilterPrefixCodedInt32s(TermsEnum termsEnum)
         {
             return new FilteredTermsEnumAnonymousClass2(termsEnum);
+        }
+
+        // LUCENENET specific: cold helper used by PrefixCodedToInt64 when the branchless
+        // sign accumulator detects an invalid byte. Kept out-of-line (NoInlining) so the hot
+        // decode loop stays free of the throw site.
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void ThrowInvalidPrefixCodedByte(byte[] bytes, int offset, int length)
+        {
+            int limit = offset + length;
+            for (int i = offset + 1; i < limit; i++)
+            {
+                byte b = bytes[i];
+                if (b > 127)
+                {
+                    throw NumberFormatException.Create("Invalid prefixCoded numerical value representation (byte " + b.ToString("x") + " at position " + (i - offset) + " is invalid)");
+                }
+            }
         }
 
         private sealed class FilteredTermsEnumAnonymousClass2 : FilteredTermsEnum
