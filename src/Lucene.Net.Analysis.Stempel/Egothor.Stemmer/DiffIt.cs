@@ -79,7 +79,7 @@ namespace Egothor.Stemmer
     {
         internal static int Get(int i, string s)
         {
-            // LUCENENET: Optimized so we don't alocate a substring
+            // LUCENENET: Optimized so we don't allocate a substring
             if (!Integer.TryParse(s, i, 1, radix: 10, out int result))
             {
                 return 1;

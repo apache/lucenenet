@@ -1040,7 +1040,7 @@ namespace Lucene.Net.Analysis.Core
                         ConstructorInfo ctor = tokenfilters[random.nextInt(tokenfilters.size())];
 
                         // hack: MockGraph/MockLookahead has assertions that will trip if they follow
-                        // an offsets violator. so we cant use them after e.g. wikipediatokenizer
+                        // an offsets violator. so we can't use them after e.g. wikipediatokenizer
                         if (!spec.offsetsAreCorrect &&
                             (ctor.DeclaringType.Equals(typeof(MockGraphTokenFilter)))
                                 || ctor.DeclaringType.Equals(typeof(MockRandomLookaheadTokenFilter)))

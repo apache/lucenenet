@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Absolute position read.  NOTE: pos must not jump
-        /// ahead by more than 1!  Ie, it's OK to read arbitarily
+        /// ahead by more than 1!  Ie, it's OK to read arbitrarily
         /// far back (just not prior to the last <see cref="FreeBefore(int)"/>,
         /// but NOT ok to read arbitrarily far
         /// ahead.  Returns -1 if you hit EOF.

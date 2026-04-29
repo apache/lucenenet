@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Path
     /// &lt;/fieldType&gt;
     /// </code>
     /// <para>
-    /// In this example however we see the oposite configuration, so that a query
+    /// In this example however we see the opposite configuration, so that a query
     /// for <c>Books/NonFic/Science/Physics</c> would match documents
     /// containing <c>Books/NonFic</c>, <c>Books/NonFic/Science</c>,
     /// or <c>Books/NonFic/Science/Physics</c>, but not

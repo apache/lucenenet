@@ -39,7 +39,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         [Test]
         public override void TestWriteReadMerge()
         {
-            AssumeFalse("impersonation isnt good enough", true);
+            AssumeFalse("impersonation isn't good enough", true);
             // this test tries to switch up between the codec and another codec.
             // for 3.x: we currently cannot take an index with existing 4.x segments
             // and merge into newly formed 3.x segments.

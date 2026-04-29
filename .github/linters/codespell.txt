@@ -1,5 +1,4 @@
 abl
-absolut
 acccount
 accessability
 accidently
@@ -10,7 +9,6 @@ adherance
 administr
 adquire
 advices
-afer
 afile
 afte
 afterwords
@@ -21,7 +19,6 @@ alle
 allo
 allocte
 allong
-alocate
 alot
 alow
 alpha-numeric
@@ -38,7 +35,6 @@ anothers
 appropropriate
 apprpriate
 aquire
-arbitarily
 arent
 arguents
 assemblie
@@ -165,7 +161,6 @@ guerilla
 guiness
 hart
 hav
-havent
 heder
 hendler
 highligh
@@ -211,7 +206,6 @@ itsself
 kake
 ket
 lama
-lenght
 lief
 lien
 loner
@@ -235,9 +229,7 @@ meus
 millenium
 millepede
 mimicing
-mimick
 mimicks
-minimun
 mininum
 mis
 mot
@@ -272,7 +264,6 @@ ommitted
 ond
 ons
 ony
-oposite
 oppertunity
 ore
 oriente

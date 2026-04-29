@@ -155,7 +155,7 @@ namespace Lucene.Net.Queries.Function
             /// <summary>
             /// This class may be used to create <see cref="ValueFiller"/> instances anonymously.
             /// </summary>
-            // LUCENENET specific - used to mimick the inline class behavior in Java.
+            // LUCENENET specific - used to mimic the inline class behavior in Java.
             internal class AnonymousValueFiller<T> : ValueFiller where T : MutableValue
             {
                 private readonly T mutableValue;

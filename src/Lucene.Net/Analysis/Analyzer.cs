@@ -482,7 +482,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// LUCENENET specific helper class to mimick Java's ability to create anonymous classes.
+        /// LUCENENET specific helper class to mimic Java's ability to create anonymous classes.
         /// Clearly, the design of <see cref="Analyzer"/> took this feature of Java into consideration.
         /// Since it doesn't exist in .NET, we can use a delegate method to call the constructor of
         /// this concrete instance to fake it (by calling an overload of

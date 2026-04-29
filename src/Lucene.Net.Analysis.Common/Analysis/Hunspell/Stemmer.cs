@@ -601,7 +601,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <param name="strippedWord"> Word the affix has been removed and the strip added </param>
         /// <param name="length"> valid length of stripped word </param>
         /// <param name="affix"> HunspellAffix representing the affix rule itself </param>
-        /// <param name="prefixFlag"> when we already stripped a prefix, we cant simply recurse and check the suffix, unless both are compatible
+        /// <param name="prefixFlag"> when we already stripped a prefix, we can't simply recurse and check the suffix, unless both are compatible
         ///                   so we must check dictionary form against both to add it as a stem! </param>
         /// <param name="recursionDepth"> current recursion depth </param>
         /// <param name="prefix"> true if we are removing a prefix (false if its a suffix) </param>

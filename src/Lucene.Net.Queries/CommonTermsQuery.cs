@@ -315,7 +315,7 @@ namespace Lucene.Net.Queries
         /// satisfied in order to produce a match on the low frequency terms query
         /// part. This method accepts a float value in the range [0..1) as a fraction
         /// of the actual query terms in the low frequent clause or a number
-        /// <tt>&gt;=1</tt> as an absolut number of clauses that need to match.
+        /// <tt>&gt;=1</tt> as an absolute number of clauses that need to match.
         ///
         /// <para>
         /// By default no optional clauses are necessary for a match (unless there are
@@ -335,7 +335,7 @@ namespace Lucene.Net.Queries
         /// satisfied in order to produce a match on the low frequency terms query
         /// part. This method accepts a float value in the range [0..1) as a fraction
         /// of the actual query terms in the low frequent clause or a number
-        /// <tt>&gt;=1</tt> as an absolut number of clauses that need to match.
+        /// <tt>&gt;=1</tt> as an absolute number of clauses that need to match.
         ///
         /// <para>
         /// By default no optional clauses are necessary for a match (unless there are

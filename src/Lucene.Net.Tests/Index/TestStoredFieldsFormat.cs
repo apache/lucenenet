@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
         public override void TestWriteReadMerge()
         {
 #pragma warning disable 612, 618
-            AssumeFalse("impersonation isnt good enough", GetCodec() is Lucene3xCodec);
+            AssumeFalse("impersonation isn't good enough", GetCodec() is Lucene3xCodec);
 #pragma warning restore 612, 618
             // this test tries to switch up between the codec and another codec.
             // for 3.x: we currently cannot take an index with existing 4.x segments

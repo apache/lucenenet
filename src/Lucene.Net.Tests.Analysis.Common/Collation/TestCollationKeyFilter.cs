@@ -44,7 +44,7 @@ namespace Lucene.Net.Collation
         }
 
         // the sort order of Ø versus U depends on the version of the rules being used
-        // for the inherited root locale: Ø's order isnt specified in Locale.US since
+        // for the inherited root locale: Ø's order isn't specified in Locale.US since
         // its not used in english.
         internal bool oStrokeFirst = Collator.Create(new CultureInfo("")).Compare("Ø", "U") < 0;
 

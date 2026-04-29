@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Hunspell
             affixFile = Get(args, PARAM_AFFIX);
             ignoreCase = GetBoolean(args, PARAM_IGNORE_CASE, false);
             longestOnly = GetBoolean(args, PARAM_LONGEST_ONLY, false);
-            // this isnt necessary: we properly load all dictionaries.
+            // this isn't necessary: we properly load all dictionaries.
             // but recognize and ignore for back compat
             GetBoolean(args, "strictAffixParsing", true);
             // this isn't necessary: multi-stage stripping is fixed and

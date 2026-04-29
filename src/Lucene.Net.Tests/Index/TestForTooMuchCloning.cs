@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
         public virtual void Test()
         {
             // NOTE: if we see a fail on this test with "NestedPulsing" its because its
-            // reuse isnt perfect (but reasonable). see TestPulsingReuse.testNestedPulsing
+            // reuse isn't perfect (but reasonable). see TestPulsingReuse.testNestedPulsing
             // for more details
             MockDirectoryWrapper dir = NewMockDirectory();
             TieredMergePolicy tmp = new TieredMergePolicy();

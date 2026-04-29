@@ -124,7 +124,7 @@ namespace Lucene.Net.Analysis.Util
         ///          a character array </param>
         /// <param name="offset">
         ///          the offset to the char values in the chars array to be converted </param>
-        /// <param name="limit"> the index afer the last element that should be used to calculate
+        /// <param name="limit"> the index after the last element that should be used to calculate
         ///        codepoint.
         /// </param>
         /// <returns> the Unicode code point at the given index </returns>
