@@ -626,7 +626,7 @@ namespace Lucene.Net.Store
                 }
 
                 long chunkFileStart = (long)chunkIdx << chunkSizePower;
-                long chunkFileEnd = chunkFileStart + chunk.length;
+                long chunkFileEnd = chunkFileStart + chunk.Length;
                 // Slice-relative interval = chunk's file interval clipped to
                 // [baseOffset, baseOffset + length] and translated.
                 long sliceFileEnd = baseOffset + length;
@@ -637,10 +637,10 @@ namespace Lucene.Net.Store
                 // Precompute readBase so ReadByte/ReadInt* fast-path is
                 // a single load: *(readBase + pos). Algebraically, the
                 // file address of slice byte `pos` is
-                //   chunk.basePtr + (baseOffset + pos - chunkFileStart)
-                // = (chunk.basePtr + baseOffset - chunkFileStart) + pos
+                //   chunk.BasePtr + (baseOffset + pos - chunkFileStart)
+                // = (chunk.BasePtr + baseOffset - chunkFileStart) + pos
                 //                ^------- readBase ----^
-                readBase = chunk.basePtr + (baseOffset - chunkFileStart);
+                readBase = chunk.BasePtr + (baseOffset - chunkFileStart);
                 currentStart = start;
                 currentEnd = end;
                 currentChunkOwnerThreadId = Environment.CurrentManagedThreadId;
@@ -944,7 +944,7 @@ namespace Lucene.Net.Store
         internal sealed unsafe class Chunk
         {
             private MemoryMappedViewAccessor? accessor;
-            internal readonly long length;
+            internal readonly long Length;
             // The chunk's base pointer (already adjusted for PointerOffset).
             // Stays valid until the last rent has been released AND Close
             // has run (whichever is later). Per-rent acquisition does NOT
@@ -952,7 +952,7 @@ namespace Lucene.Net.Store
             // AcquirePointer (taken once in MapChunks) keeps the SafeBuffer
             // alive; the per-chunk inFlight count below is what defers the
             // matching ReleasePointer.
-            internal readonly byte* basePtr;
+            internal readonly byte* BasePtr;
 
             // Bit 0: closed flag. Bits 1..31: in-flight rent count. Packed
             // into a single int so closed-then-zero-rent can be observed
@@ -968,13 +968,13 @@ namespace Lucene.Net.Store
             internal Chunk(MemoryMappedViewAccessor accessor, byte* basePtr, long length)
             {
                 this.accessor = accessor;
-                this.basePtr = basePtr;
-                this.length = length;
+                this.BasePtr = basePtr;
+                this.Length = length;
             }
 
             /// <summary>
             /// Acquire a rent on this chunk. Returns false if the chunk is
-            /// closed; otherwise the caller may dereference <see cref="basePtr"/>
+            /// closed; otherwise the caller may dereference <see cref="BasePtr"/>
             /// until it calls <see cref="Release"/>.
             /// </summary>
             public bool TryAcquire()
