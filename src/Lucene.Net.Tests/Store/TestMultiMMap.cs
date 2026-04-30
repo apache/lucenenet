@@ -498,14 +498,31 @@ namespace Lucene.Net.Store
         // extends a file on disk while the foreground thread repeatedly
         // opens it with MMapDirectory.OpenInput. The original failure
         // mode was ArgumentOutOfRangeException(paramName="capacity")
-        // from MemoryMappedFile.CreateFromFile, because we were passing
-        // a caller-computed capacity (fc.Length) that could be smaller
-        // than the actual file size by the time the framework did its
-        // internal stat. The current design passes capacity: 0, which
-        // tells the framework to size the mapping from the file's
-        // current on-disk length atomically — there is no caller-side
-        // capacity to disagree with the file. This test asserts that
-        // OpenInput continues to succeed under concurrent file extension.
+        // from MemoryMappedFile.CreateFromFile, because the on-disk file
+        // size could exceed our caller-computed capacity by the time the
+        // framework did its internal stat. .NET Framework's
+        // CreateFromFile reads fileStream.Length multiple times
+        // non-atomically (referencesource MemoryMappedFile.cs L192-L243);
+        // modern .NET snapshots it into a single local
+        // (dotnet/runtime MemoryMappedFile.cs L237-L268). Even when we
+        // pass capacity: 0 the .NET Framework path still races because
+        // the length is re-read for both the defaulting step and the
+        // capacity-vs-size guard. SharedMapping.Create handles the
+        // residual race with a retry loop. This test asserts that
+        // OpenInput continues to succeed under concurrent file
+        // extension.
+        //
+        // Test design notes:
+        // - The writer extends only (never truncates). Truncating a
+        //   user-mapped file on Windows fails with ERROR_USER_MAPPED_FILE
+        //   and is unrelated to what we're verifying here.
+        // - The reader runs a bounded number of iterations rather than a
+        //   wall-clock loop. Sustained mmap churn (thousands of
+        //   map/unmap pairs per second) can transiently exhaust Windows
+        //   kernel resources (ERROR_NO_SYSTEM_RESOURCES,
+        //   ERROR_ACCESS_DENIED on view creation), which is also
+        //   unrelated to the capacity race. A few hundred iterations
+        //   are plenty to repeatedly hit the race window.
         [Test, LuceneNetSpecific, Slow]
         public void TestOpenInputConcurrentFileExtension_Issue1090()
         {
@@ -518,7 +535,7 @@ namespace Lucene.Net.Store
 
             using var mmapDir = new MMapDirectory(dir);
 
-            const long maxFileSize = 1L * 1024 * 1024; // 1 MiB cap
+            const long maxFileSize = 64L * 1024 * 1024; // 64 MiB safety cap
             var stop = new ManualResetEventSlim(false);
             Exception writerError = null;
 
@@ -531,15 +548,14 @@ namespace Lucene.Net.Store
                     {
                         using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
                         fs.Seek(0, SeekOrigin.End);
-                        if (fs.Length < maxFileSize)
+                        if (fs.Length >= maxFileSize)
                         {
-                            fs.Write(chunk, 0, chunk.Length);
+                            // Stop extending if we somehow reach the cap. The
+                            // reader's bounded iteration count guarantees this
+                            // is far above what we'll hit in a normal run.
+                            break;
                         }
-                        else
-                        {
-                            // Keep the file bounded: truncate back and grow again.
-                            fs.SetLength(64);
-                        }
+                        fs.Write(chunk, 0, chunk.Length);
                     }
                 }
                 catch (Exception e)
@@ -552,23 +568,17 @@ namespace Lucene.Net.Store
 
             try
             {
-                var sw = Stopwatch.StartNew();
-                int iterations = 0;
-                // Stress OpenInput while the background thread extends/truncates the
-                // file. Each call must succeed cleanly. A short window is plenty:
-                // before the capacity:0 fix this race fired in well under a second.
-                const int maxSeconds = 5;
-                while (sw.Elapsed < TimeSpan.FromSeconds(maxSeconds))
+                // Bounded iteration count keeps mmap churn well below the
+                // Windows kernel-resource threshold while still exercising
+                // the capacity race many times over.
+                const int iterations = 500;
+                for (int i = 0; i < iterations; i++)
                 {
                     using (var _ = mmapDir.OpenInput(name, NewIOContext(Random)))
                     {
-                        // Just open and dispose; the race occurred during construction.
+                        // Just open and dispose; the race occurs during construction.
                     }
-                    iterations++;
                 }
-
-                TestContext.Progress.WriteLine(
-                    $"TestOpenInputConcurrentFileExtension: completed {iterations} OpenInput calls in {sw.Elapsed.TotalSeconds:F1}s");
             }
             finally
             {

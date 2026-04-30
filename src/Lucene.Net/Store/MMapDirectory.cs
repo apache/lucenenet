@@ -841,6 +841,53 @@ namespace Lucene.Net.Store
 
             internal static SharedMapping Create(string file, int chunkSizePower)
             {
+                // .NET Framework's MemoryMappedFile.CreateFromFile reads
+                // fileStream.Length multiple times non-atomically: once
+                // to materialize a default capacity (when 0 is passed),
+                // then again to enforce `fileStream.Length <= capacity`.
+                // A concurrent extender that grows the file between
+                // those reads trips an ArgumentOutOfRangeException
+                // ("capacity") with message "The capacity may not be
+                // smaller than the file size." See referencesource
+                // System.Core/System/IO/MemoryMappedFiles/
+                // MemoryMappedFile.cs lines 192-243:
+                // https://github.com/microsoft/referencesource/blob/ec9fa9ae770d522a5b5f0607898044b7478574a3/System.Core/System/IO/MemoryMappedFiles/MemoryMappedFile.cs#L192-L243
+                //
+                // Modern .NET (dotnet/runtime) caches the length into a
+                // single local fileSize at the top of CreateFromFile
+                // and reuses it for both the defaulting step and the
+                // VerifyMemoryMappedFileAccess guard, so the race
+                // cannot fire and this loop runs once:
+                // https://github.com/dotnet/runtime/blob/550500a978b784658a04110d49b3335dcacf33e0/src/libraries/System.IO.MemoryMappedFiles/src/System/IO/MemoryMappedFiles/MemoryMappedFile.cs#L237-L268
+                // https://github.com/dotnet/runtime/blob/550500a978b784658a04110d49b3335dcacf33e0/src/libraries/System.IO.MemoryMappedFiles/src/System/IO/MemoryMappedFiles/MemoryMappedFile.Windows.cs#L14-L26
+                //
+                // The retry budget is generous because the race window
+                // is small but the retry is cheap (a FileStream reopen
+                // plus another CreateFromFile call), and a tight
+                // extender can keep losing the race for many attempts
+                // in a row. Yield between attempts so the extender
+                // thread can make progress and reach a stable point
+                // between writes. (#1090)
+                const int maxAttempts = 32;
+                for (int attempt = 0; ; attempt++)
+                {
+                    try
+                    {
+                        return CreateAttempt(file, chunkSizePower);
+                    }
+                    catch (ArgumentOutOfRangeException e)
+                        when (e.ParamName == "capacity" && attempt < maxAttempts - 1)
+                    {
+                        // Re-open and retry. The FileStream from the failed
+                        // attempt was disposed by CreateFromFile (leaveOpen:
+                        // false) before the exception propagated.
+                        Thread.Yield();
+                    }
+                }
+            }
+
+            private static SharedMapping CreateAttempt(string file, int chunkSizePower)
+            {
                 // We open our own FileStream so we control the FileShare
                 // flags. The path-based CreateFromFile overload internally
                 // opens with FileShare.Read, which on Windows blocks
@@ -879,13 +926,16 @@ namespace Lucene.Net.Store
                         return new SharedMapping(mmf: null, chunks: Array.Empty<Chunk>(), length: 0);
                     }
 
-                    // capacity: 0 -> the framework uses the file's
-                    // current size on disk, atomically with mapping
-                    // creation. This eliminates the #1090 race window
-                    // we previously had to retry around.
-                    // leaveOpen: false -> the MMF takes ownership of the
-                    // FileStream and disposes it on its own Dispose, so
-                    // we don't need to track it ourselves.
+                    // capacity: 0 -> the framework sizes the mapping
+                    // from the file's current length. On modern .NET
+                    // that length is captured into a single local and
+                    // reused, so there is no race; on .NET Framework
+                    // the length is re-read across the defaulting and
+                    // validation steps, which is why Create wraps this
+                    // call in a retry loop.
+                    // leaveOpen: false -> the MMF takes ownership of
+                    // the FileStream and disposes it on its own
+                    // Dispose, so we don't need to track it ourselves.
                     mmf = MemoryMappedFile.CreateFromFile(
                         fileStream: fs,
                         mapName: null,
