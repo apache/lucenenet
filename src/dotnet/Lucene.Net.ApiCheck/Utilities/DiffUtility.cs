@@ -171,6 +171,25 @@ public static class DiffUtility
                     .ToList(),
             }));
 
+        var dotNetMethods = matchingType.DotNetType.GetApiMethods();
+
+        members.AddRange(matchingType.JavaType.Methods
+            .Where(j => !dotNetMethods.Any(d => MemberComparison.MethodsMatch(d, j)))
+            .Select(j => new MethodReference
+            {
+                Name = j.Name,
+                Modifiers = new ModifierSet(j.Modifiers.SortJavaModifiers().ToList()),
+                IsStatic = j.Modifiers.Contains("static"),
+                ReturnType = j.ReturnType.ToJavaTypeReference(kind: null),
+                Parameters = j.Parameters
+                    .Select(p => new Parameter
+                    {
+                        Name = p.Name,
+                        Type = p.Type.ToJavaTypeReference(kind: null),
+                    })
+                    .ToList(),
+            }));
+
         return members;
     }
 
@@ -198,6 +217,25 @@ public static class DiffUtility
                 Name = matchingType.DotNetType.Name,
                 Modifiers = new ModifierSet(d.GetModifiers().SortDotNetModifiers().ToList()),
                 IsStatic = false,
+                Parameters = d.GetParameters()
+                    .Select(p => new Parameter
+                    {
+                        Name = p.Name ?? string.Empty,
+                        Type = p.ParameterType.ToTypeReference(),
+                    })
+                    .ToList(),
+            }));
+
+        var javaMethods = matchingType.JavaType.Methods;
+
+        members.AddRange(matchingType.DotNetType.GetApiMethods()
+            .Where(d => !javaMethods.Any(j => MemberComparison.MethodsMatch(d, j)))
+            .Select(d => new MethodReference
+            {
+                Name = d.Name,
+                Modifiers = new ModifierSet(d.GetModifiers().SortDotNetModifiers().ToList()),
+                IsStatic = d.IsStatic,
+                ReturnType = d.ReturnType.ToTypeReference(),
                 Parameters = d.GetParameters()
                     .Select(p => new Parameter
                     {
