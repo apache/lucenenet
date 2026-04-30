@@ -109,4 +109,14 @@ public static class TypeExtensions
         => type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
             .Where(c => c is { IsPrivate: false, IsAssembly: false, IsFamilyAndAssembly: false, IsStatic: false })
             .ToList();
+
+    /// <summary>
+    /// Gets the API-visible methods declared on the type, excluding property
+    /// accessors, event accessors, operators, and other special-name methods.
+    /// </summary>
+    public static IReadOnlyList<MethodInfo> GetApiMethods(this Type type)
+        => type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
+            .Where(m => m is { IsPrivate: false, IsAssembly: false, IsFamilyAndAssembly: false }
+                        && !m.IsSpecialName)
+            .ToList();
 }

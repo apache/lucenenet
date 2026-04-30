@@ -34,15 +34,59 @@ public class MemberComparison
     /// </summary>
     public static bool ConstructorsMatch(ConstructorInfo dotNetCtor, ConstructorMetadata javaCtor)
     {
-        var dotNetParams = dotNetCtor.GetParameters();
-        if (dotNetParams.Length != javaCtor.Parameters.Count)
+        return ParameterListsMatch(dotNetCtor.GetParameters(), javaCtor.Parameters);
+    }
+
+    /// <summary>
+    /// Determines whether a .NET method matches a Java method by name and parameter
+    /// signature. Names are normalized to handle casing and the well-known
+    /// equals/hashCode/toString equivalents.
+    /// </summary>
+    public static bool MethodsMatch(MethodInfo dotNetMethod, MethodMetadata javaMethod)
+    {
+        if (!MethodNamesMatch(dotNetMethod.Name, javaMethod.Name))
+        {
+            return false;
+        }
+
+        return ParameterListsMatch(dotNetMethod.GetParameters(), javaMethod.Parameters);
+    }
+
+    /// <summary>
+    /// Compares a .NET method name to a Java method name allowing for the standard
+    /// .NET PascalCase / Java camelCase difference and the well-known
+    /// equals/hashCode/toString equivalents.
+    /// </summary>
+    public static bool MethodNamesMatch(string dotNetName, string javaName)
+    {
+        if (KnownMethodNameEquivalents.TryGetValue(javaName, out var dotNetEquivalent)
+            && dotNetEquivalent.Equals(dotNetName, StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        return string.Equals(dotNetName, javaName, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static readonly Dictionary<string, string> KnownMethodNameEquivalents = new(StringComparer.Ordinal)
+    {
+        ["equals"] = "Equals",
+        ["hashCode"] = "GetHashCode",
+        ["toString"] = "ToString",
+        ["clone"] = "Clone",
+        ["compareTo"] = "CompareTo",
+    };
+
+    private static bool ParameterListsMatch(ParameterInfo[] dotNetParams, IReadOnlyList<ParameterMetadata> javaParams)
+    {
+        if (dotNetParams.Length != javaParams.Count)
         {
             return false;
         }
 
         for (int i = 0; i < dotNetParams.Length; i++)
         {
-            if (!ParameterTypesMatch(dotNetParams[i].ParameterType, javaCtor.Parameters[i].Type))
+            if (!ParameterTypesMatch(dotNetParams[i].ParameterType, javaParams[i].Type))
             {
                 return false;
             }
@@ -66,6 +110,14 @@ public class MemberComparison
             return ParameterTypesMatch(
                 dotNetType.GetElementType()!,
                 javaTypeName[..^2]);
+        }
+
+        // .NET generic method/type parameters (T, TKey, etc.) erase to their bound
+        // on the Java side; in practice that's java.lang.Object unless a constraint
+        // applies. Treat them as matching java.lang.Object for v1.
+        if (dotNetType.IsGenericParameter)
+        {
+            return javaTypeName.Equals("java.lang.Object", StringComparison.Ordinal);
         }
 
         // For generic .NET types, compare against the open generic definition since

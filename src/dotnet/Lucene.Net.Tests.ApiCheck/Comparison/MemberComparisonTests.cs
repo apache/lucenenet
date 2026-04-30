@@ -87,4 +87,87 @@ public class MemberComparisonTests
         var ctor = typeof(CtorExample).GetConstructor(new[] { typeof(int) })!;
         Assert.False(MemberComparison.ConstructorsMatch(ctor, JavaCtor(("x", "long"))));
     }
+
+    [InlineData("Foo", "foo", true)]
+    [InlineData("Foo", "Foo", true)]
+    [InlineData("DoSomething", "doSomething", true)]
+    [InlineData("Equals", "equals", true)]
+    [InlineData("GetHashCode", "hashCode", true)]
+    [InlineData("ToString", "toString", true)]
+    [InlineData("CompareTo", "compareTo", true)]
+    [InlineData("Foo", "bar", false)]
+    [InlineData("DoSomething", "doSomethingElse", false)]
+    [Theory]
+    public void MethodNamesMatch_Tests(string dotNetName, string javaName, bool expected)
+    {
+        Assert.Equal(expected, MemberComparison.MethodNamesMatch(dotNetName, javaName));
+    }
+
+    public class MethodExample
+    {
+        public void DoSomething() { }
+        public int Add(int x, int y) => x + y;
+        public string Format(string s) => s;
+        public T Identity<T>(T value) => value;
+        public override string ToString() => string.Empty;
+    }
+
+    private static MethodMetadata JavaMethod(string name, string returnType, params (string Name, string Type)[] parameters)
+        => new(
+            Name: name,
+            ReturnType: returnType,
+            Parameters: parameters
+                .Select(p => new ParameterMetadata(p.Name, p.Type))
+                .ToList(),
+            Modifiers: new List<string> { "public" },
+            IsVarArgs: false);
+
+    [Fact]
+    public void MethodsMatch_NoArgs_Matches()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.DoSomething))!;
+        Assert.True(MemberComparison.MethodsMatch(method, JavaMethod("doSomething", "void")));
+    }
+
+    [Fact]
+    public void MethodsMatch_TwoIntParams_Matches()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.Add))!;
+        Assert.True(MemberComparison.MethodsMatch(method, JavaMethod("add", "int", ("x", "int"), ("y", "int"))));
+    }
+
+    [Fact]
+    public void MethodsMatch_DifferentName_DoesNotMatch()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.DoSomething))!;
+        Assert.False(MemberComparison.MethodsMatch(method, JavaMethod("doSomethingElse", "void")));
+    }
+
+    [Fact]
+    public void MethodsMatch_DifferentParamCount_DoesNotMatch()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.Add))!;
+        Assert.False(MemberComparison.MethodsMatch(method, JavaMethod("add", "int", ("x", "int"))));
+    }
+
+    [Fact]
+    public void MethodsMatch_StringParam_Matches()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.Format))!;
+        Assert.True(MemberComparison.MethodsMatch(method, JavaMethod("format", "java.lang.String", ("s", "java.lang.String"))));
+    }
+
+    [Fact]
+    public void MethodsMatch_GenericParameter_MatchesJavaLangObject()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.Identity))!;
+        Assert.True(MemberComparison.MethodsMatch(method, JavaMethod("identity", "java.lang.Object", ("value", "java.lang.Object"))));
+    }
+
+    [Fact]
+    public void MethodsMatch_OverriddenToString_MatchesJavaToString()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.ToString))!;
+        Assert.True(MemberComparison.MethodsMatch(method, JavaMethod("toString", "java.lang.String")));
+    }
 }
