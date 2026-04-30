@@ -897,7 +897,9 @@ namespace Lucene.Net.Store
                 // immediately recursively delete the directory. We need
                 // FileShare.Delete in particular: on Windows, a delete
                 // attempt against an open file fails unless the open
-                // share-mode permits FILE_SHARE_DELETE.
+                // share-mode permits FILE_SHARE_DELETE. In Java, FileChannel
+                // uses read+write+delete mode by default and Lucene doesn't
+                // override this.
                 //
                 // bufferSize: 1 because MemoryMappedFile uses only the
                 // file handle and bypasses the FileStream buffer, so a
