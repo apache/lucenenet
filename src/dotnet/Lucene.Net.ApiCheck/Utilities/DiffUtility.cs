@@ -140,7 +140,9 @@ public static class DiffUtility
 
     private static IReadOnlyList<MemberReference> GetJavaMembersNotInDotNet(MatchingType matchingType)
     {
-        return matchingType.JavaType.Fields
+        var members = new List<MemberReference>();
+
+        members.AddRange(matchingType.JavaType.Fields
             .Where(j => !matchingType.DotNetType.GetApiFields().Any(d => MemberComparison.FieldNamesMatch(d, j)))
             .Select(j => new FieldReference
             {
@@ -148,13 +150,35 @@ public static class DiffUtility
                 Modifiers = new ModifierSet(j.Modifiers.SortJavaModifiers().ToList()),
                 IsStatic = j.IsStatic,
                 FieldType = j.Type.ToJavaTypeReference(kind: null)
-            })
-            .ToList();
+            }));
+
+        var javaConstructors = matchingType.JavaType.Constructors ?? new List<ConstructorMetadata>();
+        var dotNetConstructors = matchingType.DotNetType.GetApiConstructors();
+
+        members.AddRange(javaConstructors
+            .Where(j => !dotNetConstructors.Any(d => MemberComparison.ConstructorsMatch(d, j)))
+            .Select(j => new ConstructorReference
+            {
+                Name = matchingType.JavaType.Name.Replace("$", "."),
+                Modifiers = new ModifierSet(j.Modifiers.SortJavaModifiers().ToList()),
+                IsStatic = false,
+                Parameters = j.Parameters
+                    .Select(p => new Parameter
+                    {
+                        Name = p.Name,
+                        Type = p.Type.ToJavaTypeReference(kind: null),
+                    })
+                    .ToList(),
+            }));
+
+        return members;
     }
 
     private static IReadOnlyList<MemberReference> GetDotNetMembersNotInJava(MatchingType matchingType)
     {
-        return matchingType.DotNetType.GetApiFields()
+        var members = new List<MemberReference>();
+
+        members.AddRange(matchingType.DotNetType.GetApiFields()
             .Where(d => !matchingType.JavaType.Fields.Any(j => MemberComparison.FieldNamesMatch(d, j)))
             .Select(d => new FieldReference
             {
@@ -162,8 +186,28 @@ public static class DiffUtility
                 Modifiers = new ModifierSet(d.GetModifiers().SortDotNetModifiers().ToList()),
                 IsStatic = d.IsStatic,
                 FieldType = d.FieldType.ToTypeReference(),
-            })
-            .ToList();
+            }));
+
+        var javaConstructors = matchingType.JavaType.Constructors ?? new List<ConstructorMetadata>();
+        var dotNetConstructors = matchingType.DotNetType.GetApiConstructors();
+
+        members.AddRange(dotNetConstructors
+            .Where(d => !javaConstructors.Any(j => MemberComparison.ConstructorsMatch(d, j)))
+            .Select(d => new ConstructorReference
+            {
+                Name = matchingType.DotNetType.Name,
+                Modifiers = new ModifierSet(d.GetModifiers().SortDotNetModifiers().ToList()),
+                IsStatic = false,
+                Parameters = d.GetParameters()
+                    .Select(p => new Parameter
+                    {
+                        Name = p.Name ?? string.Empty,
+                        Type = p.ParameterType.ToTypeReference(),
+                    })
+                    .ToList(),
+            }));
+
+        return members;
     }
 
     private static ComparisonPair<IReadOnlyList<TypeReference>>? GetTypeMismatchedInterfaces(MatchingType matchingType)

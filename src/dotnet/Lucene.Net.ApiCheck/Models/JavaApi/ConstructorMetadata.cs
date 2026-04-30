@@ -15,27 +15,9 @@
  * limitations under the License.
  */
 
-using Lucene.Net.ApiCheck.Models.Diff;
-
 namespace Lucene.Net.ApiCheck.Models.JavaApi;
 
-public record TypeMetadata(
-    string PackageName,
-    string Kind,
-    string Name,
-    string FullName,
-    string? BaseType,
-    List<string> Interfaces,
+public record ConstructorMetadata(
+    List<ParameterMetadata> Parameters,
     List<string> Modifiers,
-    List<MethodMetadata> Methods,
-    List<FieldMetadata> Fields,
-    List<ConstructorMetadata>? Constructors = null)
-{
-    public TypeReference ToTypeReference()
-        => new()
-        {
-            TypeKind = Kind,
-            TypeName = FullName,
-            DisplayName = FullName.Replace("$", "."),
-        };
-}
+    bool IsVarArgs);
