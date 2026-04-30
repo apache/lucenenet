@@ -36,6 +36,7 @@ public static class TypeComparison
         [typeof(IDisposable)] = ["java.lang.AutoCloseable", "java.io.Closeable"], // TODO: map ICloseable once #271 is done
         [typeof(ICharSequence)] = ["java.lang.CharSequence"],
         [typeof(IAppendable)] = ["java.lang.Appendable"],
+        [typeof(string)] = ["java.lang.String"],
     };
 
     public static bool TypeMatchesFullName(Type? dotNetType, string? javaTypeName, string? javaTypeKind)
@@ -68,6 +69,35 @@ public static class TypeComparison
         var javaType = new TypeMetadata(packageName, javaTypeKind, nameParts[^1], javaTypeName, null, [], [], [], []);
 
         return TypesMatch(dotNetType, javaType);
+    }
+
+    /// <summary>
+    /// Checks whether a .NET type matches a Java type name when the Java kind is not known
+    /// (e.g., when comparing parameter types). This tries the common kinds and is more lenient.
+    /// </summary>
+    public static bool TypeMatchesFullNameAnyKind(Type? dotNetType, string? javaTypeName)
+    {
+        if (dotNetType is null && javaTypeName is null)
+        {
+            return true;
+        }
+
+        if (dotNetType is null || javaTypeName is null)
+        {
+            return false;
+        }
+
+        // Derive a likely Java kind from the .NET type so TypesMatch's kind check passes
+        // for inferred LuceneType info matches.
+        var likelyKind = dotNetType.GetTypeKind() switch
+        {
+            "interface" => "interface",
+            "enum" => "enum",
+            "struct" => "class",
+            _ => "class"
+        };
+
+        return TypeMatchesFullName(dotNetType, javaTypeName, likelyKind);
     }
 
     public static bool TypesMatch(Type dotNetType, TypeMetadata javaType)

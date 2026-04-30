@@ -28,7 +28,8 @@ public record TypeMetadata(
     List<string> Interfaces,
     List<string> Modifiers,
     List<MethodMetadata> Methods,
-    List<FieldMetadata> Fields)
+    List<FieldMetadata> Fields,
+    List<ConstructorMetadata>? Constructors = null)
 {
     public TypeReference ToTypeReference()
         => new()
