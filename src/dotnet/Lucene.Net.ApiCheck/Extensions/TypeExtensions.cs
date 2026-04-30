@@ -119,4 +119,9 @@ public static class TypeExtensions
             .Where(m => m is { IsPrivate: false, IsAssembly: false, IsFamilyAndAssembly: false }
                         && !m.IsSpecialName)
             .ToList();
+
+    public static IReadOnlyList<PropertyInfo> GetApiProperties(this Type type)
+        => type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
+            .Where(p => p.IsApiVisible())
+            .ToList();
 }

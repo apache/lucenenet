@@ -170,4 +170,75 @@ public class MemberComparisonTests
         var method = typeof(MethodExample).GetMethod(nameof(MethodExample.ToString))!;
         Assert.True(MemberComparison.MethodsMatch(method, JavaMethod("toString", "java.lang.String")));
     }
+
+    public class PropertyExample
+    {
+        public string Name { get; set; } = string.Empty;
+        public int Count { get; set; }
+        public bool Empty { get; set; }
+        public bool IsClosed { get; set; }
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_Getter_Matches()
+    {
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Name))!;
+        Assert.True(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("getName", "java.lang.String")));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_Setter_Matches()
+    {
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Name))!;
+        Assert.True(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("setName", "void", ("name", "java.lang.String"))));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_PrimitiveGetter_Matches()
+    {
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Count))!;
+        Assert.True(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("getCount", "int")));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_BoolIsAccessor_MatchesBareName()
+    {
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Empty))!;
+        Assert.True(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("isEmpty", "boolean")));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_BoolIsAccessor_MatchesIsPrefixedName()
+    {
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.IsClosed))!;
+        Assert.True(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("isClosed", "boolean")));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_NameMismatch_DoesNotMatch()
+    {
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Name))!;
+        Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("getOther", "java.lang.String")));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_GetterTypeMismatch_DoesNotMatch()
+    {
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Name))!;
+        Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("getName", "int")));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_SetterReturnsNonVoid_DoesNotMatch()
+    {
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Name))!;
+        Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("setName", "java.lang.String", ("name", "java.lang.String"))));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_IsAccessorOnNonBool_DoesNotMatch()
+    {
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Count))!;
+        Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("isCount", "boolean")));
+    }
 }

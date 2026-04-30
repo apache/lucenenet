@@ -77,6 +77,64 @@ public class MemberComparison
         ["compareTo"] = "CompareTo",
     };
 
+    /// <summary>
+    /// Determines whether a .NET property corresponds to a Java getter, setter, or
+    /// boolean-style accessor method. Recognized Java patterns:
+    ///   <list type="bullet">
+    ///     <item><c>getX()</c> with non-void return matches a property named <c>X</c>.</item>
+    ///     <item><c>setX(T)</c> returning void matches a property named <c>X</c> whose type matches the parameter.</item>
+    ///     <item><c>isX()</c> returning boolean matches a property named <c>X</c> or <c>IsX</c> of type <see cref="bool"/>.</item>
+    ///   </list>
+    /// </summary>
+    public static bool PropertyMatchesJavaAccessor(PropertyInfo dotNetProperty, MethodMetadata javaMethod)
+    {
+        var javaName = javaMethod.Name;
+        var paramCount = javaMethod.Parameters.Count;
+
+        if (javaName.StartsWith("get", StringComparison.Ordinal) && javaName.Length > 3 && paramCount == 0)
+        {
+            var bareName = javaName[3..];
+            return PropertyNameMatches(dotNetProperty.Name, bareName, allowIsPrefix: false)
+                   && ParameterTypesMatch(dotNetProperty.PropertyType, javaMethod.ReturnType);
+        }
+
+        if (javaName.StartsWith("set", StringComparison.Ordinal) && javaName.Length > 3 && paramCount == 1
+            && javaMethod.ReturnType.Equals("void", StringComparison.Ordinal))
+        {
+            var bareName = javaName[3..];
+            return PropertyNameMatches(dotNetProperty.Name, bareName, allowIsPrefix: false)
+                   && ParameterTypesMatch(dotNetProperty.PropertyType, javaMethod.Parameters[0].Type);
+        }
+
+        if (javaName.StartsWith("is", StringComparison.Ordinal) && javaName.Length > 2 && paramCount == 0
+            && javaMethod.ReturnType.Equals("boolean", StringComparison.Ordinal))
+        {
+            var bareName = javaName[2..];
+            return dotNetProperty.PropertyType == typeof(bool)
+                   && PropertyNameMatches(dotNetProperty.Name, bareName, allowIsPrefix: true);
+        }
+
+        return false;
+    }
+
+    private static bool PropertyNameMatches(string dotNetPropertyName, string javaBareName, bool allowIsPrefix)
+    {
+        if (string.Equals(dotNetPropertyName, javaBareName, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        // Allow .NET 'IsFoo' to correspond to Java 'isFoo' (already stripped to 'Foo').
+        if (allowIsPrefix
+            && dotNetPropertyName.StartsWith("Is", StringComparison.Ordinal)
+            && string.Equals(dotNetPropertyName[2..], javaBareName, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private static bool ParameterListsMatch(ParameterInfo[] dotNetParams, IReadOnlyList<ParameterMetadata> javaParams)
     {
         if (dotNetParams.Length != javaParams.Count)

@@ -172,8 +172,16 @@ public static class DiffUtility
             }));
 
         var dotNetMethods = matchingType.DotNetType.GetApiMethods();
+        var dotNetProperties = matchingType.DotNetType.GetApiProperties();
+
+        // Java methods consumed by any .NET property (getX/setX/isX) should not be
+        // reported as missing methods.
+        var javaMethodsConsumedByProperty = new HashSet<MethodMetadata>(
+            matchingType.JavaType.Methods
+                .Where(j => dotNetProperties.Any(p => MemberComparison.PropertyMatchesJavaAccessor(p, j))));
 
         members.AddRange(matchingType.JavaType.Methods
+            .Where(j => !javaMethodsConsumedByProperty.Contains(j))
             .Where(j => !dotNetMethods.Any(d => MemberComparison.MethodsMatch(d, j)))
             .Select(j => new MethodReference
             {
@@ -243,6 +251,20 @@ public static class DiffUtility
                         Type = p.ParameterType.ToTypeReference(),
                     })
                     .ToList(),
+            }));
+
+        // .NET properties unmatched by any Java getter/setter/is accessor.
+        members.AddRange(matchingType.DotNetType.GetApiProperties()
+            .Where(p => !javaMethods.Any(j => MemberComparison.PropertyMatchesJavaAccessor(p, j)))
+            .Select(p => new PropertyReference
+            {
+                Name = p.Name,
+                Modifiers = new ModifierSet(p.GetModifiers().SortDotNetModifiers().ToList()),
+                IsStatic = p.GetMostVisibleAccessor()?.IsStatic ?? false,
+                PropertyType = p.PropertyType.ToTypeReference(),
+                HasGetter = p.GetMethod is not null,
+                HasSetter = p.SetMethod is not null,
+                IsIndexer = p.GetIndexParameters().Length > 0,
             }));
 
         return members;
