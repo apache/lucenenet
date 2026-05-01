@@ -114,6 +114,18 @@ public class MemberComparison
                    && PropertyNameMatches(dotNetProperty.Name, bareName, allowIsPrefix: true);
         }
 
+        // Bare-name getter: a Java zero-arg, non-void method whose name matches
+        // the property name (e.g., Java 'startOffset()' ↔ .NET 'StartOffset' property).
+        // Strict to avoid consuming legitimate methods: name must equal the property
+        // name case-insensitively and return type must match.
+        if (paramCount == 0
+            && !javaMethod.ReturnType.Equals("void", StringComparison.Ordinal)
+            && string.Equals(dotNetProperty.Name, javaName, StringComparison.OrdinalIgnoreCase)
+            && ParameterTypesMatch(dotNetProperty.PropertyType, javaMethod.ReturnType))
+        {
+            return true;
+        }
+
         return false;
     }
 
