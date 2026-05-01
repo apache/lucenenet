@@ -1,6 +1,5 @@
 // Lucene version compatibility level 4.8.1
 
-using Lucene.Net.Reflection;
 using Lucene.Net.Util;
 using System;
 using System.Runtime.InteropServices;
@@ -35,7 +34,6 @@ namespace Lucene.Net.Facet
     // LUCENENET NOTE: Keeping this around because it is public. Although,
     // we don't use it internally anymore, we use TopOrdAndSingleComparer
     // with ValuePriorityQueue instead.
-    [LuceneType("org.apache.lucene.facet", "TopOrdAndFloatQueue")]
     public class TopOrdAndSingleQueue : PriorityQueue<OrdAndValue<float>>
     {
         // LUCENENET specific - de-nested OrdAndValue and made it into a generic struct

@@ -1,5 +1,4 @@
 using Lucene.Net.Index;
-using Lucene.Net.Reflection;
 using System;
 
 namespace Lucene.Net.Documents
@@ -41,7 +40,6 @@ namespace Lucene.Net.Documents
     /// </summary>
     /// <seealso cref="NumericDocValuesField"/>
     [Obsolete("Use NumericDocValuesField instead.")]
-    [LuceneType("org.apache.lucene.document", "ShortDocValuesField")]
     public class Int16DocValuesField : NumericDocValuesField
     {
         /// <summary>

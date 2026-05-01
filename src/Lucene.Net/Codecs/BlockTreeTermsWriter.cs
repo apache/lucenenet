@@ -240,7 +240,6 @@ namespace Lucene.Net.Codecs
     /// @lucene.experimental
     /// </summary>
     /// <seealso cref="BlockTreeTermsReader{TSubclassState}"/>
-    [LuceneType("org.apache.lucene.codecs", "BlockTreeTermsWriter")]
     public class BlockTreeTermsWriter<TSubclassState> : FieldsConsumer
     {
         // LUCENENET specific - moved constants from this generic class to static BlockTreeTermsWriter

@@ -1,6 +1,5 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Reflection;
 using Lucene.Net.Util;
 using System;
 using System.Buffers;
@@ -34,7 +33,6 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <para/>
     /// NOTE: This was FloatTaxonomyFacets in Lucene
     /// </summary>
-    [LuceneType("org.apache.lucene.facet.taxonomy", "FloatTaxonomyFacets")]
     public abstract class SingleTaxonomyFacets : TaxonomyFacets
     {
         private const int OrdAndSingleByteSize = sizeof(int) + sizeof(float); // LUCENENET specific - so we can calculate stack size

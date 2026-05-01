@@ -1,7 +1,6 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using Lucene.Net.Reflection;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using System;
@@ -33,7 +32,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <para/>
     /// NOTE: This was MultiFloatFunction in Lucene
     /// </summary>
-    [LuceneType("org.apache.lucene.queries.function.valuesource", "MultiFloatFunction")]
     public abstract class MultiSingleFunction : ValueSource
     {
         protected readonly ValueSource[] m_sources;

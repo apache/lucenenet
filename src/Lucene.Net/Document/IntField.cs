@@ -1,5 +1,4 @@
 using Lucene.Net.Index;
-using Lucene.Net.Reflection;
 using System;
 using Int32 = J2N.Numerics.Int32;
 
@@ -113,7 +112,6 @@ namespace Lucene.Net.Documents
     /// </para>
     /// @since 2.9
     /// </summary>
-    [LuceneType("org.apache.lucene.document", "IntField")]
     public sealed class Int32Field : Field
     {
         /// <summary>

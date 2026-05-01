@@ -1,6 +1,5 @@
 // Lucene version compatibility level 4.8.1
 
-using Lucene.Net.Reflection;
 using System;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -27,7 +26,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <para/>
     /// NOTE: This was PowFloatFunction in Lucene
     /// </summary>
-    [LuceneType("org.apache.lucene.queries.function.valuesource", "PowFloatFunction")]
     public class PowSingleFunction : DualSingleFunction
     {
         /// <param name="a">  the base. </param>

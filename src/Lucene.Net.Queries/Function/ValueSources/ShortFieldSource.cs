@@ -1,6 +1,5 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
-using Lucene.Net.Reflection;
 using Lucene.Net.Search;
 using System;
 using System.Collections;
@@ -33,7 +32,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// NOTE: This was ShortFieldSource in Lucene
     /// </summary>
     [Obsolete]
-    [LuceneType("org.apache.lucene.queries.function.valuesource", "ShortFieldSource")]
     public class Int16FieldSource : FieldCacheSource
     {
         private readonly FieldCache.IInt16Parser parser;

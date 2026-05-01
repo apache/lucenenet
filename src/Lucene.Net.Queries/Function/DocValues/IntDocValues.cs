@@ -1,6 +1,5 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
-using Lucene.Net.Reflection;
 using Lucene.Net.Util.Mutable;
 using System;
 using System.Globalization;
@@ -30,7 +29,6 @@ namespace Lucene.Net.Queries.Function.DocValues
     /// <para/>
     /// NOTE: This was IntDocValues in Lucene
     /// </summary>
-    [LuceneType("org.apache.lucene.queries.function.docvalues", "IntDocValues")]
     public abstract class Int32DocValues : FunctionValues
     {
         protected readonly ValueSource m_vs;

@@ -1,7 +1,6 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using Lucene.Net.Reflection;
 using Lucene.Net.Search;
 using System.Collections;
 using System.Globalization;
@@ -38,7 +37,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <para/>
     /// NOTE: This was ScaleFloatFunction in Lucene
     /// </summary>
-    [LuceneType("org.apache.lucene.queries.function.valuesource", "ScaleFloatFunction")]
     public class ScaleSingleFunction : ValueSource
     {
         protected readonly ValueSource m_source;

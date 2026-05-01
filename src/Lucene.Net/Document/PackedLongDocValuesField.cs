@@ -1,4 +1,3 @@
-using Lucene.Net.Reflection;
 using System;
 
 namespace Lucene.Net.Documents
@@ -40,7 +39,6 @@ namespace Lucene.Net.Documents
     /// </summary>
     /// <seealso cref="NumericDocValuesField"/>
     [Obsolete("Use NumericDocValuesField instead.")]
-    [LuceneType("org.apache.lucene.document", "PackedLongDocValuesField")]
     public class PackedInt64DocValuesField : NumericDocValuesField
     {
         /// <summary>
