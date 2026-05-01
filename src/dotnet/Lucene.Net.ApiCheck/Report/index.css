@@ -8,6 +8,39 @@ details {
     margin-bottom: 1rem;
 }
 
+details.subsection > summary {
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+
+details.subsection > summary::-webkit-details-marker {
+    display: none;
+}
+
+details.subsection > summary > h3 {
+    display: inline-flex;
+    align-items: center;
+    margin: 0.5rem 0;
+}
+
+details.subsection > summary > h3::before {
+    content: "▶";
+    display: inline-block;
+    margin-right: 0.5rem;
+    font-size: 0.7em;
+    color: #708090;
+    transition: transform 0.15s ease-in-out;
+}
+
+details.subsection[open] > summary > h3::before {
+    transform: rotate(90deg);
+}
+
+details.subsection > summary:hover > h3 {
+    color: #506070;
+}
+
 main {
     margin: 0 auto;
     max-width: 800px;
