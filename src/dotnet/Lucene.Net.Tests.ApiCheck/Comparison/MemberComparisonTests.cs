@@ -445,4 +445,33 @@ public class MemberComparisonTests
         var method = typeof(MethodExample).GetMethod(nameof(MethodExample.DoSomething))!;
         Assert.False(MemberComparison.IsCloseToDisposeBoolMatch(method, JavaMethod("close", "void")));
     }
+
+    [Fact]
+    public void IsDotNetDisposePatternMethod_DisposeZeroArg_True()
+    {
+        var method = typeof(DisposeExample).GetMethod(nameof(DisposeExample.Dispose), Type.EmptyTypes)!;
+        Assert.True(MemberComparison.IsDotNetDisposePatternMethod(method));
+    }
+
+    [Fact]
+    public void IsDotNetDisposePatternMethod_DisposeBool_True()
+    {
+        var method = typeof(DisposeExample).GetMethod(nameof(DisposeExample.Dispose),
+            BindingFlags.Instance | BindingFlags.NonPublic, new[] { typeof(bool) })!;
+        Assert.True(MemberComparison.IsDotNetDisposePatternMethod(method));
+    }
+
+    [Fact]
+    public void IsDotNetDisposePatternMethod_DisposeNonBoolArg_False()
+    {
+        var method = typeof(DisposeExample).GetMethod(nameof(DisposeExample.Dispose), new[] { typeof(int) })!;
+        Assert.False(MemberComparison.IsDotNetDisposePatternMethod(method));
+    }
+
+    [Fact]
+    public void IsDotNetDisposePatternMethod_NotDispose_False()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.DoSomething))!;
+        Assert.False(MemberComparison.IsDotNetDisposePatternMethod(method));
+    }
 }

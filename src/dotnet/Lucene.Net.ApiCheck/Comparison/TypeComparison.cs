@@ -44,7 +44,9 @@ public static class TypeComparison
         [typeof(IAppendable)] = ["java.lang.Appendable"],
         [typeof(string)] = ["java.lang.String", "java.lang.CharSequence"],
         [typeof(TextReader)] = ["java.io.Reader"],
-        [typeof(TextWriter)] = ["java.io.Writer"],
+        // Lucene.NET ports java.io.PrintStream to TextWriter (see Support/IO/SafeTextWriterWrapper)
+        // since both are character-oriented sinks. PrintStream is rare in the public API.
+        [typeof(TextWriter)] = ["java.io.Writer", "java.io.PrintStream"],
         [typeof(Stream)] = ["java.io.InputStream", "java.io.OutputStream"],
         // java.io.File is a path that can refer to either a file or a directory; .NET ports
         // typically use FileInfo or DirectoryInfo depending on intent.

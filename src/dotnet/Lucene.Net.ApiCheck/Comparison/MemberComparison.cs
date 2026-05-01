@@ -213,6 +213,28 @@ public class MemberComparison
     }
 
     /// <summary>
+    /// Returns true when the .NET method is one of the two dispose-pattern shapes —
+    /// public <c>Dispose()</c> or protected <c>Dispose(bool disposing)</c>. Lucene.NET
+    /// commonly exposes both on the same type for one Java <c>close()</c>, so the
+    /// loser of the name+arity match should not be reported as a .NET-only method.
+    /// </summary>
+    public static bool IsDotNetDisposePatternMethod(MethodInfo dotNetMethod)
+    {
+        if (!dotNetMethod.Name.Equals("Dispose", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        var parameters = dotNetMethod.GetParameters();
+        return parameters.Length switch
+        {
+            0 => true,
+            1 => parameters[0].ParameterType == typeof(bool),
+            _ => false,
+        };
+    }
+
+    /// <summary>
     /// Compares a .NET method name to a Java method name allowing for the standard
     /// .NET PascalCase / Java camelCase difference and the well-known
     /// equals/hashCode/toString equivalents.

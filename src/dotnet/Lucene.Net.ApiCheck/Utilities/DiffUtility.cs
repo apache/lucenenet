@@ -192,7 +192,8 @@ public static class DiffUtility
             var hasModifierMismatch = !ModifierComparison.ModifiersAreEquivalent(
                 ModifierComparison.ModifierUsage.Field,
                 javaField.Modifiers,
-                dotNetField.GetModifiers());
+                dotNetField.GetModifiers(),
+                dotNetDeclaringTypeIsSealed: matchingType.DotNetType.IsSealed);
 
             if (hasTypeMismatch || hasModifierMismatch)
             {
@@ -223,18 +224,10 @@ public static class DiffUtility
                 state.ConsumedJavaFields.Add(javaField);
                 state.ConsumedDotNetProperties.Add(matchingProperty);
 
-                // Always a structural difference (field vs property), so we record this
-                // as type-mismatched even if the underlying value type is the same.
-                state.MatchedWithDifferences.Add(new MemberDiff
-                {
-                    MatchedMember = new ComparisonPair<MemberReference>
-                    {
-                        Java = BuildJavaFieldReference(javaField),
-                        DotNet = BuildDotNetPropertyReference(matchingProperty),
-                    },
-                    HasTypeMismatch = true,
-                    HasModifierMismatch = false,
-                });
+                // Java public field ↔ .NET property of the same name and compatible
+                // value type is the canonical Lucene.NET porting idiom (the field was
+                // promoted to a property to satisfy CA1051 / encapsulation). Treat as
+                // equivalent — no member difference recorded.
                 continue;
             }
 
@@ -286,7 +279,8 @@ public static class DiffUtility
                 var hasModifierMismatch = !ModifierComparison.ModifiersAreEquivalent(
                     ModifierComparison.ModifierUsage.Member,
                     javaCtor.Modifiers,
-                    dotNetCtor.GetModifiers());
+                    dotNetCtor.GetModifiers(),
+                    dotNetDeclaringTypeIsSealed: matchingType.DotNetType.IsSealed);
 
                 if (hasModifierMismatch)
                 {
@@ -321,7 +315,8 @@ public static class DiffUtility
                     var hasModifierMismatch = !ModifierComparison.ModifiersAreEquivalent(
                         ModifierComparison.ModifierUsage.Member,
                         pairedJava.Modifiers,
-                        dotNetCtor.GetModifiers());
+                        dotNetCtor.GetModifiers(),
+                        dotNetDeclaringTypeIsSealed: matchingType.DotNetType.IsSealed);
 
                     state.MatchedWithDifferences.Add(new MemberDiff
                     {
@@ -405,10 +400,14 @@ public static class DiffUtility
             {
                 state.ConsumedJavaMethods.Add(fullMatch);
 
-                // The close()↔Dispose(bool) idiom intentionally diverges in visibility
-                // (Java public, .NET protected) and parameters (zero-arg vs bool), so
-                // don't surface those as a member difference.
-                if (MemberComparison.IsCloseToDisposeBoolMatch(dotNetMethod, fullMatch))
+                // Dispose-pattern matches against Java close() (whether to .NET Dispose()
+                // or protected Dispose(bool disposing)) intentionally diverge in modifiers:
+                // Java close() is typically abstract, but Lucene.NET moves abstractness onto
+                // the Dispose(bool) overload while Dispose() is concrete and forwards. Don't
+                // surface those as member differences.
+                if (fullMatch.Name == "close"
+                    && fullMatch.Parameters.Count == 0
+                    && MemberComparison.IsDotNetDisposePatternMethod(dotNetMethod))
                 {
                     continue;
                 }
@@ -416,7 +415,8 @@ public static class DiffUtility
                 var hasModifierMismatch = !ModifierComparison.ModifiersAreEquivalent(
                     ModifierComparison.ModifierUsage.Member,
                     fullMatch.Modifiers,
-                    dotNetMethod.GetModifiers());
+                    dotNetMethod.GetModifiers(),
+                    dotNetDeclaringTypeIsSealed: matchingType.DotNetType.IsSealed);
 
                 if (hasModifierMismatch)
                 {
@@ -454,7 +454,8 @@ public static class DiffUtility
                     var hasModifierMismatch = !ModifierComparison.ModifiersAreEquivalent(
                         ModifierComparison.ModifierUsage.Member,
                         pairedJava.Modifiers,
-                        dotNetMethod.GetModifiers());
+                        dotNetMethod.GetModifiers(),
+                        dotNetDeclaringTypeIsSealed: matchingType.DotNetType.IsSealed);
 
                     state.MatchedWithDifferences.Add(new MemberDiff
                     {
@@ -468,6 +469,20 @@ public static class DiffUtility
                     });
                     continue;
                 }
+            }
+
+            // Lucene.NET typically exposes both Dispose() and protected Dispose(bool)
+            // for a single Java close(). Only one can pair with close() above; the
+            // sibling lands here with no Java match. Drop it silently rather than
+            // reporting it as .NET-only. The Java close() may be declared on the type
+            // itself or inherited from java.io.Closeable / java.lang.AutoCloseable,
+            // so check both declared methods and the implements list.
+            if (MemberComparison.IsDotNetDisposePatternMethod(dotNetMethod)
+                && (matchingType.JavaType.Methods.Any(j => j.Name == "close" && j.Parameters.Count == 0)
+                    || matchingType.JavaType.Interfaces.Any(i =>
+                        i == "java.io.Closeable" || i == "java.lang.AutoCloseable")))
+            {
+                continue;
             }
 
             state.DotNetOnly.Add(BuildDotNetMethodReference(dotNetMethod));

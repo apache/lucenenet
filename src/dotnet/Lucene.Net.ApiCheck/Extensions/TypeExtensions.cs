@@ -24,19 +24,65 @@ public static class TypeExtensions
 {
     public static string FormatDisplayName(this Type type)
     {
+        // Recurse through array, by-ref, and pointer wrappers so the inner element
+        // benefits from the keyword/generic formatting below (e.g. 'string[]' rather
+        // than 'System.String[]', 'string&' rather than 'System.String&').
+        if (type.IsArray)
+        {
+            return $"{type.GetElementType()!.FormatDisplayName()}[]";
+        }
+
+        if (type.IsByRef)
+        {
+            return $"{type.GetElementType()!.FormatDisplayName()}&";
+        }
+
+        if (type.IsPointer)
+        {
+            return $"{type.GetElementType()!.FormatDisplayName()}*";
+        }
+
+        // Render BCL primitives (and System.Void) as their C# keyword equivalents.
+        // System.Void is an internal sentinel for "no return type" and is always shown
+        // as 'void' in C# source; the other primitives are shown as keywords by convention.
+        if (BclTypeKeywords.TryGetValue(type, out var keyword))
+        {
+            return keyword;
+        }
+
         var fullName = type.FullName ?? type.Name;
         fullName = fullName.Replace("+", "."); // format nested types
 
         if (type.IsGenericType)
         {
             var genericArguments = type.GetGenericArguments();
-            var genericArgumentsDisplay = string.Join(", ", genericArguments.Select(a => a.Name));
+            var genericArgumentsDisplay = string.Join(", ", genericArguments.Select(a => a.FormatDisplayName()));
             // LUCENENET TODO: this is likely buggy in some cases like nested types
             return $"{fullName.Split('`')[0]}<{genericArgumentsDisplay}>";
         }
 
         return fullName;
     }
+
+    private static readonly Dictionary<Type, string> BclTypeKeywords = new()
+    {
+        [typeof(void)] = "void",
+        [typeof(bool)] = "bool",
+        [typeof(byte)] = "byte",
+        [typeof(sbyte)] = "sbyte",
+        [typeof(char)] = "char",
+        [typeof(short)] = "short",
+        [typeof(ushort)] = "ushort",
+        [typeof(int)] = "int",
+        [typeof(uint)] = "uint",
+        [typeof(long)] = "long",
+        [typeof(ulong)] = "ulong",
+        [typeof(float)] = "float",
+        [typeof(double)] = "double",
+        [typeof(decimal)] = "decimal",
+        [typeof(string)] = "string",
+        [typeof(object)] = "object",
+    };
 
     public static IReadOnlyList<string> GetModifiers(this Type type)
     {

@@ -58,13 +58,20 @@ public static class ModifierComparison
     }
 
     public static bool ModifiersAreEquivalent(ModifierUsage usage, IReadOnlyList<string> javaModifiers, IReadOnlyList<string> dotnetModifiers)
-        => ModifiersAreEquivalent(usage, javaModifiers, dotnetModifiers, javaTypeKind: null, isDotNetEnum: false);
+        => ModifiersAreEquivalent(usage, javaModifiers, dotnetModifiers, javaTypeKind: null, isDotNetEnum: false, dotNetDeclaringTypeIsSealed: false);
+
+    public static bool ModifiersAreEquivalent(ModifierUsage usage,
+        IReadOnlyList<string> javaModifiers,
+        IReadOnlyList<string> dotnetModifiers,
+        bool dotNetDeclaringTypeIsSealed)
+        => ModifiersAreEquivalent(usage, javaModifiers, dotnetModifiers, javaTypeKind: null, isDotNetEnum: false, dotNetDeclaringTypeIsSealed: dotNetDeclaringTypeIsSealed);
 
     public static bool ModifiersAreEquivalent(ModifierUsage usage,
         IReadOnlyList<string> javaModifiers,
         IReadOnlyList<string> dotnetModifiers,
         string? javaTypeKind,
-        bool isDotNetEnum)
+        bool isDotNetEnum,
+        bool dotNetDeclaringTypeIsSealed = false)
     {
         var applicableJavaModifiers = new HashSet<string>(javaModifiers);
         var applicableDotNetModifiers = new HashSet<string>(dotnetModifiers);
@@ -129,11 +136,43 @@ public static class ModifierComparison
                 applicableDotNetModifiers.Add("sealed");
             }
 
+            // When the .NET declaring type is sealed, no member can be further overridden
+            // through it — so Java 'final' (now 'sealed') is redundant. Likewise a .NET
+            // 'override' on a sealed type is effectively a sealed override. Drop the
+            // 'sealed' designator on both sides so the member-level final/override
+            // bookkeeping doesn't surface as a diff.
+            if (dotNetDeclaringTypeIsSealed)
+            {
+                applicableJavaModifiers.Remove("sealed");
+                applicableDotNetModifiers.Remove("sealed");
+            }
+
+            // Java 'static final' methods are idiomatic-but-redundant: 'final' on a static
+            // method only blocks subclass *hiding* (declaring a same-signature static in a
+            // subclass), not virtual override (statics aren't dispatched virtually). .NET
+            // resolves static method calls on the declaring type, so the Java 'final' has
+            // no .NET analogue. Drop the normalized 'sealed' on the Java side when both
+            // sides agree the member is static.
+            if (applicableJavaModifiers.Contains("static") && applicableDotNetModifiers.Contains("static"))
+            {
+                applicableJavaModifiers.Remove("sealed");
+            }
+
             // .NET virtual/override ↔ Java's default open-by-default behavior (no
             // explicit modifier on the Java side). Drop these so they don't count
             // as differences against an unannotated Java method.
             applicableDotNetModifiers.Remove("virtual");
             applicableDotNetModifiers.Remove("override");
+
+            // Java 'protected' ↔ .NET 'protected internal'. Lucene.NET frequently widens
+            // Java 'protected' members to 'protected internal' so the test framework
+            // (which lives in a separate assembly) can reach them. Treat the two as
+            // equivalent for the API comparison.
+            if (applicableDotNetModifiers.Contains("protected internal"))
+            {
+                applicableDotNetModifiers.Remove("protected internal");
+                applicableDotNetModifiers.Add("protected");
+            }
 
             // Java 'abstract' is meaningful on both sides and should match.
             // Java 'static' is meaningful on both sides and should match (for members,
@@ -164,6 +203,13 @@ public static class ModifierComparison
                 applicableDotNetModifiers.Remove("const");
                 applicableDotNetModifiers.Add("static");
                 applicableDotNetModifiers.Add("readonly");
+            }
+
+            // Java 'protected' ↔ .NET 'protected internal' (see Member branch for rationale).
+            if (applicableDotNetModifiers.Contains("protected internal"))
+            {
+                applicableDotNetModifiers.Remove("protected internal");
+                applicableDotNetModifiers.Add("protected");
             }
 
             // 'transient'/'volatile' are Java-only field modifiers with no .NET analogue.
