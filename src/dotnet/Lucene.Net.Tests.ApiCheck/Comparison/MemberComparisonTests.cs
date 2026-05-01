@@ -97,10 +97,58 @@ public class MemberComparisonTests
     [InlineData("CompareTo", "compareTo", true)]
     [InlineData("Foo", "bar", false)]
     [InlineData("DoSomething", "doSomethingElse", false)]
+    // Primitive type-name renames: Java Long/Short/Int/Float -> .NET Int64/Int16/Int32/Single.
+    [InlineData("ReadInt64", "readLong", true)]
+    [InlineData("ReadInt32", "readInt", true)]
+    [InlineData("ReadInt16", "readShort", true)]
+    [InlineData("ReadVInt32", "readVInt", true)]
+    [InlineData("ReadVInt64", "readVLong", true)]
+    [InlineData("WriteInt64", "writeLong", true)]
+    [InlineData("SetInt64Value", "setLongValue", true)]
+    [InlineData("SetSingleValue", "setFloatValue", true)]
+    [InlineData("SetInt16Value", "setShortValue", true)]
+    [InlineData("NewInt64Range", "newLongRange", true)]
+    [InlineData("NewSingleRange", "newFloatRange", true)]
+    [InlineData("Int32Val", "intVal", true)]
+    [InlineData("Int64Val", "longVal", true)]
+    [InlineData("SingleVal", "floatVal", true)]
+    [InlineData("ToInt32sRef", "toIntsRef", true)]
+    // Comparator -> Comparer (BCL terminology).
+    [InlineData("GetComparer", "getComparator", true)]
+    // Iterator -> Enumerator (substring rule), and standalone iterator -> GetEnumerator.
+    [InlineData("GetEnumerator", "iterator", true)]
+    [InlineData("GetEntryEnumerator", "getEntryIterator", true)]
+    // Don't confuse Int with the Int32 we just produced.
+    [InlineData("Int32", "int32", true)]
     [Theory]
     public void MethodNamesMatch_Tests(string dotNetName, string javaName, bool expected)
     {
         Assert.Equal(expected, MemberComparison.MethodNamesMatch(dotNetName, javaName));
+    }
+
+    public class PropExample
+    {
+        public int EMPTY_INT64S { get; set; }
+        public int NUM_BYTES_SINGLE { get; set; }
+        public int NUM_BYTES_INT64 { get; set; }
+        public int NUM_BYTES_INT16 { get; set; }
+        public int DEFAULT_COMPARER { get; set; }
+        public int BUF_SIZE_INT64 { get; set; }
+        public int Comparer { get; set; }
+    }
+
+    [InlineData("EMPTY_INT64S", "EMPTY_LONGS", true)]
+    [InlineData("NUM_BYTES_SINGLE", "NUM_BYTES_FLOAT", true)]
+    [InlineData("NUM_BYTES_INT64", "NUM_BYTES_LONG", true)]
+    [InlineData("NUM_BYTES_INT16", "NUM_BYTES_SHORT", true)]
+    [InlineData("DEFAULT_COMPARER", "DEFAULT_COMPARATOR", true)]
+    [InlineData("BUF_SIZE_INT64", "BUF_SIZE_LONG", true)]
+    [Theory]
+    public void PropertyNameMatchesJavaField_TypeWordRenames(string propertyName, string javaFieldName, bool expected)
+    {
+        var prop = typeof(PropExample).GetProperty(propertyName)!;
+        var javaField = new FieldMetadata(javaFieldName, "int", new List<string> { "public" }, IsStatic: false);
+        Assert.Equal(expected, MemberComparison.PropertyNameMatchesJavaField(prop, javaField));
     }
 
     public class MethodExample
