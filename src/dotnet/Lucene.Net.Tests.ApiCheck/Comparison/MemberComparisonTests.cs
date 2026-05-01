@@ -385,4 +385,64 @@ public class MemberComparisonTests
         var javaMethod = JavaMethod("add", "long", ("x", "int"), ("y", "int"));
         Assert.False(MemberComparison.MethodSignaturesMatch(method, javaMethod));
     }
+
+    public class DisposeExample
+    {
+        public void Dispose() { }
+        protected virtual void Dispose(bool disposing) { }
+        public void Dispose(int unrelated) { }
+    }
+
+    [Fact]
+    public void MethodsMatch_CloseToDisposeBool_Matches()
+    {
+        var method = typeof(DisposeExample).GetMethod(nameof(DisposeExample.Dispose),
+            BindingFlags.Instance | BindingFlags.NonPublic, new[] { typeof(bool) })!;
+        Assert.True(MemberComparison.MethodsMatch(method, JavaMethod("close", "void")));
+    }
+
+    [Fact]
+    public void MethodsMatch_CloseToDisposeZeroArg_Matches()
+    {
+        // The pre-existing zero-arg path: Java close() ↔ .NET Dispose() via KnownMethodNameEquivalents.
+        var method = typeof(DisposeExample).GetMethod(nameof(DisposeExample.Dispose), Type.EmptyTypes)!;
+        Assert.True(MemberComparison.MethodsMatch(method, JavaMethod("close", "void")));
+    }
+
+    [Fact]
+    public void MethodsMatch_CloseToDisposeNonBoolArg_DoesNotMatch()
+    {
+        var method = typeof(DisposeExample).GetMethod(nameof(DisposeExample.Dispose), new[] { typeof(int) })!;
+        Assert.False(MemberComparison.MethodsMatch(method, JavaMethod("close", "void")));
+    }
+
+    [Fact]
+    public void IsCloseToDisposeBoolMatch_True()
+    {
+        var method = typeof(DisposeExample).GetMethod(nameof(DisposeExample.Dispose),
+            BindingFlags.Instance | BindingFlags.NonPublic, new[] { typeof(bool) })!;
+        Assert.True(MemberComparison.IsCloseToDisposeBoolMatch(method, JavaMethod("close", "void")));
+    }
+
+    [Fact]
+    public void IsCloseToDisposeBoolMatch_DisposeZeroArg_False()
+    {
+        var method = typeof(DisposeExample).GetMethod(nameof(DisposeExample.Dispose), Type.EmptyTypes)!;
+        Assert.False(MemberComparison.IsCloseToDisposeBoolMatch(method, JavaMethod("close", "void")));
+    }
+
+    [Fact]
+    public void IsCloseToDisposeBoolMatch_JavaCloseWithArg_False()
+    {
+        var method = typeof(DisposeExample).GetMethod(nameof(DisposeExample.Dispose),
+            BindingFlags.Instance | BindingFlags.NonPublic, new[] { typeof(bool) })!;
+        Assert.False(MemberComparison.IsCloseToDisposeBoolMatch(method, JavaMethod("close", "void", ("x", "int"))));
+    }
+
+    [Fact]
+    public void IsCloseToDisposeBoolMatch_NotDispose_False()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.DoSomething))!;
+        Assert.False(MemberComparison.IsCloseToDisposeBoolMatch(method, JavaMethod("close", "void")));
+    }
 }
