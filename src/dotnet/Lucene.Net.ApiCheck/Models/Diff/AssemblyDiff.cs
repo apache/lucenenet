@@ -60,4 +60,8 @@ public class AssemblyDiff
     public IEnumerable<TypeDiff> TypesWithMembersNotInLucene => MatchingTypes.Where(t => t.LuceneNetMembersNotInLucene.Count > 0);
 
     public int TypesWithMembersNotInLuceneCount => TypesWithMembersNotInLucene.Count();
+
+    public IEnumerable<TypeDiff> TypesWithMatchedMemberDifferences => MatchingTypes.Where(t => t.MatchedMembersWithDifferences.Count > 0);
+
+    public int TypesWithMatchedMemberDifferencesCount => TypesWithMatchedMemberDifferences.Count();
 }

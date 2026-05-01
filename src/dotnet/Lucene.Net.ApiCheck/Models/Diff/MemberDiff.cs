@@ -17,22 +17,23 @@
 
 namespace Lucene.Net.ApiCheck.Models.Diff;
 
-public class TypeDiff
+/// <summary>
+/// Captures a member that exists on both sides but differs in some way: type
+/// (field type, return type, parameter types) and/or modifiers.
+/// </summary>
+public class MemberDiff
 {
-    public required ComparisonPair<TypeDeclaration> MatchingType { get; set; }
-
-    public ComparisonPair<ModifierSet>? MismatchedModifiers { get; set; }
-
-    public ComparisonPair<TypeReference?>? MismatchedBaseType { get; set; }
-
-    public ComparisonPair<IReadOnlyList<TypeReference>>? MismatchedInterfaces { get; set; }
-
-    public required IReadOnlyList<MemberReference> LuceneNetMembersNotInLucene { get; set; }
-
-    public required IReadOnlyList<MemberReference> LuceneMembersNotInLuceneNet { get; set; }
+    public required ComparisonPair<MemberReference> MatchedMember { get; set; }
 
     /// <summary>
-    /// Members present on both sides whose type or modifiers differ.
+    /// Set when the member's "type" (field type, property type, or method/ctor
+    /// parameter or return types) differs between the two sides.
     /// </summary>
-    public IReadOnlyList<MemberDiff> MatchedMembersWithDifferences { get; set; } = new List<MemberDiff>();
+    public bool HasTypeMismatch { get; set; }
+
+    /// <summary>
+    /// Set when the member's modifiers differ in a way not accounted for by the
+    /// Java↔.NET equivalence rules.
+    /// </summary>
+    public bool HasModifierMismatch { get; set; }
 }

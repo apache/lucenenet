@@ -34,4 +34,6 @@ public class ApiDiffResult
     public int TotalLuceneMembersNotInLuceneNet => Assemblies.Sum(a => a.TypesWithMembersNotInLuceneNet.Sum(b => b.LuceneMembersNotInLuceneNet.Count));
 
     public int TotalLuceneNetMembersNotInLucene => Assemblies.Sum(a => a.TypesWithMembersNotInLucene.Sum(b => b.LuceneNetMembersNotInLucene.Count));
+
+    public int TotalMatchedMembersWithDifferences => Assemblies.Sum(a => a.MatchingTypes.Sum(t => t.MatchedMembersWithDifferences.Count));
 }

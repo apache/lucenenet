@@ -33,6 +33,18 @@ public class ModifierComparisonTests
     [InlineData(ModifierUsage.Type, "public", "public abstract", false)]
     [InlineData(ModifierUsage.Type, "public abstract", "public sealed", false)]
     [InlineData(ModifierUsage.Type, "public abstract", "public static", false)]
+    // Members
+    [InlineData(ModifierUsage.Member, "public", "public", true)]
+    [InlineData(ModifierUsage.Member, "public abstract", "public abstract", true)]
+    [InlineData(ModifierUsage.Member, "public static", "public static", true)]
+    [InlineData(ModifierUsage.Member, "public final", "public sealed", true)]
+    [InlineData(ModifierUsage.Member, "public final", "public sealed override", true)]
+    [InlineData(ModifierUsage.Member, "public", "public virtual", true)] // Java methods are virtual by default
+    [InlineData(ModifierUsage.Member, "public", "public override", true)] // override is the .NET default-virtual continuation
+    [InlineData(ModifierUsage.Member, "public synchronized", "public", true)] // 'synchronized' has no .NET analogue
+    [InlineData(ModifierUsage.Member, "public", "private", false)] // visibility actually differs
+    [InlineData(ModifierUsage.Member, "public abstract", "public", false)] // abstract differs
+    [InlineData(ModifierUsage.Member, "public static", "public", false)] // static differs (members)
     [Theory]
     public void ModifiersAreEquivalent(ModifierUsage usage, string javaModifiers, string dotnetModifiers, bool expected)
     {

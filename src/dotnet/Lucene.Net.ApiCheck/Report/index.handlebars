@@ -55,6 +55,10 @@
                     <th>Lucene.NET members not in Lucene</th>
                     <td>{{TotalLuceneNetMembersNotInLucene}}</td>
                 </tr>
+                <tr>
+                    <th>Matched members with differences</th>
+                    <td>{{TotalMatchedMembersWithDifferences}}</td>
+                </tr>
                 </tbody>
             </table>
         </section>
@@ -295,6 +299,45 @@
                     {{else}}
                         <tr>
                             <td colspan="2">✅ No members missing</td>
+                        </tr>
+                    {{/if}}
+                </tbody>
+            </table>
+
+            <h3>
+                Matched Members with Differences
+                <span class="count">{{TypesWithMatchedMemberDifferencesCount}}</span>
+            </h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Member Kind</th>
+                    <th>Difference</th>
+                    <th>Java</th>
+                    <th>.NET</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {{#if TypesWithMatchedMemberDifferencesCount}}
+                        {{#each TypesWithMatchedMemberDifferences}}
+                            <tr>
+                                <td colspan="4"><strong>{{MatchingType.DotNet.Type.DisplayName}}</strong></td>
+                            </tr>
+                            {{#each MatchedMembersWithDifferences}}
+                                <tr>
+                                    <td>{{MatchedMember.DotNet.MemberKind}}</td>
+                                    <td>
+                                        {{#if HasTypeMismatch}}type{{/if}}
+                                        {{#if HasModifierMismatch}}modifiers{{/if}}
+                                    </td>
+                                    <td>{{MatchedMember.Java}}</td>
+                                    <td>{{MatchedMember.DotNet}}</td>
+                                </tr>
+                            {{/each}}
+                        {{/each}}
+                    {{else}}
+                        <tr>
+                            <td colspan="4">✅ No matched-member differences</td>
                         </tr>
                     {{/if}}
                 </tbody>
