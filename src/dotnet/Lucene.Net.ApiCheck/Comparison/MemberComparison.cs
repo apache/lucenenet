@@ -177,7 +177,39 @@ public class MemberComparison
             return false;
         }
 
-        return ParameterListsMatch(dotNetMethod.GetParameters(), javaMethod.Parameters);
+        if (ParameterListsMatch(dotNetMethod.GetParameters(), javaMethod.Parameters))
+        {
+            return true;
+        }
+
+        // Lucene.NET implements the dispose pattern: Java's zero-arg close() is exposed
+        // as protected Dispose(bool disposing) on the .NET side, with a public Dispose()
+        // inherited from IDisposable. The bool overload would otherwise look like an
+        // unmatched .NET-only method.
+        return IsCloseToDisposeBoolMatch(dotNetMethod, javaMethod);
+    }
+
+    /// <summary>
+    /// Returns true when the pair is the canonical Lucene.NET dispose-pattern idiom:
+    /// Java <c>close()</c> ↔ .NET <c>Dispose(bool disposing)</c>. The .NET overload is
+    /// protected by convention, so callers can use this to suppress the expected
+    /// visibility/parameter divergence from being reported as a member difference.
+    /// </summary>
+    public static bool IsCloseToDisposeBoolMatch(MethodInfo dotNetMethod, MethodMetadata javaMethod)
+    {
+        if (!javaMethod.Name.Equals("close", StringComparison.Ordinal)
+            || javaMethod.Parameters.Count != 0)
+        {
+            return false;
+        }
+
+        if (!dotNetMethod.Name.Equals("Dispose", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        var parameters = dotNetMethod.GetParameters();
+        return parameters.Length == 1 && parameters[0].ParameterType == typeof(bool);
     }
 
     /// <summary>

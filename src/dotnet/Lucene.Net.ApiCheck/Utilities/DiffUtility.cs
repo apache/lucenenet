@@ -405,6 +405,14 @@ public static class DiffUtility
             {
                 state.ConsumedJavaMethods.Add(fullMatch);
 
+                // The close()↔Dispose(bool) idiom intentionally diverges in visibility
+                // (Java public, .NET protected) and parameters (zero-arg vs bool), so
+                // don't surface those as a member difference.
+                if (MemberComparison.IsCloseToDisposeBoolMatch(dotNetMethod, fullMatch))
+                {
+                    continue;
+                }
+
                 var hasModifierMismatch = !ModifierComparison.ModifiersAreEquivalent(
                     ModifierComparison.ModifierUsage.Member,
                     fullMatch.Modifiers,
@@ -589,7 +597,9 @@ public static class DiffUtility
         if (matchingType.DotNetType.HasKnownModifierDifference()
             || ModifierComparison.ModifiersAreEquivalent(ModifierComparison.ModifierUsage.Type,
                 matchingType.JavaType.Modifiers,
-                matchingType.DotNetType.GetModifiers()))
+                matchingType.DotNetType.GetModifiers(),
+                javaTypeKind: matchingType.JavaType.Kind,
+                isDotNetEnum: matchingType.DotNetType.IsEnum))
         {
             return null;
         }
