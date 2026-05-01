@@ -22,6 +22,7 @@ using Lucene.Net.ApiCheck.Models.JavaApi;
 using Lucene.Net.Reflection;
 using System.Collections;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.ApiCheck.Comparison;
 
@@ -32,9 +33,12 @@ public static class TypeComparison
         [typeof(object)] = ["java.lang.Object"],
         [typeof(ValueType)] = ["java.lang.Object"],
         [typeof(Enum)] = ["java.lang.Enum"],
+        [typeof(Type)] = ["java.lang.Class"],
         [typeof(IOException)] = ["java.io.IOException"],
         [typeof(FileNotFoundException)] = ["java.io.FileNotFoundException"],
-        [typeof(Exception)] = ["java.lang.RuntimeException", "java.lang.Exception"],
+        // Java 'Throwable' is the root of all errors/exceptions; in .NET, Exception is the
+        // typical analogue. Java 'Error' subclasses also map to Exception in practice.
+        [typeof(Exception)] = ["java.lang.RuntimeException", "java.lang.Exception", "java.lang.Throwable", "java.lang.Error"],
         [typeof(IDisposable)] = ["java.lang.AutoCloseable", "java.io.Closeable"], // TODO: map ICloseable once #271 is done
         [typeof(ICharSequence)] = ["java.lang.CharSequence"],
         [typeof(IAppendable)] = ["java.lang.Appendable"],
@@ -42,9 +46,24 @@ public static class TypeComparison
         [typeof(TextReader)] = ["java.io.Reader"],
         [typeof(TextWriter)] = ["java.io.Writer"],
         [typeof(Stream)] = ["java.io.InputStream", "java.io.OutputStream"],
+        // java.io.File is a path that can refer to either a file or a directory; .NET ports
+        // typically use FileInfo or DirectoryInfo depending on intent.
         [typeof(FileInfo)] = ["java.io.File"],
+        [typeof(DirectoryInfo)] = ["java.io.File"],
         [typeof(Random)] = ["java.util.Random"],
         [typeof(Randomizer)] = ["java.util.Random"],
+        [typeof(Regex)] = ["java.util.regex.Pattern"],
+        // Boxed Java numeric types: Lucene.NET ports usually expose these as the underlying
+        // value type or a nullable thereof. We can't represent nullable in this dictionary
+        // (it'd require runtime-constructed Nullable<T>), so we map the value-type form.
+        [typeof(int)] = ["java.lang.Integer"],
+        [typeof(long)] = ["java.lang.Long"],
+        [typeof(short)] = ["java.lang.Short"],
+        [typeof(byte)] = ["java.lang.Byte"],
+        [typeof(float)] = ["java.lang.Float"],
+        [typeof(double)] = ["java.lang.Double"],
+        [typeof(bool)] = ["java.lang.Boolean"],
+        [typeof(char)] = ["java.lang.Character"],
         // Open-generic collection mappings: a Java erased List/Set/Map type can correspond
         // to several .NET collection types depending on how the porter chose to expose it.
         [typeof(IEnumerable<>)] = ["java.util.List", "java.util.Collection", "java.lang.Iterable", "java.util.Set"],
@@ -64,6 +83,10 @@ public static class TypeComparison
         [typeof(IEnumerator<>)] = ["java.util.Iterator"],
         [typeof(IEnumerator)] = ["java.util.Iterator"],
         [typeof(KeyValuePair<,>)] = ["java.util.Map$Entry"],
+        [typeof(IComparer<>)] = ["java.util.Comparator"],
+        [typeof(IComparer)] = ["java.util.Comparator"],
+        [typeof(IComparable<>)] = ["java.lang.Comparable"],
+        [typeof(IComparable)] = ["java.lang.Comparable"],
     };
 
     public static bool TypeMatchesFullName(Type? dotNetType, string? javaTypeName, string? javaTypeKind)

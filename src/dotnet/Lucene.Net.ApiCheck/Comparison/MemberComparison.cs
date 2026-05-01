@@ -67,6 +67,26 @@ public class MemberComparison
     }
 
     /// <summary>
+    /// Determines whether a .NET property corresponds to a Java public field of
+    /// the same (case-insensitive) name and a compatible type. Lucene exposes
+    /// many public mutable fields that the .NET ports promoted to properties.
+    /// </summary>
+    public static bool PropertyMatchesJavaField(PropertyInfo dotNetProperty, FieldMetadata javaField)
+    {
+        return string.Equals(dotNetProperty.Name, javaField.Name, StringComparison.OrdinalIgnoreCase)
+               && ParameterTypesMatch(dotNetProperty.PropertyType, javaField.Type);
+    }
+
+    /// <summary>
+    /// Determines whether a .NET property name matches a Java public field name
+    /// (case-insensitively), ignoring whether the type aligns.
+    /// </summary>
+    public static bool PropertyNameMatchesJavaField(PropertyInfo dotNetProperty, FieldMetadata javaField)
+    {
+        return string.Equals(dotNetProperty.Name, javaField.Name, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
     /// Determines whether a .NET property's name matches a Java getter/setter/is
     /// method's bare name (ignoring whether the type aligns).
     /// </summary>
@@ -140,7 +160,49 @@ public class MemberComparison
             return true;
         }
 
-        return string.Equals(dotNetName, javaName, StringComparison.OrdinalIgnoreCase);
+        if (string.Equals(dotNetName, javaName, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        // Common porting idiom: Java 'description()' ↔ .NET 'GetDescription()',
+        // Java 'getDescription()' ↔ .NET 'Description()' (rare, but possible).
+        // Match when either side adds a 'Get' or 'Is' prefix that the other lacks.
+        if (TryStripVerbPrefix(dotNetName, out var strippedDotNet)
+            && string.Equals(strippedDotNet, javaName, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (TryStripVerbPrefix(javaName, out var strippedJava)
+            && string.Equals(dotNetName, strippedJava, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryStripVerbPrefix(string name, out string stripped)
+    {
+        if (name.Length > 3 && (name.StartsWith("Get", StringComparison.Ordinal)
+                                || name.StartsWith("get", StringComparison.Ordinal)
+                                || name.StartsWith("Set", StringComparison.Ordinal)
+                                || name.StartsWith("set", StringComparison.Ordinal)))
+        {
+            stripped = name[3..];
+            return true;
+        }
+
+        if (name.Length > 2 && (name.StartsWith("Is", StringComparison.Ordinal)
+                                || name.StartsWith("is", StringComparison.Ordinal)))
+        {
+            stripped = name[2..];
+            return true;
+        }
+
+        stripped = name;
+        return false;
     }
 
     private static readonly Dictionary<string, string> KnownMethodNameEquivalents = new(StringComparer.Ordinal)
@@ -150,6 +212,8 @@ public class MemberComparison
         ["toString"] = "ToString",
         ["clone"] = "Clone",
         ["compareTo"] = "CompareTo",
+        // Lucene.NET maps Java close() to .NET Dispose() via IDisposable.
+        ["close"] = "Dispose",
     };
 
     /// <summary>
@@ -242,6 +306,14 @@ public class MemberComparison
 
     private static bool ParameterTypesMatch(Type dotNetType, string javaTypeName)
     {
+        // Unwrap Nullable<T> on the .NET side. The Java equivalent of int? is either
+        // 'int' (primitive) or 'java.lang.Integer' (boxed); try the unwrapped type.
+        var underlying = Nullable.GetUnderlyingType(dotNetType);
+        if (underlying is not null)
+        {
+            return ParameterTypesMatch(underlying, javaTypeName);
+        }
+
         // Match Java primitives to .NET equivalents (Java parameter types are erased
         // and unboxed primitives appear as 'int', 'long', etc.).
         if (TryMatchJavaPrimitive(dotNetType, javaTypeName))

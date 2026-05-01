@@ -148,39 +148,45 @@ public static class DiffUtility
         IReadOnlyList<MemberReference> DotNetOnly,
         IReadOnlyList<MemberDiff> MatchedWithDifferences);
 
-    private static MemberDiffResult ComputeMemberDiffs(MatchingType matchingType)
+    private sealed class DiffState
     {
-        var javaOnly = new List<MemberReference>();
-        var dotNetOnly = new List<MemberReference>();
-        var matchedWithDifferences = new List<MemberDiff>();
+        public List<MemberReference> JavaOnly { get; } = new();
+        public List<MemberReference> DotNetOnly { get; } = new();
+        public List<MemberDiff> MatchedWithDifferences { get; } = new();
 
-        DiffFields(matchingType, javaOnly, dotNetOnly, matchedWithDifferences);
-        DiffConstructors(matchingType, javaOnly, dotNetOnly, matchedWithDifferences);
-        DiffMethodsAndProperties(matchingType, javaOnly, dotNetOnly, matchedWithDifferences);
-
-        return new MemberDiffResult(javaOnly, dotNetOnly, matchedWithDifferences);
+        public HashSet<FieldMetadata> ConsumedJavaFields { get; } = new();
+        public HashSet<PropertyInfo> ConsumedDotNetProperties { get; } = new();
+        public HashSet<MethodMetadata> ConsumedJavaMethods { get; } = new();
     }
 
-    private static void DiffFields(MatchingType matchingType,
-        List<MemberReference> javaOnly,
-        List<MemberReference> dotNetOnly,
-        List<MemberDiff> matchedWithDifferences)
+    private static MemberDiffResult ComputeMemberDiffs(MatchingType matchingType)
+    {
+        var state = new DiffState();
+
+        DiffFields(matchingType, state);
+        DiffConstructors(matchingType, state);
+        DiffMethodsAndProperties(matchingType, state);
+
+        return new MemberDiffResult(state.JavaOnly, state.DotNetOnly, state.MatchedWithDifferences);
+    }
+
+    private static void DiffFields(MatchingType matchingType, DiffState state)
     {
         var dotNetFields = matchingType.DotNetType.GetApiFields();
-        var consumedJavaFields = new HashSet<FieldMetadata>();
+        var dotNetProperties = matchingType.DotNetType.GetApiProperties();
 
         foreach (var dotNetField in dotNetFields)
         {
             var javaField = matchingType.JavaType.Fields
-                .FirstOrDefault(j => !consumedJavaFields.Contains(j) && MemberComparison.FieldNamesMatch(dotNetField, j));
+                .FirstOrDefault(j => !state.ConsumedJavaFields.Contains(j) && MemberComparison.FieldNamesMatch(dotNetField, j));
 
             if (javaField is null)
             {
-                dotNetOnly.Add(BuildDotNetFieldReference(dotNetField));
+                state.DotNetOnly.Add(BuildDotNetFieldReference(dotNetField));
                 continue;
             }
 
-            consumedJavaFields.Add(javaField);
+            state.ConsumedJavaFields.Add(javaField);
 
             var hasTypeMismatch = !MemberComparison.FieldTypesMatch(dotNetField, javaField);
             var hasModifierMismatch = !ModifierComparison.ModifiersAreEquivalent(
@@ -190,7 +196,7 @@ public static class DiffUtility
 
             if (hasTypeMismatch || hasModifierMismatch)
             {
-                matchedWithDifferences.Add(new MemberDiff
+                state.MatchedWithDifferences.Add(new MemberDiff
                 {
                     MatchedMember = new ComparisonPair<MemberReference>
                     {
@@ -203,16 +209,65 @@ public static class DiffUtility
             }
         }
 
-        foreach (var javaField in matchingType.JavaType.Fields.Where(j => !consumedJavaFields.Contains(j)))
+        // Java fields not matched by a .NET field: try matching against .NET properties
+        // (Lucene exposes many public mutable fields that the .NET ports promoted to
+        // properties).
+        foreach (var javaField in matchingType.JavaType.Fields.Where(j => !state.ConsumedJavaFields.Contains(j)).ToList())
         {
-            javaOnly.Add(BuildJavaFieldReference(javaField));
+            var matchingProperty = dotNetProperties
+                .FirstOrDefault(p => !state.ConsumedDotNetProperties.Contains(p)
+                                     && MemberComparison.PropertyMatchesJavaField(p, javaField));
+
+            if (matchingProperty is not null)
+            {
+                state.ConsumedJavaFields.Add(javaField);
+                state.ConsumedDotNetProperties.Add(matchingProperty);
+
+                // Always a structural difference (field vs property), so we record this
+                // as type-mismatched even if the underlying value type is the same.
+                state.MatchedWithDifferences.Add(new MemberDiff
+                {
+                    MatchedMember = new ComparisonPair<MemberReference>
+                    {
+                        Java = BuildJavaFieldReference(javaField),
+                        DotNet = BuildDotNetPropertyReference(matchingProperty),
+                    },
+                    HasTypeMismatch = true,
+                    HasModifierMismatch = false,
+                });
+                continue;
+            }
+
+            // Fallback: name-only match → record as type mismatch.
+            var nameMatchingProperty = dotNetProperties
+                .FirstOrDefault(p => !state.ConsumedDotNetProperties.Contains(p)
+                                     && MemberComparison.PropertyNameMatchesJavaField(p, javaField));
+
+            if (nameMatchingProperty is not null)
+            {
+                state.ConsumedJavaFields.Add(javaField);
+                state.ConsumedDotNetProperties.Add(nameMatchingProperty);
+
+                state.MatchedWithDifferences.Add(new MemberDiff
+                {
+                    MatchedMember = new ComparisonPair<MemberReference>
+                    {
+                        Java = BuildJavaFieldReference(javaField),
+                        DotNet = BuildDotNetPropertyReference(nameMatchingProperty),
+                    },
+                    HasTypeMismatch = true,
+                    HasModifierMismatch = false,
+                });
+            }
+        }
+
+        foreach (var javaField in matchingType.JavaType.Fields.Where(j => !state.ConsumedJavaFields.Contains(j)))
+        {
+            state.JavaOnly.Add(BuildJavaFieldReference(javaField));
         }
     }
 
-    private static void DiffConstructors(MatchingType matchingType,
-        List<MemberReference> javaOnly,
-        List<MemberReference> dotNetOnly,
-        List<MemberDiff> matchedWithDifferences)
+    private static void DiffConstructors(MatchingType matchingType, DiffState state)
     {
         var javaCtors = matchingType.JavaType.Constructors ?? new List<ConstructorMetadata>();
         var dotNetCtors = matchingType.DotNetType.GetApiConstructors();
@@ -235,7 +290,7 @@ public static class DiffUtility
 
                 if (hasModifierMismatch)
                 {
-                    matchedWithDifferences.Add(new MemberDiff
+                    state.MatchedWithDifferences.Add(new MemberDiff
                     {
                         MatchedMember = new ComparisonPair<MemberReference>
                         {
@@ -268,7 +323,7 @@ public static class DiffUtility
                         pairedJava.Modifiers,
                         dotNetCtor.GetModifiers());
 
-                    matchedWithDifferences.Add(new MemberDiff
+                    state.MatchedWithDifferences.Add(new MemberDiff
                     {
                         MatchedMember = new ComparisonPair<MemberReference>
                         {
@@ -282,51 +337,48 @@ public static class DiffUtility
                 }
             }
 
-            dotNetOnly.Add(BuildDotNetConstructorReference(matchingType, dotNetCtor));
+            state.DotNetOnly.Add(BuildDotNetConstructorReference(matchingType, dotNetCtor));
         }
 
         foreach (var javaCtor in javaCtors.Where(j => !consumedJavaCtors.Contains(j)))
         {
-            javaOnly.Add(BuildJavaConstructorReference(matchingType, javaCtor));
+            state.JavaOnly.Add(BuildJavaConstructorReference(matchingType, javaCtor));
         }
     }
 
-    private static void DiffMethodsAndProperties(MatchingType matchingType,
-        List<MemberReference> javaOnly,
-        List<MemberReference> dotNetOnly,
-        List<MemberDiff> matchedWithDifferences)
+    private static void DiffMethodsAndProperties(MatchingType matchingType, DiffState state)
     {
         var javaMethods = matchingType.JavaType.Methods;
         var dotNetMethods = matchingType.DotNetType.GetApiMethods();
         var dotNetProperties = matchingType.DotNetType.GetApiProperties();
 
-        var consumedJavaMethods = new HashSet<MethodMetadata>();
-
         // Properties first: a Java getter/setter/is method matched (even loosely by
         // name) by a .NET property is consumed.
-        foreach (var prop in dotNetProperties)
+        foreach (var prop in dotNetProperties.Where(p => !state.ConsumedDotNetProperties.Contains(p)))
         {
             var matchedJavaMethods = javaMethods
-                .Where(j => !consumedJavaMethods.Contains(j) && MemberComparison.PropertyMatchesJavaAccessor(prop, j))
+                .Where(j => !state.ConsumedJavaMethods.Contains(j) && MemberComparison.PropertyMatchesJavaAccessor(prop, j))
                 .ToList();
 
             if (matchedJavaMethods.Count > 0)
             {
+                state.ConsumedDotNetProperties.Add(prop);
                 foreach (var m in matchedJavaMethods)
                 {
-                    consumedJavaMethods.Add(m);
+                    state.ConsumedJavaMethods.Add(m);
                 }
                 continue;
             }
 
             // Fallback: Java accessor whose name matches but type doesn't → type mismatch.
             var nameOnlyMatch = javaMethods
-                .FirstOrDefault(j => !consumedJavaMethods.Contains(j) && MemberComparison.PropertyNameMatchesJavaAccessor(prop, j));
+                .FirstOrDefault(j => !state.ConsumedJavaMethods.Contains(j) && MemberComparison.PropertyNameMatchesJavaAccessor(prop, j));
 
             if (nameOnlyMatch is not null)
             {
-                consumedJavaMethods.Add(nameOnlyMatch);
-                matchedWithDifferences.Add(new MemberDiff
+                state.ConsumedDotNetProperties.Add(prop);
+                state.ConsumedJavaMethods.Add(nameOnlyMatch);
+                state.MatchedWithDifferences.Add(new MemberDiff
                 {
                     MatchedMember = new ComparisonPair<MemberReference>
                     {
@@ -339,18 +391,19 @@ public static class DiffUtility
                 continue;
             }
 
-            dotNetOnly.Add(BuildDotNetPropertyReference(prop));
+            state.ConsumedDotNetProperties.Add(prop);
+            state.DotNetOnly.Add(BuildDotNetPropertyReference(prop));
         }
 
         // Methods: pair by name+arity, then check signatures and modifiers.
         foreach (var dotNetMethod in dotNetMethods)
         {
             var fullMatch = javaMethods
-                .FirstOrDefault(j => !consumedJavaMethods.Contains(j) && MemberComparison.MethodsMatch(dotNetMethod, j));
+                .FirstOrDefault(j => !state.ConsumedJavaMethods.Contains(j) && MemberComparison.MethodsMatch(dotNetMethod, j));
 
             if (fullMatch is not null)
             {
-                consumedJavaMethods.Add(fullMatch);
+                state.ConsumedJavaMethods.Add(fullMatch);
 
                 var hasModifierMismatch = !ModifierComparison.ModifiersAreEquivalent(
                     ModifierComparison.ModifierUsage.Member,
@@ -359,7 +412,7 @@ public static class DiffUtility
 
                 if (hasModifierMismatch)
                 {
-                    matchedWithDifferences.Add(new MemberDiff
+                    state.MatchedWithDifferences.Add(new MemberDiff
                     {
                         MatchedMember = new ComparisonPair<MemberReference>
                         {
@@ -377,7 +430,7 @@ public static class DiffUtility
             // Try name+arity pairing. For methods, name+arity uniqueness on both
             // sides keeps overload pairing safe.
             var arityCandidates = javaMethods
-                .Where(j => !consumedJavaMethods.Contains(j) && MemberComparison.MethodNamesAndArityMatch(dotNetMethod, j))
+                .Where(j => !state.ConsumedJavaMethods.Contains(j) && MemberComparison.MethodNamesAndArityMatch(dotNetMethod, j))
                 .ToList();
 
             if (arityCandidates.Count == 1)
@@ -388,14 +441,14 @@ public static class DiffUtility
                 if (sameSideOverloads == 1)
                 {
                     var pairedJava = arityCandidates[0];
-                    consumedJavaMethods.Add(pairedJava);
+                    state.ConsumedJavaMethods.Add(pairedJava);
 
                     var hasModifierMismatch = !ModifierComparison.ModifiersAreEquivalent(
                         ModifierComparison.ModifierUsage.Member,
                         pairedJava.Modifiers,
                         dotNetMethod.GetModifiers());
 
-                    matchedWithDifferences.Add(new MemberDiff
+                    state.MatchedWithDifferences.Add(new MemberDiff
                     {
                         MatchedMember = new ComparisonPair<MemberReference>
                         {
@@ -409,12 +462,12 @@ public static class DiffUtility
                 }
             }
 
-            dotNetOnly.Add(BuildDotNetMethodReference(dotNetMethod));
+            state.DotNetOnly.Add(BuildDotNetMethodReference(dotNetMethod));
         }
 
-        foreach (var javaMethod in javaMethods.Where(j => !consumedJavaMethods.Contains(j)))
+        foreach (var javaMethod in javaMethods.Where(j => !state.ConsumedJavaMethods.Contains(j)))
         {
-            javaOnly.Add(BuildJavaMethodReference(javaMethod));
+            state.JavaOnly.Add(BuildJavaMethodReference(javaMethod));
         }
     }
 
