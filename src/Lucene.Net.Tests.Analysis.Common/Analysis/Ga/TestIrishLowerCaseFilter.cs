@@ -93,23 +93,16 @@ namespace Lucene.Net.Analysis.Ga
         /// <summary>
         /// Regression test for issue #1150: ArgumentOutOfRangeException in IrishLowerCaseFilter.
         ///
-        /// The bug: when the n-/t-prothesis path runs, idx is set to 2 but the span length was
-        /// left as chLen (full term length) instead of chLen - idx. This creates a span that reads
-        /// chArray[idx .. idx+chLen], which exceeds the buffer when the buffer is sized just large
-        /// enough for chLen chars.
-        ///
-        /// We reproduce by using a custom TokenStream that writes directly into the internal
-        /// CharTermAttributeImpl.termBuffer field, bypassing the Oversize over-allocation that
+        /// We confirm this is fixed by using a custom TokenStream that writes directly into the
+        /// internal CharTermAttribute.termBuffer field, bypassing the Oversize over-allocation that
         /// all public paths go through, so the buffer is sized to exactly the post-prothesis
-        /// term length. The buggy code then asks for chArray[2..2+chLen] which is 2 chars past
-        /// the end.
+        /// term length. Any out-of-range access would throw an exception and fail the test.
         /// </summary>
         [Test, LuceneNetSpecific] // Issue #1150
-        public virtual void TestProthesis_SpanBoundaryThrows()
+        public virtual void TestProthesis_SpanBoundary()
         {
             // "nAthair" has length 7; after prothesis it becomes "n-athair" (length 8).
-            // We pre-size the buffer to exactly 8 so that chArray[2..2+8] = chArray[2..10]
-            // exceeds the buffer and throws ArgumentOutOfRangeException on the buggy code.
+            // We pre-size the buffer to exactly 8 so that we can detect out-of-range access.
             const string input = "nAthair";
             const string expected = "n-athair";
 
@@ -121,8 +114,8 @@ namespace Lucene.Net.Analysis.Ga
         /// <summary>
         /// A TokenStream that emits a single token with the backing buffer sized to exactly
         /// the post-prothesis term length (term.Length + 1), bypassing Oversize over-allocation.
-        /// This forces the tight-buffer condition that triggers the span length bug in
-        /// IrishLowerCaseFilter when idx=2 and spanLen is incorrectly computed as chLen.
+        /// This forces the tight-buffer condition that could detect span length bugs in
+        /// IrishLowerCaseFilter.
         /// </summary>
         private sealed class TightBufferTokenStream : TokenStream
         {
@@ -130,7 +123,7 @@ namespace Lucene.Net.Analysis.Ga
             private bool _done;
             private readonly CharTermAttribute _termAtt;
 
-            public TightBufferTokenStream(string term) : base()
+            public TightBufferTokenStream(string term)
             {
                 _term = term;
                 _termAtt = (CharTermAttribute)AddAttribute<ICharTermAttribute>();
