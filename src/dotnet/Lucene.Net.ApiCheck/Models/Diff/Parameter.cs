@@ -22,4 +22,6 @@ public class Parameter
     public required TypeReference? Type { get; set; }
 
     public required string Name { get; set; }
+
+    public override string ToString() => Type?.ToString() ?? Name;
 }

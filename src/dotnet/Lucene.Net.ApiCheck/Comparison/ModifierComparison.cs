@@ -54,6 +54,7 @@ public static class ModifierComparison
     {
         Type,
         Member,
+        Field,
     }
 
     public static bool ModifiersAreEquivalent(ModifierUsage usage, IReadOnlyList<string> javaModifiers, IReadOnlyList<string> dotnetModifiers)
@@ -143,6 +144,31 @@ public static class ModifierComparison
             {
                 applicableJavaModifiers.Remove(javaOnly);
             }
+        }
+        else if (usage == ModifierUsage.Field)
+        {
+            // Java 'final' on a field ↔ .NET 'readonly' (init-only). This is distinct
+            // from the method case where 'final' maps to 'sealed'. Note: a Java
+            // 'public static final' constant is often ported to a .NET 'const', which
+            // shows up here as 'public const' (no 'static'/'readonly' on the .NET side
+            // because const is implicitly static and not init-only). Treat .NET 'const'
+            // as 'static readonly' for the comparison so the two forms match.
+            if (applicableJavaModifiers.Contains("final"))
+            {
+                applicableJavaModifiers.Remove("final");
+                applicableJavaModifiers.Add("readonly");
+            }
+
+            if (applicableDotNetModifiers.Contains("const"))
+            {
+                applicableDotNetModifiers.Remove("const");
+                applicableDotNetModifiers.Add("static");
+                applicableDotNetModifiers.Add("readonly");
+            }
+
+            // 'transient'/'volatile' are Java-only field modifiers with no .NET analogue.
+            applicableJavaModifiers.Remove("transient");
+            applicableJavaModifiers.Remove("volatile");
         }
 
         return applicableJavaModifiers.SetEquals(applicableDotNetModifiers);

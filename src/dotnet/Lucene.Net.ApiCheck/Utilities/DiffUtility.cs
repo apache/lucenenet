@@ -190,7 +190,7 @@ public static class DiffUtility
 
             var hasTypeMismatch = !MemberComparison.FieldTypesMatch(dotNetField, javaField);
             var hasModifierMismatch = !ModifierComparison.ModifiersAreEquivalent(
-                ModifierComparison.ModifierUsage.Member,
+                ModifierComparison.ModifierUsage.Field,
                 javaField.Modifiers,
                 dotNetField.GetModifiers());
 
