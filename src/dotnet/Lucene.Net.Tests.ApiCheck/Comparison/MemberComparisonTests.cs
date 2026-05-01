@@ -30,6 +30,23 @@ public class MemberComparisonTests
         Assert.True(MemberComparison.FieldNamesMatch(dotNetField, javaField));
     }
 
+    public class FilterFieldExample
+    {
+        protected int m_input = 0;
+        protected int m_output = 0;
+    }
+
+    [InlineData("m_input", "in", true)]
+    [InlineData("m_output", "out", true)]
+    [InlineData("m_input", "out", false)]
+    [Theory]
+    public void FieldNamesMatch_FilterRename(string dotNetFieldName, string javaFieldName, bool expected)
+    {
+        var dotNetField = typeof(FilterFieldExample).GetField(dotNetFieldName, BindingFlags.Instance | BindingFlags.NonPublic)!;
+        var javaField = new FieldMetadata(javaFieldName, "java.io.Reader", new List<string> { "protected" }, IsStatic: false);
+        Assert.Equal(expected, MemberComparison.FieldNamesMatch(dotNetField, javaField));
+    }
+
     public class CtorExample
     {
         public CtorExample() { }

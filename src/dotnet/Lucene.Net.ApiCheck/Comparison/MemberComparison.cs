@@ -32,9 +32,26 @@ public class MemberComparison
             return true;
         }
 
+        if (KnownFieldNameRenames.TryGetValue(java, out var renamed)
+            && string.Equals(dotNet, renamed, StringComparison.Ordinal))
+        {
+            return true;
+        }
+
         var normalized = NormalizeJavaTypeWordsToDotNet(java);
         return !ReferenceEquals(normalized, java) && dotNet == normalized;
     }
+
+    // Lucene.NET applies a few well-known field renames that aren't reachable via
+    // mechanical string normalization. These are the Java field names (cleaned of
+    // .NET-side prefixes like m_/s_/_) and their .NET cleaned equivalents.
+    private static readonly Dictionary<string, string> KnownFieldNameRenames = new(StringComparer.Ordinal)
+    {
+        // Filter pattern: java.io.FilterReader.in / FilterWriter.out are exposed in
+        // Lucene.NET as the more descriptive m_input / m_output protected fields.
+        ["in"] = "input",
+        ["out"] = "output",
+    };
 
     /// <summary>
     /// Determines whether the field types of a name-matched .NET field and Java
