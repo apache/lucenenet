@@ -271,4 +271,53 @@ public class MemberComparisonTests
         var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Count))!;
         Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("size", "int")));
     }
+
+    public class FieldTypeExample
+    {
+        protected int foo = 0;
+        protected string bar = string.Empty;
+    }
+
+    [Fact]
+    public void FieldTypesMatch_PrimitiveInt_Matches()
+    {
+        var dotNetField = typeof(FieldTypeExample).GetField("foo", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        var javaField = new FieldMetadata("foo", "int", new List<string> { "protected" }, IsStatic: false);
+        Assert.True(MemberComparison.FieldTypesMatch(dotNetField, javaField));
+    }
+
+    [Fact]
+    public void FieldTypesMatch_StringMismatch_DoesNotMatch()
+    {
+        var dotNetField = typeof(FieldTypeExample).GetField("foo", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        var javaField = new FieldMetadata("foo", "java.lang.String", new List<string> { "protected" }, IsStatic: false);
+        Assert.False(MemberComparison.FieldTypesMatch(dotNetField, javaField));
+    }
+
+    [Fact]
+    public void MethodNamesAndArityMatch_DifferentParamTypes_StillMatches()
+    {
+        // Method matches by name + arity even when parameter types differ.
+        // This is the looser pairing used to detect type-mismatched matched methods.
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.Format))!;
+        var javaMethod = JavaMethod("format", "java.lang.String", ("s", "int"));
+        Assert.True(MemberComparison.MethodNamesAndArityMatch(method, javaMethod));
+        Assert.False(MemberComparison.MethodSignaturesMatch(method, javaMethod));
+    }
+
+    [Fact]
+    public void MethodSignaturesMatch_FullMatch_True()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.Add))!;
+        var javaMethod = JavaMethod("add", "int", ("x", "int"), ("y", "int"));
+        Assert.True(MemberComparison.MethodSignaturesMatch(method, javaMethod));
+    }
+
+    [Fact]
+    public void MethodSignaturesMatch_ReturnTypeDiffers_False()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.Add))!;
+        var javaMethod = JavaMethod("add", "long", ("x", "int"), ("y", "int"));
+        Assert.False(MemberComparison.MethodSignaturesMatch(method, javaMethod));
+    }
 }

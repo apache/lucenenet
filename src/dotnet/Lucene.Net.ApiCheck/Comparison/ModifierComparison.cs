@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -53,6 +53,7 @@ public static class ModifierComparison
     public enum ModifierUsage
     {
         Type,
+        Member,
     }
 
     public static bool ModifiersAreEquivalent(ModifierUsage usage, IReadOnlyList<string> javaModifiers, IReadOnlyList<string> dotnetModifiers)
@@ -90,7 +91,49 @@ public static class ModifierComparison
                 applicableJavaModifiers.Add("sealed"); // normalize to C# naming conventions
             }
         }
+        else if (usage == ModifierUsage.Member)
+        {
+            // Java 'final' on a method/field ↔ .NET 'sealed' (for sealed override)
+            // or no virtual modifier at all. Normalize 'final' → 'sealed', and treat
+            // 'sealed override' on the .NET side as 'sealed' for comparison.
+            if (applicableJavaModifiers.Contains("final"))
+            {
+                applicableJavaModifiers.Remove("final");
+                applicableJavaModifiers.Add("sealed");
+            }
+
+            if (applicableDotNetModifiers.Contains("sealed override"))
+            {
+                applicableDotNetModifiers.Remove("sealed override");
+                applicableDotNetModifiers.Add("sealed");
+            }
+
+            // .NET virtual/override ↔ Java's default open-by-default behavior (no
+            // explicit modifier on the Java side). Drop these so they don't count
+            // as differences against an unannotated Java method.
+            applicableDotNetModifiers.Remove("virtual");
+            applicableDotNetModifiers.Remove("override");
+
+            // Java 'abstract' is meaningful on both sides and should match.
+            // Java 'static' is meaningful on both sides and should match (for members,
+            // static has the same meaning unlike for types).
+            // Java 'synchronized', 'native', 'strictfp', 'transient', 'volatile' have
+            // no .NET equivalent on members; ignore them.
+            foreach (var javaOnly in JavaMemberOnlyModifiers)
+            {
+                applicableJavaModifiers.Remove(javaOnly);
+            }
+        }
 
         return applicableJavaModifiers.SetEquals(applicableDotNetModifiers);
     }
+
+    private static readonly HashSet<string> JavaMemberOnlyModifiers = new()
+    {
+        "synchronized",
+        "native",
+        "strictfp",
+        "transient",
+        "volatile",
+    };
 }

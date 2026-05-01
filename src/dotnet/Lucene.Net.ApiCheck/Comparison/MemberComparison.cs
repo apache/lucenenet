@@ -28,6 +28,81 @@ public class MemberComparison
     }
 
     /// <summary>
+    /// Determines whether the field types of a name-matched .NET field and Java
+    /// field are compatible.
+    /// </summary>
+    public static bool FieldTypesMatch(FieldInfo dotNetField, FieldMetadata javaField)
+    {
+        return ParameterTypesMatch(dotNetField.FieldType, javaField.Type);
+    }
+
+    /// <summary>
+    /// Determines whether a .NET method matches a Java method by name and arity
+    /// only, ignoring parameter types. Useful for detecting type mismatches on
+    /// otherwise-corresponding methods.
+    /// </summary>
+    public static bool MethodNamesAndArityMatch(MethodInfo dotNetMethod, MethodMetadata javaMethod)
+    {
+        return MethodNamesMatch(dotNetMethod.Name, javaMethod.Name)
+               && dotNetMethod.GetParameters().Length == javaMethod.Parameters.Count;
+    }
+
+    /// <summary>
+    /// Determines whether the parameter and return types of two name+arity-matched
+    /// methods are compatible.
+    /// </summary>
+    public static bool MethodSignaturesMatch(MethodInfo dotNetMethod, MethodMetadata javaMethod)
+    {
+        return ParameterListsMatch(dotNetMethod.GetParameters(), javaMethod.Parameters)
+               && ParameterTypesMatch(dotNetMethod.ReturnType, javaMethod.ReturnType);
+    }
+
+    /// <summary>
+    /// Determines whether the parameter types of two arity-matched constructors
+    /// are compatible.
+    /// </summary>
+    public static bool ConstructorSignaturesMatch(ConstructorInfo dotNetCtor, ConstructorMetadata javaCtor)
+    {
+        return ParameterListsMatch(dotNetCtor.GetParameters(), javaCtor.Parameters);
+    }
+
+    /// <summary>
+    /// Determines whether a .NET property's name matches a Java getter/setter/is
+    /// method's bare name (ignoring whether the type aligns).
+    /// </summary>
+    public static bool PropertyNameMatchesJavaAccessor(PropertyInfo dotNetProperty, MethodMetadata javaMethod)
+    {
+        var javaName = javaMethod.Name;
+        var paramCount = javaMethod.Parameters.Count;
+
+        if (javaName.StartsWith("get", StringComparison.Ordinal) && javaName.Length > 3 && paramCount == 0)
+        {
+            return PropertyNameMatches(dotNetProperty.Name, javaName[3..], allowIsPrefix: false);
+        }
+
+        if (javaName.StartsWith("set", StringComparison.Ordinal) && javaName.Length > 3 && paramCount == 1
+            && javaMethod.ReturnType.Equals("void", StringComparison.Ordinal))
+        {
+            return PropertyNameMatches(dotNetProperty.Name, javaName[3..], allowIsPrefix: false);
+        }
+
+        if (javaName.StartsWith("is", StringComparison.Ordinal) && javaName.Length > 2 && paramCount == 0
+            && javaMethod.ReturnType.Equals("boolean", StringComparison.Ordinal))
+        {
+            return PropertyNameMatches(dotNetProperty.Name, javaName[2..], allowIsPrefix: true);
+        }
+
+        if (paramCount == 0
+            && !javaMethod.ReturnType.Equals("void", StringComparison.Ordinal)
+            && string.Equals(dotNetProperty.Name, javaName, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Determines whether a .NET constructor matches a Java constructor by parameter
     /// count and parameter types. Constructors have no name to compare on, so the
     /// signature is the only signal.

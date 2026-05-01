@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,4 +30,9 @@ public class TypeDiff
     public required IReadOnlyList<MemberReference> LuceneNetMembersNotInLucene { get; set; }
 
     public required IReadOnlyList<MemberReference> LuceneMembersNotInLuceneNet { get; set; }
+
+    /// <summary>
+    /// Members present on both sides whose type or modifiers differ.
+    /// </summary>
+    public IReadOnlyList<MemberDiff> MatchedMembersWithDifferences { get; set; } = new List<MemberDiff>();
 }
