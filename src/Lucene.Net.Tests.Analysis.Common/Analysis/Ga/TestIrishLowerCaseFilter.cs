@@ -53,6 +53,44 @@ namespace Lucene.Net.Analysis.Ga
         }
 
         /// <summary>
+        /// Test that prothesis output is correct across all upper vowels and fadas,
+        /// and for both n- and t- prefixes.
+        /// </summary>
+        [Test, LuceneNetSpecific] // Issue #1150
+        public virtual void TestProthesisCorrectness()
+        {
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new IrishLowerCaseFilter(tokenizer));
+            });
+
+            // Plain upper vowels
+            CheckOneTerm(a, "nAthair", "n-athair");
+            CheckOneTerm(a, "nEan", "n-ean");
+            CheckOneTerm(a, "nIasc", "n-iasc");
+            CheckOneTerm(a, "nOiche", "n-oiche");
+            CheckOneTerm(a, "nUll", "n-ull");
+            CheckOneTerm(a, "tAthair", "t-athair");
+            CheckOneTerm(a, "tEan", "t-ean");
+            CheckOneTerm(a, "tIasc", "t-iasc");
+            CheckOneTerm(a, "tOiche", "t-oiche");
+            CheckOneTerm(a, "tUll", "t-ull");
+
+            // Accented vowels (fadas)
+            CheckOneTerm(a, "nÁit", "n-áit");
+            CheckOneTerm(a, "nÉan", "n-éan");
+            CheckOneTerm(a, "nÍoc", "n-íoc");
+            CheckOneTerm(a, "nÓg", "n-óg");
+            CheckOneTerm(a, "nÚll", "n-úll");
+            CheckOneTerm(a, "tÁit", "t-áit");
+            CheckOneTerm(a, "tÉan", "t-éan");
+            CheckOneTerm(a, "tÍoc", "t-íoc");
+            CheckOneTerm(a, "tÓg", "t-óg");
+            CheckOneTerm(a, "tÚll", "t-úll");
+        }
+
+        /// <summary>
         /// Regression test for issue #1150: ArgumentOutOfRangeException in IrishLowerCaseFilter.
         ///
         /// The bug: when the n-/t-prothesis path runs, idx is set to 2 but the span length was
