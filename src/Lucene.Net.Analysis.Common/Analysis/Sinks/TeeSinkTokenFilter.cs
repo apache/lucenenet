@@ -2,6 +2,7 @@
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Sinks
@@ -248,6 +249,8 @@ namespace Lucene.Net.Analysis.Sinks
                 return true;
             }
 
+            [SuppressMessage("Design", "Lucene1001:TokenStream override of End()/Reset()/Close() must call the corresponding base method.",
+                Justification = "Sink streams replay cached state; calling base.End() would clear the attributes that RestoreState then sets. Matches Lucene Java behavior.")]
             public override sealed void End()
             {
                 if (finalState != null)
@@ -256,6 +259,8 @@ namespace Lucene.Net.Analysis.Sinks
                 }
             }
 
+            [SuppressMessage("Design", "Lucene1001:TokenStream override of End()/Reset()/Close() must call the corresponding base method.",
+                Justification = "Sink streams replay cached state; the iterator reset is sufficient and base.Reset() (no-op on TokenStream) provides nothing further. Matches Lucene Java behavior.")]
             public override sealed void Reset()
             {
                 it = cachedStates.GetEnumerator();

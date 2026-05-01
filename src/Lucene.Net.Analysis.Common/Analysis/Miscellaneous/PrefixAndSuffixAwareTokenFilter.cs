@@ -1,4 +1,6 @@
 // Lucene version compatibility level 4.8.1
+using System.Diagnostics.CodeAnalysis;
+
 namespace Lucene.Net.Analysis.Miscellaneous
 {
     /*
@@ -85,16 +87,29 @@ namespace Lucene.Net.Analysis.Miscellaneous
             return suffix.IncrementToken();
         }
 
+        // LUCENENET specific: matches the upstream Java implementation, which does not call super.reset().
+        [SuppressMessage("Design", "Lucene1001:TokenStream override of End()/Reset()/Close() must call the corresponding base method.",
+            Justification = "Matches upstream Lucene Java behavior; TokenStream.Reset() is a no-op so the omission is equivalent.")]
         public override void Reset()
         {
             suffix.Reset();
         }
 
+        // LUCENENET specific: matches the upstream Java implementation, which does not call super.close().
+        [SuppressMessage("Design", "Lucene1001:TokenStream override of End()/Reset()/Close() must call the corresponding base method.",
+            Justification = "Matches upstream Lucene Java behavior; TokenStream.Close() is a no-op so the omission is equivalent.")]
         public override void Close()
         {
             suffix.Close();
         }
 
+        // LUCENENET TODO: the upstream Java does not call super.end() here, so neither do we — but
+        // TokenStream.End() does ClearAttributes() and resets PositionIncrementAttribute, which the
+        // documented contract says End() overrides should do. This may be a latent bug in upstream
+        // Lucene that the .NET port should investigate; see Lucene.NET issue tracker if reproducing
+        // a problem with end-of-stream attribute state on this filter.
+        [SuppressMessage("Design", "Lucene1001:TokenStream override of End()/Reset()/Close() must call the corresponding base method.",
+            Justification = "Matches upstream Lucene Java behavior; see LUCENENET TODO above for why this may need to be revisited.")]
         public override void End()
         {
             suffix.End();
