@@ -4,6 +4,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.SortedSet
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Facet.SortedSet
         /// <see cref="IndexReader"/> passed to the constructor. </summary>
         private readonly IndexReader origReader;
 
-        private readonly IDictionary<string, OrdRange> prefixToOrdRange = new Dictionary<string, OrdRange>();
+        private readonly IDictionary<string, OrdRange> prefixToOrdRange = new JCG.Dictionary<string, OrdRange>();
 
         /// <summary>
         /// Creates this, pulling doc values from the specified

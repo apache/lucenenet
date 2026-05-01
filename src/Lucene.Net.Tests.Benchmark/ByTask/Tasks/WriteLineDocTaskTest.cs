@@ -143,7 +143,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                               bool allowEmptyDocs,
                                               String docMakerName)
         {
-            Dictionary<string, string> props = new Dictionary<string, string>();
+            JCG.Dictionary<string, string> props = new JCG.Dictionary<string, string>();
             props["doc.maker"] = docMakerName;
             props["line.file.out"] = file.FullName;
             props["directory"] = "RAMDirectory"; // no accidental FS dir.

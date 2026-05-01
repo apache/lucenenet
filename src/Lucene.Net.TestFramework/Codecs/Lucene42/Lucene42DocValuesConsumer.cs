@@ -150,7 +150,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     meta.WriteByte((byte)Lucene42DocValuesProducer.TABLE_COMPRESSED); // table-compressed
                     var decode = new long[uniqueValues.Count];
                     uniqueValues.CopyTo(decode, 0);
-                    var encode = new Dictionary<long, int>();
+                    var encode = new JCG.Dictionary<long, int>();
                     data.WriteVInt32(decode.Length);
                     for (int i = 0; i < decode.Length; i++)
                     {

@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
 
     internal class CoalescedUpdates
     {
-        internal readonly IDictionary<Query, int> queries = new Dictionary<Query, int>();
+        internal readonly IDictionary<Query, int> queries = new JCG.Dictionary<Query, int>();
         internal readonly IList<IEnumerable<Term>> iterables = new JCG.List<IEnumerable<Term>>();
         internal readonly IList<NumericDocValuesUpdate> numericDVUpdates = new JCG.List<NumericDocValuesUpdate>();
         internal readonly IList<BinaryDocValuesUpdate> binaryDVUpdates = new JCG.List<BinaryDocValuesUpdate>();

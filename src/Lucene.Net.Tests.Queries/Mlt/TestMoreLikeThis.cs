@@ -9,6 +9,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Tests.Queries.Mlt
 {
@@ -103,7 +104,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
 
         private IDictionary<string, float> GetOriginalValues()
         {
-            IDictionary<string, float> originalValues = new Dictionary<string, float>();
+            IDictionary<string, float> originalValues = new JCG.Dictionary<string, float>();
             MoreLikeThis mlt = new MoreLikeThis(reader);
             mlt.Analyzer = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
             mlt.MinDocFreq = 1;

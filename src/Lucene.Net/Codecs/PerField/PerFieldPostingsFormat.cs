@@ -106,8 +106,8 @@ namespace Lucene.Net.Codecs.PerField
         {
             private readonly PerFieldPostingsFormat outerInstance;
 
-            internal readonly IDictionary<PostingsFormat, FieldsConsumerAndSuffix> formats = new Dictionary<PostingsFormat, FieldsConsumerAndSuffix>();
-            internal readonly IDictionary<string, int> suffixes = new Dictionary<string, int>();
+            internal readonly IDictionary<PostingsFormat, FieldsConsumerAndSuffix> formats = new JCG.Dictionary<PostingsFormat, FieldsConsumerAndSuffix>();
+            internal readonly IDictionary<string, int> suffixes = new JCG.Dictionary<string, int>();
 
             internal readonly SegmentWriteState segmentWriteState;
 
@@ -209,7 +209,7 @@ namespace Lucene.Net.Codecs.PerField
         {
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
             internal readonly IDictionary<string, FieldsProducer> fields = new JCG.SortedDictionary<string, FieldsProducer>(StringComparer.Ordinal);
-            internal readonly IDictionary<string, FieldsProducer> formats = new Dictionary<string, FieldsProducer>();
+            internal readonly IDictionary<string, FieldsProducer> formats = new JCG.Dictionary<string, FieldsProducer>();
 
             public FieldsReader(SegmentReadState readState)
             {

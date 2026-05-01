@@ -73,7 +73,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
                     // qtext
                     string qtext = line.Substring(k + 1).Trim();
                     // we got a topic!
-                    IDictionary<string, string> fields = new Dictionary<string, string>
+                    IDictionary<string, string> fields = new JCG.Dictionary<string, string>
                     {
                         [name] = qtext
                     };

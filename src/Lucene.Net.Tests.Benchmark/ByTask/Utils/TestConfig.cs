@@ -1,6 +1,7 @@
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Utils
 {
@@ -26,7 +27,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         [Test]
         public void TestAbsolutePathNamesWindows()
         {
-            Dictionary<string, string> props = new Dictionary<string, string>();
+            JCG.Dictionary<string, string> props = new JCG.Dictionary<string, string>();
             props["work.dir1"] = "c:\\temp";
             props["work.dir2"] = "c:/temp";
             Config conf = new Config(props);

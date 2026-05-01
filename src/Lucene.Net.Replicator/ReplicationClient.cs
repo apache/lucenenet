@@ -165,8 +165,8 @@ namespace Lucene.Net.Replicator
         private void DoUpdate()
         {
             SessionToken session = null;
-            Dictionary<string, Directory> sourceDirectory = new Dictionary<string, Directory>();
-            Dictionary<string, IList<string>> copiedFiles = new Dictionary<string, IList<string>>();
+            JCG.Dictionary<string, Directory> sourceDirectory = new JCG.Dictionary<string, Directory>();
+            JCG.Dictionary<string, IList<string>> copiedFiles = new JCG.Dictionary<string, IList<string>>();
             bool notify = false;
             try
             {
@@ -304,7 +304,7 @@ namespace Lucene.Net.Replicator
             if (handlerRevisionFiles is null)
                 return newRevisionFiles;
 
-            Dictionary<string, IList<RevisionFile>> requiredFiles = new Dictionary<string, IList<RevisionFile>>();
+            JCG.Dictionary<string, IList<RevisionFile>> requiredFiles = new JCG.Dictionary<string, IList<RevisionFile>>();
             foreach (var e in handlerRevisionFiles)
             {
                 // put the handler files in a Set, for faster contains() checks later

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -129,7 +130,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         private EnwikiContentSource createContentSource(String docs, bool forever)
         {
 
-            Dictionary<string, string> props = new Dictionary<string, string>();
+            JCG.Dictionary<string, string> props = new JCG.Dictionary<string, string>();
             props["print.props"] = "false";
             props["content.source.forever"] = forever.ToString();
             Config config = new Config(props);

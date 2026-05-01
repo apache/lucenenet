@@ -9,6 +9,7 @@ using Spatial4n.Context.Nts;
 using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Spatial.Prefix
         {
             try
             {
-                IDictionary<string, string> args = new Dictionary<string, string>
+                IDictionary<string, string> args = new JCG.Dictionary<string, string>
                 {
                     ["SpatialContextFactory"] = typeof(NtsSpatialContextFactory).FullName
                 };

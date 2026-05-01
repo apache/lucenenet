@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using Assert = Lucene.Net.TestFramework.Assert;
 using BitSet = Lucene.Net.Util.OpenBitSet;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -74,7 +75,7 @@ namespace Lucene.Net.Index
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                 .SetIndexDeletionPolicy(new RollbackDeletionPolicy(id))
                 .SetIndexCommit(last));
-            IDictionary<string, string> data = new Dictionary<string, string>();
+            IDictionary<string, string> data = new JCG.Dictionary<string, string>();
             data["index"] = "Rolled back to 1-" + id.ToString(CultureInfo.InvariantCulture);
             w.SetCommitData(data);
             w.Dispose();
@@ -153,7 +154,7 @@ namespace Lucene.Net.Index
 
                 if (currentRecordId % 10 == 0)
                 {
-                    IDictionary<string, string> data = new Dictionary<string, string>();
+                    IDictionary<string, string> data = new JCG.Dictionary<string, string>();
                     data["index"] = "records 1-" + currentRecordId.ToString(CultureInfo.InvariantCulture);
                     w.SetCommitData(data);
                     w.Commit();

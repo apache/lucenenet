@@ -498,7 +498,7 @@ namespace Lucene.Net.Queries.Mlt
         /// <exception cref="IOException"/>
         public PriorityQueue<ScoreTerm> RetrieveTerms(int docNum)
         {
-            IDictionary<string, Int32> termFreqMap = new Dictionary<string, Int32>();
+            IDictionary<string, Int32> termFreqMap = new JCG.Dictionary<string, Int32>();
             foreach (string fieldName in FieldNames)
             {
                 Fields vectors = ir.GetTermVectors(docNum);
@@ -665,7 +665,7 @@ namespace Lucene.Net.Queries.Mlt
         // LUCENENET: Factored out the object[] to avoid boxing
         public PriorityQueue<ScoreTerm> RetrieveTerms(TextReader r, string fieldName)
         {
-            IDictionary<string, Int32> words = new Dictionary<string, Int32>();
+            IDictionary<string, Int32> words = new JCG.Dictionary<string, Int32>();
             AddTermFrequencies(r, words, fieldName);
             return CreateQueue(words);
         }

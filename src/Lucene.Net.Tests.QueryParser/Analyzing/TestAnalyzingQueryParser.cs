@@ -8,6 +8,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Analyzing
 {
@@ -45,8 +46,8 @@ namespace Lucene.Net.QueryParsers.Analyzing
         private string[] fuzzyInput;
         private string[] fuzzyExpected;
 
-        private IDictionary<string, string> wildcardEscapeHits = new Dictionary<string, string>();
-        private IDictionary<string, string> wildcardEscapeMisses = new Dictionary<string, string>();
+        private IDictionary<string, string> wildcardEscapeHits = new JCG.Dictionary<string, string>();
+        private IDictionary<string, string> wildcardEscapeMisses = new JCG.Dictionary<string, string>();
 
         public override void SetUp()
         {

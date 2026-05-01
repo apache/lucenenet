@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using Lucene.Net.Util;
+using JCG = J2N.Collections.Generic;
 using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Util
@@ -55,7 +56,7 @@ namespace Lucene.Net.Analysis.Util
                 throw new ArgumentException("invalid keysAndValues map");
             }
             string previous;
-            IDictionary<string, string> args = new Dictionary<string, string>();
+            IDictionary<string, string> args = new JCG.Dictionary<string, string>();
             for (int i = 0; i < keysAndValues.Length; i += 2)
             {
                 if (args.TryGetValue(keysAndValues[i], out previous))

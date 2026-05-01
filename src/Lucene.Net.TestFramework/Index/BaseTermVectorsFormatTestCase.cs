@@ -311,8 +311,8 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                positionToTerms = new Dictionary<int, ISet<int>>(len);
-                startOffsetToTerms = new Dictionary<int, ISet<int>>(len);
+                positionToTerms = new JCG.Dictionary<int, ISet<int>>(len);
+                startOffsetToTerms = new JCG.Dictionary<int, ISet<int>>(len);
                 for (int i = 0; i < len; ++i)
                 {
                     if (!positionToTerms.TryGetValue(positions[i], out ISet<int> positionTerms))
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
                     startOffsetTerms.Add(i);
                 }
 
-                freqs = new Dictionary<string, int>();
+                freqs = new JCG.Dictionary<string, int>();
                 foreach (string term in terms)
                 {
                     if (freqs.TryGetValue(term, out int freq))

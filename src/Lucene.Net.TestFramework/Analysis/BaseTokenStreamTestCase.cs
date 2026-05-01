@@ -181,8 +181,8 @@ namespace Lucene.Net.Analysis
                 // *********** End From Lucene 8.2.0 **************
 
                 // Maps position to the start/end offset:
-                IDictionary<int, int> posToStartOffset = new Dictionary<int, int>();
-                IDictionary<int, int> posToEndOffset = new Dictionary<int, int>();
+                IDictionary<int, int> posToStartOffset = new JCG.Dictionary<int, int>();
+                IDictionary<int, int> posToEndOffset = new JCG.Dictionary<int, int>();
 
                 ts.Reset();
                 int pos = -1;

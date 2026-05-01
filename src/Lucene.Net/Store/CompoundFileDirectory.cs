@@ -5,6 +5,7 @@ using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -170,7 +171,7 @@ namespace Lucene.Net.Store
                     entriesStream = dir.OpenChecksumInput(entriesFileName, IOContext.READ_ONCE);
                     CodecUtil.CheckHeader(entriesStream, CompoundFileWriter.ENTRY_CODEC, CompoundFileWriter.VERSION_START, CompoundFileWriter.VERSION_CURRENT);
                     int numEntries = entriesStream.ReadVInt32();
-                    mapping = new Dictionary<string, FileEntry>(numEntries);
+                    mapping = new JCG.Dictionary<string, FileEntry>(numEntries);
                     for (int i = 0; i < numEntries; i++)
                     {
                         FileEntry fileEntry = new FileEntry();
@@ -215,7 +216,7 @@ namespace Lucene.Net.Store
 
         private static IDictionary<string, FileEntry> ReadLegacyEntries(IndexInput stream, int firstInt)
         {
-            IDictionary<string, FileEntry> entries = new Dictionary<string, FileEntry>();
+            IDictionary<string, FileEntry> entries = new JCG.Dictionary<string, FileEntry>();
             int count;
             bool stripSegmentName;
             if (firstInt < CompoundFileWriter.FORMAT_PRE_VERSION)

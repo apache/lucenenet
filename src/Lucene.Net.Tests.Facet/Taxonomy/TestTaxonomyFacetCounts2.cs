@@ -221,7 +221,7 @@ namespace Lucene.Net.Facet.Taxonomy
         // initialize expectedCounts w/ 0 for all categories
         private static IDictionary<string, int> newCounts()
         {
-            IDictionary<string, int> counts = new Dictionary<string, int>();
+            IDictionary<string, int> counts = new JCG.Dictionary<string, int>();
             counts[CP_A] = 0;
             counts[CP_B] = 0;
             counts[CP_C] = 0;

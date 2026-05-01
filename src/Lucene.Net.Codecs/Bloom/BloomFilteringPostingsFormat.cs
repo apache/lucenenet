@@ -373,7 +373,7 @@ namespace Lucene.Net.Codecs.Bloom
             private readonly BloomFilteringPostingsFormat outerInstance;
 
             private readonly FieldsConsumer _delegateFieldsConsumer;
-            private readonly Dictionary<FieldInfo, FuzzySet> _bloomFilters = new Dictionary<FieldInfo, FuzzySet>();
+            private readonly JCG.Dictionary<FieldInfo, FuzzySet> _bloomFilters = new JCG.Dictionary<FieldInfo, FuzzySet>();
             private readonly SegmentWriteState _state;
 
             public BloomFilteredFieldsConsumer(BloomFilteringPostingsFormat outerInstance, FieldsConsumer fieldsConsumer,

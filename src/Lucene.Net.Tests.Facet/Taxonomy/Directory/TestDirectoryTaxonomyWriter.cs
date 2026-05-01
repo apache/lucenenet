@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
@@ -102,7 +103,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             var taxoWriter = new DirectoryTaxonomyWriter(dir, OpenMode.CREATE_OR_APPEND, NO_OP_CACHE);
             taxoWriter.AddCategory(new FacetLabel("a"));
             taxoWriter.AddCategory(new FacetLabel("b"));
-            IDictionary<string, string> userCommitData = new Dictionary<string, string>();
+            IDictionary<string, string> userCommitData = new JCG.Dictionary<string, string>();
             userCommitData["testing"] = "1 2 3";
             taxoWriter.SetCommitData(userCommitData);
             taxoWriter.Dispose();
@@ -118,7 +119,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // that the taxonomy index has been recreated.
             taxoWriter = new DirectoryTaxonomyWriter(dir, OpenMode.CREATE_OR_APPEND, NO_OP_CACHE);
             taxoWriter.AddCategory(new FacetLabel("c")); // add a category so that commit will happen
-            taxoWriter.SetCommitData(new Dictionary<string, string>()
+            taxoWriter.SetCommitData(new JCG.Dictionary<string, string>()
             {
                 {"just", "data"}
             });
@@ -192,7 +193,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private void TouchTaxo(DirectoryTaxonomyWriter taxoWriter, FacetLabel cp)
         {
             taxoWriter.AddCategory(cp);
-            taxoWriter.SetCommitData(new Dictionary<string, string>()
+            taxoWriter.SetCommitData(new JCG.Dictionary<string, string>()
             {
                 {"just", "data"}
             });

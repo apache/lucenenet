@@ -2,6 +2,7 @@ using Lucene.Net.Benchmarks.ByTask.Tasks;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Programmatic
 {
@@ -89,7 +90,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Programmatic
         // Sample programmatic settings. Could also read from file.
         private static IDictionary<string, string> InitProps()
         {
-            return new Dictionary<string, string>
+            return new JCG.Dictionary<string, string>
             {
                 ["task.max.depth.log"] = "3",
                 ["max.buffered"] = "buf:10:10:100:100:10:10:100:100",

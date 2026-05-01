@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.OpenNlp
 {
@@ -65,15 +66,15 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 var loader = new ClasspathResourceLoader(GetType());
 
-                var opennlpFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var opennlpFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 opennlpFactory.Inform(loader);
                 var opennlp = opennlpFactory.Create(NewAttributeFactory(), reader); //new OpenNLPTokenizer(reader, new Tools.NLPSentenceDetectorOp(sentenceModelFile), new Tools.NLPTokenizerOp(tokenizerModelFile));
 
-                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 opennlpPOSFilterFactory.Inform(loader);
                 var opennlpPOSFilter = opennlpPOSFilterFactory.Create(opennlp);  //new OpenNLPPOSFilter(opennlp, new Tools.NLPPOSTaggerOp(posTaggerModelFile));
 
-                var opennlpChunkerFilterFactory = new OpenNLPChunkerFilterFactory(new Dictionary<string, string> { { "chunkerModel", chunkerModelFile } });
+                var opennlpChunkerFilterFactory = new OpenNLPChunkerFilterFactory(new JCG.Dictionary<string, string> { { "chunkerModel", chunkerModelFile } });
                 opennlpChunkerFilterFactory.Inform(loader);
                 var opennlpChunkerFilter = opennlpChunkerFilterFactory.Create(opennlpPOSFilter);  //new OpenNLPChunkerFilter(filter1, new Tools.NLPChunkerOp(chunkerModelFile));
 
@@ -98,19 +99,19 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 var loader = new ClasspathResourceLoader(GetType());
 
-                var opennlpFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var opennlpFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 opennlpFactory.Inform(loader);
                 var opennlp = opennlpFactory.Create(NewAttributeFactory(), reader); //new OpenNLPTokenizer(reader, new Tools.NLPSentenceDetectorOp(sentenceModelFile), new Tools.NLPTokenizerOp(tokenizerModelFile));
 
-                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 opennlpPOSFilterFactory.Inform(loader);
                 var opennlpPOSFilter = opennlpPOSFilterFactory.Create(opennlp);  //new OpenNLPPOSFilter(opennlp, new Tools.NLPPOSTaggerOp(posTaggerModelFile));
 
-                var opennlpChunkerFilterFactory = new OpenNLPChunkerFilterFactory(new Dictionary<string, string> { { "chunkerModel", chunkerModelFile } });
+                var opennlpChunkerFilterFactory = new OpenNLPChunkerFilterFactory(new JCG.Dictionary<string, string> { { "chunkerModel", chunkerModelFile } });
                 opennlpChunkerFilterFactory.Inform(loader);
                 var opennlpChunkerFilter = opennlpChunkerFilterFactory.Create(opennlpPOSFilter);  //new OpenNLPChunkerFilter(filter1, new Tools.NLPChunkerOp(chunkerModelFile));
 
-                var typeAsPayloadFilterFactory = new TypeAsPayloadTokenFilterFactory(new Dictionary<string, string>());
+                var typeAsPayloadFilterFactory = new TypeAsPayloadTokenFilterFactory(new JCG.Dictionary<string, string>());
                 var typeAsPayloadFilter = typeAsPayloadFilterFactory.Create(opennlpChunkerFilter);
 
                 return new TokenStreamComponents(opennlp, typeAsPayloadFilter);

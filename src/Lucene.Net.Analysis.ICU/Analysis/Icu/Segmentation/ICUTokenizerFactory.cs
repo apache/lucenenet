@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Icu.Segmentation
 {
@@ -81,7 +82,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         public ICUTokenizerFactory(IDictionary<string, string> args)
             : base(args)
         {
-            tailored = new Dictionary<int, string>();
+            tailored = new JCG.Dictionary<int, string>();
             string rulefilesArg = Get(args, RULEFILES);
             if (rulefilesArg != null)
             {

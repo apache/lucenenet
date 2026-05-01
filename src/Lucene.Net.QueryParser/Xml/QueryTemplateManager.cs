@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using System.Xml.Xsl;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Xml
 {
@@ -34,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Xml
     /// </summary>
     public class QueryTemplateManager
     {
-        private readonly IDictionary<string, XslCompiledTransform> compiledTemplatesCache = new Dictionary<string, XslCompiledTransform>(); // LUCENENET: marked readonly
+        private readonly IDictionary<string, XslCompiledTransform> compiledTemplatesCache = new JCG.Dictionary<string, XslCompiledTransform>(); // LUCENENET: marked readonly
         private XslCompiledTransform defaultCompiledTemplates;
 
         public QueryTemplateManager()

@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
         internal readonly IndexFileDeleter deleter;
 
         // used by forceMerge to note those needing merging
-        private readonly IDictionary<SegmentCommitInfo, bool> segmentsToMerge = new Dictionary<SegmentCommitInfo, bool>();
+        private readonly IDictionary<SegmentCommitInfo, bool> segmentsToMerge = new JCG.Dictionary<SegmentCommitInfo, bool>();
 
         private int mergeMaxNumSegments;
 
@@ -3375,7 +3375,7 @@ namespace Lucene.Net.Index
                         SegmentInfos sis = new SegmentInfos(); // read infos from dir
                         sis.Read(dir);
                         JCG.HashSet<string> dsFilesCopied = new JCG.HashSet<string>();
-                        IDictionary<string, string> dsNames = new Dictionary<string, string>();
+                        IDictionary<string, string> dsNames = new JCG.Dictionary<string, string>();
                         JCG.HashSet<string> copiedFiles = new JCG.HashSet<string>();
                         foreach (SegmentCommitInfo info in sis.Segments)
                         {
@@ -3706,11 +3706,11 @@ namespace Lucene.Net.Index
 #pragma warning disable CS0618 // Type or member is obsolete
             if (info.Info.Attributes is null)
             {
-                attributes = new Dictionary<string, string>();
+                attributes = new JCG.Dictionary<string, string>();
             }
             else
             {
-                attributes = new Dictionary<string, string>(info.Info.Attributes);
+                attributes = new JCG.Dictionary<string, string>(info.Info.Attributes);
             }
 #pragma warning restore CS0618 // Type or member is obsolete
             if (docStoreFiles3xOnly != null)
@@ -4027,7 +4027,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                segmentInfos.UserData = new Dictionary<string, string>(commitUserData);
+                segmentInfos.UserData = new JCG.Dictionary<string, string>(commitUserData);
                 _ = changeCount.IncrementAndGet();
             }
             finally
@@ -5259,7 +5259,7 @@ namespace Lucene.Net.Index
                 // names.
                 string mergeSegmentName = NewSegmentName();
                 SegmentInfo si = new SegmentInfo(directory, Constants.LUCENE_MAIN_VERSION, mergeSegmentName, -1, false, codec, null);
-                IDictionary<string, string> details = new Dictionary<string, string>
+                IDictionary<string, string> details = new JCG.Dictionary<string, string>
                 {
                     ["mergeMaxNumSegments"] = "" + merge.MaxNumSegments,
                     ["mergeFactor"] = Convert.ToString(merge.Segments.Count)
@@ -5290,7 +5290,7 @@ namespace Lucene.Net.Index
 
         private static void SetDiagnostics(SegmentInfo info, string source, IDictionary<string, string> details)
         {
-            IDictionary<string, string> diagnostics = new Dictionary<string, string>
+            IDictionary<string, string> diagnostics = new JCG.Dictionary<string, string>
             {
                 ["source"] = source,
                 ["lucene.version"] = Constants.LUCENE_VERSION,
@@ -5932,7 +5932,7 @@ namespace Lucene.Net.Index
             try
             {
                 SegmentInfos newSIS = new SegmentInfos();
-                IDictionary<SegmentCommitInfo, SegmentCommitInfo> liveSIS = new Dictionary<SegmentCommitInfo, SegmentCommitInfo>();
+                IDictionary<SegmentCommitInfo, SegmentCommitInfo> liveSIS = new JCG.Dictionary<SegmentCommitInfo, SegmentCommitInfo>();
                 foreach (SegmentCommitInfo info in segmentInfos.Segments)
                 {
                     liveSIS[info] = info;

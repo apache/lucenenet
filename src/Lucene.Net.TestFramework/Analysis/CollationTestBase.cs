@@ -11,6 +11,7 @@ using System.IO;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
@@ -243,7 +244,7 @@ namespace Lucene.Net.Analysis
         {
             int numTestPoints = 100;
             int numThreads = TestUtil.NextInt32(Random, 3, 5);
-            Dictionary<string, BytesRef> map = new Dictionary<string, BytesRef>();
+            JCG.Dictionary<string, BytesRef> map = new JCG.Dictionary<string, BytesRef>();
 
             // create a map<String,SortKey> up front.
             // then with multiple threads, generate sort keys for all the keys in the map

@@ -183,7 +183,7 @@ namespace Lucene.Net.Search
 
             private readonly Similarity similarity;
             private readonly Similarity.SimWeight stats;
-            private readonly IDictionary<Term, TermContext> termContexts = new Dictionary<Term, TermContext>();
+            private readonly IDictionary<Term, TermContext> termContexts = new JCG.Dictionary<Term, TermContext>();
 
             public MultiPhraseWeight(MultiPhraseQuery outerInstance, IndexSearcher searcher)
             {

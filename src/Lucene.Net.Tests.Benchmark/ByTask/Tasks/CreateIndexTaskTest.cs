@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -34,7 +35,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     {
         private PerfRunData createPerfRunData(String infoStreamValue)
         {
-            Dictionary<string, string> props = new Dictionary<string, string>();
+            JCG.Dictionary<string, string> props = new JCG.Dictionary<string, string>();
             // :Post-Release-Update-Version.LUCENE_XY:
 #pragma warning disable 612, 618
             props["writer.version"] = LuceneVersion.LUCENE_47.ToString();

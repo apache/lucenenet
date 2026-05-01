@@ -42,7 +42,7 @@ namespace Lucene.Net.Search.Spans
             this.m_similarity = searcher.Similarity;
             this.m_query = query;
 
-            m_termContexts = new Dictionary<Term, TermContext>();
+            m_termContexts = new JCG.Dictionary<Term, TermContext>();
             ISet<Term> terms = new JCG.SortedSet<Term>();
             query.ExtractTerms(terms);
             IndexReaderContext context = searcher.TopReaderContext;

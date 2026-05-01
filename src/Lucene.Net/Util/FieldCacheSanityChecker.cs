@@ -121,9 +121,9 @@ namespace Lucene.Net.Util
             // the indirect mapping lets MapOfSet dedup identical valIds for us
             // maps the (valId) identityhashCode of cache values to
             // sets of CacheEntry instances
-            MapOfSets<int, FieldCache.CacheEntry> valIdToItems = new MapOfSets<int, FieldCache.CacheEntry>(new Dictionary<int, ISet<FieldCache.CacheEntry>>(17));
+            MapOfSets<int, FieldCache.CacheEntry> valIdToItems = new MapOfSets<int, FieldCache.CacheEntry>(new JCG.Dictionary<int, ISet<FieldCache.CacheEntry>>(17));
             // maps ReaderField keys to Sets of ValueIds
-            MapOfSets<ReaderField, int> readerFieldToValIds = new MapOfSets<ReaderField, int>(new Dictionary<ReaderField, ISet<int>>(17));
+            MapOfSets<ReaderField, int> readerFieldToValIds = new MapOfSets<ReaderField, int>(new JCG.Dictionary<ReaderField, ISet<int>>(17));
 
             // any keys that we know result in more then one valId
             ISet<ReaderField> valMismatchKeys = new JCG.HashSet<ReaderField>();
@@ -217,7 +217,7 @@ namespace Lucene.Net.Util
         {
             JCG.List<Insanity> insanity = new JCG.List<Insanity>(23);
 
-            Dictionary<ReaderField, ISet<ReaderField>> badChildren = new Dictionary<ReaderField, ISet<ReaderField>>(17);
+            JCG.Dictionary<ReaderField, ISet<ReaderField>> badChildren = new JCG.Dictionary<ReaderField, ISet<ReaderField>>(17);
             MapOfSets<ReaderField, ReaderField> badKids = new MapOfSets<ReaderField, ReaderField>(badChildren); // wrapper
 
             IDictionary<int, ISet<FieldCache.CacheEntry>> viToItemSets = valIdToItems.Map;

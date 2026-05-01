@@ -1003,7 +1003,7 @@ namespace Lucene.Net.Search.Grouping
                     // ReaderBlocks only increases maxDoc() vs reader, which
                     // means a monotonic shift in scores, so we can
                     // reliably remap them w/ Map:
-                    IDictionary<string, IDictionary<float, J2N.Numerics.Single>> scoreMap = new Dictionary<string, IDictionary<float, J2N.Numerics.Single>>();
+                    IDictionary<string, IDictionary<float, J2N.Numerics.Single>> scoreMap = new JCG.Dictionary<string, IDictionary<float, J2N.Numerics.Single>>();
 
                     // Tricky: must separately set .score2, because the doc
                     // block index was created with possible deletions!
@@ -1011,7 +1011,7 @@ namespace Lucene.Net.Search.Grouping
                     for (int contentID = 0; contentID < 3; contentID++)
                     {
                         //Console.WriteLine("  term=real" + contentID);
-                        IDictionary<float, J2N.Numerics.Single> termScoreMap = new Dictionary<float, J2N.Numerics.Single>();
+                        IDictionary<float, J2N.Numerics.Single> termScoreMap = new JCG.Dictionary<float, J2N.Numerics.Single>();
                         scoreMap["real" + contentID] = termScoreMap;
                         //Console.WriteLine("term=real" + contentID + " dfold=" + s.docFreq(new Term("content", "real"+contentID)) +
                         //" dfnew=" + sBlocks.docFreq(new Term("content", "real"+contentID)));

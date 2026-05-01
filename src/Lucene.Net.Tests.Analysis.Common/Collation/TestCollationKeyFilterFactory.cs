@@ -10,6 +10,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Collation
 {
@@ -123,7 +124,7 @@ namespace Lucene.Net.Collation
             // and use the custom parameter.
             string germanUmlaut = "Töne";
             string germanOE = "Toene";
-            IDictionary<string, string> args = new Dictionary<string, string>();
+            IDictionary<string, string> args = new JCG.Dictionary<string, string>();
             args["custom"] = "rules.txt";
             args["strength"] = "primary";
 #pragma warning disable 612, 618

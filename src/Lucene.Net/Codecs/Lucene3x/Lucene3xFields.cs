@@ -66,7 +66,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
         internal readonly IDictionary<string, FieldInfo> fields = new JCG.SortedDictionary<string, FieldInfo>(StringComparer.Ordinal);
-        internal readonly IDictionary<string, Terms> preTerms = new Dictionary<string, Terms>();
+        internal readonly IDictionary<string, Terms> preTerms = new JCG.Dictionary<string, Terms>();
         //private readonly Directory dir; // LUCENENET: Never read
         //private readonly IOContext context; // LUCENENET: Never read
         //private Directory cfsReader; // LUCENENET NOTE: cfsReader not used

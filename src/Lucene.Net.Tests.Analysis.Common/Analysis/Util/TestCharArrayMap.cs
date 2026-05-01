@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual void TestMethods()
         {
             CharArrayDictionary<int?> cm = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, 2, false);
-            Dictionary<string, int?> hm = new Dictionary<string, int?>();
+            JCG.Dictionary<string, int?> hm = new JCG.Dictionary<string, int?>();
             hm["foo"] = 1;
             hm["bar"] = 2;
             cm.PutAll(hm);

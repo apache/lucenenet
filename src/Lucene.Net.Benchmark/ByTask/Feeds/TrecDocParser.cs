@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -36,7 +37,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         /// <summary>trec parser type used for unknown extensions</summary>
         public const ParsePathType DEFAULT_PATH_TYPE = ParsePathType.GOV2;
 
-        internal static readonly IDictionary<ParsePathType, TrecDocParser> pathType2parser = new Dictionary<ParsePathType, TrecDocParser>() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        internal static readonly IDictionary<ParsePathType, TrecDocParser> pathType2parser = new JCG.Dictionary<ParsePathType, TrecDocParser>() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             { ParsePathType.GOV2, new TrecGov2Parser() },
             { ParsePathType.FBIS, new TrecFBISParser() },
@@ -48,7 +49,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         internal static readonly IDictionary<string, ParsePathType?> pathName2Type = LoadPathName2Type();
         private static IDictionary<string, ParsePathType?> LoadPathName2Type() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            var result = new Dictionary<string, ParsePathType?>();
+            var result = new JCG.Dictionary<string, ParsePathType?>();
             foreach (ParsePathType ppt in Enum.GetValues(typeof(ParsePathType)))
             {
                 result[ppt.ToString().ToUpperInvariant()] = ppt;

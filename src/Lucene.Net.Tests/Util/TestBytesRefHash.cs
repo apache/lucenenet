@@ -106,7 +106,7 @@ namespace Lucene.Net.Util
             int num = AtLeast(2);
             for (int j = 0; j < num; j++)
             {
-                IDictionary<string, int> strings = new Dictionary<string, int>();
+                IDictionary<string, int> strings = new JCG.Dictionary<string, int>();
                 int uniqueCount = 0;
                 for (int i = 0; i < 797; i++)
                 {

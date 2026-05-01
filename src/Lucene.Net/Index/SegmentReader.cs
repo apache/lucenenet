@@ -60,12 +60,12 @@ namespace Lucene.Net.Index
         internal readonly SegmentDocValues segDocValues;
 
         internal readonly DisposableThreadLocal<IDictionary<string, object>> docValuesLocal =
-            new DisposableThreadLocal<IDictionary<string, object>>(() => new Dictionary<string, object>());
+            new DisposableThreadLocal<IDictionary<string, object>>(() => new JCG.Dictionary<string, object>());
 
         internal readonly DisposableThreadLocal<IDictionary<string, IBits>> docsWithFieldLocal =
-            new DisposableThreadLocal<IDictionary<string, IBits>>(() => new Dictionary<string, IBits>());
+            new DisposableThreadLocal<IDictionary<string, IBits>>(() => new JCG.Dictionary<string, IBits>());
 
-        internal readonly IDictionary<string, DocValuesProducer> dvProducersByField = new Dictionary<string, DocValuesProducer>();
+        internal readonly IDictionary<string, DocValuesProducer> dvProducersByField = new JCG.Dictionary<string, DocValuesProducer>();
         internal readonly ISet<DocValuesProducer> dvProducers = new JCG.HashSet<DocValuesProducer>(IdentityEqualityComparer<DocValuesProducer>.Default);
 
         private readonly FieldInfos fieldInfos; // LUCENENET specific - since it is readonly, made all internal classes use property
@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
         // returns a gen->List<FieldInfo> mapping. Fields without DV updates have gen=-1
         private IDictionary<long, IList<FieldInfo>> GetGenInfos()
         {
-            IDictionary<long, IList<FieldInfo>> genInfos = new Dictionary<long, IList<FieldInfo>>();
+            IDictionary<long, IList<FieldInfo>> genInfos = new JCG.Dictionary<long, IList<FieldInfo>>();
             foreach (FieldInfo fi in FieldInfos)
             {
                 if (fi.DocValuesType == DocValuesType.NONE)

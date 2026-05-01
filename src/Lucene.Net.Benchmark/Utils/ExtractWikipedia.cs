@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.Utils
 {
@@ -153,7 +154,7 @@ namespace Lucene.Net.Benchmarks.Utils
                 }
             }
 
-            IDictionary<string, string> properties = new Dictionary<string, string>
+            IDictionary<string, string> properties = new JCG.Dictionary<string, string>
             {
                 ["docs.file"] = wikipedia.FullName,
                 ["content.source.forever"] = "false",

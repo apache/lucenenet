@@ -182,7 +182,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         // from there
         private static void DoTestSeekExists(Random r, IList<Term> fieldTerms, IndexReader reader)
         {
-            IDictionary<string, TermsEnum> tes = new Dictionary<string, TermsEnum>();
+            IDictionary<string, TermsEnum> tes = new JCG.Dictionary<string, TermsEnum>();
 
             // Test random seek to existing term, then enum:
             if (Verbose)
@@ -256,7 +256,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         // LUCENENET specific - made static
         private static void DoTestSeekDoesNotExist(Random r, int numField, IList<Term> fieldTerms, Term[] fieldTermsArray, IndexReader reader)
         {
-            IDictionary<string, TermsEnum> tes = new Dictionary<string, TermsEnum>();
+            IDictionary<string, TermsEnum> tes = new JCG.Dictionary<string, TermsEnum>();
 
             if (Verbose)
             {

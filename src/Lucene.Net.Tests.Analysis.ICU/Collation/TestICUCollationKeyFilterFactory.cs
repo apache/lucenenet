@@ -14,6 +14,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Collation
 {
@@ -243,7 +244,7 @@ namespace Lucene.Net.Collation
             //
             string germanUmlaut = "Töne";
             string germanOE = "Toene";
-            IDictionary<string, string> args = new Dictionary<string, string>();
+            IDictionary<string, string> args = new JCG.Dictionary<string, string>();
             args["custom"] = "rules.txt";
             args["strength"] = "primary";
             ICUCollationKeyFilterFactory factory = new ICUCollationKeyFilterFactory(args);
@@ -312,7 +313,7 @@ namespace Lucene.Net.Collation
             {
                 throw new ArgumentException("invalid keysAndValues map");
             }
-            IDictionary<string, string> args = new Dictionary<string, string>();
+            IDictionary<string, string> args = new JCG.Dictionary<string, string>();
             for (int i = 0; i < keysAndValues.Length; i += 2)
             {
                 string prev = args.Put(keysAndValues[i], keysAndValues[i + 1]);

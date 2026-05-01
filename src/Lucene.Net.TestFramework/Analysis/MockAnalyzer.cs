@@ -5,6 +5,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
@@ -57,7 +58,7 @@ namespace Lucene.Net.Analysis
         private int positionIncrementGap;
         private int? offsetGap;
         private readonly Random random;
-        private readonly IDictionary<string, int> previousMappings = new Dictionary<string, int>(); // LUCENENET: marked readonly
+        private readonly IDictionary<string, int> previousMappings = new JCG.Dictionary<string, int>(); // LUCENENET: marked readonly
         private bool enableChecks = true;
         private int maxTokenLength = MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH;
 

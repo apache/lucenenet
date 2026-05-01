@@ -10,6 +10,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -53,7 +54,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 docData.Body = ("body");
                 docData.SetDate("date");
                 docData.Title = ("title");
-                Dictionary<string, string> props = new Dictionary<string, string>();
+                JCG.Dictionary<string, string> props = new JCG.Dictionary<string, string>();
                 props["key"] = "value";
                 docData.Props = props;
                 finish = true;
@@ -65,7 +66,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         private void doTestIndexProperties(bool setIndexProps,
             bool indexPropsVal, int numExpectedResults)
         {
-            Dictionary<string, string> props = new Dictionary<string, string>();
+            JCG.Dictionary<string, string> props = new JCG.Dictionary<string, string>();
 
             // Indexing configuration.
             props["analyzer"] = typeof(WhitespaceAnalyzer).AssemblyQualifiedName;
@@ -96,7 +97,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         private Document createTestNormsDocument(bool setNormsProp,
             bool normsPropVal, bool setBodyNormsProp, bool bodyNormsVal)
         {
-            Dictionary<string, string> props = new Dictionary<string, string>();
+            JCG.Dictionary<string, string> props = new JCG.Dictionary<string, string>();
 
             // Indexing configuration.
             props["analyzer"] = typeof(WhitespaceAnalyzer).AssemblyQualifiedName;
@@ -175,7 +176,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             ps.WriteLine("one title\t" + (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + "\tsome content"); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             ps.Dispose();
 
-            Dictionary<string, string> props = new Dictionary<string, string>();
+            JCG.Dictionary<string, string> props = new JCG.Dictionary<string, string>();
             props["docs.file"] = f.FullName;
             props["content.source.forever"] = "false";
             Config config = new Config(props);

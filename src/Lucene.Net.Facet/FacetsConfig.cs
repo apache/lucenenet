@@ -304,13 +304,13 @@ namespace Lucene.Net.Facet
         public virtual Document Build(ITaxonomyWriter taxoWriter, Document doc)
         {
             // Find all FacetFields, collated by the actual field:
-            IDictionary<string, IList<FacetField>> byField = new Dictionary<string, IList<FacetField>>();
+            IDictionary<string, IList<FacetField>> byField = new JCG.Dictionary<string, IList<FacetField>>();
 
             // ... and also all SortedSetDocValuesFacetFields:
-            IDictionary<string, IList<SortedSetDocValuesFacetField>> dvByField = new Dictionary<string, IList<SortedSetDocValuesFacetField>>();
+            IDictionary<string, IList<SortedSetDocValuesFacetField>> dvByField = new JCG.Dictionary<string, IList<SortedSetDocValuesFacetField>>();
 
             // ... and also all AssociationFacetFields
-            IDictionary<string, IList<AssociationFacetField>> assocByField = new Dictionary<string, IList<AssociationFacetField>>();
+            IDictionary<string, IList<AssociationFacetField>> assocByField = new JCG.Dictionary<string, IList<AssociationFacetField>>();
 
             var seenDims = new JCG.HashSet<string>();
 

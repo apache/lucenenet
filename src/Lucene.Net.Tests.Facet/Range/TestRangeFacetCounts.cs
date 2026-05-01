@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Range
 {
@@ -330,7 +331,7 @@ namespace Lucene.Net.Facet.Range
                     }
                 }
 
-                IDictionary<string, Facets> byDim = new Dictionary<string, Facets>();
+                IDictionary<string, Facets> byDim = new JCG.Dictionary<string, Facets>();
                 byDim["field"] = new Int64RangeFacetCounts("field", fieldFC,
                     new Int64Range("less than 10", 0L, true, 10L, false),
                     new Int64Range("less than or equal to 10", 0L, true, 10L, true),

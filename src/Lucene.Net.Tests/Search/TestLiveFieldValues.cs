@@ -171,7 +171,7 @@ namespace Lucene.Net.Search
             {
                 try
                 {
-                    IDictionary<string, int?> values = new Dictionary<string, int?>();
+                    IDictionary<string, int?> values = new JCG.Dictionary<string, int?>();
                     IList<string> allIDs = new SynchronizedList<string>();
 
                     startingGun.Wait();

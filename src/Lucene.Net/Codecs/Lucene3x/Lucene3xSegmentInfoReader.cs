@@ -170,7 +170,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             long delGen = input.ReadInt64();
 
             int docStoreOffset = input.ReadInt32();
-            IDictionary<string, string> attributes = new Dictionary<string, string>();
+            IDictionary<string, string> attributes = new JCG.Dictionary<string, string>();
 
             // parse the docstore stuff and shove it into attributes
             string docStoreSegment;
@@ -203,7 +203,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                normGen = new Dictionary<int, long>();
+                normGen = new JCG.Dictionary<int, long>();
                 for (int j = 0; j < numNormGen; j++)
                 {
                     normGen[j] = input.ReadInt64();

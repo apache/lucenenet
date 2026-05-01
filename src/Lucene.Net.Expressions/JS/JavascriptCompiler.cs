@@ -851,7 +851,7 @@ namespace Lucene.Net.Expressions.JS
 
         private static IDictionary<string, MethodInfo> LoadDefaultFunctions() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            IDictionary<string, MethodInfo> map = new Dictionary<string, MethodInfo>();
+            IDictionary<string, MethodInfo> map = new JCG.Dictionary<string, MethodInfo>();
             try
             {
                 foreach (var property in GetDefaultSettings())
@@ -904,7 +904,7 @@ namespace Lucene.Net.Expressions.JS
 
         private static IDictionary<string, string> GetDefaultSettings()
         {
-            var settings = new Dictionary<string, string>();
+            var settings = new JCG.Dictionary<string, string>();
             var type = typeof(JavascriptCompiler);
             using var reader = new StreamReader(type.FindAndGetManifestResourceStream(type.Name + ".properties"), Encoding.UTF8);
             settings.LoadProperties(reader);

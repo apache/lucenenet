@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Int64 = J2N.Numerics.Int64;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene42
 {
@@ -70,10 +71,10 @@ namespace Lucene.Net.Codecs.Lucene42
         private readonly int version;
 
         // ram instances we have already loaded
-        private readonly IDictionary<int, NumericDocValues> numericInstances = new Dictionary<int, NumericDocValues>();
+        private readonly IDictionary<int, NumericDocValues> numericInstances = new JCG.Dictionary<int, NumericDocValues>();
 
-        private readonly IDictionary<int, BinaryDocValues> binaryInstances = new Dictionary<int, BinaryDocValues>();
-        private readonly IDictionary<int, FST<Int64>> fstInstances = new Dictionary<int, FST<Int64>>();
+        private readonly IDictionary<int, BinaryDocValues> binaryInstances = new JCG.Dictionary<int, BinaryDocValues>();
+        private readonly IDictionary<int, FST<Int64>> fstInstances = new JCG.Dictionary<int, FST<Int64>>();
 
         private readonly int maxDoc;
         private readonly AtomicInt64 ramBytesUsed;
@@ -105,9 +106,9 @@ namespace Lucene.Net.Codecs.Lucene42
             try
             {
                 version = CodecUtil.CheckHeader(@in, metaCodec, VERSION_START, VERSION_CURRENT);
-                numerics = new Dictionary<int, NumericEntry>();
-                binaries = new Dictionary<int, BinaryEntry>();
-                fsts = new Dictionary<int, FSTEntry>();
+                numerics = new JCG.Dictionary<int, NumericEntry>();
+                binaries = new JCG.Dictionary<int, BinaryEntry>();
+                fsts = new JCG.Dictionary<int, FSTEntry>();
                 ReadFields(@in /*, state.FieldInfos // LUCENENET: Never read */);
 
                 if (version >= VERSION_CHECKSUM)

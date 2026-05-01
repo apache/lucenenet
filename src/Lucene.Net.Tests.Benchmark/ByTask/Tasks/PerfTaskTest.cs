@@ -2,6 +2,7 @@ using Lucene.Net.Benchmarks.ByTask.Utils;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -46,7 +47,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         private PerfRunData createPerfRunData(bool setLogStep, int logStepVal,
             bool setTaskLogStep, int taskLogStepVal)
         {
-            Dictionary<string, string> props = new Dictionary<string, string>();
+            JCG.Dictionary<string, string> props = new JCG.Dictionary<string, string>();
             if (setLogStep)
             {
                 props["log.step"] = logStepVal.ToString(CultureInfo.InvariantCulture);

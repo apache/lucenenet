@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestElevationComparer : LuceneTestCase
     {
-        private readonly IDictionary<BytesRef, int> priority = new Dictionary<BytesRef, int>();
+        private readonly IDictionary<BytesRef, int> priority = new JCG.Dictionary<BytesRef, int>();
 
         [Test]
         public virtual void TestSorting()

@@ -72,7 +72,7 @@ namespace Lucene.Net.Benchmarks.ByTask
 #pragma warning disable CA2213 // Disposable fields should be disposed
         private Store.Directory directory;
 #pragma warning restore CA2213 // Disposable fields should be disposed
-        private readonly IDictionary<string, AnalyzerFactory> analyzerFactories = new Dictionary<string, AnalyzerFactory>(); // LUCENENET: marked readonly
+        private readonly IDictionary<string, AnalyzerFactory> analyzerFactories = new JCG.Dictionary<string, AnalyzerFactory>(); // LUCENENET: marked readonly
         private Analyzer analyzer;
         private readonly DocMaker docMaker; // LUCENENET: marked readonly
         private readonly ContentSource contentSource; // LUCENENET: marked readonly
@@ -95,7 +95,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         private readonly Config config;
         private long startTimeMillis;
 
-        private readonly IDictionary<string, object> perfObjects = new Dictionary<string, object>();
+        private readonly IDictionary<string, object> perfObjects = new JCG.Dictionary<string, object>();
 
         // constructor
         public PerfRunData(Config config) : this(
@@ -131,7 +131,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                 typeof(RandomFacetSource).AssemblyQualifiedName))); // "org.apache.lucene.benchmark.byTask.feeds.RandomFacetSource")).asSubclass(FacetSource.class).newInstance();
             facetSource.SetConfig(config);
             // query makers
-            readTaskQueryMaker = new Dictionary<Type, IQueryMaker>();
+            readTaskQueryMaker = new JCG.Dictionary<Type, IQueryMaker>();
             qmkrClass = Type.GetType(config.Get("query.maker", typeof(SimpleQueryMaker).AssemblyQualifiedName));
 
             // index stuff

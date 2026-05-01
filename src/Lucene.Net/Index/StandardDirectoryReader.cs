@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
         {
             // we put the old SegmentReaders in a map, that allows us
             // to lookup a reader using its segment name
-            IDictionary<string, int> segmentReaders = new Dictionary<string, int>();
+            IDictionary<string, int> segmentReaders = new JCG.Dictionary<string, int>();
 
             if (oldReaders != null)
             {

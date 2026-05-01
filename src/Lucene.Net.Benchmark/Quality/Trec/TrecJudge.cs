@@ -50,7 +50,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
         /// <exception cref="IOException">If there is a low-level I/O error.</exception>
         public TrecJudge(TextReader reader)
         {
-            judgements = new Dictionary<string, QRelJudgement>();
+            judgements = new JCG.Dictionary<string, QRelJudgement>();
             QRelJudgement curr = null;
             string zero = "0";
             string line;
@@ -131,7 +131,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
         // inherit javadocs
         public virtual bool ValidateData(QualityQuery[] qq, TextWriter logger)
         {
-            IDictionary<string, QRelJudgement> missingQueries = new Dictionary<string, QRelJudgement>(judgements);
+            IDictionary<string, QRelJudgement> missingQueries = new JCG.Dictionary<string, QRelJudgement>(judgements);
             IList<string> missingJudgements = new JCG.List<string>();
             for (int i = 0; i < qq.Length; i++)
             {

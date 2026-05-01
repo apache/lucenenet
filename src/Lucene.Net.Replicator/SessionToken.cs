@@ -66,7 +66,7 @@ namespace Lucene.Net.Replicator
             Id = reader.ReadUTF();
             Version = reader.ReadUTF();
 
-            Dictionary<string, IList<RevisionFile>> sourceFiles = new Dictionary<string, IList<RevisionFile>>();
+            JCG.Dictionary<string, IList<RevisionFile>> sourceFiles = new JCG.Dictionary<string, IList<RevisionFile>>();
             int numSources = reader.ReadInt32();
             while (numSources > 0)
             {

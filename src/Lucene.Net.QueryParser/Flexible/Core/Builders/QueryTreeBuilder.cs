@@ -3,6 +3,7 @@ using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Standard.Parser;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 {
@@ -74,7 +75,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
             if (this.fieldNameBuilders is null)
             {
-                this.fieldNameBuilders = new Dictionary<string, IQueryBuilder<TQuery>>();
+                this.fieldNameBuilders = new JCG.Dictionary<string, IQueryBuilder<TQuery>>();
             }
 
             this.fieldNameBuilders[fieldName] = builder;
@@ -90,7 +91,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         {
             if (this.queryNodeBuilders is null)
             {
-                this.queryNodeBuilders = new Dictionary<Type, IQueryBuilder<TQuery>>();
+                this.queryNodeBuilders = new JCG.Dictionary<Type, IQueryBuilder<TQuery>>();
             }
 
             this.queryNodeBuilders[queryNodeClass] = builder;

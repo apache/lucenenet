@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Phonetic
 {
@@ -27,7 +28,7 @@ namespace Lucene.Net.Analysis.Phonetic
         [Test]
         public void TestDefaults()
         {
-            DoubleMetaphoneFilterFactory factory = new DoubleMetaphoneFilterFactory(new Dictionary<String, String>());
+            DoubleMetaphoneFilterFactory factory = new DoubleMetaphoneFilterFactory(new JCG.Dictionary<String, String>());
             TokenStream inputStream = new MockTokenizer(new StringReader("international"), MockTokenizer.WHITESPACE, false);
 
             TokenStream filteredStream = factory.Create(inputStream);
@@ -38,7 +39,7 @@ namespace Lucene.Net.Analysis.Phonetic
         [Test]
         public void TestSettingSizeAndInject()
         {
-            IDictionary<string, string> parameters = new Dictionary<string, string>();
+            IDictionary<string, string> parameters = new JCG.Dictionary<string, string>();
             parameters["inject"] = "false";
             parameters["maxCodeLength"] = "8";
             DoubleMetaphoneFilterFactory factory = new DoubleMetaphoneFilterFactory(parameters);
@@ -56,7 +57,7 @@ namespace Lucene.Net.Analysis.Phonetic
         {
             try
             {
-                new DoubleMetaphoneFilterFactory(new Dictionary<String, String>() {
+                new DoubleMetaphoneFilterFactory(new JCG.Dictionary<String, String>() {
                     { "bogusArg", "bogusValue" }
                 });
                 fail();

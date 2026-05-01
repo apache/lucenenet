@@ -165,7 +165,7 @@ namespace Lucene.Net.Index
 
         public virtual DocsAndWriter IndexRandomIWReader(int nThreads, int iterations, int range, Directory dir)
         {
-            IDictionary<string, Document> docs = new Dictionary<string, Document>();
+            IDictionary<string, Document> docs = new JCG.Dictionary<string, Document>();
             IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                 .SetOpenMode(OpenMode.CREATE)
                 .SetRAMBufferSizeMB(0.1)
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
 
         public virtual IDictionary<string, Document> IndexRandom(int nThreads, int iterations, int range, Directory dir, int maxThreadStates, bool doReaderPooling)
         {
-            IDictionary<string, Document> docs = new Dictionary<string, Document>();
+            IDictionary<string, Document> docs = new JCG.Dictionary<string, Document>();
             IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                 .SetOpenMode(OpenMode.CREATE)
                 .SetRAMBufferSizeMB(0.1)
@@ -812,7 +812,7 @@ namespace Lucene.Net.Index
             internal int @base;
             internal int range;
             internal int iterations;
-            internal IDictionary<string, Document> docs = new Dictionary<string, Document>();
+            internal IDictionary<string, Document> docs = new JCG.Dictionary<string, Document>();
             internal Random r;
 
             public virtual int NextInt(int lim)

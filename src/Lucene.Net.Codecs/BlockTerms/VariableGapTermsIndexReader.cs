@@ -7,6 +7,7 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using Int64 = J2N.Numerics.Int64;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.BlockTerms
 {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         private readonly IndexInput input;
         private readonly /*volatile*/ bool indexLoaded;
 
-        private readonly IDictionary<FieldInfo, FieldIndexData> fields = new Dictionary<FieldInfo, FieldIndexData>();
+        private readonly IDictionary<FieldInfo, FieldIndexData> fields = new JCG.Dictionary<FieldInfo, FieldIndexData>();
 
         // start of the field info data
         private long dirOffset;

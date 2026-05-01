@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
             private readonly TopDocsCollector<ScoreDoc> collector;
             private int docBase;
 
-            public IDictionary<int, int> DocCounts { get; } = new Dictionary<int, int>();
+            public IDictionary<int, int> DocCounts { get; } = new JCG.Dictionary<int, int>();
             private readonly ISet<Scorer> tqsSet = new JCG.HashSet<Scorer>();
 
             internal MyCollector()

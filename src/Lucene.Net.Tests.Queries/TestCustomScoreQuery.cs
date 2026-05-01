@@ -7,6 +7,7 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Tests.Queries.Function;
 using NUnit.Framework;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Tests.Queries
 {
@@ -390,7 +391,7 @@ namespace Lucene.Net.Tests.Queries
         /// <returns></returns>
         private IDictionary<int, float> TopDocsToMap(TopDocs td)
         {
-            var h = new Dictionary<int, float>();
+            var h = new JCG.Dictionary<int, float>();
             for (int i = 0; i < td.TotalHits; i++)
             {
                 h[td.ScoreDocs[i].Doc] = td.ScoreDocs[i].Score;

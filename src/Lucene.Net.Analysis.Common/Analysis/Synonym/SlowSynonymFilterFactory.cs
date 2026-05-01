@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Synonym
         private readonly bool ignoreCase;
         private readonly bool expand;
         private readonly string tf;
-        private readonly IDictionary<string, string> tokArgs = new Dictionary<string, string>();
+        private readonly IDictionary<string, string> tokArgs = new JCG.Dictionary<string, string>();
 
         // LUCENENET: Optimized by pre-comiling regex and lazy-loading
         private class Holder

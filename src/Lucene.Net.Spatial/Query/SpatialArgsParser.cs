@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Queries
 {
@@ -180,7 +181,7 @@ namespace Lucene.Net.Spatial.Queries
             if (body is null)
                 throw new ArgumentNullException(nameof(body));
 
-            var map = new Dictionary<string, string>();
+            var map = new JCG.Dictionary<string, string>();
             using StringTokenizer st = new StringTokenizer(body, " \n\t");
 
             while (st.MoveNext())

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
@@ -262,7 +263,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         private class LabelToOrdinalMap : LabelToOrdinal
         {
-            internal IDictionary<FacetLabel, int> map = new Dictionary<FacetLabel, int>();
+            internal IDictionary<FacetLabel, int> map = new JCG.Dictionary<FacetLabel, int>();
 
             internal LabelToOrdinalMap()
             {

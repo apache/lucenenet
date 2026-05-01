@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <summary>
         /// Map of start offsets to <see cref="T:IList{SegToken}"/> of tokens at that position
         /// </summary>
-        private readonly IDictionary<int, IList<SegToken>> tokenListTable = new Dictionary<int, IList<SegToken>>(); // LUCENENET: marked readonly
+        private readonly IDictionary<int, IList<SegToken>> tokenListTable = new JCG.Dictionary<int, IList<SegToken>>(); // LUCENENET: marked readonly
 
         private int maxStart = -1;
 

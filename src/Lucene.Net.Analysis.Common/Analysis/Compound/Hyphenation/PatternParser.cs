@@ -195,7 +195,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         private static IDictionary<string, string> GetAttributes(XmlReader node) // LUCENENET: CA1822: Mark members as static
         {
-            var result = new Dictionary<string, string>();
+            var result = new JCG.Dictionary<string, string>();
             if (node.HasAttributes)
             {
                 for (int i = 0; i < node.AttributeCount; i++)

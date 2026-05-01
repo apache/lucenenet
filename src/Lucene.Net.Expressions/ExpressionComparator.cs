@@ -51,7 +51,7 @@ namespace Lucene.Net.Expressions
             if (Debugging.AssertsEnabled) Debugging.Assert(readerContext != null);
             try
             {
-                var context = new Dictionary<string, object>();
+                var context = new JCG.Dictionary<string, object>();
                 if (Debugging.AssertsEnabled) Debugging.Assert(scorer != null);
                 context["scorer"] = scorer;
                 scores = source.GetValues(context, readerContext);

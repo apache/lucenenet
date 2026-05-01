@@ -5,6 +5,7 @@ using Lucene.Net.Store;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -58,7 +59,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         private PerfRunData createPerfRunData()
         {
-            IDictionary<string, string> props = new Dictionary<string, string>();
+            IDictionary<string, string> props = new JCG.Dictionary<string, string>();
             props["writer.version"] = TEST_VERSION_CURRENT.ToString();
             props["print.props"] = "false"; // don't print anything
             props["directory"] = "RAMDirectory";

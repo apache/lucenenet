@@ -8,6 +8,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -495,7 +496,7 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
 
             // commit to "first"
-            IDictionary<string, string> commitData = new Dictionary<string, string>();
+            IDictionary<string, string> commitData = new JCG.Dictionary<string, string>();
             commitData["tag"] = "first";
             w.SetCommitData(commitData);
             w.Commit();
@@ -735,7 +736,7 @@ namespace Lucene.Net.Index
             {
                 AddDoc(w);
             }
-            IDictionary<string, string> data = new Dictionary<string, string>();
+            IDictionary<string, string> data = new JCG.Dictionary<string, string>();
             data["label"] = "test1";
             w.SetCommitData(data);
             w.Dispose();

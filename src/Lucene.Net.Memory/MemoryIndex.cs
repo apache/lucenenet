@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index.Memory
 {
@@ -162,7 +163,7 @@ namespace Lucene.Net.Index.Memory
         /// <summary>
         /// info for each field: <see cref="IDictionary{String, Info}"/>
         /// </summary>
-        private readonly IDictionary<string, Info> fields = new Dictionary<string, Info>();
+        private readonly IDictionary<string, Info> fields = new JCG.Dictionary<string, Info>();
 
         /// <summary>
         /// fields sorted ascending by fieldName; lazily computed on demand </summary>
@@ -175,7 +176,7 @@ namespace Lucene.Net.Index.Memory
         //  private final IntBlockPool.SliceReader postingsReader;
         private readonly Int32BlockPool.SliceWriter postingsWriter;
 
-        private readonly Dictionary<string, FieldInfo> fieldInfos = new Dictionary<string, FieldInfo>(); // LUCENENET: marked readonly
+        private readonly JCG.Dictionary<string, FieldInfo> fieldInfos = new JCG.Dictionary<string, FieldInfo>(); // LUCENENET: marked readonly
 
         private readonly Counter bytesUsed; // LUCENENET: marked readonly
 

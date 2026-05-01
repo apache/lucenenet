@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             string text = "Qwerty";
 
-            IDictionary<string, Analyzer> analyzerPerField = new Dictionary<string, Analyzer>();
+            IDictionary<string, Analyzer> analyzerPerField = new JCG.Dictionary<string, Analyzer>();
             analyzerPerField["special"] = new SimpleAnalyzer(TEST_VERSION_CURRENT);
 
             PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(TEST_VERSION_CURRENT), analyzerPerField);

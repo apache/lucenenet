@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -38,7 +39,7 @@ namespace Lucene.Net.Index
     /// </summary>
     internal sealed class SegmentDocValues
     {
-        private readonly IDictionary<long, RefCount<DocValuesProducer>> genDVProducers = new Dictionary<long, RefCount<DocValuesProducer>>();
+        private readonly IDictionary<long, RefCount<DocValuesProducer>> genDVProducers = new JCG.Dictionary<long, RefCount<DocValuesProducer>>();
 
         private RefCount<DocValuesProducer> NewDocValuesProducer(SegmentCommitInfo si, IOContext context, Directory dir, DocValuesFormat dvFormat, long gen, IList<FieldInfo> infos, int termsIndexDivisor)
         {

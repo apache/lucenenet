@@ -538,7 +538,7 @@ namespace Lucene.Net.Search
         {
             // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
             JCG.OrderedDictionary<Term, int> tord = new JCG.OrderedDictionary<Term, int>();
-            Dictionary<Term, int> tcnt = new Dictionary<Term, int>();
+            JCG.Dictionary<Term, int> tcnt = new JCG.Dictionary<Term, int>();
             for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
             {
                 foreach (Term t in pp.terms)
@@ -621,7 +621,7 @@ namespace Lucene.Net.Search
         /// Map each term to the single group that contains it </summary>
         private static IDictionary<Term, int> TermGroups(JCG.OrderedDictionary<Term, int> tord, IList<FixedBitSet> bb) // LUCENENET: CA1822: Mark members as static
         {
-            Dictionary<Term, int> tg = new Dictionary<Term, int>();
+            JCG.Dictionary<Term, int> tg = new JCG.Dictionary<Term, int>();
             Term[] t = tord.Keys.ToArray(/*new Term[0]*/);
             for (int i = 0; i < bb.Count; i++) // i is the group no.
             {

@@ -181,7 +181,7 @@ namespace Lucene.Net.Search.Payloads
 
         private void GetPayloads(ICollection<byte[]> payloads, SpanQuery query)
         {
-            IDictionary<Term, TermContext> termContexts = new Dictionary<Term, TermContext>();
+            IDictionary<Term, TermContext> termContexts = new JCG.Dictionary<Term, TermContext>();
             var terms = new JCG.SortedSet<Term>();
             query.ExtractTerms(terms);
             foreach (Term term in terms)

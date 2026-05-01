@@ -811,8 +811,8 @@ namespace Sax.Helpers
                 {
                     uriTable = new Hashtable();
                 }
-                elementNameTable = new Dictionary<string, string[]>();
-                attributeNameTable = new Dictionary<string, string[]>();
+                elementNameTable = new JCG.Dictionary<string, string[]>();
+                attributeNameTable = new JCG.Dictionary<string, string[]>();
                 declSeen = true;
             }
 

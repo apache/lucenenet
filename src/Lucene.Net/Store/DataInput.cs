@@ -332,7 +332,7 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual IDictionary<string, string> ReadStringStringMap()
         {
-            IDictionary<string, string> map = new Dictionary<string, string>();
+            IDictionary<string, string> map = new JCG.Dictionary<string, string>();
             int count = ReadInt32();
             for (int i = 0; i < count; i++)
             {

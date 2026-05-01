@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Synonym
         private readonly string synonyms;
         private readonly string format;
         private readonly bool expand;
-        private readonly IDictionary<string, string> tokArgs = new Dictionary<string, string>();
+        private readonly IDictionary<string, string> tokArgs = new JCG.Dictionary<string, string>();
 
         private SynonymMap map;
 

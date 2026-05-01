@@ -674,7 +674,7 @@ namespace Lucene.Net.Search.Join
                     toField = "from";
                     queryVals = context.ToHitsToJoinScore;
                 }
-                IDictionary<BytesRef, JoinScore> joinValueToJoinScores = new Dictionary<BytesRef, JoinScore>();
+                IDictionary<BytesRef, JoinScore> joinValueToJoinScores = new JCG.Dictionary<BytesRef, JoinScore>();
                 if (multipleValuesPerDocument)
                 {
                     fromSearcher.Search(new TermQuery(new Term("value", uniqueRandomValue)),
@@ -686,7 +686,7 @@ namespace Lucene.Net.Search.Join
                         new CollectorAnonymousClass4(fromField, joinValueToJoinScores));
                 }
 
-                IDictionary<int, JoinScore> docToJoinScore = new Dictionary<int, JoinScore>();
+                IDictionary<int, JoinScore> docToJoinScore = new JCG.Dictionary<int, JoinScore>();
                 if (multipleValuesPerDocument)
                 {
                     if (scoreDocsInOrder)
@@ -1012,20 +1012,20 @@ namespace Lucene.Net.Search.Join
 
             internal string[] RandomUniqueValues { get; set; }
             internal bool[] RandomFrom { get; set; }
-            internal IDictionary<string, IList<RandomDoc>> FromDocuments { get; set; } = new Dictionary<string, IList<RandomDoc>>();
-            internal IDictionary<string, IList<RandomDoc>> ToDocuments { get; set; } = new Dictionary<string, IList<RandomDoc>>();
+            internal IDictionary<string, IList<RandomDoc>> FromDocuments { get; set; } = new JCG.Dictionary<string, IList<RandomDoc>>();
+            internal IDictionary<string, IList<RandomDoc>> ToDocuments { get; set; } = new JCG.Dictionary<string, IList<RandomDoc>>();
 
             internal IDictionary<string, IList<RandomDoc>> RandomValueFromDocs { get; set; } =
-                new Dictionary<string, IList<RandomDoc>>();
+                new JCG.Dictionary<string, IList<RandomDoc>>();
 
             internal IDictionary<string, IList<RandomDoc>> RandomValueToDocs { get; set; } =
-                new Dictionary<string, IList<RandomDoc>>();
+                new JCG.Dictionary<string, IList<RandomDoc>>();
 
             internal IDictionary<string, IDictionary<int, JoinScore>> FromHitsToJoinScore { get; set; } =
-                new Dictionary<string, IDictionary<int, JoinScore>>();
+                new JCG.Dictionary<string, IDictionary<int, JoinScore>>();
 
             internal IDictionary<string, IDictionary<int, JoinScore>> ToHitsToJoinScore { get; set; } =
-                new Dictionary<string, IDictionary<int, JoinScore>>();
+                new JCG.Dictionary<string, IDictionary<int, JoinScore>>();
         }
 
         private class RandomDoc

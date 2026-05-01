@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Phonetic
 {
@@ -31,7 +32,7 @@ namespace Lucene.Net.Analysis.Phonetic
         [Test]
         public void TestBasics()
         {
-            BeiderMorseFilterFactory factory = new BeiderMorseFilterFactory(new Dictionary<String, String>());
+            BeiderMorseFilterFactory factory = new BeiderMorseFilterFactory(new JCG.Dictionary<String, String>());
             TokenStream ts = factory.Create(new MockTokenizer(new StringReader("Weinberg"), MockTokenizer.WHITESPACE, false));
             AssertTokenStreamContents(ts,
                 new String[] { "vDnbirk", "vanbirk", "vinbirk", "wDnbirk", "wanbirk", "winbirk" },
@@ -43,7 +44,7 @@ namespace Lucene.Net.Analysis.Phonetic
         [Test]
         public void TestLanguageSet()
         {
-            IDictionary<String, String> args = new Dictionary<string, string>();
+            IDictionary<String, String> args = new JCG.Dictionary<string, string>();
             args["languageSet"] = "polish";
             BeiderMorseFilterFactory factory = new BeiderMorseFilterFactory(args);
             TokenStream ts = factory.Create(new MockTokenizer(new StringReader("Weinberg"), MockTokenizer.WHITESPACE, false));
@@ -57,7 +58,7 @@ namespace Lucene.Net.Analysis.Phonetic
         [Test]
         public void TestOptions()
         {
-            IDictionary<String, String> args = new Dictionary<string, string>();
+            IDictionary<String, String> args = new JCG.Dictionary<string, string>();
             args["nameType"] = "ASHKENAZI";
             args["ruleType"] = "EXACT";
             BeiderMorseFilterFactory factory = new BeiderMorseFilterFactory(args);
@@ -75,7 +76,7 @@ namespace Lucene.Net.Analysis.Phonetic
         {
             try
             {
-                new BeiderMorseFilterFactory(new Dictionary<String, String>() {
+                new BeiderMorseFilterFactory(new JCG.Dictionary<String, String>() {
                     { "bogusArg", "bogusValue" }
                 });
                 fail();

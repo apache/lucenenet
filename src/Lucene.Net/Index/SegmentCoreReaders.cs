@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
         internal readonly DisposableThreadLocal<StoredFieldsReader> fieldsReaderLocal;
         internal readonly DisposableThreadLocal<TermVectorsReader> termVectorsLocal;
         internal readonly DisposableThreadLocal<IDictionary<string, object>> normsLocal =
-            new DisposableThreadLocal<IDictionary<string, object>>(() => new Dictionary<string, object>());
+            new DisposableThreadLocal<IDictionary<string, object>>(() => new JCG.Dictionary<string, object>());
         private readonly ISet<ICoreDisposedListener> coreClosedListeners = new JCG.LinkedHashSet<ICoreDisposedListener>().AsConcurrent();
 
         internal SegmentCoreReaders(SegmentReader owner, Directory dir, SegmentCommitInfo si, IOContext context, int termsIndexDivisor)

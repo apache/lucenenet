@@ -48,7 +48,7 @@ namespace Lucene.Net.Facet.Range
             // track the start vs end case separately because if a
             // given point is both, then it must be its own
             // elementary interval:
-            IDictionary<long, int> endsMap = new Dictionary<long, int>
+            IDictionary<long, int> endsMap = new JCG.Dictionary<long, int>
             {
                 [long.MinValue] = 1,
                 [long.MaxValue] = 2

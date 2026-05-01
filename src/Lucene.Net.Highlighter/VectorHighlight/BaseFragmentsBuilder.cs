@@ -251,7 +251,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         protected virtual IList<WeightedFragInfo> DiscreteMultiValueHighlighting(IList<WeightedFragInfo> fragInfos, Field[] fields)
         {
-            IDictionary<string, IList<WeightedFragInfo>> fieldNameToFragInfos = new Dictionary<string, IList<WeightedFragInfo>>();
+            IDictionary<string, IList<WeightedFragInfo>> fieldNameToFragInfos = new JCG.Dictionary<string, IList<WeightedFragInfo>>();
             foreach (Field field in fields)
             {
                 fieldNameToFragInfos[field.Name] = new JCG.List<WeightedFragInfo>();

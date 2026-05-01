@@ -2,6 +2,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Expressions
 {
@@ -99,7 +100,7 @@ namespace Lucene.Net.Expressions
             int subReader = ReaderUtil.SubIndex(docID, leaves);
             AtomicReaderContext readerContext = leaves[subReader];
             int docIDInSegment = docID - readerContext.DocBase;
-            var context = new Dictionary<string, object>();
+            var context = new JCG.Dictionary<string, object>();
             var fakeScorer = new FakeScorer { score = firstPassExplanation.Value, doc = docIDInSegment };
             context["scorer"] = fakeScorer;
             foreach (string variable in expression.Variables)

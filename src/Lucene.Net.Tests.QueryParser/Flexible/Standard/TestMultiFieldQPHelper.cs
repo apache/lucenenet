@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard
 {
@@ -143,7 +144,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Test]
         public void TestBoostsSimple()
         {
-            IDictionary<String, float> boosts = new Dictionary<String, float>();
+            IDictionary<String, float> boosts = new JCG.Dictionary<String, float>();
             boosts["b"] = 5;
             boosts["t"] = 10;
             String[] fields = { "b", "t" };

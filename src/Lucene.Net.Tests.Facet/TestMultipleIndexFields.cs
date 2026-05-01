@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet
 {
@@ -125,7 +126,7 @@ namespace Lucene.Net.Facet
 
             FacetsCollector sfc = PerformSearch(tr, ir, searcher);
 
-            IDictionary<string, Facets> facetsMap = new Dictionary<string, Facets>();
+            IDictionary<string, Facets> facetsMap = new JCG.Dictionary<string, Facets>();
             facetsMap["Author"] = GetTaxonomyFacetCounts(tr, config, sfc, "$author");
             Facets facets = new MultiFacets(facetsMap, GetTaxonomyFacetCounts(tr, config, sfc));
 
@@ -166,7 +167,7 @@ namespace Lucene.Net.Facet
 
             FacetsCollector sfc = PerformSearch(tr, ir, searcher);
 
-            IDictionary<string, Facets> facetsMap = new Dictionary<string, Facets>();
+            IDictionary<string, Facets> facetsMap = new JCG.Dictionary<string, Facets>();
             Facets facets2 = GetTaxonomyFacetCounts(tr, config, sfc, "$music");
             facetsMap["Band"] = facets2;
             facetsMap["Composer"] = facets2;
@@ -223,7 +224,7 @@ namespace Lucene.Net.Facet
 
             FacetsCollector sfc = PerformSearch(tr, ir, searcher);
 
-            IDictionary<string, Facets> facetsMap = new Dictionary<string, Facets>();
+            IDictionary<string, Facets> facetsMap = new JCG.Dictionary<string, Facets>();
             facetsMap["Band"] = GetTaxonomyFacetCounts(tr, config, sfc, "$bands");
             facetsMap["Composer"] = GetTaxonomyFacetCounts(tr, config, sfc, "$composers");
             Facets facets = new MultiFacets(facetsMap, GetTaxonomyFacetCounts(tr, config, sfc));
@@ -266,7 +267,7 @@ namespace Lucene.Net.Facet
 
             FacetsCollector sfc = PerformSearch(tr, ir, searcher);
 
-            IDictionary<string, Facets> facetsMap = new Dictionary<string, Facets>();
+            IDictionary<string, Facets> facetsMap = new JCG.Dictionary<string, Facets>();
             Facets facets2 = GetTaxonomyFacetCounts(tr, config, sfc, "$music");
             facetsMap["Band"] = facets2;
             facetsMap["Composer"] = facets2;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Config
 {
@@ -31,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
     /// </summary>
     public abstract class AbstractQueryConfig
     {
-        private readonly IDictionary<ConfigurationKey, object> configMap = new Dictionary<ConfigurationKey, object>();
+        private readonly IDictionary<ConfigurationKey, object> configMap = new JCG.Dictionary<ConfigurationKey, object>();
 
         private protected AbstractQueryConfig() // LUCENENET: Changed from internal to private protected
         {

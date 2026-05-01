@@ -385,7 +385,7 @@ namespace Lucene.Net.Index
         /// </summary>
         private class PayloadAnalyzer : Analyzer
         {
-            internal readonly IDictionary<string, PayloadData> fieldToData = new Dictionary<string, PayloadData>();
+            internal readonly IDictionary<string, PayloadData> fieldToData = new JCG.Dictionary<string, PayloadData>();
 
             public PayloadAnalyzer()
                 : base(PER_FIELD_REUSE_STRATEGY)

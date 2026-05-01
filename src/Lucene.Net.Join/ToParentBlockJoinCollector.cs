@@ -7,6 +7,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Join
 {
@@ -80,7 +81,7 @@ namespace Lucene.Net.Search.Join
 
         // Maps each BlockJoinQuery instance to its "slot" in
         // joinScorers and in OneGroup's cached doc/scores/count:
-        private readonly IDictionary<Query, int> joinQueryID = new Dictionary<Query, int>();
+        private readonly IDictionary<Query, int> joinQueryID = new JCG.Dictionary<Query, int>();
         private readonly int numParentHits;
         private readonly FieldValueHitQueue<OneGroup> queue;
         private readonly FieldComparer[] comparers;

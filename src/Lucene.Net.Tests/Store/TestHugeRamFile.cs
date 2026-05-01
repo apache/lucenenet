@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -39,7 +40,7 @@ namespace Lucene.Net.Store
         private class DenseRAMFile : RAMFile
         {
             private long capacity = 0;
-            private readonly Dictionary<int, byte[]> singleBuffers = new Dictionary<int, byte[]>();
+            private readonly JCG.Dictionary<int, byte[]> singleBuffers = new JCG.Dictionary<int, byte[]>();
 
             protected override byte[] NewBuffer(int size)
             {

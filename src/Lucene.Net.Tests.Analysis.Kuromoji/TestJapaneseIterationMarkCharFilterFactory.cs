@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -32,7 +33,7 @@ namespace Lucene.Net.Analysis.Ja
         public void TestIterationMarksWithKeywordTokenizer()
         {
             String text = "時々馬鹿々々しいところゞゝゝミスヾ";
-            JapaneseIterationMarkCharFilterFactory filterFactory = new JapaneseIterationMarkCharFilterFactory(new Dictionary<String, String>());
+            JapaneseIterationMarkCharFilterFactory filterFactory = new JapaneseIterationMarkCharFilterFactory(new JCG.Dictionary<String, String>());
             TextReader filter = filterFactory.Create(new StringReader(text));
             TokenStream tokenStream = new MockTokenizer(filter, MockTokenizer.KEYWORD, false);
             AssertTokenStreamContents(tokenStream, new String[] { "時時馬鹿馬鹿しいところどころミスズ" });
@@ -41,10 +42,10 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestIterationMarksWithJapaneseTokenizer()
         {
-            JapaneseTokenizerFactory tokenizerFactory = new JapaneseTokenizerFactory(new Dictionary<String, String>());
+            JapaneseTokenizerFactory tokenizerFactory = new JapaneseTokenizerFactory(new JCG.Dictionary<String, String>());
             tokenizerFactory.Inform(new StringMockResourceLoader(""));
 
-            JapaneseIterationMarkCharFilterFactory filterFactory = new JapaneseIterationMarkCharFilterFactory(new Dictionary<String, String>());
+            JapaneseIterationMarkCharFilterFactory filterFactory = new JapaneseIterationMarkCharFilterFactory(new JCG.Dictionary<String, String>());
             TextReader filter = filterFactory.Create(
                 new StringReader("時々馬鹿々々しいところゞゝゝミスヾ")
             );
@@ -55,10 +56,10 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestKanjiOnlyIterationMarksWithJapaneseTokenizer()
         {
-            JapaneseTokenizerFactory tokenizerFactory = new JapaneseTokenizerFactory(new Dictionary<String, String>());
+            JapaneseTokenizerFactory tokenizerFactory = new JapaneseTokenizerFactory(new JCG.Dictionary<String, String>());
             tokenizerFactory.Inform(new StringMockResourceLoader(""));
 
-            IDictionary<String, String> filterArgs = new Dictionary<String, String>();
+            IDictionary<String, String> filterArgs = new JCG.Dictionary<String, String>();
             filterArgs["normalizeKanji"] = "true";
             filterArgs["normalizeKana"] = "false";
             JapaneseIterationMarkCharFilterFactory filterFactory = new JapaneseIterationMarkCharFilterFactory(filterArgs);
@@ -73,10 +74,10 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestKanaOnlyIterationMarksWithJapaneseTokenizer()
         {
-            JapaneseTokenizerFactory tokenizerFactory = new JapaneseTokenizerFactory(new Dictionary<String, String>());
+            JapaneseTokenizerFactory tokenizerFactory = new JapaneseTokenizerFactory(new JCG.Dictionary<String, String>());
             tokenizerFactory.Inform(new StringMockResourceLoader(""));
 
-            IDictionary<String, String> filterArgs = new Dictionary<String, String>();
+            IDictionary<String, String> filterArgs = new JCG.Dictionary<String, String>();
             filterArgs["normalizeKanji"] = "false";
             filterArgs["normalizeKana"] = "true";
             JapaneseIterationMarkCharFilterFactory filterFactory = new JapaneseIterationMarkCharFilterFactory(filterArgs);
@@ -94,7 +95,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             try
             {
-                new JapaneseIterationMarkCharFilterFactory(new Dictionary<String, String>() {
+                new JapaneseIterationMarkCharFilterFactory(new JCG.Dictionary<String, String>() {
                     { "bogusArg", "bogusValue" }
                 });
                 fail();

@@ -684,7 +684,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return fields.Keys.GetEnumerator();
         }
 
-        private readonly IDictionary<string, SimpleTextTerms> termsCache = new Dictionary<string, SimpleTextTerms>();
+        private readonly IDictionary<string, SimpleTextTerms> termsCache = new JCG.Dictionary<string, SimpleTextTerms>();
 
         public override Terms GetTerms(string field)
         {

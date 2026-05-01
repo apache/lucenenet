@@ -37,7 +37,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         /// <summary>The actual parser to read HTML documents.</summary>
         public sealed class Parser
         {
-            private readonly IDictionary<string, string> metaTags = new Dictionary<string, string>();
+            private readonly IDictionary<string, string> metaTags = new JCG.Dictionary<string, string>();
             private readonly string title, body;
 
             // LUCENENET specific - expose field through property

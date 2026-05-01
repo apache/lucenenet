@@ -447,7 +447,7 @@ namespace Lucene.Net.Analysis.Synonym
             int numSyn = AtLeast(5);
             //final int numSyn = 2;
 
-            IDictionary<string, OneSyn> synMap = new Dictionary<string, OneSyn>();
+            IDictionary<string, OneSyn> synMap = new JCG.Dictionary<string, OneSyn>();
             IList<OneSyn> syns = new JCG.List<OneSyn>();
             bool dedup = Random.nextBoolean();
             if (Verbose)

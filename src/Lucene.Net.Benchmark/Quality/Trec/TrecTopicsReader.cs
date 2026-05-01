@@ -72,7 +72,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
             {
                 while (null != (sb = Read(reader, "<top>", null, false, false)))
                 {
-                    IDictionary<string, string> fields = new Dictionary<string, string>();
+                    IDictionary<string, string> fields = new JCG.Dictionary<string, string>();
                     // id
                     sb = Read(reader, "<num>", null, true, false);
                     int k = sb.IndexOf(":", StringComparison.Ordinal);

@@ -214,7 +214,7 @@ namespace Lucene.Net.Facet
         {
             Assert.AreEqual(a.Count, b.Count);
             float lastValue = float.PositiveInfinity;
-            IDictionary<string, FacetResult> aByDim = new Dictionary<string, FacetResult>();
+            IDictionary<string, FacetResult> aByDim = new JCG.Dictionary<string, FacetResult>();
             for (int i = 0; i < a.Count; i++)
             {
                 Assert.IsTrue((float)a[i].Value <= lastValue);
@@ -222,7 +222,7 @@ namespace Lucene.Net.Facet
                 aByDim[a[i].Dim] = a[i];
             }
             lastValue = float.PositiveInfinity;
-            IDictionary<string, FacetResult> bByDim = new Dictionary<string, FacetResult>();
+            IDictionary<string, FacetResult> bByDim = new JCG.Dictionary<string, FacetResult>();
             for (int i = 0; i < b.Count; i++)
             {
                 bByDim[b[i].Dim] = b[i];

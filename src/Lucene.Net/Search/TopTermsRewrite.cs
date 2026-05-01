@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
                 this.maxSize = maxSize;
                 this.stQueue = stQueue;
                 maxBoostAtt = Attributes.AddAttribute<IMaxNonCompetitiveBoostAttribute>();
-                visitedTerms = new Dictionary<BytesRef, ScoreTerm>();
+                visitedTerms = new JCG.Dictionary<BytesRef, ScoreTerm>();
             }
 
             private readonly IMaxNonCompetitiveBoostAttribute maxBoostAtt;

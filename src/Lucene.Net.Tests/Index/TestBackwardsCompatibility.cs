@@ -225,7 +225,7 @@ namespace Lucene.Net.Index
             JCG.List<string> names = new JCG.List<string>(oldNames.Length + oldSingleSegmentNames.Length);
             names.AddRange(oldNames);
             names.AddRange(oldSingleSegmentNames);
-            oldIndexDirs = new Dictionary<string, Directory>();
+            oldIndexDirs = new JCG.Dictionary<string, Directory>();
             foreach (string name in names)
             {
                 DirectoryInfo dir = CreateTempDir(name);

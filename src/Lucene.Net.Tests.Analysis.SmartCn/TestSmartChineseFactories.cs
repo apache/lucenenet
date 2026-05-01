@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Cn.Smart
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         {
             TextReader reader = new StringReader("我购买了道具和服装。");
             TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-            SmartChineseWordTokenFilterFactory factory = new SmartChineseWordTokenFilterFactory(new Dictionary<string, string>());
+            SmartChineseWordTokenFilterFactory factory = new SmartChineseWordTokenFilterFactory(new JCG.Dictionary<string, string>());
             stream = factory.Create(stream);
             // TODO: fix smart chinese to not emit punctuation tokens
             // at the moment: you have to clean up with WDF, or use the stoplist, etc
@@ -52,9 +53,9 @@ namespace Lucene.Net.Analysis.Cn.Smart
         public void TestTokenizer()
         {
             TextReader reader = new StringReader("我购买了道具和服装。我购买了道具和服装。");
-            SmartChineseSentenceTokenizerFactory tokenizerFactory = new SmartChineseSentenceTokenizerFactory(new Dictionary<string, string>());
+            SmartChineseSentenceTokenizerFactory tokenizerFactory = new SmartChineseSentenceTokenizerFactory(new JCG.Dictionary<string, string>());
             TokenStream stream = tokenizerFactory.Create(reader);
-            SmartChineseWordTokenFilterFactory factory = new SmartChineseWordTokenFilterFactory(new Dictionary<string, string>());
+            SmartChineseWordTokenFilterFactory factory = new SmartChineseWordTokenFilterFactory(new JCG.Dictionary<string, string>());
             stream = factory.Create(stream);
             // TODO: fix smart chinese to not emit punctuation tokens
             // at the moment: you have to clean up with WDF, or use the stoplist, etc
@@ -72,7 +73,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         {
             try
             {
-                new SmartChineseSentenceTokenizerFactory(new Dictionary<string, string>() {
+                new SmartChineseSentenceTokenizerFactory(new JCG.Dictionary<string, string>() {
                     { "bogusArg", "bogusValue" }
                 });
                 fail();
@@ -84,7 +85,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
 
             try
             {
-                new SmartChineseWordTokenFilterFactory(new Dictionary<string, string>() {
+                new SmartChineseWordTokenFilterFactory(new JCG.Dictionary<string, string>() {
                     { "bogusArg", "bogusValue" }
                 });
                 fail();

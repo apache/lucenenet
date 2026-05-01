@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
         /// Reference count for all files in the index.
         /// Counts how many existing commits reference a file.
         /// </summary>
-        private readonly IDictionary<string, RefCount> refCounts = new Dictionary<string, RefCount>(); // LUCENENET: marked readonly
+        private readonly IDictionary<string, RefCount> refCounts = new JCG.Dictionary<string, RefCount>(); // LUCENENET: marked readonly
 
         /// <summary>
         /// Holds all commits (segments_N) currently in the index.

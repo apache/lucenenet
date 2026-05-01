@@ -284,7 +284,7 @@ namespace Lucene.Net.Analysis.Pt
         {
             try
             {
-                IDictionary<string, Step> steps = new Dictionary<string, Step>();
+                IDictionary<string, Step> steps = new JCG.Dictionary<string, Step>();
 
                 using (TextReader r = IOUtils.GetDecodingReader(clazz, resource, Encoding.UTF8))
                 {

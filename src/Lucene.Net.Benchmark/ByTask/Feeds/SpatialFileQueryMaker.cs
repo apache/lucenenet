@@ -60,7 +60,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         protected override Query[] PrepareQueries()
         {
             int maxQueries = m_config.Get("query.file.maxQueries", 1000);
-            Config srcConfig = new Config(new Dictionary<string, string>());
+            Config srcConfig = new Config(new JCG.Dictionary<string, string>());
             srcConfig.Set("docs.file", m_config.Get("query.file", null));
             srcConfig.Set("line.parser", m_config.Get("query.file.line.parser", null));
             srcConfig.Set("content.source.forever", "false");

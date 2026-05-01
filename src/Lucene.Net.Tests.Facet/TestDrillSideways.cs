@@ -785,7 +785,7 @@ namespace Lucene.Net.Facet
                 DrillSidewaysResult actual = ds.Search(ddq, filter, null, numDocs, sort, true, true);
 
                 TopDocs hits = s.Search(baseQuery, numDocs);
-                IDictionary<string, float> scores = new Dictionary<string, float>();
+                IDictionary<string, float> scores = new JCG.Dictionary<string, float>();
                 foreach (ScoreDoc sd in hits.ScoreDocs)
                 {
                     scores[s.Doc(sd.Doc).Get("id")] = sd.Score;
@@ -871,7 +871,7 @@ namespace Lucene.Net.Facet
 
             protected override Facets BuildFacetsResult(FacetsCollector drillDowns, FacetsCollector[] drillSideways, string[] drillSidewaysDims)
             {
-                IDictionary<string, Facets> drillSidewaysFacets = new Dictionary<string, Facets>();
+                IDictionary<string, Facets> drillSidewaysFacets = new JCG.Dictionary<string, Facets>();
                 Facets drillDownFacets = outerInstance.GetTaxonomyFacetCounts(m_taxoReader, m_config, drillDowns);
                 if (drillSideways != null)
                 {
@@ -1103,7 +1103,7 @@ namespace Lucene.Net.Facet
             }
             //nextDocBreak:// Not referenced
 
-            IDictionary<string, int> idToDocID = new Dictionary<string, int>();
+            IDictionary<string, int> idToDocID = new JCG.Dictionary<string, int>();
             for (int i = 0; i < s.IndexReader.MaxDoc; i++)
             {
                 idToDocID[s.Doc(i).Get("id")] = i;
@@ -1169,7 +1169,7 @@ namespace Lucene.Net.Facet
                 }
 
                 int idx = 0;
-                IDictionary<string, int> actualValues = new Dictionary<string, int>();
+                IDictionary<string, int> actualValues = new JCG.Dictionary<string, int>();
 
                 if (fr != null)
                 {

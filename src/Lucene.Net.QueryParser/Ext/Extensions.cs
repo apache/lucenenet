@@ -2,6 +2,7 @@ using Lucene.Net.QueryParsers.Classic;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Ext
 {
@@ -41,7 +42,7 @@ namespace Lucene.Net.QueryParsers.Ext
     /// <seealso cref="ParserExtension"/>
     public class Extensions
     {
-        private readonly IDictionary<string, ParserExtension> extensions = new Dictionary<string, ParserExtension>();
+        private readonly IDictionary<string, ParserExtension> extensions = new JCG.Dictionary<string, ParserExtension>();
         private readonly char extensionFieldDelimiter;
 
         /// <summary>

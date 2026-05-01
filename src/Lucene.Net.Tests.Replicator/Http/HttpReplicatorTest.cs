@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 #if FEATURE_ASPNETCORE_TESTHOST
 using Microsoft.AspNetCore.TestHost;
@@ -82,7 +83,7 @@ namespace Lucene.Net.Replicator.Http
 
         private void StartServer()
         {
-            ReplicationService service = new ReplicationService(new Dictionary<string, IReplicator> { { "s1", serverReplicator } });
+            ReplicationService service = new ReplicationService(new JCG.Dictionary<string, IReplicator> { { "s1", serverReplicator } });
             server = NewHttpServer(service, mockErrorConfig, useSynchronousIO, useStartupClass);
             port = ServerPort(server);
             host = ServerHost(server);

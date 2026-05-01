@@ -329,10 +329,10 @@ namespace Lucene.Net.Facet.SortedSet
                 Facets facets = new SortedSetDocValuesFacetCounts(state, fc);
 
                 // Slow, yet hopefully bug-free, faceting:
-                var expectedCounts = new JCG.List<Dictionary<string, int>>();
+                var expectedCounts = new JCG.List<JCG.Dictionary<string, int>>();
                 for (int i = 0; i < numDims; i++)
                 {
-                    expectedCounts.Add(new Dictionary<string, int>());
+                    expectedCounts.Add(new JCG.Dictionary<string, int>());
                 }
 
                 foreach (TestDoc doc in testDocs)

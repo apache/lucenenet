@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Classic
 {
@@ -130,7 +131,7 @@ namespace Lucene.Net.QueryParsers.Classic
         [Test]
         public virtual void TestBoostsSimple()
         {
-            IDictionary<string, float> boosts = new Dictionary<string, float>();
+            IDictionary<string, float> boosts = new JCG.Dictionary<string, float>();
             boosts["b"] = (float)5;
             boosts["t"] = (float)10;
             string[] fields = { "b", "t" };
@@ -396,7 +397,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
             // Create a boost map that only contains boosts for some fields, not all
             // This tests that the TryGetValue fix prevents KeyNotFoundException
-            var boosts = new Dictionary<string, float>
+            var boosts = new JCG.Dictionary<string, float>
             {
                 { "title", 2.0f },
                 // Intentionally omitting "keyword" and "description" from boost map
@@ -424,7 +425,7 @@ namespace Lucene.Net.QueryParsers.Classic
             MockAnalyzer analyzer = new MockAnalyzer(Random);
 
             // Test 1: Verify boosts are applied to the query string representation
-            var boosts = new Dictionary<string, float>
+            var boosts = new JCG.Dictionary<string, float>
             {
                 { "title", 2.0f },
                 { "keyword", 1.0f }
@@ -439,7 +440,7 @@ namespace Lucene.Net.QueryParsers.Classic
             assertFalse("Keyword field should not have boost notation when boost is 1.0", queryString.Contains("keyword:ldqk^"));
 
             // Test 2: Different boost configuration
-            var boosts2 = new Dictionary<string, float>
+            var boosts2 = new JCG.Dictionary<string, float>
             {
                 { "title", 1.0f },
                 { "keyword", 2.0f }
@@ -474,7 +475,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 IndexSearcher searcher = NewSearcher(ir);
 
                 // Test with equal boosts first (baseline)
-                var equalBoosts = new Dictionary<string, float>
+                var equalBoosts = new JCG.Dictionary<string, float>
                 {
                     { "title", 1.0f },
                     { "keyword", 1.0f }
@@ -492,7 +493,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 }
 
                 // Search with title boosted 2.0
-                var titleBoosts = new Dictionary<string, float>
+                var titleBoosts = new JCG.Dictionary<string, float>
                 {
                     { "title", 2.0f },
                     { "keyword", 1.0f }
@@ -510,7 +511,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 }
 
                 // Search with keyword boosted 2.0
-                var keywordBoosts = new Dictionary<string, float>
+                var keywordBoosts = new JCG.Dictionary<string, float>
                 {
                     { "title", 1.0f },
                     { "keyword", 2.0f }
