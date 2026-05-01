@@ -38,3 +38,4 @@ using System.Runtime.InteropServices;
 
 [assembly: LuceneMavenMapping("org.apache.lucene", "lucene-benchmark", "4.8.1")]
 [assembly: LucenePackageMapping("Lucene.Net.Benchmarks", "org.apache.lucene.benchmark")]
+[assembly: LucenePackageMapping("Lucene.Net.Benchmarks.ByTask", "org.apache.lucene.benchmark.byTask")]

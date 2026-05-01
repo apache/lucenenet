@@ -49,7 +49,7 @@ public class TypeComparisonTests
     [InlineData(typeof(IKeywordAttribute), "interface", "org.apache.lucene.analysis.tokenattributes", "KeywordAttribute")]
     [InlineData(typeof(KeywordAttribute), "class", "org.apache.lucene.analysis.tokenattributes", "KeywordAttributeImpl")]
     // Test for LuceneNamespaceMappingAttribute
-    [InlineData(typeof(PerfRunData), "class", "org.apache.lucene.benchmarks.byTask", "PerfRunData")]
+    [InlineData(typeof(PerfRunData), "class", "org.apache.lucene.benchmark.byTask", "PerfRunData")]
     [Theory]
     public void TypesMatchTests(Type dotNetType, string javaTypeKind, string javaPackage, string javaTypeName, string? javaFullName = null)
     {
