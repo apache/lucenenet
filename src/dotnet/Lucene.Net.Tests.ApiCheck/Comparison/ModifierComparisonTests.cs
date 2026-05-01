@@ -50,4 +50,37 @@ public class ModifierComparisonTests
     {
         Assert.Equal(expected, ModifierComparison.ModifiersAreEquivalent(usage, javaModifiers.Split(" "), dotnetModifiers.Split(" ")));
     }
+
+    // Enum cases: a Java enum's static/final/abstract are not applicable to a .NET enum
+    // (.NET enums are implicitly sealed and cannot carry static or abstract). When both
+    // sides are enums, those Java modifiers should be dropped before comparing.
+    [InlineData("public static final", "public", true)] // nested Java enum (e.g., Field.Store)
+    [InlineData("public final", "public", true)]        // top-level Java enum (e.g., MergeTrigger)
+    [InlineData("public abstract static", "public", true)] // Java enum with abstract method (e.g., Field.Index)
+    [InlineData("public abstract", "public", true)]
+    [InlineData("public static", "public", true)]
+    [InlineData("public", "public", true)]
+    [Theory]
+    public void ModifiersAreEquivalent_Enum(string javaModifiers, string dotnetModifiers, bool expected)
+    {
+        Assert.Equal(expected, ModifierComparison.ModifiersAreEquivalent(
+            ModifierUsage.Type,
+            javaModifiers.Split(" "),
+            dotnetModifiers.Split(" "),
+            javaTypeKind: "enum",
+            isDotNetEnum: true));
+    }
+
+    [Fact]
+    public void ModifiersAreEquivalent_EnumKindMismatch_FallsThroughToDefault()
+    {
+        // Java side claims enum but .NET side isn't an enum: skip the enum normalization
+        // path so we don't accidentally accept a kind-mismatched pair.
+        Assert.False(ModifierComparison.ModifiersAreEquivalent(
+            ModifierUsage.Type,
+            "public abstract static".Split(" "),
+            "public".Split(" "),
+            javaTypeKind: "enum",
+            isDotNetEnum: false));
+    }
 }
