@@ -57,6 +57,13 @@ public static class ModifierComparison
     }
 
     public static bool ModifiersAreEquivalent(ModifierUsage usage, IReadOnlyList<string> javaModifiers, IReadOnlyList<string> dotnetModifiers)
+        => ModifiersAreEquivalent(usage, javaModifiers, dotnetModifiers, javaTypeKind: null, isDotNetEnum: false);
+
+    public static bool ModifiersAreEquivalent(ModifierUsage usage,
+        IReadOnlyList<string> javaModifiers,
+        IReadOnlyList<string> dotnetModifiers,
+        string? javaTypeKind,
+        bool isDotNetEnum)
     {
         var applicableJavaModifiers = new HashSet<string>(javaModifiers);
         var applicableDotNetModifiers = new HashSet<string>(dotnetModifiers);
@@ -72,6 +79,19 @@ public static class ModifierComparison
             if (!applicableDotNetModifiers.Contains("public"))
             {
                 throw new ArgumentException("All .NET types are expected to be public.");
+            }
+
+            // Enums on the .NET side are implicitly sealed and can't carry static/abstract
+            // (those are compile errors). Java enums always carry static (when nested) and
+            // either 'final' (plain enum) or 'abstract' (enum with abstract methods, which
+            // Lucene.NET ports as a different shape). Drop these Java-only modifiers when
+            // both sides are enums so the comparison degenerates to a public-only match.
+            if (string.Equals(javaTypeKind, "enum", StringComparison.Ordinal) && isDotNetEnum)
+            {
+                applicableJavaModifiers.Remove("static");
+                applicableJavaModifiers.Remove("final");
+                applicableJavaModifiers.Remove("abstract");
+                return applicableJavaModifiers.SetEquals(applicableDotNetModifiers);
             }
 
             // special case where we consider public final in Java to be equivalent to public static in .NET
