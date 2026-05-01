@@ -83,4 +83,27 @@ public class ModifierComparisonTests
             javaTypeKind: "enum",
             isDotNetEnum: false));
     }
+
+    // Fields: Java 'final' ↔ .NET 'readonly' (not 'sealed' as for methods). A Java
+    // 'public static final' constant is often ported to a .NET 'public const', which
+    // is implicitly static and not init-only — treat 'const' as 'static readonly'.
+    [InlineData("public static final", "public static readonly", true)]
+    [InlineData("public final", "public readonly", true)]
+    [InlineData("public static final", "public const", true)] // Java constant ported to .NET const
+    [InlineData("public", "public", true)]
+    [InlineData("protected static final", "protected static readonly", true)]
+    [InlineData("public transient", "public", true)] // 'transient' has no .NET analogue
+    [InlineData("public volatile", "public", true)] // 'volatile' has no .NET analogue
+    [InlineData("public static final", "public static", false)] // missing readonly on .NET side
+    [InlineData("public", "public readonly", false)] // .NET-only readonly
+    [InlineData("public static", "public", false)] // static differs
+    [InlineData("public", "private", false)] // visibility differs
+    [Theory]
+    public void ModifiersAreEquivalent_Field(string javaModifiers, string dotnetModifiers, bool expected)
+    {
+        Assert.Equal(expected, ModifierComparison.ModifiersAreEquivalent(
+            ModifierUsage.Field,
+            javaModifiers.Split(" "),
+            dotnetModifiers.Split(" ")));
+    }
 }

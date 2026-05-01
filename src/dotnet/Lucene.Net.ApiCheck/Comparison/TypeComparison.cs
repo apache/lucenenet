@@ -190,7 +190,29 @@ public static class TypeComparison
 
         return string.Equals(equivalentJavaKind, javaType.Kind, StringComparison.Ordinal)
             && string.Equals(luceneTypeInfo.PackageName, javaType.PackageName, StringComparison.Ordinal)
-            && string.Equals(luceneTypeInfo.TypeName, cleanJavaName, StringComparison.Ordinal);
+            && (string.Equals(luceneTypeInfo.TypeName, cleanJavaName, StringComparison.Ordinal)
+                || string.Equals(luceneTypeInfo.TypeName, NormalizeNestedTypeName(cleanJavaName), StringComparison.Ordinal));
+    }
+
+    // Lucene.NET renames Java primitive type words inside type names (Int→Int32,
+    // Long→Int64, Short→Int16, Float→Single) the same way it does for member names.
+    // Type names can also contain '.' separators when a Java nested type has been
+    // flattened to "Outer.Inner" form, so apply the rename to each segment so that
+    // 'PackedInts.Header' becomes 'PackedInt32s.Header' rather than failing the
+    // boundary lookahead at the '.'.
+    private static string NormalizeNestedTypeName(string name)
+    {
+        if (!name.Contains('.'))
+        {
+            return MemberComparison.NormalizeJavaTypeWordsToDotNet(name);
+        }
+
+        var segments = name.Split('.');
+        for (var i = 0; i < segments.Length; i++)
+        {
+            segments[i] = MemberComparison.NormalizeJavaTypeWordsToDotNet(segments[i]);
+        }
+        return string.Join('.', segments);
     }
 
     public static bool InterfacesMatch(IReadOnlyList<Type> dotNetInterfaces, IReadOnlyList<string> javaInterfaces)
