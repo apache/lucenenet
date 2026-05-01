@@ -15,10 +15,12 @@
  * limitations under the License.
  */
 
+using J2N;
 using J2N.Text;
 using Lucene.Net.ApiCheck.Extensions;
 using Lucene.Net.ApiCheck.Models.JavaApi;
 using Lucene.Net.Reflection;
+using System.Collections;
 using System.Reflection;
 
 namespace Lucene.Net.ApiCheck.Comparison;
@@ -36,7 +38,32 @@ public static class TypeComparison
         [typeof(IDisposable)] = ["java.lang.AutoCloseable", "java.io.Closeable"], // TODO: map ICloseable once #271 is done
         [typeof(ICharSequence)] = ["java.lang.CharSequence"],
         [typeof(IAppendable)] = ["java.lang.Appendable"],
-        [typeof(string)] = ["java.lang.String"],
+        [typeof(string)] = ["java.lang.String", "java.lang.CharSequence"],
+        [typeof(TextReader)] = ["java.io.Reader"],
+        [typeof(TextWriter)] = ["java.io.Writer"],
+        [typeof(Stream)] = ["java.io.InputStream", "java.io.OutputStream"],
+        [typeof(FileInfo)] = ["java.io.File"],
+        [typeof(Random)] = ["java.util.Random"],
+        [typeof(Randomizer)] = ["java.util.Random"],
+        // Open-generic collection mappings: a Java erased List/Set/Map type can correspond
+        // to several .NET collection types depending on how the porter chose to expose it.
+        [typeof(IEnumerable<>)] = ["java.util.List", "java.util.Collection", "java.lang.Iterable", "java.util.Set"],
+        [typeof(IEnumerable)] = ["java.util.List", "java.util.Collection", "java.lang.Iterable", "java.util.Set"],
+        [typeof(ICollection<>)] = ["java.util.List", "java.util.Collection", "java.util.Set"],
+        [typeof(IList<>)] = ["java.util.List"],
+        [typeof(IReadOnlyCollection<>)] = ["java.util.List", "java.util.Collection", "java.util.Set"],
+        [typeof(IReadOnlyList<>)] = ["java.util.List"],
+        [typeof(List<>)] = ["java.util.List"],
+        [typeof(ISet<>)] = ["java.util.Set"],
+        [typeof(HashSet<>)] = ["java.util.HashSet", "java.util.Set"],
+        [typeof(SortedSet<>)] = ["java.util.TreeSet", "java.util.SortedSet", "java.util.NavigableSet"],
+        [typeof(IDictionary<,>)] = ["java.util.Map"],
+        [typeof(IReadOnlyDictionary<,>)] = ["java.util.Map"],
+        [typeof(Dictionary<,>)] = ["java.util.HashMap", "java.util.Map"],
+        [typeof(SortedDictionary<,>)] = ["java.util.TreeMap", "java.util.SortedMap", "java.util.NavigableMap"],
+        [typeof(IEnumerator<>)] = ["java.util.Iterator"],
+        [typeof(IEnumerator)] = ["java.util.Iterator"],
+        [typeof(KeyValuePair<,>)] = ["java.util.Map$Entry"],
     };
 
     public static bool TypeMatchesFullName(Type? dotNetType, string? javaTypeName, string? javaTypeKind)

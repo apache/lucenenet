@@ -102,7 +102,8 @@ public static class TypeExtensions
 
     public static IReadOnlyList<FieldInfo> GetApiFields(this Type type)
         => type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
-            .Where(f => f is { IsPrivate: false, IsAssembly: false, IsFamilyAndAssembly: false })
+            .Where(f => f is { IsPrivate: false, IsAssembly: false, IsFamilyAndAssembly: false }
+                        && !f.IsSpecialName) // excludes the synthetic enum 'value__' field
             .ToList();
 
     public static IReadOnlyList<ConstructorInfo> GetApiConstructors(this Type type)

@@ -241,4 +241,34 @@ public class MemberComparisonTests
         var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Count))!;
         Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("isCount", "boolean")));
     }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_BareNameGetter_Matches()
+    {
+        // Java 'count()' ↔ .NET 'Count' property.
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Count))!;
+        Assert.True(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("count", "int")));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_BareNameGetter_VoidReturn_DoesNotMatch()
+    {
+        // Java 'name()' returning void is not a getter.
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Name))!;
+        Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("name", "void")));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_BareNameGetter_TypeMismatch_DoesNotMatch()
+    {
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Name))!;
+        Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("name", "int")));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_BareNameGetter_NameMismatch_DoesNotMatch()
+    {
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Count))!;
+        Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("size", "int")));
+    }
 }
