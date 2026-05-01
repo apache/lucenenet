@@ -65,9 +65,10 @@ namespace Lucene.Net.Analysis.Ga
                 }
 
                 // LUCENENET: Reduce allocations by using the stack and spans
-                var source = new ReadOnlySpan<char>(chArray, idx, chLen);
-                var destination = chArray.AsSpan(idx, chLen);
-                var spare = chLen * sizeof(char) <= Constants.MaxStackByteLimit ? stackalloc char[chLen] : new char[chLen];
+                int spanLen = chLen - idx;
+                var source = new ReadOnlySpan<char>(chArray, idx, spanLen);
+                var destination = chArray.AsSpan(idx, spanLen);
+                var spare = spanLen * sizeof(char) <= Constants.MaxStackByteLimit ? stackalloc char[spanLen] : new char[spanLen];
                 source.ToLower(spare, culture); // LUCENENET specific - use Irish culture when lowercasing
                 spare.CopyTo(destination);
 

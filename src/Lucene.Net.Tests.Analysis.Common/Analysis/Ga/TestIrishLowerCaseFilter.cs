@@ -1,5 +1,7 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System.IO;
 
@@ -48,6 +50,105 @@ namespace Lucene.Net.Analysis.Ga
                 return new TokenStreamComponents(tokenizer, new IrishLowerCaseFilter(tokenizer));
             });
             CheckOneTerm(a, "", "");
+        }
+
+        /// <summary>
+        /// Test that prothesis output is correct across all upper vowels and fadas,
+        /// and for both n- and t- prefixes.
+        /// </summary>
+        [Test, LuceneNetSpecific] // Issue #1150
+        public virtual void TestProthesisCorrectness()
+        {
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new IrishLowerCaseFilter(tokenizer));
+            });
+
+            // Plain upper vowels
+            CheckOneTerm(a, "nAthair", "n-athair");
+            CheckOneTerm(a, "nEan", "n-ean");
+            CheckOneTerm(a, "nIasc", "n-iasc");
+            CheckOneTerm(a, "nOiche", "n-oiche");
+            CheckOneTerm(a, "nUll", "n-ull");
+            CheckOneTerm(a, "tAthair", "t-athair");
+            CheckOneTerm(a, "tEan", "t-ean");
+            CheckOneTerm(a, "tIasc", "t-iasc");
+            CheckOneTerm(a, "tOiche", "t-oiche");
+            CheckOneTerm(a, "tUll", "t-ull");
+
+            // Accented vowels (fadas)
+            CheckOneTerm(a, "nÁit", "n-áit");
+            CheckOneTerm(a, "nÉan", "n-éan");
+            CheckOneTerm(a, "nÍoc", "n-íoc");
+            CheckOneTerm(a, "nÓg", "n-óg");
+            CheckOneTerm(a, "nÚll", "n-úll");
+            CheckOneTerm(a, "tÁit", "t-áit");
+            CheckOneTerm(a, "tÉan", "t-éan");
+            CheckOneTerm(a, "tÍoc", "t-íoc");
+            CheckOneTerm(a, "tÓg", "t-óg");
+            CheckOneTerm(a, "tÚll", "t-úll");
+        }
+
+        /// <summary>
+        /// Regression test for issue #1150: ArgumentOutOfRangeException in IrishLowerCaseFilter.
+        ///
+        /// We confirm this is fixed by using a custom TokenStream that writes directly into the
+        /// internal CharTermAttribute.termBuffer field, bypassing the Oversize over-allocation that
+        /// all public paths go through, so the buffer is sized to exactly the post-prothesis
+        /// term length. Any out-of-range access would throw an exception and fail the test.
+        /// </summary>
+        [Test, LuceneNetSpecific] // Issue #1150
+        public virtual void TestProthesis_SpanBoundary()
+        {
+            // "nAthair" has length 7; after prothesis it becomes "n-athair" (length 8).
+            // We pre-size the buffer to exactly 8 so that we can detect out-of-range access.
+            const string input = "nAthair";
+            const string expected = "n-athair";
+
+            var source = new TightBufferTokenStream(input);
+            var filter = new IrishLowerCaseFilter(source);
+            AssertTokenStreamContents(filter, new[] { expected });
+        }
+
+        /// <summary>
+        /// A TokenStream that emits a single token with the backing buffer sized to exactly
+        /// the post-prothesis term length (term.Length + 1), bypassing Oversize over-allocation.
+        /// This forces the tight-buffer condition that could detect span length bugs in
+        /// IrishLowerCaseFilter.
+        /// </summary>
+        private sealed class TightBufferTokenStream : TokenStream
+        {
+            private readonly string _term;
+            private bool _done;
+            private readonly CharTermAttribute _termAtt;
+
+            public TightBufferTokenStream(string term)
+            {
+                _term = term;
+                _termAtt = (CharTermAttribute)AddAttribute<ICharTermAttribute>();
+            }
+
+            public override bool IncrementToken()
+            {
+                if (_done) return false;
+                _done = true;
+                ClearAttributes();
+                // Set the backing buffer to exactly postProthesisLen chars — no Oversize slack.
+                // IrishLowerCaseFilter.IncrementToken calls ResizeBuffer(chLen+1) which is a no-op
+                // when the buffer is already that size, leaving the span with no room for idx=2.
+                int postProthesisLen = _term.Length + 1;
+                _termAtt.termBuffer = new char[postProthesisLen];
+                _term.CopyTo(0, _termAtt.termBuffer, 0, _term.Length);
+                _termAtt.Length = _term.Length;
+                return true;
+            }
+
+            public override void Reset()
+            {
+                base.Reset();
+                _done = false;
+            }
         }
     }
 }
