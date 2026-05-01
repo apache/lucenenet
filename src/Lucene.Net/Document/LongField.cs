@@ -1,5 +1,4 @@
 using Lucene.Net.Index;
-using Lucene.Net.Reflection;
 using System;
 using Int64 = J2N.Numerics.Int64;
 
@@ -124,7 +123,6 @@ namespace Lucene.Net.Documents
     /// </para>
     /// @since 2.9
     /// </summary>
-    [LuceneType("org.apache.lucene.document", "LongField")]
     public sealed class Int64Field : Field
     {
         /// <summary>

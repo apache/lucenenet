@@ -1,4 +1,3 @@
-using Lucene.Net.Reflection;
 using Lucene.Net.Store;
 
 namespace Lucene.Net.Codecs.Sep
@@ -27,7 +26,6 @@ namespace Lucene.Net.Codecs.Sep
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    [LuceneType("org.apache.lucene.codecs.sep", "IntStreamFactory")]
     public abstract class Int32StreamFactory
     {
         /// <summary>

@@ -1,5 +1,4 @@
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Reflection;
 using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -35,7 +34,6 @@ namespace Lucene.Net.Util.Fst
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    [LuceneType("org.apache.lucene.util.fst", "PositiveIntOutputs")]
     public sealed class PositiveInt32Outputs : Outputs<Int64>
     {
         private static readonly Int64 NO_OUTPUT = Int64.GetInstance(0);

@@ -24,7 +24,7 @@ namespace Lucene.Net.Reflection
     /// Indicates that the target of this attribute has no equivalent in Lucene.
     /// </summary>
     [NoLuceneEquivalent] // This recursive attribute usage is intentional, as this attribute does not exist in Lucene
-    [AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
     public sealed class NoLuceneEquivalentAttribute : Attribute
     {
         /// <summary>

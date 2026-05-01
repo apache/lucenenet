@@ -1,6 +1,5 @@
 using J2N.Numerics;
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Reflection;
 using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
@@ -36,7 +35,6 @@ namespace Lucene.Net.Util
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    [LuceneType("org.apache.lucene.util", "LongBitSet")]
     public sealed class Int64BitSet : ICloneable // LUCENENET specific: Added ICloneable is to support the Clone<T>() extension method
     {
         internal readonly long[] bits; // LUCENENET: Internal for testing

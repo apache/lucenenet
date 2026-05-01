@@ -1,5 +1,4 @@
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Reflection;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -30,7 +29,6 @@ namespace Lucene.Net.Util.Fst
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    [LuceneType("org.apache.lucene.util.fst", "IntsRefFSTEnum")]
     public sealed class Int32sRefFSTEnum<T> : FSTEnum<T> where T : class // LUCENENET specific - added class constraint, since we compare reference equality
     {
         private readonly Int32sRef current = new Int32sRef(10);

@@ -1,7 +1,5 @@
 // Lucene version compatibility level 4.8.1
 
-using Lucene.Net.Reflection;
-
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /*
@@ -26,7 +24,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <para/>
     /// NOTE: This was ProductFloatFunction in Lucene
     /// </summary>
-    [LuceneType("org.apache.lucene.queries.function.valuesource", "ProductFloatFunction")]
     public class ProductSingleFunction : MultiSingleFunction
     {
         public ProductSingleFunction(ValueSource[] sources)

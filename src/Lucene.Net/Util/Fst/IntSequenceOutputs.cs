@@ -1,5 +1,4 @@
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Reflection;
 using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
@@ -34,7 +33,6 @@ namespace Lucene.Net.Util.Fst
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    [LuceneType("org.apache.lucene.util.fst", "IntSequenceOutputs")]
     public sealed class Int32SequenceOutputs : Outputs<Int32sRef>
     {
         private static readonly Int32sRef NO_OUTPUT = new Int32sRef();

@@ -93,7 +93,6 @@ namespace Lucene.Net.Search
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    [LuceneType("org.apache.lucene.search", "FieldComparator", Justification = ".NET naming conventions")]
     public abstract class FieldComparer<T> : FieldComparer
         where T : class //, IComparable // LUCENENET specific - Enforce reference types to avoid auto boxing
     {

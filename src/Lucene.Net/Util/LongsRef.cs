@@ -1,5 +1,4 @@
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Reflection;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -37,7 +36,6 @@ namespace Lucene.Net.Util
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    [LuceneType("org.apache.lucene.util", "LongsRef")]
     public sealed class Int64sRef : IComparable<Int64sRef>, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
