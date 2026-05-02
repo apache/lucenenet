@@ -1,14 +1,14 @@
 # Note: these patterns are applied to single files or directories, not full paths
 # coverage/* will ignore any coverage dir, but airflow/www/static/coverage/* will match nothing
 
-.rat-excludes
-.gitignore
 .gitattributes
+.gitignore
+.rat-excludes
 
 # Exclude build assets
+bin/*
 lib/*
 obj/*
-bin/*
 _artifacts/*
 _site/*
 
@@ -25,18 +25,18 @@ LuceneResourcesWikiPage\.html
 # Covered under a different license
 psake/*
 KStemData\d+\.cs
-Snowball/*
 Egothor.Stemmer/*
+Automaton/*
 Events/*
 Sax/*
-JaspellTernarySearchTrie\.cs
-RectangularArrays\.cs
-LimitedConcurrencyLevelTaskScheduler\.cs
-Automaton/*
+Snowball/*
 ConcurrentHashSet\.cs
-NullableAttributes\.cs
 ConfigurationReloadToken\.cs
 ConfigurationRoot\.cs
 ConfigurationSection\.cs
 DateTimeOffsetUtil\.cs
 FileStreamOptions\.cs
+JaspellTernarySearchTrie\.cs
+LimitedConcurrencyLevelTaskScheduler\.cs
+NullableAttributes\.cs
+RectangularArrays\.cs
