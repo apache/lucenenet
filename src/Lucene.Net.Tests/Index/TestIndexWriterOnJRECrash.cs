@@ -47,7 +47,6 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow]
-        [AwaitsFix]
         public override void TestNRTThreads_Mem()
         {
             //if we are not the fork
@@ -315,25 +314,39 @@ namespace Lucene.Net.Index
         {
             if (file is DirectoryInfo directoryInfo)
             {
-                BaseDirectoryWrapper dir = NewFSDirectory(directoryInfo);
-                dir.CheckIndexOnDispose = false; // don't double-checkindex
-                if (DirectoryReader.IndexExists(dir))
+                BaseDirectoryWrapper dir = null;
+                Exception priorE = null;
+                try
                 {
-                    if (Verbose)
+                    dir = NewFSDirectory(directoryInfo);
+                    dir.CheckIndexOnDispose = false; // don't double-checkindex
+                    if (DirectoryReader.IndexExists(dir))
                     {
-                        Console.Error.WriteLine("Checking index: " + file);
+                        if (Verbose)
+                        {
+                            Console.Error.WriteLine("Checking index: " + file);
+                        }
+                        // LUCENE-4738: if we crashed while writing first
+                        // commit it's possible index will be corrupt (by
+                        // design we don't try to be smart about this case
+                        // since that too risky):
+                        if (SegmentInfos.GetLastCommitGeneration(dir) > 1)
+                        {
+                            TestUtil.CheckIndex(dir);
+                        }
+                        return true;
                     }
-                    // LUCENE-4738: if we crashed while writing first
-                    // commit it's possible index will be corrupt (by
-                    // design we don't try to be smart about this case
-                    // since that too risky):
-                    if (SegmentInfos.GetLastCommitGeneration(dir) > 1)
-                    {
-                        TestUtil.CheckIndex(dir);
-                    }
-                    return true;
                 }
-                dir.Dispose();
+                catch (Exception e)
+                {
+                    priorE = e;
+                    throw;
+                }
+                finally
+                {
+                    IOUtils.DisposeWhileHandlingException(priorE, dir);
+                }
+
                 foreach (DirectoryInfo f in directoryInfo.EnumerateDirectories())
                 {
                     if (CheckIndexes(f))

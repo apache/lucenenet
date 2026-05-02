@@ -574,26 +574,47 @@ namespace Lucene.Net.Store
             /// <inheritdoc/>
             protected override void Dispose(bool disposing)
             {
-                if (disposing)
+                if (disposing && isOpen)
                 {
-                    parent.OnIndexOutputClosed(this);
-                    // only close the file if it has not been closed yet
-                    if (isOpen)
+                    Exception priorE = null; // LUCENENET: No need to cast to IOException
+
+                    try
                     {
-                        Exception priorE = null; // LUCENENET: No need to cast to IOException
+                        // LUCENENET: FileStream has a managed buffer. If we add this file
+                        // to m_staleFiles before flushing that buffer, another thread can
+                        // fsync the file through a separate handle, remove the stale marker,
+                        // and then this FileStream can flush later. That leaves bytes written
+                        // after the fsync and can make a committed index non-durable after a
+                        // process or machine crash.
+                        //
+                        // Keep the FileStream flush and stale-file bookkeeping atomic with
+                        // FSDirectory.Sync() so a file is never considered synced until all
+                        // managed FileStream buffers have at least reached the OS.
+                        UninterruptableMonitor.Enter(parent.m_syncLock);
                         try
                         {
-                            file.Flush(flushToDisk: false);
-                        }
-                        catch (Exception ioe) when (ioe.IsIOException())
-                        {
-                            priorE = ioe;
+                            try
+                            {
+                                file.Flush(flushToDisk: false);
+                            }
+                            catch (Exception ioe) when (ioe.IsIOException())
+                            {
+                                priorE = ioe;
+                            }
+                            finally
+                            {
+                                parent.OnIndexOutputClosed(this);
+                            }
                         }
                         finally
                         {
-                            isOpen = false;
-                            IOUtils.DisposeWhileHandlingException(priorE, file);
+                            UninterruptableMonitor.Exit(parent.m_syncLock);
                         }
+                    }
+                    finally
+                    {
+                        isOpen = false;
+                        IOUtils.DisposeWhileHandlingException(priorE, file);
                     }
                 }
                 //base.Dispose(disposing); // LUCENENET: No need to call base class, we are not using the functionality of BufferedIndexOutput
