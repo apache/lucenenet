@@ -7,7 +7,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
-using JCG = J2N.Collections.Generic;
+//using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 {

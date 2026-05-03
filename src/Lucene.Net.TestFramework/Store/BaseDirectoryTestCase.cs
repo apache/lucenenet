@@ -10,7 +10,7 @@ using System;
 using System.IO;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
-using JCG = J2N.Collections.Generic;
+//using JCG = J2N.Collections.Generic;
 using Test = NUnit.Framework.TestAttribute;
 
 namespace Lucene.Net.Store
