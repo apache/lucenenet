@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -242,7 +243,19 @@ namespace Lucene.Net.Index
 
         private static string GetTargetPlatform()
         {
-            return Environment.Is64BitProcess ? "x64" : "x86";
+            // LUCENENET: Match the host process architecture so the forked vstest can
+            // locate a compatible dotnet host. On Apple Silicon and other ARM64 hosts,
+            // returning "x64" here causes the fork to fail with "Could not find 'dotnet'
+            // host for the 'X64' architecture", which leaves the parent blocked forever
+            // in WaitForProcessId.
+            return RuntimeInformation.ProcessArchitecture switch
+            {
+                Architecture.X86 => "x86",
+                Architecture.X64 => "x64",
+                Architecture.Arm => "ARM",
+                Architecture.Arm64 => "ARM64",
+                _ => Environment.Is64BitProcess ? "x64" : "x86",
+            };
         }
         #endregion
 
