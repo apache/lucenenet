@@ -19,6 +19,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using static Lucene.Net.Search.Suggest.Lookup;
 using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
