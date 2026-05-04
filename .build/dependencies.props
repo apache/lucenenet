@@ -67,7 +67,7 @@
     <MorfologikStemmingPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikStemmingPackageVersion>
     <NETStandardLibrary20PackageVersion>2.0.3</NETStandardLibrary20PackageVersion>
     <NUnit3TestAdapterPackageVersion>6.2.0</NUnit3TestAdapterPackageVersion>
-    <NUnitPackageVersion>4.5.1</NUnitPackageVersion>
+    <NUnitPackageVersion>4.6.0</NUnitPackageVersion>
     <RandomizedTestingGeneratorsPackageVersion>2.7.8</RandomizedTestingGeneratorsPackageVersion>
     <SharpZipLibPackageVersion>1.4.2</SharpZipLibPackageVersion>
     <Spatial4nPackageVersion>0.4.1.1</Spatial4nPackageVersion>
