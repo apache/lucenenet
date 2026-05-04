@@ -179,7 +179,7 @@ namespace Lucene.Net.Util
             // Build a valid encoding, then corrupt one of the data bytes to have the high bit set.
             BytesRef encoded = new BytesRef(NumericUtils.BUF_SIZE_INT64);
 
-            // Int64 path: encode 12345L at shift=0 -> 10 bytes (1 shift byte + 9 data bytes).
+            // Int64 path: encode 12345L at shift=0 -> 11 bytes (1 shift byte + 10 data bytes).
             NumericUtils.Int64ToPrefixCodedBytes(12345L, 0, encoded);
             // Sanity: the round-trip works as-is.
             Assert.AreEqual(12345L, NumericUtils.PrefixCodedToInt64(encoded));
