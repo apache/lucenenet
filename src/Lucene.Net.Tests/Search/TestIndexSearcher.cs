@@ -325,20 +325,20 @@ namespace Lucene.Net.Search
                 using CancellationTokenSource cts = new CancellationTokenSource();
                 cts.Cancel();
 
-                Exception ex = NUnitAssert.Catch(() => searcher.Search(query, 10, cts.Token));
+                Exception ex = Assert.Catch(() => searcher.Search(query, 10, cts.Token));
                 AssertCancellationInChain(ex);
 
-                ex = NUnitAssert.Catch(() => searcher.SearchAfter(after: null, query, 10, cts.Token));
+                ex = Assert.Catch(() => searcher.SearchAfter(after: null, query, 10, cts.Token));
                 AssertCancellationInChain(ex);
 
                 Sort sort = new Sort(new SortField("field", SortFieldType.STRING));
-                ex = NUnitAssert.Catch(() => searcher.Search(query, 10, sort, cts.Token));
+                ex = Assert.Catch(() => searcher.Search(query, 10, sort, cts.Token));
                 AssertCancellationInChain(ex);
 
-                ex = NUnitAssert.Catch(() => searcher.Search(query, filter: null, 10, sort, doDocScores: true, doMaxScore: true, cts.Token));
+                ex = Assert.Catch(() => searcher.Search(query, filter: null, 10, sort, doDocScores: true, doMaxScore: true, cts.Token));
                 AssertCancellationInChain(ex);
 
-                ex = NUnitAssert.Catch(() => searcher.SearchAfter(after: null, query, filter: null, 10, sort, cts.Token));
+                ex = Assert.Catch(() => searcher.SearchAfter(after: null, query, filter: null, 10, sort, cts.Token));
                 AssertCancellationInChain(ex);
             }
             finally
@@ -365,7 +365,7 @@ namespace Lucene.Net.Search
                 TaskScheduler service = new LimitedConcurrencyLevelTaskScheduler(4); // LUCENENET NOTE: intentionally NOT passing cts.Token here since that parameter is for shutdown only, and that's not what we're testing
                 IndexSearcher searcher = new CancelAfterFirstLeafSearcher(r, service, cts);
 
-                Exception ex = NUnitAssert.Catch(() => searcher.Search(new MatchAllDocsQuery(), 10, cts.Token));
+                Exception ex = Assert.Catch(() => searcher.Search(new MatchAllDocsQuery(), 10, cts.Token));
                 AssertCancellationInChain(ex);
             }
             finally

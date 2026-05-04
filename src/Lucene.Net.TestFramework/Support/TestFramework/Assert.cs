@@ -910,16 +910,18 @@ namespace Lucene.Net.TestFramework
 
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Exception Throws<TException>(Action action, string message, params object[] args)
+        public static TException Throws<TException>(Action action, string message, params object[] args)
+            where TException : Exception
         {
-            return Throws(typeof(TException), action, message, args);
+            return NUnit.Framework.Assert.Throws<TException>(action, message, args)!;
         }
 
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Exception Throws<TException>(Action action)
+        public static TException Throws<TException>(Action action)
+            where TException : Exception
         {
-            return Throws(typeof(TException), action);
+            return NUnit.Framework.Assert.Throws<TException>(action)!;
         }
 
         [DebuggerStepThrough]
@@ -951,6 +953,20 @@ namespace Lucene.Net.TestFramework
             _NUnit.ClassicAssert.AreEqual(expectedParamName, exception.ParamName);
 
             return exception;
+        }
+
+        [DebuggerStepThrough]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Catch(Action action)
+        {
+            return NUnit.Framework.Assert.Catch(action);
+        }
+
+        [DebuggerStepThrough]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Exception Catch(Action action, string message, params object[] args)
+        {
+            return NUnit.Framework.Assert.Catch(action, message, args);
         }
 
         [DebuggerStepThrough]

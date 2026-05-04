@@ -16,6 +16,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Spell
 {
