@@ -898,14 +898,14 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void DoesNotThrow(Action action, string message, params object[] args)
         {
-            _NUnit.ClassicAssert.DoesNotThrow(() => action(), message, args);
+            _NUnit.ClassicAssert.DoesNotThrow(action, message, args);
         }
 
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void DoesNotThrow(Action action)
         {
-            _NUnit.ClassicAssert.DoesNotThrow(() => action());
+            _NUnit.ClassicAssert.DoesNotThrow(action);
         }
 
         [DebuggerStepThrough]
@@ -926,14 +926,14 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Exception Throws(Type expectedExceptionType, Action action)
         {
-            return _NUnit.ClassicAssert.Throws(expectedExceptionType, () => action());
+            return _NUnit.ClassicAssert.Throws(expectedExceptionType, action);
         }
 
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Exception Throws(Type expectedExceptionType, Action action, string message, params object[] args)
         {
-            return _NUnit.ClassicAssert.Throws(expectedExceptionType, () => action(), message, args);
+            return _NUnit.ClassicAssert.Throws(expectedExceptionType, action, message, args);
         }
 
         [DebuggerStepThrough]
@@ -941,7 +941,7 @@ namespace Lucene.Net.TestFramework
         public static T Throws<T>(string expectedParamName, Action action)
             where T : ArgumentException
         {
-            T exception = _NUnit.ClassicAssert.Throws<T>(() => action());
+            T exception = _NUnit.ClassicAssert.Throws<T>(action);
 
             if (exception is null)
             {
