@@ -297,7 +297,7 @@ namespace Lucene.Net.Sandbox.Queries
             //create BooleanQueries to hold the variants for each token/field pair and ensure it
             // has no coord factor
             //Step 1: sort the termqueries by term/field
-            IDictionary<Term, IList<ScoreTerm>> variantQueries = new Dictionary<Term, IList<ScoreTerm>>();
+            IDictionary<Term, IList<ScoreTerm>> variantQueries = new JCG.Dictionary<Term, IList<ScoreTerm>>();
             int size = q.Count;
             for (int i = 0; i < size; i++)
             {

@@ -16,6 +16,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 #endif
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Classic
 {
@@ -340,7 +341,7 @@ namespace Lucene.Net.QueryParsers.Classic
             if (fieldToDateResolution is null)
             {
                 // lazily initialize Dictionary
-                fieldToDateResolution = new Dictionary<string, DateResolution>();
+                fieldToDateResolution = new JCG.Dictionary<string, DateResolution>();
             }
 
             fieldToDateResolution[fieldName] = dateResolution;

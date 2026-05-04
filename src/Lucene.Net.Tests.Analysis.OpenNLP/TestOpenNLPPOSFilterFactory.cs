@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.OpenNlp
 {
@@ -68,11 +69,11 @@ namespace Lucene.Net.Analysis.OpenNlp
             var loader = new ClasspathResourceLoader(GetType());
             Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldname, reader) =>
             {
-                var tokenizerFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var tokenizerFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 tokenizerFactory.Inform(loader);
                 var tokenizer = tokenizerFactory.Create(reader);
 
-                var filter1Factory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var filter1Factory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 filter1Factory.Inform(loader);
                 var filter1 = filter1Factory.Create(tokenizer);
 
@@ -91,11 +92,11 @@ namespace Lucene.Net.Analysis.OpenNlp
             var loader = new ClasspathResourceLoader(GetType());
             Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldname, reader) =>
             {
-                var tokenizerFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var tokenizerFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 tokenizerFactory.Inform(loader);
                 var tokenizer = tokenizerFactory.Create(reader);
 
-                var filter1Factory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var filter1Factory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 filter1Factory.Inform(loader);
                 var filter1 = filter1Factory.Create(tokenizer);
 
@@ -110,15 +111,15 @@ namespace Lucene.Net.Analysis.OpenNlp
 
             analyzer = Analyzer.NewAnonymous(createComponents: (fieldname, reader) =>
             {
-                var tokenizerFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var tokenizerFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 tokenizerFactory.Inform(loader);
                 var tokenizer = tokenizerFactory.Create(reader);
 
-                var filter1Factory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var filter1Factory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 filter1Factory.Inform(loader);
                 var filter1 = filter1Factory.Create(tokenizer);
 
-                var filter2Factory = new TypeAsPayloadTokenFilterFactory(new Dictionary<string, string>());
+                var filter2Factory = new TypeAsPayloadTokenFilterFactory(new JCG.Dictionary<string, string>());
                 var filter2 = filter2Factory.Create(filter1);
 
                 return new TokenStreamComponents(tokenizer, filter2);
@@ -139,11 +140,11 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 var loader = new ClasspathResourceLoader(GetType());
 
-                var tokenizerFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var tokenizerFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 tokenizerFactory.Inform(loader);
                 var tokenizer = tokenizerFactory.Create(reader);
 
-                var tokenFilterFactory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var tokenFilterFactory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 tokenFilterFactory.Inform(loader);
                 var tokenFilter = tokenFilterFactory.Create(tokenizer);
 

@@ -36,7 +36,7 @@ namespace Lucene.Net.Spatial.Queries
     public abstract class SpatialOperation
     {
         // Private registry
-        private static readonly IDictionary<string, SpatialOperation> registry = new Dictionary<string, SpatialOperation>();
+        private static readonly IDictionary<string, SpatialOperation> registry = new JCG.Dictionary<string, SpatialOperation>();
         private static readonly IList<SpatialOperation> list = new JCG.List<SpatialOperation>();
 
         // Geometry Operations

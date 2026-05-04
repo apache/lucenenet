@@ -338,7 +338,7 @@ namespace Lucene.Net.Tests.Queries
         // Source: https://stackoverflow.com/a/32027473
         private static void GenerateHashCollision(out string theString, out string stringWithCollision)
         {
-            var words = new Dictionary<int, string>();
+            var words = new JCG.Dictionary<int, string>();
 
             int i = 0;
             string teststring;

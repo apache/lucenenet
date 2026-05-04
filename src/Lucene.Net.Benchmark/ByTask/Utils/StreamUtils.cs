@@ -2,6 +2,7 @@ using ICSharpCode.SharpZipLib.BZip2;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Utils
 {
@@ -32,7 +33,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
         // LUCENENET specific - de-nested Type and renamed FileType
 
-        private static readonly IDictionary<string, FileType?> extensionToType = new Dictionary<string, FileType?>() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        private static readonly IDictionary<string, FileType?> extensionToType = new JCG.Dictionary<string, FileType?>() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             // these in are lower case, we will lower case at the test as well
             { ".bz2", FileType.BZIP2 },

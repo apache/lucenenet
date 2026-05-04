@@ -4,6 +4,7 @@ using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.OpenNlp
 {
@@ -76,15 +77,15 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 var loader = new ClasspathResourceLoader(GetType());
 
-                var opennlpFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var opennlpFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 opennlpFactory.Inform(loader);
                 var opennlp = opennlpFactory.Create(reader);
 
-                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 opennlpPOSFilterFactory.Inform(loader);
                 var opennlpPOSFilter = opennlpPOSFilterFactory.Create(opennlp);
 
-                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new Dictionary<string, string> { { "dictionary", lemmatizerDictFile } });
+                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new JCG.Dictionary<string, string> { { "dictionary", lemmatizerDictFile } });
                 opennlpLemmatizerFilterFactory.Inform(loader);
                 var opennlpLemmatizerFilter = opennlpLemmatizerFilterFactory.Create(opennlpPOSFilter);
 
@@ -106,15 +107,15 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 var loader = new ClasspathResourceLoader(GetType());
 
-                var opennlpFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var opennlpFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 opennlpFactory.Inform(loader);
                 var opennlp = opennlpFactory.Create(reader);
 
-                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 opennlpPOSFilterFactory.Inform(loader);
                 var opennlpPOSFilter = opennlpPOSFilterFactory.Create(opennlp);
 
-                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new Dictionary<string, string> { { "dictionary", lemmatizerDictFile } });
+                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new JCG.Dictionary<string, string> { { "dictionary", lemmatizerDictFile } });
                 opennlpLemmatizerFilterFactory.Inform(loader);
                 var opennlpLemmatizerFilter = opennlpLemmatizerFilterFactory.Create(opennlpPOSFilter);
 
@@ -136,15 +137,15 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 var loader = new ClasspathResourceLoader(GetType());
 
-                var opennlpFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var opennlpFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 opennlpFactory.Inform(loader);
                 var opennlp = opennlpFactory.Create(reader);
 
-                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 opennlpPOSFilterFactory.Inform(loader);
                 var opennlpPOSFilter = opennlpPOSFilterFactory.Create(opennlp);
 
-                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new Dictionary<string, string> { { "lemmatizerModel", lemmatizerModelFile } });
+                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new JCG.Dictionary<string, string> { { "lemmatizerModel", lemmatizerModelFile } });
                 opennlpLemmatizerFilterFactory.Inform(loader);
                 var opennlpLemmatizerFilter = opennlpLemmatizerFilterFactory.Create(opennlpPOSFilter);
 
@@ -166,15 +167,15 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 var loader = new ClasspathResourceLoader(GetType());
 
-                var opennlpFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var opennlpFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 opennlpFactory.Inform(loader);
                 var opennlp = opennlpFactory.Create(reader);
 
-                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 opennlpPOSFilterFactory.Inform(loader);
                 var opennlpPOSFilter = opennlpPOSFilterFactory.Create(opennlp);
 
-                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new Dictionary<string, string> { { "lemmatizerModel", lemmatizerModelFile } });
+                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new JCG.Dictionary<string, string> { { "lemmatizerModel", lemmatizerModelFile } });
                 opennlpLemmatizerFilterFactory.Inform(loader);
                 var opennlpLemmatizerFilter = opennlpLemmatizerFilterFactory.Create(opennlpPOSFilter);
 
@@ -197,15 +198,15 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 var loader = new ClasspathResourceLoader(GetType());
 
-                var opennlpFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var opennlpFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 opennlpFactory.Inform(loader);
                 var opennlp = opennlpFactory.Create(reader);
 
-                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 opennlpPOSFilterFactory.Inform(loader);
                 var opennlpPOSFilter = opennlpPOSFilterFactory.Create(opennlp);
 
-                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new Dictionary<string, string> { { "dictionary", lemmatizerDictFile }, { "lemmatizerModel", lemmatizerModelFile } });
+                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new JCG.Dictionary<string, string> { { "dictionary", lemmatizerDictFile }, { "lemmatizerModel", lemmatizerModelFile } });
                 opennlpLemmatizerFilterFactory.Inform(loader);
                 var opennlpLemmatizerFilter = opennlpLemmatizerFilterFactory.Create(opennlpPOSFilter);
 
@@ -227,15 +228,15 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 var loader = new ClasspathResourceLoader(GetType());
 
-                var opennlpFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var opennlpFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 opennlpFactory.Inform(loader);
                 var opennlp = opennlpFactory.Create(reader);
 
-                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 opennlpPOSFilterFactory.Inform(loader);
                 var opennlpPOSFilter = opennlpPOSFilterFactory.Create(opennlp);
 
-                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new Dictionary<string, string> { { "dictionary", lemmatizerDictFile }, { "lemmatizerModel", lemmatizerModelFile } });
+                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new JCG.Dictionary<string, string> { { "dictionary", lemmatizerDictFile }, { "lemmatizerModel", lemmatizerModelFile } });
                 opennlpLemmatizerFilterFactory.Inform(loader);
                 var opennlpLemmatizerFilter = opennlpLemmatizerFilterFactory.Create(opennlpPOSFilter);
 
@@ -258,22 +259,22 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 var loader = new ClasspathResourceLoader(GetType());
 
-                var opennlpFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var opennlpFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 opennlpFactory.Inform(loader);
                 var opennlp = opennlpFactory.Create(reader);
 
-                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 opennlpPOSFilterFactory.Inform(loader);
                 var opennlpPOSFilter = opennlpPOSFilterFactory.Create(opennlp);
 
-                var keywordRepeatFilterFactory = new KeywordRepeatFilterFactory(new Dictionary<string, string>());
+                var keywordRepeatFilterFactory = new KeywordRepeatFilterFactory(new JCG.Dictionary<string, string>());
                 var keywordRepeatFilter = keywordRepeatFilterFactory.Create(opennlpPOSFilter);
 
-                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new Dictionary<string, string> { { "dictionary", lemmatizerDictFile } });
+                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new JCG.Dictionary<string, string> { { "dictionary", lemmatizerDictFile } });
                 opennlpLemmatizerFilterFactory.Inform(loader);
                 var opennlpLemmatizerFilter = opennlpLemmatizerFilterFactory.Create(keywordRepeatFilter);
 
-                var removeDuplicatesTokenFilterFactory = new RemoveDuplicatesTokenFilterFactory(new Dictionary<string, string>());
+                var removeDuplicatesTokenFilterFactory = new RemoveDuplicatesTokenFilterFactory(new JCG.Dictionary<string, string>());
                 var removeDuplicatesTokenFilter = removeDuplicatesTokenFilterFactory.Create(opennlpLemmatizerFilter);
 
                 return new TokenStreamComponents(opennlp, removeDuplicatesTokenFilter);
@@ -297,22 +298,22 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 var loader = new ClasspathResourceLoader(GetType());
 
-                var opennlpFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var opennlpFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 opennlpFactory.Inform(loader);
                 var opennlp = opennlpFactory.Create(reader);
 
-                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 opennlpPOSFilterFactory.Inform(loader);
                 var opennlpPOSFilter = opennlpPOSFilterFactory.Create(opennlp);
 
-                var keywordRepeatFilterFactory = new KeywordRepeatFilterFactory(new Dictionary<string, string>());
+                var keywordRepeatFilterFactory = new KeywordRepeatFilterFactory(new JCG.Dictionary<string, string>());
                 var keywordRepeatFilter = keywordRepeatFilterFactory.Create(opennlpPOSFilter);
 
-                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new Dictionary<string, string> { { "lemmatizerModel", lemmatizerModelFile } });
+                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new JCG.Dictionary<string, string> { { "lemmatizerModel", lemmatizerModelFile } });
                 opennlpLemmatizerFilterFactory.Inform(loader);
                 var opennlpLemmatizerFilter = opennlpLemmatizerFilterFactory.Create(keywordRepeatFilter);
 
-                var removeDuplicatesTokenFilterFactory = new RemoveDuplicatesTokenFilterFactory(new Dictionary<string, string>());
+                var removeDuplicatesTokenFilterFactory = new RemoveDuplicatesTokenFilterFactory(new JCG.Dictionary<string, string>());
                 var removeDuplicatesTokenFilter = removeDuplicatesTokenFilterFactory.Create(opennlpLemmatizerFilter);
 
                 return new TokenStreamComponents(opennlp, removeDuplicatesTokenFilter);
@@ -335,22 +336,22 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 var loader = new ClasspathResourceLoader(GetType());
 
-                var opennlpFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
+                var opennlpFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 opennlpFactory.Inform(loader);
                 var opennlp = opennlpFactory.Create(reader);
 
-                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
+                var opennlpPOSFilterFactory = new OpenNLPPOSFilterFactory(new JCG.Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 opennlpPOSFilterFactory.Inform(loader);
                 var opennlpPOSFilter = opennlpPOSFilterFactory.Create(opennlp);
 
-                var keywordRepeatFilterFactory = new KeywordRepeatFilterFactory(new Dictionary<string, string>());
+                var keywordRepeatFilterFactory = new KeywordRepeatFilterFactory(new JCG.Dictionary<string, string>());
                 var keywordRepeatFilter = keywordRepeatFilterFactory.Create(opennlpPOSFilter);
 
-                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new Dictionary<string, string> { { "dictionary", lemmatizerDictFile }, { "lemmatizerModel", lemmatizerModelFile } });
+                var opennlpLemmatizerFilterFactory = new OpenNLPLemmatizerFilterFactory(new JCG.Dictionary<string, string> { { "dictionary", lemmatizerDictFile }, { "lemmatizerModel", lemmatizerModelFile } });
                 opennlpLemmatizerFilterFactory.Inform(loader);
                 var opennlpLemmatizerFilter = opennlpLemmatizerFilterFactory.Create(keywordRepeatFilter);
 
-                var removeDuplicatesTokenFilterFactory = new RemoveDuplicatesTokenFilterFactory(new Dictionary<string, string>());
+                var removeDuplicatesTokenFilterFactory = new RemoveDuplicatesTokenFilterFactory(new JCG.Dictionary<string, string>());
                 var removeDuplicatesTokenFilter = removeDuplicatesTokenFilterFactory.Create(opennlpLemmatizerFilter);
 
                 return new TokenStreamComponents(opennlp, removeDuplicatesTokenFilter);

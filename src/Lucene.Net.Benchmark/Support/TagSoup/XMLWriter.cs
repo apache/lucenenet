@@ -22,6 +22,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace TagSoup
 {
@@ -359,10 +360,10 @@ namespace TagSoup
         {
             SetOutput(writer);
             nsSupport = new NamespaceSupport();
-            prefixTable = new Dictionary<string, string>();
-            forcedDeclTable = new Dictionary<string, bool>();
-            doneDeclTable = new Dictionary<string, string>();
-            outputProperties = new Dictionary<string, string>();
+            prefixTable = new JCG.Dictionary<string, string>();
+            forcedDeclTable = new JCG.Dictionary<string, bool>();
+            doneDeclTable = new JCG.Dictionary<string, string>();
+            outputProperties = new JCG.Dictionary<string, string>();
         }
 
         /// <summary>

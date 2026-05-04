@@ -5,6 +5,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.BlockTerms
 {
@@ -57,7 +58,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         private readonly PagedBytes termBytes = new PagedBytes(PAGED_BYTES_BITS);
         private readonly PagedBytes.Reader termBytesReader;
 
-        private readonly IDictionary<FieldInfo, FieldIndexData> fields = new Dictionary<FieldInfo, FieldIndexData>();
+        private readonly IDictionary<FieldInfo, FieldIndexData> fields = new JCG.Dictionary<FieldInfo, FieldIndexData>();
 
         // start of the field info data
         private long dirOffset;

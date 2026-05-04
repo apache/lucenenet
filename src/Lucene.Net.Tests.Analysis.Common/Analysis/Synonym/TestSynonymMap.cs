@@ -256,7 +256,7 @@ namespace Lucene.Net.Analysis.Synonym
             SlowSynonymMap synMap;
 
             // prepare bi-gram tokenizer factory
-            IDictionary<string, string> args = new Dictionary<string, string>();
+            IDictionary<string, string> args = new JCG.Dictionary<string, string>();
             args[AbstractAnalysisFactory.LUCENE_MATCH_VERSION_PARAM] = "4.4";
             args["minGramSize"] = "2";
             args["maxGramSize"] = "2";
@@ -279,7 +279,7 @@ namespace Lucene.Net.Analysis.Synonym
         [Test]
         public virtual void TestLoadRules()
         {
-            IDictionary<string, string> args = new Dictionary<string, string>();
+            IDictionary<string, string> args = new JCG.Dictionary<string, string>();
             args["synonyms"] = "something.txt";
             SlowSynonymFilterFactory ff = new SlowSynonymFilterFactory(args);
             ff.Inform(new ResourceLoaderAnonymousClass());

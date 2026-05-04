@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -110,7 +111,7 @@ namespace Lucene.Net.Facet.Taxonomy
         private void SumValues(IList<MatchingDocs> matchingDocs, bool keepScores, ValueSource valueSource)
         {
             FakeScorer scorer = new FakeScorer();
-            IDictionary context = new Dictionary<string, Scorer>();
+            IDictionary context = new JCG.Dictionary<string, Scorer>();
             if (keepScores)
             {
                 context["scorer"] = scorer;

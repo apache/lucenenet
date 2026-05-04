@@ -258,7 +258,7 @@ namespace TagSoup
         // the corresponding instance variables, but care must be taken
         // to keep them in sync.
 
-        private readonly IDictionary<string, bool> features = new Dictionary<string, bool> {
+        private readonly IDictionary<string, bool> features = new JCG.Dictionary<string, bool> {
             { NAMESPACES_FEATURE, DEFAULT_NAMESPACES },
             { NAMESPACE_PREFIXES_FEATURE, false },
             { EXTERNAL_GENERAL_ENTITIES_FEATURE, false },

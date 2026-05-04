@@ -18,6 +18,7 @@ using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Replicator
 {
@@ -177,7 +178,7 @@ namespace Lucene.Net.Replicator
         private IRevision CreateRevision(int id)
         {
             publishIndexWriter.AddDocument(NewDocument(publishTaxoWriter, id));
-            publishIndexWriter.SetCommitData(new Dictionary<string, string>{
+            publishIndexWriter.SetCommitData(new JCG.Dictionary<string, string>{
                 { VERSION_ID, id.ToString("X") }
             });
             publishIndexWriter.Commit();

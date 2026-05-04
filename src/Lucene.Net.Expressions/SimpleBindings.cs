@@ -4,6 +4,7 @@ using Lucene.Net.Search;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Expressions
 {
@@ -47,7 +48,7 @@ namespace Lucene.Net.Expressions
     /// </summary>
     public sealed class SimpleBindings : Bindings, IEnumerable<KeyValuePair<string, object>> // LUCENENET specific - Added collection initializer to make populating easier
     {
-        internal readonly IDictionary<string, object> map = new Dictionary<string, object>();
+        internal readonly IDictionary<string, object> map = new JCG.Dictionary<string, object>();
 
         /// <summary>
         /// Creates a new empty <see cref="Bindings"/>

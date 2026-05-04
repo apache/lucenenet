@@ -141,7 +141,7 @@ namespace Lucene.Net.Store
             {
                 if (openFiles is null)
                 {
-                    openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
+                    openFiles = new JCG.Dictionary<string, int>(StringComparer.Ordinal);
                     openFilesDeleted = new JCG.HashSet<string>(StringComparer.Ordinal);
                 }
 
@@ -307,7 +307,7 @@ namespace Lucene.Net.Store
             try
             {
                 crashed = true;
-                openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
+                openFiles = new JCG.Dictionary<string, int>(StringComparer.Ordinal);
                 openFilesForWrite = new JCG.HashSet<string>(StringComparer.Ordinal);
                 openFilesDeleted = new JCG.HashSet<string>(StringComparer.Ordinal);
                 using IEnumerator<string> it = unSyncedFiles.GetEnumerator();
@@ -934,7 +934,7 @@ namespace Lucene.Net.Store
                     MaybeYield();
                     if (openFiles is null)
                     {
-                        openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
+                        openFiles = new JCG.Dictionary<string, int>(StringComparer.Ordinal);
                         openFilesDeleted = new JCG.HashSet<string>(StringComparer.Ordinal);
                     }
                     if (openFiles.Count > 0)

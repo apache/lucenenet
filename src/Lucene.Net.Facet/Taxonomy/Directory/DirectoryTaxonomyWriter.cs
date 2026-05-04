@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
@@ -772,8 +773,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private IDictionary<string, string> CombinedCommitData(IDictionary<string, string> commitData)
         {
             IDictionary<string, string> m = commitData != null
-                ? new Dictionary<string, string>(commitData)
-                : new Dictionary<string, string>();
+                ? new JCG.Dictionary<string, string>(commitData)
+                : new JCG.Dictionary<string, string>();
             m[INDEX_EPOCH] = Convert.ToString(indexEpoch, 16);
             return m;
         }

@@ -84,7 +84,7 @@
 //        /// <param name="reapOnRead"> controls if the map <a href="#reapInfo">cleans up the reference queue on every read operation</a>. </param>
 //        public static WeakIdentityMap<TKey, TValue> NewHashMap(bool reapOnRead)
 //        {
-//            return new WeakIdentityMap<TKey, TValue>(new Dictionary<IdentityWeakReference, TValue>(), reapOnRead);
+//            return new WeakIdentityMap<TKey, TValue>(new JCG.Dictionary<IdentityWeakReference, TValue>(), reapOnRead);
 //        }
 
 //        /// <summary>

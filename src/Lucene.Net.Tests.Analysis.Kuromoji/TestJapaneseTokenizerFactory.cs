@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -31,7 +32,7 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestSimple()
         {
-            JapaneseTokenizerFactory factory = new JapaneseTokenizerFactory(new Dictionary<String, String>());
+            JapaneseTokenizerFactory factory = new JapaneseTokenizerFactory(new JCG.Dictionary<String, String>());
             factory.Inform(new StringMockResourceLoader(""));
             TokenStream ts = factory.Create(new StringReader("これは本ではない"));
             AssertTokenStreamContents(ts,
@@ -47,7 +48,7 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestDefaults()
         {
-            JapaneseTokenizerFactory factory = new JapaneseTokenizerFactory(new Dictionary<String, String>());
+            JapaneseTokenizerFactory factory = new JapaneseTokenizerFactory(new JCG.Dictionary<String, String>());
             factory.Inform(new StringMockResourceLoader(""));
             TokenStream ts = factory.Create(new StringReader("シニアソフトウェアエンジニア"));
             AssertTokenStreamContents(ts,
@@ -61,7 +62,7 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestMode()
         {
-            IDictionary<String, String> args = new Dictionary<String, String>();
+            IDictionary<String, String> args = new JCG.Dictionary<String, String>();
             args["mode"] = "normal";
             JapaneseTokenizerFactory factory = new JapaneseTokenizerFactory(args);
             factory.Inform(new StringMockResourceLoader(""));
@@ -83,7 +84,7 @@ namespace Lucene.Net.Analysis.Ja
                 "関西国際空港,関西 国際 空港,カンサイ コクサイ クウコウ,テスト名詞\n" +
                 "# Custom reading for sumo wrestler\n" +
                 "朝青龍,朝青龍,アサショウリュウ,カスタム人名\n";
-            IDictionary<String, String> args = new Dictionary<String, String>();
+            IDictionary<String, String> args = new JCG.Dictionary<String, String>();
             args["userDictionary"] = "userdict.txt";
             JapaneseTokenizerFactory factory = new JapaneseTokenizerFactory(args);
             factory.Inform(new StringMockResourceLoader(userDict));
@@ -99,7 +100,7 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestPreservePunctuation()
         {
-            IDictionary<String, String> args = new Dictionary<String, String>();
+            IDictionary<String, String> args = new JCG.Dictionary<String, String>();
             args["discardPunctuation"] = "false";
             JapaneseTokenizerFactory factory = new JapaneseTokenizerFactory(args);
             factory.Inform(new StringMockResourceLoader(""));
@@ -120,7 +121,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             try
             {
-                new JapaneseTokenizerFactory(new Dictionary<String, String>() {
+                new JapaneseTokenizerFactory(new JCG.Dictionary<String, String>() {
                     { "bogusArg", "bogusValue" }
                 });
                 fail();

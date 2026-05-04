@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -34,7 +35,7 @@ namespace Lucene.Net.Analysis.Util
             return new HashMapAnonymousClass();
         }
 
-        private sealed class HashMapAnonymousClass : Dictionary<string, string>
+        private sealed class HashMapAnonymousClass : JCG.Dictionary<string, string>
         {
             public HashMapAnonymousClass()
             {
@@ -56,7 +57,7 @@ namespace Lucene.Net.Analysis.Util
         {
             try
             {
-                TokenizerFactory.ForName("sdfsdfsdfdsfsdfsdf", new Dictionary<string, string>());
+                TokenizerFactory.ForName("sdfsdfsdfdsfsdfsdf", new JCG.Dictionary<string, string>());
                 fail();
             }
             catch (Exception expected) when (expected.IsIllegalArgumentException())
@@ -66,7 +67,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                TokenizerFactory.ForName("!(**#$U*#$*", new Dictionary<string, string>());
+                TokenizerFactory.ForName("!(**#$U*#$*", new JCG.Dictionary<string, string>());
                 fail();
             }
             catch (Exception expected) when (expected.IsIllegalArgumentException())
@@ -130,7 +131,7 @@ namespace Lucene.Net.Analysis.Util
         {
             try
             {
-                TokenFilterFactory.ForName("sdfsdfsdfdsfsdfsdf", new Dictionary<string, string>());
+                TokenFilterFactory.ForName("sdfsdfsdfdsfsdfsdf", new JCG.Dictionary<string, string>());
                 fail();
             }
             catch (Exception expected) when (expected.IsIllegalArgumentException())
@@ -140,7 +141,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                TokenFilterFactory.ForName("!(**#$U*#$*", new Dictionary<string, string>());
+                TokenFilterFactory.ForName("!(**#$U*#$*", new JCG.Dictionary<string, string>());
                 fail();
             }
             catch (Exception expected) when (expected.IsIllegalArgumentException())
@@ -205,7 +206,7 @@ namespace Lucene.Net.Analysis.Util
         {
             try
             {
-                CharFilterFactory.ForName("sdfsdfsdfdsfsdfsdf", new Dictionary<string, string>());
+                CharFilterFactory.ForName("sdfsdfsdfdsfsdfsdf", new JCG.Dictionary<string, string>());
                 fail();
             }
             catch (Exception expected) when (expected.IsIllegalArgumentException())
@@ -215,7 +216,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                CharFilterFactory.ForName("!(**#$U*#$*", new Dictionary<string, string>());
+                CharFilterFactory.ForName("!(**#$U*#$*", new JCG.Dictionary<string, string>());
                 fail();
             }
             catch (Exception expected) when (expected.IsIllegalArgumentException())

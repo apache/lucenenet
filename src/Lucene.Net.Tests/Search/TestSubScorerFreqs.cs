@@ -76,9 +76,9 @@ namespace Lucene.Net.Search
             private readonly ICollector other;
             private int docBase;
 
-            public IDictionary<int, IDictionary<Query, float>> DocCounts { get; } = new Dictionary<int, IDictionary<Query, float>>();
+            public IDictionary<int, IDictionary<Query, float>> DocCounts { get; } = new JCG.Dictionary<int, IDictionary<Query, float>>();
 
-            private readonly IDictionary<Query, Scorer> subScorers = new Dictionary<Query, Scorer>();
+            private readonly IDictionary<Query, Scorer> subScorers = new JCG.Dictionary<Query, Scorer>();
             private readonly ISet<string> relationships;
 
             public CountingCollector(ICollector other)
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                IDictionary<Query, float> freqs = new Dictionary<Query, float>();
+                IDictionary<Query, float> freqs = new JCG.Dictionary<Query, float>();
                 foreach (KeyValuePair<Query, Scorer> ent in subScorers)
                 {
                     Scorer value = ent.Value;

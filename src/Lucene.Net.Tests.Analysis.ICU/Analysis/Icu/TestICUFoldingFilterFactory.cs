@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Icu
 {
@@ -33,7 +34,7 @@ namespace Lucene.Net.Analysis.Icu
         public void Test()
         {
             TextReader reader = new StringReader("Résumé");
-            ICUFoldingFilterFactory factory = new ICUFoldingFilterFactory(new Dictionary<string, string>());
+            ICUFoldingFilterFactory factory = new ICUFoldingFilterFactory(new JCG.Dictionary<string, string>());
             TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
             stream = factory.Create(stream);
             AssertTokenStreamContents(stream, new string[] { "resume" });
@@ -45,7 +46,7 @@ namespace Lucene.Net.Analysis.Icu
         {
             try
             {
-                new ICUFoldingFilterFactory(new Dictionary<string, string>() {
+                new ICUFoldingFilterFactory(new JCG.Dictionary<string, string>() {
                             {"bogusArg", "bogusValue" }
                 });
                 fail();

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -427,7 +428,7 @@ namespace Lucene.Net.Store
         public class MockLockFactory : LockFactory
         {
             public bool LockPrefixSet;
-            public IDictionary<string, Lock> LocksCreated = /*CollectionsHelper.SynchronizedMap(*/new Dictionary<string, Lock>()/*)*/;
+            public IDictionary<string, Lock> LocksCreated = /*CollectionsHelper.SynchronizedMap(*/new JCG.Dictionary<string, Lock>()/*)*/;
             public int MakeLockCount = 0;
 
             public override string LockPrefix

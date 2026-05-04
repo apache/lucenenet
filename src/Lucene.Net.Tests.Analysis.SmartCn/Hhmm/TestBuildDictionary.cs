@@ -7,6 +7,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
+//using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 {
@@ -99,7 +100,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
     //            string bigramInput = @"real/path/analysis-data/bigramdict.dct";
     //            string bigramOutput = @"real/path/analysis-data/custom-dictionary-input/bigramdict.dct";
-    //            var bigramReplacementFrequencies = new Dictionary<string, int>
+    //            var bigramReplacementFrequencies = new JCG.Dictionary<string, int>
     //            {
     //                ["锲而不舍@、"] = 10000,
     //                ["聆听@了"] = 15000,
@@ -111,7 +112,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
     //            string coreInput = @"real/path/analysis-data/analysis-data/coredict.dct";
     //            string coreOutput = @"real/path/analysis-data/analysis-data/custom-dictionary-input/coredict.dct";
-    //            var coreReplacementFrequencies = new Dictionary<string, int>
+    //            var coreReplacementFrequencies = new JCG.Dictionary<string, int>
     //            {
     //                ["魅力"] = 10000,
     //                ["聆听"] = 15000,

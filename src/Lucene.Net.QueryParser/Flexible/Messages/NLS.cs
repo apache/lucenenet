@@ -49,7 +49,7 @@
 //        /// into this class.
 //        /// </summary>
 //        private static IResourceManagerFactory resourceManagerFactory = new BundleResourceManagerFactory();
-//        private static readonly IDictionary<string, Type> bundles = new Dictionary<string, Type>(0); // LUCENENET: marked readonly
+//        private static readonly IDictionary<string, Type> bundles = new JCG.Dictionary<string, Type>(0); // LUCENENET: marked readonly
 
 //        protected NLS()
 //        {
@@ -170,7 +170,7 @@
 
 //            // build a map of field names to Field objects
 //            int len = fieldArray.Length;
-//            IDictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>(len * 2);
+//            IDictionary<string, FieldInfo> fields = new JCG.Dictionary<string, FieldInfo>(len * 2);
 //            for (int i = 0; i < len; i++)
 //            {
 //                fields[fieldArray[i].Name] = fieldArray[i];

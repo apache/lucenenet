@@ -371,7 +371,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             using (var stream = GetDataFile("trecdocs.zip"))
                 TestUtil.Unzip(stream, dataDir);
             using TrecContentSource tcs = new TrecContentSource();
-            Dictionary<string, string> props = new Dictionary<string, string>();
+            JCG.Dictionary<string, string> props = new JCG.Dictionary<string, string>();
             props["print.props"] = "false";
             props["content.source.verbose"] = "false";
             props["content.source.excludeIteration"] = "true";

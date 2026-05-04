@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Query
     public sealed class QueryAutoStopWordAnalyzer : AnalyzerWrapper
     {
         private readonly Analyzer @delegate;
-        private readonly IDictionary<string, ISet<string>> stopWordsPerField = new Dictionary<string, ISet<string>>();
+        private readonly IDictionary<string, ISet<string>> stopWordsPerField = new JCG.Dictionary<string, ISet<string>>();
         //The default maximum percentage (40%) of index documents which
         //can contain a term, after which the term is considered to be a stop word.
         public const float defaultMaxDocFreqPercent = 0.4f;

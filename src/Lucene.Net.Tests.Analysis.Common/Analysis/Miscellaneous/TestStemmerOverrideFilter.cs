@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestRandomRealisticWhiteSpace()
         {
-            IDictionary<string, string> map = new Dictionary<string, string>();
+            IDictionary<string, string> map = new JCG.Dictionary<string, string>();
             // LUCENENET: Ported the patch from https://github.com/apache/lucene/commit/bce10efeb40c11271cb398c37b859408818b8a00
             // so we don't have random failures.
             ISet<string> seen = new HashSet<string>();
@@ -174,7 +174,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestRandomRealisticKeyword()
         {
-            IDictionary<string, string> map = new Dictionary<string, string>();
+            IDictionary<string, string> map = new JCG.Dictionary<string, string>();
             int numTerms = AtLeast(50);
             for (int i = 0; i < numTerms; i++)
             {

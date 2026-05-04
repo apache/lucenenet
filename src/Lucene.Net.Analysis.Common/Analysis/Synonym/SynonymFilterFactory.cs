@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -67,7 +68,7 @@ namespace Lucene.Net.Analysis.Synonym
 #pragma warning disable 612, 618
             if (m_luceneMatchVersion.OnOrAfter(Lucene.Net.Util.LuceneVersion.LUCENE_34))
             {
-                delegator = new FSTSynonymFilterFactory(new Dictionary<string, string>(OriginalArgs));
+                delegator = new FSTSynonymFilterFactory(new JCG.Dictionary<string, string>(OriginalArgs));
             }
 #pragma warning restore 612, 618
             else
@@ -79,7 +80,7 @@ namespace Lucene.Net.Analysis.Synonym
                     throw new ArgumentException("You must specify luceneMatchVersion >= 3.4 to use alternate synonyms formats");
                 }
 #pragma warning disable 612, 618
-                delegator = new SlowSynonymFilterFactory(new Dictionary<string, string>(OriginalArgs));
+                delegator = new SlowSynonymFilterFactory(new JCG.Dictionary<string, string>(OriginalArgs));
 #pragma warning restore 612, 618
             }
         }

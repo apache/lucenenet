@@ -1737,7 +1737,7 @@ namespace Lucene.Net.Util.Fst
                 // Free up RAM:
                 inCounts = null;
 
-                topNodeMap = new Dictionary<int, int>(q.Count); // LUCENENET: Allocate the dictionary prior to the loop
+                topNodeMap = new JCG.Dictionary<int, int>(q.Count); // LUCENENET: Allocate the dictionary prior to the loop
                 for (int downTo = q.Count - 1; downTo >= 0; downTo--)
                 {
                     FST.NodeAndInCount? n = q.Pop();

@@ -67,7 +67,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 SimpleTextUtil.ReadLine(input, scratch);
                 if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_NUM_DIAG));
                 int numDiag = Convert.ToInt32(ReadString(SimpleTextSegmentInfoWriter.SI_NUM_DIAG.Length, scratch), CultureInfo.InvariantCulture);
-                IDictionary<string, string> diagnostics = new Dictionary<string, string>();
+                IDictionary<string, string> diagnostics = new JCG.Dictionary<string, string>();
 
                 for (int i = 0; i < numDiag; i++)
                 {

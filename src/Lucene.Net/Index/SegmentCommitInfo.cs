@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
         private long nextWriteFieldInfosGen;
 
         // Track the per-generation updates files
-        private readonly IDictionary<long, ISet<string>> genUpdatesFiles = new Dictionary<long, ISet<string>>();
+        private readonly IDictionary<long, ISet<string>> genUpdatesFiles = new JCG.Dictionary<long, ISet<string>>();
 
         private readonly AtomicInt64 sizeInBytes = new AtomicInt64(-1L); // LUCENENET NOTE: This was volatile in the original, using AtomicInt64 instead
 

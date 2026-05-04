@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Int64 = J2N.Numerics.Int64;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -45,10 +46,10 @@ namespace Lucene.Net.Codecs.Memory
         private readonly IndexInput data;
 
         // ram instances we have already loaded
-        private readonly IDictionary<int, NumericDocValues> numericInstances = new Dictionary<int, NumericDocValues>();
-        private readonly IDictionary<int, BinaryDocValues> binaryInstances = new Dictionary<int, BinaryDocValues>();
-        private readonly IDictionary<int, FST<Int64>> fstInstances = new Dictionary<int, FST<Int64>>();
-        private readonly IDictionary<int, IBits> docsWithFieldInstances = new Dictionary<int, IBits>();
+        private readonly IDictionary<int, NumericDocValues> numericInstances = new JCG.Dictionary<int, NumericDocValues>();
+        private readonly IDictionary<int, BinaryDocValues> binaryInstances = new JCG.Dictionary<int, BinaryDocValues>();
+        private readonly IDictionary<int, FST<Int64>> fstInstances = new JCG.Dictionary<int, FST<Int64>>();
+        private readonly IDictionary<int, IBits> docsWithFieldInstances = new JCG.Dictionary<int, IBits>();
 
         private readonly int maxDoc;
         private readonly AtomicInt64 ramBytesUsed;
@@ -82,9 +83,9 @@ namespace Lucene.Net.Codecs.Memory
             try
             {
                 version = CodecUtil.CheckHeader(@in, metaCodec, VERSION_START, VERSION_CURRENT);
-                numerics = new Dictionary<int, NumericEntry>();
-                binaries = new Dictionary<int, BinaryEntry>();
-                fsts = new Dictionary<int, FSTEntry>();
+                numerics = new JCG.Dictionary<int, NumericEntry>();
+                binaries = new JCG.Dictionary<int, BinaryEntry>();
+                fsts = new JCG.Dictionary<int, FSTEntry>();
                 ReadFields(@in /*, state.FieldInfos // LUCENENET: Not referenced */);
                 if (version >= VERSION_CHECKSUM)
                 {

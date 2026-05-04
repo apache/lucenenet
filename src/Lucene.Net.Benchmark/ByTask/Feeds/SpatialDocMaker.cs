@@ -8,6 +8,7 @@ using Spatial4n.Shapes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -43,7 +44,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public const string SPATIAL_FIELD = "spatial";
 
         //cache spatialStrategy by round number
-        private static readonly IDictionary<int, SpatialStrategy> spatialStrategyCache = new Dictionary<int, SpatialStrategy>(); // LUCENENET: marked readonly
+        private static readonly IDictionary<int, SpatialStrategy> spatialStrategyCache = new JCG.Dictionary<int, SpatialStrategy>(); // LUCENENET: marked readonly
 
         private SpatialStrategy strategy;
         private IShapeConverter shapeConverter;

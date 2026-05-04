@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -105,12 +106,12 @@ namespace Lucene.Net.Index
 
         internal override void Flush(IDictionary<string, InvertedDocConsumerPerField> fieldsToFlush, SegmentWriteState state)
         {
-            IDictionary<string, TermsHashConsumerPerField> childFields = new Dictionary<string, TermsHashConsumerPerField>();
+            IDictionary<string, TermsHashConsumerPerField> childFields = new JCG.Dictionary<string, TermsHashConsumerPerField>();
             IDictionary<string, InvertedDocConsumerPerField> nextChildFields;
 
             if (nextTermsHash != null)
             {
-                nextChildFields = new Dictionary<string, InvertedDocConsumerPerField>();
+                nextChildFields = new JCG.Dictionary<string, InvertedDocConsumerPerField>();
             }
             else
             {

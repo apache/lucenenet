@@ -299,9 +299,9 @@ namespace Lucene.Net.Util.Automaton
         {
             int[] points = a.GetStartPoints();
             // subset construction
-            IDictionary<ISet<State>, ISet<State>> sets = new Dictionary<ISet<State>, ISet<State>>();
+            IDictionary<ISet<State>, ISet<State>> sets = new JCG.Dictionary<ISet<State>, ISet<State>>();
             Queue<ISet<State>> worklist = new Queue<ISet<State>>(); // LUCENENET specific - Queue is much more performant than LinkedList
-            IDictionary<ISet<State>, State> newstate = new Dictionary<ISet<State>, State>();
+            IDictionary<ISet<State>, State> newstate = new JCG.Dictionary<ISet<State>, State>();
             sets[initialset] = initialset;
             worklist.Enqueue(initialset);
             a.initial = new State();
@@ -438,7 +438,7 @@ namespace Lucene.Net.Util.Automaton
             // must use IdentityHashmap because two Transitions w/
             // different start nodes can be considered the same
             leadsToAccept = new JCG.Dictionary<Transition, bool>(IdentityEqualityComparer<Transition>.Default);
-            IDictionary<State, IList<ArrivingTransition>> allArriving = new Dictionary<State, IList<ArrivingTransition>>();
+            IDictionary<State, IList<ArrivingTransition>> allArriving = new JCG.Dictionary<State, IList<ArrivingTransition>>();
 
             Queue<State> q = new Queue<State>();
             ISet<State> seen = new JCG.HashSet<State>();

@@ -1,6 +1,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
@@ -40,9 +41,9 @@ namespace Lucene.Net.Analysis
         private int lastStartOffset;
 
         // Maps position to the start/end offset:
-        private readonly IDictionary<int, int> posToStartOffset = new Dictionary<int, int>();
+        private readonly IDictionary<int, int> posToStartOffset = new JCG.Dictionary<int, int>();
 
-        private readonly IDictionary<int, int> posToEndOffset = new Dictionary<int, int>();
+        private readonly IDictionary<int, int> posToEndOffset = new JCG.Dictionary<int, int>();
 
         private readonly IPositionIncrementAttribute posIncAtt;
         private readonly IPositionLengthAttribute posLenAtt;

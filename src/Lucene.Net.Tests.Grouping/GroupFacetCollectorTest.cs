@@ -604,7 +604,7 @@ namespace Lucene.Net.Search.Grouping
             }));
 
             // LUCENENET NOTE: Need JCG.Dictionary here because of null keys
-            IDictionary<string, JCG.Dictionary<string, ISet<string>>> searchTermToFacetToGroups = new Dictionary<string, JCG.Dictionary<string, ISet<string>>>();
+            IDictionary<string, JCG.Dictionary<string, ISet<string>>> searchTermToFacetToGroups = new JCG.Dictionary<string, JCG.Dictionary<string, ISet<string>>>();
             int facetWithMostGroups = 0;
             for (int i = 0; i < numDocs; i++)
             {

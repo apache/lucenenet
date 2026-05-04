@@ -1,5 +1,6 @@
 using Lucene.Net.Index;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public override void SetParams(string @params)
         {
             base.SetParams(@params);
-            commitUserData = new Dictionary<string, string>
+            commitUserData = new JCG.Dictionary<string, string>
             {
                 [OpenReaderTask.USER_DATA] = @params
             };

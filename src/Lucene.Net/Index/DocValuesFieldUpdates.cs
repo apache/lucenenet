@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -34,8 +35,8 @@ namespace Lucene.Net.Index
 
         public class Container
         {
-            internal readonly IDictionary<string, NumericDocValuesFieldUpdates> numericDVUpdates = new Dictionary<string, NumericDocValuesFieldUpdates>();
-            internal readonly IDictionary<string, BinaryDocValuesFieldUpdates> binaryDVUpdates = new Dictionary<string, BinaryDocValuesFieldUpdates>();
+            internal readonly IDictionary<string, NumericDocValuesFieldUpdates> numericDVUpdates = new JCG.Dictionary<string, NumericDocValuesFieldUpdates>();
+            internal readonly IDictionary<string, BinaryDocValuesFieldUpdates> binaryDVUpdates = new JCG.Dictionary<string, BinaryDocValuesFieldUpdates>();
 
             internal virtual bool Any()
             {

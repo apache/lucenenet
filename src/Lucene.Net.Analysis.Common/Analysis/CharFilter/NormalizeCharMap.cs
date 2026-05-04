@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.CharFilters
     public class NormalizeCharMap
     {
         internal readonly FST<CharsRef> map;
-        internal readonly IDictionary<char?, FST.Arc<CharsRef>> cachedRootArcs = new Dictionary<char?, FST.Arc<CharsRef>>();
+        internal readonly IDictionary<char?, FST.Arc<CharsRef>> cachedRootArcs = new JCG.Dictionary<char?, FST.Arc<CharsRef>>();
 
         // Use the builder to create:
         private NormalizeCharMap(FST<CharsRef> map)

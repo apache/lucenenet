@@ -1,6 +1,7 @@
 using Lucene.Net.Search;
 using System.Collections.Generic;
 using System.Xml;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Xml
 {
@@ -26,7 +27,7 @@ namespace Lucene.Net.QueryParsers.Xml
     /// </summary>
     public class QueryBuilderFactory : IQueryBuilder
     {
-        private readonly IDictionary<string, IQueryBuilder> builders = new Dictionary<string, IQueryBuilder>(); // LUCENENET: marked readonly
+        private readonly IDictionary<string, IQueryBuilder> builders = new JCG.Dictionary<string, IQueryBuilder>(); // LUCENENET: marked readonly
 
         public virtual Query GetQuery(XmlElement n)
         {

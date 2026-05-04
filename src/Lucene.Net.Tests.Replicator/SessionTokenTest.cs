@@ -70,7 +70,7 @@ namespace Lucene.Net.Replicator
         public void TestToString()
         {
             // Create a mock SessionToken with known data
-            Dictionary<string, IList<RevisionFile>> sourceFiles = new Dictionary<string, IList<RevisionFile>>();
+            JCG.Dictionary<string, IList<RevisionFile>> sourceFiles = new JCG.Dictionary<string, IList<RevisionFile>>();
             IList<RevisionFile> files1 = new JCG.List<RevisionFile>
             {
                 new RevisionFile("file1.txt", 100),

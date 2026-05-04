@@ -13,6 +13,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -338,7 +339,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             }
         }
 
-        private static readonly IDictionary<string, int> ELEMENTS = new Dictionary<string, int> // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        private static readonly IDictionary<string, int> ELEMENTS = new JCG.Dictionary<string, int> // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             { "page", PAGE },
             { "text", BODY },

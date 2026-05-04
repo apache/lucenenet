@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Configuration.Custom
 {
@@ -34,7 +35,7 @@ namespace Lucene.Net.Configuration.Custom
         public IConfiguration GetConfiguration()
         {
             return new MockConfiguration(wrapped.GetConfiguration(),
-                new Dictionary<string, string>
+                new JCG.Dictionary<string, string>
                 {
                     ["fruit"] = "banana",
                     ["vegetable"] = "lettuce",

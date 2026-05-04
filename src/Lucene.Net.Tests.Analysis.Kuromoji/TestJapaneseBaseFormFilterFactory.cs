@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -30,10 +31,10 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestBasics()
         {
-            JapaneseTokenizerFactory tokenizerFactory = new JapaneseTokenizerFactory(new Dictionary<String, String>());
+            JapaneseTokenizerFactory tokenizerFactory = new JapaneseTokenizerFactory(new JCG.Dictionary<String, String>());
             tokenizerFactory.Inform(new StringMockResourceLoader(""));
             TokenStream ts = tokenizerFactory.Create(new StringReader("それはまだ実験段階にあります"));
-            JapaneseBaseFormFilterFactory factory = new JapaneseBaseFormFilterFactory(new Dictionary<String, String>());
+            JapaneseBaseFormFilterFactory factory = new JapaneseBaseFormFilterFactory(new JCG.Dictionary<String, String>());
             ts = factory.Create(ts);
             AssertTokenStreamContents(ts,
                 new String[] { "それ", "は", "まだ", "実験", "段階", "に", "ある", "ます" }
@@ -46,7 +47,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             try
             {
-                new JapaneseBaseFormFilterFactory(new Dictionary<String, String>() {
+                new JapaneseBaseFormFilterFactory(new JCG.Dictionary<String, String>() {
                     { "bogusArg", "bogusValue" }
                 });
                 fail();

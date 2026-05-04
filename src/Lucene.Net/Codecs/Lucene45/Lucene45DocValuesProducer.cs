@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene45
 {
@@ -65,9 +66,9 @@ namespace Lucene.Net.Codecs.Lucene45
         private readonly int version;
 
         // memory-resident structures
-        private readonly IDictionary<int, MonotonicBlockPackedReader> addressInstances = new Dictionary<int, MonotonicBlockPackedReader>();
+        private readonly IDictionary<int, MonotonicBlockPackedReader> addressInstances = new JCG.Dictionary<int, MonotonicBlockPackedReader>();
 
-        private readonly IDictionary<int, MonotonicBlockPackedReader> ordIndexInstances = new Dictionary<int, MonotonicBlockPackedReader>();
+        private readonly IDictionary<int, MonotonicBlockPackedReader> ordIndexInstances = new JCG.Dictionary<int, MonotonicBlockPackedReader>();
 
         /// <summary>
         /// Expert: instantiates a new reader. </summary>
@@ -81,11 +82,11 @@ namespace Lucene.Net.Codecs.Lucene45
             try
             {
                 version = CodecUtil.CheckHeader(@in, metaCodec, Lucene45DocValuesFormat.VERSION_START, Lucene45DocValuesFormat.VERSION_CURRENT);
-                numerics = new Dictionary<int, NumericEntry>();
-                ords = new Dictionary<int, NumericEntry>();
-                ordIndexes = new Dictionary<int, NumericEntry>();
-                binaries = new Dictionary<int, BinaryEntry>();
-                sortedSets = new Dictionary<int, SortedSetEntry>();
+                numerics = new JCG.Dictionary<int, NumericEntry>();
+                ords = new JCG.Dictionary<int, NumericEntry>();
+                ordIndexes = new JCG.Dictionary<int, NumericEntry>();
+                binaries = new JCG.Dictionary<int, BinaryEntry>();
+                sortedSets = new JCG.Dictionary<int, SortedSetEntry>();
                 ReadFields(@in /*, state.FieldInfos // LUCENENET: Not read */);
 
                 if (version >= Lucene45DocValuesFormat.VERSION_CHECKSUM)

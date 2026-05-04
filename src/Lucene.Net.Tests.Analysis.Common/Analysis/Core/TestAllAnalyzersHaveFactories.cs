@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.Core
             foreach (Type c in analysisClasses)
             {
 
-                IDictionary<string, string> args = new Dictionary<string, string>();
+                IDictionary<string, string> args = new JCG.Dictionary<string, string>();
                 args["luceneMatchVersion"] = TEST_VERSION_CURRENT.ToString();
 
                 if (c.IsSubclassOf(typeof(Tokenizer)))

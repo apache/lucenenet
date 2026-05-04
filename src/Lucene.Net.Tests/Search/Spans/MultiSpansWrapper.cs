@@ -55,7 +55,7 @@ namespace Lucene.Net.Search.Spans
 
         public static Spans Wrap(IndexReaderContext topLevelReaderContext, SpanQuery query)
         {
-            IDictionary<Term, TermContext> termContexts = new Dictionary<Term, TermContext>();
+            IDictionary<Term, TermContext> termContexts = new JCG.Dictionary<Term, TermContext>();
             JCG.SortedSet<Term> terms = new JCG.SortedSet<Term>();
             query.ExtractTerms(terms);
             foreach (Term term in terms)

@@ -226,7 +226,7 @@ namespace Lucene.Net.Search
         internal virtual IDictionary<Term, TermStatistics> GetNodeTermStats(ISet<Term> terms, int nodeID, long version)
         {
             NodeState node = m_nodes[nodeID];
-            IDictionary<Term, TermStatistics> stats = new Dictionary<Term, TermStatistics>();
+            IDictionary<Term, TermStatistics> stats = new JCG.Dictionary<Term, TermStatistics>();
             IndexSearcher s = node.Searchers.Acquire(version);
             if (s is null)
             {

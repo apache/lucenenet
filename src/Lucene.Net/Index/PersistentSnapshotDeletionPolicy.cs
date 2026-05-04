@@ -338,7 +338,7 @@ namespace Lucene.Net.Index
                         if (genLoaded == -1 || gen > genLoaded)
                         {
                             snapshotFiles.Add(file);
-                            IDictionary<long, int> m = new Dictionary<long, int>();
+                            IDictionary<long, int> m = new JCG.Dictionary<long, int>();
                             IndexInput @in = dir.OpenInput(file, IOContext.DEFAULT);
                             try
                             {

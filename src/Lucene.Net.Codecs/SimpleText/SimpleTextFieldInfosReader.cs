@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
@@ -119,7 +120,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.ReadLine(input, scratch);
                     if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NUM_ATTS));
                     int numAtts = Convert.ToInt32(ReadString(SimpleTextFieldInfosWriter.NUM_ATTS.Length, scratch), CultureInfo.InvariantCulture);
-                    IDictionary<string, string> atts = new Dictionary<string, string>();
+                    IDictionary<string, string> atts = new JCG.Dictionary<string, string>();
 
                     for (int j = 0; j < numAtts; j++)
                     {

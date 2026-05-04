@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Replicator
 {
@@ -57,7 +58,7 @@ namespace Lucene.Net.Replicator
         private IRevision CreateRevision(int id)
         {
             sourceWriter.AddDocument(new Document());
-            sourceWriter.SetCommitData(new Dictionary<string, string> {
+            sourceWriter.SetCommitData(new JCG.Dictionary<string, string> {
                 { VERSION_ID, id.ToString() }
             });
             sourceWriter.Commit();

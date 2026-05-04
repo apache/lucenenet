@@ -80,10 +80,10 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        private static readonly IDictionary<ConstructorInfo, IPredicate<object[]>> brokenConstructors = new Dictionary<ConstructorInfo, IPredicate<object[]>>();
+        private static readonly IDictionary<ConstructorInfo, IPredicate<object[]>> brokenConstructors = new JCG.Dictionary<ConstructorInfo, IPredicate<object[]>>();
         // TODO: also fix these and remove (maybe):
         // Classes/options that don't produce consistent graph offsets:
-        private static readonly IDictionary<ConstructorInfo, IPredicate<object[]>> brokenOffsetsConstructors = new Dictionary<ConstructorInfo, IPredicate<object[]>>();
+        private static readonly IDictionary<ConstructorInfo, IPredicate<object[]>> brokenOffsetsConstructors = new JCG.Dictionary<ConstructorInfo, IPredicate<object[]>>();
 
         internal static readonly ISet<Type> allowedTokenizerArgs, allowedTokenFilterArgs, allowedCharFilterArgs;
 

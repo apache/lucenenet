@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Xml
 {
@@ -115,7 +116,7 @@ namespace Lucene.Net.QueryParsers.Xml
         //Helper method to construct Lucene query forms used in our test
         IDictionary<string, string> getPropsFromString(String nameValuePairs)
         {
-            IDictionary<string, string> result = new Dictionary<string, string>();
+            IDictionary<string, string> result = new JCG.Dictionary<string, string>();
             StringTokenizer st = new StringTokenizer(nameValuePairs, "\t=");
             while (st.MoveNext())
             {

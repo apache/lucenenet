@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Stempel
 {
@@ -31,7 +32,7 @@ namespace Lucene.Net.Analysis.Stempel
         public void TestBasics()
         {
             TextReader reader = new StringReader("studenta studenci");
-            StempelPolishStemFilterFactory factory = new StempelPolishStemFilterFactory(new Dictionary<string, string>());
+            StempelPolishStemFilterFactory factory = new StempelPolishStemFilterFactory(new JCG.Dictionary<string, string>());
             TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
             stream = factory.Create(stream);
             AssertTokenStreamContents(stream,
@@ -44,7 +45,7 @@ namespace Lucene.Net.Analysis.Stempel
         {
             try
             {
-                new StempelPolishStemFilterFactory(new Dictionary<string, string>() { { "bogusArg", "bogusValue" } });
+                new StempelPolishStemFilterFactory(new JCG.Dictionary<string, string>() { { "bogusArg", "bogusValue" } });
                 fail();
             }
             catch (Exception expected) when (expected.IsIllegalArgumentException())

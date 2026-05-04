@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
@@ -275,7 +276,7 @@ namespace Lucene.Net.Analysis
         public virtual void TestAttributeReflection()
         {
             Token t = new Token("foobar", 6, 22, 8);
-            TestUtil.AssertAttributeReflection(t, new Dictionary<string, object>()
+            TestUtil.AssertAttributeReflection(t, new JCG.Dictionary<string, object>()
             {
                 { nameof(ICharTermAttribute) + "#term", "foobar" },
                 { nameof(ITermToBytesRefAttribute) + "#bytes", new BytesRef("foobar") },

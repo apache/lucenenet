@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -95,7 +96,7 @@ namespace Lucene.Net.Index
         // updates on the merged segment too.
         private bool isMerging = false;
 
-        private readonly IDictionary<string, DocValuesFieldUpdates> mergingDVUpdates = new Dictionary<string, DocValuesFieldUpdates>();
+        private readonly IDictionary<string, DocValuesFieldUpdates> mergingDVUpdates = new JCG.Dictionary<string, DocValuesFieldUpdates>();
 
         public ReadersAndUpdates(IndexWriter writer, SegmentCommitInfo info)
         {
@@ -696,7 +697,7 @@ namespace Lucene.Net.Index
 
                 // create a new map, keeping only the gens that are in use
                 IDictionary<long, ISet<string>> genUpdatesFiles = Info.UpdatesFiles;
-                IDictionary<long, ISet<string>> newGenUpdatesFiles = new Dictionary<long, ISet<string>>();
+                IDictionary<long, ISet<string>> newGenUpdatesFiles = new JCG.Dictionary<long, ISet<string>>();
                 long fieldInfosGen = Info.FieldInfosGen;
                 foreach (FieldInfo fi in fieldInfos)
                 {

@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.OpenNlp
 {
@@ -43,7 +44,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         {
             Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldname, reader) =>
             {
-                var tokenizerFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "sentenceModel", "en-test-sent.bin" }, { "tokenizerModel", "en-test-tokenizer.bin" } });
+                var tokenizerFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "sentenceModel", "en-test-sent.bin" }, { "tokenizerModel", "en-test-tokenizer.bin" } });
                 var tokenizer = tokenizerFactory.Create(reader);
                 return new TokenStreamComponents(tokenizer);
             });
@@ -61,7 +62,7 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldname, reader) =>
                 {
-                    var tokenizerFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", "en-test-tokenizer.bin" } });
+                    var tokenizerFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "tokenizerModel", "en-test-tokenizer.bin" } });
                     var tokenizer = tokenizerFactory.Create(reader);
                     return new TokenStreamComponents(tokenizer);
                 });
@@ -81,7 +82,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         {
             //Analyzer analyzer2 = Analyzer.NewAnonymous(createComponents: (fieldname, reader) =>
             //{
-            //    var tokenizerFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "sentenceModel", "en-test-sent.bin" } });
+            //    var tokenizerFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "sentenceModel", "en-test-sent.bin" } });
             //    tokenizerFactory.Inform(new ClasspathResourceLoader(GetType()));
             //    var tokenizer = tokenizerFactory.Create(reader);
             //    return new TokenStreamComponents(tokenizer);
@@ -92,7 +93,7 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldname, reader) =>
                 {
-                    var tokenizerFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "sentenceModel", "en-test-sent.bin" } });
+                    var tokenizerFactory = new OpenNLPTokenizerFactory(new JCG.Dictionary<string, string> { { "sentenceModel", "en-test-sent.bin" } });
                     var tokenizer = tokenizerFactory.Create(reader);
                     return new TokenStreamComponents(tokenizer);
                 });
@@ -111,7 +112,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         [Test]
         public void TestClose()
         {
-            IDictionary<String, String> args = new Dictionary<String, String>()
+            IDictionary<String, String> args = new JCG.Dictionary<String, String>()
             {
                 { "sentenceModel", "en-test-sent.bin" },
                 { "tokenizerModel", "en-test-tokenizer.bin" }

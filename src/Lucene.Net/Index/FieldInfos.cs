@@ -199,9 +199,9 @@ namespace Lucene.Net.Index
 
             internal FieldNumbers()
             {
-                this.nameToNumber = new Dictionary<string, int>();
-                this.numberToName = new Dictionary<int, string>();
-                this.docValuesType = new Dictionary<string, DocValuesType>();
+                this.nameToNumber = new JCG.Dictionary<string, int>();
+                this.numberToName = new JCG.Dictionary<int, string>();
+                this.docValuesType = new JCG.Dictionary<string, DocValuesType>();
             }
 
             /// <summary>
@@ -337,7 +337,7 @@ namespace Lucene.Net.Index
 
         internal sealed class Builder
         {
-            private readonly Dictionary<string, FieldInfo> byName = new Dictionary<string, FieldInfo>();
+            private readonly JCG.Dictionary<string, FieldInfo> byName = new JCG.Dictionary<string, FieldInfo>();
             private readonly FieldNumbers globalFieldNumbers;
 
             internal Builder()

@@ -235,10 +235,10 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         private const int MAX_LENGTH = 6;
 
         /// <summary>Transformation rules indexed by the first character of their pattern.</summary>
-        private static readonly IDictionary<char, IList<Rule>> RULES = new Dictionary<char, IList<Rule>>();
+        private static readonly IDictionary<char, IList<Rule>> RULES = new JCG.Dictionary<char, IList<Rule>>();
 
         /// <summary>Folding rules.</summary>
-        private static readonly IDictionary<char, char> FOLDINGS = new Dictionary<char, char>();
+        private static readonly IDictionary<char, char> FOLDINGS = new JCG.Dictionary<char, char>();
 
         private static readonly Regex WHITESPACE = new Regex(@"\s+", RegexOptions.Compiled);
 

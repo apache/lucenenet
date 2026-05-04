@@ -63,7 +63,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Extension of separate norms file. </summary>
         internal const string SEPARATE_NORMS_EXTENSION = "s";
 
-        private readonly IDictionary<string, NormsDocValues> norms = new Dictionary<string, NormsDocValues>();
+        private readonly IDictionary<string, NormsDocValues> norms = new JCG.Dictionary<string, NormsDocValues>();
 
         // any .nrm or .sNN files we have open at any time.
         // TODO: just a list, and double-close() separate norms files?

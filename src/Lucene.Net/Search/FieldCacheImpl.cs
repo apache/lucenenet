@@ -323,7 +323,7 @@ namespace Lucene.Net.Search
                     if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache is null)
                     {
                         // First time this reader is using FieldCache
-                        innerCache = new Dictionary<TKey, object>
+                        innerCache = new JCG.Dictionary<TKey, object>
                         {
                             [key] = value
                         };
@@ -351,7 +351,7 @@ namespace Lucene.Net.Search
                     if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache is null)
                     {
                         // First time this reader is using FieldCache
-                        innerCache = new Dictionary<TKey, object>
+                        innerCache = new JCG.Dictionary<TKey, object>
                         {
                             [key] = value = new FieldCache.CreationPlaceholder<TValue>()
                         };

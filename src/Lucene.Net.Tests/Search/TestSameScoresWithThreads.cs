@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
             // Target ~10 terms to search:
             double chance = 10.0 / termCount;
             termsEnum = terms.GetEnumerator(termsEnum);
-            IDictionary<BytesRef, TopDocs> answers = new Dictionary<BytesRef, TopDocs>();
+            IDictionary<BytesRef, TopDocs> answers = new JCG.Dictionary<BytesRef, TopDocs>();
             while (termsEnum.MoveNext())
             {
                 if (Random.NextDouble() <= chance)

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -89,8 +90,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
                 if (reuseFields)
                 {
-                    fields = new Dictionary<string, Field>();
-                    numericFields = new Dictionary<string, Field>();
+                    fields = new JCG.Dictionary<string, Field>();
+                    numericFields = new JCG.Dictionary<string, Field>();
 
                     // Initialize the map with the default fields.
                     fields[BODY_FIELD] = new Field(BODY_FIELD, "", bodyFt);

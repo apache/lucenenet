@@ -725,7 +725,7 @@ namespace Lucene.Net.Analysis.Hunspell
         internal static readonly IDictionary<string, string> CHARSET_ALIASES = LoadCharsetAliases();
         private static IDictionary<string, string> LoadCharsetAliases() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            return Collections.AsReadOnly(new Dictionary<string, string>
+            return Collections.AsReadOnly(new JCG.Dictionary<string, string>
             {
                 ["microsoft-cp1251"] = "windows-1251",
                 ["TIS620-2533"] = "TIS-620"

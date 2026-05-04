@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Morfologik
         public void TestDefaultDictionary()
         {
             StringReader reader = new StringReader("rowery bilety");
-            MorfologikFilterFactory factory = new MorfologikFilterFactory(new Dictionary<string, string>());
+            MorfologikFilterFactory factory = new MorfologikFilterFactory(new JCG.Dictionary<string, string>());
             factory.Inform(new ForbidResourcesLoader());
             TokenStream stream = new MockTokenizer(reader); //whitespaceMockTokenizer(reader);
             stream = factory.Create(stream);

@@ -242,7 +242,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     // LUCENENET NOTE: diming an array and then using .CopyTo() for better efficiency than LINQ .ToArray()
                     long[] decode = new long[uniqueValues.Count];
                     uniqueValues.CopyTo(decode, 0);
-                    Dictionary<long, int> encode = new Dictionary<long, int>();
+                    JCG.Dictionary<long, int> encode = new JCG.Dictionary<long, int>();
                     meta.WriteVInt32(decode.Length);
                     for (int i = 0; i < decode.Length; i++)
                     {

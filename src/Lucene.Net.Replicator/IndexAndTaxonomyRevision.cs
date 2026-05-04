@@ -10,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Replicator
 {
@@ -61,7 +62,7 @@ namespace Lucene.Net.Replicator
         /// </summary>
         public static IDictionary<string, IList<RevisionFile>> RevisionFiles(IndexCommit indexCommit, IndexCommit taxonomyCommit)
         {
-            return new Dictionary<string, IList<RevisionFile>>{
+            return new JCG.Dictionary<string, IList<RevisionFile>>{
                     { INDEX_SOURCE,  IndexRevision.RevisionFiles(indexCommit).Values.First() },
                     { TAXONOMY_SOURCE,  IndexRevision.RevisionFiles(taxonomyCommit).Values.First() }
                 };

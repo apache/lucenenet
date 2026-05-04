@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -35,10 +36,10 @@ namespace Lucene.Net.Analysis.Ja
                 "#  verb-main:\n" +
                 "動詞-自立\n";
 
-            JapaneseTokenizerFactory tokenizerFactory = new JapaneseTokenizerFactory(new Dictionary<String, String>());
+            JapaneseTokenizerFactory tokenizerFactory = new JapaneseTokenizerFactory(new JCG.Dictionary<String, String>());
             tokenizerFactory.Inform(new StringMockResourceLoader(""));
             TokenStream ts = tokenizerFactory.Create(new StringReader("私は制限スピードを超える。"));
-            IDictionary<String, String> args = new Dictionary<String, String>();
+            IDictionary<String, String> args = new JCG.Dictionary<String, String>();
             args["luceneMatchVersion"] = TEST_VERSION_CURRENT.ToString();
             args["tags"] = "stoptags.txt";
             JapanesePartOfSpeechStopFilterFactory factory = new JapanesePartOfSpeechStopFilterFactory(args);
@@ -55,7 +56,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             try
             {
-                new JapanesePartOfSpeechStopFilterFactory(new Dictionary<String, String>() {
+                new JapanesePartOfSpeechStopFilterFactory(new JCG.Dictionary<String, String>() {
                     { "luceneMatchVersion", TEST_VERSION_CURRENT.toString() },
                     { "bogusArg", "bogusValue" }
                 });

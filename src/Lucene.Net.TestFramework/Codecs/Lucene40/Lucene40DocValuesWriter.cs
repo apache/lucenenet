@@ -417,7 +417,7 @@ namespace Lucene.Net.Codecs.Lucene40
             /* values */
             long startPosition = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             long currentAddress = 0;
-            Dictionary<BytesRef, long> valueToAddress = new Dictionary<BytesRef, long>();
+            JCG.Dictionary<BytesRef, long> valueToAddress = new JCG.Dictionary<BytesRef, long>();
             foreach (BytesRef v in dictionary)
             {
                 currentAddress = data.Position - startPosition; // LUCENENET specific: Renamed from getFilePointer() to match FileStream

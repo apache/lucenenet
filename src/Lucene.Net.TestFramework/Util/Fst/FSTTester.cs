@@ -502,7 +502,7 @@ namespace Lucene.Net.Util.Fst
                 Assert.IsFalse(fstEnum.MoveNext());
             }
 
-            IDictionary<Int32sRef, T> termsMap = new Dictionary<Int32sRef, T>();
+            IDictionary<Int32sRef, T> termsMap = new JCG.Dictionary<Int32sRef, T>();
             foreach (InputOutput<T> pair in pairs)
             {
                 termsMap[pair.Input] = pair.Output;

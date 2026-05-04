@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Classification
 {
@@ -94,7 +95,7 @@ namespace Lucene.Net.Classification
         private ClassificationResult<BytesRef> SelectClassFromNeighbors(TopDocs topDocs)
         {
             // TODO : improve the nearest neighbor selection
-            Dictionary<BytesRef, int> classCounts = new Dictionary<BytesRef, int>();
+            JCG.Dictionary<BytesRef, int> classCounts = new JCG.Dictionary<BytesRef, int>();
 
             foreach (ScoreDoc scoreDoc in topDocs.ScoreDocs)
             {

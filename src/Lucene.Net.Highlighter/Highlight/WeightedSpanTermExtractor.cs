@@ -630,7 +630,7 @@ namespace Lucene.Net.Search.Highlight
         // so we need to implement IDictionary{TKey, TValue} instead.
         protected class PositionCheckingMap<K> : IDictionary<K, WeightedSpanTerm>
         {
-            private readonly IDictionary<K, WeightedSpanTerm> wrapped = new Dictionary<K, WeightedSpanTerm>();
+            private readonly IDictionary<K, WeightedSpanTerm> wrapped = new JCG.Dictionary<K, WeightedSpanTerm>();
 
             public WeightedSpanTerm this[K key]
             {

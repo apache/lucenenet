@@ -527,10 +527,10 @@ namespace Lucene.Net.Facet.Taxonomy
                 Facets facets = new TaxonomyFacetSumValueSource(tr, config, fc, values);
 
                 // Slow, yet hopefully bug-free, faceting:
-                var expectedValues = new JCG.List<Dictionary<string, float>>(numDims);
+                var expectedValues = new JCG.List<JCG.Dictionary<string, float>>(numDims);
                 for (int i = 0; i < numDims; i++)
                 {
-                    expectedValues.Add(new Dictionary<string, float>());
+                    expectedValues.Add(new JCG.Dictionary<string, float>());
                 }
 
                 foreach (TestDoc doc in testDocs)

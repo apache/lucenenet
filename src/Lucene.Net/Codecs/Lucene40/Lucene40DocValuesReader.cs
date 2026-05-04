@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -58,10 +59,10 @@ namespace Lucene.Net.Codecs.Lucene40
         private const string segmentSuffix = "dv";
 
         // ram instances we have already loaded
-        private readonly IDictionary<int, NumericDocValues> numericInstances = new Dictionary<int, NumericDocValues>();
+        private readonly IDictionary<int, NumericDocValues> numericInstances = new JCG.Dictionary<int, NumericDocValues>();
 
-        private readonly IDictionary<int, BinaryDocValues> binaryInstances = new Dictionary<int, BinaryDocValues>();
-        private readonly IDictionary<int, SortedDocValues> sortedInstances = new Dictionary<int, SortedDocValues>();
+        private readonly IDictionary<int, BinaryDocValues> binaryInstances = new JCG.Dictionary<int, BinaryDocValues>();
+        private readonly IDictionary<int, SortedDocValues> sortedInstances = new JCG.Dictionary<int, SortedDocValues>();
 
         private readonly AtomicInt64 ramBytesUsed;
 

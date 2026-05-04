@@ -795,7 +795,7 @@ namespace Lucene.Net.Util.Automaton
             Automaton a = (Automaton)base.MemberwiseClone();
             if (!IsSingleton)
             {
-                Dictionary<State, State> m = new Dictionary<State, State>();
+                JCG.Dictionary<State, State> m = new JCG.Dictionary<State, State>();
                 State[] states = GetNumberedStates();
                 foreach (State s in states)
                 {

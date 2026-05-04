@@ -4,6 +4,7 @@ using Lucene.Net.Queries.Function;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
 {
@@ -129,7 +130,7 @@ namespace Lucene.Net.Search.Suggest
                     starts[i] = leaves[i].DocBase;
                 }
                 starts[leaves.Count] = outerInstance.m_reader.MaxDoc;
-                currentWeightValues = (leaves.Count > 0) ? outerInstance.weightsValueSource.GetValues(new Dictionary<string, object>(), leaves[currentLeafIndex]) : null;
+                currentWeightValues = (leaves.Count > 0) ? outerInstance.weightsValueSource.GetValues(new JCG.Dictionary<string, object>(), leaves[currentLeafIndex]) : null;
             }
 
             /// <summary>
@@ -148,7 +149,7 @@ namespace Lucene.Net.Search.Suggest
                     currentLeafIndex = subIndex;
                     try
                     {
-                        currentWeightValues = outerInstance.weightsValueSource.GetValues(new Dictionary<string, object>(), leaves[currentLeafIndex]);
+                        currentWeightValues = outerInstance.weightsValueSource.GetValues(new JCG.Dictionary<string, object>(), leaves[currentLeafIndex]);
                     }
                     catch (Exception e) when (e.IsIOException())
                     {

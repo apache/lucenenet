@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -199,7 +200,7 @@ namespace Lucene.Net.Index
 
         // TODO: this could really be a weak map somewhere else on the coreCacheKey,
         // but do we really need to optimize slow-wrapper any more?
-        private readonly IDictionary<string, OrdinalMap> cachedOrdMaps = new Dictionary<string, OrdinalMap>();
+        private readonly IDictionary<string, OrdinalMap> cachedOrdMaps = new JCG.Dictionary<string, OrdinalMap>();
 
         public override NumericDocValues GetNormValues(string field)
         {

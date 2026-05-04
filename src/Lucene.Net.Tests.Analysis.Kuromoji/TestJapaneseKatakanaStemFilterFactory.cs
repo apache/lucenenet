@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -30,12 +31,12 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestKatakanaStemming()
         {
-            JapaneseTokenizerFactory tokenizerFactory = new JapaneseTokenizerFactory(new Dictionary<String, String>());
+            JapaneseTokenizerFactory tokenizerFactory = new JapaneseTokenizerFactory(new JCG.Dictionary<String, String>());
             tokenizerFactory.Inform(new StringMockResourceLoader(""));
             TokenStream tokenStream = tokenizerFactory.Create(
                 new StringReader("明後日パーティーに行く予定がある。図書館で資料をコピーしました。")
             );
-            JapaneseKatakanaStemFilterFactory filterFactory = new JapaneseKatakanaStemFilterFactory(new Dictionary<String, String>()); ;
+            JapaneseKatakanaStemFilterFactory filterFactory = new JapaneseKatakanaStemFilterFactory(new JCG.Dictionary<String, String>()); ;
             AssertTokenStreamContents(filterFactory.Create(tokenStream),
                 new String[]{ "明後日", "パーティ", "に", "行く", "予定", "が", "ある",   // パーティー should be stemmed
                       "図書館", "で", "資料", "を", "コピー", "し", "まし", "た"} // コピー should not be stemmed
@@ -48,7 +49,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             try
             {
-                new JapaneseKatakanaStemFilterFactory(new Dictionary<String, String>() {
+                new JapaneseKatakanaStemFilterFactory(new JCG.Dictionary<String, String>() {
                     { "bogusArg", "bogusValue" }
                 });
                 fail();

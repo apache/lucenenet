@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -95,7 +96,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             Stream @out = new FileStream(file.FullName, FileMode.Create, FileAccess.Write);
             TextWriter writer = new StreamWriter(@out, StandardCharsets.UTF_8);
-            Dictionary<string, string> p = new Dictionary<string, string>();
+            JCG.Dictionary<string, string> p = new JCG.Dictionary<string, string>();
             foreach (String f in extraFields)
             {
                 p[f] = f;
@@ -120,7 +121,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             PerfRunData runData = null;
             try
             {
-                Dictionary<string, string> props = new Dictionary<string, string>();
+                JCG.Dictionary<string, string> props = new JCG.Dictionary<string, string>();
 
                 // LineDocSource specific settings.
                 props["docs.file"] = file.FullName;

@@ -52,8 +52,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
         private int roundNumber = 0;
         private readonly IDictionary<string, string> props;
-        private readonly IDictionary<string, object> valByRound = new Dictionary<string, object>();
-        private readonly IDictionary<string, string> colForValByRound = new Dictionary<string, string>();
+        private readonly IDictionary<string, object> valByRound = new JCG.Dictionary<string, object>();
+        private readonly IDictionary<string, string> colForValByRound = new JCG.Dictionary<string, string>();
         private readonly string algorithmText;
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 writer.WriteLine(lines[i]);
             }
             // read props from string
-            this.props = new Dictionary<string, string>();
+            this.props = new JCG.Dictionary<string, string>();
             writer.Flush();
             ms.Position = 0;
             props.LoadProperties(ms);

@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
                 fieldIDs.Add(i);
             }
 
-            IDictionary<string, Document> docs = new Dictionary<string, Document>();
+            IDictionary<string, Document> docs = new JCG.Dictionary<string, Document>();
 
             if (Verbose)
             {

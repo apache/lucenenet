@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
@@ -58,7 +59,7 @@ namespace Lucene.Net.Codecs.SimpleText
         private readonly int maxDoc;
         private readonly IndexInput data;
         private readonly BytesRef scratch = new BytesRef();
-        private readonly IDictionary<string, OneField> fields = new Dictionary<string, OneField>();
+        private readonly IDictionary<string, OneField> fields = new JCG.Dictionary<string, OneField>();
 
         // LUCENENET NOTE: Changed from public to internal because the class had to be made public, but is not for public use.
         internal SimpleTextDocValuesReader(SegmentReadState state, string ext)

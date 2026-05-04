@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Phonetic
 {
@@ -77,7 +78,7 @@ namespace Lucene.Net.Analysis.Phonetic
         private const string PACKAGE_CONTAINING_ENCODERS = "Lucene.Net.Analysis.Phonetic.Language.";
 
         //Effectively constants; uppercase keys
-        private static readonly IDictionary<string, Type> registry = new Dictionary<string, Type> // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        private static readonly IDictionary<string, Type> registry = new JCG.Dictionary<string, Type> // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             { "DoubleMetaphone".ToUpperInvariant(), typeof(DoubleMetaphone) },
             { "Metaphone".ToUpperInvariant(), typeof(Metaphone) },

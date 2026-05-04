@@ -39,7 +39,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         private bool isLeaf = true;
 
-        private Dictionary<string, object> tags = new Dictionary<string, object>();
+        private JCG.Dictionary<string, object> tags = new JCG.Dictionary<string, object>();
 
         private JCG.List<IQueryNode> clauses = null;
 
@@ -124,7 +124,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             clone.isLeaf = this.isLeaf;
 
             // Reset all tags
-            clone.tags = new Dictionary<string, object>();
+            clone.tags = new JCG.Dictionary<string, object>();
 
             // copy children
             if (this.clauses != null)
@@ -242,7 +242,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <summary>
         /// Gets a map containing all tags attached to this query node.
         /// </summary>
-        public virtual IDictionary<string, object> TagMap => new Dictionary<string, object>(this.tags);
+        public virtual IDictionary<string, object> TagMap => new JCG.Dictionary<string, object>(this.tags);
 
         // LUCENENET NOTE: There was a bug in 4.8.1 here because parent.GetChildren() returns a copy of the
         // children, so removing items from it is pointless. We therefore diverge to the version 8.8.1 source of Lucene

@@ -10,6 +10,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Expressions
 {
@@ -94,7 +95,7 @@ namespace Lucene.Net.Expressions
 
             Assert.AreEqual(1, reader.Leaves.Count);
             AtomicReaderContext leaf = reader.Leaves[0];
-            FunctionValues values = vs.GetValues(new Dictionary<string, object>(), leaf);
+            FunctionValues values = vs.GetValues(new JCG.Dictionary<string, object>(), leaf);
 
             Assert.AreEqual(10, values.DoubleVal(0), 0);
             Assert.AreEqual(10, values.SingleVal(0), 0);
@@ -134,7 +135,7 @@ namespace Lucene.Net.Expressions
 
             Assert.AreEqual(1, reader.Leaves.Count);
             AtomicReaderContext leaf = reader.Leaves[0];
-            FunctionValues values = vs.GetValues(new Dictionary<string, object>(), leaf);
+            FunctionValues values = vs.GetValues(new JCG.Dictionary<string, object>(), leaf);
 
             // everything
             ValueSourceScorer scorer = values.GetRangeScorer(leaf.Reader, "4", "40", true, true);

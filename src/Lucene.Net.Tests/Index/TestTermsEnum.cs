@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
 
             ISet<string> terms = new JCG.HashSet<string>();
             ICollection<string> pendingTerms = new JCG.List<string>();
-            IDictionary<BytesRef, int> termToID = new Dictionary<BytesRef, int>();
+            IDictionary<BytesRef, int> termToID = new JCG.Dictionary<BytesRef, int>();
             int id = 0;
             while (terms.Count != numTerms)
             {

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -135,7 +136,7 @@ namespace Lucene.Net.Analysis.Core
         private static AbstractAnalysisFactory Initialize(Type factoryClazz) // LUCENENET: CA1822: Mark members as static
         {
             IDictionary<string, string> args =
-                new Dictionary<string, string> { ["luceneMatchVersion"] = TEST_VERSION_CURRENT_STRING };
+                new JCG.Dictionary<string, string> { ["luceneMatchVersion"] = TEST_VERSION_CURRENT_STRING };
 
             ConstructorInfo ctor;
             try
@@ -188,7 +189,7 @@ namespace Lucene.Net.Analysis.Core
         }
 
         // some silly classes just so we can use checkRandomData
-        private readonly TokenizerFactory assertingTokenizer = new TokenizerFactoryAnonymousClass(new Dictionary<string, string>());
+        private readonly TokenizerFactory assertingTokenizer = new TokenizerFactoryAnonymousClass(new JCG.Dictionary<string, string>());
 
         private sealed class TokenizerFactoryAnonymousClass : TokenizerFactory
         {

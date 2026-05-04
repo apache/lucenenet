@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
         public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool> segmentsToMerge)
         {
             // first find all old segments
-            IDictionary<SegmentCommitInfo, bool> oldSegments = new Dictionary<SegmentCommitInfo, bool>();
+            IDictionary<SegmentCommitInfo, bool> oldSegments = new JCG.Dictionary<SegmentCommitInfo, bool>();
             foreach (SegmentCommitInfo si in segmentInfos.Segments)
             {
                 if (segmentsToMerge.TryGetValue(si, out bool v) && ShouldUpgradeSegment(si))

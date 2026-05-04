@@ -570,7 +570,7 @@ namespace Lucene.Net.Codecs.RAMOnly
         }
 
         // Holds all indexes created, keyed by the ID assigned in fieldsConsumer
-        private readonly IDictionary<int, RAMPostings> state = new Dictionary<int, RAMPostings>();
+        private readonly IDictionary<int, RAMPostings> state = new JCG.Dictionary<int, RAMPostings>();
 
         private readonly AtomicInt32 nextID = new AtomicInt32();
 

@@ -401,7 +401,7 @@ namespace Lucene.Net.Util.Automaton
             Transition[][] transitions2 = a2.GetSortedTransitions();
             Automaton c = new Automaton();
             Queue<StatePair> worklist = new Queue<StatePair>(); // LUCENENET specific - Queue is much more performant than LinkedList
-            Dictionary<StatePair, StatePair> newstates = new Dictionary<StatePair, StatePair>();
+            JCG.Dictionary<StatePair, StatePair> newstates = new JCG.Dictionary<StatePair, StatePair>();
             StatePair p = new StatePair(c.initial, a1.initial, a2.initial);
             worklist.Enqueue(p);
             newstates[p] = p;
@@ -679,7 +679,7 @@ namespace Lucene.Net.Util.Automaton
             internal PointTransitions[] points = new PointTransitions[5];
 
             private const int HASHMAP_CUTOVER = 30;
-            private readonly Dictionary<int, PointTransitions> map = new Dictionary<int, PointTransitions>();
+            private readonly JCG.Dictionary<int, PointTransitions> map = new JCG.Dictionary<int, PointTransitions>();
             private bool useHash = false;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -802,7 +802,7 @@ namespace Lucene.Net.Util.Automaton
             SortedInt32Set.FrozenInt32Set initialset = new SortedInt32Set.FrozenInt32Set(initNumber, a.initial);
 
             Queue<SortedInt32Set.FrozenInt32Set> worklist = new Queue<SortedInt32Set.FrozenInt32Set>(); // LUCENENET specific - Queue is much more performant than LinkedList
-            IDictionary<SortedInt32Set.FrozenInt32Set, State> newstate = new Dictionary<SortedInt32Set.FrozenInt32Set, State>();
+            IDictionary<SortedInt32Set.FrozenInt32Set, State> newstate = new JCG.Dictionary<SortedInt32Set.FrozenInt32Set, State>();
 
             worklist.Enqueue(initialset);
 
@@ -928,8 +928,8 @@ namespace Lucene.Net.Util.Automaton
         public static void AddEpsilons(Automaton a, ICollection<StatePair> pairs)
         {
             a.ExpandSingleton();
-            Dictionary<State, JCG.HashSet<State>> forward = new Dictionary<State, JCG.HashSet<State>>();
-            Dictionary<State, JCG.HashSet<State>> back = new Dictionary<State, JCG.HashSet<State>>();
+            JCG.Dictionary<State, JCG.HashSet<State>> forward = new JCG.Dictionary<State, JCG.HashSet<State>>();
+            JCG.Dictionary<State, JCG.HashSet<State>> back = new JCG.Dictionary<State, JCG.HashSet<State>>();
             foreach (StatePair p in pairs)
             {
                 if (!forward.TryGetValue(p.s1, out JCG.HashSet<State> to))

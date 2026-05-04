@@ -265,7 +265,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         private static IDictionary<NameType, ISet<string>> LoadNamePrefixes() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            return new Dictionary<NameType, ISet<string>>
+            return new JCG.Dictionary<NameType, ISet<string>>
             {
                 [NameType.ASHKENAZI] = new JCG.HashSet<string>() { "bar", "ben", "da", "de", "van", "von" }.AsReadOnly(),
                 [NameType.SEPHARDIC] = new JCG.HashSet<string>() { "al", "el", "da", "dal", "de", "del", "dela", "de la",

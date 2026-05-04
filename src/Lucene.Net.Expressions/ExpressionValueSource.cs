@@ -5,6 +5,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Expressions
 {
@@ -81,7 +82,7 @@ namespace Lucene.Net.Expressions
             IDictionary<string, FunctionValues> valuesCache = (IDictionary<string, FunctionValues>)context["valuesCache"];
             if (valuesCache is null)
             {
-                valuesCache = new Dictionary<string, FunctionValues>();
+                valuesCache = new JCG.Dictionary<string, FunctionValues>();
                 context = new Hashtable(context)
                 {
                     ["valuesCache"] = valuesCache

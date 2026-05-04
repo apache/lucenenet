@@ -209,7 +209,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// A "registry" for state interning.
         /// </summary>
-        private Dictionary<State, State> stateRegistry = new Dictionary<State, State>();
+        private JCG.Dictionary<State, State> stateRegistry = new JCG.Dictionary<State, State>();
 
         /// <summary>
         /// Root automaton state.

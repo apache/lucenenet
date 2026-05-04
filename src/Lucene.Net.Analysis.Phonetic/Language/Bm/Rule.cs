@@ -122,15 +122,15 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         private static IDictionary<NameType, IDictionary<RuleType, IDictionary<string, IDictionary<string, IList<Rule>>>>> LoadRules() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            var rules = new Dictionary<NameType, IDictionary<RuleType, IDictionary<string, IDictionary<string, IList<Rule>>>>>();
+            var rules = new JCG.Dictionary<NameType, IDictionary<RuleType, IDictionary<string, IDictionary<string, IList<Rule>>>>>();
             foreach (NameType s in Enum.GetValues(typeof(NameType)))
             {
                 IDictionary<RuleType, IDictionary<string, IDictionary<string, IList<Rule>>>> rts =
-                        new Dictionary<RuleType, IDictionary<string, IDictionary<string, IList<Rule>>>>();
+                        new JCG.Dictionary<RuleType, IDictionary<string, IDictionary<string, IList<Rule>>>>();
 
                 foreach (RuleType rt in Enum.GetValues(typeof(RuleType)))
                 {
-                    IDictionary<string, IDictionary<string, IList<Rule>>> rs = new Dictionary<string, IDictionary<string, IList<Rule>>>();
+                    IDictionary<string, IDictionary<string, IList<Rule>>> rs = new JCG.Dictionary<string, IDictionary<string, IList<Rule>>>();
 
                     Languages ls = Languages.GetInstance(s);
                     foreach (string l in ls.GetLanguages())

@@ -62,7 +62,7 @@
 //        {
 //            lock (this)
 //            {
-//                IDictionary<string, S> services = new Dictionary<string, S>(this.services);
+//                IDictionary<string, S> services = new JCG.Dictionary<string, S>(this.services);
 //                SPIClassIterator<S> loader = SPIClassIterator<S>.Get();
 
 //                // Ensure there is a default constructor (the SPIClassIterator contains types that don't)

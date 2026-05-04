@@ -3,6 +3,7 @@ using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -46,7 +47,7 @@ namespace Lucene.Net.Analysis.Ja
         public GraphvizFormatter(ConnectionCosts costs)
         {
             this.costs = costs;
-            this.bestPathMap = new Dictionary<string, string>();
+            this.bestPathMap = new JCG.Dictionary<string, string>();
             sb.Append(FormatHeader());
             sb.Append("  init [style=invis]\n");
             sb.Append("  init -> 0.0 [label=\"" + BOS_LABEL + "\"]\n");

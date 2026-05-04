@@ -17,6 +17,7 @@
 using Lucene;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace TagSoup
 {
@@ -35,8 +36,8 @@ namespace TagSoup
         public const int F_CDATA = 2;
         public const int F_NOFORCE = 4;
 
-        private readonly IDictionary<string, int> theEntities = new Dictionary<string, int>(); // string -> Character
-        private readonly IDictionary<string, ElementType> theElementTypes = new Dictionary<string, ElementType>(); // string -> ElementType
+        private readonly IDictionary<string, int> theEntities = new JCG.Dictionary<string, int>(); // string -> Character
+        private readonly IDictionary<string, ElementType> theElementTypes = new JCG.Dictionary<string, ElementType>(); // string -> ElementType
 
         private string theURI = "";
         private string thePrefix = "";

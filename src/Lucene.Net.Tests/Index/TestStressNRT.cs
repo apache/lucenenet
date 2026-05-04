@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
         private volatile DirectoryReader reader;
 
         private readonly ConcurrentDictionary<int, long> model = new ConcurrentDictionary<int, long>();
-        private IDictionary<int, long> committedModel = new Dictionary<int, long>();
+        private IDictionary<int, long> committedModel = new JCG.Dictionary<int, long>();
         private long snapshotCount;
         private long committedModelClock;
         private volatile int lastId;
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
                                 UninterruptableMonitor.Enter(outerInstance); // LUCENENET: using UninterruptableMonitor instead of lock/synchronized; see docs for type
                                 try
                                 {
-                                    newCommittedModel = new Dictionary<int, long>(outerInstance.model); // take a snapshot
+                                    newCommittedModel = new JCG.Dictionary<int, long>(outerInstance.model); // take a snapshot
                                     version = outerInstance.snapshotCount++;
                                     oldReader = outerInstance.reader;
                                     oldReader.IncRef(); // increment the reference since we will use this for reopening

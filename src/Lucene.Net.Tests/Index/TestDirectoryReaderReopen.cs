@@ -746,7 +746,7 @@ namespace Lucene.Net.Index
                 Document doc = new Document();
                 doc.Add(NewStringField("id", "" + i, Field.Store.NO));
                 writer.AddDocument(doc);
-                IDictionary<string, string> data = new Dictionary<string, string>();
+                IDictionary<string, string> data = new JCG.Dictionary<string, string>();
                 data["index"] = i + "";
                 writer.SetCommitData(data);
                 writer.Commit();
@@ -754,7 +754,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < 4; i++)
             {
                 writer.DeleteDocuments(new Term("id", "" + i));
-                IDictionary<string, string> data = new Dictionary<string, string>();
+                IDictionary<string, string> data = new JCG.Dictionary<string, string>();
                 data["index"] = (4 + i) + "";
                 writer.SetCommitData(data);
                 writer.Commit();

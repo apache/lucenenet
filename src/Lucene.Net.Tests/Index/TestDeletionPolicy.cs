@@ -253,7 +253,7 @@ namespace Lucene.Net.Index
             mp.NoCFSRatio = 1.0;
             IndexWriter writer = new IndexWriter(dir, conf);
             ExpirationTimeDeletionPolicy policy = (ExpirationTimeDeletionPolicy)writer.Config.IndexDeletionPolicy;
-            IDictionary<string, string> commitData = new Dictionary<string, string>();
+            IDictionary<string, string> commitData = new JCG.Dictionary<string, string>();
             commitData["commitTime"] = Convert.ToString(J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             writer.SetCommitData(commitData);
             writer.Commit();
@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
                 {
                     AddDoc(writer);
                 }
-                commitData = new Dictionary<string, string>();
+                commitData = new JCG.Dictionary<string, string>();
                 commitData["commitTime"] = Convert.ToString(J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 writer.SetCommitData(commitData);
                 writer.Commit();

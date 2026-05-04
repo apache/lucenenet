@@ -80,7 +80,7 @@ namespace Lucene.Net.Replicator
             }
             revisionFiles.Add(CreateRevisionFile(segmentsFile, dir)); // segments_N must be last
 
-            return Collections.AsReadOnly(new Dictionary<string, IList<RevisionFile>>
+            return Collections.AsReadOnly(new JCG.Dictionary<string, IList<RevisionFile>>
             {
                 { SOURCE, revisionFiles }
             });

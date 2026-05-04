@@ -48,11 +48,11 @@ namespace Lucene.Net.Index
         /// Records how many snapshots are held against each
         /// commit generation
         /// </summary>
-        protected IDictionary<long, int> m_refCounts = new Dictionary<long, int>();
+        protected IDictionary<long, int> m_refCounts = new JCG.Dictionary<long, int>();
 
         /// <summary>
         /// Used to map gen to <see cref="IndexCommit"/>. </summary>
-        protected IDictionary<long, IndexCommit> m_indexCommits = new Dictionary<long, IndexCommit>();
+        protected IDictionary<long, IndexCommit> m_indexCommits = new JCG.Dictionary<long, IndexCommit>();
 
         /// <summary>
         /// Wrapped <see cref="IndexDeletionPolicy"/> </summary>
@@ -290,8 +290,8 @@ namespace Lucene.Net.Index
                 SnapshotDeletionPolicy other = (SnapshotDeletionPolicy)base.Clone();
                 other.primary = (IndexDeletionPolicy)this.primary.Clone();
                 other.m_lastCommit = null;
-                other.m_refCounts = new Dictionary<long, int>(m_refCounts);
-                other.m_indexCommits = new Dictionary<long, IndexCommit>(m_indexCommits);
+                other.m_refCounts = new JCG.Dictionary<long, int>(m_refCounts);
+                other.m_indexCommits = new JCG.Dictionary<long, IndexCommit>(m_indexCommits);
                 return other;
             }
             finally

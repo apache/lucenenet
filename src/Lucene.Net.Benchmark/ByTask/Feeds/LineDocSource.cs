@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -323,7 +324,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     var p = docData.Props;
                     if (p is null)
                     {
-                        p = new Dictionary<string, string>();
+                        p = new JCG.Dictionary<string, string>();
                         docData.Props = p;
                     }
                     p[m_header[position]] = text;

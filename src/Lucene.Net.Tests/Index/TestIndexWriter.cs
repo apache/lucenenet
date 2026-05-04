@@ -2522,7 +2522,7 @@ namespace Lucene.Net.Index
             writer.Commit(); // first commit to complete IW create transaction.
 
             // this should store the commit data, even though no other changes were made
-            writer.SetCommitData(new Dictionary<string, string>() {
+            writer.SetCommitData(new JCG.Dictionary<string, string>() {
                 {"key", "value"}
             });
             writer.Commit();
@@ -2532,11 +2532,11 @@ namespace Lucene.Net.Index
             r.Dispose();
 
             // now check setCommitData and prepareCommit/commit sequence
-            writer.SetCommitData(new Dictionary<string, string>() {
+            writer.SetCommitData(new JCG.Dictionary<string, string>() {
                 {"key", "value1"}
             });
             writer.PrepareCommit();
-            writer.SetCommitData(new Dictionary<string, string>() {
+            writer.SetCommitData(new JCG.Dictionary<string, string>() {
                 {"key", "value2"}
             });
             writer.Commit(); // should commit the first commitData only, per protocol
@@ -2557,9 +2557,9 @@ namespace Lucene.Net.Index
         }
 
         // LUCENENET-specific: backport fix and test from Lucene 9.9.0 (lucene#12626, lucene#12637)
-        private Dictionary<string, string> GetLiveCommitData(IndexWriter writer)
+        private JCG.Dictionary<string, string> GetLiveCommitData(IndexWriter writer)
         {
-            Dictionary<string, string> data = new Dictionary<string, string>();
+            JCG.Dictionary<string, string> data = new JCG.Dictionary<string, string>();
             // LUCENENET UPGRADE TODO: in a post-4.8 port, this should use LiveCommitData
             foreach (var ent in writer.CommitData)
             {
@@ -2574,7 +2574,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null));
-            writer.SetCommitData(new Dictionary<string, string>()
+            writer.SetCommitData(new JCG.Dictionary<string, string>()
             {
                 {"key", "value"}
             });
@@ -2596,7 +2596,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewSnapshotIndexWriterConfig(TEST_VERSION_CURRENT, null));
             // LUCENENET UPGRADE TODO: in a post-4.8 port, this should use SetLiveCommitData
-            writer.SetCommitData(new Dictionary<string, string>
+            writer.SetCommitData(new JCG.Dictionary<string, string>
             {
                 { "key", "value" },
             });
@@ -2610,7 +2610,7 @@ namespace Lucene.Net.Index
             // Modify the commit data and commit on close so the most recent commit data is different
             writer = new IndexWriter(dir, NewSnapshotIndexWriterConfig(TEST_VERSION_CURRENT, null));
             // LUCENENET UPGRADE TODO: in a post-4.8 port, this should use SetLiveCommitData
-            writer.SetCommitData(new Dictionary<string, string>()
+            writer.SetCommitData(new JCG.Dictionary<string, string>()
             {
                 { "key", "value2" },
             });

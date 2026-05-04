@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Cn.Smart
 {
@@ -43,7 +44,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         public void TestSimple()
         {
             TextReader reader = new StringReader("我购买了道具和服装。");
-            TokenizerFactory factory = new HMMChineseTokenizerFactory(new Dictionary<string, string>());
+            TokenizerFactory factory = new HMMChineseTokenizerFactory(new JCG.Dictionary<string, string>());
             Tokenizer tokenizer = factory.Create(reader);
             tokenizer.SetReader(reader);
             // TODO: fix smart chinese to not emit punctuation tokens
@@ -60,7 +61,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         {
             try
             {
-                new HMMChineseTokenizerFactory(new Dictionary<string, string>() {
+                new HMMChineseTokenizerFactory(new JCG.Dictionary<string, string>() {
                     { "bogusArg", "bogusValue" }
                 });
                 fail();

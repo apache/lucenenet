@@ -1436,7 +1436,7 @@ namespace Lucene.Net.Index
                         if (Debugging.AssertsEnabled) Debugging.Assert(stats != null);
                         if (status.BlockTreeStats is null)
                         {
-                            status.BlockTreeStats = new Dictionary<string, BlockTreeTermsReader.Stats>();
+                            status.BlockTreeStats = new JCG.Dictionary<string, BlockTreeTermsReader.Stats>();
                         }
                         status.BlockTreeStats[field] = stats;
                     }

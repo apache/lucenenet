@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Icu.Segmentation
 {
@@ -34,7 +35,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         public void TestMixedText()
         {
             TextReader reader = new StringReader("การที่ได้ต้องแสดงว่างานดี  This is a test ກວ່າດອກ");
-            ICUTokenizerFactory factory = new ICUTokenizerFactory(new Dictionary<string, string>());
+            ICUTokenizerFactory factory = new ICUTokenizerFactory(new JCG.Dictionary<string, string>());
             factory.Inform(new ClasspathResourceLoader(GetType()));
             TokenStream stream = factory.Create(reader);
             AssertTokenStreamContents(stream,
@@ -48,7 +49,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             // “ U+201C LEFT DOUBLE QUOTATION MARK; ” U+201D RIGHT DOUBLE QUOTATION MARK
             TextReader reader = new StringReader
                 ("  Don't,break.at?/(punct)!  \u201Cnice\u201D\r\n\r\n85_At:all; `really\" +2=3$5,&813 !@#%$^)(*@#$   ");
-            IDictionary<string, string> args = new Dictionary<string, string>();
+            IDictionary<string, string> args = new JCG.Dictionary<string, string>();
             args[ICUTokenizerFactory.RULEFILES] = "Latn:Latin-break-only-on-whitespace.rbbi";
             ICUTokenizerFactory factory = new ICUTokenizerFactory(args);
             factory.Inform(new ClasspathResourceLoader(this.GetType()));
@@ -63,7 +64,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         {
             TextReader reader = new StringReader
                 ("One-two punch.  Brang-, not brung-it.  This one--not that one--is the right one, -ish.");
-            IDictionary<string, string> args = new Dictionary<string, string>();
+            IDictionary<string, string> args = new JCG.Dictionary<string, string>();
             args[ICUTokenizerFactory.RULEFILES] = "Latn:Latin-dont-break-on-hyphens.rbbi";
             ICUTokenizerFactory factory = new ICUTokenizerFactory(args);
             factory.Inform(new ClasspathResourceLoader(GetType()));
@@ -84,7 +85,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         {
             TextReader reader = new StringReader
                 ("Some English.  Немного русский.  ข้อความภาษาไทยเล็ก ๆ น้อย ๆ  More English.");
-            IDictionary<string, string> args = new Dictionary<string, string>();
+            IDictionary<string, string> args = new JCG.Dictionary<string, string>();
             args[ICUTokenizerFactory.RULEFILES] = "Cyrl:KeywordTokenizer.rbbi,Thai:KeywordTokenizer.rbbi";
             ICUTokenizerFactory factory = new ICUTokenizerFactory(args);
             factory.Inform(new ClasspathResourceLoader(GetType()));
@@ -101,7 +102,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         {
             try
             {
-                new ICUTokenizerFactory(new Dictionary<string, string>() {
+                new ICUTokenizerFactory(new JCG.Dictionary<string, string>() {
                     {"bogusArg", "bogusValue" }
                 });
                 fail();

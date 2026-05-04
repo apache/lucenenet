@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Icu
 {
@@ -33,7 +34,7 @@ namespace Lucene.Net.Analysis.Icu
         public void Test()
         {
             TextReader reader = new StringReader("簡化字");
-            IDictionary<string, string> args = new Dictionary<string, string>
+            IDictionary<string, string> args = new JCG.Dictionary<string, string>
             {
                 { "id", "Traditional-Simplified" }
             };
@@ -49,7 +50,7 @@ namespace Lucene.Net.Analysis.Icu
         {
             // forward
             TextReader reader = new StringReader("Российская Федерация");
-            IDictionary<string, string> args = new Dictionary<string, string>
+            IDictionary<string, string> args = new JCG.Dictionary<string, string>
             {
                 { "id", "Cyrillic-Latin" }
             };
@@ -64,7 +65,7 @@ namespace Lucene.Net.Analysis.Icu
         {
             // backward (invokes Latin-Cyrillic)
             TextReader reader = new StringReader("Rossijskaâ Federaciâ");
-            IDictionary<string, string> args = new Dictionary<string, string>
+            IDictionary<string, string> args = new JCG.Dictionary<string, string>
             {
                 {"id", "Cyrillic-Latin" },
                 { "direction", "reverse"}
@@ -82,7 +83,7 @@ namespace Lucene.Net.Analysis.Icu
         {
             try
             {
-                new ICUTransformFilterFactory(new Dictionary<string, string> {
+                new ICUTransformFilterFactory(new JCG.Dictionary<string, string> {
                         {"id", "Null" },
                         { "bogusArg", "bogusValue"}
                 });

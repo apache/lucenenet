@@ -54,7 +54,7 @@ namespace Lucene.Net.Util
         ///// <summary>
         ///// Restore these system property values.
         ///// </summary>
-        //private Dictionary<string, string> restoreProperties = new Dictionary<string, string>(); // LUCENENET: Never read
+        //private JCG.Dictionary<string, string> restoreProperties = new JCG.Dictionary<string, string>(); // LUCENENET: Never read
 
         private Codec savedCodec;
         private CultureInfo savedLocale;

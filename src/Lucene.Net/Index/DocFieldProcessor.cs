@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterWithThreads
         public override void Flush(SegmentWriteState state)
         {
-            IDictionary<string, DocFieldConsumerPerField> childFields = new Dictionary<string, DocFieldConsumerPerField>();
+            IDictionary<string, DocFieldConsumerPerField> childFields = new JCG.Dictionary<string, DocFieldConsumerPerField>();
             ICollection<DocFieldConsumerPerField> fields = Fields();
             foreach (DocFieldConsumerPerField f in fields)
             {

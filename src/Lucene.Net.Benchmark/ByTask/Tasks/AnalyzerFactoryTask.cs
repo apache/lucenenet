@@ -377,7 +377,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// <param name="clazz">Analysis factory class to instantiate.</param>
         private void CreateAnalysisPipelineComponent(StreamTokenizer stok, Type clazz)
         {
-            IDictionary<string, string> argMap = new Dictionary<string, string>();
+            IDictionary<string, string> argMap = new JCG.Dictionary<string, string>();
             bool parenthetical = false;
             try
             {

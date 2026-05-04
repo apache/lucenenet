@@ -72,7 +72,7 @@ namespace Lucene.Net.Store
         internal const string ENTRY_CODEC = "CompoundFileWriterEntries";
 
         private readonly Directory directory;
-        private readonly IDictionary<string, FileEntry> entries = new Dictionary<string, FileEntry>();
+        private readonly IDictionary<string, FileEntry> entries = new JCG.Dictionary<string, FileEntry>();
         private readonly ISet<string> seenIDs = new JCG.HashSet<string>();
         // all entries that are written to a sep. file but not yet moved into CFS
         private readonly LinkedList<FileEntry> pendingEntries = new LinkedList<FileEntry>();

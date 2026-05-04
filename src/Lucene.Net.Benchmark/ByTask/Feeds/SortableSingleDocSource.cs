@@ -2,6 +2,7 @@ using Lucene.Net.Benchmarks.ByTask.Utils;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -79,7 +80,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public override DocData GetNextDocData(DocData docData)
         {
             docData = base.GetNextDocData(docData);
-            var props = new Dictionary<string, string>
+            var props = new JCG.Dictionary<string, string>
             {
                 // random int
                 ["sort_field"] = r.Next(sortRange).ToString(CultureInfo.InvariantCulture)

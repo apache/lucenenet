@@ -3,6 +3,7 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Util.Mutable;
 using System.Collections;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping.Function
 {
@@ -50,7 +51,7 @@ namespace Lucene.Net.Search.Grouping.Function
         public FunctionAllGroupHeadsCollector(ValueSource groupBy, IDictionary /* Map<?, ?> */ vsContext, Sort sortWithinGroup)
             : base(sortWithinGroup.GetSort().Length)
         {
-            groups = new Dictionary<MutableValue, GroupHead>();
+            groups = new JCG.Dictionary<MutableValue, GroupHead>();
             this.sortWithinGroup = sortWithinGroup;
             this.groupBy = groupBy;
             this.vsContext = vsContext;

@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -38,7 +39,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             TestUtil.AssertAttributeReflection(new TypeAttribute(), Collections.SingletonMap(nameof(ITypeAttribute) + "#type", (object)TypeAttribute.DEFAULT_TYPE));
             TestUtil.AssertAttributeReflection(new PayloadAttribute(), Collections.SingletonMap(nameof(IPayloadAttribute) + "#payload", (object)null));
             TestUtil.AssertAttributeReflection(new KeywordAttribute(), Collections.SingletonMap(nameof(IKeywordAttribute) + "#keyword", (object)false));
-            TestUtil.AssertAttributeReflection(new OffsetAttribute(), new Dictionary<string, object>()
+            TestUtil.AssertAttributeReflection(new OffsetAttribute(), new JCG.Dictionary<string, object>()
             {
                 {nameof(IOffsetAttribute) + "#startOffset", 0 },
                 {nameof(IOffsetAttribute) + "#endOffset", 0}

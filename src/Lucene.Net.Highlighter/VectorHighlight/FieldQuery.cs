@@ -429,7 +429,7 @@ namespace Lucene.Net.Search.VectorHighlight
             internal float boost;  // valid if terminal == true
             internal int termOrPhraseNumber;   // valid if terminal == true
             internal readonly FieldQuery fieldQuery; // LUCENENET: marked readonly
-            internal readonly IDictionary<string, QueryPhraseMap> subMap = new Dictionary<string, QueryPhraseMap>(); // LUCENENET: marked readonly
+            internal readonly IDictionary<string, QueryPhraseMap> subMap = new JCG.Dictionary<string, QueryPhraseMap>(); // LUCENENET: marked readonly
 
             public QueryPhraseMap(FieldQuery fieldQuery)
             {

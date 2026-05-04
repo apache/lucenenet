@@ -7,6 +7,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -54,7 +55,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
         private PerfRunData createPerfRunData(string fileName, string docMakerName)
         {
-            Dictionary<string, string> props = new Dictionary<string, string>();
+            JCG.Dictionary<string, string> props = new JCG.Dictionary<string, string>();
             props["doc.maker"] = docMakerName;
             props["line.file.out"] = fileName;
             props["directory"] = "RAMDirectory"; // no accidental FS dir.

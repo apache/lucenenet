@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using Integer = J2N.Numerics.Int32;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.CharFilters
 {
@@ -30679,7 +30680,7 @@ namespace Lucene.Net.Analysis.CharFilters
         /// user code:
         /// </summary>
         private static readonly IDictionary<string, string> upperCaseVariantsAccepted
-            = new Dictionary<string, string>()
+            = new JCG.Dictionary<string, string>()
             {
                 {"quot", "QUOT"},
                 {"copy", "COPY" },

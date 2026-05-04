@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard
 {
@@ -799,7 +800,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             String hourField = "hour";
             StandardQueryParser qp = new StandardQueryParser();
 
-            IDictionary<string, DateResolution> dateRes = new Dictionary<string, DateResolution>();
+            IDictionary<string, DateResolution> dateRes = new JCG.Dictionary<string, DateResolution>();
 
             // set a field specific date resolution
             dateRes[monthField] = DateResolution.MONTH;

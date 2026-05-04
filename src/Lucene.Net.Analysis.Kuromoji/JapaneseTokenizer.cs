@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Ja
         private const int MAX_UNKNOWN_WORD_LENGTH = 1024;
         private const int MAX_BACKTRACE_GAP = 1024;
 
-        private readonly IDictionary<JapaneseTokenizerType, IDictionary> dictionaryMap = new Dictionary<JapaneseTokenizerType, IDictionary>();
+        private readonly IDictionary<JapaneseTokenizerType, IDictionary> dictionaryMap = new JCG.Dictionary<JapaneseTokenizerType, IDictionary>();
 
         private readonly TokenInfoFST fst;
         private readonly TokenInfoDictionary dictionary;

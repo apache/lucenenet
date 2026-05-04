@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Expressions.JS
 {
@@ -62,7 +63,7 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestNoArgMethod()
         {
-            IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
+            IDictionary<string, MethodInfo> functions = new JCG.Dictionary<string, MethodInfo>();
             functions["foo"] = GetType().GetMethod(nameof(ZeroArgMethod));
             var expr = JavascriptCompiler.Compile("foo()", functions);
             Assert.AreEqual(5, expr.Evaluate(0, null), DELTA);
@@ -74,7 +75,7 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestOneArgMethod()
         {
-            IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
+            IDictionary<string, MethodInfo> functions = new JCG.Dictionary<string, MethodInfo>();
             functions["foo"] = GetType().GetMethod(nameof(OneArgMethod), new[] { typeof(double) });
             var expr = JavascriptCompiler.Compile("foo(3)", functions);
             Assert.AreEqual(6, expr.Evaluate(0, null), DELTA);
@@ -86,7 +87,7 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestThreeArgMethod()
         {
-            IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
+            IDictionary<string, MethodInfo> functions = new JCG.Dictionary<string, MethodInfo>();
             functions["foo"] = GetType().GetMethod(nameof(ThreeArgMethod), new[] { typeof(double), typeof(double), typeof(double) });
             var expr = JavascriptCompiler.Compile("foo(3, 4, 5)", functions);
             Assert.AreEqual(12, expr.Evaluate(0, null), DELTA);
@@ -96,7 +97,7 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestTwoMethods()
         {
-            IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
+            IDictionary<string, MethodInfo> functions = new JCG.Dictionary<string, MethodInfo>();
             functions["foo"] = GetType().GetMethod(nameof(ZeroArgMethod));
             functions["bar"] = GetType().GetMethod(nameof(OneArgMethod), new[] { typeof(double) });
             var expr = JavascriptCompiler.Compile("foo() + bar(3)", functions);
@@ -109,7 +110,7 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestWrongReturnType()
         {
-            IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
+            IDictionary<string, MethodInfo> functions = new JCG.Dictionary<string, MethodInfo>();
             functions["foo"] = GetType().GetMethod(nameof(BogusReturnType));
             try
             {
@@ -128,7 +129,7 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestWrongParameterType()
         {
-            IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
+            IDictionary<string, MethodInfo> functions = new JCG.Dictionary<string, MethodInfo>();
             functions["foo"] = GetType().GetMethod(nameof(BogusParameterType), new[] { typeof(string) });
             try
             {
@@ -147,7 +148,7 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestWrongNotStatic()
         {
-            IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
+            IDictionary<string, MethodInfo> functions = new JCG.Dictionary<string, MethodInfo>();
             functions["foo"] = GetType().GetMethod(nameof(NonStaticMethod));
             try
             {
@@ -166,7 +167,7 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestWrongNotPublic()
         {
-            IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
+            IDictionary<string, MethodInfo> functions = new JCG.Dictionary<string, MethodInfo>();
             functions["foo"] = GetType().GetMethod(nameof(NonPublicMethod), BindingFlags.NonPublic | BindingFlags.Static);
 
             try
@@ -189,7 +190,7 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestWrongNestedNotPublic()
         {
-            IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
+            IDictionary<string, MethodInfo> functions = new JCG.Dictionary<string, MethodInfo>();
             functions["foo"] = typeof(NestedNotPublic).GetMethod(nameof(NestedNotPublic.Method));
             try
             {
@@ -222,7 +223,7 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestThrowingException()
         {
-            IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
+            IDictionary<string, MethodInfo> functions = new JCG.Dictionary<string, MethodInfo>();
             functions["foo"] = typeof(StaticThrowingException).GetMethod(nameof(StaticThrowingException.Method));
             const string source = "3 * foo() / 5";
             var expr = JavascriptCompiler.Compile(source, functions);
@@ -252,7 +253,7 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestNamespaces()
         {
-            IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
+            IDictionary<string, MethodInfo> functions = new JCG.Dictionary<string, MethodInfo>();
             functions["foo.bar"] = GetType().GetMethod("ZeroArgMethod");
             const string source = "foo.bar()";
             var expr = JavascriptCompiler.Compile(source, functions);

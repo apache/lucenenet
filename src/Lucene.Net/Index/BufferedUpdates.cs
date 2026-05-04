@@ -118,8 +118,8 @@ namespace Lucene.Net.Index
         internal readonly AtomicInt32 numTermDeletes = new AtomicInt32();
         internal readonly AtomicInt32 numNumericUpdates = new AtomicInt32();
         internal readonly AtomicInt32 numBinaryUpdates = new AtomicInt32();
-        internal readonly SCG.IDictionary<Term, int> terms = new Dictionary<Term, int>();
-        internal readonly SCG.IDictionary<Query, int> queries = new Dictionary<Query, int>();
+        internal readonly SCG.IDictionary<Term, int> terms = new JCG.Dictionary<Term, int>();
+        internal readonly SCG.IDictionary<Query, int> queries = new JCG.Dictionary<Query, int>();
         internal readonly SCG.IList<int> docIDs = new JCG.List<int>();
 
 
@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
         // used to update the same field multiple times (so we later traverse it
         // only once).
         // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
-        internal readonly SCG.IDictionary<string, OrderedDictionary<Term, NumericDocValuesUpdate>> numericUpdates = new Dictionary<string, OrderedDictionary<Term, NumericDocValuesUpdate>>();
+        internal readonly SCG.IDictionary<string, OrderedDictionary<Term, NumericDocValuesUpdate>> numericUpdates = new JCG.Dictionary<string, OrderedDictionary<Term, NumericDocValuesUpdate>>();
 
         // Map<dvField,Map<updateTerm,BinaryUpdate>>
         // For each field we keep an ordered list of BinaryUpdates, key'd by the
@@ -141,7 +141,7 @@ namespace Lucene.Net.Index
         // used to update the same field multiple times (so we later traverse it
         // only once).
         // LUCENENET specific: OrderedDictionary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
-        internal readonly SCG.IDictionary<string, OrderedDictionary<Term, BinaryDocValuesUpdate>> binaryUpdates = new Dictionary<string, OrderedDictionary<Term, BinaryDocValuesUpdate>>();
+        internal readonly SCG.IDictionary<string, OrderedDictionary<Term, BinaryDocValuesUpdate>> binaryUpdates = new JCG.Dictionary<string, OrderedDictionary<Term, BinaryDocValuesUpdate>>();
 
         /// <summary>
         /// NOTE: This was MAX_INT in Lucene

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja.Util
 {
@@ -29,7 +30,7 @@ namespace Lucene.Net.Analysis.Ja.Util
     public static class ToStringUtil
     {
         // a translation map for parts of speech, only used for reflectWith
-        private static readonly IDictionary<string, string> posTranslations = new Dictionary<string, string>(StringComparer.Ordinal)
+        private static readonly IDictionary<string, string> posTranslations = new JCG.Dictionary<string, string>(StringComparer.Ordinal)
         {
             { "名詞", "noun"},
             { "名詞-一般", "noun-common" },
@@ -133,7 +134,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         }
 
         // a translation map for inflection types, only used for reflectWith
-        private static readonly IDictionary<string, string> inflTypeTranslations = new Dictionary<string, string>(StringComparer.Ordinal)
+        private static readonly IDictionary<string, string> inflTypeTranslations = new JCG.Dictionary<string, string>(StringComparer.Ordinal)
         {
             { "*", "*" },
             { "形容詞・アウオ段", "adj-group-a-o-u" },
@@ -206,7 +207,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         }
 
         // a translation map for inflection forms, only used for reflectWith
-        private static readonly IDictionary<string, string> inflFormTranslations = new Dictionary<string, string>(StringComparer.Ordinal)
+        private static readonly IDictionary<string, string> inflFormTranslations = new JCG.Dictionary<string, string>(StringComparer.Ordinal)
         {
             { "*", "*" },
             { "基本形", "base" },

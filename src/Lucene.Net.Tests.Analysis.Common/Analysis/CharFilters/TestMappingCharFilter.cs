@@ -299,7 +299,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 }
 
                 char endLetter = (char)TestUtil.NextInt32(random, 'b', 'z');
-                IDictionary<string, string> map = new Dictionary<string, string>();
+                IDictionary<string, string> map = new JCG.Dictionary<string, string>();
                 NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
                 int numMappings = AtLeast(5);
                 if (Verbose)

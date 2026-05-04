@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         private static IDictionary<NameType, Languages> LoadLanguages() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            IDictionary<NameType, Languages> result = new Dictionary<NameType, Languages>();
+            IDictionary<NameType, Languages> result = new JCG.Dictionary<NameType, Languages>();
             foreach (NameType s in Enum.GetValues(typeof(NameType)))
             {
                 result[s] = GetInstance(LangResourceName(s));

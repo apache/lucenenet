@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Highlight
 
         public QueryTermScorer(WeightedTerm[] weightedTerms)
         {
-            termsToFind = new Dictionary<string, WeightedTerm>();
+            termsToFind = new JCG.Dictionary<string, WeightedTerm>();
             for (int i = 0; i < weightedTerms.Length; i++)
             {
                 if (!termsToFind.TryGetValue(weightedTerms[i].Term, out WeightedTerm existingTerm)

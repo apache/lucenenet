@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Lucene.Net.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -336,7 +337,7 @@ namespace Lucene.Net.Index
         {
             if (attributes is null)
             {
-                attributes = new Dictionary<string, string>();
+                attributes = new JCG.Dictionary<string, string>();
             }
             return attributes[key] = value;
         }

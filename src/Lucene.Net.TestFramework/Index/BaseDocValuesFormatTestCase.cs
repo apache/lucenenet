@@ -1178,7 +1178,7 @@ namespace Lucene.Net.Index
             using RandomIndexWriter w = new RandomIndexWriter(Random, dir, cfg);
             int numDocs = AtLeast(100);
             BytesRefHash hash = new BytesRefHash();
-            IDictionary<string, string> docToString = new Dictionary<string, string>();
+            IDictionary<string, string> docToString = new JCG.Dictionary<string, string>();
             int maxLength = TestUtil.NextInt32(Random, 1, 50);
             for (int i = 0; i < numDocs; i++)
             {

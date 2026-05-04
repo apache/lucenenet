@@ -233,7 +233,7 @@ namespace Lucene.Net.Util.Automaton
         {
             a.ExpandSingleton();
             // reverse all edges
-            Dictionary<State, ISet<Transition>> m = new Dictionary<State, ISet<Transition>>();
+            JCG.Dictionary<State, ISet<Transition>> m = new JCG.Dictionary<State, ISet<Transition>>();
             State[] states = a.GetNumberedStates();
             ISet<State> accept = new JCG.HashSet<State>();
             foreach (State s in states)

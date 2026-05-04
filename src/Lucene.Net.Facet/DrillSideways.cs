@@ -7,6 +7,7 @@ using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet
 {
@@ -108,7 +109,7 @@ namespace Lucene.Net.Facet
         {
 
             Facets drillDownFacets;
-            var drillSidewaysFacets = new Dictionary<string, Facets>();
+            var drillSidewaysFacets = new JCG.Dictionary<string, Facets>();
 
             if (m_taxoReader != null)
             {

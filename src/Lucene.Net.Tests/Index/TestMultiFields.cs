@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
                 // we can do this because we use NoMergePolicy (and dont merge to "nothing")
                 w.KeepFullyDeletedSegments = true;
 
-                IDictionary<BytesRef, IList<int>> docs = new Dictionary<BytesRef, IList<int>>();
+                IDictionary<BytesRef, IList<int>> docs = new JCG.Dictionary<BytesRef, IList<int>>();
                 ISet<int?> deleted = new JCG.HashSet<int?>();
                 IList<BytesRef> terms = new JCG.List<BytesRef>();
 

@@ -551,7 +551,7 @@ namespace Lucene.Net.Index
                             }
                             else
                             {
-                                genUpdatesFiles = new Dictionary<long, ISet<string>>(numGensUpdatesFiles);
+                                genUpdatesFiles = new JCG.Dictionary<long, ISet<string>>(numGensUpdatesFiles);
                                 for (int i = 0; i < numGensUpdatesFiles; i++)
                                 {
                                     genUpdatesFiles[input.ReadInt64()] = input.ReadStringSet();
@@ -862,7 +862,7 @@ namespace Lucene.Net.Index
                 // dont directly access segments, use add method!!!
                 sis.Add((SegmentCommitInfo)(info.Clone()));
             }
-            sis.userData = new Dictionary<string, string>(userData);
+            sis.userData = new JCG.Dictionary<string, string>(userData);
             return sis;
         }
 

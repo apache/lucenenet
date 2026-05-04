@@ -2,6 +2,7 @@ using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Search;
 using NUnit.Framework;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -27,7 +28,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         [Test]
         public void TestSetParams_docField()
         {
-            SearchWithSortTask task = new SearchWithSortTask(new PerfRunData(new Config(new Dictionary<string, string>())));
+            SearchWithSortTask task = new SearchWithSortTask(new PerfRunData(new Config(new JCG.Dictionary<string, string>())));
             task.SetParams("doc");
             assertEquals(SortFieldType.DOC, task.Sort.GetSort()[0].Type);
         }

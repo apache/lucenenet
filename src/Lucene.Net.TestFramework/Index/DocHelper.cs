@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -147,16 +148,16 @@ namespace Lucene.Net.Index
             LargeLazyField
         };
 
-        public static IDictionary<string, IIndexableField> All { get; set; } = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> Indexed { get; set; } = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> Stored { get; set; } = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> Unstored { get; set; } = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> Unindexed { get; set; } = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> Termvector { get; set; } = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> Notermvector { get; set; } = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> Lazy { get; set; } = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> NoNorms { get; set; } = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> NoTf { get; set; } = new Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> All { get; set; } = new JCG.Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> Indexed { get; set; } = new JCG.Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> Stored { get; set; } = new JCG.Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> Unstored { get; set; } = new JCG.Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> Unindexed { get; set; } = new JCG.Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> Termvector { get; set; } = new JCG.Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> Notermvector { get; set; } = new JCG.Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> Lazy { get; set; } = new JCG.Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> NoNorms { get; set; } = new JCG.Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> NoTf { get; set; } = new JCG.Dictionary<string, IIndexableField>();
 
         private static void Add(IDictionary<string, IIndexableField> map, IIndexableField field)
         {
@@ -298,7 +299,7 @@ namespace Lucene.Net.Index
                 }
                 //if (f.isLazy()) add(lazy, f);
             }
-            NameValues = new Dictionary<string, object>
+            NameValues = new JCG.Dictionary<string, object>
             {
                 { TEXT_FIELD_1_KEY, FIELD_1_TEXT },
                 { TEXT_FIELD_2_KEY, FIELD_2_TEXT },
