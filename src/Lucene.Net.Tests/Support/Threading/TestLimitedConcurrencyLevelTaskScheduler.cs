@@ -1,6 +1,7 @@
 // Based on tests from Apache Harmony:
 // https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/concurrent/src/test/java/ThreadPoolExecutorTest.java
 
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Threading;
@@ -217,6 +218,35 @@ namespace Lucene.Net.Support.Threading
 
             assertTrue(cts.Token.IsCancellationRequested);
             joinPool(p1);
+        }
+
+        /// <summary>
+        /// Submitting a task after shutdown via <see cref="TaskFactory.StartNew(Action)"/>
+        /// surfaces an <see cref="InvalidOperationException"/> (wrapped by the TPL in a
+        /// <see cref="TaskSchedulerException"/>), matching Java's
+        /// <c>RejectedExecutionException</c> semantics for <c>ExecutorService</c>
+        /// after <c>shutdown()</c>. Silently dropping the task would let awaiters
+        /// hang on a Task that will never complete.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific - this exercises the direct <see cref="TaskScheduler"/>
+        /// submission path used outside of <see cref="JSR166TestCaseExtensions"/>
+        /// (e.g., <see cref="Lucene.Net.Search.IndexSearcher"/>'s parallel slice path).
+        /// </remarks>
+        [Test, LuceneNetSpecific]
+        public void TestQueueTaskAfterShutdownThrows()
+        {
+            using var cts = new CancellationTokenSource();
+            var scheduler = new LimitedConcurrencyLevelTaskScheduler(1, cts.Token);
+            var factory = new TaskFactory(scheduler);
+
+            cts.Cancel();
+
+            // NOTE: we intentionally do not want to pass cts.Token to StartNew, to test QueueTask.
+            var ex = Assert.Throws<TaskSchedulerException>(() => factory.StartNew(() => { }, CancellationToken.None));
+            assertTrue(
+                $"Expected InvalidOperationException inner, got {ex!.InnerException?.GetType().FullName}",
+                ex.InnerException is InvalidOperationException);
         }
 
         /// <summary>

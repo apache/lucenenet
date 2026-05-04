@@ -85,8 +85,10 @@ namespace Lucene.Net.Support.Threading
         /// <param name="maxDegreeOfParallelism">The max degree of parallelism for tasks.</param>
         /// <param name="cancellationToken">
         /// A cancellation token that is used to shut down the task scheduler in an orderly manner.
-        /// If cancellation is requested, <see cref="QueueTask"/> will not queue any more tasks.
-        /// This behaves like <c>ExecutorService.shutdown()</c> in Java, allowing any running tasks to finish.
+        /// If cancellation is requested, this scheduler will throw a <see cref="TaskSchedulerException"/> if a
+        /// new task is attempted to be queued.
+        /// This behaves like <c>ExecutorService.shutdown()</c> in Java (with <c>RejectedExecutionException</c>),
+        /// allowing any running tasks to finish.
         /// </param>
         /// <exception cref="ArgumentOutOfRangeException">if <paramref name="maxDegreeOfParallelism"/> is less than 1.</exception>
         public LimitedConcurrencyLevelTaskScheduler(int maxDegreeOfParallelism, CancellationToken cancellationToken = default)
@@ -100,7 +102,13 @@ namespace Lucene.Net.Support.Threading
         protected sealed override void QueueTask(Task task)
         {
             // Don't queue any more work.
-            if (_cancellationToken.IsCancellationRequested) return;
+            if (_cancellationToken.IsCancellationRequested)
+            {
+                // LUCENENET NOTE: in Java's `ExecutorService.shutdown()`, this would be RejectedExecutionException.
+                // The equivalent for a TaskScheduler is TaskSchedulerException, but the framework will wrap what
+                // we throw here in a TaskSchedulerException.
+                throw new InvalidOperationException("The task scheduler was shut down and is not accepting new tasks.");
+            }
 
             // Add the task to the list of tasks to be processed.  If there aren't enough
             // delegates currently queued or running to process tasks, schedule another.
