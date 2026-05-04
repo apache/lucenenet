@@ -164,14 +164,7 @@ namespace Lucene.Net.Util
             }
             else
             {
-                //var argDisplayNames = (testFixtureData as NUnit.Framework.Internal.TestParameters)?.ArgDisplayNames;
-                var testParameters = testFixtureData as NUnit.Framework.Internal.TestParameters;
-                string[] argDisplayNames = null;
-                if (testParameters != null)
-                {
-                    // Hack so we can call the same internal property that NUnit does
-                    argDisplayNames = GetArgDisplayNames(testFixtureData);
-                }
+                var argDisplayNames = (testFixtureData as TestParameters)?.ArgDisplayNames;
 
                 if (argDisplayNames != null)
                 {
@@ -337,26 +330,6 @@ namespace Lucene.Net.Util
             return type
                 .GetConstructors()
                 .Where(c => c.GetParameters().ParametersMatch(matchingTypes));
-        }
-
-        /// <summary>
-        /// Gets the ArgDisplayNames value from the TestParameters instance.
-        /// This property is currently internal, so we have to use reflection to access it.
-        /// If a NUnit update ever makes this public, we can remove this method and just access it directly.
-        /// </summary>
-        /// <param name="testFixtureData">The test fixture data to get the ArgDisplayNames from.</param>
-        /// <returns>The ArgDisplayNames value, or null if it is not available.</returns>
-        internal static string[] GetArgDisplayNames(ITestFixtureData testFixtureData)
-        {
-            if (testFixtureData is not TestParameters)
-            {
-                // This means it will not have the TestParameters.ArgDisplayNames property
-                return null;
-            }
-
-            const BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-            PropertyInfo property = typeof(TestParameters).GetProperty("ArgDisplayNames", bindFlags);
-            return (string[])property?.GetValue(testFixtureData);
         }
 
         #endregion
