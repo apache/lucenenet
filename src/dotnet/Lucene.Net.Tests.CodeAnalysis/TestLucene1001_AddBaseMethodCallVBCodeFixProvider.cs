@@ -141,5 +141,37 @@ End Namespace";
 
             VerifyBasicDiagnostic(test, expected);
         }
+
+        [Test]
+        public void TestBaseCallInsideLambda_Diagnostic()
+        {
+            // A base call inside an uninvoked lambda does not satisfy the contract.
+            var test = @"
+Imports Lucene.Net.Analysis
+Imports System
+
+Namespace MyNamespace
+    NotInheritable Class TypeName
+        Inherits TokenStream
+
+        Public Overrides Function IncrementToken() As Boolean
+            Return False
+        End Function
+
+        Public Overrides Sub Reset()
+            Dim a As Action = Sub() MyBase.Reset()
+        End Sub
+    End Class
+End Namespace";
+            var expected = new DiagnosticResult
+            {
+                Id = Lucene1001_TokenStreamOverrideMustCallBaseMethodVBAnalyzer.DiagnosticId,
+                Message = "Override of 'Reset()' on type 'TypeName' must call MyBase.Reset().",
+                Severity = DiagnosticSeverity.Warning,
+                Locations = new[] { new DiagnosticResultLocation("Test0.vb", 13, 30) }
+            };
+
+            VerifyBasicDiagnostic(test, expected);
+        }
     }
 }

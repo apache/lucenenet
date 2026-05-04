@@ -119,6 +119,90 @@ End Namespace";
         }
 
         [Test]
+        public void TestTokenizerMissingEndOverride_CodeFix()
+        {
+            var test = @"
+Imports Lucene.Net.Analysis
+Imports System.IO
+
+Namespace MyNamespace
+    NotInheritable Class TypeName
+        Inherits Tokenizer
+
+        Public Sub New(input As TextReader)
+            MyBase.New(input)
+        End Sub
+
+        Public Overrides Function IncrementToken() As Boolean
+            Return False
+        End Function
+    End Class
+End Namespace";
+            var fixtest = @"
+Imports Lucene.Net.Analysis
+Imports System.IO
+
+Namespace MyNamespace
+    NotInheritable Class TypeName
+        Inherits Tokenizer
+
+        Public Sub New(input As TextReader)
+            MyBase.New(input)
+        End Sub
+
+        Public Overrides Function IncrementToken() As Boolean
+            Return False
+        End Function
+
+        Public Overrides Sub End()
+            MyBase.End()
+            ' TODO: set the final offset and finish up other end-of-stream attributes
+        End Sub
+    End Class
+End Namespace";
+            VerifyBasicFix(test, fixtest);
+        }
+
+        [Test]
+        public void TestIndirectTokenizerInheritance_Diagnostic()
+        {
+            var test = @"
+Imports Lucene.Net.Analysis
+Imports System.IO
+
+Namespace MyNamespace
+    MustInherit Class FooTokenizer
+        Inherits Tokenizer
+
+        Protected Sub New(input As TextReader)
+            MyBase.New(input)
+        End Sub
+    End Class
+
+    NotInheritable Class TypeName
+        Inherits FooTokenizer
+
+        Public Sub New(input As TextReader)
+            MyBase.New(input)
+        End Sub
+
+        Public Overrides Function IncrementToken() As Boolean
+            Return False
+        End Function
+    End Class
+End Namespace";
+            var expected = new DiagnosticResult
+            {
+                Id = Lucene1002_TokenizerMustOverrideEndVBAnalyzer.DiagnosticId,
+                Message = "Tokenizer subclass 'TypeName' must override End().",
+                Severity = DiagnosticSeverity.Warning,
+                Locations = new[] { new DiagnosticResultLocation("Test0.vb", 14, 26) }
+            };
+
+            VerifyBasicDiagnostic(test, expected);
+        }
+
+        [Test]
         public void TestTokenFilter_NoDiagnostic()
         {
             var test = @"

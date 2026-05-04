@@ -88,8 +88,10 @@ namespace Lucene.Net.CodeAnalysis
             {
                 // Convert expression body => to a block containing base.X(); followed by the original expression as a statement.
                 var existingExpression = methodDeclaration.ExpressionBody.Expression;
-                var existingStatement = SyntaxFactory.ExpressionStatement(existingExpression)
-                    .WithAdditionalAnnotations(Formatter.Annotation);
+                StatementSyntax existingStatement = existingExpression is ThrowExpressionSyntax throwExpression
+                    ? SyntaxFactory.ThrowStatement(throwExpression.Expression)
+                    : SyntaxFactory.ExpressionStatement(existingExpression);
+                existingStatement = existingStatement.WithAdditionalAnnotations(Formatter.Annotation);
                 var newBody = SyntaxFactory.Block(baseStatement, existingStatement)
                     .WithAdditionalAnnotations(Formatter.Annotation);
                 newMethodDeclaration = methodDeclaration

@@ -90,7 +90,7 @@ namespace Lucene.Net.CodeAnalysis
                     SyntaxFactory.ArgumentList()));
 
             var endSubStatement = SyntaxFactory.EndSubStatement()
-                .WithLeadingTrivia(SyntaxFactory.CommentTrivia("' TODO: set the final offset and finish up other end-of-stream attributes"), SyntaxFactory.EndOfLine("\r\n"));
+                .WithLeadingTrivia(SyntaxFactory.CommentTrivia("' TODO: set the final offset and finish up other end-of-stream attributes"), SyntaxFactory.ElasticCarriageReturnLineFeed);
 
             var methodBlock = SyntaxFactory.SubBlock(
                 subStatement,

@@ -214,6 +214,73 @@ namespace MyNamespace
             };
 
             VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"
+using Lucene.Net.Analysis;
+
+namespace MyNamespace
+{
+    sealed class TypeName : TokenStream
+    {
+        public override bool IncrementToken() => false;
+
+        public override void Reset()
+        {
+            base.Reset();
+            System.Diagnostics.Debug.WriteLine(""hi"");
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        [Test]
+        public void TestExpressionBodiedThrow_Diagnostic_CodeFix()
+        {
+            // Regression: an expression-bodied void method whose body is `=> throw ...;`
+            // must be converted to a block whose trailing statement is a ThrowStatement,
+            // not an ExpressionStatement (which would be invalid C#).
+            var test = @"
+using Lucene.Net.Analysis;
+using System;
+
+namespace MyNamespace
+{
+    sealed class TypeName : TokenStream
+    {
+        public override bool IncrementToken() => false;
+
+        public override void Reset() => throw new NotSupportedException();
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = Lucene1001_TokenStreamOverrideMustCallBaseMethodCSAnalyzer.DiagnosticId,
+                Message = "Override of 'Reset()' on type 'TypeName' must call base.Reset().",
+                Severity = DiagnosticSeverity.Warning,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 11, 30) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"
+using Lucene.Net.Analysis;
+using System;
+
+namespace MyNamespace
+{
+    sealed class TypeName : TokenStream
+    {
+        public override bool IncrementToken() => false;
+
+        public override void Reset()
+        {
+            base.Reset();
+            throw new NotSupportedException();
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest);
         }
 
         [Test]
@@ -282,6 +349,67 @@ namespace MyNamespace
                 Message = "Override of 'Reset()' on type 'TypeName' must call base.Reset().",
                 Severity = DiagnosticSeverity.Warning,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 12, 30) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+        }
+
+        [Test]
+        public void TestBaseCallInsideLambda_Diagnostic()
+        {
+            // A base call inside an uninvoked lambda does not satisfy the contract.
+            var test = @"
+using Lucene.Net.Analysis;
+using System;
+
+namespace MyNamespace
+{
+    sealed class TypeName : TokenStream
+    {
+        public override bool IncrementToken() => false;
+
+        public override void Reset()
+        {
+            Action a = () => base.Reset();
+        }
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = Lucene1001_TokenStreamOverrideMustCallBaseMethodCSAnalyzer.DiagnosticId,
+                Message = "Override of 'Reset()' on type 'TypeName' must call base.Reset().",
+                Severity = DiagnosticSeverity.Warning,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 11, 30) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+        }
+
+        [Test]
+        public void TestBaseCallInsideLocalFunction_Diagnostic()
+        {
+            // A base call inside an uninvoked local function does not satisfy the contract.
+            var test = @"
+using Lucene.Net.Analysis;
+
+namespace MyNamespace
+{
+    sealed class TypeName : TokenStream
+    {
+        public override bool IncrementToken() => false;
+
+        public override void Reset()
+        {
+            void Local() => base.Reset();
+        }
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = Lucene1001_TokenStreamOverrideMustCallBaseMethodCSAnalyzer.DiagnosticId,
+                Message = "Override of 'Reset()' on type 'TypeName' must call base.Reset().",
+                Severity = DiagnosticSeverity.Warning,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 10, 30) }
             };
 
             VerifyCSharpDiagnostic(test, expected);

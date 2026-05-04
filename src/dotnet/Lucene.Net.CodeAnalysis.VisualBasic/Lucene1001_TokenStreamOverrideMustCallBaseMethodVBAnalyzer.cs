@@ -102,7 +102,22 @@ namespace Lucene.Net.CodeAnalysis
                 if (node is InvocationExpressionSyntax invocation &&
                     invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                     memberAccess.Expression.IsKind(SyntaxKind.MyBaseExpression) &&
-                    memberAccess.Name.Identifier.ValueText == methodName)
+                    memberAccess.Name.Identifier.ValueText == methodName &&
+                    !IsInsideLambda(invocation, methodBlock))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // A base call inside a lambda does not necessarily execute when the enclosing method runs
+        // (the delegate may never be invoked). Treat such occurrences as not satisfying the contract.
+        private static bool IsInsideLambda(SyntaxNode node, SyntaxNode body)
+        {
+            for (var ancestor = node.Parent; ancestor is not null && ancestor != body; ancestor = ancestor.Parent)
+            {
+                if (ancestor is LambdaExpressionSyntax)
                 {
                     return true;
                 }

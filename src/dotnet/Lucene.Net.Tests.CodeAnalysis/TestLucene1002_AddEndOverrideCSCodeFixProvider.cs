@@ -146,6 +146,44 @@ namespace MyNamespace
         }
 
         [Test]
+        public void TestTokenizerMissingEndOverride_CodeFix()
+        {
+            var test = @"
+using Lucene.Net.Analysis;
+using System.IO;
+
+namespace MyNamespace
+{
+    sealed class TypeName : Tokenizer
+    {
+        public TypeName(TextReader input) : base(input) { }
+
+        public override bool IncrementToken() => false;
+    }
+}";
+            var fixtest = @"
+using Lucene.Net.Analysis;
+using System.IO;
+
+namespace MyNamespace
+{
+    sealed class TypeName : Tokenizer
+    {
+        public TypeName(TextReader input) : base(input) { }
+
+        public override bool IncrementToken() => false;
+
+        public override void End()
+        {
+            base.End();
+            // TODO: set the final offset and finish up other end-of-stream attributes
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        [Test]
         public void TestIndirectTokenizerInheritance_Diagnostic()
         {
             var test = @"

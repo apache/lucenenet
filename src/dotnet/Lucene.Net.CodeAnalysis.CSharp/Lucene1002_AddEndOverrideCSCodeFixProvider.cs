@@ -78,7 +78,7 @@ namespace Lucene.Net.CodeAnalysis
 
             var todoComment = SyntaxFactory.Comment("// TODO: set the final offset and finish up other end-of-stream attributes");
             var closeBrace = SyntaxFactory.Token(SyntaxKind.CloseBraceToken)
-                .WithLeadingTrivia(SyntaxFactory.TriviaList(todoComment, SyntaxFactory.EndOfLine("\n")));
+                .WithLeadingTrivia(SyntaxFactory.TriviaList(todoComment, SyntaxFactory.ElasticCarriageReturnLineFeed));
 
             var body = SyntaxFactory.Block(
                 SyntaxFactory.Token(SyntaxKind.OpenBraceToken),

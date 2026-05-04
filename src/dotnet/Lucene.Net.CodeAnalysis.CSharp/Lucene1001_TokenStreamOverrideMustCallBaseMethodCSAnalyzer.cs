@@ -103,13 +103,16 @@ namespace Lucene.Net.CodeAnalysis
         private static bool ContainsBaseCall(MethodDeclarationSyntax methodDeclaration, string methodName)
         {
             // Inspect either a block body or an expression-bodied member.
+            SyntaxNode body;
             IEnumerable<SyntaxNode> nodes;
             if (methodDeclaration.Body is not null)
             {
+                body = methodDeclaration.Body;
                 nodes = methodDeclaration.Body.DescendantNodes();
             }
             else if (methodDeclaration.ExpressionBody is not null)
             {
+                body = methodDeclaration.ExpressionBody;
                 nodes = methodDeclaration.ExpressionBody.DescendantNodesAndSelf();
             }
             else
@@ -123,7 +126,25 @@ namespace Lucene.Net.CodeAnalysis
                 if (node is InvocationExpressionSyntax invocation &&
                     invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                     memberAccess.Expression.IsKind(SyntaxKind.BaseExpression) &&
-                    memberAccess.Name.Identifier.ValueText == methodName)
+                    memberAccess.Name.Identifier.ValueText == methodName &&
+                    !IsInsideNestedFunction(invocation, body))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // A base call inside a lambda, anonymous method, or local function does not necessarily
+        // execute when the enclosing method runs (the delegate may never be invoked). Treat such
+        // occurrences as not satisfying the contract.
+        private static bool IsInsideNestedFunction(SyntaxNode node, SyntaxNode body)
+        {
+            for (var ancestor = node.Parent; ancestor is not null && ancestor != body; ancestor = ancestor.Parent)
+            {
+                if (ancestor is LambdaExpressionSyntax ||
+                    ancestor is AnonymousMethodExpressionSyntax ||
+                    ancestor is LocalFunctionStatementSyntax)
                 {
                     return true;
                 }
