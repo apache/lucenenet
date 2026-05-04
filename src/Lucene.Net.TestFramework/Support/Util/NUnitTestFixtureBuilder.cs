@@ -420,7 +420,7 @@ namespace Lucene.Net.Util
                 return true;
 
             // Look for the marker that indicates from was null
-            if (from is null && (to.GetTypeInfo().IsClass || to.FullName.StartsWith("System.Nullable")))
+            if (from is null && (to.GetTypeInfo().IsClass || to.FullName.StartsWith("System.Nullable", StringComparison.Ordinal)))
                 return true;
 
             if (convertibleValueTypes.ContainsKey(to) && convertibleValueTypes[to].Contains(from))

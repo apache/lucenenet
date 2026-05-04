@@ -94,11 +94,11 @@ namespace Lucene.Net.Search.VectorHighlight
             BreakIterator bi = BreakIterator.GetSentenceInstance(CultureInfo.CurrentCulture);
             IBoundaryScanner scanner = new BreakIteratorBoundaryScanner(bi);
 
-            int start = TEXT.IndexOf("any application");
-            int expected = TEXT.IndexOf("It is a");
+            int start = TEXT.IndexOf("any application", StringComparison.Ordinal);
+            int expected = TEXT.IndexOf("It is a", StringComparison.Ordinal);
             TestFindStartOffset(text, start, expected, scanner);
 
-            expected = TEXT.IndexOf("application that requires") + "application that requires\n".Length;
+            expected = TEXT.IndexOf("application that requires", StringComparison.Ordinal) + "application that requires\n".Length;
             TestFindEndOffset(text, start, expected, scanner);
         }
 
