@@ -2084,13 +2084,14 @@ namespace Lucene.Net.Util
             {
                 int threads = 0;
                 LimitedConcurrencyLevelTaskScheduler ex;
-                var cts = new CancellationTokenSource();
+                CancellationTokenSource cts = null;
                 if (random.NextBoolean())
                 {
                     ex = null;
                 }
                 else
                 {
+                    cts = new CancellationTokenSource(); // LUCENENET NOTE: this is cleaned up in ReaderClosedListenerAnonymousClass
                     threads = TestUtil.NextInt32(random, 1, 8);
                     ex = new LimitedConcurrencyLevelTaskScheduler(threads, cts.Token);
                     //ex = new ThreadPoolExecutor(threads, threads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<IThreadRunnable>(), new NamedThreadFactory("LuceneTestCase"));
@@ -3263,20 +3264,25 @@ namespace Lucene.Net.Util
             return Random.NextGaussian();
         }
 
+#nullable enable
         private sealed class ReaderClosedListenerAnonymousClass : IReaderDisposedListener
         {
-            private readonly CancellationTokenSource cts; // LUCENENET-specific: cancellation support
+            private readonly CancellationTokenSource? cts; // LUCENENET-specific: cancellation support, can be null
 
-            public ReaderClosedListenerAnonymousClass(CancellationTokenSource cts)
+            public ReaderClosedListenerAnonymousClass(CancellationTokenSource? cts)
             {
                 this.cts = cts;
             }
 
             public void OnDispose(IndexReader reader)
             {
-                cts.Cancel();
-                cts.Dispose();
+                if (cts != null)
+                {
+                    cts.Cancel();
+                    cts.Dispose();
+                }
             }
         }
+#nullable restore
     }
 }
