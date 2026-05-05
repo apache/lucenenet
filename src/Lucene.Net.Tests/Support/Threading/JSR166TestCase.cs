@@ -351,7 +351,8 @@ namespace Lucene.Net.Support.Threading
         {
             try
             {
-                exec.Shutdown();
+                // LUCENENET NOTE: no need to call a shutdown cancellation token here,
+                // since any tasks would already be queued by the time we get here
                 assertTrue(exec.AwaitTermination(TimeSpan.FromMilliseconds(LONG_DELAY_MS)));
             }
             // catch (SecurityException ok) // LUCENENET - not needed
@@ -448,6 +449,9 @@ namespace Lucene.Net.Support.Threading
 
             public void NewTask(Action action)
             {
+                if (_factory.Scheduler is LimitedConcurrencyLevelTaskScheduler { IsShutdown: true })
+                    return;
+
                 var task = _factory.StartNew(action);
                 _tasks.Add(task);
             }
@@ -515,14 +519,6 @@ namespace Lucene.Net.Support.Threading
             }
 
             return 0;
-        }
-
-        public static void Shutdown(this TaskScheduler scheduler)
-        {
-            if (scheduler is LimitedConcurrencyLevelTaskScheduler lcl)
-            {
-                lcl.Shutdown();
-            }
         }
 
         public static bool IsTerminated(this TaskScheduler scheduler)

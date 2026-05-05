@@ -2084,14 +2084,16 @@ namespace Lucene.Net.Util
             {
                 int threads = 0;
                 LimitedConcurrencyLevelTaskScheduler ex;
+                CancellationTokenSource cts = null;
                 if (random.NextBoolean())
                 {
                     ex = null;
                 }
                 else
                 {
+                    cts = new CancellationTokenSource(); // LUCENENET NOTE: this is cleaned up in ReaderClosedListenerAnonymousClass
                     threads = TestUtil.NextInt32(random, 1, 8);
-                    ex = new LimitedConcurrencyLevelTaskScheduler(threads);
+                    ex = new LimitedConcurrencyLevelTaskScheduler(threads, cts.Token);
                     //ex = new ThreadPoolExecutor(threads, threads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<IThreadRunnable>(), new NamedThreadFactory("LuceneTestCase"));
                     // uncomment to intensify LUCENE-3840
                     // ex.prestartAllCoreThreads();
@@ -2102,7 +2104,7 @@ namespace Lucene.Net.Util
                     {
                         Console.WriteLine("NOTE: newSearcher using ExecutorService with " + threads + " threads");
                     }
-                    r.AddReaderDisposedListener(new ReaderClosedListenerAnonymousClass(ex));
+                    r.AddReaderDisposedListener(new ReaderClosedListenerAnonymousClass(cts));
                 }
                 IndexSearcher ret;
                 if (wrapWithAssertions)
@@ -3262,20 +3264,25 @@ namespace Lucene.Net.Util
             return Random.NextGaussian();
         }
 
+#nullable enable
         private sealed class ReaderClosedListenerAnonymousClass : IReaderDisposedListener
         {
-            private readonly LimitedConcurrencyLevelTaskScheduler ex;
+            private readonly CancellationTokenSource? cts; // LUCENENET-specific: cancellation support, can be null
 
-            public ReaderClosedListenerAnonymousClass(LimitedConcurrencyLevelTaskScheduler ex)
+            public ReaderClosedListenerAnonymousClass(CancellationTokenSource? cts)
             {
-                this.ex = ex;
+                this.cts = cts;
             }
 
             public void OnDispose(IndexReader reader)
             {
-                ex?.Shutdown();
-                //TestUtil.ShutdownExecutorService(ex);
+                if (cts != null)
+                {
+                    cts.Cancel();
+                    cts.Dispose();
+                }
             }
         }
+#nullable restore
     }
 }

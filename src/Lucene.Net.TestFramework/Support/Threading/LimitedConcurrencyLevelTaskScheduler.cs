@@ -48,7 +48,6 @@ Framework or Silverlight), or Microsoft application platform (such as Microsoft
 Office or Microsoft Dynamics).
 */
 
-using J2N.Threading.Atomic;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -64,8 +63,6 @@ namespace Lucene.Net.Support.Threading
     /// </summary>
     internal class LimitedConcurrencyLevelTaskScheduler : TaskScheduler
     {
-        private readonly AtomicBoolean shutDown = new AtomicBoolean(false);
-
         // Indicates whether the current thread is processing work items.
         [ThreadStatic]
         private static bool _currentThreadIsProcessingItems;
@@ -76,21 +73,42 @@ namespace Lucene.Net.Support.Threading
         // The maximum concurrency level allowed by this scheduler.
         private readonly int _maxDegreeOfParallelism;
 
+        // A cancellation token for preventing queueing new work when shut down
+        private readonly CancellationToken _cancellationToken;
+
         // Indicates whether the scheduler is currently processing work items.
         private int _delegatesQueuedOrRunning = 0;
 
-        // Creates a new instance with the specified degree of parallelism.
-        public LimitedConcurrencyLevelTaskScheduler(int maxDegreeOfParallelism)
+        /// <summary>
+        /// Creates a new instance with the specified degree of parallelism.
+        /// </summary>
+        /// <param name="maxDegreeOfParallelism">The max degree of parallelism for tasks.</param>
+        /// <param name="cancellationToken">
+        /// A cancellation token that is used to shut down the task scheduler in an orderly manner.
+        /// If cancellation is requested, this scheduler will throw a <see cref="TaskSchedulerException"/> if a
+        /// new task is attempted to be queued.
+        /// This behaves like <c>ExecutorService.shutdown()</c> in Java (with <c>RejectedExecutionException</c>),
+        /// allowing any running tasks to finish.
+        /// </param>
+        /// <exception cref="ArgumentOutOfRangeException">if <paramref name="maxDegreeOfParallelism"/> is less than 1.</exception>
+        public LimitedConcurrencyLevelTaskScheduler(int maxDegreeOfParallelism, CancellationToken cancellationToken = default)
         {
             if (maxDegreeOfParallelism < 1) throw new ArgumentOutOfRangeException(nameof(maxDegreeOfParallelism));
             _maxDegreeOfParallelism = maxDegreeOfParallelism;
+            _cancellationToken = cancellationToken;
         }
 
         // Queues a task to the scheduler.
         protected sealed override void QueueTask(Task task)
         {
             // Don't queue any more work.
-            if (shutDown) return;
+            if (_cancellationToken.IsCancellationRequested)
+            {
+                // LUCENENET NOTE: in Java's `ExecutorService.shutdown()`, this would be RejectedExecutionException.
+                // The equivalent for a TaskScheduler is TaskSchedulerException, but the framework will wrap what
+                // we throw here in a TaskSchedulerException.
+                throw new InvalidOperationException("The task scheduler was shut down and is not accepting new tasks.");
+            }
 
             // Add the task to the list of tasks to be processed.  If there aren't enough
             // delegates currently queued or running to process tasks, schedule another.
@@ -204,16 +222,12 @@ namespace Lucene.Net.Support.Threading
         }
 
         /// <summary>
-        /// Stops this TaskScheduler from queuing new tasks.
-        /// </summary>
-        public void Shutdown()
-        {
-            shutDown.Value = true;
-        }
-
-        /// <summary>
         /// Gets a value indicating whether this TaskScheduler has been shut down.
         /// </summary>
-        public bool IsShutdown => shutDown;
+        /// <remarks>
+        /// This simply returns whether the cancellation token provided to the constructor
+        /// has requested cancellation.
+        /// </remarks>
+        public bool IsShutdown => _cancellationToken.IsCancellationRequested;
     }
 }

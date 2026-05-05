@@ -472,11 +472,19 @@ namespace Lucene.Net.Search.Spell
             int numThreads = 5 + Random.nextInt(5);
             var tasks = new ConcurrentBag<Task>();
             SpellCheckWorker[] workers = new SpellCheckWorker[numThreads];
-            var executor = new LimitedConcurrencyLevelTaskScheduler(numThreads); // LUCENENET NOTE: Not sure why in Java they decided to pass the max concurrent threads as all of the threads, but this demonstrates how to use a custom TaskScheduler in .NET.
+
+            // LUCENENET NOTE: Not sure why in Java they decided to pass the max concurrent threads as all of the threads, but this demonstrates how to use a custom TaskScheduler in .NET.
+            // LUCENENET NOTE: This cancellation token/source is intentionally separate from the one below, because it is solely used as an equivalent
+            // to ExecutorService.shutdown(), which just stops queueing new tasks.
+            using var executorShutdown = new CancellationTokenSource();
+            var executor = new LimitedConcurrencyLevelTaskScheduler(numThreads, executorShutdown.Token);
+
             using var shutdown = new CancellationTokenSource();
             var cancellationToken = shutdown.Token;
+
             var stop = new AtomicBoolean(false);
             var taskFactory = new TaskFactory(executor);
+
             for (int i = 0; i < numThreads; i++)
             {
                 SpellCheckWorker spellCheckWorker = new SpellCheckWorker(this, r, stop, cancellationToken, taskNum: i);
@@ -495,7 +503,12 @@ namespace Lucene.Net.Search.Spell
             }
 
             stop.Value = true;
-            executor.Shutdown(); // Stop allowing tasks to queue
+
+            // LUCENENET NOTE: This is technically pointless, since by this point we've already queued all the tasks.
+            // Leaving this here for compatibility and possible future test changes that might use it properly.
+            // ReSharper disable once MethodHasAsyncOverload - not available in .NET Framework
+            executorShutdown.Cancel(); // Stop queueing new tasks
+
             try
             {
                 // wait for 60 seconds - usually this is very fast but coverage runs could take quite long
@@ -526,7 +539,7 @@ namespace Lucene.Net.Search.Spell
             AssertSearchersClosed();
         }
 
-        private void AssertLastSearcherOpen(int numSearchers)
+        private static void AssertLastSearcherOpen(int numSearchers)
         {
             assertEquals(numSearchers, searchers.Count);
             IndexSearcher[] searcherArray = searchers.ToArray();
@@ -545,7 +558,7 @@ namespace Lucene.Net.Search.Spell
             }
         }
 
-        private void AssertSearchersClosed()
+        private static void AssertSearchersClosed()
         {
             foreach (IndexSearcher searcher in searchers)
             {
