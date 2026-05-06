@@ -538,11 +538,14 @@ namespace Lucene.Net.Index
                 int dwptNumDocs = dwpt.NumDocsInRAM;
                 try
                 {
-                    int docCount = dwpt.UpdateDocuments(docs, analyzer, delTerm);
-                    numDocsInRAM.AddAndGet(docCount);
+                    dwpt.UpdateDocuments(docs, analyzer, delTerm);
                 }
                 finally
                 {
+                    // We don't know how many documents were actually
+                    // counted as indexed, so we must subtract here to
+                    // accumulate our separate counter:
+                    numDocsInRAM.AddAndGet(dwpt.NumDocsInRAM - dwptNumDocs);
                     if (dwpt.CheckAndResetHasAborted())
                     {
                         if (dwpt.PendingFilesToDelete.Count > 0)
@@ -585,10 +588,13 @@ namespace Lucene.Net.Index
                 try
                 {
                     dwpt.UpdateDocument(doc, analyzer, delTerm);
-                    numDocsInRAM.IncrementAndGet();
                 }
                 finally
                 {
+                    // We don't know whether the document actually
+                    // counted as being indexed, so we must subtract here to
+                    // accumulate our separate counter:
+                    numDocsInRAM.AddAndGet(dwpt.NumDocsInRAM - dwptNumDocs);
                     if (dwpt.CheckAndResetHasAborted())
                     {
                         if (dwpt.PendingFilesToDelete.Count > 0)
@@ -732,6 +738,7 @@ namespace Lucene.Net.Index
             {
                 oldValue = numDocsInRAM;
             }
+            if (Debugging.AssertsEnabled) Debugging.Assert(numDocsInRAM >= 0);
         }
 
         // for asserts

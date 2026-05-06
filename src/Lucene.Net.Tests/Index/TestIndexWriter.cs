@@ -2,6 +2,7 @@ using J2N.Text;
 using J2N.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Diagnostics;
@@ -1206,10 +1207,10 @@ namespace Lucene.Net.Index
                 MockDirectoryWrapper dir = new MockDirectoryWrapper(random, new RAMDirectory());
                 //var dir = new RAMDirectory();
 
-                // When interrupt arrives in w.Dispose(), when it's
-                // writing liveDocs, this can lead to double-write of
-                // _X_N.del:
-                //dir.setPreventDoubleWrite(false);
+                // When interrupt arrives in w.Dispose(), this can
+                // lead to double-write of files:
+                dir.PreventDoubleWrite = false;
+
                 IndexWriter w = null;
                 while (!finish)
                 {
@@ -2429,35 +2430,44 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        // here we do better, there is no current segments file, so we don't delete anything.
-        // however, if you actually go and make a commit, the next time you run indexwriter
-        // this file will be gone.
-        [Test]
-        public virtual void TestOtherFiles2()
-        {
-            Directory dir = NewDirectory();
-            try
-            {
-                // Create my own random file:
-                IndexOutput @out = dir.CreateOutput("_a.frq", NewIOContext(Random));
-                @out.WriteByte((byte)42);
-                @out.Dispose();
-
-                new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).Dispose();
-
-                Assert.IsTrue(SlowFileExists(dir, "_a.frq"));
-
-                IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-                iw.AddDocument(new Document());
-                iw.Dispose();
-
-                Assert.IsFalse(SlowFileExists(dir, "_a.frq"));
-            }
-            finally
-            {
-                dir.Dispose();
-            }
-        }
+        // LUCENENET: this test was removed upstream in commit 2cfcdcc (LUCENE-5871),
+        // which is the backport that fixes #1284. The fix changes Dispose() so that a
+        // graceful close runs a final CommitInternal followed by RollbackInternal,
+        // which checkpoints the deleter and removes unreferenced files. The original
+        // assertion `Assert.IsTrue(SlowFileExists(dir, "_a.frq"))` after the first
+        // Dispose() therefore no longer holds — _a.frq is now deleted on the very
+        // first close, before the second IndexWriter is opened. We keep the test
+        // commented out at its original location for porting reference.
+        //
+        //// here we do better, there is no current segments file, so we don't delete anything.
+        //// however, if you actually go and make a commit, the next time you run indexwriter
+        //// this file will be gone.
+        //[Test]
+        //public virtual void TestOtherFiles2()
+        //{
+        //    Directory dir = NewDirectory();
+        //    try
+        //    {
+        //        // Create my own random file:
+        //        IndexOutput @out = dir.CreateOutput("_a.frq", NewIOContext(Random));
+        //        @out.WriteByte((byte)42);
+        //        @out.Dispose();
+        //
+        //        new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).Dispose();
+        //
+        //        Assert.IsTrue(SlowFileExists(dir, "_a.frq"));
+        //
+        //        IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+        //        iw.AddDocument(new Document());
+        //        iw.Dispose();
+        //
+        //        Assert.IsFalse(SlowFileExists(dir, "_a.frq"));
+        //    }
+        //    finally
+        //    {
+        //        dir.Dispose();
+        //    }
+        //}
 
         // LUCENE-4398
         [Test]
@@ -2940,6 +2950,153 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+        [Test]
+        public virtual void TestHasUncommittedChangesAfterException()
+        {
+            Analyzer analyzer = new MockAnalyzer(Random);
+            AssumeTrue("requires doc values", DefaultCodecSupportsDocValues);
+
+            Directory directory = NewDirectory();
+            // we don't use RandomIndexWriter because it might add more docvalues than we expect !!!!
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+            iwc.SetMergePolicy(NewLogMergePolicy());
+            IndexWriter iwriter = new IndexWriter(directory, iwc);
+            Document doc = new Document();
+            doc.Add(new SortedDocValuesField("dv", new BytesRef("foo!")));
+            doc.Add(new SortedDocValuesField("dv", new BytesRef("bar!")));
+            try
+            {
+                iwriter.AddDocument(doc);
+                Assert.Fail("didn't hit expected exception");
+            }
+            catch (Exception expected) when (expected.IsIllegalArgumentException())
+            {
+                // expected
+            }
+            iwriter.Commit();
+            Assert.IsFalse(iwriter.HasUncommittedChanges());
+            iwriter.Dispose();
+            directory.Dispose();
+        }
+
+        [Test]
+        public virtual void TestDoubleClose()
+        {
+            Directory dir = NewDirectory();
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            w.AddDocument(new Document());
+            w.Dispose();
+            // Close again should have no effect
+            w.Dispose();
+            dir.Dispose();
+        }
+
+        [Test]
+        public virtual void TestRollbackThenClose()
+        {
+            Directory dir = NewDirectory();
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            w.AddDocument(new Document());
+            w.Rollback();
+            // Close after rollback should have no effect
+            w.Dispose();
+            dir.Dispose();
+        }
+
+        [Test]
+        public virtual void TestCloseThenRollback()
+        {
+            Directory dir = NewDirectory();
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            w.AddDocument(new Document());
+            w.Dispose();
+            // Rollback after close should have no effect
+            w.Rollback();
+            dir.Dispose();
+        }
+
+        [Test]
+        public virtual void TestRollbackWhileMergeIsRunning()
+        {
+            Directory dir = NewDirectory();
+
+            CountdownEvent mergeStarted = new CountdownEvent(1);
+            CountdownEvent closeStarted = new CountdownEvent(1);
+
+            IndexWriterConfig iwc = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            LogDocMergePolicy mp = new LogDocMergePolicy();
+            mp.MergeFactor = 2;
+            iwc.SetMergePolicy(mp);
+            iwc.SetInfoStream(new RollbackWhileMergeInfoStream(closeStarted));
+
+            iwc.SetMergeScheduler(new RollbackWhileMergeScheduler(mergeStarted, closeStarted));
+            IndexWriter w = new IndexWriter(dir, iwc);
+            w.AddDocument(new Document());
+            w.Commit();
+            w.AddDocument(new Document());
+            w.Commit();
+            w.Rollback();
+            dir.Dispose();
+        }
+
+        private sealed class RollbackWhileMergeInfoStream : InfoStream
+        {
+            private readonly CountdownEvent closeStarted;
+
+            public RollbackWhileMergeInfoStream(CountdownEvent closeStarted)
+            {
+                this.closeStarted = closeStarted;
+            }
+
+            public override bool IsEnabled(string component)
+            {
+                return true;
+            }
+
+            public override void Message(string component, string message)
+            {
+                if (message.Equals("rollback", StringComparison.Ordinal))
+                {
+                    closeStarted.Signal();
+                }
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+            }
+        }
+
+        private sealed class RollbackWhileMergeScheduler : ConcurrentMergeScheduler
+        {
+            private readonly CountdownEvent mergeStarted;
+            private readonly CountdownEvent closeStarted;
+
+            public RollbackWhileMergeScheduler(CountdownEvent mergeStarted, CountdownEvent closeStarted)
+            {
+                this.mergeStarted = mergeStarted;
+                this.closeStarted = closeStarted;
+            }
+
+            protected internal override void DoMerge(MergePolicy.OneMerge merge)
+            {
+                mergeStarted.Signal();
+                try
+                {
+                    closeStarted.Wait();
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    Thread.CurrentThread.Interrupt();
+                    throw RuntimeException.Create(ie);
+                }
+                base.DoMerge(merge);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+            }
+        }
+
         // LUCENE-5574
         [Test]
         public virtual void TestClosingNRTReaderDoesNotCorruptYourIndex()
@@ -2983,6 +3140,148 @@ namespace Lucene.Net.Index
             w.Dispose();
             r.Dispose();
             dir.Dispose();
+        }
+
+        /// <summary>
+        /// Make sure that close waits for any still-running commits. </summary>
+        [Test]
+        public virtual void TestCloseDuringCommit()
+        {
+            CountdownEvent startCommit = new CountdownEvent(1);
+            CountdownEvent finishCommit = new CountdownEvent(1);
+
+            Directory dir = NewDirectory();
+            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, null);
+            // infostream that "takes a long time" to commit
+            iwc.SetInfoStream(new SlowCommittingInfoStream(startCommit));
+            IndexWriter iw = new IndexWriter(dir, iwc);
+            Document doc = new Document();
+            new ThreadAnonymousClassForCloseDuringCommit(iw, finishCommit).Start();
+            startCommit.Wait();
+            try
+            {
+                iw.Dispose();
+            }
+            catch (Exception ise) when (ise.IsIllegalStateException())
+            {
+                // OK, but not required (depends on thread scheduling)
+            }
+            finishCommit.Wait();
+            iw.Dispose();
+            dir.Dispose();
+        }
+
+        private sealed class SlowCommittingInfoStream : InfoStream
+        {
+            private readonly CountdownEvent startCommit;
+
+            public SlowCommittingInfoStream(CountdownEvent startCommit)
+            {
+                this.startCommit = startCommit;
+            }
+
+            public override void Message(string component, string message)
+            {
+                if (message.Equals("finishStartCommit", StringComparison.Ordinal))
+                {
+                    startCommit.Signal();
+                    try
+                    {
+                        Thread.Sleep(10);
+                    }
+                    catch (Exception ie) when (ie.IsInterruptedException())
+                    {
+                        throw new Util.ThreadInterruptedException(ie);
+                    }
+                }
+            }
+
+            public override bool IsEnabled(string component)
+            {
+                return true;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+            }
+        }
+
+        private sealed class ThreadAnonymousClassForCloseDuringCommit : ThreadJob
+        {
+            private readonly IndexWriter iw;
+            private readonly CountdownEvent finishCommit;
+
+            public ThreadAnonymousClassForCloseDuringCommit(IndexWriter iw, CountdownEvent finishCommit)
+            {
+                this.iw = iw;
+                this.finishCommit = finishCommit;
+            }
+
+            public override void Run()
+            {
+                try
+                {
+                    iw.Commit();
+                    finishCommit.Signal();
+                }
+                catch (IOException ioe)
+                {
+                    throw RuntimeException.Create(ioe);
+                }
+            }
+        }
+
+        // LUCENENET specific: regression test for #1284 — IndexWriter.Dispose
+        // must not leak the write.lock file handle when CommitInternal throws
+        // an I/O exception during close. The upstream LUCENE-5871 backport
+        // (commit 2cfcdcc) covers the OOME path; this test additionally
+        // proves the I/O exception path releases the write lock so a fresh
+        // IndexWriter can be opened on the same directory.
+        [Test, LuceneNetSpecific]
+        public virtual void TestDisposeDoesNotLeakWriteLockOnCommitFailure()
+        {
+            MockDirectoryWrapper dir = NewMockDirectory();
+            // Ensure we go through the lock factory rather than NoLockFactory.
+            dir.PreventDoubleWrite = false;
+            dir.FailOn(new FailOnceInCommitFinishCommit());
+
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            writer.AddDocument(new Document());
+
+            try
+            {
+                writer.Dispose();
+                Assert.Fail("expected IOException from Dispose");
+            }
+            catch (IOException expected) when (expected.Message != null && expected.Message.Contains("on purpose"))
+            {
+                // expected
+            }
+
+            // The write lock must have been released even though CommitInternal threw.
+            // Pre-fix, this assertion fails because Dispose's straight-line cleanup
+            // skipped writeLock.Dispose() when CommitInternal threw.
+            Assert.IsFalse(dir.MakeLock(IndexWriter.WRITE_LOCK_NAME).IsLocked(),
+                "write.lock should be released even when CommitInternal throws");
+
+            dir.Dispose();
+        }
+
+        // Throws an IOException exactly once from inside IndexWriter.FinishCommit
+        // (which is on the Commit/CommitInternal call stack). After it has thrown
+        // once it disables itself so the subsequent rollback can complete.
+        private sealed class FailOnceInCommitFinishCommit : Lucene.Net.Store.Failure
+        {
+            private bool fired;
+
+            public override void Eval(MockDirectoryWrapper dir)
+            {
+                if (!fired && StackTraceHelper.DoesStackTraceContainMethod(nameof(IndexWriter), "FinishCommit"))
+                {
+                    fired = true;
+                    throw new IOException("now failing on purpose");
+                }
+            }
         }
 #endif
     }

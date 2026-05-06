@@ -1188,44 +1188,55 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.AggressiveInlining)] // LUCENENET NOTE: this will interfere with stack trace inspection in tests, but that case should be covered by Dispose above which is NoInlining
         internal void Close(bool waitForMerges) // LUCENENET: made internal for test purposes
         {
-            // Ensure that only one thread actually gets to do the
-            // closing, and make sure no commit is also in progress:
-            UninterruptableMonitor.Enter(commitLock);
-            try
+            Shutdown(waitForMerges);
+        }
+
+        /// <summary>
+        /// Gracefully closes (commits, waits for merges), but calls rollback
+        /// if there's an exc so the IndexWriter is always closed.
+        /// </summary>
+        // LUCENENET: ported from upstream LUCENE-5871 (commit 2cfcdcc) to fix #1284 —
+        // previously the close path's straight-line cleanup leaked the reader pool,
+        // deleter, and write.lock when CommitInternal threw an I/O exception.
+        private void Shutdown(bool waitForMerges)
+        {
+            if (pendingCommit != null)
             {
-                if (ShouldClose())
+                throw IllegalStateException.Create("cannot close: prepareCommit was already called with no corresponding call to commit");
+            }
+            // Ensure that only one thread actually gets to do the
+            // closing
+            if (ShouldClose())
+            {
+                bool success = false;
+                try
                 {
-                    // If any methods have hit OutOfMemoryError, then abort
-                    // on close, in case the internal state of IndexWriter
-                    // or DocumentsWriter is corrupt
-                    if (hitOOM)
+                    if (infoStream.IsEnabled("IW"))
                     {
-                        RollbackInternal();
+                        infoStream.Message("IW", "now flush at close");
                     }
-                    else
+                    Flush(true, true);
+                    FinishMerges(waitForMerges);
+                    CommitInternal();
+                    RollbackInternal(); // ie close, since we just committed
+                    success = true;
+                }
+                finally
+                {
+                    if (success == false)
                     {
-                        CloseInternal(waitForMerges, true);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(AssertEventQueueAfterClose());
+                        // Be certain to close the index on any exception
+                        try
+                        {
+                            RollbackInternal();
+                        }
+                        catch (Exception t) when (t.IsThrowable())
+                        {
+                            // Suppress so we keep throwing original exception
+                        }
                     }
                 }
             }
-            finally
-            {
-                UninterruptableMonitor.Exit(commitLock);
-            }
-        }
-
-        private bool AssertEventQueueAfterClose()
-        {
-            if (eventQueue.IsEmpty)
-            {
-                return true;
-            }
-            foreach (IEvent e in eventQueue)
-            {
-                if (Debugging.AssertsEnabled) Debugging.Assert(e is DocumentsWriter.MergePendingEvent, "{0}", e);
-            }
-            return true;
         }
 
         /// <summary>
@@ -1264,185 +1275,6 @@ namespace Lucene.Net.Index
             finally
             {
                 UninterruptableMonitor.Exit(this);
-            }
-        }
-
-        private void CloseInternal(bool waitForMerges, bool doFlush)
-        {
-            bool interrupted = false;
-            try
-            {
-                if (pendingCommit != null)
-                {
-                    throw IllegalStateException.Create("cannot close: prepareCommit was already called with no corresponding call to commit");
-                }
-
-                if (infoStream.IsEnabled("IW"))
-                {
-                    infoStream.Message("IW", "now flush at close waitForMerges=" + waitForMerges);
-                }
-
-                docWriter.Dispose();
-
-                try
-                {
-                    // Only allow a new merge to be triggered if we are
-                    // going to wait for merges:
-                    if (doFlush)
-                    {
-                        Flush(waitForMerges, true);
-                    }
-                    else
-                    {
-                        docWriter.Abort(this); // already closed -- never sync on IW
-                    }
-                }
-                finally
-                {
-                    try
-                    {
-                        // LUCENENET specific - Java calls Thread.interrupted(), which resets and returns the
-                        // initial "interrupted status". .NET has no such method. However, following the logic
-                        // carefully below, we call Thread.CurrentThread.Interrupted() if interrupted is true.
-                        // If the current thread is already in "interrupted status", there is no reason to call
-                        // Thread.CurrentThread.Interrupted() since it is already in that state.
-
-                        // clean up merge scheduler in all cases, although flushing may have failed:
-                        //interrupted = ThreadJob.Interrupted();
-
-                        if (waitForMerges)
-                        {
-                            try
-                            {
-                                // Give merge scheduler last chance to run, in case
-                                // any pending merges are waiting:
-                                mergeScheduler.Merge(this, MergeTrigger.CLOSING, false);
-                            }
-                            catch (Util.ThreadInterruptedException)
-                            {
-                                // ignore any interruption, does not matter
-                                interrupted = true;
-                                if (infoStream.IsEnabled("IW"))
-                                {
-                                    infoStream.Message("IW", "interrupted while waiting for final merges");
-                                }
-                            }
-                        }
-
-                        UninterruptableMonitor.Enter(this);
-                        try
-                        {
-                            for (; ; )
-                            {
-                                try
-                                {
-                                    FinishMerges(waitForMerges && !interrupted);
-                                    break;
-                                }
-                                catch (Util.ThreadInterruptedException)
-                                {
-                                    // by setting the interrupted status, the
-                                    // next call to finishMerges will pass false,
-                                    // so it will not wait
-                                    interrupted = true;
-                                    if (infoStream.IsEnabled("IW"))
-                                    {
-                                        infoStream.Message("IW", "interrupted while waiting for merges to finish");
-                                    }
-                                }
-                            }
-                            stopMerges = true;
-                        }
-                        finally
-                        {
-                            UninterruptableMonitor.Exit(this);
-                        }
-                    }
-                    finally
-                    {
-                        // shutdown policy, scheduler and all threads (this call is not interruptible):
-                        IOUtils.DisposeWhileHandlingException(mergePolicy, mergeScheduler);
-                    }
-                }
-
-                if (infoStream.IsEnabled("IW"))
-                {
-                    infoStream.Message("IW", "now call final commit()");
-                }
-
-                if (doFlush)
-                {
-                    CommitInternal();
-                }
-                ProcessEvents(false, true);
-                UninterruptableMonitor.Enter(this);
-                try
-                {
-                    // commitInternal calls ReaderPool.commit, which
-                    // writes any pending liveDocs from ReaderPool, so
-                    // it's safe to drop all readers now:
-                    readerPool.DropAll(true);
-                    deleter.Dispose();
-                }
-                finally
-                {
-                    UninterruptableMonitor.Exit(this);
-                }
-
-                if (infoStream.IsEnabled("IW"))
-                {
-                    infoStream.Message("IW", "at close: " + SegString());
-                }
-
-                if (writeLock != null)
-                {
-                    writeLock.Dispose(); // release write lock
-                    writeLock = null;
-                }
-                UninterruptableMonitor.Enter(this);
-                try
-                {
-                    closed = true;
-                }
-                finally
-                {
-                    UninterruptableMonitor.Exit(this);
-                }
-                if (Debugging.AssertsEnabled)
-                {
-                    // LUCENENET specific - store the number of states so we don't have to call this method twice
-                    int numDeactivatedThreadStates = docWriter.perThreadPool.NumDeactivatedThreadStates();
-                    Debugging.Assert(numDeactivatedThreadStates == docWriter.perThreadPool.MaxThreadStates, "{0} {1}", numDeactivatedThreadStates, docWriter.perThreadPool.MaxThreadStates);
-                }
-            }
-            catch (Exception oom) when (oom.IsOutOfMemoryError())
-            {
-                HandleOOM(oom, "CloseInternal");
-            }
-            finally
-            {
-                UninterruptableMonitor.Enter(this);
-                try
-                {
-                    closing = false;
-                    UninterruptableMonitor.PulseAll(this);
-                    if (!closed)
-                    {
-                        if (infoStream.IsEnabled("IW"))
-                        {
-                            infoStream.Message("IW", "hit exception while closing");
-                        }
-                    }
-                }
-                finally
-                {
-                    UninterruptableMonitor.Exit(this);
-                }
-                // finally, restore interrupt status:
-                if (interrupted)
-                {
-                    Thread.CurrentThread.Interrupt();
-                }
             }
         }
 
