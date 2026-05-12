@@ -35,6 +35,15 @@ github:
     # Enable discussions
     discussions: true
 
-  # Disallow forced pushes
-  protected_branches:
-    master: {}
+  rulesets:
+    - name: "Branch Protection"
+      type: branch
+      branches:
+        includes:
+          - "master"
+          - "release/*"
+        excludes: []
+      restrict_deletion: true
+      restrict_force_push: true
+      required_linear_history: true
+      required_conversation_resolution: true
