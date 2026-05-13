@@ -75,7 +75,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-2025-vs2026, ubuntu-latest]
         framework: [net10.0, net8.0, net48, net472]
         platform: [x64]
         configuration: [Release]

@@ -67,7 +67,7 @@ param(
 
     [string[]]$TestFrameworks = @('net10.0', 'net8.0', 'net472', 'net48'), # targets under test: net10.0, net8.0, netstandard2.0, net462
 
-    [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
+    [string[]]$OperatingSystems = @('windows-2025-vs2026', 'ubuntu-latest'),
 
     [string[]]$TestPlatforms = @('x64'),
 
@@ -163,7 +163,7 @@ function Write-TestWorkflow(
     [string[]]$Configurations = @('Release'),
     [string[]]$TestFrameworks = @('net6.0', 'net48'),
     [string[]]$TestPlatforms = @('x64'),
-    [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
+    [string[]]$OperatingSystems = @('windows-2025-vs2026', 'ubuntu-latest', 'macos-latest'),
     [string]$DotNet10SDKVersion = $DotNet10SDKVersion,
     [string]$DotNet8SDKVersion = $DotNet8SDKVersion) {
 
