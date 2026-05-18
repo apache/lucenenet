@@ -1,0 +1,16 @@
+<footer>
+  <div class="container">
+    <span class="pull-left">
+      {{{_appFooter}}}{{^_appFooter}}Copyright &copy; 2025 The Apache Software Foundation{{/_appFooter}}
+    </span>
+    <div class="asf-links text-center">
+      <a href="{{_asfFoundationHref}}">{{_asfFoundationText}}</a> |
+      <a href="{{_asfEventsHref}}">{{_asfEventsText}}</a> |
+      <a href="{{_asfLicenseHref}}">{{_asfLicenseText}}</a> |
+      <a href="{{_asfSecurityHref}}">{{_asfSecurityText}}</a> |
+      <a href="{{_asfSponsorshipHref}}">{{_asfSponsorshipText}}</a> |
+      <a href="{{_asfThanksHref}}">{{_asfThanksText}}</a> |
+      <a href="{{_asfPrivacyHref}}">{{_asfPrivacyText}}</a>
+    </div>
+  </div>
+</footer>
