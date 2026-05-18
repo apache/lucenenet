@@ -78,6 +78,15 @@ repos:
       - id: check-vcs-permalinks
         name: run check-vcs-permalinks
         description: ensures that links to vcs websites are permalinks
+      - id: check-xml
+        name: run check-xml
+        description: attempts to load all xml files to verify syntax
+      - id: check-yaml
+        name: run check-yaml
+        description: attempts to load all yaml files to verify syntax
+      - id: debug-statements
+        name: run debug-statements
+        description: check for debugger imports and py37+ `breakpoint()` calls in python source.
       - id: detect-private-key
         name: run detect-private-key
         description: checks for the existence of private keys
