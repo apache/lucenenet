@@ -35,6 +35,14 @@ github:
     # Enable discussions
     discussions: true
 
+  enabled_merge_buttons:
+    squash:  true
+    # default commit message when merging with a squash commit
+    # can either be: DEFAULT | PR_TITLE | PR_TITLE_AND_COMMIT_DETAILS | PR_TITLE_AND_DESC
+    squash_commit_message: PR_TITLE
+    merge: false
+    rebase: false
+
   rulesets:
     - name: "Branch Protection"
       type: branch
@@ -44,6 +52,8 @@ github:
           - "release/*"
           - "docs/*"
         excludes: []
+      bypass_teams:
+        - root
       restrict_deletion: true
       restrict_force_push: true
       required_linear_history: true
