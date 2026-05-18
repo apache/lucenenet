@@ -155,19 +155,22 @@ namespace Lucene.Net.Util
             int nChars = (((63 - shift) * 37) >> 8) + 1; // i/7 is the same as (i*37)>>8 for i in 0..63
             bytes.Offset = 0;
             bytes.Length = nChars + 1; // one extra for the byte that contains the shift info
-            if (bytes.Bytes.Length < bytes.Length)
+            byte[] buf = bytes.Bytes; // LUCENENET: local reference to array to avoid repeated property access
+            if (buf.Length < bytes.Length)
             {
-                bytes.Bytes = new byte[NumericUtils.BUF_SIZE_INT64]; // use the max
+                // LUCENENET: update `buf` reference too
+                bytes.Bytes = buf = new byte[NumericUtils.BUF_SIZE_INT64]; // use the max
             }
-            bytes.Bytes[0] = (byte)(SHIFT_START_INT64 + shift);
-            ulong sortableBits = BitConverter.ToUInt64(BitConverter.GetBytes(val), 0) ^ 0x8000000000000000L; // LUCENENET TODO: Performance - Benchmark this
-            sortableBits = sortableBits >> shift;
-            while (nChars > 0)
+
+            long sortableBits = val ^ long.MinValue; // LUCENENET: was long sortableBits = val ^ 0x8000000000000000L; in Java
+            sortableBits >>>= shift;
+            buf[0] = (byte)(SHIFT_START_INT64 + shift);
+            // LUCENENET: shift directly from sortableBits each iteration (independent shifts) instead
+            // of the carried `sortableBits >>>= 7` so the CPU can ILP the byte computations.
+            for (int k = 0; k < nChars; k++)
             {
-                // Store 7 bits per byte for compatibility
-                // with UTF-8 encoding of terms
-                bytes.Bytes[nChars--] = (byte)(sortableBits & 0x7f);
-                sortableBits = sortableBits >> 7;
+                // Store 7 bits per byte for compatibility with UTF-8 encoding of terms
+                buf[nChars - k] = (byte)((sortableBits >>> (7 * k)) & 0x7f);
             }
         }
 
@@ -190,19 +193,21 @@ namespace Lucene.Net.Util
             int nChars = (((31 - shift) * 37) >> 8) + 1; // i/7 is the same as (i*37)>>8 for i in 0..63
             bytes.Offset = 0;
             bytes.Length = nChars + 1; // one extra for the byte that contains the shift info
-            if (bytes.Bytes.Length < bytes.Length)
+            byte[] buf = bytes.Bytes; // LUCENENET: local reference to array to avoid repeated property access
+            if (buf.Length < bytes.Length)
             {
-                bytes.Bytes = new byte[NumericUtils.BUF_SIZE_INT64]; // use the max
+                // LUCENENET: update `buf` reference too
+                bytes.Bytes = buf = new byte[NumericUtils.BUF_SIZE_INT64]; // use the max
             }
-            bytes.Bytes[0] = (byte)(SHIFT_START_INT32 + shift);
-            int sortableBits = val ^ unchecked((int)0x80000000);
+
+            int sortableBits = val ^ int.MinValue; // LUCENENET: was int sortableBits = val ^ 0x80000000; in Java
             sortableBits >>>= shift;
-            while (nChars > 0)
+            buf[0] = (byte)(SHIFT_START_INT32 + shift);
+            // LUCENENET: see Int64ToPrefixCodedBytes for the independent-shift rationale.
+            for (int k = 0; k < nChars; k++)
             {
-                // Store 7 bits per byte for compatibility
-                // with UTF-8 encoding of terms
-                bytes.Bytes[nChars--] = (byte)(sortableBits & 0x7f);
-                sortableBits >>>= 7;
+                // Store 7 bits per byte for compatibility with UTF-8 encoding of terms
+                buf[nChars - k] = (byte)((sortableBits >>> (7 * k)) & 0x7f);
             }
         }
 
@@ -254,16 +259,28 @@ namespace Lucene.Net.Util
         /// <seealso cref="Int64ToPrefixCodedBytes(long, int, BytesRef)"/>
         public static long PrefixCodedToInt64(BytesRef val)
         {
+            // LUCENENET specific: hoist BytesRef fields to locals so the JIT doesn't
+            // reload them through the property accessors on every iteration.
+            byte[] bytes = val.Bytes;
+            int offset = val.Offset;
+            int length = val.Length;
+
+            // LUCENENET specific: branchless invalid-byte detection. Upstream Java throws
+            // inside the loop on signed `b < 0`; we OR each byte into a sign accumulator and
+            // validate once after the loop, keeping the hot path branch-free. (Equivalent
+            // C# check is `b > 127` since `byte` is unsigned — see ThrowInvalidPrefixCodedByte.)
             long sortableBits = 0L;
-            for (int i = val.Offset + 1, limit = val.Offset + val.Length; i < limit; i++)
+            int signAccum = 0;
+            for (int i = offset + 1, limit = offset + length; i < limit; i++)
             {
                 sortableBits <<= 7;
-                var b = val.Bytes[i];
-                if (b < 0)
-                {
-                    throw NumberFormatException.Create("Invalid prefixCoded numerical value representation (byte " + (b & 0xff).ToString("x") + " at position " + (i - val.Offset) + " is invalid)");
-                }
-                sortableBits |= (byte)b;
+                byte b = bytes[i];
+                signAccum |= b;
+                sortableBits |= b;
+            }
+            if ((signAccum & 0x80) != 0)
+            {
+                ThrowInvalidPrefixCodedByte(bytes, offset, length);
             }
             return (long)((ulong)(sortableBits << GetPrefixCodedInt64Shift(val)) ^ 0x8000000000000000L); // LUCENENET TODO: Is the casting here necessary?
         }
@@ -280,14 +297,27 @@ namespace Lucene.Net.Util
         /// <seealso cref="Int32ToPrefixCodedBytes(int, int, BytesRef)"/>
         public static int PrefixCodedToInt32(BytesRef val)
         {
+            // LUCENENET specific: hoist BytesRef fields to locals so the JIT doesn't
+            // reload them through the property accessors on every iteration.
+            byte[] bytes = val.Bytes;
+            int offset = val.Offset;
+            int length = val.Length;
+
             long sortableBits = 0;
-            for (int i = val.Offset, limit = val.Offset + val.Length; i < limit; i++)
+
+            // LUCENENET: unlike PrefixCodedToInt64, we use the in-loop branch (not the sign
+            // accumulator). The Int32 loop is 1-5 iterations; the per-iteration `if (b > 127)`
+            // is cheaper than the accumulator's extra OR + post-loop check at this size,
+            // confirmed via benchmarks.
+            for (int i = offset + 1, limit = offset + length; i < limit; i++)
             {
                 sortableBits <<= 7;
-                var b = val.Bytes[i];
-                if (b < 0)
+                var b = bytes[i];
+                // LUCENENET: upstream Java tests `b < 0` (signed byte). In C# byte is unsigned,
+                // so the equivalent high-bit-set check is `b > 127`.
+                if (b > 127)
                 {
-                    throw NumberFormatException.Create("Invalid prefixCoded numerical value representation (byte " + (b & 0xff).ToString("x") + " at position " + (i - val.Offset) + " is invalid)");
+                    throw NumberFormatException.Create("Invalid prefixCoded numerical value representation (byte " + b.ToString("x") + " at position " + (i - offset) + " is invalid)");
                 }
                 sortableBits |= b;
             }
@@ -582,6 +612,23 @@ namespace Lucene.Net.Util
         public static TermsEnum FilterPrefixCodedInt32s(TermsEnum termsEnum)
         {
             return new FilteredTermsEnumAnonymousClass2(termsEnum);
+        }
+
+        // LUCENENET specific: cold helper used by PrefixCodedToInt64 when the branchless
+        // sign accumulator detects an invalid byte. Kept out-of-line (NoInlining) so the hot
+        // decode loop stays free of the throw site.
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void ThrowInvalidPrefixCodedByte(byte[] bytes, int offset, int length)
+        {
+            int limit = offset + length;
+            for (int i = offset + 1; i < limit; i++)
+            {
+                byte b = bytes[i];
+                if (b > 127)
+                {
+                    throw NumberFormatException.Create("Invalid prefixCoded numerical value representation (byte " + b.ToString("x") + " at position " + (i - offset) + " is invalid)");
+                }
+            }
         }
 
         private sealed class FilteredTermsEnumAnonymousClass2 : FilteredTermsEnum
