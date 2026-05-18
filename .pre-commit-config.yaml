@@ -40,7 +40,7 @@ repos:
         exclude: ^src/Lucene\.Net\.Analysis\.Common/Analysis/../.*\.rslp$|^.*Lucene\.Net\.Tests.*$
         args: [--ignore-words=.github/linters/codespell.txt]
   - repo: https://github.com/oxipng/oxipng
-    rev: v10.1.0
+    rev: v10.1.1
     hooks:
       - id: oxipng
         name: run oxipng
