@@ -42,6 +42,7 @@ github:
         includes:
           - "master"
           - "release/*"
+          - "docs/*"
         excludes: []
       restrict_deletion: true
       restrict_force_push: true
