@@ -74,7 +74,6 @@ compatibity
 compatiblity
 completly
 concret
-condtions
 confguration
 conjuction
 conjuntions
@@ -127,9 +126,6 @@ entend
 equest
 euclidian
 everytime
-execeptions
-exmaple
-explicitely
 explicity
 faild
 failue
@@ -285,8 +281,6 @@ plaforms
 pluse
 pont
 posin
-postion
-postions
 pre-pended
 pres
 prevend

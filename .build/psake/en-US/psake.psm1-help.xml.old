@@ -19,35 +19,35 @@
     <command:syntax>
       <command:syntaxItem>
         <command:name>Invoke-psake</command:name>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>buildFile</maml:name>
           <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         </command:parameter>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>taskList</maml:name>
           <command:parameterValue required="false" variableLength="false">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>framework</maml:name>
           <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         </command:parameter>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>docs</maml:name>
           <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         </command:parameter>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>parameters</maml:name>
           <command:parameterValue required="false" variableLength="false">Hashtable</command:parameterValue>
         </command:parameter>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>properties</maml:name>
           <command:parameterValue required="false" variableLength="false">Hashtable</command:parameterValue>
         </command:parameter>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>nologo</maml:name>
           <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         </command:parameter>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>notr</maml:name>
           <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         </command:parameter>
@@ -478,7 +478,7 @@ task in the build script.</maml:para>
     <command:syntax>
       <command:syntaxItem>
         <command:name>TaskTearDown</command:name>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>teardown</maml:name>
           <command:parameterValue required="true" variableLength="false">ScriptBlock</command:parameterValue>
         </command:parameter>
@@ -629,7 +629,7 @@ task in the build script.</maml:para>
     <command:syntax>
       <command:syntaxItem>
         <command:name>TaskSetup</command:name>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>setup</maml:name>
           <command:parameterValue required="true" variableLength="false">ScriptBlock</command:parameterValue>
         </command:parameter>
@@ -779,7 +779,7 @@ Build Succeeded</maml:para>
     <command:syntax>
       <command:syntaxItem>
         <command:name>Framework</command:name>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>framework</maml:name>
           <command:parameterValue required="true" variableLength="false">string</command:parameterValue>
         </command:parameter>
@@ -910,7 +910,7 @@ Task Compile -depends Clean {
     <command:syntax>
       <command:syntaxItem>
         <command:name>FormatTaskName</command:name>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>format</maml:name>
           <command:parameterValue required="true" variableLength="false">String or ScriptBlock</command:parameterValue>
         </command:parameter>
@@ -1218,7 +1218,7 @@ Task TaskC {
     <command:syntax>
       <command:syntaxItem>
         <command:name>Include</command:name>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>fileNamePathToInclude</maml:name>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         </command:parameter>
@@ -1359,7 +1359,7 @@ Task Clean {
     <command:syntax>
       <command:syntaxItem>
         <command:name>Properties</command:name>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>properties</maml:name>
           <command:parameterValue required="true" variableLength="false">ScriptBlock</command:parameterValue>
         </command:parameter>
@@ -1505,43 +1505,43 @@ Task Clean {
     <command:syntax>
       <command:syntaxItem>
         <command:name>Task</command:name>
-        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>Name</maml:name>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         </command:parameter>
-    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>Action</maml:name>
           <command:parameterValue required="true" variableLength="false">ScriptBlock</command:parameterValue>
         </command:parameter>
-    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>PreAction</maml:name>
           <command:parameterValue required="false" variableLength="false">ScriptBlock</command:parameterValue>
         </command:parameter>
-    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>PostAction</maml:name>
           <command:parameterValue required="false" variableLength="false">ScriptBlock</command:parameterValue>
         </command:parameter>
-    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>Precondition</maml:name>
           <command:parameterValue required="false" variableLength="false">ScriptBlock</command:parameterValue>
         </command:parameter>
-    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>Postcondition</maml:name>
           <command:parameterValue required="false" variableLength="false">ScriptBlock</command:parameterValue>
         </command:parameter>
-    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>ContinueOnError</maml:name>
           <command:parameterValue required="false" variableLength="false">Boolean</command:parameterValue>
         </command:parameter>
-    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>Depends</maml:name>
           <command:parameterValue required="false" variableLength="false">String[]</command:parameterValue>
         </command:parameter>
-    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>RequiredVariables</maml:name>
           <command:parameterValue required="false" variableLength="false">String[]</command:parameterValue>
         </command:parameter>
-    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" postion="0">
+    <command:parameter require="false" variableLength="false" globbing="false" pipelineInput="false" position="0">
           <maml:name>Description</maml:name>
           <command:parameterValue required="false" variableLength="false">String[]</command:parameterValue>
         </command:parameter>
@@ -1825,11 +1825,11 @@ Total:  00:00:00.0782496</dev:code>
     <command:syntax>
       <command:syntaxItem>
         <command:name>Assert</command:name>
-        <command:parameter require="true" variableLength="true" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="true" variableLength="true" globbing="false" pipelineInput="false" position="0">
           <maml:name>conditionToCheck</maml:name>
           <command:parameterValue required="true" variableLength="false">Boolean</command:parameterValue>
         </command:parameter>
-        <command:parameter require="true" variableLength="true" globbing="false" pipelineInput="false" postion="1">
+        <command:parameter require="true" variableLength="true" globbing="false" pipelineInput="false" position="1">
           <maml:name>failureMessage</maml:name>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         </command:parameter>
@@ -1920,10 +1920,10 @@ Total:  00:00:00.0782496</dev:code>
         <dev:remarks>
     <maml:para>Description</maml:para>
       <maml:para>-----------</maml:para>
-          <maml:para>This exmaple may throw an exception if $i is not an even number</maml:para>
+          <maml:para>This example may throw an exception if $i is not an even number</maml:para>
           <maml:para></maml:para>
           <maml:para>Note:</maml:para>
-      <maml:para>It might be necessary to wrap the condition with paranthesis to force PS to evaluate the condition
+      <maml:para>It might be necessary to wrap the condition with parenthesis to force PS to evaluate the condition
 so that a boolean value is calculated and passed into the 'conditionToCheck' parameter.
 
 Example:
@@ -2000,11 +2000,11 @@ The solution is to wrap the condition in () so that PS will evaluate it first.
     <command:syntax>
       <command:syntaxItem>
         <command:name>Exec</command:name>
-        <command:parameter require="true" variableLength="true" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="true" variableLength="true" globbing="false" pipelineInput="false" position="0">
           <maml:name>cmd</maml:name>
           <command:parameterValue required="true" variableLength="false">ScriptBlock</command:parameterValue>
         </command:parameter>
-        <command:parameter require="true" variableLength="true" globbing="false" pipelineInput="false" postion="1">
+        <command:parameter require="true" variableLength="true" globbing="false" pipelineInput="false" position="1">
           <maml:name>errorMessage</maml:name>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         </command:parameter>
@@ -2147,7 +2147,7 @@ The solution is to wrap the condition in () so that PS will evaluate it first.
     <command:syntax>
       <command:syntaxItem>
         <command:name>Invoke-Task</command:name>
-        <command:parameter require="true" variableLength="true" globbing="false" pipelineInput="false" postion="0">
+        <command:parameter require="true" variableLength="true" globbing="false" pipelineInput="false" position="0">
           <maml:name>taskName</maml:name>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         </command:parameter>

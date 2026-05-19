@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Highlight
         /// <summary>
         /// Checks to see if this term is valid at <paramref name="position"/>.
         /// </summary>
-        /// <param name="position">to check against valid term postions</param>
+        /// <param name="position">to check against valid term positions</param>
         /// <returns>true iff this term is a hit at this position</returns>
         public virtual bool CheckPosition(int position)
         {
