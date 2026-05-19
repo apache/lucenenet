@@ -1,5 +1,5 @@
 Contributors to this port of Lucene 4.8.0 to C# were Russell Trupiano and David Wan.
-All changes are to be submitted under the apache 2.0 license.
+All changes are to be submitted under the Apache 2.0 License.
 
 The snowball stemmers in contrib/Snowball.Net/Snowball.Net/SF/Snowball
 were developed by Martin Porter and Richard Boulton.
