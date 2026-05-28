@@ -9,7 +9,9 @@
     "\\.DotSettings$",
     "App\\.config$",
     "\\.htaccess$",
-    "packages\\.lock\\.json$"
+    "packages\\.lock\\.json$",
+    "\\.[Tt][Tt][Ff]$",
+    "src/Lucene\\.Net\\.Tests\\.Analysis\\.Common/Analysis/Core/.*\\.txt$"
   ],
   "AllowedContentTypes": [],
   "PassedFiles": [],
