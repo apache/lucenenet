@@ -1227,6 +1227,14 @@ namespace Lucene.Net.Index
             }
         }
 
+        // LUCENENET: upstream 2cfcdcc had private assertEventQueueAfterClose() between
+        // close(boolean) and shouldClose() (and closeInternal(boolean, boolean) immediately
+        // after shouldClose()). The LUCENE-5871 rewrite of close(boolean) stranded both as
+        // dead code: shutdown(boolean) replaced their only callers, and neither is referenced
+        // anywhere else in the file at 2cfcdcc. Trunk LUCENE-4246 (commit 8559eaf, Lucene 5.0)
+        // removed both alongside the rest of the close(boolean) cleanup; we follow that 5.0
+        // end state here rather than carrying the dead branch_4x leftovers.
+
         /// <summary>
         /// Returns <c>true</c> if this thread should attempt to close, or
         /// false if IndexWriter is now closed; else, waits until
@@ -1265,6 +1273,9 @@ namespace Lucene.Net.Index
                 UninterruptableMonitor.Exit(this);
             }
         }
+
+        // LUCENENET: upstream 2cfcdcc had private closeInternal(boolean waitForMerges,
+        // boolean doFlush) here. See the note above ShouldClose() for why it is dropped.
 
         /// <summary>
         /// Gets the <see cref="Store.Directory"/> used by this index. </summary>
