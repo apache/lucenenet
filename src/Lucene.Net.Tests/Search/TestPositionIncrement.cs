@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
             hits = searcher.Search(q, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
 
-            // same as previous, just specify positions explicitely.
+            // same as previous, just specify positions explicitly.
             q = new PhraseQuery();
             q.Add(new Term("field", "1"), 0);
             q.Add(new Term("field", "2"), 1);
@@ -128,7 +128,7 @@ namespace Lucene.Net.Search
             hits = searcher.Search(q, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
 
-            // multi-phrase query should succed for non existing searched term
+            // multi-phrase query should succeed for non existing searched term
             // because there exist another searched terms in the same searched position.
             MultiPhraseQuery mq = new MultiPhraseQuery();
             mq.Add(new Term[] { new Term("field", "3"), new Term("field", "9") }, 0);
