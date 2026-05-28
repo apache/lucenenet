@@ -2294,6 +2294,12 @@ namespace Lucene.Net.Index
                             Console.WriteLine("  now close writer");
                         }
                         doClose = true;
+                        // LUCENENET: w.Commit() before w.Dispose() ported from upstream
+                        // LUCENE-5871 (commit 2cfcdcc, first released in 4.10.0), pulled in
+                        // alongside the LUCENE-5871 IndexWriter close fix (#1284). The new
+                        // Shutdown contract throws IllegalStateException if a prepareCommit
+                        // is outstanding, so we commit first.
+                        w.Commit();
                         w.Dispose();
                         w = null;
                     }

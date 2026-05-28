@@ -1042,55 +1042,32 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Commits all changes to an index, waits for pending merges
-        /// to complete, and closes all associated files.
-        /// <para/>
-        /// This is a "slow graceful shutdown" which may take a long time
-        /// especially if a big merge is pending: If you only want to close
-        /// resources use <see cref="Rollback()"/>. If you only want to commit
-        /// pending changes and close resources see <see cref="Dispose(bool)"/>.
-        /// <para/>
+        /// to complete, closes all associated files and releases the
+        /// write lock.
+        ///
+        /// <para>Note that:
+        /// <list type="bullet">
+        ///     <item><description>If you called <see cref="PrepareCommit()"/> but failed to call <see cref="Commit()"/>, this
+        ///         method will throw <see cref="InvalidOperationException"/> and the <see cref="IndexWriter"/>
+        ///         will not be closed.</description></item>
+        ///     <item><description>If this method throws any other exception, the <see cref="IndexWriter"/>
+        ///         will be closed, but changes may have been lost.</description></item>
+        /// </list>
+        /// </para>
+        ///
+        /// <para>
         /// Note that this may be a costly
         /// operation, so, try to re-use a single writer instead of
         /// closing and opening a new one.  See <see cref="Commit()"/> for
-        /// caveats about write caching done by some IO devices.
+        /// caveats about write caching done by some IO devices.</para>
         ///
-        /// <para> If an <see cref="Exception"/> is hit during close, eg due to disk
-        /// full or some other reason, then both the on-disk index
-        /// and the internal state of the <see cref="IndexWriter"/> instance will
-        /// be consistent.  However, the close will not be complete
-        /// even though part of it (flushing buffered documents)
-        /// may have succeeded, so the write lock will still be
-        /// held.</para>
-        ///
-        /// <para> If you can correct the underlying cause (eg free up
-        /// some disk space) then you can call <see cref="Dispose()"/> again.
-        /// Failing that, if you want to force the write lock to be
-        /// released (dangerous, because you may then lose buffered
-        /// docs in the <see cref="IndexWriter"/> instance) then you can do
-        /// something like this:</para>
-        ///
-        /// <code>
-        /// try
-        /// {
-        ///     writer.Dispose();
-        /// }
-        /// finally
-        /// {
-        ///     if (IndexWriter.IsLocked(directory))
-        ///     {
-        ///         IndexWriter.Unlock(directory);
-        ///     }
-        /// }
-        /// </code>
-        ///
-        /// after which, you must be certain not to use the writer
-        /// instance anymore.
-        ///
-        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
-        /// you should immediately dispose the writer, again.  See
-        /// <see cref="IndexWriter"/> for details.</para>
+        /// <para><b>NOTE</b>: You must ensure no other threads are still making
+        /// changes at the same time that this method is invoked.</para>
         /// </summary>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        // LUCENENET: doc-comment updated to match upstream LUCENE-5871 (commit 2cfcdcc, first
+        // released in 4.10.0); the previous text described the pre-fix behavior where the
+        // write lock could remain held on exception, which no longer applies after #1284.
         [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler and TestIndexWriterWithThreads
         public void Dispose()
         {
@@ -1102,18 +1079,17 @@ namespace Lucene.Net.Index
         /// Disposes the index with or without waiting for currently
         /// running merges to finish.  This is only meaningful when
         /// using a <see cref="MergeScheduler"/> that runs merges in background
-        /// threads.
-        ///
-        /// <para><b>NOTE</b>: If this method hits an <see cref="OutOfMemoryException"/>
-        /// you should immediately dispose the writer, again.  See
-        /// <see cref="IndexWriter"/> for details.</para>
+        /// threads.  See <see cref="Dispose()"/> for details on behavior
+        /// when exceptions are thrown.
         ///
         /// <para><b>NOTE</b>: It is dangerous to always call
         /// <c>Dispose(false)</c>, especially when <see cref="IndexWriter"/> is not open
         /// for very long, because this can result in "merge
         /// starvation" whereby long merges will never have a
         /// chance to finish.  This will cause too many segments in
-        /// your index over time.</para>
+        /// your index over time, which leads to all sorts of
+        /// problems like slow searches, too much RAM and too
+        /// many file descriptors used by readers, etc.</para>
         ///
         /// <para><b>NOTE</b>: This overload should not be called when implementing a finalizer.
         /// Instead, call <see cref="Dispose(bool, bool)"/> with <c>disposing</c> set to
@@ -1124,6 +1100,18 @@ namespace Lucene.Net.Index
         /// running merges to abort, wait until those merges have
         /// finished (which should be at most a few seconds), and
         /// then return. </param>
+        // LUCENENET: doc-comment updated and [Obsolete] applied to match upstream LUCENE-5871
+        // (commit 2cfcdcc, first released in 4.10.0). Upstream marked this overload @Deprecated
+        // because the new Shutdown contract makes "close without waiting for merges" easy to
+        // misuse; prefer Commit() followed by Rollback() to abort merges and then close.
+        //
+        // The deprecation generates CS0618 warnings on existing in-tree callers. This mirrors
+        // upstream's posture exactly: branch_4x kept javac [deprecation] warnings at the
+        // method's call sites and did not migrate them when 2cfcdcc landed. The intent was
+        // always to remove the overload entirely on the next major release: trunk did exactly
+        // that in LUCENE-4246 (commit 8559eaf, Lucene 5.0), deleting close(boolean) and
+        // migrating all the trunk call sites in the same commit.
+        [Obsolete("To abort merges and then close, call Commit() and then Rollback() instead.")]
         [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler and TestIndexWriterWithThreads
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Usage", "CA1816:Dispose methods should call SuppressFinalize", Justification = "This is Lucene's alternate path to Dispose() and we must suppress the finalizer here.")]
@@ -1195,9 +1183,9 @@ namespace Lucene.Net.Index
         /// Gracefully closes (commits, waits for merges), but calls rollback
         /// if there's an exc so the IndexWriter is always closed.
         /// </summary>
-        // LUCENENET: ported from upstream LUCENE-5871 (commit 2cfcdcc) to fix #1284 —
-        // previously the close path's straight-line cleanup leaked the reader pool,
-        // deleter, and write.lock when CommitInternal threw an I/O exception.
+        // LUCENENET: ported from upstream LUCENE-5871 (commit 2cfcdcc, first released in
+        // 4.10.0) to fix #1284. Previously the close path's straight-line cleanup leaked
+        // the reader pool, deleter, and write.lock when CommitInternal threw an I/O exception.
         private void Shutdown(bool waitForMerges)
         {
             if (pendingCommit != null)
