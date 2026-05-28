@@ -31,6 +31,16 @@
     <NoWarn Label="Java array parameters can sometimes be replaced with .NET out or ref parameters">$(NoWarn);LuceneDev1003</NoWarn>
     <NoWarn Label="Return array may be able to be replaced with out values">$(NoWarn);LuceneDev1004</NoWarn>
     <NoWarn Label="Floating point values embedded in strings should be formatted with J2N.Numerics Single or Double ToString methods">$(NoWarn);LuceneDev1006</NoWarn>
+    <NoWarn Label="Generic Dictionary indexer '...' may throw KeyNotFoundException. Use TryGetValue instead.">$(NoWarn);LuceneDev1007</NoWarn>
+    <NoWarn Label="Generic Dictionary indexer '...' may throw KeyNotFoundException. Use TryGetValue and check the value for null.">$(NoWarn);LuceneDev1008</NoWarn>
+    <NoWarn Label="Call to 'Parse' on numeric type 'Single' should specify an IFormatProvider (typically CultureInfo.InvariantCulture).">$(NoWarn);LuceneDev2000</NoWarn>
+    <NoWarn Label="Call to 'ToString' on numeric type 'Int64' should specify an IFormatProvider (typically CultureInfo.InvariantCulture).">$(NoWarn);LuceneDev2001</NoWarn>
+    <NoWarn Label="Call to 'Convert.ToString' should specify an IFormatProvider (typically CultureInfo.InvariantCulture).">$(NoWarn);LuceneDev2002</NoWarn>
+    <NoWarn Label="Call to 'string.Format' with a numeric argument should specify an IFormatProvider (typically CultureInfo.InvariantCulture).">$(NoWarn);LuceneDev2003</NoWarn>
+    <NoWarn Label="Call to 'TryParse' on J2N numeric type 'Int32' should specify an IFormatProvider (typically CultureInfo.InvariantCulture).">$(NoWarn);LuceneDev2004</NoWarn>
+    <NoWarn Label="Numeric value of type 'Int32' is concatenated to a string and will be formatted using the current culture. Wrap with .ToString(CultureInfo.InvariantCulture) explicitly.">$(NoWarn);LuceneDev2005</NoWarn>
+    <NoWarn Label="Numeric value of type 'Int32' is interpolated into a string and will be formatted using the current culture. Use FormattableString.Invariant or wrap with .ToString(CultureInfo.InvariantCulture) explicitly.">$(NoWarn);LuceneDev2006</NoWarn>
+    <NoWarn Label="Call to 'Parse' passes a non-invariant IFormatProvider. Use CultureInfo.InvariantCulture unless current-culture behavior is intentional.">$(NoWarn);LuceneDev2007</NoWarn>
 
   </PropertyGroup>
 

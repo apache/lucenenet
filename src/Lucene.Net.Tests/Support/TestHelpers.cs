@@ -321,7 +321,9 @@ namespace Lucene.Net
             E4,
         }
 
+#pragma warning disable LuceneDev4001
         [MethodImpl(MethodImplOptions.NoInlining)]
+#pragma warning restore LuceneDev4001
         public static void DoNotIgnore<T>(T value, int consumed)
         {
         }

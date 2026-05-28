@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             // LUCENENET: use more efficient implementation in MemoryExtensions
-            return s.StartsWith(prefix, StringComparison.Ordinal);
+            return s.StartsWith(prefix);
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             // LUCENENET: use more efficient implementation in MemoryExtensions
-            return s.EndsWith(suffix, StringComparison.Ordinal);
+            return s.EndsWith(suffix);
         }
 
         /// <summary>
