@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -1139,7 +1140,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
             }
 
-            CountdownEvent done = new CountdownEvent(numThreads);
+            CountDownLatch done = new CountDownLatch(numThreads);
             AtomicInt32 numUpdates = new AtomicInt32(AtLeast(100));
 
             // same thread updates a field as well as reopens
@@ -1155,7 +1156,7 @@ namespace Lucene.Net.Index
             {
                 t.Start();
             }
-            done.Wait();
+            done.Await();
             writer.Dispose();
 
             DirectoryReader reader = DirectoryReader.Open(dir);
@@ -1191,12 +1192,12 @@ namespace Lucene.Net.Index
         {
             private readonly IndexWriter writer;
             private readonly int numDocs;
-            private readonly CountdownEvent done;
+            private readonly CountDownLatch done;
             private readonly AtomicInt32 numUpdates;
             private readonly string f;
             private readonly string cf;
 
-            public ThreadAnonymousClass(string str, IndexWriter writer, int numDocs, CountdownEvent done, AtomicInt32 numUpdates, string f, string cf)
+            public ThreadAnonymousClass(string str, IndexWriter writer, int numDocs, CountDownLatch done, AtomicInt32 numUpdates, string f, string cf)
                 : base(str)
             {
                 this.writer = writer;
@@ -1303,7 +1304,7 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-                    done.Signal();
+                    done.CountDown();
                 }
             }
         }

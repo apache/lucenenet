@@ -18,6 +18,7 @@ using static Lucene.Net.Index.TermsEnum;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 using Test = NUnit.Framework.TestAttribute;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -3243,13 +3244,13 @@ namespace Lucene.Net.Index
             using DirectoryReader ir = DirectoryReader.Open(dir);
             int numThreads = TestUtil.NextInt32(Random, 2, 7);
             ThreadJob[] threads = new ThreadJob[numThreads];
-            using CountdownEvent startingGun = new CountdownEvent(1);
+            CountDownLatch startingGun = new CountDownLatch(1);
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousClass(ir, startingGun);
                 threads[i].Start();
             }
-            startingGun.Signal();
+            startingGun.CountDown();
             foreach (ThreadJob t in threads)
             {
                 t.Join();
@@ -3259,9 +3260,9 @@ namespace Lucene.Net.Index
         private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly DirectoryReader ir;
-            private readonly CountdownEvent startingGun;
+            private readonly CountDownLatch startingGun;
 
-            public ThreadAnonymousClass(DirectoryReader ir, CountdownEvent startingGun)
+            public ThreadAnonymousClass(DirectoryReader ir, CountDownLatch startingGun)
             {
                 this.ir = ir;
                 this.startingGun = startingGun;
@@ -3271,7 +3272,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    startingGun.Wait();
+                    startingGun.Await();
                     BytesRef scratch = new BytesRef(); // LUCENENET: Moved outside of the loop for performance
                     foreach (AtomicReaderContext context in ir.Leaves)
                     {
@@ -3379,13 +3380,13 @@ namespace Lucene.Net.Index
             using DirectoryReader ir = DirectoryReader.Open(dir);
             int numThreads = TestUtil.NextInt32(Random, 2, 7);
             ThreadJob[] threads = new ThreadJob[numThreads];
-            using CountdownEvent startingGun = new CountdownEvent(1);
+            CountDownLatch startingGun = new CountDownLatch(1);
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousClass2(ir, startingGun);
                 threads[i].Start();
             }
-            startingGun.Signal();
+            startingGun.CountDown();
             foreach (ThreadJob t in threads)
             {
                 t.Join();
@@ -3395,9 +3396,9 @@ namespace Lucene.Net.Index
         private sealed class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly DirectoryReader ir;
-            private readonly CountdownEvent startingGun;
+            private readonly CountDownLatch startingGun;
 
-            public ThreadAnonymousClass2(DirectoryReader ir, CountdownEvent startingGun)
+            public ThreadAnonymousClass2(DirectoryReader ir, CountDownLatch startingGun)
             {
                 this.ir = ir;
                 this.startingGun = startingGun;
@@ -3407,7 +3408,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    startingGun.Wait();
+                    startingGun.Await();
                     foreach (AtomicReaderContext context in ir.Leaves)
                     {
                         AtomicReader r = context.AtomicReader;

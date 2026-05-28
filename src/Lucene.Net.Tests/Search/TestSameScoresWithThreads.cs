@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Search
 {
@@ -91,7 +92,7 @@ namespace Lucene.Net.Search
 
             if (answers.Count > 0)
             {
-                CountdownEvent startingGun = new CountdownEvent(1);
+                CountDownLatch startingGun = new CountDownLatch(1);
                 int numThreads = TestUtil.NextInt32(Random, 2, 5);
                 ThreadJob[] threads = new ThreadJob[numThreads];
                 for (int threadID = 0; threadID < numThreads; threadID++)
@@ -100,7 +101,7 @@ namespace Lucene.Net.Search
                     threads[threadID] = thread;
                     thread.Start();
                 }
-                startingGun.Signal();
+                startingGun.CountDown();
                 foreach (ThreadJob thread in threads)
                 {
                     thread.Join();
@@ -114,9 +115,9 @@ namespace Lucene.Net.Search
         {
             private readonly IndexSearcher s;
             private readonly IDictionary<BytesRef, TopDocs> answers;
-            private readonly CountdownEvent startingGun;
+            private readonly CountDownLatch startingGun;
 
-            public ThreadAnonymousClass(IndexSearcher s, IDictionary<BytesRef, TopDocs> answers, CountdownEvent startingGun)
+            public ThreadAnonymousClass(IndexSearcher s, IDictionary<BytesRef, TopDocs> answers, CountDownLatch startingGun)
             {
                 this.s = s;
                 this.answers = answers;
@@ -127,7 +128,7 @@ namespace Lucene.Net.Search
             {
                 try
                 {
-                    startingGun.Wait();
+                    startingGun.Await();
                     for (int i = 0; i < 20; i++)
                     {
                         IList<KeyValuePair<BytesRef, TopDocs>> shuffled = new JCG.List<KeyValuePair<BytesRef, TopDocs>>(answers);

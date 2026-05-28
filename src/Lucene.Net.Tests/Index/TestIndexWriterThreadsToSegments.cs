@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -43,10 +44,10 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-            CountdownEvent startingGun = new CountdownEvent(1);
-            CountdownEvent startDone = new CountdownEvent(2);
-            CountdownEvent middleGun = new CountdownEvent(1);
-            CountdownEvent finalGun = new CountdownEvent(1);
+            CountDownLatch startingGun = new CountDownLatch(1);
+            CountDownLatch startDone = new CountDownLatch(2);
+            CountDownLatch middleGun = new CountDownLatch(1);
+            CountDownLatch finalGun = new CountDownLatch(1);
             ThreadJob[] threads = new ThreadJob[2];
             for (int i = 0; i < threads.Length; i++)
             {
@@ -55,8 +56,8 @@ namespace Lucene.Net.Index
                 threads[i].Start();
             }
 
-            startingGun.Signal();
-            startDone.Wait();
+            startingGun.CountDown();
+            startDone.Await();
 
             IndexReader r = DirectoryReader.Open(w, true);
             Assert.AreEqual(2, r.NumDocs);
@@ -65,10 +66,10 @@ namespace Lucene.Net.Index
             Assert.IsTrue(numSegments <= 2);
             r.Dispose();
 
-            middleGun.Signal();
+            middleGun.CountDown();
             threads[0].Join();
 
-            finalGun.Signal();
+            finalGun.CountDown();
             threads[1].Join();
 
             r = DirectoryReader.Open(w, true);
@@ -85,12 +86,12 @@ namespace Lucene.Net.Index
         {
             private readonly IndexWriter w;
             private readonly int threadID;
-            private readonly CountdownEvent startingGun;
-            private readonly CountdownEvent startDone;
-            private readonly CountdownEvent middleGun;
-            private readonly CountdownEvent finalGun;
+            private readonly CountDownLatch startingGun;
+            private readonly CountDownLatch startDone;
+            private readonly CountDownLatch middleGun;
+            private readonly CountDownLatch finalGun;
 
-            public ThreadAnonymousClassForSegmentCountOnFlushBasic(IndexWriter w, int threadID, CountdownEvent startingGun, CountdownEvent startDone, CountdownEvent middleGun, CountdownEvent finalGun)
+            public ThreadAnonymousClassForSegmentCountOnFlushBasic(IndexWriter w, int threadID, CountDownLatch startingGun, CountDownLatch startDone, CountDownLatch middleGun, CountDownLatch finalGun)
             {
                 this.w = w;
                 this.threadID = threadID;
@@ -104,20 +105,20 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    startingGun.Wait();
+                    startingGun.Await();
                     Document doc = new Document();
                     doc.Add(NewTextField("field", "here is some text", Field.Store.NO));
                     w.AddDocument(doc);
-                    startDone.Signal();
+                    startDone.CountDown();
 
-                    middleGun.Wait();
+                    middleGun.Await();
                     if (threadID == 0)
                     {
                         w.AddDocument(doc);
                     }
                     else
                     {
-                        finalGun.Wait();
+                        finalGun.Await();
                         w.AddDocument(doc);
                     }
                 }
@@ -310,14 +311,14 @@ namespace Lucene.Net.Index
             RandomIndexWriter w = new RandomIndexWriter(Random, dir);
             w.DoRandomForceMerge = false;
             ThreadJob[] threads = new ThreadJob[TestUtil.NextInt32(Random, 4, 30)];
-            CountdownEvent startingGun = new CountdownEvent(1);
+            CountDownLatch startingGun = new CountDownLatch(1);
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousClassForManyThreadsClose(w, startingGun);
                 threads[i].Start();
             }
 
-            startingGun.Signal();
+            startingGun.CountDown();
 
             Thread.Sleep(100);
             // LUCENENET: ported from upstream LUCENE-5871 (commit 2cfcdcc, first released in
@@ -343,9 +344,9 @@ namespace Lucene.Net.Index
         private sealed class ThreadAnonymousClassForManyThreadsClose : ThreadJob
         {
             private readonly RandomIndexWriter w;
-            private readonly CountdownEvent startingGun;
+            private readonly CountDownLatch startingGun;
 
-            public ThreadAnonymousClassForManyThreadsClose(RandomIndexWriter w, CountdownEvent startingGun)
+            public ThreadAnonymousClassForManyThreadsClose(RandomIndexWriter w, CountDownLatch startingGun)
             {
                 this.w = w;
                 this.startingGun = startingGun;
@@ -355,7 +356,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    startingGun.Wait();
+                    startingGun.Await();
                     Document doc = new Document();
                     doc.Add(new TextField("field", "here is some text that is a bit longer than normal trivial text", Field.Store.NO));
                     // LUCENENET: ported from upstream LUCENE-5871 (commit 2cfcdcc, first released
@@ -388,7 +389,7 @@ namespace Lucene.Net.Index
             iwc.SetCodec(codec);
             iwc.SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES);
             IndexWriter w = new IndexWriter(dir, iwc);
-            CountdownEvent startingGun = new CountdownEvent(1);
+            CountDownLatch startingGun = new CountDownLatch(1);
             ThreadJob[] threads = new ThreadJob[2];
             for (int i = 0; i < threads.Length; i++)
             {
@@ -397,7 +398,7 @@ namespace Lucene.Net.Index
                 threads[i].Start();
             }
 
-            startingGun.Signal();
+            startingGun.CountDown();
             foreach (ThreadJob t in threads)
             {
                 t.Join();
@@ -449,9 +450,9 @@ namespace Lucene.Net.Index
         {
             private readonly IndexWriter w;
             private readonly int threadID;
-            private readonly CountdownEvent startingGun;
+            private readonly CountDownLatch startingGun;
 
-            public ThreadAnonymousClassForDocsStuckInRAMForever(IndexWriter w, int threadID, CountdownEvent startingGun)
+            public ThreadAnonymousClassForDocsStuckInRAMForever(IndexWriter w, int threadID, CountDownLatch startingGun)
             {
                 this.w = w;
                 this.threadID = threadID;
@@ -462,7 +463,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    startingGun.Wait();
+                    startingGun.Await();
                     for (int j = 0; j < 1000; j++)
                     {
                         Document doc = new Document();

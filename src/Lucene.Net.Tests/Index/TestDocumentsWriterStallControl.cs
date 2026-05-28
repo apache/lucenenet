@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -153,7 +154,7 @@ namespace Lucene.Net.Index
             {
                 if (checkPoint)
                 {
-                    Assert.IsTrue(sync.updateJoin.Wait(TimeSpan.FromSeconds(10)), "timed out waiting for update threads - deadlock?");
+                    Assert.IsTrue(sync.updateJoin.Await(TimeSpan.FromSeconds(10)), "timed out waiting for update threads - deadlock?");
                     if (exceptions.Count > 0)
                     {
                         foreach (Exception throwable in exceptions)
@@ -169,11 +170,11 @@ namespace Lucene.Net.Index
                     }
 
                     checkPoint.Value = false;
-                    sync.waiter.Signal();
-                    sync.leftCheckpoint.Wait();
+                    sync.waiter.CountDown();
+                    sync.leftCheckpoint.Await();
                 }
                 Assert.IsFalse(checkPoint);
-                Assert.AreEqual(0, sync.waiter.CurrentCount);
+                Assert.AreEqual(0, sync.waiter.Count);
                 if (checkPointProbability >= Random.NextSingle())
                 {
                     sync.Reset(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
@@ -186,12 +187,12 @@ namespace Lucene.Net.Index
                 checkPoint.Value = true;
             }
 
-            Assert.IsTrue(sync.updateJoin.Wait(TimeSpan.FromSeconds(10)));
+            Assert.IsTrue(sync.updateJoin.Await(TimeSpan.FromSeconds(10)));
             AssertState(numReleasers, numStallers, numWaiters, threads, ctrl);
             checkPoint.Value = false;
             stop.Value = true;
-            sync.waiter.Signal();
-            sync.leftCheckpoint.Wait();
+            sync.waiter.CountDown();
+            sync.leftCheckpoint.Await();
 
             for (int i = 0; i < threads.Length; i++)
             {
@@ -272,7 +273,7 @@ namespace Lucene.Net.Index
                             }
                             catch (Exception e) when (e.IsInterruptedException())
                             {
-                                Console.WriteLine("[Waiter] got interrupted - wait count: " + sync.waiter.CurrentCount);
+                                Console.WriteLine("[Waiter] got interrupted - wait count: " + sync.waiter.Count);
                                 throw new Util.ThreadInterruptedException(e);
                             }
                         }
@@ -319,14 +320,14 @@ namespace Lucene.Net.Index
                         }
                         if (checkPoint)
                         {
-                            sync.updateJoin.Signal();
+                            sync.updateJoin.CountDown();
                             try
                             {
                                 Assert.IsTrue(sync.Await());
                             }
                             catch (Exception e) when (e.IsInterruptedException())
                             {
-                                Console.WriteLine("[Updater] got interrupted - wait count: " + sync.waiter.CurrentCount);
+                                Console.WriteLine("[Updater] got interrupted - wait count: " + sync.waiter.Count);
                                 throw new Util.ThreadInterruptedException(e);
                             }
                             // LUCENENET: Not sure why this catch block was added, but I suspect it was for debugging purposes. Commented it rather than removing it because
@@ -337,7 +338,7 @@ namespace Lucene.Net.Index
                             //    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             //}
 
-                            sync.leftCheckpoint.Signal();
+                            sync.leftCheckpoint.CountDown();
                         }
                         if (Random.NextBoolean())
                         {
@@ -351,11 +352,7 @@ namespace Lucene.Net.Index
                     exceptions.Add(e);
                 }
 
-                // LUCENENET specific - possible InvalidOperationException here if Signal() is called more than what is required to decrement to zero
-                if (!sync.updateJoin.IsSet)
-                {
-                    sync.updateJoin.Signal();
-                }
+                sync.updateJoin.CountDown();
             }
         }
 
@@ -446,9 +443,9 @@ namespace Lucene.Net.Index
 
         public sealed class Synchronizer
         {
-            internal volatile CountdownEvent waiter;
-            internal volatile CountdownEvent updateJoin;
-            internal volatile CountdownEvent leftCheckpoint;
+            internal volatile CountDownLatch waiter;
+            internal volatile CountDownLatch updateJoin;
+            internal volatile CountDownLatch leftCheckpoint;
 
             public Synchronizer(int numUpdater, int numThreads)
             {
@@ -457,14 +454,14 @@ namespace Lucene.Net.Index
 
             public void Reset(int numUpdaters, int numThreads)
             {
-                this.waiter = new CountdownEvent(1);
-                this.updateJoin = new CountdownEvent(numUpdaters);
-                this.leftCheckpoint = new CountdownEvent(numUpdaters);
+                this.waiter = new CountDownLatch(1);
+                this.updateJoin = new CountDownLatch(numUpdaters);
+                this.leftCheckpoint = new CountDownLatch(numUpdaters);
             }
 
             public bool Await()
             {
-                return waiter.Wait(TimeSpan.FromSeconds(10));
+                return waiter.Await(TimeSpan.FromSeconds(10));
             }
         }
     }

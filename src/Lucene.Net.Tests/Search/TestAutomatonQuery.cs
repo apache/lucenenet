@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Search
 {
@@ -230,7 +231,7 @@ namespace Lucene.Net.Search
             {
                 queries[i] = new AutomatonQuery(new Term("bogus", "bogus"), AutomatonTestUtil.RandomAutomaton(Random));
             }
-            CountdownEvent startingGun = new CountdownEvent(1);
+            CountDownLatch startingGun = new CountDownLatch(1);
             int numThreads = TestUtil.NextInt32(Random, 2, 5);
             ThreadJob[] threads = new ThreadJob[numThreads];
             for (int threadID = 0; threadID < numThreads; threadID++)
@@ -239,7 +240,7 @@ namespace Lucene.Net.Search
                 threads[threadID] = thread;
                 thread.Start();
             }
-            startingGun.Signal();
+            startingGun.CountDown();
             foreach (ThreadJob thread in threads)
             {
                 thread.Join();
@@ -249,9 +250,9 @@ namespace Lucene.Net.Search
         private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly AutomatonQuery[] queries;
-            private readonly CountdownEvent startingGun;
+            private readonly CountDownLatch startingGun;
 
-            public ThreadAnonymousClass(AutomatonQuery[] queries, CountdownEvent startingGun)
+            public ThreadAnonymousClass(AutomatonQuery[] queries, CountDownLatch startingGun)
             {
                 this.queries = queries;
                 this.startingGun = startingGun;
@@ -259,7 +260,7 @@ namespace Lucene.Net.Search
 
             public override void Run()
             {
-                startingGun.Wait();
+                startingGun.Await();
                 for (int i = 0; i < queries.Length; i++)
                 {
                     _ = queries[i].GetHashCode(); // LUCENENET: using discard variable to prevent warning about ignoring return value

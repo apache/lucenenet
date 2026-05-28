@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
+using Lucene.Net.Support.Threading;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -68,7 +69,7 @@ namespace Lucene.Net.Search
                 Console.WriteLine(numThreads + " threads");
             }
 
-            CountdownEvent startingGun = new CountdownEvent(1);
+            CountDownLatch startingGun = new CountDownLatch(1);
             IList<ThreadJob> threads = new JCG.List<ThreadJob>();
 
             int iters = AtLeast(1000);
@@ -87,7 +88,7 @@ namespace Lucene.Net.Search
                 thread.Start();
             }
 
-            startingGun.Signal();
+            startingGun.CountDown();
 
             foreach (ThreadJob thread in threads)
             {
@@ -140,7 +141,7 @@ namespace Lucene.Net.Search
             private readonly SearcherManager mgr;
             private readonly int? missing;
             private readonly LiveFieldValues<IndexSearcher, int?> rt;
-            private readonly CountdownEvent startingGun;
+            private readonly CountDownLatch startingGun;
             private readonly int iters;
             private readonly int idCount;
             private readonly double reopenChance;
@@ -150,7 +151,7 @@ namespace Lucene.Net.Search
             private readonly int threadID;
             private readonly Random threadRandom;
 
-            public ThreadAnonymousClass(IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<IndexSearcher, int?> rt, CountdownEvent startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
+            public ThreadAnonymousClass(IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<IndexSearcher, int?> rt, CountDownLatch startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
             {
                 this.w = w;
                 this.mgr = mgr;
@@ -174,7 +175,7 @@ namespace Lucene.Net.Search
                     IDictionary<string, int?> values = new JCG.Dictionary<string, int?>();
                     IList<string> allIDs = new SynchronizedList<string>();
 
-                    startingGun.Wait();
+                    startingGun.Await();
                     for (int iter = 0; iter < iters; iter++)
                     {
                         // Add/update a document

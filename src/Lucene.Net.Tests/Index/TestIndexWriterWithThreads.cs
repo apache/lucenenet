@@ -551,14 +551,14 @@ namespace Lucene.Net.Index
         public virtual void TestOpenTwoIndexWritersOnDifferentThreads()
         {
             Directory dir = NewDirectory();
-            CountdownEvent oneIWConstructed = new CountdownEvent(1);
+            CountDownLatch oneIWConstructed = new CountDownLatch(1);
 
             DelayedIndexAndCloseRunnable thread1 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed);
             DelayedIndexAndCloseRunnable thread2 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed);
 
             thread1.Start();
             thread2.Start();
-            oneIWConstructed.Wait();
+            oneIWConstructed.Await();
 
             thread1.StartIndexing();
             thread2.StartIndexing();
@@ -592,10 +592,10 @@ namespace Lucene.Net.Index
             private readonly Directory dir;
             internal bool failed = false;
             internal Exception failure = null;
-            private readonly CountdownEvent startIndexing = new CountdownEvent(1);
-            private CountdownEvent iwConstructed;
+            private readonly CountDownLatch startIndexing = new CountDownLatch(1);
+            private CountDownLatch iwConstructed;
 
-            public DelayedIndexAndCloseRunnable(Directory dir, CountdownEvent iwConstructed)
+            public DelayedIndexAndCloseRunnable(Directory dir, CountDownLatch iwConstructed)
             {
                 this.dir = dir;
                 this.iwConstructed = iwConstructed;
@@ -603,7 +603,7 @@ namespace Lucene.Net.Index
 
             public virtual void StartIndexing()
             {
-                this.startIndexing.Signal();
+                this.startIndexing.CountDown();
             }
 
             public override void Run()
@@ -614,11 +614,8 @@ namespace Lucene.Net.Index
                     Field field = NewTextField("field", "testData", Field.Store.YES);
                     doc.Add(field);
                     using IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-                    if (iwConstructed.CurrentCount > 0)
-                    {
-                        iwConstructed.Signal();
-                    }
-                    startIndexing.Wait();
+                    iwConstructed.CountDown();
+                    startIndexing.Await();
                     writer.AddDocument(doc);
                 }
                 catch (Exception e) when (e.IsThrowable())

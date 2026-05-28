@@ -18,6 +18,7 @@ using System.Threading;
 using JCG = J2N.Collections.Generic;
 // ReSharper disable once RedundantUsingDirective - keep until we have an analyzer to look out for accidental NUnit asserts
 using Assert = Lucene.Net.TestFramework.Assert;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -355,17 +356,17 @@ namespace Lucene.Net.Index
             RandomIndexWriter modifier = new RandomIndexWriter(Random, dir);
             int numThreads = AtLeast(2);
             ThreadJob[] threads = new ThreadJob[numThreads];
-            CountdownEvent latch = new CountdownEvent(1);
-            CountdownEvent doneLatch = new CountdownEvent(numThreads);
+            CountDownLatch latch = new CountDownLatch(1);
+            CountDownLatch doneLatch = new CountDownLatch(numThreads);
             for (int i = 0; i < numThreads; i++)
             {
                 int offset = i;
                 threads[i] = new ThreadAnonymousClass(modifier, latch, doneLatch, offset);
                 threads[i].Start();
             }
-            latch.Signal();
+            latch.CountDown();
             //Wait for 1 millisecond
-            while (!doneLatch.Wait(TimeSpan.FromMilliseconds(1)))
+            while (!doneLatch.Await(TimeSpan.FromMilliseconds(1)))
             {
                 modifier.DeleteAll();
                 if (Verbose)
@@ -393,11 +394,11 @@ namespace Lucene.Net.Index
         private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly RandomIndexWriter modifier;
-            private readonly CountdownEvent latch;
-            private readonly CountdownEvent doneLatch;
+            private readonly CountDownLatch latch;
+            private readonly CountDownLatch doneLatch;
             private readonly int offset;
 
-            public ThreadAnonymousClass(RandomIndexWriter modifier, CountdownEvent latch, CountdownEvent doneLatch, int offset)
+            public ThreadAnonymousClass(RandomIndexWriter modifier, CountDownLatch latch, CountDownLatch doneLatch, int offset)
             {
                 this.modifier = modifier;
                 this.latch = latch;
@@ -411,7 +412,7 @@ namespace Lucene.Net.Index
                 const int value = 100;
                 try
                 {
-                    latch.Wait();
+                    latch.Await();
                     for (int j = 0; j < 1000; j++)
                     {
                         Document doc = new Document();
@@ -435,7 +436,7 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    doneLatch.Signal();
+                    doneLatch.CountDown();
                     if (Verbose)
                     {
                         Console.WriteLine("\tThread[" + offset + "]: done indexing");

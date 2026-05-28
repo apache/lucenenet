@@ -258,7 +258,7 @@ namespace Lucene.Net.Index
                 ids[i] = Random.Next();
                 uniqueValues.Add(new Term("id", ids[i].ToString()));
             }
-            CountdownEvent latch = new CountdownEvent(1);
+            CountDownLatch latch = new CountDownLatch(1);
             AtomicInt32 index = new AtomicInt32(0);
             int numThreads = 2 + Random.Next(5);
             UpdateThread[] threads = new UpdateThread[numThreads];
@@ -267,7 +267,7 @@ namespace Lucene.Net.Index
                 threads[i] = new UpdateThread(queue, index, ids, latch);
                 threads[i].Start();
             }
-            latch.Signal();
+            latch.CountDown();
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i].Join();
@@ -301,9 +301,9 @@ namespace Lucene.Net.Index
             internal readonly int[] ids;
             internal readonly DeleteSlice slice;
             internal readonly BufferedUpdates deletes;
-            internal readonly CountdownEvent latch;
+            internal readonly CountDownLatch latch;
 
-            protected internal UpdateThread(DocumentsWriterDeleteQueue queue, AtomicInt32 index, int[] ids, CountdownEvent latch)
+            protected internal UpdateThread(DocumentsWriterDeleteQueue queue, AtomicInt32 index, int[] ids, CountDownLatch latch)
             {
                 this.queue = queue;
                 this.index = index;
@@ -317,7 +317,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    latch.Wait();
+                    latch.Await();
                 }
                 catch (Exception ie) when (ie.IsInterruptedException())
                 {

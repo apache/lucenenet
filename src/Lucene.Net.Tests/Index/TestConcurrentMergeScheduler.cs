@@ -3,6 +3,7 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -286,7 +287,7 @@ namespace Lucene.Net.Index
 
             int maxMergeCount = TestUtil.NextInt32(Random, 1, 5);
             int maxMergeThreads = TestUtil.NextInt32(Random, 1, maxMergeCount);
-            CountdownEvent enoughMergesWaiting = new CountdownEvent(maxMergeCount);
+            CountDownLatch enoughMergesWaiting = new CountDownLatch(maxMergeCount);
             AtomicInt32 runningMergeCount = new AtomicInt32(0);
             AtomicBoolean failed = new AtomicBoolean();
 
@@ -308,7 +309,7 @@ namespace Lucene.Net.Index
             IndexWriter w = new IndexWriter(dir, iwc);
             Document doc = new Document();
             doc.Add(NewField("field", "field", TextField.TYPE_NOT_STORED));
-            while (enoughMergesWaiting.CurrentCount != 0 && !failed)
+            while (enoughMergesWaiting.Count != 0 && !failed)
             {
                 for (int i = 0; i < 10; i++)
                 {
@@ -322,11 +323,11 @@ namespace Lucene.Net.Index
         private sealed class ConcurrentMergeSchedulerAnonymousClass : ConcurrentMergeScheduler
         {
             private readonly int maxMergeCount;
-            private readonly CountdownEvent enoughMergesWaiting;
+            private readonly CountDownLatch enoughMergesWaiting;
             private readonly AtomicInt32 runningMergeCount;
             private readonly AtomicBoolean failed;
 
-            public ConcurrentMergeSchedulerAnonymousClass(int maxMergeCount, CountdownEvent enoughMergesWaiting, AtomicInt32 runningMergeCount, AtomicBoolean failed)
+            public ConcurrentMergeSchedulerAnonymousClass(int maxMergeCount, CountDownLatch enoughMergesWaiting, AtomicInt32 runningMergeCount, AtomicBoolean failed)
             {
                 this.maxMergeCount = maxMergeCount;
                 this.enoughMergesWaiting = enoughMergesWaiting;
@@ -344,14 +345,14 @@ namespace Lucene.Net.Index
                     try
                     {
                         Assert.IsTrue(count <= maxMergeCount, "count=" + count + " vs maxMergeCount=" + maxMergeCount);
-                        enoughMergesWaiting.Signal();
+                        enoughMergesWaiting.CountDown();
 
                         // Stall this merge until we see exactly
                         // maxMergeCount merges waiting
                         while (true)
                         {
                             // wait for 10 milliseconds
-                            if (enoughMergesWaiting.Wait(new TimeSpan(0, 0, 0, 0, 10)) || failed)
+                            if (enoughMergesWaiting.Await(new TimeSpan(0, 0, 0, 0, 10)) || failed)
                             {
                                 break;
                             }

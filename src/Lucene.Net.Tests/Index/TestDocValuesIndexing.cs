@@ -7,6 +7,7 @@ using NUnit.Framework;
 using System;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -513,7 +514,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
-            CountdownEvent startingGun = new CountdownEvent(1);
+            CountDownLatch startingGun = new CountDownLatch(1);
             AtomicBoolean hitExc = new AtomicBoolean();
             ThreadJob[] threads = new ThreadJob[3];
             for (int i = 0; i < 3; i++)
@@ -538,7 +539,7 @@ namespace Lucene.Net.Index
                 threads[i].Start();
             }
 
-            startingGun.Signal();
+            startingGun.CountDown();
 
             foreach (ThreadJob t in threads)
             {
@@ -552,11 +553,11 @@ namespace Lucene.Net.Index
         private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly IndexWriter w;
-            private readonly CountdownEvent startingGun;
+            private readonly CountDownLatch startingGun;
             private readonly AtomicBoolean hitExc;
             private readonly Document doc;
 
-            public ThreadAnonymousClass(IndexWriter w, CountdownEvent startingGun, AtomicBoolean hitExc, Document doc)
+            public ThreadAnonymousClass(IndexWriter w, CountDownLatch startingGun, AtomicBoolean hitExc, Document doc)
             {
                 this.w = w;
                 this.startingGun = startingGun;
@@ -568,7 +569,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    startingGun.Wait();
+                    startingGun.Await();
                     w.AddDocument(doc);
                 }
                 catch (Exception iae) when (iae.IsIllegalArgumentException())

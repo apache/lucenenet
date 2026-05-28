@@ -20,6 +20,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
+using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -3020,8 +3021,8 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
 
-            CountdownEvent mergeStarted = new CountdownEvent(1);
-            CountdownEvent closeStarted = new CountdownEvent(1);
+            CountDownLatch mergeStarted = new CountDownLatch(1);
+            CountDownLatch closeStarted = new CountDownLatch(1);
 
             IndexWriterConfig iwc = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             LogDocMergePolicy mp = new LogDocMergePolicy();
@@ -3041,9 +3042,9 @@ namespace Lucene.Net.Index
 
         private sealed class InfoStreamAnonymousClassForRollbackWhileMergeIsRunning : InfoStream
         {
-            private readonly CountdownEvent closeStarted;
+            private readonly CountDownLatch closeStarted;
 
-            public InfoStreamAnonymousClassForRollbackWhileMergeIsRunning(CountdownEvent closeStarted)
+            public InfoStreamAnonymousClassForRollbackWhileMergeIsRunning(CountDownLatch closeStarted)
             {
                 this.closeStarted = closeStarted;
             }
@@ -3057,7 +3058,7 @@ namespace Lucene.Net.Index
             {
                 if (message.Equals("rollback", StringComparison.Ordinal))
                 {
-                    closeStarted.Signal();
+                    closeStarted.CountDown();
                 }
             }
 
@@ -3068,10 +3069,10 @@ namespace Lucene.Net.Index
 
         private sealed class ConcurrentMergeSchedulerAnonymousClassForRollbackWhileMergeIsRunning : ConcurrentMergeScheduler
         {
-            private readonly CountdownEvent mergeStarted;
-            private readonly CountdownEvent closeStarted;
+            private readonly CountDownLatch mergeStarted;
+            private readonly CountDownLatch closeStarted;
 
-            public ConcurrentMergeSchedulerAnonymousClassForRollbackWhileMergeIsRunning(CountdownEvent mergeStarted, CountdownEvent closeStarted)
+            public ConcurrentMergeSchedulerAnonymousClassForRollbackWhileMergeIsRunning(CountDownLatch mergeStarted, CountDownLatch closeStarted)
             {
                 this.mergeStarted = mergeStarted;
                 this.closeStarted = closeStarted;
@@ -3079,10 +3080,10 @@ namespace Lucene.Net.Index
 
             protected internal override void DoMerge(MergePolicy.OneMerge merge)
             {
-                mergeStarted.Signal();
+                mergeStarted.CountDown();
                 try
                 {
-                    closeStarted.Wait();
+                    closeStarted.Await();
                 }
                 catch (Exception ie) when (ie.IsInterruptedException())
                 {
@@ -3147,8 +3148,8 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestCloseDuringCommit()
         {
-            CountdownEvent startCommit = new CountdownEvent(1);
-            CountdownEvent finishCommit = new CountdownEvent(1);
+            CountDownLatch startCommit = new CountDownLatch(1);
+            CountDownLatch finishCommit = new CountDownLatch(1);
 
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, null);
@@ -3157,7 +3158,7 @@ namespace Lucene.Net.Index
             IndexWriter iw = new IndexWriter(dir, iwc);
             Document doc = new Document();
             new ThreadAnonymousClassForCloseDuringCommit(iw, finishCommit).Start();
-            startCommit.Wait();
+            startCommit.Await();
             try
             {
                 iw.Dispose();
@@ -3166,16 +3167,16 @@ namespace Lucene.Net.Index
             {
                 // OK, but not required (depends on thread scheduling)
             }
-            finishCommit.Wait();
+            finishCommit.Await();
             iw.Dispose();
             dir.Dispose();
         }
 
         private sealed class InfoStreamAnonymousClassForCloseDuringCommit : InfoStream
         {
-            private readonly CountdownEvent startCommit;
+            private readonly CountDownLatch startCommit;
 
-            public InfoStreamAnonymousClassForCloseDuringCommit(CountdownEvent startCommit)
+            public InfoStreamAnonymousClassForCloseDuringCommit(CountDownLatch startCommit)
             {
                 this.startCommit = startCommit;
             }
@@ -3184,7 +3185,7 @@ namespace Lucene.Net.Index
             {
                 if (message.Equals("finishStartCommit", StringComparison.Ordinal))
                 {
-                    startCommit.Signal();
+                    startCommit.CountDown();
                     try
                     {
                         Thread.Sleep(10);
@@ -3209,9 +3210,9 @@ namespace Lucene.Net.Index
         private sealed class ThreadAnonymousClassForCloseDuringCommit : ThreadJob
         {
             private readonly IndexWriter iw;
-            private readonly CountdownEvent finishCommit;
+            private readonly CountDownLatch finishCommit;
 
-            public ThreadAnonymousClassForCloseDuringCommit(IndexWriter iw, CountdownEvent finishCommit)
+            public ThreadAnonymousClassForCloseDuringCommit(IndexWriter iw, CountDownLatch finishCommit)
             {
                 this.iw = iw;
                 this.finishCommit = finishCommit;
@@ -3222,7 +3223,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     iw.Commit();
-                    finishCommit.Signal();
+                    finishCommit.CountDown();
                 }
                 catch (IOException ioe)
                 {

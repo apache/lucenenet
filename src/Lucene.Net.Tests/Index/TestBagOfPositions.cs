@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
             // else just positions
 
             ThreadJob[] threads = new ThreadJob[threadCount];
-            CountdownEvent startingGun = new CountdownEvent(1);
+            CountDownLatch startingGun = new CountDownLatch(1);
 
             for (int threadID = 0; threadID < threadCount; threadID++)
             {
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
                 threads[threadID] = new ThreadAnonymousClass(maxTermsPerDoc, postings, iw, startingGun, threadRandom, document, field);
                 threads[threadID].Start();
             }
-            startingGun.Signal();
+            startingGun.CountDown();
             foreach (ThreadJob t in threads)
             {
                 t.Join();
@@ -160,12 +160,12 @@ namespace Lucene.Net.Index
             private readonly int maxTermsPerDoc;
             private readonly ConcurrentQueue<string> postings;
             private readonly RandomIndexWriter iw;
-            private readonly CountdownEvent startingGun;
+            private readonly CountDownLatch startingGun;
             private readonly Random threadRandom;
             private readonly Document document;
             private readonly Field field;
 
-            public ThreadAnonymousClass(int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountdownEvent startingGun, Random threadRandom, Document document, Field field)
+            public ThreadAnonymousClass(int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountDownLatch startingGun, Random threadRandom, Document document, Field field)
             {
                 this.maxTermsPerDoc = maxTermsPerDoc;
                 this.postings = postings;
@@ -180,7 +180,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    startingGun.Wait();
+                    startingGun.Await();
                     while (!postings.IsEmpty)
                     {
                         StringBuilder text = new StringBuilder();
