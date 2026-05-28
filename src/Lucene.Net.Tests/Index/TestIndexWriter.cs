@@ -3027,9 +3027,9 @@ namespace Lucene.Net.Index
             LogDocMergePolicy mp = new LogDocMergePolicy();
             mp.MergeFactor = 2;
             iwc.SetMergePolicy(mp);
-            iwc.SetInfoStream(new RollbackWhileMergeInfoStream(closeStarted));
+            iwc.SetInfoStream(new InfoStreamAnonymousClassForRollbackWhileMergeIsRunning(closeStarted));
 
-            iwc.SetMergeScheduler(new RollbackWhileMergeScheduler(mergeStarted, closeStarted));
+            iwc.SetMergeScheduler(new ConcurrentMergeSchedulerAnonymousClassForRollbackWhileMergeIsRunning(mergeStarted, closeStarted));
             IndexWriter w = new IndexWriter(dir, iwc);
             w.AddDocument(new Document());
             w.Commit();
@@ -3039,11 +3039,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private sealed class RollbackWhileMergeInfoStream : InfoStream
+        private sealed class InfoStreamAnonymousClassForRollbackWhileMergeIsRunning : InfoStream
         {
             private readonly CountdownEvent closeStarted;
 
-            public RollbackWhileMergeInfoStream(CountdownEvent closeStarted)
+            public InfoStreamAnonymousClassForRollbackWhileMergeIsRunning(CountdownEvent closeStarted)
             {
                 this.closeStarted = closeStarted;
             }
@@ -3066,12 +3066,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        private sealed class RollbackWhileMergeScheduler : ConcurrentMergeScheduler
+        private sealed class ConcurrentMergeSchedulerAnonymousClassForRollbackWhileMergeIsRunning : ConcurrentMergeScheduler
         {
             private readonly CountdownEvent mergeStarted;
             private readonly CountdownEvent closeStarted;
 
-            public RollbackWhileMergeScheduler(CountdownEvent mergeStarted, CountdownEvent closeStarted)
+            public ConcurrentMergeSchedulerAnonymousClassForRollbackWhileMergeIsRunning(CountdownEvent mergeStarted, CountdownEvent closeStarted)
             {
                 this.mergeStarted = mergeStarted;
                 this.closeStarted = closeStarted;
@@ -3153,7 +3153,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, null);
             // infostream that "takes a long time" to commit
-            iwc.SetInfoStream(new SlowCommittingInfoStream(startCommit));
+            iwc.SetInfoStream(new InfoStreamAnonymousClassForCloseDuringCommit(startCommit));
             IndexWriter iw = new IndexWriter(dir, iwc);
             Document doc = new Document();
             new ThreadAnonymousClassForCloseDuringCommit(iw, finishCommit).Start();
@@ -3171,11 +3171,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private sealed class SlowCommittingInfoStream : InfoStream
+        private sealed class InfoStreamAnonymousClassForCloseDuringCommit : InfoStream
         {
             private readonly CountdownEvent startCommit;
 
-            public SlowCommittingInfoStream(CountdownEvent startCommit)
+            public InfoStreamAnonymousClassForCloseDuringCommit(CountdownEvent startCommit)
             {
                 this.startCommit = startCommit;
             }
