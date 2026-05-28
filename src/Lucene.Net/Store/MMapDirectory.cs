@@ -192,6 +192,7 @@ namespace Lucene.Net.Store
         public override IndexInput OpenInput(string name, IOContext context)
         {
             EnsureOpen();
+            EnsureCanRead(name); // LUCENENET-specific: backported call site from Lucene 6.0.0
             var file = Path.Combine(Directory.FullName, name); // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
             var fc = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file + "\")", fc);
@@ -199,6 +200,7 @@ namespace Lucene.Net.Store
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
+            // LUCENENET NOTE: name is validated in OpenInput call below
             var full = (MMapIndexInput)OpenInput(name, context);
             return new IndexInputSlicerAnonymousClass(this, full);
         }
