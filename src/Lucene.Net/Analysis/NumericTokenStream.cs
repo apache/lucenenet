@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Analysis
 {
@@ -330,6 +331,9 @@ namespace Lucene.Net.Analysis
             return this;
         }
 
+        // LUCENENET specific: matches the upstream Java implementation, which does not call super.reset().
+        [SuppressMessage("Design", "Lucene1001:TokenStream override of End()/Reset()/Close() must call the corresponding base method.",
+            Justification = "Matches upstream Lucene Java behavior; TokenStream.Reset() is a no-op so the omission is equivalent.")]
         public override void Reset()
         {
             if (valSize == 0)

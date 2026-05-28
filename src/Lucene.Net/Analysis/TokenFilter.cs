@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Lucene.Net.Analysis
@@ -58,6 +59,8 @@ namespace Lucene.Net.Analysis
         /// be sure to call <c>base.End()</c> first when overriding this method.
         /// </remarks>
         /// <exception cref="IOException"> If an I/O error occurs </exception>
+        [SuppressMessage("Design", "Lucene1001:TokenStream override of End()/Reset()/Close() must call the corresponding base method.",
+            Justification = "TokenFilter intentionally chains the call to the wrapped input rather than calling base.End(); this matches the Lucene Java implementation. Subclasses that override TokenFilter.End() are still expected to call base.End() (i.e. this method).")]
         public override void End()
         {
             m_input.End();
@@ -85,6 +88,8 @@ namespace Lucene.Net.Analysis
         /// The default implementation chains the call to the input <see cref="TokenStream"/>, so
         /// be sure to call <c>base.Reset()</c> when overriding this method.
         /// </remarks>
+        [SuppressMessage("Design", "Lucene1001:TokenStream override of End()/Reset()/Close() must call the corresponding base method.",
+            Justification = "TokenFilter intentionally chains the call to the wrapped input rather than calling base.Reset(); this matches the Lucene Java implementation. Subclasses that override TokenFilter.Reset() are still expected to call base.Reset() (i.e. this method).")]
         public override void Reset()
         {
             m_input.Reset();

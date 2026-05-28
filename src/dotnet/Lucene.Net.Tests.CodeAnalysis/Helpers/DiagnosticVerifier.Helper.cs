@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 
 namespace TestHelper
@@ -33,6 +34,40 @@ namespace TestHelper
     public abstract partial class DiagnosticVerifier
     {
         private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
+        // LUCENENET: typeof(object) lives in System.Private.CoreLib and BCL types are forwarded through
+        // System.Runtime; analyzer tests that reference base methods returning void (e.g. base.Reset())
+        // need the runtime reference to resolve System.Void. Try the directory next to corlib first;
+        // fall back to scanning TRUSTED_PLATFORM_ASSEMBLIES for hosts where the file isn't co-located.
+        private static readonly MetadataReference SystemRuntimeReference = ResolveSystemRuntimeReference();
+
+        private static MetadataReference ResolveSystemRuntimeReference()
+        {
+            var corlibDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
+            if (!string.IsNullOrEmpty(corlibDir))
+            {
+                var candidate = Path.Combine(corlibDir, "System.Runtime.dll");
+                if (File.Exists(candidate))
+                {
+                    return MetadataReference.CreateFromFile(candidate);
+                }
+            }
+
+            if (AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") is string tpa)
+            {
+                foreach (var path in tpa.Split(Path.PathSeparator))
+                {
+                    if (Path.GetFileName(path).Equals("System.Runtime.dll", StringComparison.OrdinalIgnoreCase) &&
+                        File.Exists(path))
+                    {
+                        return MetadataReference.CreateFromFile(path);
+                    }
+                }
+            }
+
+            throw new FileNotFoundException(
+                "Unable to locate System.Runtime.dll. Looked next to corlib and in TRUSTED_PLATFORM_ASSEMBLIES.");
+        }
+
         private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
         private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
         private static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
@@ -168,6 +203,7 @@ namespace TestHelper
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
                 .AddMetadataReference(projectId, CorlibReference)
+                .AddMetadataReference(projectId, SystemRuntimeReference)
                 .AddMetadataReference(projectId, SystemCoreReference)
                 .AddMetadataReference(projectId, CSharpSymbolsReference)
                 .AddMetadataReference(projectId, CodeAnalysisReference)

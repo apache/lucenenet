@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -949,11 +950,17 @@ namespace Lucene.Net.Documents
                 offsetAttribute.SetOffset(finalOffset, finalOffset);
             }
 
+            // LUCENENET specific: matches the upstream Java implementation, which does not call super.reset().
+            [SuppressMessage("Design", "Lucene1001:TokenStream override of End()/Reset()/Close() must call the corresponding base method.",
+                Justification = "Matches upstream Lucene Java behavior; TokenStream.Reset() is a no-op so the omission is equivalent.")]
             public override void Reset()
             {
                 used = false;
             }
 
+            // LUCENENET specific: matches the upstream Java implementation, which does not call super.close().
+            [SuppressMessage("Design", "Lucene1001:TokenStream override of End()/Reset()/Close() must call the corresponding base method.",
+                Justification = "Matches upstream Lucene Java behavior; TokenStream.Close() is a no-op so the omission is equivalent.")]
             public override void Close()
             {
                 value = null;

@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.Phonetic.Language;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Analysis.Phonetic
 {
@@ -104,6 +105,10 @@ namespace Lucene.Net.Analysis.Phonetic
             return true;
         }
 
+        // LUCENENET specific: matches the upstream Java implementation, which calls input.reset()
+        // directly rather than super.reset(). Behavior is identical.
+        [SuppressMessage("Design", "Lucene1001:TokenStream override of End()/Reset()/Close() must call the corresponding base method.",
+            Justification = "Matches upstream Lucene Java behavior; TokenFilter.Reset() chains to m_input.Reset() so this is equivalent.")]
         public override void Reset()
         {
             m_input.Reset();

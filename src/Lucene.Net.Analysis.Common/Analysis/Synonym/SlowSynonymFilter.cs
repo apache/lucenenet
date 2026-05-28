@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Synonym
@@ -309,6 +310,11 @@ namespace Lucene.Net.Analysis.Synonym
             }
         }
 
+        // LUCENENET specific: matches the upstream Java implementation, which calls input.reset()
+        // directly rather than super.reset(). Behavior is identical (TokenFilter.Reset() just chains
+        // to m_input.Reset()), but we keep the call shape to preserve Java parity.
+        [SuppressMessage("Design", "Lucene1001:TokenStream override of End()/Reset()/Close() must call the corresponding base method.",
+            Justification = "Matches upstream Lucene Java behavior; TokenFilter.Reset() chains to m_input.Reset() so this is equivalent.")]
         public override void Reset()
         {
             m_input.Reset();

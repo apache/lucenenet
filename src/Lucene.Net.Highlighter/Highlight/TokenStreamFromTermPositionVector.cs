@@ -4,6 +4,7 @@ using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Highlight
@@ -126,6 +127,9 @@ namespace Lucene.Net.Search.Highlight
             return false;
         }
 
+        // LUCENENET specific: matches the upstream Java implementation, which does not call super.reset().
+        [SuppressMessage("Design", "Lucene1001:TokenStream override of End()/Reset()/Close() must call the corresponding base method.",
+            Justification = "Matches upstream Lucene Java behavior; TokenStream.Reset() is a no-op so the omission is equivalent.")]
         public override void Reset()
         {
             this.tokensAtCurrentPosition = this.positionedTokens.GetEnumerator();
