@@ -1,23 +1,5 @@
 // Some code adapted from Apache Harmony: https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/concurrent/src/test/java/CountDownLatchTest.java
 
-#region Copyright 2010 by Apache Harmony, Licensed under the Apache License, Version 2.0
-/*  Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  See the NOTICE file distributed with
- *  this work for additional information regarding copyright ownership.
- *  The ASF licenses this file to You under the Apache License, Version 2.0
- *  (the "License"); you may not use this file except in compliance with
- *  the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-#endregion
-
 using J2N.Threading;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
@@ -138,9 +120,16 @@ namespace Lucene.Net.Support.Threading
 
             public override void Run()
             {
-                outerInstance.threadAssertTrue(l.Count > 0);
-                l.Await();
-                outerInstance.threadAssertTrue(l.Count == 0);
+                try
+                {
+                    outerInstance.threadAssertTrue(l.Count > 0);
+                    l.Await();
+                    outerInstance.threadAssertTrue(l.Count == 0);
+                }
+                catch (Exception e) when (e.IsInterruptedException())
+                {
+                    outerInstance.threadUnexpectedException();
+                }
             }
         }
 
@@ -183,8 +172,15 @@ namespace Lucene.Net.Support.Threading
 
             public override void Run()
             {
-                outerInstance.threadAssertTrue(l.Count > 0);
-                outerInstance.threadAssertTrue(l.Await(TimeSpan.FromMilliseconds(SMALL_DELAY_MS)));
+                try
+                {
+                    outerInstance.threadAssertTrue(l.Count > 0);
+                    outerInstance.threadAssertTrue(l.Await(TimeSpan.FromMilliseconds(SMALL_DELAY_MS)));
+                }
+                catch (Exception e) when (e.IsInterruptedException())
+                {
+                    outerInstance.threadUnexpectedException();
+                }
             }
         }
 
@@ -192,7 +188,6 @@ namespace Lucene.Net.Support.Threading
          * await throws IE if interrupted before counted down
          */
         [Test]
-        [Ignore("LUCENENET: CountDownLatch.Await() does not honor Thread.Interrupt() because Lucene.NET does not support Java-style thread interrupts. See the LUCENENET note on CountDownLatch.Await() for details.")]
         public void TestAwait_InterruptedException()
         {
             CountDownLatch l = new CountDownLatch(1);
@@ -240,7 +235,6 @@ namespace Lucene.Net.Support.Threading
          * timed await throws IE if interrupted before counted down
          */
         [Test]
-        [Ignore("LUCENENET: CountDownLatch.Await(TimeSpan) does not honor Thread.Interrupt() because Lucene.NET does not support Java-style thread interrupts. See the LUCENENET note on CountDownLatch.Await() for details.")]
         public void TestTimedAwait_InterruptedException()
         {
             CountDownLatch l = new CountDownLatch(1);
@@ -318,9 +312,16 @@ namespace Lucene.Net.Support.Threading
 
             public override void Run()
             {
-                outerInstance.threadAssertTrue(l.Count > 0);
-                outerInstance.threadAssertFalse(l.Await(TimeSpan.FromMilliseconds(SHORT_DELAY_MS)));
-                outerInstance.threadAssertTrue(l.Count > 0);
+                try
+                {
+                    outerInstance.threadAssertTrue(l.Count > 0);
+                    outerInstance.threadAssertFalse(l.Await(TimeSpan.FromMilliseconds(SHORT_DELAY_MS)));
+                    outerInstance.threadAssertTrue(l.Count > 0);
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    outerInstance.threadUnexpectedException();
+                }
             }
         }
 

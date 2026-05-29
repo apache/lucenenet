@@ -8,6 +8,7 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
@@ -18,7 +19,6 @@ using static Lucene.Net.Index.TermsEnum;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 using Test = NUnit.Framework.TestAttribute;
-using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -3244,7 +3244,7 @@ namespace Lucene.Net.Index
             using DirectoryReader ir = DirectoryReader.Open(dir);
             int numThreads = TestUtil.NextInt32(Random, 2, 7);
             ThreadJob[] threads = new ThreadJob[numThreads];
-            CountDownLatch startingGun = new CountDownLatch(1);
+            using CountDownLatch startingGun = new CountDownLatch(1);
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousClass(ir, startingGun);
@@ -3380,7 +3380,7 @@ namespace Lucene.Net.Index
             using DirectoryReader ir = DirectoryReader.Open(dir);
             int numThreads = TestUtil.NextInt32(Random, 2, 7);
             ThreadJob[] threads = new ThreadJob[numThreads];
-            CountDownLatch startingGun = new CountDownLatch(1);
+            using CountDownLatch startingGun = new CountDownLatch(1);
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousClass2(ir, startingGun);

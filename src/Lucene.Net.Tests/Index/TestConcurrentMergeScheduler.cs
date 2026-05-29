@@ -261,7 +261,9 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 writer.Commit();
 
+#pragma warning disable 612, 618
                 writer.Dispose(false);
+#pragma warning restore 612, 618
 
                 IndexReader reader = DirectoryReader.Open(directory);
                 Assert.AreEqual((1 + iter) * 182, reader.NumDocs);
@@ -316,7 +318,9 @@ namespace Lucene.Net.Index
                     w.AddDocument(doc);
                 }
             }
+#pragma warning disable 612, 618
             w.Dispose(false);
+#pragma warning restore 612, 618
             dir.Dispose();
         }
 

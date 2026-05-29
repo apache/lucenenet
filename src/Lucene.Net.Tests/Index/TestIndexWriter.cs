@@ -10,6 +10,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -20,7 +21,6 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
-using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -3225,7 +3225,7 @@ namespace Lucene.Net.Index
                     iw.Commit();
                     finishCommit.CountDown();
                 }
-                catch (IOException ioe)
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
                     throw RuntimeException.Create(ioe);
                 }
@@ -3254,7 +3254,7 @@ namespace Lucene.Net.Index
                 writer.Dispose();
                 Assert.Fail("expected IOException from Dispose");
             }
-            catch (IOException expected) when (expected.Message != null && expected.Message.Contains("on purpose"))
+            catch (Exception expected) when (expected.IsIOException() && expected.Message != null && expected.Message.Contains("on purpose"))
             {
                 // expected
             }

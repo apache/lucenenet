@@ -3,6 +3,7 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -10,7 +11,6 @@ using System.Collections.Generic;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
-using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {

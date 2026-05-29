@@ -5,6 +5,7 @@ using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
@@ -17,7 +18,6 @@ using Assert = Lucene.Net.TestFramework.Assert;
 using Attribute = Lucene.Net.Util.Attribute;
 using Directory = Lucene.Net.Store.Directory;
 using JCG = J2N.Collections.Generic;
-using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Analysis
 {
@@ -711,7 +711,7 @@ namespace Lucene.Net.Analysis
                 // now test with multiple threads: note we do the EXACT same thing we did before in each thread,
                 // so this should only really fail from another thread if its an actual thread problem
                 int numThreads = TestUtil.NextInt32(random, 2, 4);
-                var startingGun = new CountDownLatch(1);
+                using var startingGun = new CountDownLatch(1);
                 var threads = new AnalysisThread[numThreads];
                 for (int i = 0; i < threads.Length; i++)
                 {

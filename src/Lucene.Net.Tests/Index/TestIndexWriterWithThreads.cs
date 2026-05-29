@@ -197,7 +197,9 @@ namespace Lucene.Net.Index
                 // Make sure once disk space is avail again, we can
                 // cleanly close:
                 dir.MaxSizeInBytes = 0;
+#pragma warning disable 612, 618
                 writer.Dispose(false);
+#pragma warning restore 612, 618
                 dir.Dispose();
             }
         }
@@ -267,7 +269,9 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("\nTEST: now close");
                 }
+#pragma warning disable 612, 618
                 writer.Dispose(false);
+#pragma warning restore 612, 618
 
                 // Make sure threads that are adding docs are not hung:
                 for (int i = 0; i < NUM_THREADS; i++)
@@ -343,13 +347,17 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
+#pragma warning disable 612, 618
                     writer.Dispose(false);
+#pragma warning restore 612, 618
                     success = true;
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
                     failure.ClearDoFail();
+#pragma warning disable 612, 618
                     writer.Dispose(false);
+#pragma warning restore 612, 618
                 }
                 if (Verbose)
                 {
@@ -408,7 +416,9 @@ namespace Lucene.Net.Index
             }
             failure.ClearDoFail();
             writer.AddDocument(doc);
+#pragma warning disable 612, 618
             writer.Dispose(false);
+#pragma warning restore 612, 618
             dir.Dispose();
         }
 

@@ -1,23 +1,4 @@
 // Some code adapted from Apache Harmony: https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/concurrent/src/main/java/java/util/concurrent/CountDownLatch.java
-
-#region Copyright 2010 by Apache Harmony, Licensed under the Apache License, Version 2.0
-/*  Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  See the NOTICE file distributed with
- *  this work for additional information regarding copyright ownership.
- *  The ASF licenses this file to You under the Apache License, Version 2.0
- *  (the "License"); you may not use this file except in compliance with
- *  the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-#endregion
-
 // Other aspects adapted from .NET's CountdownEvent: https://github.com/dotnet/runtime/blob/38496302e54e1b6fb11a998b297492f3fdfbfd0c/src/libraries/System.Threading/src/System/Threading/CountdownEvent.cs
 
 using System;
@@ -73,7 +54,14 @@ namespace Lucene.Net.Support.Threading
     /// can be called any number of times after the count reaches zero without
     /// throwing. This matches Java's <c>CountDownLatch.countDown()</c> semantics.
     /// </summary>
-    internal class CountDownLatch
+    /// <remarks>
+    /// LUCENENET specific: Unlike Java's <c>java.util.concurrent.CountDownLatch</c>,
+    /// which is not <c>AutoCloseable</c>, this type implements <see cref="IDisposable"/>
+    /// because it holds an unmanaged synchronization handle that may be lazily allocated
+    /// the first time a waiter blocks. Callers should dispose instances when they are no
+    /// longer needed, typically via a <c>using</c> statement.
+    /// </remarks>
+    internal class CountDownLatch : IDisposable
     {
         // LUCENENET: the current count and ManualResetEventSlim for signaling, instead of Java's Sync class
         private volatile int _currentCount;
@@ -98,33 +86,9 @@ namespace Lucene.Net.Support.Threading
 
         /// <summary>
         /// Causes the current thread to wait until the latch has counted down to
-        /// zero.
+        /// zero, unless the thread is interrupted.
         /// <para/>
         /// If the current count is zero then this method returns immediately.
-        /// <para/>
-        /// If the current count is greater than zero then the current
-        /// thread becomes disabled for thread scheduling purposes and lies
-        /// dormant until the count reaches zero due to invocations of the
-        /// <see cref="CountDown()"/> method.
-        /// <para/>
-        /// LUCENENET specific: Unlike Java's <c>await()</c>, which throws
-        /// <c>InterruptedException</c> if the thread is interrupted while
-        /// waiting, this overload blocks unconditionally until the count
-        /// reaches zero. Callers that need cancellation/interrupt support
-        /// should use the timeout overload or a higher-level coordination
-        /// primitive.
-        /// </summary>
-        public void Await()
-        {
-            _event.Wait(Timeout.Infinite);
-        }
-
-        /// <summary>
-        /// Causes the current thread to wait until the latch has counted down to
-        /// zero, or the specified waiting time elapses.
-        /// <para/>
-        /// If the current count is zero then this method returns immediately
-        /// with the value <c>true</c>.
         /// <para/>
         /// If the current count is greater than zero then the current
         /// thread becomes disabled for thread scheduling purposes and lies
@@ -132,11 +96,44 @@ namespace Lucene.Net.Support.Threading
         /// <list type="bullet">
         ///     <item><description>The count reaches zero due to invocations of the
         ///         <see cref="CountDown()"/> method; or</description></item>
+        ///     <item><description>Some other thread interrupts the current thread.</description></item>
+        /// </list>
+        /// <para/>
+        /// If the current thread is interrupted while waiting, a
+        /// <see cref="ThreadInterruptedException"/> is thrown by the underlying
+        /// <see cref="ManualResetEventSlim.Wait()"/>.
+        /// </summary>
+        /// <exception cref="ThreadInterruptedException">if the current thread is
+        /// interrupted while waiting.</exception>
+        public void Await()
+        {
+            _event.Wait(Timeout.Infinite);
+        }
+
+        /// <summary>
+        /// Causes the current thread to wait until the latch has counted down to
+        /// zero, unless the thread is interrupted, or the specified waiting time
+        /// elapses.
+        /// <para/>
+        /// If the current count is zero then this method returns immediately
+        /// with the value <c>true</c>.
+        /// <para/>
+        /// If the current count is greater than zero then the current
+        /// thread becomes disabled for thread scheduling purposes and lies
+        /// dormant until one of three things happen:
+        /// <list type="bullet">
+        ///     <item><description>The count reaches zero due to invocations of the
+        ///         <see cref="CountDown()"/> method; or</description></item>
+        ///     <item><description>Some other thread interrupts the current thread; or</description></item>
         ///     <item><description>The specified waiting time elapses.</description></item>
         /// </list>
         /// <para/>
         /// If the count reaches zero then the method returns with the
         /// value <c>true</c>.
+        /// <para/>
+        /// If the current thread is interrupted while waiting, a
+        /// <see cref="ThreadInterruptedException"/> is thrown by the underlying
+        /// <see cref="ManualResetEventSlim.Wait(TimeSpan)"/>.
         /// <para/>
         /// If the specified waiting time elapses then the value <c>false</c>
         /// is returned. If the time is less than or equal to zero, the method
@@ -145,6 +142,8 @@ namespace Lucene.Net.Support.Threading
         /// <param name="timeout">The maximum time to wait.</param>
         /// <returns><c>true</c> if the count reached zero, or <c>false</c>
         /// if the waiting time elapsed before the count reached zero.</returns>
+        /// <exception cref="ThreadInterruptedException">if the current thread is
+        /// interrupted while waiting.</exception>
         public bool Await(TimeSpan timeout)
         {
             return _event.Wait(timeout);
@@ -201,5 +200,20 @@ namespace Lucene.Net.Support.Threading
         /// </summary>
         /// <returns>a string identifying this latch, as well as its state</returns>
         public override string ToString() => $"{base.ToString()}[Count = {_currentCount}]";
+
+        /// <summary>
+        /// Releases the unmanaged synchronization resources held by this latch.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific: Java's <c>CountDownLatch</c> is not <c>AutoCloseable</c>
+        /// and does not need to be closed. This .NET port may hold an unmanaged
+        /// synchronization handle that is lazily allocated the first time a waiter
+        /// blocks, so it must be disposed when no longer needed.
+        /// </remarks>
+        public void Dispose()
+        {
+            _event.Dispose();
+            GC.SuppressFinalize(this);
+        }
     }
 }

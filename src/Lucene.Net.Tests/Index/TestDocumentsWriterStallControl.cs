@@ -1,12 +1,12 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {

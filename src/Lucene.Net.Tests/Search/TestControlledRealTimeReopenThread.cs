@@ -1,6 +1,7 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -15,9 +16,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Lucene.Net.Attributes;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {

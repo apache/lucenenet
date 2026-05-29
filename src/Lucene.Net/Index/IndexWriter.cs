@@ -1041,28 +1041,74 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
+        /// Gracefully closes (commits, waits for merges), but calls rollback
+        /// if there's an exc so the IndexWriter is always closed.
+        /// </summary>
+        // LUCENENET: ported from upstream LUCENE-5871 (commit 2cfcdcc, first released in
+        // 4.10.0) to fix #1284. Previously the close path's straight-line cleanup leaked
+        // the reader pool, deleter, and write.lock when CommitInternal threw an I/O exception.
+        private void Shutdown(bool waitForMerges)
+        {
+            if (pendingCommit != null)
+            {
+                throw IllegalStateException.Create("cannot close: prepareCommit was already called with no corresponding call to commit");
+            }
+            // Ensure that only one thread actually gets to do the
+            // closing
+            if (ShouldClose())
+            {
+                bool success = false;
+                try
+                {
+                    if (infoStream.IsEnabled("IW"))
+                    {
+                        infoStream.Message("IW", "now flush at close");
+                    }
+                    Flush(true, true);
+                    FinishMerges(waitForMerges);
+                    CommitInternal();
+                    RollbackInternal(); // ie close, since we just committed
+                    success = true;
+                }
+                finally
+                {
+                    if (success == false)
+                    {
+                        // Be certain to close the index on any exception
+                        try
+                        {
+                            RollbackInternal();
+                        }
+                        catch (Exception t) when (t.IsThrowable())
+                        {
+                            // Suppress so we keep throwing original exception
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Commits all changes to an index, waits for pending merges
         /// to complete, closes all associated files and releases the
         /// write lock.
-        ///
-        /// <para>Note that:
+        /// <para/>
+        /// Note that:
         /// <list type="bullet">
         ///     <item><description>If you called <see cref="PrepareCommit()"/> but failed to call <see cref="Commit()"/>, this
         ///         method will throw <see cref="InvalidOperationException"/> and the <see cref="IndexWriter"/>
-        ///         will not be closed.</description></item>
+        ///         will not be disposed.</description></item>
         ///     <item><description>If this method throws any other exception, the <see cref="IndexWriter"/>
-        ///         will be closed, but changes may have been lost.</description></item>
+        ///         will be disposed, but changes may have been lost.</description></item>
         /// </list>
-        /// </para>
-        ///
-        /// <para>
+        /// <para/>
         /// Note that this may be a costly
         /// operation, so, try to re-use a single writer instead of
         /// closing and opening a new one.  See <see cref="Commit()"/> for
-        /// caveats about write caching done by some IO devices.</para>
-        ///
-        /// <para><b>NOTE</b>: You must ensure no other threads are still making
-        /// changes at the same time that this method is invoked.</para>
+        /// caveats about write caching done by some IO devices.
+        /// <para/>
+        /// <b>NOTE</b>: You must ensure no other threads are still making
+        /// changes at the same time that this method is invoked.
         /// </summary>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         // LUCENENET: doc-comment updated to match upstream LUCENE-5871 (commit 2cfcdcc, first
@@ -1177,54 +1223,6 @@ namespace Lucene.Net.Index
         internal void Close(bool waitForMerges) // LUCENENET: made internal for test purposes
         {
             Shutdown(waitForMerges);
-        }
-
-        /// <summary>
-        /// Gracefully closes (commits, waits for merges), but calls rollback
-        /// if there's an exc so the IndexWriter is always closed.
-        /// </summary>
-        // LUCENENET: ported from upstream LUCENE-5871 (commit 2cfcdcc, first released in
-        // 4.10.0) to fix #1284. Previously the close path's straight-line cleanup leaked
-        // the reader pool, deleter, and write.lock when CommitInternal threw an I/O exception.
-        private void Shutdown(bool waitForMerges)
-        {
-            if (pendingCommit != null)
-            {
-                throw IllegalStateException.Create("cannot close: prepareCommit was already called with no corresponding call to commit");
-            }
-            // Ensure that only one thread actually gets to do the
-            // closing
-            if (ShouldClose())
-            {
-                bool success = false;
-                try
-                {
-                    if (infoStream.IsEnabled("IW"))
-                    {
-                        infoStream.Message("IW", "now flush at close");
-                    }
-                    Flush(true, true);
-                    FinishMerges(waitForMerges);
-                    CommitInternal();
-                    RollbackInternal(); // ie close, since we just committed
-                    success = true;
-                }
-                finally
-                {
-                    if (success == false)
-                    {
-                        // Be certain to close the index on any exception
-                        try
-                        {
-                            RollbackInternal();
-                        }
-                        catch (Exception t) when (t.IsThrowable())
-                        {
-                            // Suppress so we keep throwing original exception
-                        }
-                    }
-                }
-            }
         }
 
         // LUCENENET: upstream 2cfcdcc had private assertEventQueueAfterClose() between

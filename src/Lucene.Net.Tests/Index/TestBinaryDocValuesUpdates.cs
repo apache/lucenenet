@@ -10,6 +10,7 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -18,7 +19,6 @@ using System.IO;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
-using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {
