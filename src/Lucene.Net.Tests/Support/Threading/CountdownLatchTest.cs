@@ -27,7 +27,7 @@ namespace Lucene.Net.Support.Threading
      */
 
     [TestFixture]
-    public class CountDownLatchTest : JSR166TestCase
+    public class CountdownLatchTest : JSR166TestCase
     {
         //public static void main(String[] args)
         //{
@@ -46,7 +46,7 @@ namespace Lucene.Net.Support.Threading
         {
             try
             {
-                _ = new CountDownLatch(-1);
+                _ = new CountdownLatch(-1);
                 shouldThrow();
             }
             catch (ArgumentOutOfRangeException)
@@ -61,9 +61,9 @@ namespace Lucene.Net.Support.Threading
         [Test]
         public void TestGetCount()
         {
-            CountDownLatch l = new CountDownLatch(2);
+            CountdownLatch l = new CountdownLatch(2);
             assertEquals(2, l.Count);
-            l.CountDown();
+            l.Signal();
             assertEquals(1, l.Count);
         }
 
@@ -71,13 +71,13 @@ namespace Lucene.Net.Support.Threading
          * countDown decrements count when positive and has no effect when zero
          */
         [Test]
-        public void TestCountDown()
+        public void TestSignal() // LUCENENET: renamed from TestCountDown (Signal() was CountDown())
         {
-            CountDownLatch l = new CountDownLatch(1);
+            CountdownLatch l = new CountdownLatch(1);
             assertEquals(1, l.Count);
-            l.CountDown();
+            l.Signal();
             assertEquals(0, l.Count);
-            l.CountDown();
+            l.Signal();
             assertEquals(0, l.Count);
         }
 
@@ -85,19 +85,19 @@ namespace Lucene.Net.Support.Threading
          * await returns after countDown to zero, but not before
          */
         [Test]
-        public void TestAwait()
+        public void TestWait() // LUCENENET: renamed from TestAwait (Wait() was Await())
         {
-            CountDownLatch l = new CountDownLatch(2);
+            CountdownLatch l = new CountdownLatch(2);
 
-            ThreadJob t = new ThreadAnonymousClassForTestAwait(this, l);
+            ThreadJob t = new ThreadAnonymousClassForTestWait(this, l);
             t.Start();
             try
             {
                 assertEquals(l.Count, 2);
                 Thread.Sleep(SHORT_DELAY_MS);
-                l.CountDown();
+                l.Signal();
                 assertEquals(l.Count, 1);
-                l.CountDown();
+                l.Signal();
                 assertEquals(l.Count, 0);
                 t.Join();
             }
@@ -107,12 +107,12 @@ namespace Lucene.Net.Support.Threading
             }
         }
 
-        private sealed class ThreadAnonymousClassForTestAwait : ThreadJob
+        private sealed class ThreadAnonymousClassForTestWait : ThreadJob // LUCENENET: renamed from ThreadAnonymousClassForTestAwait
         {
-            private readonly CountDownLatchTest outerInstance;
-            private readonly CountDownLatch l;
+            private readonly CountdownLatchTest outerInstance;
+            private readonly CountdownLatch l;
 
-            public ThreadAnonymousClassForTestAwait(CountDownLatchTest outerInstance, CountDownLatch l)
+            public ThreadAnonymousClassForTestWait(CountdownLatchTest outerInstance, CountdownLatch l)
             {
                 this.outerInstance = outerInstance;
                 this.l = l;
@@ -123,7 +123,7 @@ namespace Lucene.Net.Support.Threading
                 try
                 {
                     outerInstance.threadAssertTrue(l.Count > 0);
-                    l.Await();
+                    l.Wait();
                     outerInstance.threadAssertTrue(l.Count == 0);
                 }
                 catch (Exception e) when (e.IsInterruptedException())
@@ -137,19 +137,19 @@ namespace Lucene.Net.Support.Threading
          * timed await returns after countDown to zero
          */
         [Test]
-        public void TestTimedAwait()
+        public void TestTimedWait() // LUCENENET: renamed from TestTimedAwait (Wait() was Await())
         {
-            CountDownLatch l = new CountDownLatch(2);
+            CountdownLatch l = new CountdownLatch(2);
 
-            ThreadJob t = new ThreadAnonymousClassForTestTimedAwait(this, l);
+            ThreadJob t = new ThreadAnonymousClassForTestTimedWait(this, l);
             t.Start();
             try
             {
                 assertEquals(l.Count, 2);
                 Thread.Sleep(SHORT_DELAY_MS);
-                l.CountDown();
+                l.Signal();
                 assertEquals(l.Count, 1);
-                l.CountDown();
+                l.Signal();
                 assertEquals(l.Count, 0);
                 t.Join();
             }
@@ -159,12 +159,12 @@ namespace Lucene.Net.Support.Threading
             }
         }
 
-        private sealed class ThreadAnonymousClassForTestTimedAwait : ThreadJob
+        private sealed class ThreadAnonymousClassForTestTimedWait : ThreadJob // LUCENENET: renamed from ThreadAnonymousClassForTestTimedAwait
         {
-            private readonly CountDownLatchTest outerInstance;
-            private readonly CountDownLatch l;
+            private readonly CountdownLatchTest outerInstance;
+            private readonly CountdownLatch l;
 
-            public ThreadAnonymousClassForTestTimedAwait(CountDownLatchTest outerInstance, CountDownLatch l)
+            public ThreadAnonymousClassForTestTimedWait(CountdownLatchTest outerInstance, CountdownLatch l)
             {
                 this.outerInstance = outerInstance;
                 this.l = l;
@@ -175,7 +175,7 @@ namespace Lucene.Net.Support.Threading
                 try
                 {
                     outerInstance.threadAssertTrue(l.Count > 0);
-                    outerInstance.threadAssertTrue(l.Await(TimeSpan.FromMilliseconds(SMALL_DELAY_MS)));
+                    outerInstance.threadAssertTrue(l.Wait(TimeSpan.FromMilliseconds(SMALL_DELAY_MS)));
                 }
                 catch (Exception e) when (e.IsInterruptedException())
                 {
@@ -188,10 +188,10 @@ namespace Lucene.Net.Support.Threading
          * await throws IE if interrupted before counted down
          */
         [Test]
-        public void TestAwait_InterruptedException()
+        public void TestWait_InterruptedException() // LUCENENET: renamed from TestAwait_InterruptedException (Wait() was Await())
         {
-            CountDownLatch l = new CountDownLatch(1);
-            ThreadJob t = new ThreadAnonymousClassForTestAwaitInterruptedException(this, l);
+            CountdownLatch l = new CountdownLatch(1);
+            ThreadJob t = new ThreadAnonymousClassForTestWaitInterruptedException(this, l);
             t.Start();
             try
             {
@@ -205,12 +205,12 @@ namespace Lucene.Net.Support.Threading
             }
         }
 
-        private sealed class ThreadAnonymousClassForTestAwaitInterruptedException : ThreadJob
+        private sealed class ThreadAnonymousClassForTestWaitInterruptedException : ThreadJob // LUCENENET: renamed from ThreadAnonymousClassForTestAwaitInterruptedException
         {
-            private readonly CountDownLatchTest outerInstance;
-            private readonly CountDownLatch l;
+            private readonly CountdownLatchTest outerInstance;
+            private readonly CountdownLatch l;
 
-            public ThreadAnonymousClassForTestAwaitInterruptedException(CountDownLatchTest outerInstance, CountDownLatch l)
+            public ThreadAnonymousClassForTestWaitInterruptedException(CountdownLatchTest outerInstance, CountdownLatch l)
             {
                 this.outerInstance = outerInstance;
                 this.l = l;
@@ -221,7 +221,7 @@ namespace Lucene.Net.Support.Threading
                 try
                 {
                     outerInstance.threadAssertTrue(l.Count > 0);
-                    l.Await();
+                    l.Wait();
                     outerInstance.threadShouldThrow();
                 }
                 catch (Exception e) when (e.IsInterruptedException())
@@ -235,10 +235,10 @@ namespace Lucene.Net.Support.Threading
          * timed await throws IE if interrupted before counted down
          */
         [Test]
-        public void TestTimedAwait_InterruptedException()
+        public void TestTimedWait_InterruptedException() // LUCENENET: renamed from TestTimedAwait_InterruptedException (Wait() was Await())
         {
-            CountDownLatch l = new CountDownLatch(1);
-            ThreadJob t = new ThreadAnonymousClassForTestTimedAwaitInterruptedException(this, l);
+            CountdownLatch l = new CountdownLatch(1);
+            ThreadJob t = new ThreadAnonymousClassForTestTimedWaitInterruptedException(this, l);
             t.Start();
             try
             {
@@ -253,12 +253,12 @@ namespace Lucene.Net.Support.Threading
             }
         }
 
-        private sealed class ThreadAnonymousClassForTestTimedAwaitInterruptedException : ThreadJob
+        private sealed class ThreadAnonymousClassForTestTimedWaitInterruptedException : ThreadJob // LUCENENET: renamed from ThreadAnonymousClassForTestTimedAwaitInterruptedException
         {
-            private readonly CountDownLatchTest outerInstance;
-            private readonly CountDownLatch l;
+            private readonly CountdownLatchTest outerInstance;
+            private readonly CountdownLatch l;
 
-            public ThreadAnonymousClassForTestTimedAwaitInterruptedException(CountDownLatchTest outerInstance, CountDownLatch l)
+            public ThreadAnonymousClassForTestTimedWaitInterruptedException(CountdownLatchTest outerInstance, CountdownLatch l)
             {
                 this.outerInstance = outerInstance;
                 this.l = l;
@@ -269,7 +269,7 @@ namespace Lucene.Net.Support.Threading
                 try
                 {
                     outerInstance.threadAssertTrue(l.Count > 0);
-                    l.Await(TimeSpan.FromMilliseconds(MEDIUM_DELAY_MS));
+                    l.Wait(TimeSpan.FromMilliseconds(MEDIUM_DELAY_MS));
                     outerInstance.threadShouldThrow();
                 }
                 catch (Exception e) when (e.IsInterruptedException())
@@ -283,10 +283,10 @@ namespace Lucene.Net.Support.Threading
          * timed await times out if not counted down before timeout
          */
         [Test]
-        public void TestAwaitTimeout()
+        public void TestWaitTimeout() // LUCENENET: renamed from TestAwaitTimeout (Wait() was Await())
         {
-            CountDownLatch l = new CountDownLatch(1);
-            ThreadJob t = new ThreadAnonymousClassForTestAwaitTimeout(this, l);
+            CountdownLatch l = new CountdownLatch(1);
+            ThreadJob t = new ThreadAnonymousClassForTestWaitTimeout(this, l);
             t.Start();
             try
             {
@@ -299,12 +299,12 @@ namespace Lucene.Net.Support.Threading
             }
         }
 
-        private sealed class ThreadAnonymousClassForTestAwaitTimeout : ThreadJob
+        private sealed class ThreadAnonymousClassForTestWaitTimeout : ThreadJob // LUCENENET: renamed from ThreadAnonymousClassForTestAwaitTimeout
         {
-            private readonly CountDownLatchTest outerInstance;
-            private readonly CountDownLatch l;
+            private readonly CountdownLatchTest outerInstance;
+            private readonly CountdownLatch l;
 
-            public ThreadAnonymousClassForTestAwaitTimeout(CountDownLatchTest outerInstance, CountDownLatch l)
+            public ThreadAnonymousClassForTestWaitTimeout(CountdownLatchTest outerInstance, CountdownLatch l)
             {
                 this.outerInstance = outerInstance;
                 this.l = l;
@@ -315,7 +315,7 @@ namespace Lucene.Net.Support.Threading
                 try
                 {
                     outerInstance.threadAssertTrue(l.Count > 0);
-                    outerInstance.threadAssertFalse(l.Await(TimeSpan.FromMilliseconds(SHORT_DELAY_MS)));
+                    outerInstance.threadAssertFalse(l.Wait(TimeSpan.FromMilliseconds(SHORT_DELAY_MS)));
                     outerInstance.threadAssertTrue(l.Count > 0);
                 }
                 catch (Exception ie) when (ie.IsInterruptedException())
@@ -331,13 +331,13 @@ namespace Lucene.Net.Support.Threading
         [Test]
         public void TestToString()
         {
-            CountDownLatch s = new CountDownLatch(2);
+            CountdownLatch s = new CountdownLatch(2);
             string us = s.ToString();
             assertTrue(us.IndexOf("Count = 2", StringComparison.Ordinal) >= 0);
-            s.CountDown();
+            s.Signal();
             string s1 = s.ToString();
             assertTrue(s1.IndexOf("Count = 1", StringComparison.Ordinal) >= 0);
-            s.CountDown();
+            s.Signal();
             string s2 = s.ToString();
             assertTrue(s2.IndexOf("Count = 0", StringComparison.Ordinal) >= 0);
         }

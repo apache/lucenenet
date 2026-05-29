@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
             {
                 if (checkPoint)
                 {
-                    Assert.IsTrue(sync.updateJoin.Await(TimeSpan.FromSeconds(10)), "timed out waiting for update threads - deadlock?");
+                    Assert.IsTrue(sync.updateJoin.Wait(TimeSpan.FromSeconds(10)), "timed out waiting for update threads - deadlock?");
                     if (exceptions.Count > 0)
                     {
                         foreach (Exception throwable in exceptions)
@@ -170,8 +170,8 @@ namespace Lucene.Net.Index
                     }
 
                     checkPoint.Value = false;
-                    sync.waiter.CountDown();
-                    sync.leftCheckpoint.Await();
+                    sync.waiter.Signal();
+                    sync.leftCheckpoint.Wait();
                 }
                 Assert.IsFalse(checkPoint);
                 Assert.AreEqual(0, sync.waiter.Count);
@@ -187,12 +187,12 @@ namespace Lucene.Net.Index
                 checkPoint.Value = true;
             }
 
-            Assert.IsTrue(sync.updateJoin.Await(TimeSpan.FromSeconds(10)));
+            Assert.IsTrue(sync.updateJoin.Wait(TimeSpan.FromSeconds(10)));
             AssertState(numReleasers, numStallers, numWaiters, threads, ctrl);
             checkPoint.Value = false;
             stop.Value = true;
-            sync.waiter.CountDown();
-            sync.leftCheckpoint.Await();
+            sync.waiter.Signal();
+            sync.leftCheckpoint.Wait();
 
             for (int i = 0; i < threads.Length; i++)
             {
@@ -320,7 +320,7 @@ namespace Lucene.Net.Index
                         }
                         if (checkPoint)
                         {
-                            sync.updateJoin.CountDown();
+                            sync.updateJoin.Signal();
                             try
                             {
                                 Assert.IsTrue(sync.Await());
@@ -338,7 +338,7 @@ namespace Lucene.Net.Index
                             //    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             //}
 
-                            sync.leftCheckpoint.CountDown();
+                            sync.leftCheckpoint.Signal();
                         }
                         if (Random.NextBoolean())
                         {
@@ -352,7 +352,7 @@ namespace Lucene.Net.Index
                     exceptions.Add(e);
                 }
 
-                sync.updateJoin.CountDown();
+                sync.updateJoin.Signal();
             }
         }
 
@@ -443,9 +443,9 @@ namespace Lucene.Net.Index
 
         public sealed class Synchronizer
         {
-            internal volatile CountDownLatch waiter;
-            internal volatile CountDownLatch updateJoin;
-            internal volatile CountDownLatch leftCheckpoint;
+            internal volatile CountdownLatch waiter;
+            internal volatile CountdownLatch updateJoin;
+            internal volatile CountdownLatch leftCheckpoint;
 
             public Synchronizer(int numUpdater, int numThreads)
             {
@@ -454,14 +454,14 @@ namespace Lucene.Net.Index
 
             public void Reset(int numUpdaters, int numThreads)
             {
-                this.waiter = new CountDownLatch(1);
-                this.updateJoin = new CountDownLatch(numUpdaters);
-                this.leftCheckpoint = new CountDownLatch(numUpdaters);
+                this.waiter = new CountdownLatch(1);
+                this.updateJoin = new CountdownLatch(numUpdaters);
+                this.leftCheckpoint = new CountdownLatch(numUpdaters);
             }
 
             public bool Await()
             {
-                return waiter.Await(TimeSpan.FromSeconds(10));
+                return waiter.Wait(TimeSpan.FromSeconds(10));
             }
         }
     }

@@ -356,17 +356,17 @@ namespace Lucene.Net.Index
             RandomIndexWriter modifier = new RandomIndexWriter(Random, dir);
             int numThreads = AtLeast(2);
             ThreadJob[] threads = new ThreadJob[numThreads];
-            CountDownLatch latch = new CountDownLatch(1);
-            CountDownLatch doneLatch = new CountDownLatch(numThreads);
+            CountdownLatch latch = new CountdownLatch(1);
+            CountdownLatch doneLatch = new CountdownLatch(numThreads);
             for (int i = 0; i < numThreads; i++)
             {
                 int offset = i;
                 threads[i] = new ThreadAnonymousClass(modifier, latch, doneLatch, offset);
                 threads[i].Start();
             }
-            latch.CountDown();
+            latch.Signal();
             //Wait for 1 millisecond
-            while (!doneLatch.Await(TimeSpan.FromMilliseconds(1)))
+            while (!doneLatch.Wait(TimeSpan.FromMilliseconds(1)))
             {
                 modifier.DeleteAll();
                 if (Verbose)
@@ -394,11 +394,11 @@ namespace Lucene.Net.Index
         private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly RandomIndexWriter modifier;
-            private readonly CountDownLatch latch;
-            private readonly CountDownLatch doneLatch;
+            private readonly CountdownLatch latch;
+            private readonly CountdownLatch doneLatch;
             private readonly int offset;
 
-            public ThreadAnonymousClass(RandomIndexWriter modifier, CountDownLatch latch, CountDownLatch doneLatch, int offset)
+            public ThreadAnonymousClass(RandomIndexWriter modifier, CountdownLatch latch, CountdownLatch doneLatch, int offset)
             {
                 this.modifier = modifier;
                 this.latch = latch;
@@ -412,7 +412,7 @@ namespace Lucene.Net.Index
                 const int value = 100;
                 try
                 {
-                    latch.Await();
+                    latch.Wait();
                     for (int j = 0; j < 1000; j++)
                     {
                         Document doc = new Document();
@@ -436,7 +436,7 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    doneLatch.CountDown();
+                    doneLatch.Signal();
                     if (Verbose)
                     {
                         Console.WriteLine("\tThread[" + offset + "]: done indexing");

@@ -289,7 +289,7 @@ namespace Lucene.Net.Index
 
             int maxMergeCount = TestUtil.NextInt32(Random, 1, 5);
             int maxMergeThreads = TestUtil.NextInt32(Random, 1, maxMergeCount);
-            CountDownLatch enoughMergesWaiting = new CountDownLatch(maxMergeCount);
+            CountdownLatch enoughMergesWaiting = new CountdownLatch(maxMergeCount);
             AtomicInt32 runningMergeCount = new AtomicInt32(0);
             AtomicBoolean failed = new AtomicBoolean();
 
@@ -327,11 +327,11 @@ namespace Lucene.Net.Index
         private sealed class ConcurrentMergeSchedulerAnonymousClass : ConcurrentMergeScheduler
         {
             private readonly int maxMergeCount;
-            private readonly CountDownLatch enoughMergesWaiting;
+            private readonly CountdownLatch enoughMergesWaiting;
             private readonly AtomicInt32 runningMergeCount;
             private readonly AtomicBoolean failed;
 
-            public ConcurrentMergeSchedulerAnonymousClass(int maxMergeCount, CountDownLatch enoughMergesWaiting, AtomicInt32 runningMergeCount, AtomicBoolean failed)
+            public ConcurrentMergeSchedulerAnonymousClass(int maxMergeCount, CountdownLatch enoughMergesWaiting, AtomicInt32 runningMergeCount, AtomicBoolean failed)
             {
                 this.maxMergeCount = maxMergeCount;
                 this.enoughMergesWaiting = enoughMergesWaiting;
@@ -349,14 +349,14 @@ namespace Lucene.Net.Index
                     try
                     {
                         Assert.IsTrue(count <= maxMergeCount, "count=" + count + " vs maxMergeCount=" + maxMergeCount);
-                        enoughMergesWaiting.CountDown();
+                        enoughMergesWaiting.Signal();
 
                         // Stall this merge until we see exactly
                         // maxMergeCount merges waiting
                         while (true)
                         {
                             // wait for 10 milliseconds
-                            if (enoughMergesWaiting.Await(new TimeSpan(0, 0, 0, 0, 10)) || failed)
+                            if (enoughMergesWaiting.Wait(new TimeSpan(0, 0, 0, 0, 10)) || failed)
                             {
                                 break;
                             }

@@ -96,14 +96,14 @@ namespace Lucene.Net.Index
             }
 
             ThreadJob[] threads = new ThreadJob[threadCount];
-            CountDownLatch startingGun = new CountDownLatch(1);
+            CountdownLatch startingGun = new CountdownLatch(1);
 
             for (int threadID = 0; threadID < threadCount; threadID++)
             {
                 threads[threadID] = new ThreadAnonymousClass(maxTermsPerDoc, postings, iw, startingGun);
                 threads[threadID].Start();
             }
-            startingGun.CountDown();
+            startingGun.Signal();
             foreach (ThreadJob t in threads)
             {
                 t.Join();
@@ -141,9 +141,9 @@ namespace Lucene.Net.Index
             private readonly int maxTermsPerDoc;
             private readonly ConcurrentQueue<string> postings;
             private readonly RandomIndexWriter iw;
-            private readonly CountDownLatch startingGun;
+            private readonly CountdownLatch startingGun;
 
-            public ThreadAnonymousClass(int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountDownLatch startingGun)
+            public ThreadAnonymousClass(int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountdownLatch startingGun)
             {
                 this.maxTermsPerDoc = maxTermsPerDoc;
                 this.postings = postings;
@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
                     Document document = new Document();
                     Field field = NewTextField("field", "", Field.Store.NO);
                     document.Add(field);
-                    startingGun.Await();
+                    startingGun.Wait();
                     while (!postings.IsEmpty)
                     {
                         StringBuilder text = new StringBuilder();

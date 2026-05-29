@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
 
             int numThreads = TestUtil.NextInt32(Random, 2, 5);
             IList<ThreadJob> threads = new JCG.List<ThreadJob>();
-            CountDownLatch startingGun = new CountDownLatch(1);
+            CountdownLatch startingGun = new CountdownLatch(1);
             for (int t = 0; t < numThreads; t++)
             {
                 Random threadRandom = new J2N.Randomizer(Random.NextInt64());
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
                 threads.Add(thread);
             }
 
-            startingGun.CountDown();
+            startingGun.Signal();
 
             foreach (ThreadJob thread in threads)
             {
@@ -105,10 +105,10 @@ namespace Lucene.Net.Index
             private readonly IList<BytesRef> sorted;
             private readonly int numDocs;
             private readonly AtomicReader ar;
-            private readonly CountDownLatch startingGun;
+            private readonly CountdownLatch startingGun;
             private readonly Random threadRandom;
 
-            public ThreadAnonymousClass(IList<long> numbers, IList<BytesRef> binary, IList<BytesRef> sorted, int numDocs, AtomicReader ar, CountDownLatch startingGun, Random threadRandom)
+            public ThreadAnonymousClass(IList<long> numbers, IList<BytesRef> binary, IList<BytesRef> sorted, int numDocs, AtomicReader ar, CountdownLatch startingGun, Random threadRandom)
             {
                 this.numbers = numbers;
                 this.binary = binary;
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
                     //BinaryDocValues bdv = ar.GetBinaryDocValues("bytes");
                     BinaryDocValues bdv = FieldCache.DEFAULT.GetTerms(ar, "bytes", false);
                     SortedDocValues sdv = FieldCache.DEFAULT.GetTermsIndex(ar, "sorted");
-                    startingGun.Await();
+                    startingGun.Wait();
                     int iters = AtLeast(1000);
                     BytesRef scratch = new BytesRef();
                     BytesRef scratch2 = new BytesRef();

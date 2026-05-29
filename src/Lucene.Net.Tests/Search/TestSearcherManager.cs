@@ -272,8 +272,8 @@ namespace Lucene.Net.Search
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(new ConcurrentMergeScheduler()));
             writer.AddDocument(new Document());
             writer.Commit();
-            CountDownLatch awaitEnterWarm = new CountDownLatch(1);
-            CountDownLatch awaitClose = new CountDownLatch(1);
+            CountdownLatch awaitEnterWarm = new CountdownLatch(1);
+            CountdownLatch awaitClose = new CountdownLatch(1);
             AtomicBoolean triedReopen = new AtomicBoolean(false);
             //TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory("testIntermediateClose"));
             TaskScheduler es = Random.NextBoolean() ? null : TaskScheduler.Default;
@@ -302,13 +302,13 @@ namespace Lucene.Net.Search
             {
                 Console.WriteLine("THREAD started");
             }
-            awaitEnterWarm.Await();
+            awaitEnterWarm.Wait();
             if (Verbose)
             {
                 Console.WriteLine("NOW call close");
             }
             searcherManager.Dispose();
-            awaitClose.CountDown();
+            awaitClose.Signal();
             thread.Join();
             try
             {
@@ -333,12 +333,12 @@ namespace Lucene.Net.Search
 
         private sealed class SearcherFactoryAnonymousClass2 : SearcherFactory
         {
-            private readonly CountDownLatch awaitEnterWarm;
-            private readonly CountDownLatch awaitClose;
+            private readonly CountdownLatch awaitEnterWarm;
+            private readonly CountdownLatch awaitClose;
             private readonly AtomicBoolean triedReopen;
             private readonly TaskScheduler es;
 
-            public SearcherFactoryAnonymousClass2(CountDownLatch awaitEnterWarm, CountDownLatch awaitClose, AtomicBoolean triedReopen, TaskScheduler es)
+            public SearcherFactoryAnonymousClass2(CountdownLatch awaitEnterWarm, CountdownLatch awaitClose, AtomicBoolean triedReopen, TaskScheduler es)
             {
                 this.awaitEnterWarm = awaitEnterWarm;
                 this.awaitClose = awaitClose;
@@ -352,8 +352,8 @@ namespace Lucene.Net.Search
                 {
                     if (triedReopen)
                     {
-                        awaitEnterWarm.CountDown();
-                        awaitClose.Await();
+                        awaitEnterWarm.Signal();
+                        awaitClose.Wait();
                     }
                 }
                 catch (Exception e) when (e.IsInterruptedException())

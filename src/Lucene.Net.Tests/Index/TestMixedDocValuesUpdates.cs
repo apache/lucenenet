@@ -269,7 +269,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
             }
 
-            CountDownLatch done = new CountDownLatch(numThreads);
+            CountdownLatch done = new CountdownLatch(numThreads);
             AtomicInt32 numUpdates = new AtomicInt32(AtLeast(100));
 
             // same thread updates a field as well as reopens
@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
             {
                 t.Start();
             }
-            done.Await();
+            done.Wait();
             writer.Dispose();
 
             DirectoryReader reader = DirectoryReader.Open(dir);
@@ -327,12 +327,12 @@ namespace Lucene.Net.Index
         {
             private readonly IndexWriter writer;
             private readonly int numDocs;
-            private readonly CountDownLatch done;
+            private readonly CountdownLatch done;
             private readonly AtomicInt32 numUpdates;
             private readonly string f;
             private readonly string cf;
 
-            public ThreadAnonymousClass(string str, IndexWriter writer, int numDocs, CountDownLatch done, AtomicInt32 numUpdates, string f, string cf)
+            public ThreadAnonymousClass(string str, IndexWriter writer, int numDocs, CountdownLatch done, AtomicInt32 numUpdates, string f, string cf)
                 : base(str)
             {
                 this.writer = writer;
@@ -441,7 +441,7 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-                    done.CountDown();
+                    done.Signal();
                 }
             }
         }

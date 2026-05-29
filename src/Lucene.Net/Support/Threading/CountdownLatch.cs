@@ -27,30 +27,30 @@ namespace Lucene.Net.Support.Threading
     /// A synchronization aid that allows one or more threads to wait until
     /// a set of operations being performed in other threads completes.
     /// <para/>
-    /// A <see cref="CountDownLatch"/> is initialized with a given <em>count</em>.
-    /// The <see cref="Await()"/> methods block until the current count reaches
-    /// zero due to invocations of the <see cref="CountDown()"/> method, after which
+    /// A <see cref="CountdownLatch"/> is initialized with a given <em>count</em>.
+    /// The <see cref="Wait()"/> methods block until the current count reaches
+    /// zero due to invocations of the <see cref="Signal()"/> method, after which
     /// all waiting threads are released and any subsequent invocations of
-    /// <see cref="Await()"/> return immediately. This is a one-shot phenomenon:
+    /// <see cref="Wait()"/> return immediately. This is a one-shot phenomenon:
     /// the count cannot be reset.
     /// <para/>
-    /// A <see cref="CountDownLatch"/> is a versatile synchronization tool
-    /// and can be used for a number of purposes. A <see cref="CountDownLatch"/>
+    /// A <see cref="CountdownLatch"/> is a versatile synchronization tool
+    /// and can be used for a number of purposes. A <see cref="CountdownLatch"/>
     /// initialized with a count of one serves as a simple on/off latch, or gate:
-    /// all threads invoking <see cref="Await()"/> wait at the gate until it is
-    /// opened by a thread invoking <see cref="CountDown()"/>. A
-    /// <see cref="CountDownLatch"/> initialized to <em>N</em> can be used to make
+    /// all threads invoking <see cref="Wait()"/> wait at the gate until it is
+    /// opened by a thread invoking <see cref="Signal()"/>. A
+    /// <see cref="CountdownLatch"/> initialized to <em>N</em> can be used to make
     /// one thread wait until <em>N</em> threads have completed some action, or
     /// some action has been completed N times.
     /// <para/>
-    /// A useful property of a <see cref="CountDownLatch"/> is that it
-    /// doesn't require that threads calling <see cref="CountDown()"/> wait for
+    /// A useful property of a <see cref="CountdownLatch"/> is that it
+    /// doesn't require that threads calling <see cref="Signal()"/> wait for
     /// the count to reach zero before proceeding, it simply prevents any
-    /// thread from proceeding past an <see cref="Await()"/> until all
+    /// thread from proceeding past an <see cref="Wait()"/> until all
     /// threads could pass.
     /// <para/>
     /// LUCENENET specific: This type is similar to <see cref="CountdownEvent"/>,
-    /// but unlike <see cref="CountdownEvent.Signal()"/>, <see cref="CountDown()"/>
+    /// but unlike <see cref="CountdownEvent.Signal()"/>, <see cref="Signal()"/>
     /// can be called any number of times after the count reaches zero without
     /// throwing. This matches Java's <c>CountDownLatch.countDown()</c> semantics.
     /// </summary>
@@ -61,19 +61,19 @@ namespace Lucene.Net.Support.Threading
     /// the first time a waiter blocks. Callers should dispose instances when they are no
     /// longer needed, typically via a <c>using</c> statement.
     /// </remarks>
-    internal class CountDownLatch : IDisposable
+    internal class CountdownLatch : IDisposable
     {
         // LUCENENET: the current count and ManualResetEventSlim for signaling, instead of Java's Sync class
         private volatile int _currentCount;
         private readonly ManualResetEventSlim _event;
 
         /// <summary>
-        /// Constructs a <see cref="CountDownLatch"/> initialized with the given <paramref name="count"/>.
+        /// Constructs a <see cref="CountdownLatch"/> initialized with the given <paramref name="count"/>.
         /// </summary>
-        /// <param name="count">The number of times <see cref="CountDown()"/> must be invoked
-        /// before threads can pass through <see cref="Await()"/></param>
+        /// <param name="count">The number of times <see cref="Signal()"/> must be invoked
+        /// before threads can pass through <see cref="Wait()"/></param>
         /// <exception cref="ArgumentOutOfRangeException">if <paramref name="count"/> is negative</exception>
-        public CountDownLatch(int count)
+        public CountdownLatch(int count)
         {
             if (count < 0)
             {
@@ -95,7 +95,7 @@ namespace Lucene.Net.Support.Threading
         /// dormant until one of two things happen:
         /// <list type="bullet">
         ///     <item><description>The count reaches zero due to invocations of the
-        ///         <see cref="CountDown()"/> method; or</description></item>
+        ///         <see cref="Signal()"/> method; or</description></item>
         ///     <item><description>Some other thread interrupts the current thread.</description></item>
         /// </list>
         /// <para/>
@@ -105,7 +105,7 @@ namespace Lucene.Net.Support.Threading
         /// </summary>
         /// <exception cref="ThreadInterruptedException">if the current thread is
         /// interrupted while waiting.</exception>
-        public void Await()
+        public void Wait()
         {
             _event.Wait(Timeout.Infinite);
         }
@@ -123,7 +123,7 @@ namespace Lucene.Net.Support.Threading
         /// dormant until one of three things happen:
         /// <list type="bullet">
         ///     <item><description>The count reaches zero due to invocations of the
-        ///         <see cref="CountDown()"/> method; or</description></item>
+        ///         <see cref="Signal()"/> method; or</description></item>
         ///     <item><description>Some other thread interrupts the current thread; or</description></item>
         ///     <item><description>The specified waiting time elapses.</description></item>
         /// </list>
@@ -144,7 +144,7 @@ namespace Lucene.Net.Support.Threading
         /// if the waiting time elapsed before the count reached zero.</returns>
         /// <exception cref="ThreadInterruptedException">if the current thread is
         /// interrupted while waiting.</exception>
-        public bool Await(TimeSpan timeout)
+        public bool Wait(TimeSpan timeout)
         {
             return _event.Wait(timeout);
         }
@@ -159,7 +159,7 @@ namespace Lucene.Net.Support.Threading
         /// <para />
         /// If the current count equals zero then nothing happens.
         /// </summary>
-        public void CountDown()
+        public void Signal()
         {
             if (_currentCount <= 0)
             {
@@ -186,7 +186,7 @@ namespace Lucene.Net.Support.Threading
         /// to make the internal count 64-bit.
         /// <para/>
         /// The returned value is clamped at zero. The internal counter may
-        /// briefly drop below zero under concurrent <see cref="CountDown()"/>
+        /// briefly drop below zero under concurrent <see cref="Signal()"/>
         /// calls that race past the early-return guard, but that detail is
         /// hidden here to match Java's <c>getCount()</c> semantics, which never
         /// returns a negative value.

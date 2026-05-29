@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
                 Console.WriteLine(numThreads + " threads");
             }
 
-            CountDownLatch startingGun = new CountDownLatch(1);
+            CountdownLatch startingGun = new CountdownLatch(1);
             IList<ThreadJob> threads = new JCG.List<ThreadJob>();
 
             int iters = AtLeast(1000);
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
                 thread.Start();
             }
 
-            startingGun.CountDown();
+            startingGun.Signal();
 
             foreach (ThreadJob thread in threads)
             {
@@ -141,7 +141,7 @@ namespace Lucene.Net.Search
             private readonly SearcherManager mgr;
             private readonly int? missing;
             private readonly LiveFieldValues<IndexSearcher, int?> rt;
-            private readonly CountDownLatch startingGun;
+            private readonly CountdownLatch startingGun;
             private readonly int iters;
             private readonly int idCount;
             private readonly double reopenChance;
@@ -151,7 +151,7 @@ namespace Lucene.Net.Search
             private readonly int threadID;
             private readonly Random threadRandom;
 
-            public ThreadAnonymousClass(IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<IndexSearcher, int?> rt, CountDownLatch startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
+            public ThreadAnonymousClass(IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<IndexSearcher, int?> rt, CountdownLatch startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
             {
                 this.w = w;
                 this.mgr = mgr;
@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
                     IDictionary<string, int?> values = new JCG.Dictionary<string, int?>();
                     IList<string> allIDs = new SynchronizedList<string>();
 
-                    startingGun.Await();
+                    startingGun.Wait();
                     for (int iter = 0; iter < iters; iter++)
                     {
                         // Add/update a document

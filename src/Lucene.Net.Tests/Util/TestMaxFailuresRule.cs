@@ -148,7 +148,7 @@ namespace Lucene.Net.Util
         public class Nested2 : WithNestedTests.AbstractNestedTest
         {
             public const int TOTAL_ITERS = 10;
-            public static CountDownLatch Die;
+            public static CountdownLatch Die;
             public static Thread Zombie;
             public static int TestNum;
 
@@ -158,7 +158,7 @@ namespace Lucene.Net.Util
             public static void Setup()
             {
                 Debug.Assert(Zombie == null);
-                Die = new CountDownLatch(1);
+                Die = new CountdownLatch(1);
                 TestNum = 0;
             }
 
