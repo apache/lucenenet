@@ -510,6 +510,7 @@ namespace Lucene.Net.Store
             private readonly FileStream file;
 #pragma warning restore CA2213 // Disposable fields should be disposed
             private volatile bool isOpen; // remember if the file is open, so that we don't try to close it more than once
+            private int disposed; // LUCENENET specific: 0 = open, 1 = disposed. Used with Interlocked to make Dispose run-once.
             private readonly CRC32 crc = new CRC32();
 
             public FSIndexOutput(FSDirectory parent, string name)
@@ -574,45 +575,43 @@ namespace Lucene.Net.Store
             /// <inheritdoc/>
             protected override void Dispose(bool disposing)
             {
-                if (disposing && isOpen)
+                // LUCENENET specific: Ensure dispose only runs once, even if two threads race here.
+                // A plain isOpen check is not enough: the read is atomic, but two threads could both
+                // observe true and both run the dispose logic. Atomically transition disposed 0 -> 1
+                // so only the first thread proceeds.
+                if (disposing && 0 == Interlocked.CompareExchange(ref disposed, 1, 0))
                 {
                     Exception priorE = null; // LUCENENET: No need to cast to IOException
 
+                    UninterruptableMonitor.Enter(parent.m_syncLock);
                     try
                     {
-                        // LUCENENET: FileStream has a managed buffer. If we add this file
-                        // to m_staleFiles before flushing that buffer, another thread can
-                        // fsync the file through a separate handle, remove the stale marker,
-                        // and then this FileStream can flush later. That leaves bytes written
-                        // after the fsync and can make a committed index non-durable after a
-                        // process or machine crash.
+                        // LUCENENET: FileStream has a managed buffer, so a write is not guaranteed to
+                        // have reached the OS until the buffer is flushed. (Java's RandomAccessFile.write()
+                        // is unbuffered, so upstream has no such buffer and no flush race here.) If we add
+                        // this file to m_staleFiles (via OnIndexOutputClosed) before flushing that buffer,
+                        // another thread can fsync the file through a separate handle, remove the stale
+                        // marker, and only then does this FileStream flush its buffer to the OS. That leaves
+                        // bytes written after the fsync, which can make a committed index non-durable after
+                        // a process or machine crash.
                         //
-                        // Keep the FileStream flush and stale-file bookkeeping atomic with
-                        // FSDirectory.Sync() so a file is never considered synced until all
-                        // managed FileStream buffers have at least reached the OS.
-                        UninterruptableMonitor.Enter(parent.m_syncLock);
+                        // Keep the FileStream flush and stale-file bookkeeping atomic with FSDirectory.Sync()
+                        // (which also takes m_syncLock) so a file is never considered synced until all managed
+                        // FileStream buffers have at least reached the OS.
                         try
                         {
-                            try
-                            {
-                                file.Flush(flushToDisk: false);
-                            }
-                            catch (Exception ioe) when (ioe.IsIOException())
-                            {
-                                priorE = ioe;
-                            }
-                            finally
-                            {
-                                parent.OnIndexOutputClosed(this);
-                            }
+                            file.Flush(flushToDisk: false);
                         }
-                        finally
+                        catch (Exception ioe) when (ioe.IsIOException())
                         {
-                            UninterruptableMonitor.Exit(parent.m_syncLock);
+                            priorE = ioe;
                         }
+
+                        parent.OnIndexOutputClosed(this);
                     }
                     finally
                     {
+                        UninterruptableMonitor.Exit(parent.m_syncLock);
                         isOpen = false;
                         IOUtils.DisposeWhileHandlingException(priorE, file);
                     }
