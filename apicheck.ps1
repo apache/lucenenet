@@ -4,52 +4,71 @@ param (
 
 $ErrorActionPreference = "Stop"
 
-$mvnPomPath = "src/java/lucene-api-extractor/pom.xml"
-$targetPath = "src/java/lucene-api-extractor/target"
+# The Java API extractor now lives in its own repository:
+#   https://github.com/paulirwin/java-api-extractor
+# Its source is no longer vendored here. We download the pre-built shaded
+# ("fat") jar from a pinned GitHub Release and run it with `java -jar`.
+#
+# Requirements:
+#   - The GitHub CLI (`gh`) must be installed and authenticated (`gh auth login`).
+#     It is used to download the release asset.
+#   - A Java 21+ runtime on PATH (the extractor targets Java 21).
+
+$extractorRepo = "paulirwin/java-api-extractor"
+$extractorVersion = "v0.1.0"
+# The release attaches the shaded fat jar named "<artifact>-<version>-all.jar".
+$jarAssetPattern = "*-all.jar"
+
 $dotnetProjectPath = "src/dotnet/Lucene.Net.ApiCheck/Lucene.Net.ApiCheck.csproj"
 $configFilePath = "apicheck-config.jsonc"
-$artifactId = "lucene-api-extractor"
+$jarCachePath = "_artifacts/java-api-extractor/$extractorVersion"
 $downloadPath = "_artifacts/lucene-api-extractor/download"
 $outputPath = "_artifacts/lucene-api-extractor/output"
 
 if ($clean)
 {
-    # delete existing output path
+    # delete existing output and cached jar
     Remove-Item -Recurse -Force $outputPath -ErrorAction SilentlyContinue
+    Remove-Item -Recurse -Force $jarCachePath -ErrorAction SilentlyContinue
 }
 
-# create download and output paths recursively
+# create download, output, and jar cache paths recursively
 New-Item -ItemType Directory -Force -Path $downloadPath -InformationAction SilentlyContinue -ErrorAction SilentlyContinue | Out-Null
 New-Item -ItemType Directory -Force -Path $outputPath -InformationAction SilentlyContinue -ErrorAction SilentlyContinue | Out-Null
+New-Item -ItemType Directory -Force -Path $jarCachePath -InformationAction SilentlyContinue -ErrorAction SilentlyContinue | Out-Null
 
-if ($clean)
+# Reuse a previously downloaded jar if present (use -clean to force a fresh download).
+$jarFile = Get-ChildItem -Path $jarCachePath -Filter $jarAssetPattern -ErrorAction SilentlyContinue | Select-Object -First 1
+
+if (-not $jarFile)
 {
-    # build jar
-    Write-Host "Building jar file..."
-    mvn -f $mvnPomPath clean package
+    # The download requires the GitHub CLI.
+    if (-not (Get-Command gh -ErrorAction SilentlyContinue))
+    {
+        Write-Host "The GitHub CLI ('gh') is required to download the java-api-extractor jar but was not found on PATH."
+        Write-Host "Install it from https://cli.github.com/ and run 'gh auth login', then re-run this script."
+        exit 1
+    }
+
+    Write-Host "Downloading java-api-extractor $extractorVersion fat jar from $extractorRepo..."
+    gh release download $extractorVersion --repo $extractorRepo --pattern $jarAssetPattern --dir $jarCachePath --clobber
 
     if ($LASTEXITCODE -ne 0)
     {
-        Write-Host "Maven build failed. Exiting."
+        Write-Host "Failed to download the java-api-extractor release asset. Exiting."
         exit $LASTEXITCODE
     }
-}
-elseif (-not (Test-Path "$targetPath/$artifactId-*.jar"))
-{
-    # build jar
-    Write-Host "Building jar file..."
-    mvn -f $mvnPomPath package
 
-    if ($LASTEXITCODE -ne 0)
+    $jarFile = Get-ChildItem -Path $jarCachePath -Filter $jarAssetPattern -ErrorAction SilentlyContinue | Select-Object -First 1
+
+    if (-not $jarFile)
     {
-        Write-Host "Maven build failed. Exiting."
-        exit $LASTEXITCODE
+        Write-Host "Download succeeded but no jar matching '$jarAssetPattern' was found in $jarCachePath. Exiting."
+        exit 1
     }
 }
 
-
-$jarFile = Get-ChildItem -Path $targetPath -Filter "$artifactId-*.jar" | Select-Object -First 1
-Write-Host "Jar file: $jarFile"
+Write-Host "Jar file: $($jarFile.FullName)"
 
 if ($clean) {
     # Clean the API Check project
@@ -59,4 +78,4 @@ if ($clean) {
 
 # Run the API check
 Write-Host "Running API check..."
-dotnet run --project $dotnetProjectPath -- report -j $jarFile -c $configFilePath -o $outputPath -d $downloadPath
+dotnet run --project $dotnetProjectPath -- report -j $jarFile.FullName -c $configFilePath -o $outputPath -d $downloadPath
