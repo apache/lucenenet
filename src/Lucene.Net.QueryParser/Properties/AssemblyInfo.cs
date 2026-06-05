@@ -42,3 +42,4 @@ using System.Runtime.InteropServices;
 
 [assembly: LuceneMavenMapping("org.apache.lucene", "lucene-queryparser", "4.8.1")]
 [assembly: LucenePackageMapping("Lucene.Net.QueryParsers", "org.apache.lucene.queryparser")]
+[assembly: LucenePackageMapping("Lucene.Net.QueryParsers.ComplexPhrase", "org.apache.lucene.queryparser.complexPhrase")]
