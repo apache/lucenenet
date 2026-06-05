@@ -483,7 +483,7 @@ public class MemberComparison
         }
 
         // Strip array brackets if present on both sides and recurse
-        if (javaTypeName.EndsWith("[]") && dotNetType.IsArray)
+        if (javaTypeName.EndsWith("[]", StringComparison.Ordinal) && dotNetType.IsArray)
         {
             return ParameterTypesMatch(
                 dotNetType.GetElementType()!,
@@ -529,7 +529,7 @@ public class MemberComparison
 
     private static string CleanFieldName(string name)
     {
-        if (name.StartsWith("m_") || name.StartsWith("s_"))
+        if (name.StartsWith("m_", StringComparison.Ordinal) || name.StartsWith("s_", StringComparison.Ordinal))
         {
             return name[2..];
         }
