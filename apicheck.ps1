@@ -4,10 +4,9 @@ param (
 
 $ErrorActionPreference = "Stop"
 
-# The Java API extractor now lives in its own repository:
+# The Java API extractor lives in its own Apache-licensed repository:
 #   https://github.com/paulirwin/java-api-extractor
-# Its source is no longer vendored here. We download the pre-built shaded
-# ("fat") jar from a pinned GitHub Release and run it with `java -jar`.
+# We download the pre-built shaded ("fat") jar from a pinned GitHub Release and run it with `java -jar`.
 #
 # Requirements:
 #   - The GitHub CLI (`gh`) must be installed and authenticated (`gh auth login`).
