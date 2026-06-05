@@ -70,7 +70,8 @@ namespace Lucene.Net.Index
         internal readonly DisposableThreadLocal<TermVectorsReader> termVectorsLocal;
         internal readonly DisposableThreadLocal<IDictionary<string, object>> normsLocal =
             new DisposableThreadLocal<IDictionary<string, object>>(() => new JCG.Dictionary<string, object>());
-        private readonly ISet<ICoreDisposedListener> coreClosedListeners = new JCG.LinkedHashSet<ICoreDisposedListener>().AsConcurrent();
+        // LUCENENET specific: OrderedHashSet<T> is a replacement for LinkedHashSet<E> in the JDK
+        private readonly ISet<ICoreDisposedListener> coreClosedListeners = new JCG.OrderedHashSet<ICoreDisposedListener>().AsConcurrent();
 
         internal SegmentCoreReaders(SegmentReader owner, Directory dir, SegmentCommitInfo si, IOContext context, int termsIndexDivisor)
         {

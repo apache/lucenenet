@@ -362,7 +362,8 @@ namespace Lucene.Net.Search
             {
                 termOrds.SetDocument(i);
                 // this will remove identical terms. A DocTermOrds doesn't return duplicate ords for a docId
-                ISet<BytesRef> values = new JCG.LinkedHashSet<BytesRef>(multiValued[i]);
+                // LUCENENET specific: OrderedHashSet<T> is a replacement for LinkedHashSet<E> in the JDK
+                ISet<BytesRef> values = new JCG.OrderedHashSet<BytesRef>(multiValued[i]);
                 foreach (BytesRef v in values)
                 {
                     if (v is null)

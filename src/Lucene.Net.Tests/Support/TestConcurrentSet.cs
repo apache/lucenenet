@@ -38,8 +38,9 @@ namespace Lucene.Net
     /// </remarks>
     public class TestConcurrentSet : BaseConcurrentSetTestCase
     {
+        // LUCENENET specific: OrderedHashSet<T> is a replacement for LinkedHashSet<E> in the JDK
         protected override ISet<T> NewSet<T>()
-            => new ConcurrentSet<T>(new JCG.LinkedHashSet<T>());
+            => new ConcurrentSet<T>(new JCG.OrderedHashSet<T>());
 
         protected override ISet<T> NewSet<T>(ISet<T> set)
             => new ConcurrentSet<T>(set);
@@ -51,7 +52,8 @@ namespace Lucene.Net
         [Test, LuceneNetSpecific]
         public async Task TestSyncRoot()
         {
-            var innerSet = new JCG.LinkedHashSet<int>();
+            // LUCENENET specific: OrderedHashSet<T> is a replacement for LinkedHashSet<E> in the JDK
+            var innerSet = new JCG.OrderedHashSet<int>();
             var set = new ConcurrentSet<int>(innerSet);
             Assert.IsNotNull(set.SyncRoot);
 
@@ -97,7 +99,8 @@ namespace Lucene.Net
         [Test, LuceneNetSpecific]
         public void TestGetEnumerator()
         {
-            var innerSet = new JCG.LinkedHashSet<int>();
+            // LUCENENET specific: OrderedHashSet<T> is a replacement for LinkedHashSet<E> in the JDK
+            var innerSet = new JCG.OrderedHashSet<int>();
             var set = new ConcurrentSet<int>(innerSet);
             for (int i = 0; i < 100; i++)
             {

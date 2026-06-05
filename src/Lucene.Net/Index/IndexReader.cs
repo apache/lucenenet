@@ -99,7 +99,8 @@ namespace Lucene.Net.Index
 
         // LUCENENET specific - de-nested IReaderClosedListener and renamed to IReaderDisposedListener
 
-        private readonly ISet<IReaderDisposedListener> readerDisposedListeners = new JCG.LinkedHashSet<IReaderDisposedListener>().AsConcurrent();
+        // LUCENENET specific: OrderedHashSet<T> is a replacement for LinkedHashSet<E> in the JDK
+        private readonly ISet<IReaderDisposedListener> readerDisposedListeners = new JCG.OrderedHashSet<IReaderDisposedListener>().AsConcurrent();
 
         private readonly ConditionalWeakTable<IndexReader, object> parentReaders = new ConditionalWeakTable<IndexReader, object>();
 
