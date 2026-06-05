@@ -20,7 +20,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <see cref="ProductSingleFunction"/> returns the product of its components.
+    /// <see cref="ProductSingleFunction"/> returns the product of it's components.
     /// <para/>
     /// NOTE: This was ProductFloatFunction in Lucene
     /// </summary>
