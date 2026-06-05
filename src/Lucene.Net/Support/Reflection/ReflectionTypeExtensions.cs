@@ -30,7 +30,7 @@ namespace Lucene.Net.Reflection
     [NoLuceneEquivalent]
     public static class ReflectionTypeExtensions
     {
-        private static readonly Regex LuceneNetNamespaceRegex = new("^Lucene.Net.", RegexOptions.Compiled);
+        private static readonly Regex luceneNetNamespaceRegex = new("^Lucene.Net.", RegexOptions.Compiled);
 
         /// <summary>
         /// Gets the <see cref="LuceneTypeInfo"/> for the specified type.
@@ -100,7 +100,7 @@ namespace Lucene.Net.Reflection
             if (packageName == null)
             {
                 // assume all lower-case, any casing will have to be mapped manually
-                packageName = LuceneNetNamespaceRegex.Replace(type.Namespace, "org.apache.lucene.").ToLowerInvariant();
+                packageName = luceneNetNamespaceRegex.Replace(type.Namespace, "org.apache.lucene.").ToLowerInvariant();
             }
 
             var packageNameParts = packageName.Split('.');
