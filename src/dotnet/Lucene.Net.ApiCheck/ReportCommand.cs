@@ -32,7 +32,6 @@ public static class ReportCommand
         string[] filesToCopy =
         [
             "index.css",
-            "index.js",
         ];
 
         foreach (var file in filesToCopy)
