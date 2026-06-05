@@ -17,13 +17,12 @@
                 "org.carrot2:morfologik-polish:1.7.1"
             ]
         },
-// OpenNLP not currently supported due to version difference
-//        {
-//            "luceneNetName": "Lucene.Net.Analysis.OpenNLP",
-//            "mavenDependencies": [
-//                "org.apache.opennlp:opennlp-tools:1.9.1",
-//            ]
-//        },
+        {
+            "luceneNetName": "Lucene.Net.Analysis.OpenNLP",
+            "mavenDependencies": [
+                "org.apache.opennlp:opennlp-tools:1.9.1",
+            ]
+        },
         {
             "luceneNetName": "Lucene.Net.Analysis.Phonetic",
         },
