@@ -364,19 +364,23 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         /// <summary>
         /// LUCENENET specific helper class to force the DTD file to be read from the embedded resource
-        /// rather than from the file system.
+        /// rather than from the file system. Any other external reference is rejected, so the parser
+        /// only ever resolves the known, embedded <c>hyphenation.dtd</c>.
         /// </summary>
         internal class DtdResolver : XmlUrlResolver
         {
+            internal const string DtdFilename = "hyphenation.dtd";
+
             public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
             {
-                string dtdFilename = "hyphenation.dtd";
-                if (dtdFilename.Equals(absoluteUri.Segments.LastOrDefault(), StringComparison.Ordinal))
+                if (DtdFilename.Equals(absoluteUri?.Segments.LastOrDefault(), StringComparison.Ordinal))
                 {
-                    return typeof(PatternParser).FindAndGetManifestResourceStream(dtdFilename);
+                    return typeof(PatternParser).FindAndGetManifestResourceStream(DtdFilename);
                 }
 
-                return base.GetEntity(absoluteUri, role, ofObjectToReturn);
+                // Only the embedded hyphenation.dtd is a valid external reference. Reject anything
+                // else rather than resolving it from the file system or network.
+                throw new XmlException($"Unexpected external reference in hyphenation data: '{absoluteUri}'. Only '{DtdFilename}' may be referenced.");
             }
         }
 
