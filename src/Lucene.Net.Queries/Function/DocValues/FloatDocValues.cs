@@ -1,5 +1,4 @@
 // Lucene version compatibility level 4.8.1
-
 using Lucene.Net.Util.Mutable;
 using System;
 using System.Globalization;
