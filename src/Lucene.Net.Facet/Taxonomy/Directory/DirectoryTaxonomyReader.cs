@@ -77,7 +77,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private readonly ReaderWriterLockSlim ordinalCacheLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         private readonly ReaderWriterLockSlim categoryCacheLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
-        private /*volatile*/ TaxonomyIndexArrays taxoArrays; // LUCENENET specific: LazyInitalizer negates the need for volatile
+        private /*volatile*/ TaxonomyIndexArrays taxoArrays; // LUCENENET specific: LazyInitializer negates the need for volatile
         private bool isDisposed = false;
 
         /// <summary>

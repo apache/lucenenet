@@ -133,7 +133,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 {
                     charsNeeded += Components[i].Length;
                 }
-                charsNeeded += Length - 1; // num delimter chars
+                charsNeeded += Length - 1; // num delimiter chars
                 return charsNeeded;
             }
         }

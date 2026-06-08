@@ -509,8 +509,8 @@ namespace Lucene.Net.Search
     }
 
     /// <summary>
-    /// LUCENENET specific class to provide access to static factory metods of <see cref="NumericRangeQuery{T}"/>
-    /// without referring to its genereic closing type.
+    /// LUCENENET specific class to provide access to static factory methods of <see cref="NumericRangeQuery{T}"/>
+    /// without referring to its generic closing type.
     /// </summary>
     public static class NumericRangeQuery
     {

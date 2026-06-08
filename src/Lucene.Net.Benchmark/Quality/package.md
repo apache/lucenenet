@@ -67,7 +67,7 @@ Here is a sample code used to run the TREC 2006 queries 701-850 on the .Gov2 col
         SubmissionReport submitLog = null;
         QualityStats stats[] = qrun.execute(maxResults, judge, submitLog, logger);
 
-        // print an avarage sum of the results
+        // print an average sum of the results
         QualityStats avg = QualityStats.average(stats);
         avg.log("SUMMARY",2,logger, "  ");
 

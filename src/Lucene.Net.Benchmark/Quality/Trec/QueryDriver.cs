@@ -108,7 +108,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
             qrun.MaxResults = maxResults;
             QualityStats[] stats = qrun.Execute(judge, submitLog, logger);
 
-            // print an avarage sum of the results
+            // print an average sum of the results
             QualityStats avg = QualityStats.Average(stats);
             avg.Log("SUMMARY", 2, logger, "  ");
         }

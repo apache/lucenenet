@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             this.totalIndexInterval = totalIndexInterval;
             indexSize = 1 + ((int)indexEnum.size - 1) / indexDivisor;
             skipInterval = indexEnum.skipInterval;
-            // this is only an inital size, it will be GCed once the build is complete
+            // this is only an initial size, it will be GCed once the build is complete
             long initialSize = (long)(tiiFileLength * 1.5) / indexDivisor;
             PagedBytes dataPagedBytes = new PagedBytes(EstimatePageBits(initialSize));
             PagedBytesDataOutput dataOutput = dataPagedBytes.GetDataOutput();

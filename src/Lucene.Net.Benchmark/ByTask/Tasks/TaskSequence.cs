@@ -310,7 +310,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     {
                         break;
                     }
-                    nextStartTime += delayStep; // this aims at avarage rate.
+                    nextStartTime += delayStep; // this aims at average rate.
                     try
                     {
                         int inc = task.RunAndMaybeStats(letChildReport);

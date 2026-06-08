@@ -39,7 +39,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Tries to get the random seed from either a <see cref="RandomSeedAttribute"/> or the "tests:seed" system property.
-        /// If niether of these exist, a random seed will be generated and this method returns <c>false</c>;
+        /// If neither of these exist, a random seed will be generated and this method returns <c>false</c>;
         /// </summary>
         /// <param name="test">The test fixture.</param>
         /// <param name="seed">The random seed for a new <see cref="Random"/> instance.
@@ -113,7 +113,7 @@ namespace Lucene.Net.Util
 
             random = new J2N.Randomizer(initialSeed + seedOffset);
 
-            int goodFastHashSeed = (int)initialSeed * 31; // LUCENENET: Multiplying 31 to remove the possility of a collision with the test framework while still using a deterministic number.
+            int goodFastHashSeed = (int)initialSeed * 31; // LUCENENET: Multiplying 31 to remove the possibility of a collision with the test framework while still using a deterministic number.
             if (StringHelper.goodFastHashSeed != goodFastHashSeed)
                 StringHelper.goodFastHashSeed = goodFastHashSeed;
 
