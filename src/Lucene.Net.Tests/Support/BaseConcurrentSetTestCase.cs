@@ -399,12 +399,13 @@ namespace Lucene.Net
         }
 
         /// <summary>
-        /// Runs the synchronized set tests using <see cref="J2N.Collections.Generic.LinkedHashSet{T}"/> as the inner set type.
+        /// Runs the synchronized set tests using <see cref="J2N.Collections.Generic.OrderedHashSet{T}"/> as the inner set type.
         /// </summary>
         [Test]
-        public void TestSynchronizedSet_LinkedHashSet()
+        public void TestSynchronizedSet_OrderedHashSet()
         {
-            BaseTestSynchronizedSet(() => new JCG.LinkedHashSet<object?>());
+            // LUCENENET specific: OrderedHashSet<T> is a replacement for LinkedHashSet<E> in the JDK
+            BaseTestSynchronizedSet(() => new JCG.OrderedHashSet<object?>());
         }
 
         protected void BaseTestSynchronizedSet(Func<ISet<object?>> innerSetFactory)

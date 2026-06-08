@@ -316,8 +316,10 @@ namespace Lucene.Net.Spatial.Prefix
                 // We ensure true-positive matches (if the predicate on the raw shapes match
                 //  then the search should find those same matches).
                 // approximations, false-positive matches
-                ISet<string> expectedIds = new JCG.LinkedHashSet<string>();//true-positives
-                ISet<string> secondaryIds = new JCG.LinkedHashSet<string>();//false-positives (unless disjoint)
+                // LUCENENET specific: OrderedHashSet<T> is a replacement for LinkedHashSet<E> in the JDK
+                ISet<string> expectedIds = new JCG.OrderedHashSet<string>();//true-positives
+                // LUCENENET specific: OrderedHashSet<T> is a replacement for LinkedHashSet<E> in the JDK
+                ISet<string> secondaryIds = new JCG.OrderedHashSet<string>();//false-positives (unless disjoint)
                 foreach (var entry in indexedShapes)
                 {
                     string id = entry.Key;
@@ -368,7 +370,8 @@ namespace Lucene.Net.Spatial.Prefix
                     args.DistErrPct = (0.0);//a hack; we want to be more detailed than gridSnap(queryShape)
                 Query query = strategy.MakeQuery(args);
                 SearchResults got = executeQuery(query, 100);
-                ISet<String> remainingExpectedIds = new JCG.LinkedHashSet<string>(expectedIds);
+                // LUCENENET specific: OrderedHashSet<T> is a replacement for LinkedHashSet<E> in the JDK
+                ISet<String> remainingExpectedIds = new JCG.OrderedHashSet<string>(expectedIds);
                 foreach (SearchResult result in got.results)
                 {
                     String id = result.GetId();

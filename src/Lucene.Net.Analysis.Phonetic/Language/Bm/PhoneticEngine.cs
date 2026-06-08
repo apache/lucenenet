@@ -72,7 +72,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
             private PhonemeBuilder(Phoneme phoneme)
             {
-                this.phonemes = new JCG.LinkedHashSet<Phoneme>
+                // LUCENENET specific: OrderedHashSet<T> is a replacement for LinkedHashSet<E> in the JDK
+                this.phonemes = new JCG.OrderedHashSet<Phoneme>
                 {
                     phoneme
                 };
@@ -131,7 +132,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             /// <param name="maxPhonemes">The maximum number of phonemes to build up.</param>
             public void Apply(IPhonemeExpr phonemeExpr, int maxPhonemes)
             {
-                ISet<Phoneme> newPhonemes = new JCG.LinkedHashSet<Phoneme>(maxPhonemes);
+                // LUCENENET specific: OrderedHashSet<T> is a replacement for LinkedHashSet<E> in the JDK
+                ISet<Phoneme> newPhonemes = new JCG.OrderedHashSet<Phoneme>(maxPhonemes);
 
                 //EXPR_continue:
                 foreach (Phoneme left in this.phonemes)

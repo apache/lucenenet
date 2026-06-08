@@ -48,8 +48,9 @@ namespace Lucene.Net.Search.VectorHighlight
         internal FieldQuery(Query query, IndexReader reader, bool phraseHighlight, bool fieldMatch)
         {
             this.fieldMatch = fieldMatch;
-            // LUCENENET NOTE: LinkedHashSet cares about insertion order
-            ISet<Query> flatQueries = new JCG.LinkedHashSet<Query>();
+            // LUCENENET specific: OrderedHashSet<T> is a replacement for LinkedHashSet<E> in the JDK
+            // (insertion order is significant here)
+            ISet<Query> flatQueries = new JCG.OrderedHashSet<Query>();
             Flatten(query, reader, flatQueries);
             SaveTerms(flatQueries, reader);
             ICollection<Query> expandQueries = Expand(flatQueries);
@@ -189,7 +190,8 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <returns></returns>
         internal ICollection<Query> Expand(ICollection<Query> flatQueries)
         {
-            ISet<Query> expandQueries = new JCG.LinkedHashSet<Query>();
+            // LUCENENET specific: OrderedHashSet<T> is a replacement for LinkedHashSet<E> in the JDK
+            ISet<Query> expandQueries = new JCG.OrderedHashSet<Query>();
 
             for (int i = 0; i < flatQueries.Count;)
             {
