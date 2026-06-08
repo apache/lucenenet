@@ -1,4 +1,5 @@
 using J2N.Threading;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -37,6 +38,7 @@ namespace Lucene.Net.Index
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+    using StackTraceHelper = Lucene.Net.Util.StackTraceHelper;
     using StringField = StringField;
 
     [TestFixture]
@@ -169,8 +171,29 @@ namespace Lucene.Net.Index
                             return;
                         }
 
-                        writer1.Commit();
-                        writer2.Commit();
+                        // LUCENENET specific: deviates from upstream Java, which leaves
+                        // these Commit() calls unguarded. The test injects random I/O
+                        // failures (RandomFailure) for the whole prepare+commit region,
+                        // and Commit() writes the segments file footer via
+                        // SegmentInfos.FinishCommit, so an injected IOException can escape
+                        // Commit() into TimedThread.Run's catch and trip failed=true. That
+                        // is not the behavior under test: the test verifies the
+                        // transactional protocol holds *in the presence of* random I/O
+                        // failures, so a Commit() failure should be handled the same way as
+                        // a PrepareCommit() failure (roll back and abort the cycle). The
+                        // same limitation exists in upstream Java; it just surfaces rarely.
+                        // See https://github.com/apache/lucenenet/issues/1298.
+                        try
+                        {
+                            writer1.Commit();
+                            writer2.Commit();
+                        }
+                        catch (Exception t) when (t.IsThrowable())
+                        {
+                            writer1.Rollback();
+                            writer2.Rollback();
+                            return;
+                        }
                     }
                     finally
                     {
@@ -281,14 +304,56 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestTransactions_Mem()
         {
+            DoTestTransactions(new RandomFailure(), new RandomFailure());
+        }
+
+        // LUCENENET specific: deterministic regression test for the race surfaced
+        // intermittently in https://github.com/apache/lucenenet/issues/1298
+        // (TestTransactions_Mem reporting "Expected: True Actual: False"). The
+        // standard test relies on RandomFailure, which throws during PrepareCommit
+        // ~100% of the time, so it almost never reaches Commit, making the
+        // Commit-phase failure nearly impossible to reproduce. This variant injects
+        // an exception that fires *only* inside SegmentInfos.FinishCommit, which is
+        // on the call stack of writer.Commit() (it writes the segments file footer)
+        // but never of writer.PrepareCommit(). That makes Commit() throw
+        // deterministically while PrepareCommit() stays clean, exercising the
+        // previously-unguarded Commit() path in IndexerThread.DoWork. Without the
+        // Commit() try/catch added for #1298 this fails with "Expected: True
+        // Actual: False"; with it, the Commit failure is treated as a recoverable
+        // cycle abort and the test passes.
+        [Test, LuceneNetSpecific]
+        public virtual void TestTransactions_CommitFailure_IsHandled()
+        {
+            DoTestTransactions(new FailOnlyInFinishCommit(), new FailOnlyInFinishCommit());
+        }
+
+        // Fires "now failing on purpose" only when the call stack is inside
+        // SegmentInfos.FinishCommit (which is marked NoInlining so the stack frame
+        // remains observable). That method is reachable from writer.Commit() but
+        // not writer.PrepareCommit(), so PrepareCommit completes cleanly and the
+        // test reaches the Commit() calls in IndexerThread.DoWork.
+        private class FailOnlyInFinishCommit : Failure
+        {
+            public override void Eval(MockDirectoryWrapper dir)
+            {
+                if (TestTransactions.doFail &&
+                    StackTraceHelper.DoesStackTraceContainMethod(nameof(SegmentInfos), nameof(SegmentInfos.FinishCommit)))
+                {
+                    throw new IOException("now failing on purpose");
+                }
+            }
+        }
+
+        private void DoTestTransactions(Failure failure1, Failure failure2)
+        {
             Console.WriteLine("start test");
             // we can't use non-ramdir on windows, because this test needs to double-write.
             MockDirectoryWrapper dir1 = new MockDirectoryWrapper(Random, new RAMDirectory());
             MockDirectoryWrapper dir2 = new MockDirectoryWrapper(Random, new RAMDirectory());
             dir1.PreventDoubleWrite = false;
             dir2.PreventDoubleWrite = false;
-            dir1.FailOn(new RandomFailure());
-            dir2.FailOn(new RandomFailure());
+            dir1.FailOn(failure1);
+            dir2.FailOn(failure2);
             dir1.FailOnOpenInput = false;
             dir2.FailOnOpenInput = false;
 
