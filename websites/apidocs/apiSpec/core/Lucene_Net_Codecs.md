@@ -49,7 +49,7 @@ public class MyCodec : Codec
 
 To override the default codec name, decorate the custom codec with the <xref:Lucene.Net.Codecs.CodecNameAttribute>.
 
-The <xref:Lucene.Net.Codecs.CodecNameAttribute> can be used to set the name to that of a built-in codec to override its registration in the <xref:Lucene.Net.Codecs.DefaultCodecFactory>.  
+The <xref:Lucene.Net.Codecs.CodecNameAttribute> can be used to set the name to that of a built-in codec to override its registration in the <xref:Lucene.Net.Codecs.DefaultCodecFactory>.
 
 ```cs
 [CodecName("MyCodec")] // Sets the codec name explicitly
@@ -178,7 +178,7 @@ The <xref:Lucene.Net.TestFramework> library contains specialized classes to mini
 > See [Unit testing C# with NUnit and .NET Core](https://docs.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit) for detailed instructions on how to set up a class library to use with NUnit.
 
 > [!NOTE]
-> .NET Standard is not an executable target. Tests will not run unless you target a framework such as `net6.0` or `net48`.
+> .NET Standard is not an executable target. Tests will not run unless you target a framework such as `net8.0` or `net48`.
 
 Here is an example project file for .NET 8 for testing a project named `MyCodecs.csproj`.
 
