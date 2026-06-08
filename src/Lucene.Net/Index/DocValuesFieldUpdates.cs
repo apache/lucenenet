@@ -124,14 +124,14 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Add an update to a document from a <see cref="DocValuesFieldUpdatesIterator"/>.
         /// The <see cref="DocValuesFieldUpdatesIterator"/>'s value should be <c>null</c> to unset a value.
-        /// Note that the value is exposed by casting to the apprpriate <see cref="DocValuesFieldUpdatesIterator"/> subclasss.
+        /// Note that the value is exposed by casting to the appropriate <see cref="DocValuesFieldUpdatesIterator"/> subclasss.
         /// </summary>
         public abstract void AddFromIterator(int doc, DocValuesFieldUpdatesIterator iterator);
 
         /// <summary>
         /// Add an update to a document from a <see cref="DocValuesUpdate"/>.
         /// The <see cref="DocValuesUpdate"/>'s value should be <c>null</c> to unset a value.
-        /// Note that the value is exposed by casting to the apprpriate <see cref="DocValuesUpdate"/> subclasss.
+        /// Note that the value is exposed by casting to the appropriate <see cref="DocValuesUpdate"/> subclasss.
         /// </summary>
         public abstract void AddFromUpdate(int doc, DocValuesUpdate update);
 

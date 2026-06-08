@@ -799,7 +799,7 @@ namespace Lucene.Net.Index
 
             Assert.IsNotNull(docsEnum, "null DocsEnum");
             int initialDocID = docsEnum.DocID;
-            Assert.AreEqual(-1, initialDocID, "inital docID should be -1" + docsEnum);
+            Assert.AreEqual(-1, initialDocID, "initial docID should be -1" + docsEnum);
 
             if (Verbose)
             {

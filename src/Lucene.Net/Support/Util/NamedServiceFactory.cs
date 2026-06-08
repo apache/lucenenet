@@ -22,7 +22,7 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// LUCENENET specific abstract class containing common fuctionality for named service factories.
+    /// LUCENENET specific abstract class containing common functionality for named service factories.
     /// </summary>
     /// <typeparam name="TService">The type of service this factory applies to.</typeparam>
     public abstract class NamedServiceFactory<TService>

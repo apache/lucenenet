@@ -105,7 +105,7 @@ namespace Lucene.Net.NUnit.TestUtilities
 
         internal static void InitializeTestFixture(Test fixture)
         {
-            var random = new J2N.Randomizer(); // LUCENENET TOOD: Initilize this to make it repeatable?
+            var random = new J2N.Randomizer(); // LUCENENET TODO: Initialize this to make it repeatable?
             long initialSeed = random.NextInt64();
             long testSeed = random.NextInt64();
             var randomizedContext = new RandomizedContext(fixture, fixture.TypeInfo.Assembly, initialSeed, testSeed);
