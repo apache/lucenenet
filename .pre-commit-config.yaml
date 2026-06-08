@@ -96,3 +96,16 @@ repos:
       - id: fix-byte-order-marker
         name: run fix-byte-order-marker
         description: fixes files with UTF-8 byte order markers
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+        name: run gitleaks
+        description: check for secrets with gitleaks
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.37.2
+    hooks:
+      - id: check-dependabot
+        name: validate dependabot.yml
+        description: ensures the dependabot config file is valid
+        files: ^\.github/dependabot\.yml$
