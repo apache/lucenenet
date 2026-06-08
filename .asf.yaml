@@ -10,7 +10,7 @@ notifications:
   # jobs: builds@lucenenet.apache.org # This is probably too noisy to enable
 
 github:
-  description: "Apache Lucene.NET is an open-source full-text search library written in C#. It is a port of the popular Java Apache Lucene project."
+  description: "Apache Lucene.NET is an open-source full-text search library written in C#, ported from the Apache Lucene project."
   homepage: https://lucenenet.apache.org/
   labels:
     - lucenenet
