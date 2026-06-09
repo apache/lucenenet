@@ -40,13 +40,13 @@ steps:
     EnsureNotNullOrEmpty('${{ parameters.testSymbolFilesConvention }}', 'testSymbolFilesConvention')
   displayName: 'Validate Template Parameters'
 
-- task: DownloadPipelineArtifact@0
+- task: DownloadPipelineArtifact@2
   displayName: 'Download Build Artifacts: ${{ parameters.nugetArtifactName }}'
   inputs:
     artifactName: '${{ parameters.nugetArtifactName }}'
     targetPath: '$(System.DefaultWorkingDirectory)/${{ parameters.nugetArtifactName }}'
 
-- task: DownloadPipelineArtifact@0
+- task: DownloadPipelineArtifact@2
   displayName: 'Download Build Artifacts: ${{ parameters.debugArtifactName }}'
   inputs:
     artifactName: '${{ parameters.debugArtifactName }}'
