@@ -121,7 +121,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        // :TODO: synchronize to prevent redundent copying? (sync per field name?)
+        // :TODO: synchronize to prevent redundant copying? (sync per field name?)
         private void FetchRealValues(string name, int fieldNum)
         {
             Document d = GetDocument();

@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
 #pragma warning disable SYSLIB0011 // Type or member is obsolete (BinaryFormatter)
         /// <summary>
         /// Serializes <paramref name="source"/> using <see cref="BinaryFormatter"/>
-        /// and returns a <see cref="MemoryStream"/> with the result of the serialzation.
+        /// and returns a <see cref="MemoryStream"/> with the result of the serialization.
         /// This method is not meant to scale, it is only for quick serialization verification
         /// in tests.
         /// </summary>

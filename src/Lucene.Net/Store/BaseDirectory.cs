@@ -32,7 +32,7 @@ namespace Lucene.Net.Store
         private const int True = 1;
         private const int False = 0;
 
-        // LUCENENET specific - using Interlocked intead of a volatile field for IsOpen.
+        // LUCENENET specific - using Interlocked instead of a volatile field for IsOpen.
         private int isOpen = True; // LUCENENET: Added check to ensure we aren't disposed.
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Lucene.Net.Store
         /// if the current value <c>==</c> the expected value.
         /// <para/>
         /// Expert: Use this in the <see cref="Directory.Dispose(bool)"/> call to skip
-        /// duplicate calls by using the folling if block to guard the
+        /// duplicate calls by using the following if block to guard the
         /// dispose logic.
         /// <code>
         /// protected override void Dispose(bool disposing)

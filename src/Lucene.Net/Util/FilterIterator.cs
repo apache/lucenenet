@@ -24,7 +24,7 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// An <see cref="IEnumerator{T}"/> implementation that filters elements with a boolean predicate. </summary>
-    // LUCENENET specific - simplifed the logic, as this is much easier to do in .NET
+    // LUCENENET specific - simplified the logic, as this is much easier to do in .NET
     public sealed class FilterEnumerator<T> : IEnumerator<T>
     {
         private readonly IEnumerator<T> iter;

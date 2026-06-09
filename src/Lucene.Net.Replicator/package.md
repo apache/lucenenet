@@ -132,7 +132,7 @@ public class AspNetCoreReplicationResponse : IReplicationResponse
     }
 
     // Return a stream where the ReplicatorService can write to for the response.
-    // Depending on the action either the file or the sesssion token will be written to this stream.
+    // Depending on the action either the file or the session token will be written to this stream.
     public Stream Body => response.Body;
 
     // Called when the ReplicatorService is done writing data to the response.

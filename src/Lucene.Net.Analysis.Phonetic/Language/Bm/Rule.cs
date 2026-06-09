@@ -825,15 +825,15 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
             // evaluate the pattern, left context and right context
             // fail early if any of the evaluations is not successful
-            if (!input.Subsequence(i, ipl - i).Equals(this.pattern)) // LUCENENET: Corrected 2nd Subseqence parameter
+            if (!input.Subsequence(i, ipl - i).Equals(this.pattern)) // LUCENENET: Corrected 2nd Subsequence parameter
             {
                 return false;
             }
-            else if (!this.rContext.IsMatch(input.Subsequence(ipl, input.Length - ipl))) // LUCENENET: Corrected 2nd Subseqence parameter
+            else if (!this.rContext.IsMatch(input.Subsequence(ipl, input.Length - ipl))) // LUCENENET: Corrected 2nd Subsequence parameter
             {
                 return false;
             }
-            return this.lContext.IsMatch(input.Subsequence(0, i - 0)); // LUCENENET: Corrected 2nd Subseqence parameter
+            return this.lContext.IsMatch(input.Subsequence(0, i - 0)); // LUCENENET: Corrected 2nd Subsequence parameter
         }
 
         /// <summary>

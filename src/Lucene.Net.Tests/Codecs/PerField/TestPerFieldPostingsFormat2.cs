@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.PerField
         }
 
         /// <summary>
-        /// Test that heterogeneous index segments are merged sucessfully
+        /// Test that heterogeneous index segments are merged successfully
         /// </summary>
         // TODO: not sure this test is that great, we should probably peek inside PerFieldPostingsFormat or something?!
         [Test]

@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs
      */
 
     // The test framework will automatically select the Codec.Default property at random from the complete
-    // set of codecs. For any codecs that were not registed, they need to be supressed with the SuppressCodecs attribute
+    // set of codecs. For any codecs that were not registered, they need to be suppressed with the SuppressCodecs attribute
     // on each test class (or a base class of them).
     [SuppressCodecs("Lucene3x", "Lucene40", "Lucene41", "Lucene42", "Lucene45")]
     public class TestCodecServices : LuceneTestCase

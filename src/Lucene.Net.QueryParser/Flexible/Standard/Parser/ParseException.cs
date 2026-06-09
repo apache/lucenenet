@@ -132,7 +132,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// <summary>
         /// This is the last token that has been consumed successfully.  If
         /// this object has been created due to a parse error, the token
-        /// followng this token will (therefore) be the first error token.
+        /// following this token will (therefore) be the first error token.
         /// </summary>
         public Token? CurrentToken { get; private set; }
 

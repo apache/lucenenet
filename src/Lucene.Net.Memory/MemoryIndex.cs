@@ -644,7 +644,7 @@ namespace Lucene.Net.Index.Memory
 
         /// <summary>
         /// Returns a reasonable approximation of the main memory [bytes] consumed by
-        /// this instance. Useful for smart memory sensititive caches/pools. </summary>
+        /// this instance. Useful for smart memory sensitive caches/pools. </summary>
         /// <returns> the main memory consumption </returns>
         public virtual long GetMemorySize()
         {
