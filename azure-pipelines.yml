@@ -624,7 +624,7 @@ stages:
 
     - template: '.build/azure-templates/show-all-environment-variables.yml'
 
-    - task: DownloadPipelineArtifact@0
+    - task: DownloadPipelineArtifact@2
       displayName: 'Download Build Artifacts: $(VersionArtifactName)'
       inputs:
         artifactName: '$(VersionArtifactName)'
@@ -667,14 +667,14 @@ stages:
     - template: '.build/azure-templates/show-all-environment-variables.yml'
 
 
-    - task: 'DownloadPipelineArtifact@0'
+    - task: 'DownloadPipelineArtifact@2'
       displayName: 'Download Build Artifacts: $(NuGetArtifactName)'
       inputs:
         artifactName: '$(NuGetArtifactName)'
         targetPath: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
 
 
-    - task: DownloadPipelineArtifact@0
+    - task: DownloadPipelineArtifact@2
       displayName: 'Download Build Artifacts: $(VersionArtifactName)'
       inputs:
         artifactName: '$(VersionArtifactName)'
