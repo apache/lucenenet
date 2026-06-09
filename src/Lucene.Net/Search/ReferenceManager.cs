@@ -373,7 +373,7 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// LUCENENET specific class used to provide static access to <see cref="ReferenceManager.IRefreshListener"/>
-    /// without having to specifiy the generic closing type of <see cref="ReferenceManager{G}"/>.
+    /// without having to specify the generic closing type of <see cref="ReferenceManager{G}"/>.
     /// </summary>
     public static class ReferenceManager
     {

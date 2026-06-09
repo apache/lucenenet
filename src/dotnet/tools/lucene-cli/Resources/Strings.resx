@@ -412,7 +412,7 @@ WARNING: This command should only be used on an emergency basis as it will cause
     <value>Lists the top N most frequent terms by document frequency.</value>
   </data>
   <data name="IndexListHighFreqTermsCommandExtendedHelpText" xml:space="preserve">
-    <value>Extracts the top N most frequent terms (by document frequency) from an index and reports thier document frequency.</value>
+    <value>Extracts the top N most frequent terms (by document frequency) from an index and reports their document frequency.</value>
   </data>
   <data name="IndexListHighFreqTermsCommandFieldDescription" xml:space="preserve">
     <value>The field to consider. If omitted, considers all fields.</value>

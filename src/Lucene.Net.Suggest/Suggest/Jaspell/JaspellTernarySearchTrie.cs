@@ -803,7 +803,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         }
 
         /// <summary>
-        /// Recursivelly vists the nodes in order to find the ones that almost match a
+        /// Recursively visits the nodes in order to find the ones that almost match a
         /// given key.
         /// </summary>
         /// <param name="currentNode">
@@ -942,7 +942,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         }
 
         /// <summary>
-        /// Recursivelly visists each node to calculate the number of nodes.
+        /// Recursively visits each node to calculate the number of nodes.
         /// </summary>
         /// <param name="currentNode">
         ///          The current node. </param>

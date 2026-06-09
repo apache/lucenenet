@@ -126,7 +126,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                             }
                                         case StreamTokenizer.TokenType_EndOfStream:
                                             {
-                                                throw RuntimeException.Create("Unexpexted EOF: - " + stok.ToString());
+                                                throw RuntimeException.Create("Unexpected EOF: - " + stok.ToString());
                                             }
                                         case '"':
                                         case '\'':
@@ -184,7 +184,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                         {
 
                             case ':':
-                                if (!colonOk) throw new Exception("colon unexpexted: - " + stok.ToString());
+                                if (!colonOk) throw new Exception("colon unexpected: - " + stok.ToString());
                                 //colonOk = false; // LUCENENET: IDE0059: Remove unnecessary value assignment - this is assigned again below without being read
                                 // get repetitions number
                                 stok.NextToken();

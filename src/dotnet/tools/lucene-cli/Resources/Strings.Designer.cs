@@ -836,7 +836,7 @@ namespace Lucene.Net.Cli.Resources {
         }
 
         /// <summary>
-        ///    Looks up a localized string similar to Extracts the top N most frequent terms (by document frequency) from an index and reports thier document frequency..
+        ///    Looks up a localized string similar to Extracts the top N most frequent terms (by document frequency) from an index and reports their document frequency..
         /// </summary>
         public static string IndexListHighFreqTermsCommandExtendedHelpText {
             get {
