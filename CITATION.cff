@@ -20,7 +20,25 @@ message: If you use this software, please cite it as below.
 title: Apache Lucene.NET
 type: software
 authors:
-  - name: Apache Lucene.NET Project
+  - name: Apache Lucene.NET Contributors
 repository-code: https://github.com/apache/lucenenet
 url: https://lucenenet.apache.org
 license: Apache-2.0
+abstract: "Apache Lucene.NET is a C# port of the Apache Lucene search library targeting .NET developers. It provides a powerful indexing and search engine library with support for text analysis, relevance ranking, query processing, and scalable full-text search across large collections of documents."
+keywords:
+  - search
+  - information retrieval
+  - full-text search
+  - text analysis
+  - query processing
+  - inverted index
+  - document retrieval
+  - relevance ranking
+  - indexing
+  - tokenization
+  - stemming
+  - faceted search
+  - linguistic analysis
+  - phonetic search
+  - fuzzy search
+  - spatial search
