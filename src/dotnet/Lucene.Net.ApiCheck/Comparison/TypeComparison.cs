@@ -20,6 +20,7 @@ using J2N.Text;
 using Lucene.Net.ApiCheck.Extensions;
 using Lucene.Net.ApiCheck.Models.JavaApi;
 using Lucene.Net.Reflection;
+using Lucene.Net.Util;
 using System.Collections;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -39,7 +40,11 @@ public static class TypeComparison
         // Java 'Throwable' is the root of all errors/exceptions; in .NET, Exception is the
         // typical analogue. Java 'Error' subclasses also map to Exception in practice.
         [typeof(Exception)] = ["java.lang.RuntimeException", "java.lang.Exception", "java.lang.Throwable", "java.lang.Error"],
-        [typeof(IDisposable)] = ["java.lang.AutoCloseable", "java.io.Closeable"], // TODO: map ICloseable once #271 is done
+        [typeof(IDisposable)] = ["java.lang.AutoCloseable", "java.io.Closeable"],
+        // Lucene.NET's Lucene.Net.Util.ICloseable is the .NET analogue of the Java
+        // close()-bearing marker interfaces (the #271 work item). Map it the same way as
+        // IDisposable so types that implement it satisfy a Java Closeable/AutoCloseable.
+        [typeof(ICloseable)] = ["java.io.Closeable", "java.lang.AutoCloseable"],
         [typeof(ICharSequence)] = ["java.lang.CharSequence"],
         [typeof(IAppendable)] = ["java.lang.Appendable"],
         [typeof(string)] = ["java.lang.String", "java.lang.CharSequence"],
@@ -154,7 +159,14 @@ public static class TypeComparison
 
     public static bool TypesMatch(Type dotNetType, TypeMetadata javaType)
     {
-        if (WellKnownEquivalentTypes.TryGetValue(dotNetType, out HashSet<string>? wellKnownEquivalentTypes))
+        // Java generic types are erased, so the well-known mappings are keyed by the open
+        // generic definition (e.g. IComparable<>, IEnumerator<>). Reduce a closed generic
+        // (IComparable<Term>) to its definition before the lookup so it still matches.
+        var lookupType = dotNetType.IsGenericType && !dotNetType.IsGenericTypeDefinition
+            ? dotNetType.GetGenericTypeDefinition()
+            : dotNetType;
+
+        if (WellKnownEquivalentTypes.TryGetValue(lookupType, out HashSet<string>? wellKnownEquivalentTypes))
         {
             return wellKnownEquivalentTypes.Contains(javaType.FullName);
         }
@@ -190,10 +202,32 @@ public static class TypeComparison
             _ => null
         };
 
-        return string.Equals(equivalentJavaKind, javaType.Kind, StringComparison.Ordinal)
-            && string.Equals(luceneTypeInfo.PackageName, javaType.PackageName, StringComparison.Ordinal)
-            && (string.Equals(luceneTypeInfo.TypeName, cleanJavaName, StringComparison.Ordinal)
-                || string.Equals(luceneTypeInfo.TypeName, NormalizeNestedTypeName(cleanJavaName), StringComparison.Ordinal));
+        if (!string.Equals(equivalentJavaKind, javaType.Kind, StringComparison.Ordinal)
+            || !string.Equals(luceneTypeInfo.PackageName, javaType.PackageName, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        if (string.Equals(luceneTypeInfo.TypeName, cleanJavaName, StringComparison.Ordinal)
+            || string.Equals(luceneTypeInfo.TypeName, NormalizeNestedTypeName(cleanJavaName), StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        // De-nesting: Lucene.NET frequently promotes a Java nested type (Outer$Inner) to a
+        // top-level type to avoid naming collisions (e.g. BooleanClause.Occur -> Occur,
+        // FieldInfo.IndexOptions -> IndexOptions). The Java name is then "Outer.Inner" while
+        // the .NET inferred name is just "Inner". When the Java type is nested and the .NET
+        // type is top-level, match on the innermost segment, still gated on the package and
+        // kind equality checked above so the candidate must live in the same package.
+        if (cleanJavaName.Contains('.') && !luceneTypeInfo.TypeName.Contains('.'))
+        {
+            var javaInnerName = cleanJavaName[(cleanJavaName.LastIndexOf('.') + 1)..];
+            return string.Equals(luceneTypeInfo.TypeName, javaInnerName, StringComparison.Ordinal)
+                || string.Equals(luceneTypeInfo.TypeName, NormalizeNestedTypeName(javaInnerName), StringComparison.Ordinal);
+        }
+
+        return false;
     }
 
     // Lucene.NET renames Java primitive type words inside type names (Int→Int32,
@@ -217,6 +251,14 @@ public static class TypeComparison
         return string.Join('.', segments);
     }
 
+    // JVM marker interfaces that carry no members and have no .NET counterpart. Lucene.NET
+    // does not (and cannot) implement these, so they should not count as a missing interface.
+    private static readonly HashSet<string> MarkerInterfacesWithoutDotNetEquivalent = new(StringComparer.Ordinal)
+    {
+        "java.lang.Cloneable",
+        "java.io.Serializable",
+    };
+
     public static bool InterfacesMatch(IReadOnlyList<Type> dotNetInterfaces, IReadOnlyList<string> javaInterfaces)
     {
         // The Java extractor reports only the directly-declared interfaces, while .NET reflection
@@ -226,9 +268,64 @@ public static class TypeComparison
         // equal-count or ".NET subset of Java" rule is wrong: the correct invariant is that every
         // Java interface is represented somewhere on the .NET side. .NET-only additions are benign.
         return javaInterfaces
-            // java.lang.Cloneable is a marker interface Lucene.NET intentionally drops; it has no
-            // .NET counterpart to match against.
-            .Where(j => !j.Equals("java.lang.Cloneable", StringComparison.Ordinal))
+            // java.lang.Cloneable and java.io.Serializable are JVM marker interfaces Lucene.NET
+            // intentionally drops; they have no .NET counterpart to match against.
+            .Where(j => !MarkerInterfacesWithoutDotNetEquivalent.Contains(j))
             .All(j => dotNetInterfaces.Any(i => TypeMatchesFullName(i, j, "interface")));
+    }
+
+    /// <summary>
+    /// Determines whether a .NET type's base type corresponds to the Java type's base type,
+    /// accounting for two Lucene.NET porting idioms in addition to a direct match.
+    /// </summary>
+    public static bool BaseTypesMatch(Type dotNetType, string? javaBaseType)
+    {
+        // Direct match (including the WellKnownEquivalentTypes / LuceneType mappings).
+        if (TypeMatchesFullName(dotNetType.BaseType, javaBaseType, "class"))
+        {
+            return true;
+        }
+
+        if (javaBaseType is null)
+        {
+            return false;
+        }
+
+        // Interface-ification: Lucene.NET frequently turns a Java abstract base class (e.g.
+        // org.apache.lucene.search.Collector) into a .NET interface (ICollector) that the
+        // concrete type implements, so the .NET class now derives from object. Accept when the
+        // .NET type derives from object (or has no base) and implements an interface whose
+        // Lucene name matches the Java base class.
+        var baseIsObjectOrNone = dotNetType.BaseType is null || dotNetType.BaseType == typeof(object);
+        if (baseIsObjectOrNone
+            && dotNetType.GetImplementedInterfaces().Any(i => TypeMatchesFullName(i, javaBaseType, "interface")))
+        {
+            return true;
+        }
+
+        // Generic/non-generic split: a .NET generic type (e.g. FieldComparer<T>) often derives
+        // from its own non-generic same-named twin (FieldComparer) that holds the shared static
+        // surface, while the Java type derives from java.lang.Object. Accept when the Java base
+        // is Object and the .NET base type is this type's own non-generic counterpart.
+        if (javaBaseType.Equals("java.lang.Object", StringComparison.Ordinal)
+            && dotNetType.IsGenericType
+            && dotNetType.BaseType is { IsGenericType: false } baseType)
+        {
+            var ownName = StripGenericArity(dotNetType.Name);
+            var baseName = StripGenericArity(baseType.Name);
+            if (string.Equals(ownName, baseName, StringComparison.Ordinal)
+                && string.Equals(dotNetType.Namespace, baseType.Namespace, StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static string StripGenericArity(string typeName)
+    {
+        var index = typeName.IndexOf('`');
+        return index < 0 ? typeName : typeName[..index];
     }
 }

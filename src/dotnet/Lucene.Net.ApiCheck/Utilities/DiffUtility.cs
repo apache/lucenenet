@@ -615,8 +615,7 @@ public static class DiffUtility
         }
 
         if (matchingType.DotNetType.HasKnownBaseTypeDifference()
-            || TypeComparison.TypeMatchesFullName(matchingType.DotNetType.BaseType, matchingType.JavaType.BaseType,
-                "class"))
+            || TypeComparison.BaseTypesMatch(matchingType.DotNetType, matchingType.JavaType.BaseType))
         {
             return null;
         }
@@ -635,7 +634,8 @@ public static class DiffUtility
                 matchingType.JavaType.Modifiers,
                 matchingType.DotNetType.GetModifiers(),
                 javaTypeKind: matchingType.JavaType.Kind,
-                isDotNetEnum: matchingType.DotNetType.IsEnum))
+                isDotNetEnum: matchingType.DotNetType.IsEnum,
+                isDotNetStruct: matchingType.DotNetType is { IsValueType: true, IsEnum: false }))
         {
             return null;
         }
