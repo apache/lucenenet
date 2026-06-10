@@ -99,7 +99,12 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void Test()
         {
-            IList<Type> analysisClasses = typeof(StandardAnalyzer).Assembly.GetTypes()
+            // LUCENENET specific: In Java, getClassesForPackage() scans the whole test classpath,
+            // which includes the test-framework (Mock*/Cranky/Validating types live there). In .NET
+            // those types are in a separate assembly (Lucene.Net.TestFramework), so we scan it in
+            // addition to Analysis.Common to match the upstream coverage. See GitHub #1126.
+            IList<Type> analysisClasses = new[] { typeof(StandardAnalyzer).Assembly, typeof(MockTokenizer).Assembly }
+                    .SelectMany(a => a.GetTypes())
                     .Where(c =>
                     {
                         var typeInfo = c;
