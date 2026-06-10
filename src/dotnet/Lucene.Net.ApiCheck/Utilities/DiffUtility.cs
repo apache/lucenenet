@@ -312,22 +312,32 @@ public static class DiffUtility
                     var pairedJava = arityCandidates[0];
                     consumedJavaCtors.Add(pairedJava);
 
+                    // Paired by arity alone because the strict ConstructorsMatch above failed.
+                    // Re-check the parameter types rather than assuming a mismatch: the strict
+                    // match can fail for reasons unrelated to this ctor's own parameters, in
+                    // which case the signatures are actually compatible.
+                    var hasTypeMismatch = !MemberComparison.ConstructorSignaturesMatch(dotNetCtor, pairedJava);
+
                     var hasModifierMismatch = !ModifierComparison.ModifiersAreEquivalent(
                         ModifierComparison.ModifierUsage.Member,
                         pairedJava.Modifiers,
                         dotNetCtor.GetModifiers(),
                         dotNetDeclaringTypeIsSealed: matchingType.DotNetType.IsSealed);
 
-                    state.MatchedWithDifferences.Add(new MemberDiff
+                    if (hasTypeMismatch || hasModifierMismatch)
                     {
-                        MatchedMember = new ComparisonPair<MemberReference>
+                        state.MatchedWithDifferences.Add(new MemberDiff
                         {
-                            Java = BuildJavaConstructorReference(matchingType, pairedJava),
-                            DotNet = BuildDotNetConstructorReference(matchingType, dotNetCtor),
-                        },
-                        HasTypeMismatch = true,
-                        HasModifierMismatch = hasModifierMismatch,
-                    });
+                            MatchedMember = new ComparisonPair<MemberReference>
+                            {
+                                Java = BuildJavaConstructorReference(matchingType, pairedJava),
+                                DotNet = BuildDotNetConstructorReference(matchingType, dotNetCtor),
+                            },
+                            HasTypeMismatch = hasTypeMismatch,
+                            HasModifierMismatch = hasModifierMismatch,
+                        });
+                    }
+
                     continue;
                 }
             }
@@ -451,22 +461,33 @@ public static class DiffUtility
                     var pairedJava = arityCandidates[0];
                     state.ConsumedJavaMethods.Add(pairedJava);
 
+                    // The pair matched by name+arity only because the strict MethodsMatch above
+                    // failed. Re-check the signature here rather than assuming a type mismatch:
+                    // the strict match can fail for reasons unrelated to the parameter/return
+                    // types (e.g. a single de-nested type elsewhere), in which case the
+                    // signatures are actually compatible and there is no type mismatch to report.
+                    var hasTypeMismatch = !MemberComparison.MethodSignaturesMatch(dotNetMethod, pairedJava);
+
                     var hasModifierMismatch = !ModifierComparison.ModifiersAreEquivalent(
                         ModifierComparison.ModifierUsage.Member,
                         pairedJava.Modifiers,
                         dotNetMethod.GetModifiers(),
                         dotNetDeclaringTypeIsSealed: matchingType.DotNetType.IsSealed);
 
-                    state.MatchedWithDifferences.Add(new MemberDiff
+                    if (hasTypeMismatch || hasModifierMismatch)
                     {
-                        MatchedMember = new ComparisonPair<MemberReference>
+                        state.MatchedWithDifferences.Add(new MemberDiff
                         {
-                            Java = BuildJavaMethodReference(pairedJava),
-                            DotNet = BuildDotNetMethodReference(dotNetMethod),
-                        },
-                        HasTypeMismatch = true,
-                        HasModifierMismatch = hasModifierMismatch,
-                    });
+                            MatchedMember = new ComparisonPair<MemberReference>
+                            {
+                                Java = BuildJavaMethodReference(pairedJava),
+                                DotNet = BuildDotNetMethodReference(dotNetMethod),
+                            },
+                            HasTypeMismatch = hasTypeMismatch,
+                            HasModifierMismatch = hasModifierMismatch,
+                        });
+                    }
+
                     continue;
                 }
             }
