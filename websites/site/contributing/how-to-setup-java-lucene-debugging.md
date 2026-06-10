@@ -364,7 +364,7 @@ In windows, this is what the directory looks like:
 
 ## Downloading the Project's Dependencies
 
-### Boostrap ant
+### Bootstrap ant
 First we need to get ant bootstrapped.
 Here is some background on Maven and Ivy from the web:
 > Apache Maven is a software project management and comprehension tool, whereas Apache Ivy is only a dependency management tool, highly integrated with Apache Ant™, the popular build management tool. Source: https://ant.apache.org/ivy/m2comparison.html

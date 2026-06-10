@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Thrown by Lucene on detecing that <see cref="System.Threading.Thread.Interrupt()"/> had been
+    /// Thrown by Lucene on detecting that <see cref="System.Threading.Thread.Interrupt()"/> had been
     /// called. This exception has the specific purpose of being allowed to pass through to the
     /// calling thread of <see cref="J2N.Threading.ThreadJob"/> so it reaches the appropriate handler.
     /// </summary>

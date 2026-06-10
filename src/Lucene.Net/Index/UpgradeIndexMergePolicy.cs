@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
     /// This allows for an as-cheap-as possible upgrade of an older index by only upgrading segments that
     /// are created by previous Lucene versions. ForceMerge does no longer really merge;
     /// it is just used to &quot;ForceMerge&quot; older segment versions away.
-    /// <para/>In general one would use <see cref="IndexUpgrader"/>, but for a fully customizeable upgrade,
+    /// <para/>In general one would use <see cref="IndexUpgrader"/>, but for a fully customizable upgrade,
     /// you can use this like any other <see cref="MergePolicy"/> and call <see cref="IndexWriter.ForceMerge(int)"/>:
     /// <code>
     ///     IndexWriterConfig iwc = new IndexWriterConfig(LuceneVersion.LUCENE_XX, new KeywordAnalyzer());

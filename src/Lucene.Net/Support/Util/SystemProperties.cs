@@ -49,7 +49,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Retrieves the value of a property from the current process,
-        /// with a default value if it doens't exist or the caller doesn't have
+        /// with a default value if it doesn't exist or the caller doesn't have
         /// permission to read the value.
         /// </summary>
         /// <param name="key">The name of the property.</param>
@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Retrieves the value of a property from the current process as <see cref="bool"/>,
-        /// with a default value if it doens't exist, the caller doesn't have permission to read the value,
+        /// with a default value if it doesn't exist, the caller doesn't have permission to read the value,
         /// or the value cannot be cast to a <see cref="bool"/>.
         /// </summary>
         /// <param name="key">The name of the property.</param>
@@ -99,7 +99,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Retrieves the value of a property from the current process as <see cref="int"/>,
-        /// with a default value if it doens't exist, the caller doesn't have permission to read the value,
+        /// with a default value if it doesn't exist, the caller doesn't have permission to read the value,
         /// or the value cannot be cast to a <see cref="int"/>.
         /// </summary>
         /// <param name="key">The name of the property.</param>

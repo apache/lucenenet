@@ -368,7 +368,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 // we only store the fact that a category exists, not its inexistence.
                 // This is required because the caches are shared with new DTR instances
                 // that are allocated from doOpenIfChanged. Therefore, if we only store
-                // information about found categories, we cannot accidently tell a new
+                // information about found categories, we cannot accidentally tell a new
                 // generation of DTR that a category does not exist.
 
                 ordinalCacheLock.EnterWriteLock();

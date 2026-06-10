@@ -135,7 +135,7 @@ namespace Egothor.Stemmer
             string[] keys = { "a", "ba", "bb", "c" };
             /*
              * short vals won't work, see line 155 for example
-             * the IOOBE is caught (wierd), but shouldnt affect patch cmds?
+             * the IOOBE is caught (wierd), but shouldn't affect patch cmds?
              */
             string[] vals = { "1111", "2222", "2223", "4444" };
 
@@ -155,7 +155,7 @@ namespace Egothor.Stemmer
             string[] keys = { "a", "ba", "bb", "c" };
             /*
              * short vals won't work, see line 155 for example
-             * the IOOBE is caught (wierd), but shouldnt affect patch cmds?
+             * the IOOBE is caught (wierd), but shouldn't affect patch cmds?
              */
             string[] vals = { "1111", "2222", "2223", "4444" };
 

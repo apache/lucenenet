@@ -635,7 +635,7 @@ namespace Lucene.Net.Util
             IMergeScheduler ms = w.Config.MergeScheduler;
             if (ms is IConcurrentMergeScheduler concurrentMergeScheduler)
             {
-                // wtf... shouldnt it be even lower since its 1 by default?!?!
+                // wtf... shouldn't it be even lower since its 1 by default?!?!
                 concurrentMergeScheduler.SetMaxMergesAndThreads(3, 2);
             }
         }

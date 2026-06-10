@@ -760,7 +760,7 @@ namespace Lucene.Net.Index
                 TermState termState;
                 if (Random.Next(6) == 4)
                 {
-                    // pick term that doens't exist:
+                    // pick term that doesn't exist:
                     t = GetNonExistTerm(validTerms);
                     termState = null;
                     if (Verbose)

@@ -213,7 +213,7 @@ namespace Lucene.Net.Search
         public virtual bool WaitForGeneration(long targetGen, int maxMS)
         {
             // LUCENENET NOTE: Porting this method is a bit tricky because the java wait method releases the
-            //                 syncronize lock and c# has no similar primitive.  So we must handle locking a
+            //                 synchronize lock and c# has no similar primitive.  So we must handle locking a
             //                 bit differently here to mimic that affect.
 
             long curGen = writer.Generation;
