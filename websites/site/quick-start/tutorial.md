@@ -35,7 +35,7 @@ Let's use PowerShell now to verify that you have the .NET SDK with the .NET CLI 
 
 This command will show the latest version of the .NET SDK installed and also show a list of all versions installed. If the .NET SDK is not installed this the command will return an error indicating the command was not found.
 
-Below I show the top of the results for the `dotnet --info` command ran on my machine. You can see I'm using .NET SDK 6.0.200 on windows for this demo. In my case I had to scroll the screen up to see this info since I have many versions of the .NET SDK installed and it shows info on each version which scrolled the info about the latest version off the screen. Your latest version will likely be different than mine and perhaps you may be running on Unix or Mac. That's fine. But remember **you need .NET SDK 6 or later**. Or you need to modify the examples according to the note above.
+Below I show the top of the results for the `dotnet --info` command ran on my machine. You can see I'm using .NET SDK 6.0.200 on Windows for this demo. In my case I had to scroll the screen up to see this info since I have many versions of the .NET SDK installed and it shows info on each version which scrolled the info about the latest version off the screen. Your latest version will likely be different than mine and perhaps you may be running on Unix or Mac. That's fine. But remember **you need .NET SDK 6 or later**. Or you need to modify the examples according to the note above.
 
 <img src='https://lucenenet.apache.org/images/quick-start/tutorial/power-shell01.png'>
 
@@ -81,7 +81,7 @@ Our directory looks like this:
 <img src='https://lucenenet.apache.org/images/quick-start/tutorial/directory-files-example1.png'>
 
 ### Viewing the Two Main files
-From here on out, you can use your favorite editor to view and edit files as we walk through the rest of the example.  I'll be using Visual Studio 2022 on Windows, but you could just as easily use VIM, Visual Studio Code or any other editor and even be doing that on Ubuntu on a Raspberry Pi if you like. Remember, Lucene.NET and the .NET framework both support a wide variety of platforms.
+From here on out, you can use your favorite editor to view and edit files as we walk through the rest of the example.  I'll be using Visual Studio 2022 on Windows, but you could just as easily use VIM, Visual Studio Code or any other editor and even be doing that on Ubuntu on a Raspberry Pi if you like. Remember, Lucene.NET and the .NET Framework both support a wide variety of platforms.
 
 Below is what the project file looks like which we created using the dotnet CLI. Notice that it contains package references to the two Lucene.NET Nuget packages we specified.
 
@@ -213,9 +213,9 @@ string indexPath = Path.Combine(Environment.CurrentDirectory, indexName);
 using LuceneDirectory indexDir = FSDirectory.Open(indexPath);
 ```
 
-Then in the next block we create an `IndexWriter` that will use our `LuceneDirectory`. The `IndexWriter` is a important class in Lucene.NET and is used to write documents to the Index (among other things).
+Then in the next block we create an `IndexWriter` that will use our `LuceneDirectory`. The `IndexWriter` is an important class in Lucene.NET and is used to write documents to the Index (among other things).
 
-The `IndexWriter` will create our subdirectory for us since it doesn't yet exist and it will create the index since it also doesn't yet exist.  By using  `OpenMode.CREATE` we are telling Lucene.NET that we want to recreate the index if it already exists.  This works great for a demo like this since every time  the console app is ran we will be recreating our LuceneIndex which means we will get the same output each time.  
+The `IndexWriter` will create our subdirectory for us since it doesn't yet exist and it will create the index since it also doesn't yet exist.  By using  `OpenMode.CREATE` we are telling Lucene.NET that we want to recreate the index if it already exists.  This works great for a demo like this since every time the console app is run we will be recreating our LuceneIndex which means we will get the same output each time.  
 
 ```c#
 //Create an index writer
@@ -300,14 +300,14 @@ This is exactly what we would expect.
 ### Conclusion - Example 1
 While this example is not particularly complicated, it will get you started. It provides fully working code that uses Lucne.NET that you now understand.
 
-When looking at this code it's pretty easy to imagine how one might use a while loop instead of inline code for adding documents and how one could perhaps add 10,000 documents (or a million documents) instead of just three.  And it's pretty easy to imagine how one would add several fields per document rather then just two.
+When looking at this code it's pretty easy to imagine how one might use a while loop instead of inline code for adding documents and how one could perhaps add 10,000 documents (or a million documents) instead of just three.  And it's pretty easy to imagine how one would add several fields per document rather than just two.
 
 I would encourage you to play with this code, modify it (maybe by adding more fields, or changing the field name or field values) and then run it to see the results.  This iterative process is a great way to grow your knowledge of Lucene.NET.
 
 Then move onto the next example that demonstrates full text search.
 
 ## Example 2 – Full Text Search
-We are going to create a console application that uses Lucene.NET to index three documents that each have two fields and then the app will search those docs on a certain field doing an full text search and output some info about the results.
+We are going to create a console application that uses Lucene.NET to index three documents that each have two fields and then the app will search those docs on a certain field doing a full text search and output some info about the results.
 
 This example assumes you did Example 1 so:
 1.	You already have the .NET SDK installed,
@@ -322,7 +322,7 @@ Create a directory where you would like this project to live, call it `lucene-ex
 * Lucene.Net.Analysis.Common
 * Lucene.Net.QueryParser
 
-You can use whatever tool you choose for Example 1 to accomplish these steps. In my case I will created the directory in the GUI then make it the current directory in PowerShell and then execute these commands in PowerShell one at at time (similar to how I did it in Example 1):
+You can use whatever tool you choose for Example 1 to accomplish these steps. In my case I will created the directory in the GUI then make it the current directory in PowerShell and then execute these commands in PowerShell one at a time (similar to how I did it in Example 1):
 
 ` dotnet new console`
 
@@ -464,7 +464,7 @@ QueryParser parser = new QueryParser(luceneVersion, "title", standardAnalyzer);
 Query query = parser.Parse("open source");
 ```
 
-These lines allow us to create a query that will perform a full text search. This type of search is similar to what you are use to when doing a google or bing search.
+These lines allow us to create a query that will perform a full text search. This type of search is similar to what you are used to when doing a google or bing search.
 
 What we are saying in these two lines is that we want to create a query that will search the `title` field of our documents and we want back document that contain "open source" or just "open" or just "source" and we want them sorted by how well they match our "open source" query.  
 
@@ -499,7 +499,7 @@ So now you can hit F5 in Visual Studio or VS Code or you can execute `dotnet run
 
 <img src='https://lucenenet.apache.org/images/quick-start/tutorial/run-example2.png'>
 
-If you go back and review the contents of the `title` field for each document you will see the output from running the code does indeed return the only two documents that that contain "open source" in the title field.
+If you go back and review the contents of the `title` field for each document you will see the output from running the code does indeed return the only two documents that contain "open source" in the title field.
 
 ### Conclusion - Example 2
 In this Example we saw Lucene.NET's full text search feature.  But we only scratched the surface.

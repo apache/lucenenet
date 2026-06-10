@@ -10,11 +10,11 @@ uid: quick-start/introduction
 
 Apache Lucene.NET is a C# port of Java based Apache Lucene.  Apache Lucene has a huge following and is used directly or indirectly to power search by many companies you probably know including Amazon, Twitter, LinkedIn, Netflix, Salesforce, SAS, and Microsoft Power BI.
 
-Apache Lucene is the core search library used by popular open source search servers like Apache Solr, ElasticSearch and OpenSearch.  The reason Apache Lucene is so widely used is because it's extremely powerful and can index large amounts of data quickly -- think 100s of GB/Hours. And it can perform full text search on that data in sub-second time. And unlike traditional sql databases, it's data engine is optimized for full text search.  
+Apache Lucene is the core search library used by popular open source search servers like Apache Solr, ElasticSearch and OpenSearch.  The reason Apache Lucene is so widely used is because it's extremely powerful and can index large amounts of data quickly -- think 100s of GB/Hours. And it can perform full text search on that data in sub-second time. And unlike traditional SQL databases, it's data engine is optimized for full text search.  
 
-The codebase for Apache Lucene is very mature.  In March 2020, the open source project celebrated it's 20th birthday. You can scroll through the years and see the major [Apache Lucene milestones](https://www.elastic.co/celebrating-lucene).
+The codebase for Apache Lucene is very mature.  In March 2020, the open source project celebrated its 20th birthday. You can scroll through the years and see the major [Apache Lucene milestones](https://www.elastic.co/celebrating-lucene).
 
-Apache Lucene.NET 4.8 is an open source project who's aim is to be a line by line c# port of java based Apache Lucene 4.8.  This port makes the power of Lucene available to all .NET developers. And makes it easy for them to contribute to the project or customize it since it's pure C#.
+Apache Lucene.NET 4.8 is an open source project whose aim is to be a line by line c# port of java based Apache Lucene 4.8.  This port makes the power of Lucene available to all .NET developers. And makes it easy for them to contribute to the project or customize it since it's pure C#.
 
 Currently Lucene.NET 4.8 is in Beta but it is extremely stable and many developers already use it in production. It has far more features than Lucene.NET 3.03 and has much better unit test coverage than the older version.  Lucene.NET has more than 7800+ passing unit tests.  This test coverage is what makes Lucene.NET so stable.
 
@@ -35,7 +35,7 @@ At this early stage of your journey it's probably good to cover a few things abo
 
 Lucene and hence Lucene.NET stores data in immutable "segments."  Segments are made of multiple files. Segments automatically get merged together to form new bigger segments and then the old segments are typically deleted by the merge process.  This approach is based on what is called a Log Structured Merge (LSM) design.
 
-LSM has become the defacto standard for NoSql databases and is used not only by Lucene but also by Google BigTable, Apache Hbase, Apache Cassandra and many others. The details of each implementation vary as does the number and types of files used. So let's take a look at what those files might look like for a Lucene.NET index.
+LSM has become the defacto standard for NoSql databases and is used not only by Lucene but also by Google BigTable, Apache HBase, Apache Cassandra and many others. The details of each implementation vary as does the number and types of files used. So let's take a look at what those files might look like for a Lucene.NET index.
 
 
 Here is an example of Lucene.NET's files for a brand new index with one segment:
@@ -60,7 +60,7 @@ Here is a two segment example that has gone through merges many times:
 
 
    ### Lucene Directories
-   We already mentioned that the data is stored in segments.  Those segments can be stored via different classes that inherit from `Lucene.Net.Store.Directory`.  Some of those classes, like `FSDirectory` store to your local file system, other can store elsewhere.  For example a `RAMDirectory` can be useful for unit tests as it stores the segments in RAM.  So one of the things that we must provide an `IndexWriter` is a instance of a `Lucene.Net.Store.Directory` that is the type of directory we want to work with.
+   We already mentioned that the data is stored in segments.  Those segments can be stored via different classes that inherit from `Lucene.Net.Store.Directory`.  Some of those classes, like `FSDirectory` store to your local file system, other can store elsewhere.  For example a `RAMDirectory` can be useful for unit tests as it stores the segments in RAM.  So one of the things that we must provide an `IndexWriter` is an instance of a `Lucene.Net.Store.Directory` that is the type of directory we want to work with.
 
 
   ### How the Pieces Fit Together
@@ -77,4 +77,4 @@ Here is a two segment example that has gone through merges many times:
 
 
 ### Wrapping Up
-I hope this introduction has helped you to understand a bit about Lucene.NET.  The information we have covered so far should give you a bit of a foundation to work from as you work through the [tutorial examples](xref:quick-start/tutorial) and then dig deaper into the [Lucene.NET Documentation](xref:docs) and [Learning Resources](xref:quick-start/learning-resources).
+I hope this introduction has helped you to understand a bit about Lucene.NET.  The information we have covered so far should give you a bit of a foundation to work from as you work through the [tutorial examples](xref:quick-start/tutorial) and then dig deeper into the [Lucene.NET Documentation](xref:docs) and [Learning Resources](xref:quick-start/learning-resources).

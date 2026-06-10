@@ -9,7 +9,7 @@ Apache Lucene.Net uses git as its source code management system.  More specifica
 In practice, the team primarily uses the GitHub repo at **[https://github.com/apache/lucenenet](https://github.com/apache/lucenenet)** for it's work. You can find current issues that need worked on in the [issues list](https://github.com/apache/lucenenet/issues) there.
 
 ## Setting Up Your Fork
-If you would like to contribute to the project, typically the first thing you will want to do is to [create a github account](https://docs.github.com/en/get-started/signing-up-for-github/signing-up-for-a-new-github-account) and then [fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) the apache/LuceneNET GitHub repo.  Forking the repo will place a copy of the repo (the "Fork") in your GitHub account. A fork is a copy of a repository that you manage.
+If you would like to contribute to the project, typically the first thing you will want to do is to [create a GitHub account](https://docs.github.com/en/get-started/signing-up-for-github/signing-up-for-a-new-github-account) and then [fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) the apache/LuceneNET GitHub repo.  Forking the repo will place a copy of the repo (the "Fork") in your GitHub account. A fork is a copy of a repository that you manage.
 
 You use this fork to make changes without affecting the upstream repository. For more information, see GitHub Docs "[Working with forks](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks)."
 
@@ -38,10 +38,10 @@ This is a large solution with more than [644K+ lines](https://lucenenet.apache.o
 
 ## Making Changes
 
-If you would like to make a change to the source code or other files, typically you will first make a new branch in your local repository. Then make the changes in that branch and commit them to your local repository.  If there are several different types of changes you'd like to make it's best to put each type of change into a seperate commit so that each commit description can be more specific.
+If you would like to make a change to the source code or other files, typically you will first make a new branch in your local repository. Then make the changes in that branch and commit them to your local repository.  If there are several different types of changes you'd like to make it's best to put each type of change into a separate commit so that each commit description can be more specific.
 
 ## Contributing Your Changes Back
-Once you have made your change to a newly created branch of your local repo, push those changes to the remote repository located in your GitHub account.  Then visit that your GitHub repo via the browser and it should display a button you can click to compare it to the upstream repo (ie. the apache/lucenenet rep you forked from) and to submit a pull request.  That pull request (PR) is your way of letting the Lucene.NET core team know you have a contribution that you would like to have merged into the official Lucene.NET repo.
+Once you have made your change to a newly created branch of your local repo, push those changes to the remote repository located in your GitHub account.  Then visit that your GitHub repo via the browser and it should display a button you can click to compare it to the upstream repo (i.e. the apache/lucenenet rep you forked from) and to submit a pull request.  That pull request (PR) is your way of letting the Lucene.NET core team know you have a contribution that you would like to have merged into the official Lucene.NET repo.
 
 Someone will get back to you with feedback if needed, or will directly merge your changes into the official repo.  Any action they take on the PR will trigger an email to the email address of your GitHub account so that you have visibility as to what's going on with your submission.
 
