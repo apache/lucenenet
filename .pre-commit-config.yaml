@@ -87,6 +87,10 @@ repos:
       - id: debug-statements
         name: run debug-statements
         description: check for debugger imports and py37+ `breakpoint()` calls in python source.
+      - id: detect-aws-credentials
+        name: run detect-aws-credentials
+        description: checks for the existence of AWS secrets that you have set up with the AWS CLI
+        args: [--allow-missing-credentials]
       - id: detect-private-key
         name: run detect-private-key
         description: checks for the existence of private keys
