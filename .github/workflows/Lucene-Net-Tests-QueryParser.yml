@@ -81,21 +81,21 @@ jobs:
 
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       - name: Setup .NET 8 SDK
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
         with:
           dotnet-version: '8.0.x'
         if: ${{ startswith(matrix.framework, 'net8.') }}
 
       - name: Setup .NET 10 SDK
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
         with:
           dotnet-version: '10.0.x'
 
       - name: Cache NuGet Packages
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           # '**/*.*proj' includes .csproj, .vbproj, .fsproj, msbuildproj, etc.
           # '**/*.props' includes Directory.Packages.props, Directory.Build.props and Dependencies.props
@@ -129,7 +129,7 @@ jobs:
         shell: bash
       # upload reports as build artifacts
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: ${{always()}}
         with:
           name: '${{env.test_results_artifact_name}}'
