@@ -44,6 +44,15 @@ public static class ModifierComparison
         "final"
     };
 
+    // A Java 'public abstract' class whose members are all static is ported to a .NET
+    // 'public static' class (e.g. StringHelper, PriorityQueue). Java has no static-class
+    // construct, so the idiomatic Java holder is an abstract class that can't be instantiated.
+    private static readonly HashSet<string> JavaPublicAbstractSpecialCase = new HashSet<string>
+    {
+        "public",
+        "abstract"
+    };
+
     private static readonly HashSet<string> DotNetPublicStaticSpecialCase = new HashSet<string>
     {
         "public",
@@ -71,7 +80,8 @@ public static class ModifierComparison
         IReadOnlyList<string> dotnetModifiers,
         string? javaTypeKind,
         bool isDotNetEnum,
-        bool dotNetDeclaringTypeIsSealed = false)
+        bool dotNetDeclaringTypeIsSealed = false,
+        bool isDotNetStruct = false)
     {
         var applicableJavaModifiers = new HashSet<string>(javaModifiers);
         var applicableDotNetModifiers = new HashSet<string>(dotnetModifiers);
@@ -107,6 +117,23 @@ public static class ModifierComparison
                 && applicableDotNetModifiers.SetEquals(DotNetPublicStaticSpecialCase))
             {
                 return true;
+            }
+
+            // public abstract (Java holder class) ↔ public static (.NET static class)
+            if (applicableJavaModifiers.SetEquals(JavaPublicAbstractSpecialCase)
+                && applicableDotNetModifiers.SetEquals(DotNetPublicStaticSpecialCase))
+            {
+                return true;
+            }
+
+            // A .NET struct is implicitly sealed and is the value-type port of a Java final
+            // (often 'public static final' for a nested) class. GetModifiers does not emit
+            // 'sealed' for a struct, so drop the Java-side 'final'/'static' that have no .NET
+            // struct analogue before comparing.
+            if (isDotNetStruct)
+            {
+                applicableJavaModifiers.Remove("final");
+                applicableJavaModifiers.Remove("static");
             }
 
             // static has different meanings in Java and .NET
