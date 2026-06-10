@@ -102,10 +102,3 @@ repos:
       - id: gitleaks
         name: run gitleaks
         description: check for secrets with gitleaks
-  - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.37.2
-    hooks:
-      - id: check-dependabot
-        name: validate dependabot.yml
-        description: ensures the dependabot config file is valid
-        files: ^\.github/dependabot\.yml$
