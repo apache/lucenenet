@@ -32,7 +32,7 @@ repos:
         name: run check hooks apply
         description: check that all the hooks apply to the repository
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.2
+    rev: 2ccb47ff45ad361a21071a7eedda4c37e6ae8c5a # frozen: v2.4.2
     hooks:
       - id: codespell
         name: run codespell
@@ -40,14 +40,14 @@ repos:
         exclude: ^src/Lucene\.Net\.Analysis\.Common/Analysis/../.*\.rslp$|^.*Lucene\.Net\.Tests.*$
         args: [--ignore-words=.github/linters/codespell.txt]
   - repo: https://github.com/oxipng/oxipng
-    rev: v10.1.1
+    rev: 628e241e23f368097883807fa6e985ccf7c00357 # frozen: v10.1.1
     hooks:
       - id: oxipng
         name: run oxipng
         description: check PNG files with oxipng
         args: [ '--fix', '-o', '4', '--strip', 'safe', '--alpha' ]
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
       - id: trailing-whitespace
         name: run trailing-whitespace
@@ -101,7 +101,7 @@ repos:
         name: run fix-byte-order-marker
         description: fixes files with UTF-8 byte order markers
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.30.1
+    rev: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e # frozen: v8.30.1
     hooks:
       - id: gitleaks
         name: run gitleaks
