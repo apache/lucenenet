@@ -12,13 +12,13 @@ _Details about this website and the API documentation site and how to help contr
 
 The website and the api documentation source code is found in the same Git repository as the Lucene.Net code in the folder: `./websites/`. The website and documentation site is built with a static site generator called [DocFx](https://dotnet.github.io/docfx/) and all of the content/pages are created using Markdown files.
 
-To submit changes for the website, create a Pull Request to the [Lucene Git repositoriy](https://github.com/apache/lucenenet). (See [Contributing](xref:contributing#submit-a-pull-request) for details)
+To submit changes for the website, create a Pull Request to the [Lucene Git repository](https://github.com/apache/lucenenet). (See [Contributing](xref:contributing#submit-a-pull-request) for details)
 
 ## Website
 
 ### Build script
 
-To build the website and run it on your machine, run the Powershell script: `./websites/site/site.ps1` with the `-ServeDocs` flag. For example:
+To build the website and run it on your machine, run the PowerShell script: `./websites/site/site.ps1` with the `-ServeDocs` flag. For example:
 
 ```
 ./websites/site/site.ps1 -ServeDocs
@@ -62,7 +62,7 @@ The file/folder structure is within `./websites/site`:
 
 ### Build script
 
-To build the api docs and run it on your machine, run the Powershell script: `./websites/apidocs/docs.ps1`. For example:
+To build the api docs and run it on your machine, run the PowerShell script: `./websites/apidocs/docs.ps1`. For example:
 
 ```
 ./websites/apidocs/docs.ps1 -ServeDocs -LuceneNetVersion 4.8.0-beta00008 -BaseUrl http://localhost:8080
@@ -95,9 +95,9 @@ The file/folder structure is within `./websites/apidocs`:
 
 - `docs.ps1` - The build script
 - `docfx.*.json` - The DocFx configuration files _(see docfx manual for further info)_
-  - `docfx.{library}.json` - Where {library} is an individual Lucene.NET project (i.e. `codecs`). Each library is built as it's own individual DocFx site and it's xref maps are exported to file to be shared between DocFx builds.
-  - `docfx.global.json` - Each library DocFx json references this file for global metadata. This is where all global metadata such as Title, Logo, Footer, etc... are declared.
-  - `docfx.global.subsite.json` - Each library DocFx json references this file for global metadata which denotes the [`_rel`](https://dotnet.github.io/docfx/tutorial/intro_template.html#system-generated-properties) (The relative path of the root output folder from current output file. i.e. the base URL). For example: `https://lucenenet.apache.org/docs/4.8.0-beta00009/`.
+  - `docfx.{library}.json` - Where {library} is an individual Lucene.NET project (i.e. `codecs`). Each library is built as its own individual DocFx site and it's xref maps are exported to file to be shared between DocFx builds.
+  - `docfx.global.json` - Each library DocFx JSON references this file for global metadata. This is where all global metadata such as Title, Logo, Footer, etc... are declared.
+  - `docfx.global.subsite.json` - Each library DocFx JSON references this file for global metadata which denotes the [`_rel`](https://dotnet.github.io/docfx/tutorial/intro_template.html#system-generated-properties) (The relative path of the root output folder from current output file. i.e. the base URL). For example: `https://lucenenet.apache.org/docs/4.8.0-beta00009/`.
   - `docfx.site.json` - Once each library is built and it's xref maps are exported, the main documentation site container is built with this definition.
 - `lucenetemplate/*` - The custom template files to style the website
 - `*.md` - The root site content such as the index and download pages
@@ -132,7 +132,7 @@ Where `<LUCENE DIRECTORY>` is the `lucene` sub folder location of the Java Lucen
 
 #### Automated execution
 
-A powershell script has been created to automate the above. Execute the `./src/docs/convert.ps1` script and enter the current Lucene version to convert from. For example, for Lucene.Net 4.8.0 we are converting from the Java Lucene build release of ["4.8.1"](https://github.com/apache/lucene-solr/releases/tag/releases%2Flucene-solr%2F4.8.1) so in this case enter: 4.8.1 at the prompt or call the whole script like `./src/docs/convert.ps1 -JavaLuceneVersion 4.8.1`
+A PowerShell script has been created to automate the above. Execute the `./src/docs/convert.ps1` script and enter the current Lucene version to convert from. For example, for Lucene.Net 4.8.0 we are converting from the Java Lucene build release of ["4.8.1"](https://github.com/apache/lucene-solr/releases/tag/releases%2Flucene-solr%2F4.8.1) so in this case enter: 4.8.1 at the prompt or call the whole script like `./src/docs/convert.ps1 -JavaLuceneVersion 4.8.1`
 
 #### Review, commit and merge
 

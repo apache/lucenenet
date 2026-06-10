@@ -71,4 +71,4 @@ If you are interested in use cases for changing your similarity, see the Lucene 
 
 In general, Chris Hostetter sums it up best in saying (from [the Lucene users's mailing list](http://www.gossamer-threads.com/lists/lucene/java-user/39125#39125)):
 
-> [One would override the Similarity in] ... any situation where you know more about your data then just that it's "text" is a situation where it *might* make sense to to override your Similarity method.
+> [One would override the Similarity in] ... any situation where you know more about your data then just that it's "text" is a situation where it *might* make sense to override your Similarity method.

@@ -18,7 +18,7 @@ The version number that is used in the build process is called the _Package Vers
 
   - Pre-Release (i.e. `4.8.0-beta00001`)
   - Production Release (i.e. `4.8.0`)
-  - Production Release Patch N (i.e where N is 1, `4.8.0.1`, where N is 2, `4.8.0.2`, etc)
+  - Production Release Patch N (i.e. where N is 1, `4.8.0.1`, where N is 2, `4.8.0.2`, etc.)
 
 - Version numbers correspond to GitHub milestones, so when releasing a milestone, the same version number should be used
 

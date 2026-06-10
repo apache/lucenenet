@@ -279,7 +279,7 @@ Please review the Apache Release Policy to understand the requirements for evalu
 https://www.apache.org/legal/release-policy.html
 
 Please vote on releasing these packages as Apache Lucene.NET [version]. The vote is open for at least the next 72 hours, i.e. midnight UTC on [YYYY-MM-DD]
-http://www.timeanddate.com/counters/customcounter.html?year=[YYYY]&month=[MM]&day=[DD]
+https://www.timeanddate.com/counters/customcounter.html?year=[YYYY]&month=[MM]&day=[DD]
 
 
 

@@ -50,4 +50,4 @@ GOTO endcommentblock
 :: -----------------------------------------------------------------------------------
 :endcommentblock
 where pwsh >nul 2>nul
-if %ERRORLEVEL% NEQ 0 (echo "Powershell could not be found. Please install version 3 or higher.") else (pwsh -ExecutionPolicy bypass -Command "& '%~dpn0.ps1'" %*)
+if %ERRORLEVEL% NEQ 0 (echo "PowerShell could not be found. Please install version 3 or higher.") else (pwsh -ExecutionPolicy bypass -Command "& '%~dpn0.ps1'" %*)
