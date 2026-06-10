@@ -455,7 +455,7 @@ public static class DiffUtility
             {
                 var sameSideOverloads = dotNetMethods
                     .Count(d => MemberComparison.MethodNamesMatch(d.Name, arityCandidates[0].Name)
-                                && d.GetParameters().Length == arityCandidates[0].Parameters.Count);
+                                && MemberComparison.EffectiveParameterCount(d.GetParameters()) == arityCandidates[0].Parameters.Count);
                 if (sameSideOverloads == 1)
                 {
                     var pairedJava = arityCandidates[0];

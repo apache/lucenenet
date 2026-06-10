@@ -32,7 +32,9 @@ public class ModifierComparisonTests
     [InlineData(ModifierUsage.Type, "public", "public sealed", false)]
     [InlineData(ModifierUsage.Type, "public", "public abstract", false)]
     [InlineData(ModifierUsage.Type, "public abstract", "public sealed", false)]
-    [InlineData(ModifierUsage.Type, "public abstract", "public static", false)]
+    // H-7: a Java 'public abstract' holder class (all-static members) is ported to a
+    // .NET 'public static' class. GetModifiers emits 'static' for a .NET static class.
+    [InlineData(ModifierUsage.Type, "public abstract", "public static", true)]
     // Members
     [InlineData(ModifierUsage.Member, "public", "public", true)]
     [InlineData(ModifierUsage.Member, "public abstract", "public abstract", true)]
@@ -97,6 +99,40 @@ public class ModifierComparisonTests
             ParseModifiers(dotnetModifiers),
             javaTypeKind: "enum",
             isDotNetEnum: true));
+    }
+
+    // H-7: a .NET struct is the value-type port of a Java final / static-final (nested) class.
+    // GetModifiers does not emit 'sealed' for a struct, so the Java-side final/static (which have
+    // no struct analogue) should be dropped when isDotNetStruct is set.
+    [InlineData("public static final", "public", true)] // nested Java final class -> .NET struct
+    [InlineData("public final", "public", true)]        // top-level Java final class -> .NET struct
+    [InlineData("public", "public", true)]
+    [Theory]
+    public void ModifiersAreEquivalent_Type_DotNetStruct(string javaModifiers, string dotnetModifiers, bool expected)
+    {
+        Assert.Equal(expected, ModifierComparison.ModifiersAreEquivalent(
+            ModifierUsage.Type,
+            ParseModifiers(javaModifiers),
+            ParseModifiers(dotnetModifiers),
+            javaTypeKind: "class",
+            isDotNetEnum: false,
+            dotNetDeclaringTypeIsSealed: false,
+            isDotNetStruct: true));
+    }
+
+    // Without the struct flag, the same Java final/static-final modifiers are a real diff
+    // against a bare 'public' .NET type (the modifiers don't simply vanish).
+    [InlineData("public static final", "public", false)]
+    [InlineData("public final", "public", false)]
+    [Theory]
+    public void ModifiersAreEquivalent_Type_NonStruct_FinalIsDiff(string javaModifiers, string dotnetModifiers, bool expected)
+    {
+        Assert.Equal(expected, ModifierComparison.ModifiersAreEquivalent(
+            ModifierUsage.Type,
+            ParseModifiers(javaModifiers),
+            ParseModifiers(dotnetModifiers),
+            javaTypeKind: "class",
+            isDotNetEnum: false));
     }
 
     // When the .NET declaring type is sealed (which includes .NET static classes),

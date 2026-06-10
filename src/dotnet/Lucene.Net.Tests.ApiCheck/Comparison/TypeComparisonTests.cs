@@ -30,6 +30,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Facet;
 using Lucene.Net.Facet.Range;
 using Lucene.Net.Facet.Taxonomy;
+using Lucene.Net.Index;
 using Lucene.Net.Index.Sorter;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Queries.Function.ValueSources;
@@ -126,6 +127,11 @@ public class TypeComparisonTests
     // FieldComparer / FieldComparerSource: 'Comparator' → 'Comparer' rename
     [InlineData(typeof(FieldComparerSource), "class", "org.apache.lucene.search", "FieldComparatorSource")]
     [InlineData(typeof(FieldComparer<object>), "class", "org.apache.lucene.search", "FieldComparator")]
+    // H-1: de-nested enums (Java Outer$Inner -> .NET top-level Inner, no [LuceneType] attribute).
+    [InlineData(typeof(Occur), "enum", "org.apache.lucene.search", "Occur", "org.apache.lucene.search.BooleanClause$Occur")]
+    [InlineData(typeof(Lucene.Net.Index.IndexOptions), "enum", "org.apache.lucene.index", "IndexOptions", "org.apache.lucene.index.FieldInfo$IndexOptions")]
+    // BUG-5: a type kept as 'FooImpl' identically on both sides (the Impl strip is one-directional).
+    [InlineData(typeof(Lucene.Net.Analysis.MockUTF16TermAttributeImpl), "class", "org.apache.lucene.analysis", "MockUTF16TermAttributeImpl")]
     [Theory]
     public void TypesMatchTests(Type dotNetType, string javaTypeKind, string javaPackage, string javaTypeName, string? javaFullName = null)
     {
@@ -141,5 +147,90 @@ public class TypeComparisonTests
     {
         var javaType = new TypeMetadata(javaPackage, javaTypeKind, javaTypeName, javaFullName ?? $"{javaPackage}.{javaTypeName}", null, [], [], [], []);
         Assert.False(TypeComparison.TypesMatch(dotNetType, javaType));
+    }
+
+    // H-4: well-known type equivalences, including the closed->open generic reduction
+    // (IComparable<Term> must match via the IComparable<> key) and the non-generic IDictionary.
+    [InlineData(typeof(System.Collections.IDictionary), "java.util.Map")]
+    [InlineData(typeof(IDictionary<string, int>), "java.util.Map")]
+    [InlineData(typeof(System.Text.StringBuilder), "java.lang.StringBuilder")]
+    [InlineData(typeof(System.Globalization.CultureInfo), "java.util.Locale")]
+    [InlineData(typeof(System.Xml.XmlElement), "org.w3c.dom.Element")]
+    [InlineData(typeof(IComparable<Term>), "java.lang.Comparable")]
+    [InlineData(typeof(J2N.Numerics.Int64), "java.lang.Long")]
+    [InlineData(typeof(J2N.Threading.Atomic.AtomicInt32), "java.util.concurrent.atomic.AtomicInteger")]
+    [Theory]
+    public void WellKnownEquivalentTypes_Match(Type dotNetType, string javaTypeName)
+    {
+        Assert.True(TypeComparison.TypeMatchesFullNameAnyKind(dotNetType, javaTypeName));
+    }
+
+    // H-4: Spatial4n / ICU4N equivalences keyed by .NET full name (assemblies the ApiCheck
+    // project does not reference at compile time). These can't be expressed as typeof in the
+    // production map, so verify via the name-derived TypesMatch path using a synthetic .NET type
+    // proxy is not possible; instead assert the negative cases below are not affected. The
+    // positive Spatial4n cases are exercised by the integration diff. Here we cover the
+    // closed->open reduction does not over-match an unrelated Java type.
+    [InlineData(typeof(IComparable<Term>), "java.lang.Runnable")]
+    [InlineData(typeof(System.Collections.IDictionary), "java.util.List")]
+    [InlineData(typeof(System.Text.StringBuilder), "java.lang.String")]
+    [Theory]
+    public void WellKnownEquivalentTypes_DoNotOverMatch(Type dotNetType, string javaTypeName)
+    {
+        Assert.False(TypeComparison.TypeMatchesFullNameAnyKind(dotNetType, javaTypeName));
+    }
+
+    // H-6: generic/non-generic same-name base split. FieldComparer<T> derives from the
+    // non-generic FieldComparer, while the Java FieldComparator derives from java.lang.Object.
+    [Fact]
+    public void BaseTypesMatch_GenericNonGenericSplit()
+    {
+        Assert.True(TypeComparison.BaseTypesMatch(typeof(FieldComparer<object>), "java.lang.Object"));
+    }
+
+    // H-6: a direct base-type match still works through BaseTypesMatch.
+    [Fact]
+    public void BaseTypesMatch_DirectObjectBase()
+    {
+        // A type whose .NET base is object and whose Java base is java.lang.Object.
+        Assert.True(TypeComparison.BaseTypesMatch(typeof(object), null));
+        Assert.True(TypeComparison.BaseTypesMatch(typeof(Document), "java.lang.Object"));
+    }
+
+    // H-6: not every object-based .NET type should match an arbitrary Java base; a genuine
+    // re-rooting (no matching interface, not a generic split) must still be reported.
+    [Fact]
+    public void BaseTypesMatch_GenuineDifference_DoesNotMatch()
+    {
+        Assert.False(TypeComparison.BaseTypesMatch(typeof(Document), "org.apache.lucene.search.Collector"));
+    }
+
+    // BUG-1 / H-4: InterfacesMatch is subset-based (every Java interface represented on .NET),
+    // tolerates .NET-only additions, and filters the Cloneable/Serializable JVM markers.
+    [Fact]
+    public void InterfacesMatch_SubsetWithDotNetAdditions()
+    {
+        // Java declares Comparable; .NET adds IComparable<T> plus an extra IEquatable<T>.
+        Assert.True(TypeComparison.InterfacesMatch(
+            [typeof(IComparable<Term>), typeof(IEquatable<Term>)],
+            ["java.lang.Comparable"]));
+    }
+
+    [Fact]
+    public void InterfacesMatch_MarkerInterfacesFilteredOut()
+    {
+        // Cloneable and Serializable have no .NET counterpart; they must not count as missing.
+        Assert.True(TypeComparison.InterfacesMatch(
+            [],
+            ["java.lang.Cloneable", "java.io.Serializable"]));
+    }
+
+    [Fact]
+    public void InterfacesMatch_GenuinelyMissingJavaInterface_DoesNotMatch()
+    {
+        // A non-marker Java interface with no .NET representation is still reported.
+        Assert.False(TypeComparison.InterfacesMatch(
+            [typeof(IComparable<Term>)],
+            ["java.lang.Comparable", "java.io.DataInput"]));
     }
 }

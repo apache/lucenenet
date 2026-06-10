@@ -84,6 +84,9 @@ public static class TypeComparison
         [typeof(HashSet<>)] = ["java.util.HashSet", "java.util.Set"],
         [typeof(SortedSet<>)] = ["java.util.TreeSet", "java.util.SortedSet", "java.util.NavigableSet"],
         [typeof(IDictionary<,>)] = ["java.util.Map"],
+        // Non-generic IDictionary: Lucene.NET sometimes exposes a non-generic map where Java has
+        // the erased java.util.Map. The generic form above doesn't cover these.
+        [typeof(IDictionary)] = ["java.util.Map"],
         [typeof(IReadOnlyDictionary<,>)] = ["java.util.Map"],
         [typeof(Dictionary<,>)] = ["java.util.HashMap", "java.util.Map"],
         [typeof(SortedDictionary<,>)] = ["java.util.TreeMap", "java.util.SortedMap", "java.util.NavigableMap"],
@@ -94,6 +97,50 @@ public static class TypeComparison
         [typeof(IComparer)] = ["java.util.Comparator"],
         [typeof(IComparable<>)] = ["java.lang.Comparable"],
         [typeof(IComparable)] = ["java.lang.Comparable"],
+        // StringBuilder is a 1:1 BCL equivalent of java.lang.StringBuilder.
+        [typeof(System.Text.StringBuilder)] = ["java.lang.StringBuilder"],
+        // Lucene.NET maps Java locale/timezone/charset/text-format types to their BCL analogues.
+        [typeof(System.Globalization.CultureInfo)] = ["java.util.Locale"],
+        [typeof(TimeZoneInfo)] = ["java.util.TimeZone"],
+        [typeof(System.Text.Encoding)] = ["java.nio.charset.Charset"],
+        [typeof(DateTime)] = ["java.util.Date"],
+        // Lucene.NET ports java.io.PrintWriter to TextWriter (alongside java.io.Writer/PrintStream
+        // already mapped above) since all are character sinks.
+        [typeof(TextWriter)] = ["java.io.Writer", "java.io.PrintStream", "java.io.PrintWriter"],
+        [typeof(System.Xml.XmlElement)] = ["org.w3c.dom.Element"],
+        // J2N boxed-numeric replacements for java.lang.* wrapper types. These are the J2N.Numerics
+        // forms Lucene.NET exposes where Java has the boxed wrapper; the primitive forms are mapped
+        // separately above via the BCL value types.
+        [typeof(J2N.Numerics.Int32)] = ["java.lang.Integer"],
+        [typeof(J2N.Numerics.Int64)] = ["java.lang.Long"],
+        [typeof(J2N.Numerics.Int16)] = ["java.lang.Short"],
+        [typeof(J2N.Numerics.Byte)] = ["java.lang.Byte"],
+        [typeof(J2N.Numerics.SByte)] = ["java.lang.Byte"],
+        [typeof(J2N.Numerics.Single)] = ["java.lang.Float"],
+        [typeof(J2N.Numerics.Double)] = ["java.lang.Double"],
+        [typeof(J2N.Numerics.Number)] = ["java.lang.Number"],
+        // J2N atomics for the java.util.concurrent.atomic.* family.
+        [typeof(J2N.Threading.Atomic.AtomicInt32)] = ["java.util.concurrent.atomic.AtomicInteger"],
+        [typeof(J2N.Threading.Atomic.AtomicInt64)] = ["java.util.concurrent.atomic.AtomicLong"],
+        [typeof(J2N.Threading.Atomic.AtomicBoolean)] = ["java.util.concurrent.atomic.AtomicBoolean"],
+        // J2N IO and collections replacements.
+        [typeof(J2N.IO.IDataInput)] = ["java.io.DataInput"],
+        [typeof(J2N.IO.IDataOutput)] = ["java.io.DataOutput"],
+        [typeof(J2N.Collections.BitSet)] = ["java.util.BitSet"],
+    };
+
+    // Equivalences keyed by .NET full type name, for types in assemblies the ApiCheck project does
+    // not reference at compile time (so they can't be expressed via typeof). Spatial4n is the port
+    // of the Java spatial4j library (package com.spatial4j.core); ICU4N ports a few java.text types.
+    private static readonly Dictionary<string, HashSet<string>> WellKnownEquivalentTypeNames = new(StringComparer.Ordinal)
+    {
+        ["Spatial4n.Context.SpatialContext"] = ["com.spatial4j.core.context.SpatialContext"],
+        ["Spatial4n.Shapes.IShape"] = ["com.spatial4j.core.shape.Shape"],
+        ["Spatial4n.Shapes.IPoint"] = ["com.spatial4j.core.shape.Point"],
+        ["Spatial4n.Shapes.IRectangle"] = ["com.spatial4j.core.shape.Rectangle"],
+        ["Spatial4n.Shapes.SpatialRelation"] = ["com.spatial4j.core.shape.SpatialRelation"],
+        ["Spatial4n.Distance.IDistanceCalculator"] = ["com.spatial4j.core.distance.DistanceCalculator"],
+        ["ICU4N.Text.CharacterIterator"] = ["java.text.CharacterIterator"],
     };
 
     public static bool TypeMatchesFullName(Type? dotNetType, string? javaTypeName, string? javaTypeKind)
@@ -171,6 +218,12 @@ public static class TypeComparison
             return wellKnownEquivalentTypes.Contains(javaType.FullName);
         }
 
+        if (lookupType.FullName is { } lookupFullName
+            && WellKnownEquivalentTypeNames.TryGetValue(lookupFullName, out HashSet<string>? wellKnownEquivalentTypeNames))
+        {
+            return wellKnownEquivalentTypeNames.Contains(javaType.FullName);
+        }
+
         var javaFullNameParts = javaType.FullName.Split(".");
         var javaName = javaFullNameParts[^1].Replace("$", ".");
 
@@ -208,8 +261,14 @@ public static class TypeComparison
             return false;
         }
 
+        // Match against the Impl-stripped Java name (the common case: Java FooImpl <-> .NET Foo),
+        // and also against the un-stripped name. The strip is one-directional (it only adjusts the
+        // Java side), so a type kept as 'FooImpl' identically on both sides would otherwise fail to
+        // match because GetInferredLuceneTypeName never strips Impl from the .NET name.
         if (string.Equals(luceneTypeInfo.TypeName, cleanJavaName, StringComparison.Ordinal)
-            || string.Equals(luceneTypeInfo.TypeName, NormalizeNestedTypeName(cleanJavaName), StringComparison.Ordinal))
+            || string.Equals(luceneTypeInfo.TypeName, NormalizeNestedTypeName(cleanJavaName), StringComparison.Ordinal)
+            || string.Equals(luceneTypeInfo.TypeName, javaName, StringComparison.Ordinal)
+            || string.Equals(luceneTypeInfo.TypeName, NormalizeNestedTypeName(javaName), StringComparison.Ordinal))
         {
             return true;
         }
