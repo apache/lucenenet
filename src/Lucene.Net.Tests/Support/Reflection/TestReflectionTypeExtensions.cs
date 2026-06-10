@@ -2,6 +2,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
+using Lucene.Net.Util.Fst;
 using NUnit.Framework;
 using System;
 
@@ -41,6 +42,7 @@ namespace Lucene.Net.Reflection
         [TestCase(typeof(Field), "Field")] // test package mapping attribute
         [TestCase(typeof(ReferenceContext<>), "ReferenceContext")] // this type doesn't actually exist in Lucene, but it tests the generic type erasure
         [TestCase(typeof(FieldCache.CacheEntry), "FieldCache.CacheEntry")] // test nested type
+        [TestCase(typeof(PairOutputs<object, object>.Pair), "PairOutputs.Pair")] // nested type under a generic outer: arity stripped from the enclosing name too
         [TestCase(typeof(IAttribute), "Attribute")] // test interface
         public void TestGetInferredLuceneTypeName(Type luceneNetType, string expectedName)
         {
