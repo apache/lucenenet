@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
     //Used to hold non-generic nested types
     public static class FieldValueHitQueue
     {
-        // had to change from internal to public, due to public accessability of FieldValueHitQueue
+        // had to change from internal to public, due to public accessibility of FieldValueHitQueue
         public class Entry : ScoreDoc
         {
             public int Slot { get; set; } // LUCENENET NOTE: For some reason, this was not made readonly in the original

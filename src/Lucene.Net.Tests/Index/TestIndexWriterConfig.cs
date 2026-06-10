@@ -329,7 +329,7 @@ namespace Lucene.Net.Index
             }
 
             // Test Similarity:
-            // we shouldnt assert what the default is, just that its not null.
+            // we shouldn't assert what the default is, just that its not null.
             Assert.IsTrue(IndexSearcher.DefaultSimilarity == conf.Similarity);
             conf.SetSimilarity(new MySimilarity());
             Assert.AreEqual(typeof(MySimilarity), conf.Similarity.GetType());

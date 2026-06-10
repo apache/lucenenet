@@ -628,7 +628,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Simple utilty method that takes a previously caught
+        /// Simple utility method that takes a previously caught
         /// <see cref="Exception"/> and rethrows either
         /// <see cref="IOException"/> or an unchecked exception.  If the
         /// argument is <c>null</c> then this method does nothing.
@@ -646,7 +646,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Simple utilty method that takes a previously caught
+        /// Simple utility method that takes a previously caught
         /// <see cref="Exception"/> and rethrows it as an unchecked exception.
         /// If the argument is <c>null</c> then this method does nothing.
         /// </summary>

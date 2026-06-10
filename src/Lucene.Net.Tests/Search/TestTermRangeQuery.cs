@@ -281,7 +281,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
         }
 
-        // shouldnt create an analyzer for every doc?
+        // shouldn't create an analyzer for every doc?
         private void AddDoc(string content)
         {
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetOpenMode(OpenMode.APPEND));

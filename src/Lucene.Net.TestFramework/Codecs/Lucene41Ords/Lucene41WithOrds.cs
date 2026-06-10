@@ -61,7 +61,7 @@ namespace Lucene.Net.Codecs.Lucene41Ords
             try
             {
                 // Must use BlockTermsWriter (not BlockTree) because
-                // BlockTree doens't support ords (yet)...
+                // BlockTree doesn't support ords (yet)...
                 FieldsConsumer ret = new BlockTermsWriter(indexWriter, state, docs);
                 success = true;
                 return ret;

@@ -1206,7 +1206,7 @@ namespace Lucene.Net.Store
 
         //        using (IndexInput input = dir.OpenInput("bytes", NewIOContext(Random)))
         //        {
-        //            // seek to a random spot shouldnt impact slicing.
+        //            // seek to a random spot shouldn't impact slicing.
         //            input.Seek(TestUtil.NextInt64(Random, 0, input.Length));
         //            for (int i = 0; i < num; i += 16)
         //            {
@@ -1214,7 +1214,7 @@ namespace Lucene.Net.Store
         //                assertEquals(0, slice1.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //                assertEquals(num - i, slice1.Length);
 
-        //                // seek to a random spot shouldnt impact slicing.
+        //                // seek to a random spot shouldn't impact slicing.
         //                slice1.Seek(TestUtil.NextInt64(Random, 0, slice1.Length));
         //                for (int j = 0; j < slice1.Length; j += 16)
         //                {
