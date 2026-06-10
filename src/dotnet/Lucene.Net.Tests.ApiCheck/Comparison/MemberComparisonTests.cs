@@ -12,22 +12,62 @@ public class MemberComparisonTests
         protected int _foo2 = 2;
         protected int m_foo3 = 3;
         protected static int s_foo4 = 4;
+
+        // F-1: .NET PascalCase const for a Java camelCase field, and a snake_case Java field.
+        public const int DefaultMaxEdits = 2;
+        protected float m_scaleFactor = 1.0f;
     }
 
     [InlineData("foo1", "protected", "foo1")]
     [InlineData("_foo2", "protected", "foo2")]
     [InlineData("m_foo3", "protected", "foo3")]
     [InlineData("s_foo4", "protected static", "foo4")]
+    // F-1: Java camelCase field -> .NET PascalCase const (case-insensitive).
+    [InlineData("DefaultMaxEdits", "public static final", "defaultMaxEdits")]
+    // F-1: Java snake_case field -> .NET PascalCase (m_ stripped, underscores collapsed).
+    [InlineData("m_scaleFactor", "protected final", "scale_factor")]
     [Theory]
     public void FieldsMatchTests_Name(string dotNetFieldName, string javaModifiers, string javaFieldName)
     {
-        var dotNetField = typeof(Example).GetField(dotNetFieldName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic) ?? throw new InvalidOperationException("Field not found");
+        var dotNetField = typeof(Example).GetField(dotNetFieldName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic) ?? throw new InvalidOperationException("Field not found");
         var javaField = new FieldMetadata(
             Name: javaFieldName,
             Type: dotNetField.FieldType.Name, // ignoring this for now
             Modifiers: javaModifiers.Split(" ").ToList(),
             IsStatic: javaModifiers.Contains("static"));
         Assert.True(MemberComparison.FieldNamesMatch(dotNetField, javaField));
+    }
+
+    // F-1 negative: an unrelated field name must not match just because of case-insensitivity.
+    [Fact]
+    public void FieldNamesMatch_UnrelatedName_DoesNotMatch()
+    {
+        var dotNetField = typeof(Example).GetField("DefaultMaxEdits", BindingFlags.Static | BindingFlags.Public)!;
+        var javaField = new FieldMetadata("somethingElse", "int", new List<string> { "public" }, IsStatic: true);
+        Assert.False(MemberComparison.FieldNamesMatch(dotNetField, javaField));
+    }
+
+    public class SnakeCollisionExample
+    {
+        public const string MAX_LEVELS = "maxLevels";
+        protected int m_maxLevels = 0;
+    }
+
+    // F-1 guard: a SCREAMING_SNAKE Java constant must NOT de-snake and collide with a separate
+    // camelCase field on the same type. .NET m_maxLevels (-> maxLevels) must not match Java
+    // MAX_LEVELS, and .NET MAX_LEVELS must not match Java maxLevels.
+    [Fact]
+    public void FieldNamesMatch_ScreamingSnakeConst_DoesNotCollideWithCamelField()
+    {
+        var netCamel = typeof(SnakeCollisionExample).GetField("m_maxLevels", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        var netConst = typeof(SnakeCollisionExample).GetField("MAX_LEVELS", BindingFlags.Static | BindingFlags.Public)!;
+        var javaConst = new FieldMetadata("MAX_LEVELS", "java.lang.String", new List<string> { "public", "static", "final" }, IsStatic: true);
+        var javaCamel = new FieldMetadata("maxLevels", "int", new List<string> { "protected" }, IsStatic: false);
+
+        Assert.False(MemberComparison.FieldNamesMatch(netCamel, javaConst));  // m_maxLevels != MAX_LEVELS
+        Assert.False(MemberComparison.FieldNamesMatch(netConst, javaCamel));  // MAX_LEVELS != maxLevels
+        Assert.True(MemberComparison.FieldNamesMatch(netCamel, javaCamel));   // m_maxLevels == maxLevels
+        Assert.True(MemberComparison.FieldNamesMatch(netConst, javaConst));   // MAX_LEVELS == MAX_LEVELS
     }
 
     public class FilterFieldExample
@@ -242,6 +282,48 @@ public class MemberComparisonTests
         Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("size", "long")));
     }
 
+    public class FluentSetterExample
+    {
+        public int Length { get; set; }
+    }
+
+    // F-4: a Java fluent setter setX(T) that returns the owner type (not void) should still
+    // pair with the .NET property X. The existing setter branch requires a void return.
+    [Fact]
+    public void PropertyMatchesJavaAccessor_FluentSetter_MatchesProperty()
+    {
+        var prop = typeof(FluentSetterExample).GetProperty(nameof(FluentSetterExample.Length))!;
+        // Java: FluentSetterExample setLength(int) -> returns the owner type, not void.
+        var javaMethod = JavaMethod("setLength", "org.apache.lucene.util.FluentSetterExample", ("length", "int"));
+        Assert.True(MemberComparison.PropertyMatchesJavaAccessor(prop, javaMethod));
+    }
+
+    // F-4 negative: a fluent setter whose parameter type doesn't match the property type
+    // must not pair.
+    [Fact]
+    public void PropertyMatchesJavaAccessor_FluentSetter_TypeMismatch_DoesNotMatch()
+    {
+        var prop = typeof(FluentSetterExample).GetProperty(nameof(FluentSetterExample.Length))!;
+        var javaMethod = JavaMethod("setLength", "org.apache.lucene.util.FluentSetterExample", ("length", "java.lang.String"));
+        Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, javaMethod));
+    }
+
+    public class SetGetMethodExample
+    {
+        public void SetMbPerSec(double mbPerSec) { }
+        public double GetMbPerSec() => 0;
+    }
+
+    // F-2 building block: a standalone .NET Set/Get *method* should match the Java set/get
+    // accessor by name (MethodNamesMatch strips the verb prefix). The DiffUtility consumption
+    // fix relies on this pairing being available.
+    [Fact]
+    public void MethodsMatch_SetMethod_MatchesJavaSetter()
+    {
+        var method = typeof(SetGetMethodExample).GetMethod(nameof(SetGetMethodExample.SetMbPerSec))!;
+        Assert.True(MemberComparison.MethodsMatch(method, JavaMethod("setMbPerSec", "void", ("mbPerSec", "double"))));
+    }
+
     private static MethodMetadata JavaMethod(string name, string returnType, params (string Name, string Type)[] parameters)
         => new(
             Name: name,
@@ -299,6 +381,20 @@ public class MemberComparisonTests
     {
         var method = typeof(MethodExample).GetMethod(nameof(MethodExample.ToString))!;
         Assert.True(MemberComparison.MethodsMatch(method, JavaMethod("toString", "java.lang.String")));
+    }
+
+    // F-3: Lucene.NET renames Java template/hook methods with a leading 'Do'
+    // (lookup() -> DoLookup(), checkIndex() -> DoCheckIndex()).
+    [InlineData("DoLookup", "lookup", true)]
+    [InlineData("DoCheckIndex", "checkIndex", true)]
+    // 'Do' must be followed by an uppercase letter and leave a matching remainder.
+    [InlineData("Double", "uble", false)]
+    [InlineData("Document", "cument", false)]
+    [InlineData("DoLookup", "search", false)]
+    [Theory]
+    public void MethodNamesMatch_DoPrefix(string dotNetName, string javaName, bool expected)
+    {
+        Assert.Equal(expected, MemberComparison.MethodNamesMatch(dotNetName, javaName));
     }
 
     public class PropertyExample
@@ -360,10 +456,20 @@ public class MemberComparisonTests
     }
 
     [Fact]
-    public void PropertyMatchesJavaAccessor_SetterReturnsNonVoid_DoesNotMatch()
+    public void PropertyMatchesJavaAccessor_FluentSetterReturnsNonVoid_Matches()
     {
+        // F-4: a non-void (fluent) setter whose param type matches the property type pairs.
+        // (Previously this was asserted NOT to match; the fluent-setter idiom now allows it.)
         var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Name))!;
-        Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("setName", "java.lang.String", ("name", "java.lang.String"))));
+        Assert.True(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("setName", "java.lang.String", ("name", "java.lang.String"))));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_SetterParamTypeMismatch_DoesNotMatch()
+    {
+        // The param-type guard still rejects a setter whose argument doesn't match the property.
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Name))!;
+        Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("setName", "void", ("name", "int"))));
     }
 
     [Fact]

@@ -27,19 +27,42 @@ public class MemberComparison
     {
         var dotNet = CleanFieldName(dotNetField.Name);
         var java = CleanFieldName(javaField.Name);
-        if (dotNet == java)
+
+        // Case-insensitive: Lucene.NET PascalCases Java camelCase field/const names
+        // (defaultMaxEdits -> DefaultMaxEdits), the same convention used for methods and
+        // properties. The other name matchers are already case-insensitive; fields were not.
+        if (string.Equals(dotNet, java, StringComparison.OrdinalIgnoreCase))
         {
             return true;
         }
 
         if (KnownFieldNameRenames.TryGetValue(java, out var renamed)
-            && string.Equals(dotNet, renamed, StringComparison.Ordinal))
+            && string.Equals(dotNet, renamed, StringComparison.OrdinalIgnoreCase))
         {
             return true;
         }
 
         var normalized = NormalizeJavaTypeWordsToDotNet(java);
-        return !ReferenceEquals(normalized, java) && dotNet == normalized;
+        if (!ReferenceEquals(normalized, java) && string.Equals(dotNet, normalized, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        // lower_snake_case Java field (e.g. scale_factor) -> .NET PascalCase (ScaleFactor):
+        // collapse underscores on the Java side and compare case-insensitively. Restricted to
+        // names with no uppercase letters so a SCREAMING_SNAKE constant (MAX_LEVELS) is NOT
+        // de-snaked - those keep their underscores on the .NET side (MAX_LEVELS) and must not
+        // collide with a separate camelCase field (maxLevels) on the same type.
+        if (java.Contains('_') && !java.Any(char.IsUpper))
+        {
+            var deSnaked = java.Replace("_", string.Empty);
+            if (string.Equals(dotNet, deSnaked, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // Lucene.NET applies a few well-known field renames that aren't reachable via
@@ -150,8 +173,9 @@ public class MemberComparison
             return PropertyNameMatches(dotNetProperty.Name, javaName[3..], allowIsPrefix: false);
         }
 
-        if (javaName.StartsWith("set", StringComparison.Ordinal) && javaName.Length > 3 && paramCount == 1
-            && javaMethod.ReturnType.Equals("void", StringComparison.Ordinal))
+        // setX(T): void or fluent (returns owner). This is the name-only fallback, so the
+        // return type isn't constrained here.
+        if (javaName.StartsWith("set", StringComparison.Ordinal) && javaName.Length > 3 && paramCount == 1)
         {
             return PropertyNameMatches(dotNetProperty.Name, javaName[3..], allowIsPrefix: false);
         }
@@ -294,6 +318,18 @@ public class MemberComparison
             return true;
         }
 
+        // Lucene.NET renames Java template/hook methods with a leading 'Do' (the public method
+        // forwards to a protected 'DoX'): Java lookup() ↔ .NET DoLookup(), checkIndex() ↔
+        // DoCheckIndex(). Strip a leading 'Do' (followed by an uppercase letter) from the .NET
+        // name and compare. Gated on the uppercase boundary so 'Document'/'Double' don't strip.
+        if (dotNetName.Length > 2
+            && dotNetName.StartsWith("Do", StringComparison.Ordinal)
+            && char.IsUpper(dotNetName[2])
+            && string.Equals(dotNetName[2..], javaName, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
         return false;
     }
 
@@ -410,8 +446,10 @@ public class MemberComparison
                    && ParameterTypesMatch(dotNetProperty.PropertyType, javaMethod.ReturnType);
         }
 
-        if (javaName.StartsWith("set", StringComparison.Ordinal) && javaName.Length > 3 && paramCount == 1
-            && javaMethod.ReturnType.Equals("void", StringComparison.Ordinal))
+        // setX(T): a void setter, or a fluent setter that returns the owner type (a Lucene
+        // builder idiom). The param type must still match the property type, which keeps the
+        // fluent form from over-matching an unrelated method.
+        if (javaName.StartsWith("set", StringComparison.Ordinal) && javaName.Length > 3 && paramCount == 1)
         {
             var bareName = javaName[3..];
             return PropertyNameMatches(dotNetProperty.Name, bareName, allowIsPrefix: false)
