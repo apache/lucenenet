@@ -70,8 +70,16 @@ public class MemberComparison
     public static bool MethodNamesAndArityMatch(MethodInfo dotNetMethod, MethodMetadata javaMethod)
     {
         return MethodNamesMatch(dotNetMethod.Name, javaMethod.Name)
-               && dotNetMethod.GetParameters().Length == javaMethod.Parameters.Count;
+               && EffectiveParameterCount(dotNetMethod.GetParameters()) == javaMethod.Parameters.Count;
     }
+
+    // The .NET parameter count as seen from the Java side: a trailing CancellationToken is a
+    // Lucene.NET-only addition with no Java counterpart, so it does not count toward arity.
+    internal static int EffectiveParameterCount(ParameterInfo[] dotNetParams)
+        => dotNetParams.Length > 0
+           && dotNetParams[^1].ParameterType == typeof(System.Threading.CancellationToken)
+            ? dotNetParams.Length - 1
+            : dotNetParams.Length;
 
     /// <summary>
     /// Determines whether the parameter and return types of two name+arity-matched
@@ -127,6 +135,15 @@ public class MemberComparison
     {
         var javaName = javaMethod.Name;
         var paramCount = javaMethod.Parameters.Count;
+
+        // Well-known accessor renames (see PropertyMatchesJavaAccessor); checked first so that
+        // 'get'-prefixed entries like getSize/getFilePointer aren't stripped to the wrong name.
+        if (paramCount == 0
+            && !javaMethod.ReturnType.Equals("void", StringComparison.Ordinal)
+            && KnownAccessorPropertyRenames.TryGetValue(javaName, out var renamedProperty))
+        {
+            return string.Equals(dotNetProperty.Name, renamedProperty, StringComparison.Ordinal);
+        }
 
         if (javaName.StartsWith("get", StringComparison.Ordinal) && javaName.Length > 3 && paramCount == 0)
         {
@@ -375,6 +392,17 @@ public class MemberComparison
         var javaName = javaMethod.Name;
         var paramCount = javaMethod.Parameters.Count;
 
+        // Well-known accessor renames (size()/getSize() -> Count, getFilePointer() -> Position).
+        // Checked before the generic get/set/is handling because some entries (getSize,
+        // getFilePointer) start with 'get' and would otherwise be stripped to the wrong bare name.
+        if (paramCount == 0
+            && !javaMethod.ReturnType.Equals("void", StringComparison.Ordinal)
+            && KnownAccessorPropertyRenames.TryGetValue(javaName, out var renamedProperty))
+        {
+            return string.Equals(dotNetProperty.Name, renamedProperty, StringComparison.Ordinal)
+                   && ParameterTypesMatch(dotNetProperty.PropertyType, javaMethod.ReturnType);
+        }
+
         if (javaName.StartsWith("get", StringComparison.Ordinal) && javaName.Length > 3 && paramCount == 0)
         {
             var bareName = javaName[3..];
@@ -413,6 +441,17 @@ public class MemberComparison
         return false;
     }
 
+    // Java zero-arg accessors that Lucene.NET renames to a conventional .NET property name.
+    // Keyed by the Java method name; value is the .NET property name.
+    private static readonly Dictionary<string, string> KnownAccessorPropertyRenames = new(StringComparer.Ordinal)
+    {
+        // java.util.Collection.size() / getSize() -> .NET Count (ICollection convention).
+        ["size"] = "Count",
+        ["getSize"] = "Count",
+        // IndexInput/IndexOutput.getFilePointer() -> Position (FileStream convention).
+        ["getFilePointer"] = "Position",
+    };
+
     private static bool PropertyNameMatches(string dotNetPropertyName, string javaBareName, bool allowIsPrefix)
     {
         if (string.Equals(dotNetPropertyName, javaBareName, StringComparison.OrdinalIgnoreCase))
@@ -449,6 +488,16 @@ public class MemberComparison
 
     private static bool ParameterListsMatch(ParameterInfo[] dotNetParams, IReadOnlyList<ParameterMetadata> javaParams)
     {
+        // Lucene.NET adds an optional trailing CancellationToken parameter to many methods
+        // (Search/Train/Lookup/Collect, documented "LUCENENET Specific"). When the .NET method has
+        // exactly one extra trailing parameter and it is a CancellationToken, drop it so the leading
+        // parameters compare against the Java signature.
+        if (dotNetParams.Length == javaParams.Count + 1
+            && dotNetParams[^1].ParameterType == typeof(System.Threading.CancellationToken))
+        {
+            dotNetParams = dotNetParams[..^1];
+        }
+
         if (dotNetParams.Length != javaParams.Count)
         {
             return false;

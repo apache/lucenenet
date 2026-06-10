@@ -175,6 +175,71 @@ public class MemberComparisonTests
         public string Format(string s) => s;
         public T Identity<T>(T value) => value;
         public override string ToString() => string.Empty;
+
+        // H-8: a method with a trailing CancellationToken added on the .NET side only.
+        public int Search(string query, int count, System.Threading.CancellationToken token) => count;
+        // A method whose only parameter is a CancellationToken (the Java method has zero params).
+        public void Collect(System.Threading.CancellationToken token) { }
+    }
+
+    [Fact]
+    public void MethodsMatch_TrailingCancellationToken_Matches()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.Search))!;
+        // Java side has no CancellationToken: search(String, int).
+        Assert.True(MemberComparison.MethodsMatch(method, JavaMethod("search", "int", ("query", "java.lang.String"), ("count", "int"))));
+    }
+
+    [Fact]
+    public void MethodsMatch_OnlyCancellationToken_MatchesZeroArgJava()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.Collect))!;
+        Assert.True(MemberComparison.MethodsMatch(method, JavaMethod("collect", "void")));
+    }
+
+    [Fact]
+    public void MethodNamesAndArityMatch_TrailingCancellationToken_IgnoredForArity()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.Search))!;
+        // Effective arity is 2 (the CancellationToken does not count).
+        Assert.True(MemberComparison.MethodNamesAndArityMatch(method, JavaMethod("search", "int", ("query", "java.lang.String"), ("count", "int"))));
+    }
+
+    [Fact]
+    public void MethodsMatch_TrailingCancellationToken_DifferentLeadingParams_DoesNotMatch()
+    {
+        var method = typeof(MethodExample).GetMethod(nameof(MethodExample.Search))!;
+        // Leading params still must match: here the Java arity-2 signature differs in type.
+        Assert.False(MemberComparison.MethodsMatch(method, JavaMethod("search", "int", ("query", "java.lang.String"), ("count", "java.lang.String"))));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_SizeMethod_MatchesCount()
+    {
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Count))!;
+        Assert.True(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("size", "int")));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_GetSizeMethod_MatchesCount()
+    {
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Count))!;
+        Assert.True(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("getSize", "int")));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_GetFilePointer_MatchesPosition()
+    {
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Position))!;
+        Assert.True(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("getFilePointer", "long")));
+    }
+
+    [Fact]
+    public void PropertyMatchesJavaAccessor_SizeMethod_WrongProperty_DoesNotMatch()
+    {
+        // size() maps to Count, not to an arbitrary same-typed property.
+        var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Position))!;
+        Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("size", "long")));
     }
 
     private static MethodMetadata JavaMethod(string name, string returnType, params (string Name, string Type)[] parameters)
@@ -242,6 +307,7 @@ public class MemberComparisonTests
         public int Count { get; set; }
         public bool Empty { get; set; }
         public bool IsClosed { get; set; }
+        public long Position { get; set; }
     }
 
     [Fact]
@@ -333,8 +399,10 @@ public class MemberComparisonTests
     [Fact]
     public void PropertyMatchesJavaAccessor_BareNameGetter_NameMismatch_DoesNotMatch()
     {
+        // 'capacity()' is an unrelated zero-arg accessor that should not match the Count property.
+        // (Note: 'size()' DOES map to Count via the known-accessor rename table, so it isn't used here.)
         var prop = typeof(PropertyExample).GetProperty(nameof(PropertyExample.Count))!;
-        Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("size", "int")));
+        Assert.False(MemberComparison.PropertyMatchesJavaAccessor(prop, JavaMethod("capacity", "int")));
     }
 
     public class FieldTypeExample
