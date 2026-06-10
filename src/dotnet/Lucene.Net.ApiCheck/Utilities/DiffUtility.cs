@@ -367,8 +367,26 @@ public static class DiffUtility
 
             if (matchedJavaMethods.Count > 0)
             {
+                // Don't let the property greedily consume a Java accessor that a standalone .NET
+                // method will pair with. Lucene.NET sometimes exposes BOTH a property X and a
+                // method SetX/GetX for ONE Java get/set PAIR (e.g. RateLimiter.MbPerSec property +
+                // SetMbPerSec method <- getMbPerSec + setMbPerSec). If the property swallows both
+                // Java accessors, the .NET method is left orphaned.
+                //
+                // Only divert an accessor to a .NET method when doing so still leaves the property
+                // at least one accessor to pair with. Otherwise (a single Java accessor with both a
+                // .NET property AND method, e.g. BooleanQuery.getClauses <- Clauses + GetClauses)
+                // the property keeps it and the extra .NET method is genuine enrichment.
+                var divertable = matchedJavaMethods
+                    .Where(j => dotNetMethods.Any(d => MemberComparison.MethodNamesAndArityMatch(d, j)))
+                    .ToList();
+
+                var accessorsToConsume = divertable.Count > 0 && matchedJavaMethods.Count - divertable.Count >= 1
+                    ? matchedJavaMethods.Except(divertable).ToList()
+                    : matchedJavaMethods;
+
                 state.ConsumedDotNetProperties.Add(prop);
-                foreach (var m in matchedJavaMethods)
+                foreach (var m in accessorsToConsume)
                 {
                     state.ConsumedJavaMethods.Add(m);
                 }
