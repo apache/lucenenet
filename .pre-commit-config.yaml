@@ -96,3 +96,9 @@ repos:
       - id: fix-byte-order-marker
         name: run fix-byte-order-marker
         description: fixes files with UTF-8 byte order markers
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+        name: run gitleaks
+        description: check for secrets with gitleaks
