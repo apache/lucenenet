@@ -219,11 +219,16 @@ public static class TypeComparison
 
     public static bool InterfacesMatch(IReadOnlyList<Type> dotNetInterfaces, IReadOnlyList<string> javaInterfaces)
     {
-        if (dotNetInterfaces.Count != javaInterfaces.Count)
-        {
-            return false;
-        }
-
-        return dotNetInterfaces.All(i => javaInterfaces.Any(j => TypeMatchesFullName(i, j, "interface")));
+        // The Java extractor reports only the directly-declared interfaces, while .NET reflection
+        // reports the full transitive interface set (one java.lang.Iterable becomes IEnumerable<T> +
+        // IEnumerable; one java.util.List explodes to several BCL interfaces). Lucene.NET also
+        // intentionally enriches the surface (IFormattable, IEquatable<T>, IDisposable, ...). So an
+        // equal-count or ".NET subset of Java" rule is wrong: the correct invariant is that every
+        // Java interface is represented somewhere on the .NET side. .NET-only additions are benign.
+        return javaInterfaces
+            // java.lang.Cloneable is a marker interface Lucene.NET intentionally drops; it has no
+            // .NET counterpart to match against.
+            .Where(j => !j.Equals("java.lang.Cloneable", StringComparison.Ordinal))
+            .All(j => dotNetInterfaces.Any(i => TypeMatchesFullName(i, j, "interface")));
     }
 }

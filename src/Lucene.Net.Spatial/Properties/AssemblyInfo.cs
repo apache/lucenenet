@@ -37,3 +37,4 @@ using System.Runtime.InteropServices;
 [assembly: Guid("5c8e810f-4bf7-472f-9785-8d80a0de6ea8")]
 
 [assembly: LuceneMavenMapping("org.apache.lucene", "lucene-spatial", "4.8.1")]
+[assembly: LucenePackageMapping("Lucene.Net.Spatial.Queries", "org.apache.lucene.spatial.query")]

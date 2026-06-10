@@ -131,7 +131,16 @@ namespace Lucene.Net.Reflection
 
             while (declaringType != null)
             {
-                typeName = $"{declaringType.Name}.{typeName}";
+                var declaringTypeName = declaringType.Name;
+
+                if (declaringTypeName.Contains('`'))
+                {
+                    // Java Generic types are erased, so we don't include the type parameters
+                    // on the enclosing type name either (e.g. PackedInts.Reader, not PackedInts`2.Reader).
+                    declaringTypeName = declaringTypeName.Substring(0, declaringTypeName.IndexOf('`'));
+                }
+
+                typeName = $"{declaringTypeName}.{typeName}";
                 declaringType = declaringType.DeclaringType;
             }
 
