@@ -20,7 +20,7 @@ Apache [Lucene.NET 4.8](https://github.com/apache/lucenenet) is a port of Java A
 
 So for example, in Java it's common for method names start with a lower case letter, but of course  in .NET we expect method names to start with an upper case letter.  So we change the method names to confirm to .NET conventions when porting the code. Likewise, C# has support for properties with getters and setters but Java does not.  So sometimes when converting the Java to C# a get method that is behaving like a property accessor will be turned into a C# property.
 
-But other then that, you will find that the documentation for Java Lucene 4.X can be very useful to your learning of Lucene.NET 4.8.  Just keep in mind the ".NETifing" that we do to the code and it's pretty simple to translate in your head Java examples into the C# equivalent.  
+But other than that, you will find that the documentation for Java Lucene 4.X can be very useful to your learning of Lucene.NET 4.8.  Just keep in mind the ".NETifing" that we do to the code and it's pretty simple to translate in your head Java examples into the C# equivalent.  
 
 
 ## From the Community
@@ -34,7 +34,7 @@ Another source of information about Lucene.NET is current and past GitHub issues
 
 
 ### Searching Java Lucene Issues
-In general, the Java Lucene Issues database can be a good place to learn about about how features were developed, the historical issues related to features, and how issues were resolved.  One thing that can be helpful to know is that each major Lucene feature is assigned a Lucene issue number and it's often referenced using this format: LUCENE-<issue number> for example LUCENE-6001.
+In general, the Java Lucene Issues database can be a good place to learn about how features were developed, the historical issues related to features, and how issues were resolved.  One thing that can be helpful to know is that each major Lucene feature is assigned a Lucene issue number and it's often referenced using this format: LUCENE-<issue number> for example LUCENE-6001.
 
 Java Lucene has a GitHub mirror of their repo, but they don't track issues there.  If you want to search issues for the Java Lucene project you need to search on the [apache.org issues website](https://issues.apache.org/jira/projects/LUCENE/issues/).
 
@@ -47,7 +47,7 @@ By default that page shows only open issues but you can click the "View all issu
 You can search the Lucene.NET dev email archives for past emails that may contain information of a topic you'd like to dig into.  This can be especially useful, for example, to research why we may have chosen a specific porting approach for some code that wasn't so easy to port.  https://lists.apache.org/list.html?dev@lucenenet.apache.org
 
 ### Java Apache Lucene Email Archives
-You can search the Java Lucene dev email archives for past emails as well.  If you the feature or patch you are trying to learn about has an issue number, searching the email archives for it formatted like LUCENE-<issue number> for example LUCENE-6001 can return some really great discussion about the rational that went into defining how that feature works. https://lists.apache.org/list.html?dev@lucene.apache.org
+You can search the Java Lucene dev email archives for past emails as well.  If the feature or patch you are trying to learn about has an issue number, searching the email archives for it formatted like LUCENE-<issue number> for example LUCENE-6001 can return some really great discussion about the rational that went into defining how that feature works. https://lists.apache.org/list.html?dev@lucene.apache.org
 
 ### StackOverflow
 
@@ -70,7 +70,7 @@ In the contributing section of this website we have a list of several community 
 
 **[Lucene 4 Cookbook](https://www.amazon.com/Lucene-4-Cookbook-Edwood-Ng/dp/1782162283/)** - The nice thing about this book is that it is specifically written for Lucene 4, so the examples are all from the era of Lucene.NET 4.X and will work great on Lucene.NET 4.8  While the code examples are in Java it's easy to convert them to C#. ie. change method names from starting with a lower case letter to an upper case letter.  Change some getter methods to properties instead.
 
-**[Lucene In Action 2nd Edition](https://www.amazon.com/Lucene-Action-Second-Covers-Apache/dp/1933988177)** - This is a great book written by a core Lucene committer that dives deep into the inner workings of Lucene.  It's packed full of great information about Lucene. It is written for Java Lucene rather then Lucene.NET but as I have already mentioned, it's generally not a big deal to translate Lucene code samples from Java to c#.  That said, the one downside to this book is that it was written during the Lucene 3.0 era.  The largest changes in the history of Lucene came in version 4.0.  So some of the information in this book, and some of the code samples, are outdated.  But much of the information, especially at the conceptual level, hold true and is very valuable for understanding Lucene.
+**[Lucene In Action 2nd Edition](https://www.amazon.com/Lucene-Action-Second-Covers-Apache/dp/1933988177)** - This is a great book written by a core Lucene committer that dives deep into the inner workings of Lucene.  It's packed full of great information about Lucene. It is written for Java Lucene rather than Lucene.NET but as I have already mentioned, it's generally not a big deal to translate Lucene code samples from Java to c#.  That said, the one downside to this book is that it was written during the Lucene 3.0 era.  The largest changes in the history of Lucene came in version 4.0.  So some of the information in this book, and some of the code samples, are outdated.  But much of the information, especially at the conceptual level, hold true and is very valuable for understanding Lucene.
 
 **[Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/information-retrieval-book.html)** - This book isn't written about Lucene per se but is a great resource on the subject of information retrieval which is the knowledgebase that underpins search software like Lucene.  This book was written by two professors at Stanford University and one from the University of Stuttgart.  The introduction in the book states "Introduction to Information Retrieval is the first textbook with a coherent treatment of classical and web information retrieval, including web search and the related areas of text classification and text clustering.  Written from a computer science perspective, it gives and up-to-date treatment of all aspects of the design and implementation of systems for gathering, indexing and searching documents..."  The content is [available online for free](https://nlp.stanford.edu/IR-book/information-retrieval-book.html) or a [hard cover version](https://www.amazon.com/Introduction-Information-Retrieval-Christopher-Manning/dp/0521865719) is available for purchase.
 

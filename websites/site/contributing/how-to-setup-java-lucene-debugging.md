@@ -13,8 +13,8 @@ Sometimes when porting Lucene 4.8 to Lucene.NET 4.8 it is helpful, or even neces
 The Java Lucene 4.8 repository indicates that the following development environments are supported:
 
 + Eclipse - Basic support (help/IDEs.txt).
-+ IntelliJ - IntelliJ idea can import the project out of the box.
-+ Netbeans - Not tested.
++ IntelliJ - IntelliJ IDEA can import the project out of the box.
++ NetBeans - Not tested.
 
 In this document however, we will be using Eclipse because it's open source and widely used. Because Java Lucene 4.8 uses an old version of the Java JDK that has known security issues, the approach we take here is to setup a virtual machine vis VirtualBox to quarantine our use of the insecure JDK.
 
@@ -65,7 +65,7 @@ To change the location where the machine will be stored, click the Preferences i
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box03.png'>
 
 ### Create Windows 10 Installation Media
-In this walkthrough we will be running Windows 10 in the VM.  Note that to do this one needs a 2nd Windows 10 license other then the one installed on the physical machine.  So two licenses are needed, one for the physical machine OS install and one for the VM OS install.  If you don't have a spare Windows 10 license to use in the VM you can consider installing ubuntu or other open source OS.  Next to run Windows 10 in the VM we much download and create Windows 10 installation media.  This can be done from https://www.microsoft.com/en-us/software-download/windows10 . Start by downloading the installation media tool.  
+In this walkthrough we will be running Windows 10 in the VM.  Note that to do this one needs a 2nd Windows 10 license other than the one installed on the physical machine.  So two licenses are needed, one for the physical machine OS install and one for the VM OS install.  If you don't have a spare Windows 10 license to use in the VM you can consider installing ubuntu or other open source OS.  Next to run Windows 10 in the VM we much download and create Windows 10 installation media.  This can be done from https://www.microsoft.com/en-us/software-download/windows10 . Start by downloading the installation media tool.  
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box04.png'>
 
@@ -83,7 +83,7 @@ Then in the dialog that comes up pick a place on the computer to save the ISO fi
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box07.png'>
 
-And then it will begin downloading the file and displaying a progress indicator.  Once the file is downloaded, we have now have the ISO file we need for installing the OS inside of VirtualBox.
+And then it will begin downloading the file and displaying a progress indicator.  Once the file is downloaded, we now have the ISO file we need for installing the OS inside of VirtualBox.
 
 Once that's done, you can click Finished in the dialog that comes up since we don't need to burn this ISO file to a dvd.  Having it on the hard drive is fine.
 
@@ -266,7 +266,7 @@ Use version 3.8.1.  https://maven.apache.org/download.cgi The installation proce
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-apache-maven02.png'>
 
 We are going to download `apache-maven-3.8.1-bin.zip`
-Move the folder out of the zip and into the location by the apache ant folder.
+Move the folder out of the zip and into the location by the Apache ant folder.
 
 "install" instructions are here: https://maven.apache.org/install.html
 
@@ -294,7 +294,7 @@ Of the choices above I chose "64-bit Git for Windows Setup."  Download and run t
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-git03.png'>
 
-In the dialog avove I ched the default Git editor from vim to Notepad.  Pick whatever you like.  In general for the other dialogs I kept the defaults including on this one
+In the dialog above I changed the default Git editor from vim to Notepad.  Pick whatever you like.  In general for the other dialogs I kept the defaults including on this one
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-git04.png'>
 
@@ -312,7 +312,7 @@ C:\Users\Ron\source\eclipse_workspaces\lucene_workspace
 C:\Users\Ron\source\repos\lucene
 
 ### Why not clone the code directly from Java Lucene Repo?
-It turns out that it's no longer possible to directly compile the Lucene 4.8 code obtained from the Java Lucene Repo without modification.  Unlike NuGet which makes old versions available forever and is always online, Maven has lots of mirrors that may cease to exist at some point, and that is what's happed, so the configuration in the Java Lucene 4.8 Repo is out of date and no longer builds.
+It turns out that it's no longer possible to directly compile the Lucene 4.8 code obtained from the Java Lucene Repo without modification.  Unlike NuGet which makes old versions available forever and is always online, Maven has lots of mirrors that may cease to exist at some point, and that is what's happened, so the configuration in the Java Lucene 4.8 Repo is out of date and no longer builds.
 
 In addition, Java 8 (which we need for Eclipse) detects an error in the code that Java 7 did not, so the build doesn't complete. It is due to some fields that are marked final that are disposed at the end of the constructor (so they really don't need to be fields). Taking the final keyword off of the field removes the error. So, the project has to be modified slightly so all of this can happen.
 
@@ -398,7 +398,7 @@ In my case it took about 10 minutes for ant to download all the dependencies.  T
 ## Using Eclipse
 
 ### Getting Stared with Eclipse
-Now we need to open eclipse and create a workspace.  So we use windows to go to the eclipse folder which in my case is here C:\Program Files\eclipse and we double click on eclipse to run it.
+Now we need to open eclipse and create a workspace.  So we use Windows to go to the eclipse folder which in my case is here C:\Program Files\eclipse and we double click on eclipse to run it.
 Eclipse will prompt you to create a workspace.
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/using-eclipse01.png'>
@@ -452,7 +452,7 @@ Once the build complete my screen looked like the screenshot below.  There were 
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/debugging-with-eclipse01.png'>
 
-Now Click the little icon to expand the packages under Lucne4.8.0 in the package explorer
+Now Click the little icon to expand the packages under Lucene4.8.0 in the package explorer
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/debugging-with-eclipse02.png'>
 
@@ -488,7 +488,7 @@ You will get this dialog:
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/debugging-with-eclipse09.png'>
 
-Eclipse has a different "perspective" for debugging than for browsing projects, similar to in VisualStudo. However, it gives you a choice whether you want to use it or not.  Click yes, but don't choose to remember the setting, because it's not clear where to find it again.
+Eclipse has a different "perspective" for debugging than for browsing projects, similar to in Visual Studio. However, it gives you a choice whether you want to use it or not.  Click yes, but don't choose to remember the setting, because it's not clear where to find it again.
 
 And it will launch into the debugger layout and be waiting on the breakpoint.
 
@@ -501,7 +501,7 @@ Step Into is F5<br>
 Step Over is F6<br>
 Step Return is F7<br>
 
-So it works much like VisualStudio but the F key configuration is different.  You can of course just click the icons at the top of the window, or goggle and there is probably a way to change the F key configuration for the debugger actions.
+So it works much like Visual Studio but the F key configuration is different.  You can of course just click the icons at the top of the window, or goggle and there is probably a way to change the F key configuration for the debugger actions.
 
 <font style="font-weight:bold; font-size: 17px">There ya go.   You are now in Eclipse, and able to run the debugger for Lucene 4.8 Java code.</font>
 
@@ -520,7 +520,7 @@ Basically, it is cloning the whole repo again in the subdirectory lucene-4.8.1. 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/clone-local-repo01.png'>
 
 
-Zommed in a bit more:
+Zoomed in a bit more:
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/clone-local-repo02.png'>
 
