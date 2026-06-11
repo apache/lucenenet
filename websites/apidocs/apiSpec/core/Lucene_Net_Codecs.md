@@ -145,7 +145,7 @@ public class MyPostingsFormat : PostingsFormat
 }
 ```
 
-Extend the the default <xref:Lucene.Net.Codecs.Lucene46.Lucene46Codec>, and override [GetPostingsFormatForField(string)](xref:Lucene.Net.Codecs.Lucene46.Lucene46Codec) to return your custom postings format.
+Extend the default <xref:Lucene.Net.Codecs.Lucene46.Lucene46Codec>, and override [GetPostingsFormatForField(string)](xref:Lucene.Net.Codecs.Lucene46.Lucene46Codec) to return your custom postings format.
 
 ```cs
 [CodecName("MyCodec")]
@@ -295,7 +295,7 @@ The above block will register a new codec named `MyCodec` with the test framewor
 Set an environment variable named `lucene:tests:codec` to the name of the codec.
 
 ```
-$env:lucene:tests:codec = "MyCodec"; # Powershell example
+$env:lucene:tests:codec = "MyCodec"; # PowerShell example
 ```
 
 #### Setting the Default Codec using a Configuration File
@@ -319,8 +319,8 @@ Similarly to codecs, the default postings format or doc values format can be set
 Set environment variables named `lucene:tests:postingsformat` to the name of the postings format and/or `lucene:tests:docvaluesformat` to the name of the doc values format.
 
 ```
-$env:lucene:tests:postingsformat = "MyPostingsFormat"; # Powershell example
-$env:lucene:tests:docvaluesformat = "MyDocValuesFormat"; # Powershell example
+$env:lucene:tests:postingsformat = "MyPostingsFormat"; # PowerShell example
+$env:lucene:tests:docvaluesformat = "MyDocValuesFormat"; # PowerShell example
 ```
 
 #### Configuration File

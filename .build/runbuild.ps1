@@ -106,7 +106,7 @@ task Init -depends CheckSDK, UpdateLocalSDKVersion -description "This task makes
     Write-Host "Configuration: $configuration"
     Write-Host "Platform: $platform"
     Write-Host "MaximumParallelJobs: $($maximumParallelJobs.ToString())"
-    Write-Host "Powershell Version: $($PSVersionTable.PSVersion)"
+    Write-Host "PowerShell Version: $($PSVersionTable.PSVersion)"
 
     Ensure-Directory-Exists "$artifactsDirectory"
     Ensure-Directory-Exists "$nugetPackageDirectory" # helpful when adding this path to your nuget sources for local installs

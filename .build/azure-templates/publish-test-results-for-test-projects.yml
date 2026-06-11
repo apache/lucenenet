@@ -17,7 +17,7 @@
 
 # Runs Publish Test Results task for all Lucene.Net test projects
 
-# The tasks can be easily re-generated (except for any special cases) using the following powershell script
+# The tasks can be easily re-generated (except for any special cases) using the following PowerShell script
 
 #$source_directory = "F:/Projects/lucenenet" # Change to your repo location
 #

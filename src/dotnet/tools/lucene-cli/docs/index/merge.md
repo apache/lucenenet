@@ -12,7 +12,7 @@ lucene index merge <OUTPUT_DIRECTORY> <INPUT_DIRECTORY> <INPUT_DIRECTORY_2>[ <IN
 
 ### Description
 
-Merges the the input index directories into a combined index at the output directory path.
+Merges the input index directories into a combined index at the output directory path.
 
 ### Arguments
 

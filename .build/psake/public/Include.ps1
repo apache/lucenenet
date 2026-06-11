@@ -1,14 +1,14 @@
 function Include {
     <#
         .SYNOPSIS
-        Include the functions or code of another powershell script file into the current build script's scope
+        Include the functions or code of another PowerShell script file into the current build script's scope
 
         .DESCRIPTION
-        A build script may declare an "includes" function which allows you to define a file containing powershell code to be included
+        A build script may declare an "includes" function which allows you to define a file containing PowerShell code to be included
         and added to the scope of the currently running build script. Code from such file will be executed after code from build script.
 
         .PARAMETER fileNamePathToInclude
-        A string containing the path and name of the powershell file to include
+        A string containing the path and name of the PowerShell file to include
 
         .EXAMPLE
         A sample build script is shown below:
