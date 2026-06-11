@@ -377,11 +377,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
         [Test]
         public void MultipleCallsToGetSpan()
         {
-            if (RuntimeHelpers.IsReferenceOrContainsReferences<char>())
-            {
-                return;
-            }
-
             var output = new CharTermAttribute();
             Assert.True(MemoryMarshal.TryGetArray(output.GetMemory(), out ArraySegment<char> array));
             GCHandle pinnedArray = GCHandle.Alloc(array.Array, GCHandleType.Pinned);

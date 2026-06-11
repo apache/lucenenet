@@ -421,11 +421,6 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public void MultipleCallsToGetSpan()
         {
-            if (RuntimeHelpers.IsReferenceOrContainsReferences<char>())
-            {
-                return;
-            }
-
             var output = new OpenStringBuilder(300);
             Assert.True(MemoryMarshal.TryGetArray(output.GetMemory(), out ArraySegment<char> array));
             GCHandle pinnedArray = GCHandle.Alloc(array.Array, GCHandleType.Pinned);
