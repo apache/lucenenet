@@ -2,6 +2,8 @@
 using J2N.Text;
 using Lucene.Net.Support;
 using System;
+using System.Buffers;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
@@ -28,7 +30,15 @@ namespace Lucene.Net.Analysis.Util
     /// <summary>
     /// A StringBuilder that allows one to access the array.
     /// </summary>
-    public class OpenStringBuilder : IAppendable, ISpanAppendable, ICharSequence // LUCENENET specific - implemented ISpanAppendable to support ReadOnlySpan<char>
+    /// <remarks>
+    /// LUCENENET specific: This type implements <see cref="IBufferWriter{T}"/> to allow for efficient access to the underlying buffer.
+    /// Note that if you hold a view into the buffer via either <see cref="GetMemory(int)"/> or <see cref="GetSpan(int)"/>,
+    /// this view can be invalidated by any operation that changes the position or length of the buffer.
+    /// It is recommended to avoid any non-<see cref="IBufferWriter{T}"/> operations while holding a view into the buffer.
+    /// <para />
+    /// This type also implements <see cref="ISpanAppendable"/> to allow for efficient appending of <see cref="ReadOnlySpan{T}"/>.
+    /// </remarks>
+    public class OpenStringBuilder : IAppendable, ISpanAppendable, ICharSequence, IBufferWriter<char>
     {
         protected char[] m_buf;
         protected int m_len;
@@ -42,6 +52,12 @@ namespace Lucene.Net.Analysis.Util
 
         public OpenStringBuilder(int size)
         {
+            // LUCENENET specific - validate argument
+            if (size <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(size), "size must be greater than zero");
+            }
+
             m_buf = new char[size];
         }
 
@@ -400,5 +416,72 @@ namespace Lucene.Net.Analysis.Util
         ISpanAppendable ISpanAppendable.Append(ReadOnlySpan<char> value) => Append(value);
 
         #endregion IAppendable Members
+
+        #region IBufferWriter<char> members and support
+
+        // LUCENENET-specific: IBufferWriter<char> support.
+        // See ArrayBufferWriter for an inspiration and reference implementation:
+        // https://github.com/dotnet/runtime/blob/v10.0.6/src/libraries/Common/src/System/Buffers/ArrayBufferWriter.cs
+
+        public void Advance(int count)
+        {
+            if (count < 0)
+                throw new ArgumentException(null, nameof(count));
+
+            if (m_len > m_buf.Length - count)
+                throw new InvalidOperationException($"Cannot advance {count} characters beyond the end of the buffer.");
+
+            m_len += count;
+        }
+
+        public Memory<char> GetMemory(int sizeHint = 0)
+        {
+            CheckAndResizeBufferForBufferWriter(sizeHint);
+            Debug.Assert(m_buf.Length > m_len);
+            return m_buf.AsMemory(m_len);
+        }
+
+        public Span<char> GetSpan(int sizeHint = 0)
+        {
+            CheckAndResizeBufferForBufferWriter(sizeHint);
+            Debug.Assert(m_buf.Length > m_len);
+            return m_buf.AsSpan(m_len);
+        }
+
+        private void CheckAndResizeBufferForBufferWriter(int sizeHint)
+        {
+            if (sizeHint < 0)
+            {
+                throw new ArgumentException("sizeHint must be non-negative", nameof(sizeHint));
+            }
+
+            if (sizeHint == 0)
+            {
+                sizeHint = 1;
+            }
+
+            EnsureCapacity(sizeHint);
+        }
+
+        /// <summary>
+        /// Returns the amount of space available that can still be written into without forcing the underlying buffer to grow.
+        /// </summary>
+        public int FreeCapacity => m_buf.Length - m_len;
+
+        #endregion
+
+        #region AsSpan/AsMemory support
+
+        /// <summary>
+        /// Returns the data written to the underlying buffer so far, as a <see cref="ReadOnlyMemory{T}"/>.
+        /// </summary>
+        public ReadOnlyMemory<char> AsMemory() => m_buf.AsMemory(0, m_len);
+
+        /// <summary>
+        /// Returns the data written to the underlying buffer so far, as a <see cref="ReadOnlySpan{T}"/>.
+        /// </summary>
+        public ReadOnlySpan<char> AsSpan() => m_buf.AsSpan(0, m_len);
+
+        #endregion
     }
 }

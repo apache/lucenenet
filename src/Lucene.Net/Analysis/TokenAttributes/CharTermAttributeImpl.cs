@@ -1,6 +1,8 @@
 using J2N.Text;
 using Lucene.Net.Support;
 using System;
+using System.Buffers;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
@@ -33,7 +35,16 @@ namespace Lucene.Net.Analysis.TokenAttributes
     using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
     /// <summary>
-    /// Default implementation of <see cref="ICharTermAttribute"/>. </summary>
+    /// Default implementation of <see cref="ICharTermAttribute"/>.
+    /// </summary>
+    /// <remarks>
+    /// LUCENENET specific: This type implements <see cref="IBufferWriter{T}"/> to allow for efficient access to the underlying buffer.
+    /// Note that if you hold a view into the buffer via either <see cref="GetMemory(int)"/> or <see cref="GetSpan(int)"/>,
+    /// this view can be invalidated by any operation that changes the position or length of the buffer.
+    /// It is recommended to avoid any non-<see cref="IBufferWriter{T}"/> operations while holding a view into the buffer.
+    /// <para />
+    /// This type also implements <see cref="ISpanAppendable"/> to allow for efficient appending of <see cref="ReadOnlySpan{T}"/>.
+    /// </remarks>
     public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute, IAppendable, // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
         ISpanAppendable /* LUCENENET specific */
     {
@@ -487,6 +498,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         ICharTermAttribute ICharTermAttribute.Append(ICharTermAttribute value) => Append(value);
 
+        ICharTermAttribute ICharTermAttribute.Append(ReadOnlySpan<char> value) => Append(value);
+
         #endregion
 
         #region IAppendable Members
@@ -514,6 +527,122 @@ namespace Lucene.Net.Analysis.TokenAttributes
         #region ISpanAppendable Members
 
         ISpanAppendable ISpanAppendable.Append(ReadOnlySpan<char> value) => Append(value);
+
+        #endregion
+
+        #region IBufferWriter<char> members and implementation support
+
+        // LUCENENET-specific: IBufferWriter<char> support.
+        // See ArrayBufferWriter for an inspiration and reference implementation:
+        // https://github.com/dotnet/runtime/blob/v10.0.6/src/libraries/Common/src/System/Buffers/ArrayBufferWriter.cs
+
+        /// <summary>
+        /// Notifies this instance that <paramref name="count"/> characters were
+        /// written to the buffer returned by the most recent call to
+        /// <see cref="GetSpan(int)"/> or <see cref="GetMemory(int)"/>, advancing
+        /// the term length accordingly.
+        /// <para/>
+        /// LUCENENET specific - implements <see cref="System.Buffers.IBufferWriter{T}"/>.
+        /// </summary>
+        /// <param name="count">The number of characters written to the buffer.</param>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="count"/> is negative.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Advancing by <paramref name="count"/> would move past the end of the
+        /// available buffer space.
+        /// </exception>
+        /// <remarks>
+        /// You must request a new buffer after calling Advance to continue writing more data
+        /// and cannot write to a previously acquired buffer.
+        /// </remarks>
+        public void Advance(int count)
+        {
+            if (count < 0)
+                throw new ArgumentException(null, nameof(count));
+
+            if (termLength > termBuffer.Length - count)
+                throw new InvalidOperationException($"Cannot advance {count} characters beyond the end of the buffer.");
+
+            termLength += count;
+        }
+
+        /// <summary>
+        /// Returns a <see cref="Memory{T}"/> to write to, starting at the current
+        /// term length, that is at least <paramref name="sizeHint"/> characters in
+        /// length. The buffer is grown if necessary; the returned memory is never
+        /// empty.
+        /// <para/>
+        /// LUCENENET specific - implements <see cref="System.Buffers.IBufferWriter{T}"/>.
+        /// </summary>
+        /// <param name="sizeHint">
+        /// The minimum requested length of the returned <see cref="Memory{T}"/>.
+        /// A value of <c>0</c> requests a non-empty buffer of unspecified size.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Memory{T}"/> of at least <paramref name="sizeHint"/>
+        /// characters (and at least one character).
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="sizeHint"/> is negative.
+        /// </exception>
+        public Memory<char> GetMemory(int sizeHint = 0)
+        {
+            CheckAndResizeBufferForBufferWriter(sizeHint);
+            Debug.Assert(termBuffer.Length > termLength);
+            return termBuffer.AsMemory(termLength);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="Span{T}"/> to write to, starting at the current
+        /// term length, that is at least <paramref name="sizeHint"/> characters in
+        /// length. The buffer is grown if necessary; the returned span is never
+        /// empty.
+        /// <para/>
+        /// LUCENENET specific - implements <see cref="System.Buffers.IBufferWriter{T}"/>.
+        /// </summary>
+        /// <param name="sizeHint">
+        /// The minimum requested length of the returned <see cref="Span{T}"/>.
+        /// A value of <c>0</c> requests a non-empty buffer of unspecified size.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Span{T}"/> of at least <paramref name="sizeHint"/>
+        /// characters (and at least one character).
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="sizeHint"/> is negative.
+        /// </exception>
+        public Span<char> GetSpan(int sizeHint = 0)
+        {
+            CheckAndResizeBufferForBufferWriter(sizeHint);
+            Debug.Assert(termBuffer.Length > termLength);
+            return termBuffer.AsSpan(termLength);
+        }
+
+        private void CheckAndResizeBufferForBufferWriter(int sizeHint)
+        {
+            if (sizeHint < 0)
+            {
+                throw new ArgumentException("sizeHint must be non-negative", nameof(sizeHint));
+            }
+
+            if (sizeHint == 0)
+            {
+                sizeHint = 1;
+            }
+
+            _ = InternalResizeBuffer(termLength + sizeHint);
+        }
+
+        /// <summary>
+        /// Returns the total amount of space within the underlying buffer.
+        /// </summary>
+        public int Capacity => termBuffer.Length;
+
+        /// <summary>
+        /// Returns the amount of space available that can still be written into without forcing the underlying buffer to grow.
+        /// </summary>
+        public int FreeCapacity => termBuffer.Length - termLength;
 
         #endregion
     }

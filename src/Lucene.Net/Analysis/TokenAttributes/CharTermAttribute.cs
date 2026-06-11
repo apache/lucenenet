@@ -2,6 +2,7 @@ using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Util;
 using System;
+using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -27,7 +28,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
     /// <summary>
     /// The term text of a <see cref="Token"/>.
     /// </summary>
-    public interface ICharTermAttribute : IAttribute, ICharSequence, IAppendable
+    public interface ICharTermAttribute : IAttribute, ICharSequence, IAppendable,
+        IBufferWriter<char> // LUCENENET specific
     {
         /// <summary>
         /// Copies the contents of buffer, starting at offset for
@@ -283,5 +285,13 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// </summary>
         /// <param name="value">The sequence of characters to append.</param>
         ICharTermAttribute Append(ICharTermAttribute value);
+
+        /// <summary>
+        /// Appends the contents of the <see cref="ReadOnlySpan{T}"/> to this character sequence.
+        /// <para/>The characters of the <see cref="ReadOnlySpan{T}"/> argument are appended, in order, increasing the length of
+        /// this sequence by the length of the argument. If the argument is an empty span, this method is a no-op.
+        /// </summary>
+        /// <param name="value">The sequence of characters to append.</param>
+        ICharTermAttribute Append(ReadOnlySpan<char> value);
     }
 }
