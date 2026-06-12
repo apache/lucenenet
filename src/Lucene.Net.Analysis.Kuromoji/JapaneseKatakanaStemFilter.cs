@@ -1,5 +1,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using System;
 using System.Text.RegularExpressions;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -49,6 +51,10 @@ namespace Lucene.Net.Analysis.Ja
         public JapaneseKatakanaStemFilter(TokenStream input, int minimumLength)
             : base(input)
         {
+            // LUCENENET: Added guard clause
+            if (minimumLength < 0)
+                throw new ArgumentOutOfRangeException(nameof(minimumLength), "Minimum length must be a non-negative integer.");
+
             this.minimumKatakanaLength = minimumLength;
             this.termAttr = AddAttribute<ICharTermAttribute>();
             this.keywordAttr = AddAttribute<IKeywordAttribute>();
