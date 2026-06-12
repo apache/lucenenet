@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace Lucene.Net.Analysis.TokenAttributes
+namespace Lucene.Net.Analysis.Util
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -31,16 +31,14 @@ namespace Lucene.Net.Analysis.TokenAttributes
      */
 
     /// <summary>
-    /// Tests for the <see cref="CharTermAttribute"/> class' <see cref="IBufferWriter{T}"/> implementation.
+    /// Tests for <see cref="OpenStringBuilder"/>'s <see cref="IBufferWriter{T}"/> implementation.
     /// </summary>
     [TestFixture]
     [LuceneNetSpecific]
-    public class TestCharTermAttributeImplBufferWriter : LuceneTestCase
+    public class TestOpenStringBuilderBufferWriter : LuceneTestCase
     {
         private const char DefaultChar = (char)0;
-
-        // LUCENENET specific: 10 is MIN_BUFFER_SIZE, but it gets oversized
-        private static readonly int DefaultBufferSize = ArrayUtil.Oversize(10, RamUsageEstimator.NUM_BYTES_CHAR);
+        private const int DefaultBufferSize = 32; // copied from hardcoded value in OpenStringBuilder
 
         // LUCENENET specific: works around a .NET Framework x64 RyuJIT bug where
         // ReadOnlyMemory<char>.Span returns an empty span when the property is read
@@ -61,41 +59,46 @@ namespace Lucene.Net.Analysis.TokenAttributes
         private static char MemoryElementAt(ReadOnlyMemory<char> memory, int index)
             => memory.Span[index];
 
-        // LUCENENET specific: note that Clear behaves more like a Reset, which resets the position without clearing the
-        // buffer. so this test looks a lot more like the ResetWrittenCount in ArrayBufferWriter tests, than Clear.
         [Test]
-        public void Clear()
+        public void ArrayBufferWriter_Ctor()
         {
-            var output = new CharTermAttribute();
-            int previousAvailable = output.FreeCapacity;
-            WriteData(output, 2);
-            Assert.True(output.FreeCapacity < previousAvailable);
-            Assert.True(output.Length > 0);
-            Assert.False(ReadOnlySpan<char>.Empty.SequenceEqual(output.AsSpan()));
-            Assert.False(MemoryEqualsMemory(ReadOnlyMemory<char>.Empty, output.AsMemory()));
-            Assert.True(SpanEqualsMemory(output.AsSpan(), output.AsMemory()));
+            {
+                var output = new OpenStringBuilder();
+                Assert.AreEqual(DefaultBufferSize, output.FreeCapacity);
+                Assert.AreEqual(DefaultBufferSize, output.Capacity);
+                Assert.AreEqual(0, output.Length);
+                Assert.True(ReadOnlySpan<char>.Empty.SequenceEqual(output.AsSpan()));
+                Assert.True(MemoryEqualsMemory(ReadOnlyMemory<char>.Empty, output.AsMemory()));
+            }
 
-            ReadOnlyMemory<char> transientMemory = output.AsMemory();
-            ReadOnlySpan<char> transientSpan = output.AsSpan();
-            char t0 = MemoryElementAt(transientMemory, 0);
-            char t1 = transientSpan[1];
-            Assert.AreNotEqual(DefaultChar, t0);
-            Assert.AreNotEqual(DefaultChar, t1);
-            output.Clear();
-            Assert.AreEqual(t0, MemoryElementAt(transientMemory, 0));
-            Assert.AreEqual(t1, transientSpan[1]);
+            {
+                var output = new OpenStringBuilder(200);
+                Assert.True(output.FreeCapacity >= 200);
+                Assert.True(output.Capacity >= 200);
+                Assert.AreEqual(0, output.Length);
+                Assert.True(ReadOnlySpan<char>.Empty.SequenceEqual(output.AsSpan()));
+                Assert.True(MemoryEqualsMemory(ReadOnlyMemory<char>.Empty, output.AsMemory()));
+            }
 
-            Assert.AreEqual(0, output.Length);
-            Assert.True(ReadOnlySpan<char>.Empty.SequenceEqual(output.AsSpan()));
-            Assert.True(MemoryEqualsMemory(ReadOnlyMemory<char>.Empty, output.AsMemory()));
-            Assert.AreEqual(previousAvailable, output.FreeCapacity);
+            {
+                OpenStringBuilder output = default;
+                Assert.Null(output);
+            }
         }
 
-        // LUCENENET: this is equivalent to the ResetWrittenCount test
         [Test]
-        public void SetLengthToZero()
+        public void Invalid_Ctor()
         {
-            var output = new CharTermAttribute();
+            // LUCENENET specific - changed to ArgumentOutOfRangeException
+            Assert.Throws<ArgumentOutOfRangeException>(() => new OpenStringBuilder(0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new OpenStringBuilder(-1));
+            Assert.Throws<OutOfMemoryException>(() => new OpenStringBuilder(int.MaxValue));
+        }
+
+        [Test]
+        public void Reset()
+        {
+            var output = new OpenStringBuilder(256);
             int previousAvailable = output.FreeCapacity;
             WriteData(output, 2);
             Assert.True(output.FreeCapacity < previousAvailable);
@@ -110,7 +113,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             char t1 = transientSpan[1];
             Assert.AreNotEqual(DefaultChar, t0);
             Assert.AreNotEqual(DefaultChar, t1);
-            output.Length = 0;
+            output.Reset();
             Assert.AreEqual(t0, MemoryElementAt(transientMemory, 0));
             Assert.AreEqual(t1, transientSpan[1]);
 
@@ -124,7 +127,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         public void Advance()
         {
             {
-                var output = new CharTermAttribute();
+                var output = new OpenStringBuilder();
                 int capacity = output.Capacity;
                 Assert.AreEqual(capacity, output.FreeCapacity);
                 output.Advance(output.FreeCapacity);
@@ -133,7 +136,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             }
 
             {
-                var output = new CharTermAttribute();
+                var output = new OpenStringBuilder();
                 output.Advance(output.Capacity);
                 Assert.AreEqual(output.Capacity, output.Length);
                 Assert.AreEqual(0, output.FreeCapacity);
@@ -143,7 +146,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             }
 
             {
-                var output = new CharTermAttribute();
+                var output = new OpenStringBuilder(256);
                 WriteData(output, 2);
                 ReadOnlyMemory<char> previousMemory = output.AsMemory();
                 ReadOnlySpan<char> previousSpan = output.AsSpan();
@@ -155,7 +158,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             }
 
             {
-                var output = new CharTermAttribute();
+                var output = new OpenStringBuilder();
                 _ = output.GetSpan(20);
                 WriteData(output, 10);
                 ReadOnlyMemory<char> previousMemory = output.AsMemory();
@@ -172,7 +175,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         [Test]
         public void AdvanceZero()
         {
-            var output = new CharTermAttribute();
+            var output = new OpenStringBuilder();
             WriteData(output, 2);
             Assert.AreEqual(2, output.Length);
             ReadOnlyMemory<char> previousMemory = output.AsMemory();
@@ -189,13 +192,13 @@ namespace Lucene.Net.Analysis.TokenAttributes
         public void InvalidAdvance()
         {
             {
-                var output = new CharTermAttribute();
-                Assert.Throws<ArgumentException>(() => output.Advance(-1));
+                var output = new OpenStringBuilder();
+                Assert.Throws<ArgumentOutOfRangeException>(() => output.Advance(-1));
                 Assert.Throws<InvalidOperationException>(() => output.Advance(output.Capacity + 1));
             }
 
             {
-                var output = new CharTermAttribute();
+                var output = new OpenStringBuilder();
                 WriteData(output, 100);
                 Assert.Throws<InvalidOperationException>(() => output.Advance(output.FreeCapacity + 1));
             }
@@ -204,7 +207,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         [Test]
         public void GetSpan_DefaultCtor()
         {
-            var output = new CharTermAttribute();
+            var output = new OpenStringBuilder();
             Span<char> span = output.GetSpan();
             Assert.AreEqual(DefaultBufferSize, span.Length);
         }
@@ -213,16 +216,42 @@ namespace Lucene.Net.Analysis.TokenAttributes
         [TestCaseSource(nameof(SizeHints))]
         public void GetSpan_DefaultCtor_WithSizeHint(int sizeHint)
         {
-            var output = new CharTermAttribute();
+            var output = new OpenStringBuilder();
             Span<char> span = output.GetSpan(sizeHint);
-            // LUCENENET specific: due to our oversize logic, changed to GreaterOrEqual
-            Assert.GreaterOrEqual(span.Length, sizeHint <= DefaultBufferSize ? DefaultBufferSize : sizeHint);
+            Assert.AreEqual(sizeHint <= DefaultBufferSize ? DefaultBufferSize : sizeHint, span.Length);
+        }
+
+        [Test]
+        public void GetSpan_InitSizeCtor()
+        {
+            var output = new OpenStringBuilder(100);
+            Span<char> span = output.GetSpan();
+            Assert.AreEqual(100, span.Length);
+        }
+
+        [Test]
+        [TestCaseSource(nameof(SizeHints))]
+        public void GetSpan_InitSizeCtor_WithSizeHint(int sizeHint)
+        {
+            {
+                var output = new OpenStringBuilder(256);
+                Span<char> span = output.GetSpan(sizeHint);
+                // LUCENENET specific: due to our oversize logic, changed to GreaterOrEqual and removed sizeHint addend
+                Assert.GreaterOrEqual(span.Length, sizeHint <= 256 ? 256 : sizeHint);
+            }
+
+            {
+                var output = new OpenStringBuilder(1000);
+                Span<char> span = output.GetSpan(sizeHint);
+                // LUCENENET specific: due to our oversize logic, changed to GreaterOrEqual and removed sizeHint addend
+                Assert.GreaterOrEqual(span.Length, sizeHint <= 1000 ? 1000 : sizeHint);
+            }
         }
 
         [Test]
         public void GetMemory_DefaultCtor()
         {
-            var output = new CharTermAttribute();
+            var output = new OpenStringBuilder();
             Memory<char> memory = output.GetMemory();
             Assert.AreEqual(DefaultBufferSize, memory.Length);
         }
@@ -231,28 +260,54 @@ namespace Lucene.Net.Analysis.TokenAttributes
         [TestCaseSource(nameof(SizeHints))]
         public void GetMemory_DefaultCtor_WithSizeHint(int sizeHint)
         {
-            var output = new CharTermAttribute();
+            var output = new OpenStringBuilder();
             Memory<char> memory = output.GetMemory(sizeHint);
-            // LUCENENET specific: due to our oversize logic, changed to GreaterOrEqual
-            Assert.GreaterOrEqual(memory.Length, sizeHint <= DefaultBufferSize ? DefaultBufferSize : sizeHint);
+            Assert.AreEqual(sizeHint <= DefaultBufferSize ? DefaultBufferSize : sizeHint, memory.Length);
         }
 
         [Test]
         public void GetMemory_ExceedMaximumBufferSize_WithSmallStartingSize()
         {
-            var output = new CharTermAttribute();
+            var output = new OpenStringBuilder(256);
             Assert.Throws<OutOfMemoryException>(() => output.GetMemory(int.MaxValue));
         }
 
+        [Test]
+        public void GetMemory_InitSizeCtor()
+        {
+            var output = new OpenStringBuilder(100);
+            Memory<char> memory = output.GetMemory();
+            Assert.AreEqual(100, memory.Length);
+        }
+
+        [Test]
+        [TestCaseSource(nameof(SizeHints))]
+        public void GetMemory_InitSizeCtor_WithSizeHint(int sizeHint)
+        {
+            {
+                var output = new OpenStringBuilder(256);
+                Memory<char> memory = output.GetMemory(sizeHint);
+                // LUCENENET specific: due to our oversize logic, changed to GreaterOrEqual and removed sizeHint addend
+                Assert.GreaterOrEqual(memory.Length, sizeHint <= 256 ? 256 : sizeHint);
+            }
+
+            {
+                var output = new OpenStringBuilder(1000);
+                Memory<char> memory = output.GetMemory(sizeHint);
+                // LUCENENET specific: due to our oversize logic, changed to GreaterOrEqual and removed sizeHint addend
+                Assert.GreaterOrEqual(memory.Length, sizeHint <= 1000 ? 1000 : sizeHint);
+            }
+        }
+
         // LUCENENET specific: This test allocates a very large buffer to verify that Advance()
-        // performs its bounds check purely arithmetically (termLength vs. termBuffer.Length);
-        // Advance() itself never touches buffer memory, and WriteData only touches the first 1,000
-        // chars. If the allocation fails with OutOfMemoryException, the test is a no-op. Marked
-        // [Slow] due to the large allocation.
+        // performs its bounds check purely arithmetically (m_len vs. m_buf.Length); Advance() itself
+        // never touches buffer memory, and WriteData only touches the first 1,000 chars. If the
+        // allocation fails with OutOfMemoryException, the test is a no-op. Marked [Slow] due to the
+        // large allocation.
         //
         // NOTE: The upstream ArrayBufferWriter test gated this on Windows/macOS, and so do we. The
         // risk is real on Linux but comes from the allocation itself, not from Advance(): under memory
-        // overcommit the kernel may grant the large buffer optimistically, then the GC's
+        // overcommit the kernel may grant new char[2_000_000_000] optimistically, then the GC's
         // zero-initialization of the array touches every page, which can invoke the OOM killer (an
         // uncatchable SIGKILL, not an OutOfMemoryException) and tear down the whole test run.
         [Test]
@@ -266,21 +321,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
             try
             {
                 {
-                    var output = new CharTermAttribute();
-
-                    // LUCENENET specific: we don't (currently) have a ctor that takes a capacity,
-                    // so we first request a span to force the buffer to grow to at least this size.
-                    // The size stays under ~1.9B so it does not hit the ArrayUtil.Oversize int
-                    // overflow clamp; the actual buffer is still oversized past the request.
-                    // (The returned span is discarded; the grown buffer is retained by output.)
-                    _ = output.GetSpan(1_500_000_000);
-
+                    var output = new OpenStringBuilder(2_000_000_000);
                     WriteData(output, 1_000);
-
-                    // LUCENENET specific: the buffer is oversized past the requested size, so the
-                    // over-advance boundary is Capacity-relative rather than a fixed request-based value.
                     Assert.Throws<InvalidOperationException>(() => output.Advance(int.MaxValue));
-                    Assert.Throws<InvalidOperationException>(() => output.Advance(output.FreeCapacity + 1));
+                    Assert.Throws<InvalidOperationException>(() => output.Advance(2_000_000_000 - 1_000 + 1));
                 }
             }
             catch (OutOfMemoryException) { }
@@ -290,7 +334,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         public void GetMemoryAndSpan()
         {
             {
-                var output = new CharTermAttribute();
+                var output = new OpenStringBuilder();
                 WriteData(output, 2);
                 Span<char> span = output.GetSpan();
                 Memory<char> memory = output.GetMemory();
@@ -306,7 +350,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             }
 
             {
-                var output = new CharTermAttribute();
+                var output = new OpenStringBuilder();
                 WriteData(output, 2);
                 ReadOnlyMemory<char> writtenSoFarMemory = output.AsMemory();
                 ReadOnlySpan<char> writtenSoFar = output.AsSpan();
@@ -343,9 +387,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
         }
 
         [Test]
-        public void GetSpanShouldAtLeastDoubleWhenGrowing()
+        public void GetSpanShouldAtleastDoubleWhenGrowing()
         {
-            var output = new CharTermAttribute();
+            var output = new OpenStringBuilder(256);
             WriteData(output, 100);
             int previousAvailable = output.FreeCapacity;
 
@@ -360,7 +404,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         public void GetSpanOnlyGrowsAboveThreshold()
         {
             {
-                var output = new CharTermAttribute();
+                var output = new OpenStringBuilder();
                 _ = output.GetSpan();
                 int previousAvailable = output.FreeCapacity;
 
@@ -372,7 +416,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             }
 
             {
-                var output = new CharTermAttribute();
+                var output = new OpenStringBuilder();
                 _ = output.GetSpan(10);
                 int previousAvailable = output.FreeCapacity;
 
@@ -387,32 +431,31 @@ namespace Lucene.Net.Analysis.TokenAttributes
         [Test]
         public void InvalidGetMemoryAndSpan()
         {
-            var output = new CharTermAttribute();
+            var output = new OpenStringBuilder();
             WriteData(output, 2);
-            Assert.Throws<ArgumentException>(() => output.GetSpan(-1));
-            Assert.Throws<ArgumentException>(() => output.GetMemory(-1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => output.GetSpan(-1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => output.GetMemory(-1));
         }
 
         [Test]
         public void MultipleCallsToGetSpan()
         {
-            var output = new CharTermAttribute();
+            var output = new OpenStringBuilder(300);
             Assert.True(MemoryMarshal.TryGetArray(output.GetMemory(), out ArraySegment<char> array));
             GCHandle pinnedArray = GCHandle.Alloc(array.Array, GCHandleType.Pinned);
             try
             {
                 int previousAvailable = output.FreeCapacity;
-                Assert.True(previousAvailable >= DefaultBufferSize);
-                Assert.True(output.Capacity >= DefaultBufferSize);
+                Assert.True(previousAvailable >= 300);
+                Assert.True(output.Capacity >= 300);
                 Assert.AreEqual(previousAvailable, output.Capacity);
                 Span<char> span = output.GetSpan();
                 Assert.True(span.Length >= previousAvailable);
-                Assert.True(span.Length >= DefaultBufferSize);
+                Assert.True(span.Length >= 256);
                 Span<char> newSpan = output.GetSpan();
                 Assert.AreEqual(span.Length, newSpan.Length);
                 // LUCENENET specific: changed expected to IntPtr.Zero due to presumed Xunit vs. NUnit differences
-                Assert.AreEqual(IntPtr.Zero,
-                    Unsafe.ByteOffset(ref MemoryMarshal.GetReference(span), ref MemoryMarshal.GetReference(newSpan)));
+                Assert.AreEqual(IntPtr.Zero, Unsafe.ByteOffset(ref MemoryMarshal.GetReference(span), ref MemoryMarshal.GetReference(newSpan)));
                 Assert.AreEqual(span.Length, output.GetSpan().Length);
             }
             finally

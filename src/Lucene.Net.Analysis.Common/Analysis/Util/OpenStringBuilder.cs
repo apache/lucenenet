@@ -5,6 +5,8 @@ using System;
 using System.Buffers;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
 
@@ -426,9 +428,9 @@ namespace Lucene.Net.Analysis.Util
         public void Advance(int count)
         {
             if (count < 0)
-                throw new ArgumentException(null, nameof(count));
+                throw new ArgumentOutOfRangeException(nameof(count));
 
-            if (m_len > m_buf.Length - count)
+            if (count > m_buf.Length - m_len)
                 throw new InvalidOperationException($"Cannot advance {count} characters beyond the end of the buffer.");
 
             m_len += count;
@@ -452,7 +454,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (sizeHint < 0)
             {
-                throw new ArgumentException("sizeHint must be non-negative", nameof(sizeHint));
+                throw new ArgumentOutOfRangeException(nameof(sizeHint), "sizeHint must be non-negative");
             }
 
             if (sizeHint == 0)
@@ -469,19 +471,332 @@ namespace Lucene.Net.Analysis.Util
         public int FreeCapacity => m_buf.Length - m_len;
 
         #endregion
+    }
 
-        #region AsSpan/AsMemory support
+    /// <summary>
+    /// Extension methods for <see cref="OpenStringBuilder"/> that expose the data written
+    /// so far as a <see cref="ReadOnlySpan{T}"/> or <see cref="ReadOnlyMemory{T}"/>.
+    /// </summary>
+    /// <remarks>
+    /// LUCENENET specific. These are implemented as extension methods (rather than instance
+    /// methods) so that a <c>null</c> <see cref="OpenStringBuilder"/> naturally converts to
+    /// an empty span/memory instead of throwing, matching the behavior of the BCL
+    /// <c>AsSpan</c>/<c>AsMemory</c> extensions for reference types.
+    /// </remarks>
+    public static class OpenStringBuilderExtensions
+    {
+        #region AsSpan
 
         /// <summary>
-        /// Returns the data written to the underlying buffer so far, as a <see cref="ReadOnlyMemory{T}"/>.
+        /// Creates a new read-only span over the data written to <paramref name="text"/> so far.
         /// </summary>
-        public ReadOnlyMemory<char> AsMemory() => m_buf.AsMemory(0, m_len);
+        /// <param name="text">The target <see cref="OpenStringBuilder"/>.</param>
+        /// <returns>The read-only span representation of the data, or <c>default</c> if
+        /// <paramref name="text"/> is <c>null</c>.</returns>
+        public static ReadOnlySpan<char> AsSpan(this OpenStringBuilder text)
+        {
+            if (text is null)
+                return default;
+
+            char[] chars = text.Array;
+
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<char>(ref MemoryMarshal.GetArrayDataReference(chars), text.Length);
+#else
+            return new ReadOnlySpan<char>(chars, 0, text.Length);
+#endif
+        }
 
         /// <summary>
-        /// Returns the data written to the underlying buffer so far, as a <see cref="ReadOnlySpan{T}"/>.
+        /// Creates a new read-only span over a portion of the data written to
+        /// <paramref name="text"/> so far, from a specified position to the end.
         /// </summary>
-        public ReadOnlySpan<char> AsSpan() => m_buf.AsSpan(0, m_len);
+        /// <param name="text">The target <see cref="OpenStringBuilder"/>.</param>
+        /// <param name="start">The index at which to begin this slice.</param>
+        /// <returns>The read-only span representation of the data, or <c>default</c> if
+        /// <paramref name="text"/> is <c>null</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="start"/> is less than 0 or greater than <c>text.Length</c>.
+        /// </exception>
+        public static ReadOnlySpan<char> AsSpan(this OpenStringBuilder text, int start)
+        {
+            if (text is null)
+            {
+                if (start != 0)
+                    throw new ArgumentOutOfRangeException(nameof(start));
 
-        #endregion
+                return default;
+            }
+
+            if ((uint)start > (uint)text.Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+            char[] chars = text.Array;
+
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<char>(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(chars),
+                (nint)(uint)start /* force zero-extension */), text.Length - start);
+#else
+            return new ReadOnlySpan<char>(chars, start, text.Length - start);
+#endif
+        }
+
+        /// <summary>
+        /// Creates a new read-only span over a portion of the data written to
+        /// <paramref name="text"/> so far, from a specified position for a specified length.
+        /// </summary>
+        /// <param name="text">The target <see cref="OpenStringBuilder"/>.</param>
+        /// <param name="start">The index at which to begin this slice.</param>
+        /// <param name="length">The desired length for the slice.</param>
+        /// <returns>The read-only span representation of the data, or <c>default</c> if
+        /// <paramref name="text"/> is <c>null</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="start"/>, <paramref name="length"/>, or
+        /// <paramref name="start"/> + <paramref name="length"/> is not in the range of <paramref name="text"/>.
+        /// </exception>
+        public static ReadOnlySpan<char> AsSpan(this OpenStringBuilder text, int start, int length)
+        {
+            if (text is null)
+            {
+                if (start != 0 || length != 0)
+                    throw new ArgumentOutOfRangeException(nameof(start));
+
+                return default;
+            }
+
+            if (IntPtr.Size == 8) // 64-bit process
+            {
+                // See comment in Span<T>.Slice for how this works.
+                if ((ulong)(uint)start + (ulong)(uint)length > (ulong)(uint)text.Length)
+                    throw new ArgumentOutOfRangeException(nameof(start));
+            }
+            else
+            {
+                if ((uint)start > (uint)text.Length || (uint)length > (uint)(text.Length - start))
+                    throw new ArgumentOutOfRangeException(nameof(start));
+            }
+
+            char[] chars = text.Array;
+
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<char>(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(chars),
+                (nint)(uint)start /* force zero-extension */), length);
+#else
+            return new ReadOnlySpan<char>(chars, start, length);
+#endif
+        }
+
+        /// <summary>
+        /// Creates a new read-only span over a portion of the data written to
+        /// <paramref name="text"/> so far, from a specified position to the end.
+        /// </summary>
+        /// <param name="text">The target <see cref="OpenStringBuilder"/>.</param>
+        /// <param name="startIndex">The index at which to begin this slice.</param>
+        /// <returns>The read-only span representation of the data, or <c>default</c> if
+        /// <paramref name="text"/> is <c>null</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> is less
+        /// than 0 or greater than <c>text.Length</c>.</exception>
+        public static ReadOnlySpan<char> AsSpan(this OpenStringBuilder text, System.Index startIndex)
+        {
+            if (text is null)
+            {
+                if (!startIndex.Equals(System.Index.Start))
+                    throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+                return default;
+            }
+
+            int actualIndex = startIndex.GetOffset(text.Length);
+            if ((uint)actualIndex > (uint)text.Length)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            char[] chars = text.Array;
+
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<char>(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(chars),
+                (nint)(uint)actualIndex /* force zero-extension */), text.Length - actualIndex);
+#else
+            return new ReadOnlySpan<char>(chars, actualIndex, text.Length - actualIndex);
+#endif
+        }
+
+        /// <summary>
+        /// Creates a new read-only span over a portion of the data written to
+        /// <paramref name="text"/> so far, using the range start and end indexes.
+        /// </summary>
+        /// <param name="text">The target <see cref="OpenStringBuilder"/>.</param>
+        /// <param name="range">The range that has start and end indexes to use for slicing the data.</param>
+        /// <returns>The read-only span representation of the data, or <c>default</c> if
+        /// <paramref name="text"/> is <c>null</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="range"/>'s start or end index is not within the bounds of the data.
+        /// -or-
+        /// <paramref name="range"/>'s start index is greater than its end index.
+        /// </exception>
+        public static ReadOnlySpan<char> AsSpan(this OpenStringBuilder text, Range range)
+        {
+            if (text is null)
+            {
+                System.Index startIndex = range.Start;
+                System.Index endIndex = range.End;
+
+                if (!startIndex.Equals(System.Index.Start) || !endIndex.Equals(System.Index.Start))
+                    throw new ArgumentOutOfRangeException(nameof(range));
+
+                return default;
+            }
+
+            (int start, int length) = range.GetOffsetAndLength(text.Length);
+            char[] chars = text.Array;
+
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<char>(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(chars),
+                (nint)(uint)start /* force zero-extension */), length);
+#else
+            return new ReadOnlySpan<char>(chars, start, length);
+#endif
+        }
+
+        #endregion AsSpan
+
+        #region AsMemory
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over the data written to <paramref name="text"/> so far.
+        /// </summary>
+        /// <param name="text">The target <see cref="OpenStringBuilder"/>.</param>
+        /// <returns>The read-only memory representation of the data, or <c>default</c> if
+        /// <paramref name="text"/> is <c>null</c>.</returns>
+        public static ReadOnlyMemory<char> AsMemory(this OpenStringBuilder text)
+        {
+            if (text is null)
+                return default;
+
+            return new ReadOnlyMemory<char>(text.Array, 0, text.Length);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over a portion of the data written to
+        /// <paramref name="text"/> so far, from a specified position to the end.
+        /// </summary>
+        /// <param name="text">The target <see cref="OpenStringBuilder"/>.</param>
+        /// <param name="start">The index at which to begin this slice.</param>
+        /// <returns>The read-only memory representation of the data, or <c>default</c> if
+        /// <paramref name="text"/> is <c>null</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="start"/> is less than 0 or greater than <c>text.Length</c>.
+        /// </exception>
+        public static ReadOnlyMemory<char> AsMemory(this OpenStringBuilder text, int start)
+        {
+            if (text is null)
+            {
+                if (start != 0)
+                    throw new ArgumentOutOfRangeException(nameof(start));
+
+                return default;
+            }
+
+            if ((uint)start > (uint)text.Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+            return new ReadOnlyMemory<char>(text.Array, start, text.Length - start);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over a portion of the data written to
+        /// <paramref name="text"/> so far, from a specified position for a specified length.
+        /// </summary>
+        /// <param name="text">The target <see cref="OpenStringBuilder"/>.</param>
+        /// <param name="start">The index at which to begin this slice.</param>
+        /// <param name="length">The desired length for the slice.</param>
+        /// <returns>The read-only memory representation of the data, or <c>default</c> if
+        /// <paramref name="text"/> is <c>null</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="start"/>, <paramref name="length"/>, or
+        /// <paramref name="start"/> + <paramref name="length"/> is not in the range of <paramref name="text"/>.
+        /// </exception>
+        public static ReadOnlyMemory<char> AsMemory(this OpenStringBuilder text, int start, int length)
+        {
+            if (text is null)
+            {
+                if (start != 0 || length != 0)
+                    throw new ArgumentOutOfRangeException(nameof(start));
+
+                return default;
+            }
+
+            if (IntPtr.Size == 8) // 64-bit process
+            {
+                // See comment in Span<T>.Slice for how this works.
+                if ((ulong)(uint)start + (ulong)(uint)length > (ulong)(uint)text.Length)
+                    throw new ArgumentOutOfRangeException(nameof(start));
+            }
+            else
+            {
+                if ((uint)start > (uint)text.Length || (uint)length > (uint)(text.Length - start))
+                    throw new ArgumentOutOfRangeException(nameof(start));
+            }
+
+            return new ReadOnlyMemory<char>(text.Array, start, length);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over a portion of the data written to
+        /// <paramref name="text"/> so far, from a specified position to the end.
+        /// </summary>
+        /// <param name="text">The target <see cref="OpenStringBuilder"/>.</param>
+        /// <param name="startIndex">The index at which to begin this slice.</param>
+        /// <returns>The read-only memory representation of the data, or <c>default</c> if
+        /// <paramref name="text"/> is <c>null</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> is less
+        /// than 0 or greater than <c>text.Length</c>.</exception>
+        public static ReadOnlyMemory<char> AsMemory(this OpenStringBuilder text, System.Index startIndex)
+        {
+            if (text is null)
+            {
+                if (!startIndex.Equals(System.Index.Start))
+                    throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+                return default;
+            }
+
+            int actualIndex = startIndex.GetOffset(text.Length);
+            if ((uint)actualIndex > (uint)text.Length)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            return new ReadOnlyMemory<char>(text.Array, actualIndex, text.Length - actualIndex);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over a portion of the data written to
+        /// <paramref name="text"/> so far, using the range start and end indexes.
+        /// </summary>
+        /// <param name="text">The target <see cref="OpenStringBuilder"/>.</param>
+        /// <param name="range">The range used to indicate the start and length of the sliced data.</param>
+        /// <returns>The read-only memory representation of the data, or <c>default</c> if
+        /// <paramref name="text"/> is <c>null</c>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="range"/>'s start or end index is not within the bounds of the data.
+        /// -or-
+        /// <paramref name="range"/>'s start index is greater than its end index.
+        /// </exception>
+        public static ReadOnlyMemory<char> AsMemory(this OpenStringBuilder text, Range range)
+        {
+            if (text is null)
+            {
+                System.Index startIndex = range.Start;
+                System.Index endIndex = range.End;
+
+                if (!startIndex.Equals(System.Index.Start) || !endIndex.Equals(System.Index.Start))
+                    throw new ArgumentOutOfRangeException(nameof(range));
+
+                return default;
+            }
+
+            (int start, int length) = range.GetOffsetAndLength(text.Length);
+            return new ReadOnlyMemory<char>(text.Array, start, length);
+        }
+
+        #endregion AsMemory
     }
 }

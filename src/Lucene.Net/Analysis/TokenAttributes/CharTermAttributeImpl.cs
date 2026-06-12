@@ -545,7 +545,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// LUCENENET specific - implements <see cref="System.Buffers.IBufferWriter{T}"/>.
         /// </summary>
         /// <param name="count">The number of characters written to the buffer.</param>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="count"/> is negative.
         /// </exception>
         /// <exception cref="InvalidOperationException">
@@ -559,9 +559,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
         public void Advance(int count)
         {
             if (count < 0)
-                throw new ArgumentException(null, nameof(count));
+                throw new ArgumentOutOfRangeException(nameof(count));
 
-            if (termLength > termBuffer.Length - count)
+            if (count > termBuffer.Length - termLength)
                 throw new InvalidOperationException($"Cannot advance {count} characters beyond the end of the buffer.");
 
             termLength += count;
@@ -583,7 +583,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// A <see cref="Memory{T}"/> of at least <paramref name="sizeHint"/>
         /// characters (and at least one character).
         /// </returns>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="sizeHint"/> is negative.
         /// </exception>
         public Memory<char> GetMemory(int sizeHint = 0)
@@ -609,7 +609,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// A <see cref="Span{T}"/> of at least <paramref name="sizeHint"/>
         /// characters (and at least one character).
         /// </returns>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="sizeHint"/> is negative.
         /// </exception>
         public Span<char> GetSpan(int sizeHint = 0)
@@ -623,7 +623,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         {
             if (sizeHint < 0)
             {
-                throw new ArgumentException("sizeHint must be non-negative", nameof(sizeHint));
+                throw new ArgumentOutOfRangeException(nameof(sizeHint), "sizeHint must be non-negative");
             }
 
             if (sizeHint == 0)
