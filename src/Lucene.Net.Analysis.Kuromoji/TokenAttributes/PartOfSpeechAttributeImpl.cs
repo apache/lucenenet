@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.Ja.Util;
 using Lucene.Net.Util;
 using System;
 using Attribute = Lucene.Net.Util.Attribute;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja.TokenAttributes
 {
@@ -27,14 +28,14 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
     /// </summary>
     public class PartOfSpeechAttribute : Attribute, IPartOfSpeechAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
-        private Token token;
+        private Token? token;
 
-        public virtual string GetPartOfSpeech()
+        public virtual string? GetPartOfSpeech()
         {
             return token?.GetPartOfSpeech();
         }
 
-        public virtual void SetToken(Token token)
+        public virtual void SetToken(Token? token)
         {
             this.token = token;
         }
@@ -60,8 +61,8 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
             if (reflector is null)
                 throw new ArgumentNullException(nameof(reflector));
 
-            string partOfSpeech = GetPartOfSpeech();
-            string partOfSpeechEN = partOfSpeech is null ? null : ToStringUtil.GetPOSTranslation(partOfSpeech);
+            string? partOfSpeech = GetPartOfSpeech();
+            string? partOfSpeechEN = partOfSpeech is null ? null : ToStringUtil.GetPOSTranslation(partOfSpeech);
             reflector.Reflect<IPartOfSpeechAttribute>("partOfSpeech", partOfSpeech);
             reflector.Reflect<IPartOfSpeechAttribute>("partOfSpeech (en)", partOfSpeechEN);
         }

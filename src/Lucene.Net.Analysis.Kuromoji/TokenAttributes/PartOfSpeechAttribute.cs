@@ -1,4 +1,5 @@
 using Lucene.Net.Util;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja.TokenAttributes
 {
@@ -24,7 +25,7 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
     /// </summary>
     public interface IPartOfSpeechAttribute : IAttribute
     {
-        string GetPartOfSpeech();
-        void SetToken(Token token);
+        string? GetPartOfSpeech();
+        void SetToken(Token? token);
     }
 }

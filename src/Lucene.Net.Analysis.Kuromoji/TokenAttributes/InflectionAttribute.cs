@@ -1,4 +1,5 @@
 using Lucene.Net.Util;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja.TokenAttributes
 {
@@ -27,8 +28,8 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
     /// </summary>
     public interface IInflectionAttribute : IAttribute
     {
-        string GetInflectionType();
-        string GetInflectionForm();
-        void SetToken(Token token);
+        string? GetInflectionType();
+        string? GetInflectionForm();
+        void SetToken(Token? token);
     }
 }
