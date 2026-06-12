@@ -42,6 +42,25 @@ namespace Lucene.Net.Analysis.TokenAttributes
         // LUCENENET specific: 10 is MIN_BUFFER_SIZE, but it gets oversized
         private static readonly int DefaultBufferSize = ArrayUtil.Oversize(10, RamUsageEstimator.NUM_BYTES_CHAR);
 
+        // LUCENENET specific: works around a .NET Framework x64 RyuJIT bug where
+        // ReadOnlyMemory<char>.Span returns an empty span when the property is read
+        // inline on a local inside a large method (it only reproduces with the
+        // System.Memory polyfill; modern .NET is unaffected). Forcing the .Span read
+        // into its own non-inlined method makes the JIT compile it correctly. These
+        // helpers preserve the original assertion intent (comparing the Memory view
+        // against the Span view) on all target frameworks.
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static bool SpanEqualsMemory(ReadOnlySpan<char> span, ReadOnlyMemory<char> memory)
+            => span.SequenceEqual(memory.Span);
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static bool MemoryEqualsMemory(ReadOnlyMemory<char> a, ReadOnlyMemory<char> b)
+            => a.Span.SequenceEqual(b.Span);
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static char MemoryElementAt(ReadOnlyMemory<char> memory, int index)
+            => memory.Span[index];
+
         // LUCENENET specific: note that Clear behaves more like a Reset, which resets the position without clearing the
         // buffer. so this test looks a lot more like the ResetWrittenCount in ArrayBufferWriter tests, than Clear.
         [Test]
@@ -53,22 +72,22 @@ namespace Lucene.Net.Analysis.TokenAttributes
             Assert.True(output.FreeCapacity < previousAvailable);
             Assert.True(output.Length > 0);
             Assert.False(ReadOnlySpan<char>.Empty.SequenceEqual(output.AsSpan()));
-            Assert.False(ReadOnlyMemory<char>.Empty.Span.SequenceEqual(output.AsMemory().Span));
-            Assert.True(output.AsSpan().SequenceEqual(output.AsMemory().Span));
+            Assert.False(MemoryEqualsMemory(ReadOnlyMemory<char>.Empty, output.AsMemory()));
+            Assert.True(SpanEqualsMemory(output.AsSpan(), output.AsMemory()));
 
             ReadOnlyMemory<char> transientMemory = output.AsMemory();
             ReadOnlySpan<char> transientSpan = output.AsSpan();
-            char t0 = transientMemory.Span[0];
+            char t0 = MemoryElementAt(transientMemory, 0);
             char t1 = transientSpan[1];
             Assert.AreNotEqual(DefaultChar, t0);
             Assert.AreNotEqual(DefaultChar, t1);
             output.Clear();
-            Assert.AreEqual(t0, transientMemory.Span[0]);
+            Assert.AreEqual(t0, MemoryElementAt(transientMemory, 0));
             Assert.AreEqual(t1, transientSpan[1]);
 
             Assert.AreEqual(0, output.Length);
             Assert.True(ReadOnlySpan<char>.Empty.SequenceEqual(output.AsSpan()));
-            Assert.True(ReadOnlyMemory<char>.Empty.Span.SequenceEqual(output.AsMemory().Span));
+            Assert.True(MemoryEqualsMemory(ReadOnlyMemory<char>.Empty, output.AsMemory()));
             Assert.AreEqual(previousAvailable, output.FreeCapacity);
         }
 
@@ -82,22 +101,22 @@ namespace Lucene.Net.Analysis.TokenAttributes
             Assert.True(output.FreeCapacity < previousAvailable);
             Assert.True(output.Length > 0);
             Assert.False(ReadOnlySpan<char>.Empty.SequenceEqual(output.AsSpan()));
-            Assert.False(ReadOnlyMemory<char>.Empty.Span.SequenceEqual(output.AsMemory().Span));
-            Assert.True(output.AsSpan().SequenceEqual(output.AsMemory().Span));
+            Assert.False(MemoryEqualsMemory(ReadOnlyMemory<char>.Empty, output.AsMemory()));
+            Assert.True(SpanEqualsMemory(output.AsSpan(), output.AsMemory()));
 
             ReadOnlyMemory<char> transientMemory = output.AsMemory();
             ReadOnlySpan<char> transientSpan = output.AsSpan();
-            char t0 = transientMemory.Span[0];
+            char t0 = MemoryElementAt(transientMemory, 0);
             char t1 = transientSpan[1];
             Assert.AreNotEqual(DefaultChar, t0);
             Assert.AreNotEqual(DefaultChar, t1);
             output.Length = 0;
-            Assert.AreEqual(t0, transientMemory.Span[0]);
+            Assert.AreEqual(t0, MemoryElementAt(transientMemory, 0));
             Assert.AreEqual(t1, transientSpan[1]);
 
             Assert.AreEqual(0, output.Length);
             Assert.True(ReadOnlySpan<char>.Empty.SequenceEqual(output.AsSpan()));
-            Assert.True(ReadOnlyMemory<char>.Empty.Span.SequenceEqual(output.AsMemory().Span));
+            Assert.True(MemoryEqualsMemory(ReadOnlyMemory<char>.Empty, output.AsMemory()));
             Assert.AreEqual(previousAvailable, output.FreeCapacity);
         }
 
@@ -128,11 +147,11 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 WriteData(output, 2);
                 ReadOnlyMemory<char> previousMemory = output.AsMemory();
                 ReadOnlySpan<char> previousSpan = output.AsSpan();
-                Assert.True(previousSpan.SequenceEqual(previousMemory.Span));
+                Assert.True(SpanEqualsMemory(previousSpan, previousMemory));
                 output.Advance(10);
-                Assert.False(previousMemory.Span.SequenceEqual(output.AsMemory().Span));
+                Assert.False(MemoryEqualsMemory(previousMemory, output.AsMemory()));
                 Assert.False(previousSpan.SequenceEqual(output.AsSpan()));
-                Assert.True(output.AsSpan().SequenceEqual(output.AsMemory().Span));
+                Assert.True(SpanEqualsMemory(output.AsSpan(), output.AsMemory()));
             }
 
             {
@@ -141,12 +160,12 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 WriteData(output, 10);
                 ReadOnlyMemory<char> previousMemory = output.AsMemory();
                 ReadOnlySpan<char> previousSpan = output.AsSpan();
-                Assert.True(previousSpan.SequenceEqual(previousMemory.Span));
+                Assert.True(SpanEqualsMemory(previousSpan, previousMemory));
                 Assert.Throws<InvalidOperationException>(() => output.Advance(247));
                 output.Advance(10);
-                Assert.False(previousMemory.Span.SequenceEqual(output.AsMemory().Span));
+                Assert.False(MemoryEqualsMemory(previousMemory, output.AsMemory()));
                 Assert.False(previousSpan.SequenceEqual(output.AsSpan()));
-                Assert.True(output.AsSpan().SequenceEqual(output.AsMemory().Span));
+                Assert.True(SpanEqualsMemory(output.AsSpan(), output.AsMemory()));
             }
         }
 
@@ -158,12 +177,12 @@ namespace Lucene.Net.Analysis.TokenAttributes
             Assert.AreEqual(2, output.Length);
             ReadOnlyMemory<char> previousMemory = output.AsMemory();
             ReadOnlySpan<char> previousSpan = output.AsSpan();
-            Assert.True(previousSpan.SequenceEqual(previousMemory.Span));
+            Assert.True(SpanEqualsMemory(previousSpan, previousMemory));
             output.Advance(0);
             Assert.AreEqual(2, output.Length);
-            Assert.True(previousMemory.Span.SequenceEqual(output.AsMemory().Span));
+            Assert.True(MemoryEqualsMemory(previousMemory, output.AsMemory()));
             Assert.True(previousSpan.SequenceEqual(output.AsSpan()));
-            Assert.True(output.AsSpan().SequenceEqual(output.AsMemory().Span));
+            Assert.True(SpanEqualsMemory(output.AsSpan(), output.AsMemory()));
         }
 
         [Test]
@@ -291,7 +310,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 WriteData(output, 2);
                 ReadOnlyMemory<char> writtenSoFarMemory = output.AsMemory();
                 ReadOnlySpan<char> writtenSoFar = output.AsSpan();
-                Assert.True(writtenSoFarMemory.Span.SequenceEqual(writtenSoFar));
+                Assert.True(SpanEqualsMemory(writtenSoFar, writtenSoFarMemory));
                 int previousAvailable = output.FreeCapacity;
                 Span<char> span = output.GetSpan(500);
                 Assert.True(span.Length >= 500);
