@@ -16,6 +16,7 @@ using System.IO;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Int64 = J2N.Numerics.Int64;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -85,21 +86,21 @@ namespace Lucene.Net.Analysis.Ja
         private const int MAX_UNKNOWN_WORD_LENGTH = 1024;
         private const int MAX_BACKTRACE_GAP = 1024;
 
-        private readonly IDictionary<JapaneseTokenizerType, IDictionary> dictionaryMap = new JCG.Dictionary<JapaneseTokenizerType, IDictionary>();
+        private readonly IDictionary<JapaneseTokenizerType, IDictionary?> dictionaryMap = new JCG.Dictionary<JapaneseTokenizerType, IDictionary?>();
 
         private readonly TokenInfoFST fst;
         private readonly TokenInfoDictionary dictionary;
         private readonly UnknownDictionary unkDictionary;
         private readonly ConnectionCosts costs;
-        private readonly UserDictionary userDictionary;
+        private readonly UserDictionary? userDictionary;
         private readonly CharacterDefinition characterDefinition;
 
         private readonly FST.Arc<Int64> arc = new FST.Arc<Int64>();
         private readonly FST.BytesReader fstReader;
         private readonly Int32sRef wordIdRef = new Int32sRef();
 
-        private readonly FST.BytesReader userFSTReader;
-        private readonly TokenInfoFST userFST;
+        private readonly FST.BytesReader? userFSTReader;
+        private readonly TokenInfoFST? userFST;
 
         private readonly RollingCharBuffer buffer = new RollingCharBuffer();
 
@@ -147,7 +148,7 @@ namespace Lucene.Net.Analysis.Ja
         /// <param name="userDictionary">Optional: if non-null, user dictionary.</param>
         /// <param name="discardPunctuation"><c>true</c> if punctuation tokens should be dropped from the output.</param>
         /// <param name="mode">Tokenization mode.</param>
-        public JapaneseTokenizer(TextReader input, UserDictionary userDictionary, bool discardPunctuation, JapaneseTokenizerMode mode)
+        public JapaneseTokenizer(TextReader input, UserDictionary? userDictionary, bool discardPunctuation, JapaneseTokenizerMode mode)
             : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, input, userDictionary, discardPunctuation, mode)
         {
         }
@@ -161,7 +162,7 @@ namespace Lucene.Net.Analysis.Ja
         /// <param name="discardPunctuation"><c>true</c> if punctuation tokens should be dropped from the output.</param>
         /// <param name="mode">Tokenization mode.</param>
         public JapaneseTokenizer
-            (AttributeFactory factory, TextReader input, UserDictionary userDictionary, bool discardPunctuation, JapaneseTokenizerMode mode)
+            (AttributeFactory factory, TextReader input, UserDictionary? userDictionary, bool discardPunctuation, JapaneseTokenizerMode mode)
             : base(factory, input)
         {
             this.termAtt = AddAttribute<ICharTermAttribute>();
@@ -218,7 +219,7 @@ namespace Lucene.Net.Analysis.Ja
             dictionaryMap[JapaneseTokenizerType.USER] = userDictionary;
         }
 
-        private GraphvizFormatter dotOut;
+        private GraphvizFormatter? dotOut;
 
         // LUCENENET specific - added getter and made into property
         // so we can set this during object initialization.
@@ -227,7 +228,7 @@ namespace Lucene.Net.Analysis.Ja
         /// Expert: set this to produce graphviz (dot) output of
         /// the Viterbi lattice
         /// </summary>
-        public GraphvizFormatter GraphvizFormatter
+        public GraphvizFormatter? GraphvizFormatter
         {
             get => this.dotOut;
             set => this.dotOut = value;
@@ -381,12 +382,8 @@ namespace Lucene.Net.Analysis.Ja
                 Parse();
             }
 
-            Token token = pending[pending.Count - 1]; // LUCENENET: The above loop ensures we don't get here unless we have at least 1 item
-            if (token != null)
-            {
-                pending.Remove(token);
-            }
-
+            Token token = pending[pending.Count - 1]!; // LUCENENET: The above loop ensures we don't get here unless we have at least 1 item
+            pending.Remove(token);
             int position = token.Position;
             int length = token.Length;
             ClearAttributes();
@@ -496,7 +493,7 @@ namespace Lucene.Net.Analysis.Ja
                     // including ending at future positions:
                     int leastIDX = -1;
                     int leastCost = int.MaxValue;
-                    Position leastPosData = null;
+                    Position? leastPosData = null;
                     for (int pos2 = pos; pos2 < positions.GetNextPos(); pos2++)
                     {
                         Position posData2 = positions.Get(pos2);
@@ -515,6 +512,7 @@ namespace Lucene.Net.Analysis.Ja
 
                     // We will always have at least one live path:
                     if (Debugging.AssertsEnabled) Debugging.Assert(leastIDX != -1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(leastPosData != null); // LUCENENET: Just to satisfy the compiler, we know this can't be null since leastIDX is not -1
 
                     // Second pass: prune all but the best path:
                     for (int pos2 = pos; pos2 < positions.GetNextPos(); pos2++)
@@ -539,10 +537,10 @@ namespace Lucene.Net.Analysis.Ja
                         }
                     }
 
-                    Backtrace(leastPosData, 0);
+                    Backtrace(leastPosData!, 0); // LUCENENET: Asserted above
 
                     // Re-base cost so we don't risk int overflow:
-                    Arrays.Fill(leastPosData.costs, 0, leastPosData.count, 0);
+                    Arrays.Fill(leastPosData!.costs, 0, leastPosData.count, 0);
 
                     if (pos != leastPosData.pos)
                     {
@@ -598,7 +596,8 @@ namespace Lucene.Net.Analysis.Ja
                             {
                                 Console.WriteLine("    USER word " + new string(buffer.Get(pos, posAhead - pos + 1)) + " toPos=" + (posAhead + 1));
                             }
-                            Add(userDictionary, posData, posAhead + 1, output + (int)arc.NextFinalOutput, JapaneseTokenizerType.USER, false);
+                            // LUCENENET: userDictionary is the source of userFST. If userFST is not null, then userDictionary is not null either.
+                            Add(userDictionary!, posData, posAhead + 1, output + (int)arc.NextFinalOutput, JapaneseTokenizerType.USER, false);
                             anyMatches = true;
                         }
                     }
@@ -906,7 +905,7 @@ namespace Lucene.Net.Analysis.Ja
 
             int pos = endPos;
             int bestIDX = fromIDX;
-            Token altToken = null;
+            Token? altToken = null;
 
             // We trace backwards, so this will be the leftWordID of
             // the token after the one we are now on:
@@ -1085,7 +1084,7 @@ namespace Lucene.Net.Analysis.Ja
 
                     // Expand the phraseID we recorded into the actual
                     // segmentation:
-                    int[] wordIDAndLength = userDictionary.LookupSegmentation(backID);
+                    int[] wordIDAndLength = userDictionary!.LookupSegmentation(backID); // LUCENENET: User arcs only exist when userDictionary (thus userFST) is non-null
                     int wordID = wordIDAndLength[0];
                     int current = 0;
                     for (int j = 1; j < wordIDAndLength.Length; j++)
@@ -1191,8 +1190,8 @@ namespace Lucene.Net.Analysis.Ja
 
         internal IDictionary GetDict(JapaneseTokenizerType type)
         {
-            dictionaryMap.TryGetValue(type, out IDictionary result);
-            return result;
+            dictionaryMap.TryGetValue(type, out IDictionary? result);
+            return result ?? throw new InvalidOperationException($"JapaneseTokenizerType {type} has no registered dictionary"); // LUCENENET: Added null check and exception. With the current code, this should never happen.
         }
 
         private static bool IsPunctuation(char ch)

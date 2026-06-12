@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.Ja.Util;
 using Lucene.Net.Util;
 using System;
 using Attribute = Lucene.Net.Util.Attribute;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja.TokenAttributes
 {
@@ -27,19 +28,19 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
     /// </summary>
     public class ReadingAttribute : Attribute, IReadingAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
-        private Token token;
+        private Token? token;
 
-        public virtual string GetReading()
+        public virtual string? GetReading()
         {
             return token?.GetReading();
         }
 
-        public virtual string GetPronunciation()
+        public virtual string? GetPronunciation()
         {
             return token?.GetPronunciation();
         }
 
-        public virtual void SetToken(Token token)
+        public virtual void SetToken(Token? token)
         {
             this.token = token;
         }
@@ -65,10 +66,10 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
             if (reflector is null)
                 throw new ArgumentNullException(nameof(reflector));
 
-            string reading = GetReading();
-            string readingEN = reading is null ? null : ToStringUtil.GetRomanization(reading);
-            string pronunciation = GetPronunciation();
-            string pronunciationEN = pronunciation is null ? null : ToStringUtil.GetRomanization(pronunciation);
+            string? reading = GetReading();
+            string? readingEN = reading is null ? null : ToStringUtil.GetRomanization(reading.AsSpan());
+            string? pronunciation = GetPronunciation();
+            string? pronunciationEN = pronunciation is null ? null : ToStringUtil.GetRomanization(pronunciation.AsSpan());
             reflector.Reflect<IReadingAttribute>("reading", reading);
             reflector.Reflect<IReadingAttribute>("reading (en)", readingEN);
             reflector.Reflect<IReadingAttribute>("pronunciation", pronunciation);

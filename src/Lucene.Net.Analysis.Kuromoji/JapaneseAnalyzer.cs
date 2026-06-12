@@ -1,4 +1,3 @@
-using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis.Cjk;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Ja.Dict;
@@ -8,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -36,19 +36,19 @@ namespace Lucene.Net.Analysis.Ja
     {
         private readonly JapaneseTokenizerMode mode;
         private readonly ISet<string> stoptags;
-        private readonly UserDictionary userDict;
+        private readonly UserDictionary? userDict;
 
         public JapaneseAnalyzer(LuceneVersion matchVersion)
             : this(matchVersion, null, JapaneseTokenizer.DEFAULT_MODE, DefaultSetHolder.DEFAULT_STOP_SET, DefaultSetHolder.DEFAULT_STOP_TAGS)
         {
         }
 
-        public JapaneseAnalyzer(LuceneVersion matchVersion, UserDictionary userDict, JapaneseTokenizerMode mode, CharArraySet stopwords, ISet<string> stoptags)
+        public JapaneseAnalyzer(LuceneVersion matchVersion, UserDictionary? userDict, JapaneseTokenizerMode mode, CharArraySet stopwords, ISet<string> stoptags)
             : base(matchVersion, stopwords)
         {
             this.userDict = userDict;
             this.mode = mode;
-            this.stoptags = stoptags;
+            this.stoptags = stoptags ?? throw new ArgumentNullException(nameof(stoptags));
         }
 
         [Obsolete("Use DefaultStopSet instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]

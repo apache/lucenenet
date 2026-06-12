@@ -7,9 +7,8 @@ using Lucene.Net.Analysis.Nl;
 using Lucene.Net.Analysis.Path;
 using Lucene.Net.Analysis.Sinks;
 using Lucene.Net.Analysis.Snowball;
-using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Analysis.Stempel;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Analysis;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -78,7 +77,10 @@ namespace Lucene.Net.Analysis.Core
                 typeof(ReversePathHierarchyTokenizer), // this is supported via an option to PathHierarchyTokenizer's factory
                 typeof(SnowballFilter), // this is called SnowballPorterFilterFactory
                 typeof(PatternKeywordMarkerFilter),
-                typeof(SetKeywordMarkerFilter)
+                typeof(SetKeywordMarkerFilter),
+
+                // LUCENENET specific: Added this exception because we are scanning the Stempel assembly
+                typeof(StempelFilter), // this is called StempelPolishStemFilterFactory
             });
         }
 
@@ -99,17 +101,18 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void Test()
         {
-            IList<Type> analysisClasses = typeof(StandardAnalyzer).Assembly.GetTypes()
-                    .Where(c =>
-                    {
-                        var typeInfo = c;
+            // LUCENENET specific: In Java, getClassesForPackage() scans the whole test classpath,
+            // which includes the test-framework (Mock*/Cranky/Validating types live there). In .NET
+            // we scan each assembly that has analysis types. See GitHub #1126.
+            IEnumerable<Type> analysisClasses = TestRandomChains.GetClassesForPackage()
+                .Where(c =>
+                {
+                    var typeInfo = c;
 
-                        return !typeInfo.IsAbstract && typeInfo.IsPublic && !typeInfo.IsInterface && typeInfo.IsClass && (typeInfo.GetCustomAttribute<ObsoleteAttribute>() is null)
-                            && !testComponents.Contains(c) && !crazyComponents.Contains(c) && !oddlyNamedComponents.Contains(c) && !deprecatedDuplicatedComponents.Contains(c)
-                            && (typeInfo.IsSubclassOf(typeof(Tokenizer)) || typeInfo.IsSubclassOf(typeof(TokenFilter)) || typeInfo.IsSubclassOf(typeof(CharFilter)));
-                    })
-                    .ToList();
-
+                    return !typeInfo.IsAbstract && typeInfo.IsPublic && !typeInfo.IsInterface && typeInfo.IsClass && (typeInfo.GetCustomAttribute<ObsoleteAttribute>() is null)
+                        && !testComponents.Contains(c) && !crazyComponents.Contains(c) && !oddlyNamedComponents.Contains(c) && !deprecatedDuplicatedComponents.Contains(c)
+                        && (typeInfo.IsSubclassOf(typeof(Tokenizer)) || typeInfo.IsSubclassOf(typeof(TokenFilter)) || typeInfo.IsSubclassOf(typeof(CharFilter)));
+                });
 
             foreach (Type c in analysisClasses)
             {

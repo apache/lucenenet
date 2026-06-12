@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -52,12 +53,12 @@ namespace Lucene.Net.Analysis.Ja
 
         private const string DISCARD_PUNCTUATION = "discardPunctuation"; // Expert option
 
-        private UserDictionary userDictionary;
+        private UserDictionary? userDictionary;
 
         private readonly JapaneseTokenizerMode mode;
         private readonly bool discardPunctuation;
-        private readonly string userDictionaryPath;
-        private readonly string userDictionaryEncoding;
+        private readonly string? userDictionaryPath;
+        private readonly string? userDictionaryEncoding;
 
         /// <summary>Creates a new <see cref="JapaneseTokenizerFactory"/>.</summary>
         public JapaneseTokenizerFactory(IDictionary<string, string> args)
@@ -84,7 +85,7 @@ namespace Lucene.Net.Analysis.Ja
             if (userDictionaryPath != null)
             {
                 Stream stream = loader.OpenResource(userDictionaryPath);
-                string encoding = userDictionaryEncoding;
+                string? encoding = userDictionaryEncoding;
                 if (encoding is null)
                 {
                     encoding = Encoding.UTF8.WebName;
