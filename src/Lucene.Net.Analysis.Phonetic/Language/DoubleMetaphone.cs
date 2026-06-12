@@ -242,7 +242,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         public virtual int MaxCodeLen
         {
             get => this.maxCodeLen;
-            set => this.maxCodeLen = value;
+            set
+            {
+                // LUCENENET: Added guard clause
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(value), "maxCodeLen must be a non-negative integer");
+                this.maxCodeLen = value;
+            }
         }
 
         //-- BEGIN HANDLERS --//
