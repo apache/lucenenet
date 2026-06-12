@@ -490,6 +490,120 @@ namespace Lucene.Net.Store
             }
         }
 
+        // LUCENENET specific: Regression test for #1283. A read handle held open by SimpleFSDirectory or
+        // NIOFSDirectory must not block deletion of the underlying file. On Windows this only works because the
+        // read FileStream is opened with FileShare.Delete (the delete becomes a deferred/pending delete); on
+        // POSIX, delete-while-open always works. After the delete, the still-open handle must keep returning the
+        // original bytes without corruption. The assertion only has teeth on Windows (POSIX ignores share modes
+        // and would pass regardless), but the behavior asserted is cross-platform, so the test is not gated.
+        // MMapDirectory is intentionally excluded: its read handle still lacks FileShare.Delete in master and is
+        // addressed separately in #1267.
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestDeleteWhileReadHandleOpen()
+        {
+            DirectoryInfo tempDir = CreateTempDir(GetType().Name);
+            var factories = new Func<Directory>[]
+            {
+                () => new SimpleFSDirectory(tempDir),
+                () => new NIOFSDirectory(tempDir),
+            };
+
+            byte[] expected = new byte[128];
+            for (int i = 0; i < expected.Length; i++)
+            {
+                expected[i] = (byte)i;
+            }
+
+            int n = 0;
+            foreach (var factory in factories)
+            {
+                using Directory dir = factory();
+                string name = "delete-while-read-" + n++;
+
+                using (IndexOutput output = dir.CreateOutput(name, NewIOContext(Random)))
+                {
+                    output.WriteBytes(expected, expected.Length);
+                }
+
+                IndexInput input = dir.OpenInput(name, NewIOContext(Random));
+                try
+                {
+                    // Read the first byte so the handle is genuinely active.
+                    Assert.AreEqual(expected[0], input.ReadByte());
+
+                    // The crux: deleting while a read handle is open must not throw.
+                    try
+                    {
+                        dir.DeleteFile(name);
+                    }
+                    catch (Exception e)
+                    {
+                        Assert.Fail("DeleteFile threw while a read handle was open (missing FileShare.Delete?) for "
+                            + dir.GetType().Name + ": " + e);
+                    }
+
+                    // The still-open handle must keep returning the original bytes (no corruption, handle still valid).
+                    byte[] actual = new byte[expected.Length - 1];
+                    input.ReadBytes(actual, 0, actual.Length);
+                    for (int i = 0; i < actual.Length; i++)
+                    {
+                        Assert.AreEqual(expected[i + 1], actual[i]);
+                    }
+                }
+                finally
+                {
+                    input.Dispose();
+                }
+            }
+        }
+
+        // LUCENENET specific: Regression test for #1283. The shared FSIndexOutput write handle (used by every
+        // FSDirectory subclass) is opened with FileShare.Delete, so deleting a file must succeed even while its
+        // write handle is still open. This makes the "if Lucene decides a file is deletable, the delete succeeds"
+        // guarantee hold unconditionally on Windows regardless of which of our own handles are open.
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestDeleteWhileWriteHandleOpen()
+        {
+            DirectoryInfo tempDir = CreateTempDir(GetType().Name);
+            var factories = new Func<Directory>[]
+            {
+                () => new SimpleFSDirectory(tempDir),
+                () => new NIOFSDirectory(tempDir),
+                () => new MMapDirectory(tempDir),
+            };
+
+            int n = 0;
+            foreach (var factory in factories)
+            {
+                using Directory dir = factory();
+                string name = "delete-while-write-" + n++;
+
+                IndexOutput output = dir.CreateOutput(name, NewIOContext(Random));
+                try
+                {
+                    output.WriteByte((byte)0x2A);
+                    output.Flush();
+
+                    // Deleting while the write handle is open must not throw.
+                    try
+                    {
+                        dir.DeleteFile(name);
+                    }
+                    catch (Exception e)
+                    {
+                        Assert.Fail("DeleteFile threw while a write handle was open (missing FileShare.Delete?) for "
+                            + dir.GetType().Name + ": " + e);
+                    }
+                }
+                finally
+                {
+                    output.Dispose();
+                }
+            }
+        }
+
 
 #pragma warning disable 612, 618
         [Test]

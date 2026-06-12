@@ -100,7 +100,10 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             var path = Path.Combine(Directory.FullName, name); // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
-            var raf = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            // LUCENENET specific: Add FileShare.Delete (a deliberate divergence from upstream Java's RandomAccessFile,
+            // which omits it) to match NIOFSDirectory and our other handles, giving Windows the same delete-while-open
+            // semantics POSIX already provides so index files can be deleted while a read handle is open (#1283).
+            var raf = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
             return new SimpleFSIndexInput("SimpleFSIndexInput(path=\"" + path + "\")", raf, context);
         }
 
@@ -108,7 +111,10 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             var file = Path.Combine(Directory.FullName, name); // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
-            var descriptor = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            // LUCENENET specific: Add FileShare.Delete (a deliberate divergence from upstream Java's RandomAccessFile,
+            // which omits it) to match NIOFSDirectory and our other handles, giving Windows the same delete-while-open
+            // semantics POSIX already provides so index files can be deleted while a read handle is open (#1283).
+            var descriptor = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
             return new IndexInputSlicerAnonymousClass(context, file, descriptor);
         }
 
