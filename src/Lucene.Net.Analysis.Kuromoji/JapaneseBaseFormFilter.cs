@@ -1,6 +1,7 @@
 using Lucene.Net.Analysis.Ja.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -49,7 +50,7 @@ namespace Lucene.Net.Analysis.Ja
             {
                 if (!keywordAtt.IsKeyword)
                 {
-                    string baseForm = basicFormAtt.GetBaseForm();
+                    string? baseForm = basicFormAtt.GetBaseForm();
                     if (baseForm != null)
                     {
                         termAtt.SetEmpty().Append(baseForm);

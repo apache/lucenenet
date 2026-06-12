@@ -1,6 +1,7 @@
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja
 {

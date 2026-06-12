@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Ja
 
         protected override bool Accept()
         {
-            string pos = posAtt.GetPartOfSpeech();
+            string? pos = posAtt.GetPartOfSpeech();
             return pos is null || !stopTags.Contains(pos);
         }
     }

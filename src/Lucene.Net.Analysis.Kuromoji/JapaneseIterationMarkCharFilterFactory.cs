@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -58,7 +59,7 @@ namespace Lucene.Net.Analysis.Ja
             return new JapaneseIterationMarkCharFilter(input, normalizeKanji, normalizeKana);
         }
 
-        public virtual AbstractAnalysisFactory GetMultiTermComponent()
+        public virtual AbstractAnalysisFactory? GetMultiTermComponent()
         {
             return this;
         }
