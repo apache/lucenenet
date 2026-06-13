@@ -113,11 +113,25 @@ namespace Lucene.Net.Store
             pos += length;
         }
 
-        // LUCENENET specific: write directly into the backing array to avoid the base
-        // class's stackalloc + virtual WriteBytes(Span) hop. The base WriteInt64 keeps the
-        // span path (it wins on stream/buffered outputs), but for this array-backed output
-        // a direct BinaryPrimitives write is far cheaper - matching ReadInt64 in
-        // ByteArrayDataInput. See #1279.
+        // LUCENENET specific: write fixed-width values directly into the backing array via
+        // BinaryPrimitives, avoiding the base class's per-byte WriteByte (Int16/Int32) or
+        // stackalloc + virtual WriteBytes(Span) hop (Int64). Mirrors the ReadInt16/32/64
+        // overrides in ByteArrayDataInput. The base implementations stay byte-by-byte /
+        // span-based for subclasses without a cheap contiguous buffer. See #1279.
+        public override void WriteInt16(short i)
+        {
+            if (Debugging.AssertsEnabled) Debugging.Assert(pos + sizeof(short) <= limit);
+            BinaryPrimitives.WriteInt16BigEndian(bytes.AsSpan(pos, sizeof(short)), i);
+            pos += sizeof(short);
+        }
+
+        public override void WriteInt32(int i)
+        {
+            if (Debugging.AssertsEnabled) Debugging.Assert(pos + sizeof(int) <= limit);
+            BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(pos, sizeof(int)), i);
+            pos += sizeof(int);
+        }
+
         public override void WriteInt64(long i)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(pos + sizeof(long) <= limit);

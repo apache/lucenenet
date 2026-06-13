@@ -85,5 +85,55 @@ namespace Lucene.Net.Store
             Assert.AreEqual((byte)0x07, one[6]);
             Assert.AreEqual((byte)0x08, one[7]);
         }
+
+        // LUCENENET specific: WriteInt16/WriteInt32 also have direct-array BinaryPrimitives
+        // overrides (#1279). Round-trip edge values and verify big-endian layout.
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestWriteInt16_RoundTripsAndIsBigEndian()
+        {
+            short[] values = { 0, 1, -1, short.MaxValue, short.MinValue, 0x0102, unchecked((short)0xFFEE) };
+            byte[] buffer = new byte[values.Length * sizeof(short)];
+            ByteArrayDataOutput @out = new ByteArrayDataOutput(buffer);
+            foreach (short v in values)
+            {
+                @out.WriteInt16(v);
+            }
+            ByteArrayDataInput @in = new ByteArrayDataInput(buffer);
+            foreach (short v in values)
+            {
+                Assert.AreEqual(v, @in.ReadInt16());
+            }
+
+            byte[] one = new byte[sizeof(short)];
+            new ByteArrayDataOutput(one).WriteInt16(0x0102);
+            Assert.AreEqual((byte)0x01, one[0]);
+            Assert.AreEqual((byte)0x02, one[1]);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestWriteInt32_RoundTripsAndIsBigEndian()
+        {
+            int[] values = { 0, 1, -1, int.MaxValue, int.MinValue, 0x01020304, unchecked((int)0xFFEEDDCC) };
+            byte[] buffer = new byte[values.Length * sizeof(int)];
+            ByteArrayDataOutput @out = new ByteArrayDataOutput(buffer);
+            foreach (int v in values)
+            {
+                @out.WriteInt32(v);
+            }
+            ByteArrayDataInput @in = new ByteArrayDataInput(buffer);
+            foreach (int v in values)
+            {
+                Assert.AreEqual(v, @in.ReadInt32());
+            }
+
+            byte[] one = new byte[sizeof(int)];
+            new ByteArrayDataOutput(one).WriteInt32(0x01020304);
+            Assert.AreEqual((byte)0x01, one[0]);
+            Assert.AreEqual((byte)0x02, one[1]);
+            Assert.AreEqual((byte)0x03, one[2]);
+            Assert.AreEqual((byte)0x04, one[3]);
+        }
     }
 }
