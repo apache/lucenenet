@@ -36,12 +36,16 @@
     <PackageTags>$(PackageTags);miscellaneous</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
 
 
   <ItemGroup>
-    <Compile Remove="Store\*" />
+    <!-- LUCENENET TODO: The Unix/POSIX native directory port (NativeUnixDirectory) is not yet
+         complete and is excluded from compilation. See GH-1342. WindowsDirectory has been ported. -->
+    <Compile Remove="Store\NativeUnixDirectory.cs" />
+    <Compile Remove="Store\NativePosixUtil.cs" />
   </ItemGroup>
 
   <ItemGroup>

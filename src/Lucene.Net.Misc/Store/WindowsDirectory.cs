@@ -1,9 +1,16 @@
+using Lucene.Net.Util;
+using Microsoft.Win32.SafeHandles;
 using System;
+using System.ComponentModel;
+using System.IO;
 using System.Runtime.InteropServices;
+#if FEATURE_SUPPORTEDOSPLATFORMATTRIBUTE
+using System.Runtime.Versioning;
+#endif
+using System.Threading;
 
-namespace org.apache.lucene.store
+namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements. See the NOTICE file distributed with this
@@ -21,161 +28,294 @@ namespace org.apache.lucene.store
      * the License.
      */
 
-
-
     /// <summary>
-    /// Native <seealso cref="Directory"/> implementation for Microsoft Windows.
-    /// <para>
-    /// Steps:
-    /// <ol>
-    ///   <li>Compile the source code to create WindowsDirectory.dll:
-    ///       <blockquote>
-    /// c:\mingw\bin\g++ -Wall -D_JNI_IMPLEMENTATION_ -Wl,--kill-at
-    /// -I"%JAVA_HOME%\include" -I"%JAVA_HOME%\include\win32" -static-libgcc
-    /// -static-libstdc++ -shared WindowsDirectory.cpp -o WindowsDirectory.dll
-    ///       </blockquote>
-    ///       For 64-bit JREs, use mingw64, with the -m64 option.
-    ///   <li>Put WindowsDirectory.dll into some directory in your windows PATH
-    ///   <li>Open indexes with WindowsDirectory and use it.
-    /// </ol>
-    /// </para>
+    /// Native <see cref="Directory"/> implementation for Microsoft Windows.
+    /// <para/>
+    /// This uses <c>CreateFile</c> with the <c>FILE_FLAG_RANDOM_ACCESS</c> cache hint via
+    /// P/Invoke, so that the operating system can optimize its caching for the random-access
+    /// pattern that searching produces. Each read supplies its own file offset through the
+    /// <c>OVERLAPPED</c> structure; because the handle is synchronous (not opened with
+    /// <c>FILE_FLAG_OVERLAPPED</c>), these positioned reads are serialized by the OS on the
+    /// shared handle rather than running in parallel, but no explicit seek state is needed and
+    /// clones can read independently.
+    /// <para/>
+    /// <font color="red"><b>NOTE:</b> Unlike the original Lucene implementation, which
+    /// required compiling a native <c>WindowsDirectory.dll</c> with the JNI sources,
+    /// this implementation calls the Win32 APIs directly through P/Invoke. No native
+    /// build step is required, but it can only be used on Microsoft Windows.</font>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SUPPORTEDOSPLATFORMATTRIBUTE
+    [SupportedOSPlatform("windows")]
+#endif
     public class WindowsDirectory : FSDirectory
     {
-      private const int DEFAULT_BUFFERSIZE = 4096; // default pgsize on ia32/amd64
+        private const int DEFAULT_BUFFERSIZE = 4096; // default pgsize on ia32/amd64
 
-      static WindowsDirectory()
-      {
-//JAVA TO C# CONVERTER TODO TASK: The library is specified in the 'DllImport' attribute for .NET:
-//      System.loadLibrary("WindowsDirectory");
-      }
-
-      /// <summary>
-      /// Create a new WindowsDirectory for the named location.
-      /// </summary>
-      /// <param name="path"> the path of the directory </param>
-      /// <param name="lockFactory"> the lock factory to use, or null for the default
-      /// (<seealso cref="NativeFSLockFactory"/>); </param>
-      /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public WindowsDirectory(java.io.File path, LockFactory lockFactory) throws java.io.IOException
-      public WindowsDirectory(File path, LockFactory lockFactory) : base(path, lockFactory)
-      {
-      }
-
-      /// <summary>
-      /// Create a new WindowsDirectory for the named location and <seealso cref="NativeFSLockFactory"/>.
-      /// </summary>
-      /// <param name="path"> the path of the directory </param>
-      /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public WindowsDirectory(java.io.File path) throws java.io.IOException
-      public WindowsDirectory(File path) : base(path, null)
-      {
-      }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public IndexInput openInput(String name, IOContext context) throws java.io.IOException
-      public override IndexInput openInput(string name, IOContext context)
-      {
-        ensureOpen();
-        return new WindowsIndexInput(new File(Directory, name), Math.Max(BufferedIndexInput.bufferSize(context), DEFAULT_BUFFERSIZE));
-      }
-
-      internal class WindowsIndexInput : BufferedIndexInput
-      {
-        internal readonly long fd;
-        internal readonly long length_Renamed;
-        internal bool isClone;
-        internal bool isOpen;
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public WindowsIndexInput(java.io.File file, int bufferSize) throws java.io.IOException
-        public WindowsIndexInput(File file, int bufferSize) : base("WindowsIndexInput(path=\"" + file.Path + "\")", bufferSize)
+        /// <summary>
+        /// Create a new <see cref="WindowsDirectory"/> for the named location.
+        /// </summary>
+        /// <param name="path"> the path of the directory </param>
+        /// <param name="lockFactory"> the lock factory to use, or null for the default
+        /// (<see cref="NativeFSLockFactory"/>); </param>
+        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
+        /// <exception cref="PlatformNotSupportedException"> If not running on Microsoft Windows </exception>
+        public WindowsDirectory(DirectoryInfo path, LockFactory lockFactory)
+            : base(path, lockFactory)
         {
-          fd = WindowsDirectory.open(file.Path);
-          length_Renamed = WindowsDirectory.length(fd);
-          isOpen = true;
+            EnsureWindows();
         }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override protected void readInternal(byte[] b, int offset, int length) throws java.io.IOException
-        protected internal override void readInternal(sbyte[] b, int offset, int length)
+        /// <summary>
+        /// Create a new <see cref="WindowsDirectory"/> for the named location and <see cref="NativeFSLockFactory"/>.
+        /// </summary>
+        /// <param name="path"> the path of the directory </param>
+        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
+        /// <exception cref="PlatformNotSupportedException"> If not running on Microsoft Windows </exception>
+        public WindowsDirectory(DirectoryInfo path)
+            : base(path, null)
         {
-          int bytesRead;
-          try
-          {
-            bytesRead = WindowsDirectory.read(fd, b, offset, length, FilePointer);
-          }
-          catch (IOException ioe)
-          {
-            throw new IOException(ioe.Message + ": " + this, ioe);
-          }
-
-          if (bytesRead != length)
-          {
-            throw new EOFException("read past EOF: " + this);
-          }
+            EnsureWindows();
         }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override protected void seekInternal(long pos) throws java.io.IOException
-        protected internal override void seekInternal(long pos)
+        /// <summary>
+        /// Create a new <see cref="WindowsDirectory"/> for the named location.
+        /// <para/>
+        /// LUCENENET specific overload for convenience using string instead of <see cref="DirectoryInfo"/>.
+        /// </summary>
+        /// <param name="path"> the path of the directory </param>
+        /// <param name="lockFactory"> the lock factory to use, or null for the default
+        /// (<see cref="NativeFSLockFactory"/>); </param>
+        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
+        /// <exception cref="PlatformNotSupportedException"> If not running on Microsoft Windows </exception>
+        public WindowsDirectory(string path, LockFactory lockFactory)
+            : this(new DirectoryInfo(path), lockFactory)
         {
         }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public synchronized void close() throws java.io.IOException
-        public override void close()
+        /// <summary>
+        /// Create a new <see cref="WindowsDirectory"/> for the named location and <see cref="NativeFSLockFactory"/>.
+        /// <para/>
+        /// LUCENENET specific overload for convenience using string instead of <see cref="DirectoryInfo"/>.
+        /// </summary>
+        /// <param name="path"> the path of the directory </param>
+        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
+        /// <exception cref="PlatformNotSupportedException"> If not running on Microsoft Windows </exception>
+        public WindowsDirectory(string path)
+            : this(path, null)
         {
-            lock (this)
+        }
+
+        private static void EnsureWindows()
+        {
+            if (!Constants.WINDOWS)
             {
-              // NOTE: we synchronize and track "isOpen" because Lucene sometimes closes IIs twice!
-              if (!isClone && isOpen)
-              {
-                WindowsDirectory.close(fd);
-                isOpen = false;
-              }
+                throw new PlatformNotSupportedException($"{nameof(WindowsDirectory)} is only supported on Microsoft Windows.");
             }
         }
 
-        public override long length()
+        public override IndexInput OpenInput(string name, IOContext context)
         {
-          return length_Renamed;
+            EnsureOpen();
+            var path = Path.Combine(Directory.FullName, name);
+            return new WindowsIndexInput(path, Math.Max(BufferedIndexInput.GetBufferSize(context), DEFAULT_BUFFERSIZE));
         }
 
-        public override WindowsIndexInput clone()
+        internal class WindowsIndexInput : BufferedIndexInput
         {
-          WindowsIndexInput clone = (WindowsIndexInput)base.clone();
-          clone.isClone = true;
-          return clone;
+            private readonly SafeFileHandle fd;
+            private readonly long length;
+            private bool isClone;
+            private bool isOpen;
+            private int disposed = 0; // LUCENENET specific - allow double-dispose
+
+            public WindowsIndexInput(string path, int bufferSize)
+                : base("WindowsIndexInput(path=\"" + path + "\")", bufferSize)
+            {
+                fd = WindowsDirectory.OpenFile(path);
+                try
+                {
+                    length = WindowsDirectory.Length(fd);
+                }
+                catch
+                {
+                    // LUCENENET specific: avoid leaking the handle if reading the length fails;
+                    // the ctor throws so Dispose() will never be called on this instance.
+                    fd.Dispose();
+                    throw;
+                }
+                isOpen = true;
+            }
+
+            protected override void ReadInternal(Span<byte> b)
+            {
+                int bytesRead;
+                try
+                {
+                    bytesRead = WindowsDirectory.Read(fd, b, Position); // LUCENENET: Position is the file pointer (renamed from getFilePointer())
+                }
+                catch (Exception ioe) when (ioe.IsIOException())
+                {
+                    throw new IOException(ioe.Message + ": " + this, ioe);
+                }
+
+                if (bytesRead != b.Length)
+                {
+                    throw EOFException.Create("read past EOF: " + this);
+                }
+            }
+
+            protected override void SeekInternal(long pos)
+            {
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                // NOTE: we track "isOpen" because Lucene sometimes closes IndexInputs twice!
+                if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
+
+                if (disposing && !isClone && isOpen)
+                {
+                    fd.Dispose(); // closes the underlying Win32 handle (CloseHandle)
+                    isOpen = false;
+                }
+            }
+
+            public override sealed long Length => length;
+
+            public override object Clone()
+            {
+                WindowsIndexInput clone = (WindowsIndexInput)base.Clone();
+                clone.isClone = true;
+                return clone;
+            }
         }
-      }
 
-      /// <summary>
-      /// Opens a handle to a file. </summary>
-//JAVA TO C# CONVERTER TODO TASK: Replace 'unknown' with the appropriate dll name:
-      [DllImport("unknown")]
-      private static extern long open(string filename);
+        /// <summary>
+        /// Opens a handle to a file. </summary>
+        private static SafeFileHandle OpenFile(string filename)
+        {
+            // LUCENENET specific: include FILE_SHARE_DELETE (upstream used only READ|WRITE) so that,
+            // like SimpleFSDirectory's read path (#1283), an open read handle does not block deletion
+            // of the underlying file on Windows.
+            IntPtr handle = NativeMethods.CreateFileW(
+                filename,
+                NativeMethods.GENERIC_READ,
+                NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE | NativeMethods.FILE_SHARE_DELETE,
+                IntPtr.Zero,
+                NativeMethods.OPEN_EXISTING,
+                NativeMethods.FILE_FLAG_RANDOM_ACCESS,
+                IntPtr.Zero);
+            int lastError = Marshal.GetLastWin32Error();
 
-      /// <summary>
-      /// Reads data from a file at pos into bytes </summary>
-//JAVA TO C# CONVERTER TODO TASK: Replace 'unknown' with the appropriate dll name:
-      [DllImport("unknown")]
-      private static extern int read(long fd, sbyte[] bytes, int offset, int length, long pos);
+            if (handle == NativeMethods.INVALID_HANDLE_VALUE)
+            {
+                throw new IOException("Could not open file " + filename + ": " + new Win32Exception(lastError).Message);
+            }
 
-      /// <summary>
-      /// Closes a handle to a file </summary>
-//JAVA TO C# CONVERTER TODO TASK: Replace 'unknown' with the appropriate dll name:
-      [DllImport("unknown")]
-      private static extern void close(long fd);
+            return new SafeFileHandle(handle, ownsHandle: true);
+        }
 
-      /// <summary>
-      /// Returns the length of a file </summary>
-//JAVA TO C# CONVERTER TODO TASK: Replace 'unknown' with the appropriate dll name:
-      [DllImport("unknown")]
-      private static extern long length(long fd);
+        /// <summary>
+        /// Reads data from a file at <paramref name="pos"/> into <paramref name="bytes"/>.
+        /// <para/>
+        /// The position is supplied via the <c>OVERLAPPED</c> structure. The handle is
+        /// synchronous (no <c>FILE_FLAG_OVERLAPPED</c>), so the read completes synchronously and
+        /// is serialized by the OS on the handle; the explicit offset is what lets clones share
+        /// one handle without seeking. </summary>
+        private static unsafe int Read(SafeFileHandle fd, Span<byte> bytes, long pos)
+        {
+            NativeOverlapped overlapped = default;
+            overlapped.OffsetLow = (int)(pos & 0xFFFFFFFFL);
+            overlapped.OffsetHigh = (int)((pos >> 0x20) & 0x7FFFFFFFL);
+
+            int numRead;
+            bool success;
+            fixed (byte* p = bytes)
+            {
+                success = NativeMethods.ReadFile(fd, p, bytes.Length, out numRead, &overlapped);
+            }
+
+            if (!success)
+            {
+                throw new IOException(new Win32Exception(Marshal.GetLastWin32Error()).Message);
+            }
+
+            return numRead;
+        }
+
+        /// <summary>
+        /// Returns the length of a file. </summary>
+        private static long Length(SafeFileHandle fd)
+        {
+            if (!NativeMethods.GetFileInformationByHandle(fd, out NativeMethods.BY_HANDLE_FILE_INFORMATION info))
+            {
+                throw new IOException(new Win32Exception(Marshal.GetLastWin32Error()).Message);
+            }
+
+            return ((long)info.nFileSizeHigh << 0x20) | info.nFileSizeLow;
+        }
+
+        /// <summary>
+        /// P/Invoke declarations for the Win32 APIs used by <see cref="WindowsDirectory"/>.
+        /// <para/>
+        /// These replace the JNI/C++ native methods (<c>open</c>, <c>read</c>, <c>close</c>,
+        /// <c>length</c>) in the original Lucene implementation. Closing is handled by
+        /// <see cref="SafeFileHandle"/>, which calls <c>CloseHandle</c>.
+        /// </summary>
+        private static class NativeMethods
+        {
+            internal const uint GENERIC_READ = 0x80000000;
+            internal const uint FILE_SHARE_READ = 0x00000001;
+            internal const uint FILE_SHARE_WRITE = 0x00000002;
+            internal const uint FILE_SHARE_DELETE = 0x00000004;
+            internal const uint OPEN_EXISTING = 3;
+            internal const uint FILE_FLAG_RANDOM_ACCESS = 0x10000000;
+
+            internal static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+
+            // https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+            internal static extern IntPtr CreateFileW(
+                string lpFileName,
+                uint dwDesiredAccess,
+                uint dwShareMode,
+                IntPtr lpSecurityAttributes,
+                uint dwCreationDisposition,
+                uint dwFlagsAndAttributes,
+                IntPtr hTemplateFile);
+
+            // https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfile
+            [DllImport("kernel32.dll", SetLastError = true)]
+            internal static extern unsafe bool ReadFile(
+                SafeFileHandle hFile,
+                byte* lpBuffer,
+                int nNumberOfBytesToRead,
+                out int lpNumberOfBytesRead,
+                NativeOverlapped* lpOverlapped);
+
+            // https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfileinformationbyhandle
+            [DllImport("kernel32.dll", SetLastError = true)]
+            internal static extern bool GetFileInformationByHandle(
+                SafeFileHandle hFile,
+                out BY_HANDLE_FILE_INFORMATION lpFileInformation);
+
+            // https://learn.microsoft.com/en-us/windows/win32/api/fileapi/ns-fileapi-by_handle_file_information
+            [StructLayout(LayoutKind.Sequential)]
+            internal struct BY_HANDLE_FILE_INFORMATION
+            {
+                public uint dwFileAttributes;
+                public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
+                public System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
+                public System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
+                public uint dwVolumeSerialNumber;
+                public uint nFileSizeHigh;
+                public uint nFileSizeLow;
+                public uint nNumberOfLinks;
+                public uint nFileIndexHigh;
+                public uint nFileIndexLow;
+            }
+        }
     }
-
 }
