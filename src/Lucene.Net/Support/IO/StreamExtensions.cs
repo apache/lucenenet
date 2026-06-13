@@ -280,7 +280,7 @@ namespace Lucene.Net.Support.IO
                     // newBytes[newIndex + 1] = (byte)(chars[index] >> 8);
 
                     // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
-                    BinaryPrimitives.WriteUInt16LittleEndian(newBytes.AsSpan(newIndex), chars[index]);
+                    BinaryPrimitives.WriteUInt16LittleEndian(newBytes.AsSpan(newIndex, sizeof(ushort)), chars[index]);
                 }
 
                 stream.Write(newBytes, 0, byteCount);
@@ -567,7 +567,7 @@ namespace Lucene.Net.Support.IO
             // buffer[offset++] = (byte)value;
 
             // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
-            BinaryPrimitives.WriteUInt16BigEndian(buffer.Slice(offset), value);
+            BinaryPrimitives.WriteUInt16BigEndian(buffer.Slice(offset, sizeof(ushort)), value);
 
             return offset + sizeof(ushort);
         }

@@ -540,7 +540,7 @@ namespace Lucene.Net.Facet
                     // bytes[upto++] = (byte)ordinal;
 
                     // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
-                    BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(upto), ordinal);
+                    BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(upto, sizeof(int)), ordinal);
                     upto += sizeof(int);
 
                     if (upto + field.Assoc.Length > bytes.Length)

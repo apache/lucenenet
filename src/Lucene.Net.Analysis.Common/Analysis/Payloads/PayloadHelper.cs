@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Payloads
             // return data;
 
             // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
-            BinaryPrimitives.WriteInt32BigEndian(data.AsSpan(offset), payload);
+            BinaryPrimitives.WriteInt32BigEndian(data.AsSpan(offset, sizeof(int)), payload);
             return data;
         }
 
