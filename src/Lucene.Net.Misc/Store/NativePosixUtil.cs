@@ -66,12 +66,26 @@ namespace Lucene.Net.Store
         {
             EnsureUnix();
 
+            // Upstream's C++ called open(fname, O_RDWR | O_CREAT | DIRECT_FLAG, 0666) for the write path.
+            // We cannot create-with-mode through P/Invoke: open() is variadic (int open(const char*, int, ...))
+            // and the mode argument rides the varargs ABI. On platforms where varargs are not passed in the
+            // same registers as fixed args (notably macOS, including Apple Silicon arm64), a fixed-signature
+            // P/Invoke delivers garbage for mode, producing a file without owner-read permission, so the
+            // subsequent O_RDONLY open of the same file fails with EACCES. To stay correct and ABI-agnostic
+            // we never pass mode: the file is created up front by the BCL (which applies the normal mode and
+            // umask), and we then open it with the plain two-argument open() - no O_CREAT, no varargs.
+            if (!read)
+            {
+                // mirrors O_CREAT: ensure the file exists with a sane mode before opening it
+                using (System.IO.File.Open(filename, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite)) { }
+            }
+
             int fd;
             if (Constants.MAC_OS_X)
             {
                 fd = read
                     ? NativeMethods.open(filename, NativeMethods.O_RDONLY)
-                    : NativeMethods.open(filename, NativeMethods.O_RDWR | NativeMethods.O_CREAT, NativeMethods.S_RW);
+                    : NativeMethods.open(filename, NativeMethods.O_RDWR);
                 if (fd < 0)
                 {
                     throw NewIOException("open", filename);
@@ -89,7 +103,7 @@ namespace Lucene.Net.Store
             {
                 fd = read
                     ? NativeMethods.open(filename, NativeMethods.O_RDONLY | NativeMethods.O_DIRECT | NativeMethods.O_NOATIME)
-                    : NativeMethods.open(filename, NativeMethods.O_RDWR | NativeMethods.O_CREAT | NativeMethods.O_DIRECT | NativeMethods.O_NOATIME, NativeMethods.S_RW);
+                    : NativeMethods.open(filename, NativeMethods.O_RDWR | NativeMethods.O_DIRECT | NativeMethods.O_NOATIME);
                 if (fd < 0)
                 {
                     throw NewIOException("open", filename);
@@ -194,20 +208,23 @@ namespace Lucene.Net.Store
         {
             private const string LIBC = "libc";
 
-            // open() flags. O_CREAT differs between Linux and macOS; O_DIRECT/O_NOATIME are Linux-only.
+            // open() flags. O_DIRECT/O_NOATIME are Linux-only. We never pass O_CREAT/mode: see OpenDirect.
             internal const int O_RDONLY = 0x0;
             internal const int O_RDWR = 0x2;
-            internal static readonly int O_CREAT = Constants.MAC_OS_X ? 0x0200 : 0x40;
-            internal const int O_DIRECT = 0x4000;   // Linux
+
+            // O_DIRECT is architecture-dependent on Linux: most arches (x86/x86-64) use the asm-generic
+            // value 0x4000, but Arm/Arm64 (and a few others) swap it with O_DIRECTORY and use 0x10000.
+            // Using the wrong value silently means "O_DIRECTORY", which makes open() of a regular file
+            // fail with ENOTDIR. O_NOATIME (0x40000) is the same across these arches.
+            internal static readonly int O_DIRECT =
+                RuntimeInformation.OSArchitecture is Architecture.Arm or Architecture.Arm64
+                    ? 0x10000
+                    : 0x4000;
             internal const int O_NOATIME = 0x40000; // Linux
             internal const int F_NOCACHE = 48;      // macOS
-            internal const int S_RW = 0x1B6;        // 0666
 
             [DllImport(LIBC, SetLastError = true, EntryPoint = "open")]
             internal static extern int open([MarshalAs(UnmanagedType.LPStr)] string pathname, int flags);
-
-            [DllImport(LIBC, SetLastError = true, EntryPoint = "open")]
-            internal static extern int open([MarshalAs(UnmanagedType.LPStr)] string pathname, int flags, int mode);
 
             [DllImport(LIBC, SetLastError = true)]
             internal static extern int close(int fd);

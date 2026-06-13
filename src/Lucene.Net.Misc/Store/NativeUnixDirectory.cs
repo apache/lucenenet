@@ -526,7 +526,10 @@ namespace Lucene.Net.Store
                 {
                     throw new IOException(ioe.Message + ": " + this, ioe);
                 }
-                if (n < 0)
+                // Upstream used FileChannel.read(), which returns -1 at EOF. Here Pread() wraps libc
+                // pread(), which returns 0 at EOF (a genuine error already threw above), so a refill that
+                // reads nothing means we have stepped entirely past the end of the file.
+                if (n <= 0)
                 {
                     throw EOFException.Create("read past EOF: " + this);
                 }
