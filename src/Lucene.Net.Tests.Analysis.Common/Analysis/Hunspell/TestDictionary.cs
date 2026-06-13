@@ -1,5 +1,6 @@
 // Lucene version compatibility level 4.10.4
 using J2N.Text;
+using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using NUnit.Framework;
@@ -280,6 +281,41 @@ namespace Lucene.Net.Analysis.Hunspell
         {
             assertNotNull(Dictionary.GetFlagParsingStrategy("FLAG\tUTF-8"));
             assertNotNull(Dictionary.GetFlagParsingStrategy("FLAG    UTF-8"));
+        }
+
+        // LUCENENET specific: direct round-trip for EncodeFlags/DecodeFlags. EncodeFlags was
+        // rewritten to use BinaryPrimitives.WriteUInt16BigEndian; this guards the big-endian
+        // char layout (including chars above 0x7FFF, which must not sign-extend) against
+        // regressions. The existing tests only exercise DecodeFlags off dictionary data.
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestEncodeDecodeFlags_RoundTrips()
+        {
+            char[][] cases =
+            {
+                new char[] { }, // empty
+                new char[] { (char)0 },
+                new char[] { 'A' },
+                new char[] { 'ÿ' },        // low byte set
+                new char[] { 'Ā' },        // high byte set
+                new char[] { '耀' },        // top bit set - must not sign-extend
+                new char[] { '￿' },        // all bits set
+                new char[] { 'a', 'b', 'c', 'd' },
+                new char[] { 'ሴ', 'ꯍ', (char)0, '￿' },
+            };
+
+            foreach (char[] flags in cases)
+            {
+                BytesRef b = new BytesRef();
+                Dictionary.EncodeFlags(b, flags);
+                assertEquals(flags.Length * 2, b.Length);
+                char[] decoded = Dictionary.DecodeFlags(b);
+                assertEquals(flags.Length, decoded.Length);
+                for (int i = 0; i < flags.Length; i++)
+                {
+                    assertEquals("flag[" + i + "]", flags[i], decoded[i]);
+                }
+            }
         }
     }
 }
