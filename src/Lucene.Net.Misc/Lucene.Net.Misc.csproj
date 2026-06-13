@@ -39,15 +39,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-
-
-  <ItemGroup>
-    <!-- LUCENENET TODO: The Unix/POSIX native directory port (NativeUnixDirectory) is not yet
-         complete and is excluded from compilation. See GH-1342. WindowsDirectory has been ported. -->
-    <Compile Remove="Store\NativeUnixDirectory.cs" />
-    <Compile Remove="Store\NativePosixUtil.cs" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
   </ItemGroup>
