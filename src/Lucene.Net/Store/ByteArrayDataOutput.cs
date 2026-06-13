@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Buffers.Binary;
 
 namespace Lucene.Net.Store
 {
@@ -110,6 +111,18 @@ namespace Lucene.Net.Store
             if (Debugging.AssertsEnabled) Debugging.Assert(pos + length <= limit);
             Arrays.Copy(source, /*offset*/ 0, bytes, pos, length);
             pos += length;
+        }
+
+        // LUCENENET specific: write directly into the backing array to avoid the base
+        // class's stackalloc + virtual WriteBytes(Span) hop. The base WriteInt64 keeps the
+        // span path (it wins on stream/buffered outputs), but for this array-backed output
+        // a direct BinaryPrimitives write is far cheaper - matching ReadInt64 in
+        // ByteArrayDataInput. See #1279.
+        public override void WriteInt64(long i)
+        {
+            if (Debugging.AssertsEnabled) Debugging.Assert(pos + sizeof(long) <= limit);
+            BinaryPrimitives.WriteInt64BigEndian(bytes.AsSpan(pos, sizeof(long)), i);
+            pos += sizeof(long);
         }
     }
 }
