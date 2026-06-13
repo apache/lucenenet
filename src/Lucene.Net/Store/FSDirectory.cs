@@ -521,7 +521,12 @@ namespace Lucene.Net.Store
                     path: Path.Combine(parent.m_directory.FullName, name),
                     mode: FileMode.OpenOrCreate,
                     access: FileAccess.Write,
-                    share: FileShare.ReadWrite,
+                    // LUCENENET specific: Add FileShare.Delete (a deliberate divergence from upstream Java's
+                    // RandomAccessFile, which omits it) so that every handle Lucene.NET opens on a file permits
+                    // deletion. Windows blocks a delete unless all open handles allow Delete share; including it
+                    // here makes "if Lucene decides a file is deletable, the delete succeeds" hold unconditionally,
+                    // regardless of which handles are open, matching POSIX semantics (#1283).
+                    share: FileShare.ReadWrite | FileShare.Delete,
                     bufferSize: CHUNK_SIZE);
                 isOpen = true;
             }
