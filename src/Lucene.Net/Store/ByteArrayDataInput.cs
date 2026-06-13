@@ -139,7 +139,11 @@ namespace Lucene.Net.Store
         /// </summary>
         public override int ReadVInt32()
         {
-            // LUCENENET: unify logic in VIntUtils. Note that existing code was not checking bytes length.
+            // LUCENENET: unify logic in VIntUtils. Unlike the buffered readers, this class
+            // intentionally omits a MaxVInt32Length bounds guard (and the base.ReadVInt32()
+            // fallback): per its class summary it "omits all low-level checks", matching the
+            // original byte-by-byte code which read straight from the array and let an
+            // out-of-range access throw on truncated/malformed input.
             bool ok = VIntUtils.TryReadVInt32(bytes.AsSpan(pos), out int value, out int count);
             pos += count;
             if (!ok)
@@ -154,7 +158,8 @@ namespace Lucene.Net.Store
         /// </summary>
         public override long ReadVInt64()
         {
-            // LUCENENET: unify logic in VIntUtils. Note that existing code was not checking bytes length.
+            // LUCENENET: unify logic in VIntUtils. See ReadVInt32() above for why this
+            // intentionally omits a MaxVInt64Length bounds guard and base fallback.
             bool ok = VIntUtils.TryReadVInt64(bytes.AsSpan(pos), out long value, out int count);
             pos += count;
             if (!ok)

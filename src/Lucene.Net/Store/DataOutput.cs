@@ -84,15 +84,13 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataInput.ReadInt32()"/>
         public virtual void WriteInt32(int i)
         {
-            // LUCENENET specific: optimize for single WriteBytes call, was:
-            // WriteByte((byte)(i >> 24));
-            // WriteByte((byte)(i >> 16));
-            // WriteByte((byte)(i >> 8));
-            // WriteByte((byte)i);
-
-            Span<byte> bytes = stackalloc byte[4];
-            BinaryPrimitives.WriteInt32BigEndian(bytes, i);
-            WriteBytes(bytes);
+            // NOTE: deliberately byte-by-byte (upstream Java parity) - see WriteInt16 below
+            // for why the stackalloc + WriteBytes(Span) rewrite was reverted (#1279). No
+            // DataOutput subclass overrides this, so all of them inherit this base.
+            WriteByte((byte)(i >> 24));
+            WriteByte((byte)(i >> 16));
+            WriteByte((byte)(i >> 8));
+            WriteByte((byte)i);
         }
 
         /// <summary>
@@ -103,13 +101,14 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataInput.ReadInt16()"/>
         public virtual void WriteInt16(short i)
         {
-            // LUCENENET specific: optimize for single WriteBytes call, was:
-            // WriteByte((byte)((ushort)i >> 8));
-            // WriteByte((byte)(ushort)i);
-
-            Span<byte> bytes = stackalloc byte[2];
-            BinaryPrimitives.WriteInt16BigEndian(bytes, i);
-            WriteBytes(bytes);
+            // NOTE: deliberately byte-by-byte (upstream Java parity). A stackalloc +
+            // WriteBytes(Span) rewrite was benchmarked and regressed every inheriting
+            // output (e.g. WriteInt16 +231%, GrowableByteArrayDataOutput +132%), because
+            // routing 2 bytes through the virtual WriteBytes adds a fixed ~3ns floor that
+            // dwarfs two inlined WriteByte() calls. No subclass overrides WriteInt16, so
+            // the base implementation is what every output uses. See #1279.
+            WriteByte((byte)((ushort)i >> 8));
+            WriteByte((byte)(ushort)i);
         }
 
         /// <summary>
@@ -342,7 +341,6 @@ namespace Lucene.Net.Store
             {
                 // Fast path - don't allocate if we don't need to
                 WriteVInt32(0);
-                WriteBytes(Array.Empty<byte>());
                 return;
             }
 

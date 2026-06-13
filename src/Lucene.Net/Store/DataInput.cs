@@ -128,13 +128,15 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataOutput.WriteInt16(short)"/>
         public virtual short ReadInt16()
         {
-            // LUCENENET specific: optimize for single ReadBytes call and JIT-intrinsics, was:
-            // return (short)(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
-            // Also note: the 0xFF mask is not needed in C# since bytes are unsigned.
-
-            Span<byte> b = stackalloc byte[2];
-            ReadBytes(b);
-            return BinaryPrimitives.ReadInt16BigEndian(b);
+            // LUCENENET: the 0xFF mask is not needed in C# since bytes are unsigned.
+            // NOTE: deliberately byte-by-byte (upstream Java parity). A stackalloc +
+            // ReadBytes(Span) rewrite was benchmarked and regressed every subclass that
+            // inherits this base method (e.g. RAMInputStream ReadInt16 +327%), because
+            // routing 2 bytes through the virtual ReadBytes adds a fixed ~3ns floor that
+            // dwarfs two inlined ReadByte() calls. Subclasses with a cheap contiguous
+            // buffer (ByteArrayDataInput, BufferedIndexInput, ByteBufferIndexInput)
+            // override this with a BinaryPrimitives fast path instead. See #1279.
+            return (short)((ReadByte() << 8) | ReadByte());
         }
 
         /// <summary>
@@ -145,14 +147,12 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataOutput.WriteInt32(int)"/>
         public virtual int ReadInt32()
         {
-            // LUCENENET specific: optimize for single ReadBytes call, was:
-            // return ((ReadByte() & 0xFF) << 24) | ((ReadByte() & 0xFF) << 16)
-            //     | ((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF);
-            // Also note: the 0xFF mask is not needed in C# since bytes are unsigned.
-
-            Span<byte> b = stackalloc byte[4];
-            ReadBytes(b);
-            return BinaryPrimitives.ReadInt32BigEndian(b);
+            // LUCENENET: the 0xFF mask is not needed in C# since bytes are unsigned.
+            // NOTE: deliberately byte-by-byte (upstream Java parity) - see ReadInt16 above
+            // for why the span rewrite was reverted (#1279). Overriding subclasses use a
+            // BinaryPrimitives fast path.
+            return (ReadByte() << 24) | (ReadByte() << 16)
+                | (ReadByte() << 8) | ReadByte();
         }
 
         /// <summary>
