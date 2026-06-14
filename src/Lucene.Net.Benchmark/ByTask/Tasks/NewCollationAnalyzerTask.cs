@@ -33,11 +33,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             switch (impl)
             {
-                //case NewCollationAnalyzerTask.Implementation.JDK:
-                //    return typeof(Lucene.Net.Collation.CollationKeyAnalyzer);
+                case NewCollationAnalyzerTask.Implementation.BCL:
+                    return typeof(Lucene.Net.Collation.CollationKeyAnalyzer);
 
                 case NewCollationAnalyzerTask.Implementation.ICU:
-                    return typeof(Lucene.Net.Collation.ICUCollationKeyAnalyzer);
                 default:
                     return typeof(Lucene.Net.Collation.ICUCollationKeyAnalyzer);
             }
@@ -47,11 +46,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             switch (impl)
             {
-                //case NewCollationAnalyzerTask.Implementation.JDK:
-                //    return typeof(Icu.Collation.Collator);
+                case NewCollationAnalyzerTask.Implementation.BCL:
+                    // LUCENENET: The .NET (BCL) equivalent of the JDK's java.text.Collator is the
+                    // platform collator, System.Globalization.CompareInfo.
+                    return typeof(CompareInfo);
 
                 case NewCollationAnalyzerTask.Implementation.ICU:
-                    return typeof(Collator);
                 default:
                     return typeof(Collator);
             }
@@ -61,18 +61,24 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     public class NewCollationAnalyzerTask : PerfTask
     {
         /// <summary>
-        /// Different Collation implementations: currently
-        /// limited to what is provided in ICU.
+        /// Different Collation implementations: the .NET platform collator
+        /// (<see cref="CompareInfo"/>, the equivalent of the JDK's collator) and ICU.
         /// <para/>
         /// See <a href="http://site.icu-project.org/charts/collation-icu4j-sun">Comparison of implementations</a>
         /// </summary>
         public enum Implementation
         {
-            //JDK, // LUCENENET: Not supported
+            // LUCENENET: This value is named JDK in upstream Lucene (the collator comes from the
+            // Java Development Kit's java.text.Collator). It has been renamed to BCL here because the
+            // equivalent in .NET is the platform collator (System.Globalization.CompareInfo) provided
+            // by the Base Class Library. The "jdk" parameter value is still accepted as a legacy alias.
+
+            /// <summary>The .NET platform collator (<see cref="CompareInfo"/>), equivalent to the JDK's <c>java.text.Collator</c>.</summary>
+            BCL,
             ICU
         }
 
-        private Implementation impl = Implementation.ICU; //Implementation.JDK;
+        private Implementation impl = Implementation.BCL;
 
         public NewCollationAnalyzerTask(PerfRunData runData)
             : base(runData)
@@ -81,12 +87,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         internal static Analyzer CreateAnalyzer(CultureInfo locale, Implementation impl)
         {
-            // LUCENENET specific - senseless to use reflection here because we only have one
-            // collator.
-            object collator = Collator.GetInstance(locale);
-
-            // LUCENENET TODO: The .NET equivalent to create a collator like the one in the JDK is:
-            //CompareInfo.GetCompareInfo(locale.Name);
+            // LUCENENET specific - senseless to use reflection here, so we construct the collator
+            // for the chosen implementation directly. The BCL implementation (named JDK in upstream
+            // Lucene) maps to the .NET platform collator (System.Globalization.CompareInfo); ICU maps
+            // to ICU4N's Collator.
+            object collator = impl == Implementation.ICU
+                ? (object)Collator.GetInstance(locale)
+                : CompareInfo.GetCompareInfo(locale.Name);
 
             Type clazz = impl.GetAnalyzerType();
             return (Analyzer)Activator.CreateInstance(clazz,
@@ -132,8 +139,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     if (value.Equals("icu", StringComparison.OrdinalIgnoreCase))
                         impl = Implementation.ICU;
-                    //else if (value.Equals("jdk", StringComparison.OrdinalIgnoreCase))
-                    //    impl = Implementation.JDK;
+                    // LUCENENET: "bcl" is the .NET name for what upstream Lucene calls "jdk"; we accept
+                    // "jdk" as a legacy alias so existing Lucene benchmark .alg files keep working.
+                    else if (value.Equals("bcl", StringComparison.OrdinalIgnoreCase)
+                        || value.Equals("jdk", StringComparison.OrdinalIgnoreCase))
+                        impl = Implementation.BCL;
                     else
                         throw RuntimeException.Create("Unknown parameter " + param);
                 }

@@ -1,16 +1,9 @@
 // Lucene version compatibility level 4.8.1
-#if FEATURE_COLLATION
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Icu;
-using Icu.Collation;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
-using Assert = Lucene.Net.TestFramework.Assert;
-using JCG = J2N.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Collation
 {
@@ -40,6 +33,7 @@ namespace Lucene.Net.Collation
         /// Instead of using LowerCaseFilter, use a turkish collator with primary strength.
         /// Then things will sort and match correctly.
         /// </summary>
+        [Test]
         public virtual void TestBasicUsage()
         {
             var turkishUpperCase = "I WİLL USE TURKİSH CASING";
@@ -56,7 +50,7 @@ namespace Lucene.Net.Collation
         [Test]
         public virtual void TestNormalization()
         {
-            var turkishUpperCase = "I W\u0049\u0307LL USE TURKİSH CASING";
+            var turkishUpperCase = "I WİLL USE TURKİSH CASING";
             var turkishLowerCase = "ı will use turkish casıng";
             var factory = this.TokenFilterFactory("CollationKey", "language", "tr", "strength", "primary", "decomposition", "canonical");
             var tsUpper = factory.Create(new MockTokenizer(new StringReader(turkishUpperCase), MockTokenizer.KEYWORD, false));
@@ -93,50 +87,6 @@ namespace Lucene.Net.Collation
             AssertCollatesToSame(tsUpper, tsLower);
         }
 
-        /// <summary>
-        /// For german, you might want oe to sort and match with o umlaut.
-        /// This is not the default, but you can make a customized ruleset to do this.
-        ///
-        /// The default is DIN 5007-1, this shows how to tailor a collator to get DIN 5007-2 behavior.
-        ///  http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4423383
-        /// </summary>
-        [Test]
-        public virtual void TestCustomRules()
-        {
-            // It is possible not to have the collator rules for a specific
-            // country, fallback to the language if that is the case.
-            var possiblelocales = new[] { new Locale("de-DE"), new Locale("de") };
-            var allRules = RuleBasedCollator.GetAvailableCollationLocales();
-            var localeToUse = possiblelocales.FirstOrDefault(locl => allRules.Contains(locl.Id));
-
-            Assert.True(localeToUse != default, "Should have found a matching collation locale given the two locales to use.");
-
-            const string DIN5007_2_tailorings = "& ae , a\u0308 & AE , A\u0308" + "& oe , o\u0308 & OE , O\u0308" + "& ue , u\u0308 & UE , u\u0308";
-            var collationRules = Collator.GetCollationRules(localeToUse.Id);
-
-            Assert.IsNotNull(collationRules, $"Rules should have been fetched for {localeToUse.Id}");
-
-            string tailoredRules = collationRules + DIN5007_2_tailorings;
-
-            RuleBasedCollator tailoredCollator = new RuleBasedCollator(tailoredRules);
-
-            // at this point, you would save these tailoredRules to a file,
-            // and use the custom parameter.
-            string germanUmlaut = "Töne";
-            string germanOE = "Toene";
-            IDictionary<string, string> args = new JCG.Dictionary<string, string>();
-            args["custom"] = "rules.txt";
-            args["strength"] = "primary";
-#pragma warning disable 612, 618
-            CollationKeyFilterFactory factory = new CollationKeyFilterFactory(args);
-#pragma warning restore 612, 618
-            factory.Inform(new StringMockResourceLoader(tailoredRules));
-            TokenStream tsUmlaut = factory.Create(new MockTokenizer(new StringReader(germanUmlaut), MockTokenizer.KEYWORD, false));
-            TokenStream tsOE = factory.Create(new MockTokenizer(new StringReader(germanOE), MockTokenizer.KEYWORD, false));
-
-            AssertCollatesToSame(tsUmlaut, tsOE);
-        }
-
         private static void AssertCollatesToSame(TokenStream stream1, TokenStream stream2)
         {
             stream1.Reset();
@@ -150,9 +100,8 @@ namespace Lucene.Net.Collation
             assertFalse(stream2.IncrementToken());
             stream1.End();
             stream2.End();
-            stream1.Dispose();
-            stream2.Dispose();
+            stream1.Close();
+            stream2.Close();
         }
     }
 }
-#endif

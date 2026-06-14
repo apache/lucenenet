@@ -49,6 +49,22 @@ namespace Lucene.Net.Analysis
         //protected readonly string[] availableCollationLocales = RuleBasedCollator.GetAvailableCollationLocales().ToArray();
 
         /// <summary>
+        /// LUCENENET: The expected ordering of the French field in <see cref="TestCollationKeySort"/> when using
+        /// the platform collator (<see cref="System.Globalization.CompareInfo"/>) depends on the active
+        /// globalization backend. .NET Framework (NLS) applies traditional French (backward) accent ordering and
+        /// produces "EACGI" - the same result as Lucene's <c>java.text.Collator</c> with <c>Locale.FRANCE</c> -
+        /// whereas .NET 5+ (ICU) uses forward accent ordering and produces "ECAGI". <see cref="System.Globalization.CompareInfo"/>
+        /// has no option to select French reverse-accent ordering, and its sort keys are consistent with its
+        /// <see cref="System.Globalization.CompareInfo.Compare(string, string)"/>, so we detect the active behavior
+        /// here rather than hard-coding a single (backend-specific) value. This is only relevant to tests that use
+        /// the platform collator; the ICU-based collation tests have their own expected values.
+        /// </summary>
+        protected static string FranceResult =>
+            System.Globalization.CompareInfo.GetCompareInfo("fr").Compare("pêche", "péché") < 0
+                ? "EACGI"   // backward (traditional French) accent ordering - NLS backend
+                : "ECAGI";  // forward accent ordering - ICU backend
+
+        /// <summary>
         /// Convenience method to perform the same function as CollationKeyFilter.
         /// </summary>
         /// <param name="keyBits"> the result from

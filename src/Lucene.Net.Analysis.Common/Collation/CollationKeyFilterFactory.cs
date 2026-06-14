@@ -1,15 +1,9 @@
 // Lucene version compatibility level 4.8.1
-#if FEATURE_COLLATION
-using Icu;
-using Icu.Collation;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Text;
 
 namespace Lucene.Net.Collation
 {
@@ -33,14 +27,8 @@ namespace Lucene.Net.Collation
     /// <summary>
     /// Factory for <see cref="CollationKeyFilter"/>.
     /// <para>
-    /// This factory can be created in two ways:
-    /// <list type="bullet">
-    ///  <item><description>Based upon a system collator associated with a <see cref="System.Globalization.CultureInfo"/>.</description></item>
-    ///  <item><description>Based upon a tailored ruleset.</description></item>
-    /// </list>
-    /// </para>
-    /// <para>
-    /// Using a System collator:
+    /// This factory is created based upon a system collator associated with a
+    /// <see cref="CultureInfo"/>:
     /// <list type="bullet">
     ///  <item><description>language: ISO-639 language code (mandatory)</description></item>
     ///  <item><description>country: ISO-3166 country code (optional)</description></item>
@@ -50,13 +38,6 @@ namespace Lucene.Net.Collation
     /// </list>
     /// </para>
     /// <para>
-    /// Using a Tailored ruleset:
-    /// <list type="bullet">
-    ///  <item><description>custom: UTF-8 text file containing rules supported by RuleBasedCollator (mandatory)</description></item>
-    ///  <item><description>strength: 'primary','secondary','tertiary', or 'identical' (optional)</description></item>
-    ///  <item><description>decomposition: 'no','canonical', or 'full' (optional)</description></item>
-    /// </list>
-    ///
     /// <code>
     /// &lt;fieldType name="text_clltnky" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -64,18 +45,24 @@ namespace Lucene.Net.Collation
     ///     &lt;filter class="solr.CollationKeyFilterFactory" language="ja" country="JP"/&gt;
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
-    ///
+    /// </para>
+    /// <para>
+    /// <strong>LUCENENET NOTE:</strong> Unlike Lucene's <c>java.text.RuleBasedCollator</c>, the .NET
+    /// <see cref="CompareInfo"/> does not support tailored (custom) collation rules. The <c>custom</c>
+    /// parameter that exists in Lucene is therefore not supported; specifying it throws
+    /// <see cref="NotSupportedException"/>. Use the <c>ICUCollationKeyFilterFactory</c> in the
+    /// Lucene.Net.ICU package if you need custom rules.
     /// </para>
     /// </summary>
-    /// <seealso cref="Collator"/>
+    /// <seealso cref="CompareInfo"/>
     /// <seealso cref="CultureInfo"/>
-    /// <seealso cref="RuleBasedCollator"/>
     /// @since solr 3.1
     /// @deprecated use <see cref="CollationKeyAnalyzer"/> instead.
-    [Obsolete("use <seealso cref=\"CollationKeyAnalyzer\"/> instead.")]
+    [Obsolete("use CollationKeyAnalyzer instead.")]
     public class CollationKeyFilterFactory : TokenFilterFactory, IMultiTermAwareComponent, IResourceLoaderAware
     {
-        private Collator collator;
+        private CompareInfo collator;
+        private CompareOptions options;
         private readonly string custom;
         private readonly string language;
         private readonly string country;
@@ -99,7 +86,9 @@ namespace Lucene.Net.Collation
 
             if (this.custom != null && (this.language != null || this.country != null || this.variant != null))
             {
-                throw new ArgumentException("Cannot specify both language and custom. " + "To tailor rules for a built-in language, see the javadocs for RuleBasedCollator. " + "Then save the entire customized ruleset to a file, and use with the custom parameter");
+                throw new ArgumentException("Cannot specify both language and custom. "
+                    + "To tailor rules for a built-in language, the platform collator must be replaced with the "
+                    + "ICUCollationKeyFilterFactory in the Lucene.Net.ICU package, which supports custom rulesets.");
             }
 
             if (args.Count > 0)
@@ -112,33 +101,40 @@ namespace Lucene.Net.Collation
         {
             if (this.language != null)
             {
-                // create from a system collator, based on Locale.
+                // create from a system collator, based on culture.
                 this.collator = this.CreateFromLocale(this.language, this.country, this.variant);
             }
             else
             {
-                // create from a custom ruleset
-                this.collator = this.CreateFromRules(this.custom, loader);
+                // LUCENENET: The .NET CompareInfo does not support tailored (custom) collation
+                // rules the way java.text.RuleBasedCollator does. Direct users to the ICU package.
+                throw new NotSupportedException("Custom collation rules are not supported by the platform collator. "
+                    + "Use the ICUCollationKeyFilterFactory in the Lucene.Net.ICU package, which supports custom rulesets.");
             }
 
+            this.options = CompareOptions.None;
+
             // set the strength flag, otherwise it will be the default.
+            // LUCENENET: System.Globalization.CompareInfo has no Strength concept; the collation
+            // strength is approximated with CompareOptions. IDENTICAL is the strongest level the
+            // platform collator exposes (it has no level beyond TERTIARY/IDENTICAL).
             if (this.strength != null)
             {
                 if (this.strength.Equals("primary", StringComparison.OrdinalIgnoreCase))
                 {
-                    this.collator.Strength = CollationStrength.Primary;
+                    this.options |= CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace;
                 }
                 else if (this.strength.Equals("secondary", StringComparison.OrdinalIgnoreCase))
                 {
-                    this.collator.Strength = CollationStrength.Secondary;
+                    this.options |= CompareOptions.IgnoreCase;
                 }
                 else if (this.strength.Equals("tertiary", StringComparison.OrdinalIgnoreCase))
                 {
-                    this.collator.Strength = CollationStrength.Tertiary;
+                    // default: case- and accent-sensitive (CompareOptions.None)
                 }
                 else if (this.strength.Equals("identical", StringComparison.OrdinalIgnoreCase))
                 {
-                    this.collator.Strength = CollationStrength.Identical;
+                    // default: the platform collator has no level beyond tertiary/identical
                 }
                 else
                 {
@@ -146,22 +142,23 @@ namespace Lucene.Net.Collation
                 }
             }
 
-            // LUCENENET TODO: Verify Decomposition > NormalizationMode mapping between the JDK and icu-dotnet
-
             // set the decomposition flag, otherwise it will be the default.
+            // LUCENENET: The platform collator always normalizes canonically-equivalent text, so
+            // 'no' and 'canonical' both rely on the default behavior. 'full' additionally folds
+            // compatibility differences such as full-/half-width and kana type.
             if (this.decomposition != null)
             {
                 if (this.decomposition.Equals("no", StringComparison.OrdinalIgnoreCase))
                 {
-                    this.collator.NormalizationMode = NormalizationMode.Default; // .Decomposition = Collator.NoDecomposition;
+                    // default
                 }
                 else if (this.decomposition.Equals("canonical", StringComparison.OrdinalIgnoreCase))
                 {
-                    this.collator.NormalizationMode = NormalizationMode.Off; //.Decomposition = Collator.CannonicalDecomposition;
+                    // default
                 }
                 else if (this.decomposition.Equals("full", StringComparison.OrdinalIgnoreCase))
                 {
-                    this.collator.NormalizationMode = NormalizationMode.On; //.Decomposition = Collator.FullDecomposition;
+                    this.options |= CompareOptions.IgnoreWidth | CompareOptions.IgnoreKanaType;
                 }
                 else
                 {
@@ -172,117 +169,45 @@ namespace Lucene.Net.Collation
 
         public override TokenStream Create(TokenStream input)
         {
-            return new CollationKeyFilter(input, this.collator);
+            return new CollationKeyFilter(input, this.collator, this.options);
         }
 
         /// <summary>
-        /// Create a locale from language, with optional country and variant.
-        /// Then return the appropriate collator for the locale.
+        /// Create a culture from language, with optional country and variant.
+        /// Then return the appropriate collator for the culture.
         /// </summary>
-        private Collator CreateFromLocale(string language, string country, string variant)
+        private CompareInfo CreateFromLocale(string language, string country, string variant)
         {
-            CultureInfo cultureInfo;
-
             if (language is null)
             {
                 throw new ArgumentException("Language is required");
             }
 
-            if (language != null && country is null && variant != null)
+            if (country is null && variant != null)
             {
                 throw new ArgumentException("To specify variant, country is required");
             }
 
+            string name;
             if (country != null && variant != null)
             {
-                cultureInfo = new CultureInfo(string.Concat(language, "-", country, "-", variant));
-
-                // LUCENENET TODO: This method won't work on .NET core - confirm the above solution works as expected.
-                //cultureInfo = CultureInfo.GetCultures(CultureTypes.SpecificCultures).Single(x =>
-                //{
-                //	if (!x.TwoLetterISOLanguageName.Equals(language, StringComparison.OrdinalIgnoreCase) &&
-                //		!x.ThreeLetterISOLanguageName.Equals(language, StringComparison.OrdinalIgnoreCase) &&
-                //		!x.ThreeLetterWindowsLanguageName.Equals(language, StringComparison.OrdinalIgnoreCase))
-                //	{
-                //		return false;
-                //	}
-
-                //	var region = new RegionInfo(x.Name);
-
-                //	if (!region.TwoLetterISORegionName.Equals(country, StringComparison.OrdinalIgnoreCase) &&
-                //		!region.ThreeLetterISORegionName.Equals(country, StringComparison.OrdinalIgnoreCase) &&
-                //		!region.ThreeLetterWindowsRegionName.Equals(country, StringComparison.OrdinalIgnoreCase)
-                //                    )
-                //	{
-                //		return false;
-                //	}
-
-                //	return x.Name
-                //		.Replace(x.TwoLetterISOLanguageName, string.Empty)
-                //		.Replace(region.TwoLetterISORegionName, string.Empty)
-                //		.Replace("-", string.Empty)
-                //		.Equals(variant, StringComparison.OrdinalIgnoreCase);
-                //});
+                name = string.Concat(language, "-", country, "-", variant);
             }
             else if (country != null)
             {
-                cultureInfo = new CultureInfo(string.Concat(language, "-", country));
+                name = string.Concat(language, "-", country);
             }
             else
             {
-                cultureInfo = new CultureInfo(language);
+                name = language;
             }
 
-            return Collator.Create(cultureInfo);
-        }
-
-         /// <summary>
-         /// Read custom rules from a file, and create a RuleBasedCollator
-         /// The file cannot support comments, as # might be in the rules!
-         /// </summary>
-        private Collator CreateFromRules(string fileName, IResourceLoader loader)
-        {
-            Stream input = null;
-            try
-            {
-                input = loader.OpenResource(fileName);
-                var rules = ToUTF8String(input);
-                return new RuleBasedCollator(rules);
-            }
-            catch (TransliteratorParseException e)
-            {
-                // invalid rules
-                throw new IOException("ParseException thrown while parsing rules", e);
-            }
-            catch (SyntaxErrorException e)
-            {
-                // invalid rules
-                throw new IOException("ParseException thrown while parsing rules", e);
-            }
-            finally
-            {
-                IOUtils.CloseWhileHandlingException(input);
-            }
+            return CompareInfo.GetCompareInfo(name);
         }
 
         public virtual AbstractAnalysisFactory GetMultiTermComponent()
         {
             return this;
-        }
-
-        private static string ToUTF8String(Stream @in)
-        {
-            var builder = new StringBuilder();
-            var buffer = new char[1024];
-            var reader = IOUtils.GetDecodingReader(@in, Encoding.UTF8);
-
-            var index = 0;
-            while ((index = reader.Read(buffer, index, 1)) > 0)
-            {
-                builder.Append(buffer, 0, index);
-            }
-
-            return builder.ToString();
         }
 
         /// <summary>
@@ -302,4 +227,3 @@ namespace Lucene.Net.Collation
         }
     }
 }
-#endif
