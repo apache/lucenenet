@@ -157,7 +157,11 @@ namespace Lucene.Net.Store
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new IOException(ioe.Message + ": " + this, ioe);
+                    // LUCENENET: surface the original HResult (via the ctor that accepts it, which is
+                    // public on all target frameworks) so callers such as NativeFSLock, which inspect
+                    // IOException.HResult, still see the underlying error. The inner detail is retained
+                    // in the message.
+                    throw new IOException(ioe.Message + ": " + this, ioe.HResult);
                 }
 
                 if (bytesRead != b.Length)
@@ -208,10 +212,13 @@ namespace Lucene.Net.Store
                 NativeMethods.FILE_FLAG_RANDOM_ACCESS,
                 IntPtr.Zero);
             int lastError = Marshal.GetLastWin32Error();
+            // LUCENENET: surface the Win32 error as the IOException's HResult (matching what the BCL
+            // sets on a FileStream IOException) so callers such as NativeFSLock can recognize it.
+            int hresult = Marshal.GetHRForLastWin32Error();
 
             if (handle == NativeMethods.INVALID_HANDLE_VALUE)
             {
-                throw new IOException("Could not open file " + filename + ": " + new Win32Exception(lastError).Message);
+                throw new IOException("Could not open file " + filename + ": " + new Win32Exception(lastError).Message, hresult);
             }
 
             return new SafeFileHandle(handle, ownsHandle: true);
@@ -239,7 +246,9 @@ namespace Lucene.Net.Store
 
             if (!success)
             {
-                throw new IOException(new Win32Exception(Marshal.GetLastWin32Error()).Message);
+                int lastError = Marshal.GetLastWin32Error();
+                // LUCENENET: surface the Win32 error as the IOException's HResult (see OpenFile).
+                throw new IOException(new Win32Exception(lastError).Message, Marshal.GetHRForLastWin32Error());
             }
 
             return numRead;
@@ -251,7 +260,9 @@ namespace Lucene.Net.Store
         {
             if (!NativeMethods.GetFileInformationByHandle(fd, out NativeMethods.BY_HANDLE_FILE_INFORMATION info))
             {
-                throw new IOException(new Win32Exception(Marshal.GetLastWin32Error()).Message);
+                int lastError = Marshal.GetLastWin32Error();
+                // LUCENENET: surface the Win32 error as the IOException's HResult (see OpenFile).
+                throw new IOException(new Win32Exception(lastError).Message, Marshal.GetHRForLastWin32Error());
             }
 
             return ((long)info.nFileSizeHigh << 0x20) | info.nFileSizeLow;

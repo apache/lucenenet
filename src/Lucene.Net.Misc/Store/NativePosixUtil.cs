@@ -159,7 +159,9 @@ namespace Lucene.Net.Store
             if (code != 0)
             {
                 // LUCENENET: upstream throws RuntimeException; we use IOException as this is an I/O failure.
-                throw new IOException("posix_fadvise failed code=" + code);
+                // posix_fadvise returns the error number directly (it does not set errno); surface it as
+                // the HResult to match the errno-as-HResult convention used elsewhere here.
+                throw new IOException("posix_fadvise failed code=" + code, code);
             }
         }
 
@@ -188,7 +190,10 @@ namespace Lucene.Net.Store
             string where = filename is null ? operation : $"{operation} {filename}";
             // On Unix with SetLastError, GetLastWin32Error() returns errno. Win32Exception's message
             // is not meaningful on Unix, so include the raw errno for diagnosis.
-            return new IOException($"{where} failed (errno {errno})");
+            // LUCENENET: surface the errno as the IOException's HResult. On Unix the BCL sets HResult to
+            // the raw errno (e.g. a FileStream share violation surfaces HResult == EWOULDBLOCK), and
+            // NativeFSLock inspects IOException.HResult, so we match that convention here.
+            return new IOException($"{where} failed (errno {errno})", errno);
         }
 
         internal static void EnsureUnix()

@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Microsoft.Win32.SafeHandles;
 using System;
@@ -186,7 +187,10 @@ namespace Lucene.Net.Store
             long written = (long)NativeMethods.pwrite(Fd(fd), buffer, (nuint)length, pos);
             if (written < 0)
             {
-                throw new IOException($"pwrite failed (errno {Marshal.GetLastWin32Error()})");
+                int errno = Marshal.GetLastWin32Error();
+                // LUCENENET: surface errno as the HResult (see NativePosixUtil.NewIOException) so callers
+                // such as NativeFSLock, which inspect IOException.HResult, still see the underlying error.
+                throw new IOException($"pwrite failed (errno {errno})", errno);
             }
         }
 
@@ -194,7 +198,9 @@ namespace Lucene.Net.Store
         {
             if (NativeMethods.ftruncate(Fd(fd), length) < 0)
             {
-                throw new IOException($"ftruncate failed (errno {Marshal.GetLastWin32Error()})");
+                int errno = Marshal.GetLastWin32Error();
+                // LUCENENET: surface errno as the HResult (see PWrite).
+                throw new IOException($"ftruncate failed (errno {errno})", errno);
             }
         }
 
@@ -205,7 +211,9 @@ namespace Lucene.Net.Store
             long size = NativeMethods.lseek(Fd(fd), 0, NativeMethods.SEEK_END);
             if (size < 0)
             {
-                throw new IOException($"lseek failed (errno {Marshal.GetLastWin32Error()})");
+                int errno = Marshal.GetLastWin32Error();
+                // LUCENENET: surface errno as the HResult (see PWrite).
+                throw new IOException($"lseek failed (errno {errno})", errno);
             }
             return size;
         }
@@ -286,6 +294,9 @@ namespace Lucene.Net.Store
             private readonly AlignedByteBuffer buffer;
             private readonly SafeFileHandle fd;
             private readonly int bufferSize;
+            // LUCENENET specific: track a running CRC32 over the bytes written (in logical order), so
+            // Checksum can return it like FSIndexOutput does. Upstream left getChecksum() unsupported.
+            private readonly CRC32 crc = new CRC32();
 
             private int bufferPos;
             private long filePos;
@@ -302,6 +313,7 @@ namespace Lucene.Net.Store
 
             public override void WriteByte(byte b)
             {
+                crc.Update(b);
                 buffer.Put(b);
                 if (++bufferPos == bufferSize)
                 {
@@ -311,6 +323,7 @@ namespace Lucene.Net.Store
 
             public override void WriteBytes(ReadOnlySpan<byte> source)
             {
+                crc.Update(source);
                 int offset = 0;
                 int toWrite = source.Length;
                 while (true)
@@ -393,7 +406,9 @@ namespace Lucene.Net.Store
                 set { /* not supported: length is managed internally */ }
             }
 
-            public override long Checksum => throw new NotSupportedException("this directory currently does not work at all!");
+            // LUCENENET specific: upstream left getChecksum() unsupported; we maintain a running CRC32
+            // over the written bytes (like FSIndexOutput) so the checksum footer can be written.
+            public override long Checksum => crc.Value;
 
             protected override void Dispose(bool disposing)
             {
@@ -494,7 +509,16 @@ namespace Lucene.Net.Store
                     }
                     catch (Exception ioe) when (ioe.IsIOException())
                     {
-                        throw RuntimeException.Create("IOException during Length: " + this, ioe);
+                        // LUCENENET: upstream wraps in a RuntimeException here (IndexInput.Length cannot
+                        // throw a checked IOException in Java). Preserve the original HResult so callers
+                        // that inspect it (e.g. NativeFSLock) still see the underlying error. The HResult
+                        // setter is only public on modern TFMs; on net462/netstandard2.0 it is protected,
+                        // so the detail is retained in the message there instead.
+                        Exception wrapped = RuntimeException.Create("IOException during Length: " + this, ioe);
+#if !(NETSTANDARD2_0 || NET462)
+                        wrapped.HResult = ioe.HResult;
+#endif
+                        throw wrapped;
                     }
                 }
             }
@@ -524,7 +548,10 @@ namespace Lucene.Net.Store
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw new IOException(ioe.Message + ": " + this, ioe);
+                    // LUCENENET: surface the original HResult (via the ctor that accepts it, which is
+                    // public on all target frameworks) so callers such as NativeFSLock still see the
+                    // underlying error. The inner detail is retained in the message.
+                    throw new IOException(ioe.Message + ": " + this, ioe.HResult);
                 }
                 // Upstream used FileChannel.read(), which returns -1 at EOF. Here Pread() wraps libc
                 // pread(), which returns 0 at EOF (a genuine error already threw above), so a refill that
@@ -567,7 +594,14 @@ namespace Lucene.Net.Store
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    throw RuntimeException.Create("IOException during clone: " + this, ioe);
+                    // LUCENENET: as in Length above, upstream wraps in a RuntimeException (Clone cannot
+                    // throw a checked IOException in Java). Preserve the original HResult where the setter
+                    // is public (modern TFMs); on net462/netstandard2.0 the detail stays in the message.
+                    Exception wrapped = RuntimeException.Create("IOException during clone: " + this, ioe);
+#if !(NETSTANDARD2_0 || NET462)
+                    wrapped.HResult = ioe.HResult;
+#endif
+                    throw wrapped;
                 }
             }
 
