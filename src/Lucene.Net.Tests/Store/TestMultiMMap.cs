@@ -1444,9 +1444,12 @@ namespace Lucene.Net.Store
                 "OpenFullSlice bytes must match OpenInput bytes for the same CFS file");
         }
 
-        // OpenFullSlice on a slicer that has been disposed must throw
-        // AlreadyClosedException, not ObjectDisposedException leaking from
-        // the underlying FileStream. Part of the review-item-6 fix.
+        // OpenFullSlice on a slicer that has been disposed must throw the
+        // already-closed exception. In Lucene.NET, AlreadyClosedException.Create()
+        // is a factory that returns an ObjectDisposedException (there is no
+        // distinct AlreadyClosedException type), so this test cannot and does not
+        // distinguish the two by type; it asserts via IsAlreadyClosedException(),
+        // which matches the ObjectDisposedException that Create() produces.
         [Test, LuceneNetSpecific]
         public void TestOpenFullSlice_AfterDispose_ThrowsAlreadyClosed()
         {
@@ -1490,6 +1493,71 @@ namespace Lucene.Net.Store
 
             // Now it should be possible to delete the file. This is the condition we are testing for.
             File.Delete(fileName);
+        }
+
+        // LUCENENET specific: PR #1267 review item. MemoryMappedFile.CreateFromFile
+        // borrows the file handle from the FileStream we pass in but never disposes
+        // the FileStream object itself. SharedMapping therefore owns that FileStream
+        // and must dispose it deterministically on Dispose; otherwise the stream (a
+        // finalizable object holding the file handle) is left to the finalizer. We
+        // assert the invariant directly through internal members rather than by
+        // probing the OS, because the borrowed handle is released either way (the MMF
+        // closes it) and so the leak is not observable as a deletion or exclusive-open
+        // failure. IsFileStreamDisposed reports whether the owned FileStream was disposed.
+        // Note TestDisposeIndexInput above uses a zero-length file, which takes the
+        // early-return path that never calls CreateFromFile and owns no FileStream.
+        [Test, LuceneNetSpecific]
+        public void TestDisposeDisposesBackingFileStream_NonEmptyFile()
+        {
+            const string name = "bytes";
+            var dir = CreateTempDir("testDisposeDisposesBackingFileStream");
+
+            using MMapDirectory mmapDir = new MMapDirectory(dir);
+            using (var output = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            {
+                output.WriteInt64(0x0123456789ABCDEFL);
+            }
+
+            var input = (MMapDirectory.MMapIndexInput)mmapDir.OpenInput(name, NewIOContext(Random));
+            var mapping = input.Mapping;
+            Assert.IsFalse(mapping.IsFileStreamDisposed,
+                "backing FileStream must still be open while the input is open");
+
+            input.Dispose();
+
+            Assert.IsTrue(mapping.IsFileStreamDisposed,
+                "disposing the root input must deterministically dispose the mapping's backing FileStream");
+        }
+
+        // LUCENENET specific: PR #1267 review item. The slicer (CreateSlicer) owns its
+        // own SharedMapping; disposing the slicer must dispose that mapping's backing
+        // FileStream just as disposing a root input does. This is the OpenFullSlice /
+        // 3.x CFS path the reviewer called out.
+        [Test, LuceneNetSpecific]
+        public void TestDisposeSlicerDisposesBackingFileStream_NonEmptyFile()
+        {
+            const string name = "bytes";
+            var dir = CreateTempDir("testDisposeSlicerDisposesBackingFileStream");
+
+            using MMapDirectory mmapDir = new MMapDirectory(dir);
+            using (var output = mmapDir.CreateOutput(name, NewIOContext(Random)))
+            {
+                output.WriteInt64(0x0123456789ABCDEFL);
+            }
+
+            var slicer = mmapDir.CreateSlicer(name, NewIOContext(Random));
+#pragma warning disable 612, 618
+            var full = (MMapDirectory.MMapIndexInput)slicer.OpenFullSlice();
+#pragma warning restore 612, 618
+            var mapping = full.Mapping;
+            Assert.IsFalse(mapping.IsFileStreamDisposed,
+                "backing FileStream must still be open while the slicer is open");
+
+            full.Dispose();
+            slicer.Dispose();
+
+            Assert.IsTrue(mapping.IsFileStreamDisposed,
+                "disposing the slicer must deterministically dispose the mapping's backing FileStream");
         }
 
         // LUCENENET specific: tests written to investigate the concern raised
