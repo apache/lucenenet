@@ -1243,6 +1243,72 @@ namespace Lucene.Net.Store
             }
         }
 
+        // LUCENENET specific: PR #1267 review item. End-to-end leak gate for the
+        // MMap-specific disposal paths. MockDirectoryWrapper tracks every
+        // directly-opened IndexInput, IndexInputSlicer, and slice and, on Dispose,
+        // throws "cannot close: there are still open files" if any was not disposed.
+        // Wrapping a real MMapDirectory means a missing Dispose on an input, slicer,
+        // or slice fails here. (TestRandomChunkSizes covers the OpenInput-via-
+        // IndexWriter path through MockDirectoryWrapper; this adds explicit coverage
+        // for the slicer/slice paths.)
+        //
+        // Caveats so nobody over-reads this gate:
+        //  - Clones are NOT tracked: upstream MockIndexInputWrapper.Clone leaves the
+        //    open-file count alone (see the commented LUCENE-686 block there), so a
+        //    leaked clone would not fail this test. The clones below verify clone
+        //    read behavior, not clone-disposal leakage.
+        //  - This gate is at the Lucene IndexInput level: it asserts inputs/slices
+        //    are disposed, not that SharedMapping released its backing FileStream -
+        //    that lower-level invariant is pinned by
+        //    TestDisposeDisposesBackingFileStream_NonEmptyFile.
+        [Test, LuceneNetSpecific]
+        public void TestNoOpenHandlesAfterDispose_SliceAndClonePaths()
+        {
+            var dirPath = CreateTempDir("testMMapNoOpenHandles");
+            var mmapDir = new MMapDirectory(dirPath);
+            // MockDirectoryWrapper takes ownership of mmapDir and disposes it.
+            // dir is NOT in a using: its Dispose() is the assertion under test
+            // (it throws if a handle leaked), so it must run only on the success
+            // path, last. A using would also dispose it while unwinding an earlier
+            // assertion failure, and the resulting "still open files" throw would
+            // mask the real failure. The inputs below ARE in usings: that still
+            // exercises their Dispose() (the path under test) while guaranteeing
+            // cleanup if an assertion in this method throws. usings dispose LIFO,
+            // which gives the correct order (clone before slice before slicer).
+            var dir = new MockDirectoryWrapper(Random, mmapDir);
+
+            const string name = "bytes";
+            using (var io = dir.CreateOutput(name, NewIOContext(Random)))
+            {
+                for (int i = 0; i < 1024; i++) io.WriteInt32(i);
+            }
+
+            // Root input + a clone of it.
+            using (var input = dir.OpenInput(name, NewIOContext(Random)))
+            using (var inputClone = (IndexInput)input.Clone())
+            {
+                Assert.AreEqual(42, ReadInt32At(inputClone, 42));
+            }
+
+            // Slicer + slice + a clone of the slice.
+            using (var slicer = dir.CreateSlicer(name, NewIOContext(Random)))
+            using (var slice = slicer.OpenSlice("half", 0, 1024 * sizeof(int) / 2))
+            using (var sliceClone = (IndexInput)slice.Clone())
+            {
+                Assert.AreEqual(7, ReadInt32At(sliceClone, 7));
+            }
+
+            // If any of the above was left open, this throws
+            // "MockDirectoryWrapper: cannot close: there are still open files".
+            dir.Dispose();
+        }
+
+        private static int ReadInt32At(IndexInput input, long intIndex)
+        {
+            input.Seek(intIndex * sizeof(int));
+            return input.ReadInt32();
+        }
+
         // Disposing a single slice must not affect its sibling slices from
         // the same slicer. In the new design each OpenSlice has its own
         // View, so slice.Dispose closes that slice's view only. Slicer
