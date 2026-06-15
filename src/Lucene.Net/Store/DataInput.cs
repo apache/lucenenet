@@ -1,6 +1,7 @@
 using J2N.Numerics;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Buffers;
 using Lucene.Net.Util;
 using System;
@@ -198,7 +199,8 @@ namespace Lucene.Net.Store
             {
                 return i;
             }
-            throw new IOException("Invalid VInt32 detected (too many bits)");
+            VIntUtils.ThrowInvalidVInt32();
+            return 0; // unreachable; ThrowInvalidVInt32 always throws
         }
 
         /// <summary>
@@ -295,7 +297,8 @@ namespace Lucene.Net.Store
             {
                 return i;
             }
-            throw new IOException("Invalid VInt64 detected (negative values disallowed)");
+            VIntUtils.ThrowInvalidVInt64();
+            return 0; // unreachable; ThrowInvalidVInt64 always throws
         }
 
 #nullable enable

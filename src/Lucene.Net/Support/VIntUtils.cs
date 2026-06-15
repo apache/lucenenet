@@ -191,7 +191,8 @@ namespace Lucene.Net.Support
 
         /// <summary>
         /// Throws an <see cref="IOException"/> indicating a malformed 32-bit VInt. Used by the
-        /// buffered/stream-backed readers, which surface decode failures as I/O errors.
+        /// base <see cref="Lucene.Net.Store.DataInput"/> and the buffered/stream-backed readers,
+        /// which surface decode failures as I/O errors.
         /// </summary>
         [MethodImpl(MethodImplOptions.NoInlining)]
         [DoesNotReturn]
@@ -200,7 +201,8 @@ namespace Lucene.Net.Support
 
         /// <summary>
         /// Throws an <see cref="IOException"/> indicating a malformed 64-bit VInt. Used by the
-        /// buffered/stream-backed readers, which surface decode failures as I/O errors.
+        /// base <see cref="Lucene.Net.Store.DataInput"/> and the buffered/stream-backed readers,
+        /// which surface decode failures as I/O errors.
         /// </summary>
         [MethodImpl(MethodImplOptions.NoInlining)]
         [DoesNotReturn]
