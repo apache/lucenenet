@@ -79,7 +79,7 @@ namespace Lucene.Net.Search.Spans
             return clauses.ToArray();
         }
 
-        public override string Field => field;
+        public override string Field => this.field;
 
         public override void ExtractTerms(ISet<Term> terms)
         {

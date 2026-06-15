@@ -78,9 +78,9 @@ namespace Lucene.Net.Index
             get
             {
                 long numTerms = 0;
-                foreach (string field in this)
+                foreach (string f in this)
                 {
-                    Terms terms = GetTerms(field);
+                    Terms terms = GetTerms(f);
                     if (terms != null)
                     {
                         long termCount = terms.Count;

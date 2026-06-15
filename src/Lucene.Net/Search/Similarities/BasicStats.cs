@@ -119,7 +119,7 @@ namespace Lucene.Net.Search.Similarities
         /// The field.
         /// </summary>
         // LUCENENET specific
-        public string Field => field;
+        public string Field => this.field;
 
         // -------------------------- Boost-related stuff --------------------------
 
