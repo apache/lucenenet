@@ -67,3 +67,11 @@ svn-*/
 
 # Visual Studio Code/Rider files
 .vscode/
+
+# Index compatibility harness (src/java/index-compat): generated, never committed
+src/java/**/target/
+src/java/**/work/
+
+# macOS files
+.DS_Store
+

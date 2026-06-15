@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.apache.lucenenet</groupId>
+  <artifactId>index-compat</artifactId>
+  <version>4.8.1</version>
+  <packaging>jar</packaging>
+
+  <name>Lucene.NET index compatibility harness</name>
+  <description>
+    Generates and reads Apache Lucene 4.8.1 indexes to verify two-way index/codec
+    compatibility with Lucene.NET. See README.md and issue #270.
+  </description>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- Lucene 4.8.1 targets Java 7. We compile to release 8, the lowest level
+         still accepted by modern JDKs. A JDK 8 or newer is required to run this. -->
+    <maven.compiler.release>8</maven.compiler.release>
+    <lucene.version>4.8.1</lucene.version>
+    <!-- Default location an index is read from in the "read .NET index" direction.
+         Overridden on the command line with -Dlucenenet.index.dir=... -->
+    <lucenenet.index.dir></lucenenet.index.dir>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-core</artifactId>
+      <version>${lucene.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-analyzers-common</artifactId>
+      <version>${lucene.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-codecs</artifactId>
+      <version>${lucene.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+        <configuration>
+          <!-- Pass the .NET index dir through to the JUnit test. -->
+          <systemPropertyVariables>
+            <lucenenet.index.dir>${lucenenet.index.dir}</lucenenet.index.dir>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- Used to run GenerateIndex.main(): ./mvnw exec:java -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <mainClass>org.apache.lucenenet.compat.GenerateIndex</mainClass>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
