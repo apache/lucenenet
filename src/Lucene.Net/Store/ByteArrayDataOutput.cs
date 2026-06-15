@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Buffers.Binary;
+using System.Diagnostics;
 
 namespace Lucene.Net.Store
 {
@@ -120,21 +121,24 @@ namespace Lucene.Net.Store
         // span-based for subclasses without a cheap contiguous buffer. See #1279.
         public override void WriteInt16(short i)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(pos + sizeof(short) <= limit);
+            // LUCENENET: Debug.Assert (compiled out of Release) rather than Debugging.Assert,
+            // since this is a LUCENENET-specific hot-path override with no upstream assert to
+            // preserve - the bounds check is a dev-only invariant. See #1279.
+            Debug.Assert(pos + sizeof(short) <= limit);
             BinaryPrimitives.WriteInt16BigEndian(bytes.AsSpan(pos, sizeof(short)), i);
             pos += sizeof(short);
         }
 
         public override void WriteInt32(int i)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(pos + sizeof(int) <= limit);
+            Debug.Assert(pos + sizeof(int) <= limit);
             BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(pos, sizeof(int)), i);
             pos += sizeof(int);
         }
 
         public override void WriteInt64(long i)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(pos + sizeof(long) <= limit);
+            Debug.Assert(pos + sizeof(long) <= limit);
             BinaryPrimitives.WriteInt64BigEndian(bytes.AsSpan(pos, sizeof(long)), i);
             pos += sizeof(long);
         }
