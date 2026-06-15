@@ -298,7 +298,7 @@ namespace Lucene.Net.Store
                 bufferPosition += count;
                 if (!ok)
                 {
-                    throw new IOException("Invalid VInt32 detected (too many bits)");
+                    VIntUtils.ThrowInvalidVInt32();
                 }
                 return value;
             }
@@ -320,7 +320,7 @@ namespace Lucene.Net.Store
                 bufferPosition += count;
                 if (!ok)
                 {
-                    throw new IOException("Invalid VInt64 detected (negative values disallowed)");
+                    VIntUtils.ThrowInvalidVInt64();
                 }
                 return value;
             }

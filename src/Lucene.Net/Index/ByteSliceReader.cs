@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
             upto += count;
             if (!ok)
             {
-                throw new System.IO.IOException("Invalid VInt32 detected (too many bits)");
+                VIntUtils.ThrowInvalidVInt32();
             }
             return result;
         }
@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
             upto += count;
             if (!ok)
             {
-                throw new System.IO.IOException("Invalid VInt64 detected (negative values disallowed)");
+                VIntUtils.ThrowInvalidVInt64();
             }
             return result;
         }

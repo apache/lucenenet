@@ -148,7 +148,7 @@ namespace Lucene.Net.Store
             pos += count;
             if (!ok)
             {
-                throw RuntimeException.Create("Invalid VInt32 detected (too many bits)");
+                VIntUtils.ThrowInvalidVInt32Runtime();
             }
             return value;
         }
@@ -164,7 +164,7 @@ namespace Lucene.Net.Store
             pos += count;
             if (!ok)
             {
-                throw RuntimeException.Create("Invalid VInt64 detected (negative values disallowed)");
+                VIntUtils.ThrowInvalidVInt64Runtime();
             }
             return value;
         }
