@@ -151,6 +151,16 @@ namespace Lucene.Net.Analysis.Core
                     foreach (ConstructorInfo ctor in c.GetConstructors())
                     {
                         brokenOffsetsConstructors[ctor] = ALWAYS;
+
+                        // LUCENENET specific (#1072): Also fully exclude these broken-offsets producers
+                        // from the random chains, not just relax offset validation. brokenOffsetsConstructors
+                        // only flips offsetsAreCorrect=false (which suppresses ValidatingTokenFilter's checks),
+                        // but the offending filter still runs and can feed backwards offsets into a downstream
+                        // word-combiner (e.g. ShingleFilter), which then throws from OffsetAttribute.SetOffset.
+                        // Upstream Lucene resolved this in 9.1 (LUCENE-10352) by excluding these classes via the
+                        // @IgnoreRandomChains annotation. Until that annotation is backported, exclude them here.
+                        // TODO: Remove this when LUCENE-10352 (IgnoreRandomChains) is backported.
+                        brokenConstructors[ctor] = ALWAYS;
                     }
                 }
             }
@@ -1169,8 +1179,8 @@ namespace Lucene.Net.Analysis.Core
                         // hack: MockGraph/MockLookahead has assertions that will trip if they follow
                         // an offsets violator. so we can't use them after e.g. wikipediatokenizer
                         if (!spec.offsetsAreCorrect &&
-                            (ctor.DeclaringType.Equals(typeof(MockGraphTokenFilter)))
-                                || ctor.DeclaringType.Equals(typeof(MockRandomLookaheadTokenFilter)))
+                            (ctor.DeclaringType.Equals(typeof(MockGraphTokenFilter))
+                                || ctor.DeclaringType.Equals(typeof(MockRandomLookaheadTokenFilter))))
                         {
                             continue;
                         }
@@ -1284,7 +1294,6 @@ namespace Lucene.Net.Analysis.Core
         }
 
         [Test]
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/271#issuecomment-973005744")] // LUCENENET TODO: this test occasionally fails
         public void TestRandomChains_()
         {
             int numIterations = AtLeast(20);
@@ -1311,7 +1320,6 @@ namespace Lucene.Net.Analysis.Core
 
         // we might regret this decision...
         [Test]
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/271#issuecomment-973005744")] // LUCENENET TODO: this test occasionally fails
         public void TestRandomChainsWithLargeStrings()
         {
             int numIterations = AtLeast(20);
