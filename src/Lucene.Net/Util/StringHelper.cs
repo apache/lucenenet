@@ -219,6 +219,10 @@ namespace Lucene.Net.Util
 
             switch (len & 0x03)
             {
+                // LUCENENET: upstream Java reads each tail byte as ((sbyte)data[i]) & 0xff to
+                // undo Java's signed byte before masking back to 0-255. In C# the array element
+                // is already an unsigned byte (0-255), so that round-trip is a no-op; we index
+                // the byte directly.
                 case 3:
                     k2 = data[roundedEnd + 2] << 16;
                     // fallthrough
