@@ -62,8 +62,9 @@ namespace Lucene.Net.Util
             Assert.AreEqual(42L, ((J2N.Randomizer)context.RandomGenerator).Seed);
 
             // Two generators created from the same test seed must produce the same sequence.
-            var a = new RandomizedContext(MakeClassLevelTest(), TestAssembly, 1L, 42L).RandomGenerator;
-            var b = new RandomizedContext(MakeClassLevelTest(), TestAssembly, 99L, 42L).RandomGenerator;
+            // Cast to J2N.Randomizer because System.Random.NextInt64() is not available on .NET Framework.
+            var a = (J2N.Randomizer)new RandomizedContext(MakeClassLevelTest(), TestAssembly, 1L, 42L).RandomGenerator;
+            var b = (J2N.Randomizer)new RandomizedContext(MakeClassLevelTest(), TestAssembly, 99L, 42L).RandomGenerator;
             Assert.AreEqual(a.NextInt64(), b.NextInt64(), "Same test seed must yield the same random sequence regardless of the initial random seed.");
         }
 
