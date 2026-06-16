@@ -50,8 +50,8 @@ env:
   DOTNET_NOLOGO: 1
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
   BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS: 'true'
-  # The _I-J shard owns Index/TestJ*.cs, so it contains TestJavaCompatibility.
-  project_path: './src/Lucene.Net.Tests._I-J/Lucene.Net.Tests._I-J.csproj'
+  # The _J-S shard owns Support/Index/*.cs, so it contains TestJavaCompatibility.
+  project_path: './src/Lucene.Net.Tests._J-S/Lucene.Net.Tests._J-S.csproj'
   compat_dir: './src/java/index-compat'
 
 jobs:
@@ -96,7 +96,7 @@ jobs:
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           # Use a 'compat-' prefixed key so this cache lives in its own namespace.
-          # This job only restores the _I-J project, a smaller package closure than
+          # This job only restores the _J-S project, a smaller package closure than
           # the generated workflows' full-solution restore. Sharing their 'nuget-...'
           # key would let whichever job runs first populate a partial cache the other
           # then gets a (wrong-sized) hit on. A separate key avoids that interaction.
