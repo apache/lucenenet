@@ -119,7 +119,7 @@ namespace Lucene.Net.Collation
             // the slow path when the app is configured for NLS.
             if (CollationUtil.IsICU)
             {
-                ReadOnlySpan<char> source = this.termAtt.Buffer.AsSpan(0, this.termAtt.Length);
+                ReadOnlySpan<char> source = this.termAtt.AsSpan();
                 byte[] collationKey = new byte[this.collator.GetSortKeyLength(source, this.options)];
                 this.collator.GetSortKey(source, collationKey, this.options);
                 return collationKey;
