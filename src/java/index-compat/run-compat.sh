@@ -16,74 +16,19 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# Runs both directions of the Lucene 4.8.1 <-> Lucene.NET index compatibility
-# check (issue #270). Requires a JDK and the .NET SDK. All generated indexes go
-# under the gitignored work/ folder; nothing is committed.
+# Thin wrapper that forwards to run-compat.ps1, which contains all the business
+# logic. This keeps the cross-platform logic in a single place; the .sh, .bat,
+# and .ps1 entry points differ only in how they locate and invoke PowerShell.
 #
-# By default the test shard builds with its own default target framework. Set
-# COMPAT_TFM (e.g. net10.0, net8.0) to force a specific one.
+# See run-compat.ps1 for what the harness does (both directions of the Lucene
+# 4.8.1 <-> Lucene.NET index compatibility check, issue #270) and the
+# COMPAT_TFM environment variable.
 
-set -euo pipefail
-
-# Guarantee a clear message and non-zero exit code on any failure so CI fails the job.
-trap 'status=$?; if [[ $status -ne 0 ]]; then echo "==> Compatibility check FAILED (exit $status)" >&2; fi' EXIT
-
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$HERE/../../.." && pwd)"
-WORK="$HERE/work"
-SHARD="$REPO_ROOT/src/Lucene.Net.Tests._I-J/Lucene.Net.Tests._I-J.csproj"
-
-JAVA_INDEX="$WORK/java"
-DOTNET_INDEX="$WORK/dotnet"
-
-# Only pass -f when the caller explicitly forces a target framework.
-TFM_ARGS=()
-if [[ -n "${COMPAT_TFM:-}" ]]; then
-  TFM_ARGS=(-f "$COMPAT_TFM")
+if ! command -v pwsh &> /dev/null
+then
+    echo "PowerShell Core could not be found. Please install version 3 or higher."
+    exit 1
 fi
 
-# dotnet test exits 0 when a --filter matches nothing, which would hide a
-# misconfiguration. Capture output, surface it, and fail on "matched 0".
-# Env-var names contain dots, which bash forbids as bare assignments, so the
-# caller passes "name=value" pairs that we apply via `env`.
-run_dotnet_test() {
-  local filter="$1"
-  shift
-  local out
-  if ! out="$(env "$@" dotnet test "$SHARD" ${TFM_ARGS[@]+"${TFM_ARGS[@]}"} -c Release --no-build --filter "$filter" 2>&1)"; then
-    echo "$out"
-    echo "ERROR: dotnet test failed for filter '$filter'" >&2
-    return 1
-  fi
-  echo "$out"
-  if echo "$out" | grep -Eq 'no test is available|matches the given testcase filter|total:[[:space:]]*0\b'; then
-    echo "ERROR: No tests ran for filter '$filter'. Is the shard built for this target framework?" >&2
-    return 1
-  fi
-}
-
-echo "==> Building the .NET test shard${COMPAT_TFM:+ ($COMPAT_TFM)}"
-dotnet build "$SHARD" ${TFM_ARGS[@]+"${TFM_ARGS[@]}"} -c Release
-
-echo
-echo "==> Direction 1: .NET writes, Java reads"
-echo "    .NET writing index into $DOTNET_INDEX"
-run_dotnet_test "FullyQualifiedName~TestJavaCompatibility.TestWriteIndexForJava" \
-  "lucenenet.compat.write.dir=$DOTNET_INDEX"
-
-for variant in index.481.nocfs index.481.cfs; do
-  echo "    Java reading $DOTNET_INDEX/$variant"
-  (cd "$HERE" && ./mvnw -q test -Dlucenenet.index.dir="$DOTNET_INDEX/$variant")
-done
-
-echo
-echo "==> Direction 2: Java writes, .NET reads"
-echo "    Java writing index into $JAVA_INDEX"
-(cd "$HERE" && ./mvnw -q compile exec:java -Dexec.args="$JAVA_INDEX")
-
-echo "    .NET reading from $JAVA_INDEX"
-run_dotnet_test "FullyQualifiedName~TestJavaCompatibility.TestReadJavaIndex" \
-  "lucenenet.compat.read.dir=$JAVA_INDEX"
-
-echo
-echo "==> Both directions passed."
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+pwsh -ExecutionPolicy bypass -Command "& '$HERE/run-compat.ps1'" "$@"
