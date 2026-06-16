@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Store;
+using Lucene.Net.Support.Text;
 using System;
 using System.IO;
 using Directory = Lucene.Net.Store.Directory;
@@ -42,6 +43,17 @@ namespace Lucene.Net.Replicator
 
         public virtual Directory GetDirectory(string sessionId, string source)
         {
+            // LUCENENET-specific: validate sessionId and source are valid for paths
+            if (!sessionId.IsValidSinglePathComponent())
+            {
+                throw new ArgumentException("Session ID is not valid for replication", nameof(sessionId));
+            }
+
+            if (!source.IsValidSinglePathComponent())
+            {
+                throw new ArgumentException("Source is not valid for replication", nameof(source));
+            }
+
             string sourceDirectory = Path.Combine(workingDirectory, sessionId, source);
             System.IO.Directory.CreateDirectory(sourceDirectory);
             if (!System.IO.Directory.Exists(sourceDirectory))
@@ -51,7 +63,16 @@ namespace Lucene.Net.Replicator
 
         public virtual void CleanupSession(string sessionId)
         {
-            if (string.IsNullOrEmpty(sessionId)) throw new ArgumentException("sessionID cannot be empty", nameof(sessionId));
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new ArgumentException("sessionID cannot be empty", nameof(sessionId));
+            }
+
+            // LUCENENET-specific: validate sessionId is valid for paths
+            if (!sessionId.IsValidSinglePathComponent())
+            {
+                throw new ArgumentException("Session ID is not valid for replication", nameof(sessionId));
+            }
 
             string sessionDirectory = Path.Combine(workingDirectory, sessionId);
             System.IO.Directory.Delete(sessionDirectory, true);

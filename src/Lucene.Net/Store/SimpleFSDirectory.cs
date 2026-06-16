@@ -98,6 +98,7 @@ namespace Lucene.Net.Store
         public override IndexInput OpenInput(string name, IOContext context)
         {
             EnsureOpen();
+            EnsureCanRead(name); // LUCENENET-specific: backported call site from Lucene 6.0.0
             var path = new FileInfo(Path.Combine(Directory.FullName, name));
             var raf = new FileStream(path.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             return new SimpleFSIndexInput("SimpleFSIndexInput(path=\"" + path.FullName + "\")", raf, context);
@@ -106,6 +107,7 @@ namespace Lucene.Net.Store
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
+            EnsureCanRead(name); // LUCENENET-specific: this method is not in Lucene 6.0.0 but added to match OpenInput above
             var file = new FileInfo(Path.Combine(Directory.FullName, name));
             var descriptor = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             return new IndexInputSlicerAnonymousClass(context, file, descriptor);

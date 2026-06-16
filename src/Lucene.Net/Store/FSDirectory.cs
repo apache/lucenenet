@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Support.Text;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -362,6 +363,12 @@ namespace Lucene.Net.Store
 
         protected virtual void EnsureCanWrite(string name)
         {
+            // LUCENENET-specific: validate the name is valid for a FSDirectory
+            if (!name.IsValidSinglePathComponent())
+            {
+                throw new ArgumentException("File name is not valid for a FSDirectory", nameof(name));
+            }
+
             if (!m_directory.Exists)
             {
                 try
@@ -385,6 +392,17 @@ namespace Lucene.Net.Store
                 {
                     throw new IOException("Cannot overwrite: " + file);
                 }
+            }
+        }
+
+        // LUCENENET-specific: backported method signature (but not implementation, yet)
+        // from Lucene 6.0.0 as extensibility point to override name validation if needed
+        protected virtual void EnsureCanRead(string name)
+        {
+            // LUCENENET-specific: validate the name is valid for a FSDirectory
+            if (!name.IsValidSinglePathComponent())
+            {
+                throw new ArgumentException("File name is not valid for a FSDirectory", nameof(name));
             }
         }
 

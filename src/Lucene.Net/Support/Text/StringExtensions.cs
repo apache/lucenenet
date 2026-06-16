@@ -1,5 +1,6 @@
 ﻿using J2N.Text;
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Support.Text
@@ -48,5 +49,27 @@ namespace Lucene.Net.Support.Text
             }
             return false;
         }
+
+#nullable enable
+        /// <summary>
+        /// Returns <c>true</c> if <paramref name="path"/> is a valid, single path component for use in index
+        /// file system access. A valid value is either a file name or a directory name, without any directory
+        /// or volume separators.
+        /// </summary>
+        /// <param name="path">The file name to check.</param>
+        /// <returns><c>true</c> if <paramref name="path"/> is a valid path component;
+        /// otherwise, <c>false</c>.</returns>
+        public static bool IsValidSinglePathComponent(this string path)
+        {
+            // Check IndexOfAny before Path.GetFileName: on .NET Framework, Path.GetFileName throws
+            // ArgumentException for strings containing NUL or other characters that are illegal in paths.
+            return !string.IsNullOrEmpty(path)
+                   && path != "."
+                   && path != ".."
+                   && path.IndexOfAny(Path.GetInvalidFileNameChars()) < 0
+                   && path.IndexOf('\\') < 0 // backslash is not an invalid character on Linux/macOS but is invalid for this purpose
+                   && path == Path.GetFileName(path); // NOTE: ensures no directory components (separators, volume names)
+        }
+#nullable restore
     }
 }

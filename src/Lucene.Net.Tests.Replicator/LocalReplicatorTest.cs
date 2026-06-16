@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Documents;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
@@ -88,6 +89,27 @@ namespace Lucene.Net.Replicator
             {
                 // expected
             }
+        }
+
+        // LUCENENET-specific: covers fileName validation in LocalReplicator.ObtainFile.
+        // Validation runs before session lookup, so a fresh (never-published) replicator is sufficient.
+        [Test, LuceneNetSpecific]
+        [TestCase("../../a.txt")]
+        [TestCase("..\\a.txt")]
+        [TestCase("/a/b")]
+        [TestCase("C:\\folder\\file")]
+        [TestCase("subdir/file.txt")]
+        [TestCase("subdir\\file.txt")]
+        [TestCase("..")]
+        [TestCase(".")]
+        [TestCase("name\0extra")]
+        [TestCase("")]
+        public void TestObtainFileRejectsInvalidFileName(string invalidFileName)
+        {
+            Assert.Throws<ArgumentException>(() =>
+            {
+                using Stream _ = replicator.ObtainFile("session1", "src", invalidFileName);
+            }, $"ObtainFile should reject fileName '{invalidFileName}'");
         }
 
         [Test]
