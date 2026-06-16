@@ -649,5 +649,102 @@ namespace Lucene.Net.Store
                 }
             }
         }
+
+        // LUCENENET-specific: covers EnsureCanWrite name validation across FSDirectory subclasses.
+        [Test, LuceneNetSpecific]
+        [TestCase("../../foo.txt")]
+        [TestCase("..\\foo.txt")]
+        [TestCase("/tmp/foo.txt")]
+        [TestCase("subdir/file.txt")]
+        [TestCase("subdir\\file.txt")]
+        [TestCase("..")]
+        [TestCase(".")]
+        [TestCase("")]
+        public void TestCreateOutputRejectsInvalidName(string invalidName)
+        {
+            DirectoryInfo path = CreateTempDir("ensureCanWrite");
+            foreach (FSDirectory dir in new FSDirectory[]
+            {
+                new SimpleFSDirectory(path),
+                new NIOFSDirectory(path),
+                new MMapDirectory(path),
+            })
+            {
+                try
+                {
+                    Assert.Throws<ArgumentException>(() =>
+                    {
+                        using IndexOutput _ = dir.CreateOutput(invalidName, IOContext.DEFAULT);
+                    }, $"{dir.GetType().Name}.CreateOutput should reject '{invalidName}'");
+                }
+                finally
+                {
+                    dir.Dispose();
+                }
+            }
+        }
+
+        // LUCENENET-specific: covers EnsureCanRead name validation across FSDirectory subclasses.
+        [Test, LuceneNetSpecific]
+        [TestCase("../../foo.txt")]
+        [TestCase("..\\foo.txt")]
+        [TestCase("/tmp/foo.txt")]
+        [TestCase("subdir/file.txt")]
+        [TestCase("subdir\\file.txt")]
+        [TestCase("..")]
+        [TestCase(".")]
+        [TestCase("")]
+        public void TestOpenInputRejectsInvalidName(string invalidName)
+        {
+            DirectoryInfo path = CreateTempDir("ensureCanRead");
+            foreach (FSDirectory dir in new FSDirectory[]
+            {
+                new SimpleFSDirectory(path),
+                new NIOFSDirectory(path),
+                new MMapDirectory(path),
+            })
+            {
+                try
+                {
+                    Assert.Throws<ArgumentException>(() =>
+                    {
+                        using IndexInput _ = dir.OpenInput(invalidName, IOContext.DEFAULT);
+                    }, $"{dir.GetType().Name}.OpenInput should reject '{invalidName}'");
+                }
+                finally
+                {
+                    dir.Dispose();
+                }
+            }
+        }
+
+        // NIOFSDirectory and SimpleFSDirectory have their own CreateSlicer overload that opens its
+        // own FileStream rather than delegating to OpenInput, so validation must fire there too.
+        [Test, LuceneNetSpecific]
+        [TestCase("../../foo.txt")]
+        [TestCase("..\\foo.txt")]
+        [TestCase("/tmp/foo.txt")]
+        public void TestCreateSlicerRejectsInvalidName(string invalidName)
+        {
+            DirectoryInfo path = CreateTempDir("ensureCanReadSlicer");
+            foreach (FSDirectory dir in new FSDirectory[]
+            {
+                new SimpleFSDirectory(path),
+                new NIOFSDirectory(path),
+            })
+            {
+                try
+                {
+                    Assert.Throws<ArgumentException>(() =>
+                    {
+                        using Directory.IndexInputSlicer _ = dir.CreateSlicer(invalidName, IOContext.DEFAULT);
+                    }, $"{dir.GetType().Name}.CreateSlicer should reject '{invalidName}'");
+                }
+                finally
+                {
+                    dir.Dispose();
+                }
+            }
+        }
     }
 }

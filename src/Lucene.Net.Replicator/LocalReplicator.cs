@@ -1,4 +1,5 @@
 using J2N.Threading.Atomic;
+using Lucene.Net.Support.Text;
 using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
@@ -256,6 +257,12 @@ namespace Lucene.Net.Replicator
 
         public virtual Stream ObtainFile(string sessionId, string source, string fileName)
         {
+            // LUCENENET-specific: validate the file name is valid for replication
+            if (!fileName.IsValidSinglePathComponent())
+            {
+                throw new ArgumentException("File name is not valid for replication", nameof(fileName));
+            }
+
             UninterruptableMonitor.Enter(syncLock);
             try
             {
