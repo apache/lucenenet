@@ -85,12 +85,14 @@ namespace Lucene.Net.Support.Text
             // NOTE: `path == Path.GetFileName(path)` ensures there are no directory components, such as
             // directory separators or volume names. This works for both file and folder names, despite the use of
             // Path.GetFileName() for the latter. If `path` ends with a directory separator, it's invalid anyway.
+            // Check IndexOfAny before Path.GetFileName: on .NET Framework, Path.GetFileName throws
+            // ArgumentException for strings containing NUL or other characters that are illegal in paths.
             return !string.IsNullOrEmpty(path)
                    && path != "."
                    && path != ".."
-                   && path == Path.GetFileName(path) // see NOTE above
                    && path.IndexOfAny(Path.GetInvalidFileNameChars()) < 0
-                   && path.IndexOf('\\') < 0; // backslash is not an invalid character on Linux/macOS but is invalid for this purpose
+                   && path.IndexOf('\\') < 0 // backslash is not an invalid character on Linux/macOS but is invalid for this purpose
+                   && path == Path.GetFileName(path); // see NOTE above
         }
 #nullable restore
     }

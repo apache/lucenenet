@@ -93,7 +93,9 @@ namespace Lucene.Net.Replicator
             File.WriteAllText(siblingFile, "untouched");
 
             PerSessionDirectoryFactory factory = new PerSessionDirectoryFactory(workDir.FullName);
-            string relative = Path.GetRelativePath(workDir.FullName, sibling.FullName);
+            // Path.GetRelativePath is not available on .NET Framework; compute manually.
+            // Both temp dirs share the same parent, so the relative path is "../<siblingName>".
+            string relative = Path.Combine("..", sibling.Name);
 
             Assert.Throws<ArgumentException>(() => factory.CleanupSession(relative));
             assertTrue("sibling directory must still exist", System.IO.Directory.Exists(sibling.FullName));
