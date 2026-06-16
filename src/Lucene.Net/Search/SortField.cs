@@ -276,7 +276,7 @@ namespace Lucene.Net.Search
         /// Returns the name of the field.  Could return <c>null</c>
         /// if the sort is by <see cref="SortFieldType.SCORE"/> or <see cref="SortFieldType.DOC"/>. </summary>
         /// <returns> Name of field, possibly <c>null</c>. </returns>
-        public virtual string Field => field;
+        public virtual string Field => this.field;
 
         /// <summary>
         /// Returns the type of contents in the field. </summary>

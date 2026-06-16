@@ -163,9 +163,9 @@ namespace Lucene.Net.Codecs.Memory
                 get
                 {
                     long numTerms = 0;
-                    foreach (DirectField field in fields.Values)
+                    foreach (DirectField @field in fields.Values)
                     {
-                        numTerms += field.terms.Length;
+                        numTerms += @field.terms.Length;
                     }
                     return numTerms;
                 }

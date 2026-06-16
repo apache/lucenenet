@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the field name </summary>
-        public string Field => field;
+        public string Field => this.field;
 
         /// <summary>
         /// Returns the total number of documents, regardless of
