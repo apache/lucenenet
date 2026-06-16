@@ -116,8 +116,8 @@ namespace Lucene.Net.Collation
 
         public override Attribute CreateAttributeInstance<T>()
         {
-            return typeof(T).IsAssignableFrom(typeof(CollatedTermAttributeImpl))
-                ? new CollatedTermAttributeImpl(this.collator, this.options)
+            return typeof(T).IsAssignableFrom(typeof(CollatedTermAttribute))
+                ? new CollatedTermAttribute(this.collator, this.options)
                 : this.@delegate.CreateAttributeInstance<T>();
         }
     }

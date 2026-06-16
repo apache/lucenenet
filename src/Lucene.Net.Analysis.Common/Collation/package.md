@@ -41,15 +41,16 @@ summary: *content
 ### Farsi Range Queries
 
 ```cs
-CompareInfo collator = CompareInfo.GetCompareInfo("ar");
+CompareInfo collator = CompareInfo.GetCompareInfo("fa");
 CollationKeyAnalyzer analyzer = new CollationKeyAnalyzer(LuceneVersion.LUCENE_48, collator);
 Store.Directory ramDir = new RAMDirectory();
-IndexWriter writer = new IndexWriter(ramDir, new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer));
-Document doc = new Document();
-doc.Add(new TextField("content", "ساب", Field.Store.YES));
-writer.AddDocument(doc);
-writer.Dispose();
-IndexReader ir = DirectoryReader.Open(ramDir);
+using (IndexWriter writer = new IndexWriter(ramDir, new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer)))
+{
+    Document doc = new Document();
+    doc.Add(new TextField("content", "ساب", Field.Store.YES));
+    writer.AddDocument(doc);
+}
+using IndexReader ir = DirectoryReader.Open(ramDir);
 IndexSearcher searcher = new IndexSearcher(ir);
 
 QueryParser aqp = new QueryParser(LuceneVersion.LUCENE_48, "content", analyzer);
@@ -58,7 +59,7 @@ aqp.AnalyzeRangeTerms = true;
 // Unicode order would include U+0633 in [ U+062F - U+0698 ], but Farsi
 // orders the U+0698 character before the U+0633 character, so the single
 // indexed Term above should NOT be returned by a TermRangeQuery with a
-// Farsi Collator (or an Arabic one for the case when Farsi is not supported).
+// Farsi Collator.
 ScoreDoc[] result = searcher.Search(aqp.Parse("[ د TO ژ ]"), null, 1000).ScoreDocs;
 assertEquals("The index Term should not be included.", 0, result.Length);
 ```
@@ -68,19 +69,20 @@ assertEquals("The index Term should not be included.", 0, result.Length);
 ```cs
 Analyzer analyzer = new CollationKeyAnalyzer(LuceneVersion.LUCENE_48, CompareInfo.GetCompareInfo("da-DK"));
 Store.Directory indexStore = new RAMDirectory();
-IndexWriter writer = new IndexWriter(indexStore, new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer));
-string[] tracer = new string[] { "A", "B", "C", "D", "E" };
-string[] data = new string[] { "HAT", "HUT", "HÅT", "HØT", "HOT" };
-string[] sortedTracerOrder = new string[] { "A", "E", "B", "D", "C" };
-for (int i = 0; i < data.Length; ++i)
+using (IndexWriter writer = new IndexWriter(indexStore, new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer)))
 {
-    Document doc = new Document();
-    doc.Add(new StoredField("tracer", tracer[i]));
-    doc.Add(new TextField("contents", data[i], Field.Store.NO));
-    writer.AddDocument(doc);
+    string[] tracer = new string[] { "A", "B", "C", "D", "E" };
+    string[] data = new string[] { "HAT", "HUT", "HÅT", "HØT", "HOT" };
+    for (int i = 0; i < data.Length; ++i)
+    {
+        Document doc = new Document();
+        doc.Add(new StoredField("tracer", tracer[i]));
+        doc.Add(new TextField("contents", data[i], Field.Store.NO));
+        writer.AddDocument(doc);
+    }
 }
-writer.Dispose();
-IndexReader ir = DirectoryReader.Open(indexStore);
+string[] sortedTracerOrder = new string[] { "A", "E", "B", "D", "C" };
+using IndexReader ir = DirectoryReader.Open(indexStore);
 IndexSearcher searcher = new IndexSearcher(ir);
 Sort sort = new Sort();
 sort.SetSort(new SortField("contents", SortFieldType.STRING));
@@ -101,12 +103,13 @@ CompareInfo collator = CompareInfo.GetCompareInfo("tr-TR");
 Analyzer analyzer = new CollationKeyAnalyzer(LuceneVersion.LUCENE_48, collator,
     CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace);
 Store.Directory ramDir = new RAMDirectory();
-IndexWriter writer = new IndexWriter(ramDir, new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer));
-Document doc = new Document();
-doc.Add(new TextField("contents", "DIGY", Field.Store.NO));
-writer.AddDocument(doc);
-writer.Dispose();
-IndexReader ir = DirectoryReader.Open(ramDir);
+using (IndexWriter writer = new IndexWriter(ramDir, new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer)))
+{
+    Document doc = new Document();
+    doc.Add(new TextField("contents", "DIGY", Field.Store.NO));
+    writer.AddDocument(doc);
+}
+using IndexReader ir = DirectoryReader.Open(ramDir);
 IndexSearcher searcher = new IndexSearcher(ir);
 QueryParser parser = new QueryParser(LuceneVersion.LUCENE_48, "contents", analyzer);
 Query query = parser.Parse("dıgy");   // U+0131: dotless i
@@ -118,7 +121,7 @@ assertEquals("The index Term should be included.", 1, result.Length);
 
  __WARNING:__ Make sure you use exactly the same collator (`System.Globalization.CompareInfo` *and* `System.Globalization.CompareOptions`) at index and query time -- `System.Globalization.SortKey`s are only comparable when produced by the same collator. Since the platform collator is not independently versioned, it is unsafe to search against stored `System.Globalization.SortKey`s unless the following are exactly the same (best practice is to store this information with the index and check that they remain the same at query time):
 
-1.  The .NET runtime version, and the active globalization backend. .NET Framework uses Windows NLS, while .NET 5+ uses ICU by default; the two produce different sort keys and orderings.
+1.  The .NET runtime version, and the active globalization backend. .NET Framework uses Windows NLS, while .NET 5+ uses ICU by default; the two produce different sort keys and orderings. You can detect the active backend at runtime via <xref:Lucene.Net.Collation.CollationUtil.IsICU> (or its inverse, <xref:Lucene.Net.Collation.CollationUtil.IsNLS>) and store that value with the index to verify it matches at query time.
 
 2.  The language (and country and variant, if specified) of the culture used when obtaining the collator via `System.Globalization.CompareInfo.GetCompareInfo`.
 

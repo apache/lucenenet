@@ -1043,30 +1043,30 @@ namespace Lucene.Net.Benchmarks.ByTask
             expected = new ICUCollationKeyAnalyzer(TEST_VERSION_CURRENT, Collator.GetInstance(new CultureInfo("nb-NO"/*, "NY"*/)));
             assertEqualCollation(expected, benchmark.RunData.Analyzer, "foobar");
 
-            // LUCENENET: BCL implementation (named "jdk" in upstream Lucene) - maps to the .NET
+            // LUCENENET: DotNet implementation (named "jdk" in upstream Lucene) - maps to the .NET
             // platform collator (System.Globalization.CompareInfo via CollationKeyAnalyzer). This path
             // was previously unsupported; it is enabled now that the platform-collator port is complete.
-            var bclParam = "impl:bcl";
+            var dotNetParam = "impl:dotnet";
 
             // ROOT locale
-            benchmark = execBenchmark(getCollatorConfig("ROOT", bclParam));
-            CollationKeyAnalyzer bclExpected = new CollationKeyAnalyzer(TEST_VERSION_CURRENT, CultureInfo.InvariantCulture.CompareInfo);
-            assertEqualCollation(bclExpected, benchmark.RunData.Analyzer, "foobar");
+            benchmark = execBenchmark(getCollatorConfig("ROOT", dotNetParam));
+            CollationKeyAnalyzer dotNetExpected = new CollationKeyAnalyzer(TEST_VERSION_CURRENT, CultureInfo.InvariantCulture.CompareInfo);
+            assertEqualCollation(dotNetExpected, benchmark.RunData.Analyzer, "foobar");
 
             // specify just a language
-            benchmark = execBenchmark(getCollatorConfig("de", bclParam));
-            bclExpected = new CollationKeyAnalyzer(TEST_VERSION_CURRENT, CompareInfo.GetCompareInfo("de"));
-            assertEqualCollation(bclExpected, benchmark.RunData.Analyzer, "foobar");
+            benchmark = execBenchmark(getCollatorConfig("de", dotNetParam));
+            dotNetExpected = new CollationKeyAnalyzer(TEST_VERSION_CURRENT, CompareInfo.GetCompareInfo("de"));
+            assertEqualCollation(dotNetExpected, benchmark.RunData.Analyzer, "foobar");
 
             // specify language + country
-            benchmark = execBenchmark(getCollatorConfig("en,US", bclParam));
-            bclExpected = new CollationKeyAnalyzer(TEST_VERSION_CURRENT, CompareInfo.GetCompareInfo("en-US"));
-            assertEqualCollation(bclExpected, benchmark.RunData.Analyzer, "foobar");
+            benchmark = execBenchmark(getCollatorConfig("en,US", dotNetParam));
+            dotNetExpected = new CollationKeyAnalyzer(TEST_VERSION_CURRENT, CompareInfo.GetCompareInfo("en-US"));
+            assertEqualCollation(dotNetExpected, benchmark.RunData.Analyzer, "foobar");
 
             // specify language + country + variant
-            benchmark = execBenchmark(getCollatorConfig("nb,NO,NY", bclParam));
-            bclExpected = new CollationKeyAnalyzer(TEST_VERSION_CURRENT, CompareInfo.GetCompareInfo("nb-NO"/*, "NY"*/));
-            assertEqualCollation(bclExpected, benchmark.RunData.Analyzer, "foobar");
+            benchmark = execBenchmark(getCollatorConfig("nb,NO,NY", dotNetParam));
+            dotNetExpected = new CollationKeyAnalyzer(TEST_VERSION_CURRENT, CompareInfo.GetCompareInfo("nb-NO"/*, "NY"*/));
+            assertEqualCollation(dotNetExpected, benchmark.RunData.Analyzer, "foobar");
         }
 
         private void assertEqualCollation(Analyzer a1, Analyzer a2, string text)

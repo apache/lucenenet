@@ -96,8 +96,7 @@ namespace Lucene.Net.Collation
         {
             if (this.m_input.IncrementToken())
             {
-                // LUCENENET: Normalize to NFC for cross-backend consistency. See CollatedTermAttributeImpl.Normalize.
-                byte[] collationKey = this.collator.GetSortKey(TokenAttributes.CollatedTermAttributeImpl.Normalize(this.termAtt.ToString()), this.options).KeyData;
+                byte[] collationKey = GetCollationKey();
                 int encodedLength = IndexableBinaryStringTools.GetEncodedLength(collationKey, 0, collationKey.Length);
                 this.termAtt.ResizeBuffer(encodedLength);
                 this.termAtt.Length = encodedLength;
@@ -109,6 +108,25 @@ namespace Lucene.Net.Collation
             {
                 return false;
             }
+        }
+
+        private byte[] GetCollationKey()
+        {
+#if FEATURE_COMPAREINFO_SPAN_SORTKEY
+            // LUCENENET: On .NET 5+ with ICU, CompareInfo has a ReadOnlySpan<char> overload of GetSortKey
+            // that lets us generate the sort key without converting the term to a string first. The NLS
+            // backend does not normalize internally (see CollatedTermAttribute.Normalize), so we still need
+            // the slow path when the app is configured for NLS.
+            if (CollationUtil.IsICU)
+            {
+                ReadOnlySpan<char> source = this.termAtt.Buffer.AsSpan(0, this.termAtt.Length);
+                byte[] collationKey = new byte[this.collator.GetSortKeyLength(source, this.options)];
+                this.collator.GetSortKey(source, collationKey, this.options);
+                return collationKey;
+            }
+#endif
+            // LUCENENET: Normalize to NFC for cross-backend consistency. See CollatedTermAttribute.Normalize.
+            return this.collator.GetSortKey(TokenAttributes.CollatedTermAttribute.Normalize(this.termAtt.ToString()), this.options).KeyData;
         }
     }
 }

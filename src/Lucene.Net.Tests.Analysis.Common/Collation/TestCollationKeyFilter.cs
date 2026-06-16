@@ -30,10 +30,7 @@ namespace Lucene.Net.Collation
     [Obsolete("remove when CollationKeyFilter is removed.")]
     public class TestCollationKeyFilter : CollationTestBase
     {
-        // Neither Java 1.4.2 nor 1.5.0 has Farsi Locale collation available in
-        // RuleBasedCollator.  However, the Arabic Locale seems to order the Farsi
-        // characters properly.
-        private readonly CompareInfo collator = CompareInfo.GetCompareInfo("ar");
+        private readonly CompareInfo collator = CompareInfo.GetCompareInfo("fa");
         private readonly Analyzer analyzer;
 
         private readonly BytesRef firstRangeBeginning;
@@ -98,7 +95,7 @@ namespace Lucene.Net.Collation
             Analyzer denmarkAnalyzer = new TestAnalyzer(CompareInfo.GetCompareInfo("da-DK"));
 
             this.TestCollationKeySort(usAnalyzer, franceAnalyzer, swedenAnalyzer, denmarkAnalyzer,
-                this.oStrokeFirst ? "BFJHD" : "BFJDH", FranceResult, "BJDFH", "BJDHF");
+                this.oStrokeFirst ? "BFJHD" : "BFJDH", FrenchResult, "BJDFH", "BJDHF");
         }
     }
 }

@@ -50,7 +50,7 @@ namespace Lucene.Net.Collation
         [Test]
         public virtual void TestNormalization()
         {
-            var turkishUpperCase = "I WİLL USE TURKİSH CASING";
+            var turkishUpperCase = "I W\u0049\u0307LL USE TURKİSH CASING";
             var turkishLowerCase = "ı will use turkish casıng";
             var factory = this.TokenFilterFactory("CollationKey", "language", "tr", "strength", "primary", "decomposition", "canonical");
             var tsUpper = factory.Create(new MockTokenizer(new StringReader(turkishUpperCase), MockTokenizer.KEYWORD, false));
@@ -86,6 +86,12 @@ namespace Lucene.Net.Collation
             var tsLower = factory.Create(new MockTokenizer(new StringReader(lowerCase), MockTokenizer.KEYWORD, false));
             AssertCollatesToSame(tsUpper, tsLower);
         }
+
+        // LUCENENET: Upstream's testCustomRules() has been omitted because it relies on
+        // RuleBasedCollator tailoring (custom collation rules), which System.Globalization.CompareInfo
+        // (the platform collator) does not support. CollationKeyFilterFactory therefore does not accept
+        // a "custom" ruleset, so there is no equivalent behavior to test here. See:
+        // https://github.com/apache/lucene/blob/f01152a5909fa6059f4f1d4aeb4e14968ef1d8c2/lucene/analysis/common/src/test/org/apache/lucene/collation/TestCollationKeyFilterFactory.java#L108-L142
 
         private static void AssertCollatesToSame(TokenStream stream1, TokenStream stream2)
         {
