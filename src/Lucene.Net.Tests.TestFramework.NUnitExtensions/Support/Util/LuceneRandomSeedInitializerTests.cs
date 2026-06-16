@@ -88,5 +88,37 @@ namespace Lucene.Net.Util
             Assert.AreEqual(childContexts.Count, distinctTestSeeds,
                 "Each child test should receive its own distinct per-test seed.");
         }
+
+        [Test]
+        public void GenerateRandomSeedsIsReproducibleFromTheInitialSeed()
+        {
+            TestSuite fixture = TestBuilder.MakeFixture(typeof(MultiMethodFixture));
+
+            var initializer = new LuceneRandomSeedInitializer();
+            initializer.InitializeTestFixture(fixture, TestAssembly);
+            initializer.GenerateRandomSeeds(fixture);
+
+            long initialSeed = fixture.GetRandomizedContext().RandomSeed;
+
+            // Reproduce the exact draw sequence the builder uses (seedOffset 0 for the test fixture):
+            //   draw #1 -> the fixture context created by InitializeTestFixture (later overwritten)
+            //   draw #2 -> the fixture context set by GenerateRandomSeeds
+            //   draws #3.. -> each child test, in order
+            var expected = new J2N.Randomizer(initialSeed);
+            _ = expected.NextInt64(); // discard draw #1 (overwritten fixture context)
+
+            long expectedFixtureSeed = expected.NextInt64();
+            Assert.AreEqual(expectedFixtureSeed, fixture.GetRandomizedContext().TestSeed,
+                "The fixture's per-test seed must be reproducible from the initial seed.");
+
+            int i = 0;
+            foreach (ITest child in fixture.Tests)
+            {
+                long expectedChildSeed = expected.NextInt64();
+                Assert.AreEqual(expectedChildSeed, ((Test)child).GetRandomizedContext().TestSeed,
+                    $"Child test #{i} per-test seed must be reproducible from the initial seed.");
+                i++;
+            }
+        }
     }
 }
