@@ -346,7 +346,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
@@ -381,7 +381,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
     displayName: 'Test net10.0,x86 on'
     pool:
@@ -406,7 +406,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
@@ -441,7 +441,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
     displayName: 'Test net9.0,x86 on'
     pool:
@@ -466,7 +466,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
@@ -501,7 +501,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
     displayName: 'Test net8.0,x86 on'
     pool:
@@ -526,7 +526,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
     displayName: 'Test net472,x64 on'
     pool:
@@ -551,7 +551,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
     displayName: 'Test net472,x86 on'
     pool:
@@ -583,7 +583,7 @@ stages:
         testBinariesArtifactName: '$(TestBinariesArtifactName)'
         nugetArtifactName: '$(NuGetArtifactName)'
         testResultsArtifactName: '$(TestResultsArtifactName)'
-        maximumParallelJobs: 8
+        maximumParallelJobs: 2
         maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
         dotNetSdkVersion: '$(DotNetSDKVersion)'
 
@@ -601,7 +601,7 @@ stages:
         testBinariesArtifactName: '$(TestBinariesArtifactName)'
         nugetArtifactName: '$(NuGetArtifactName)'
         testResultsArtifactName: '$(TestResultsArtifactName)'
-        maximumParallelJobs: 8
+        maximumParallelJobs: 2
         maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
         dotNetSdkVersion: '$(DotNetSDKVersion)'
 
