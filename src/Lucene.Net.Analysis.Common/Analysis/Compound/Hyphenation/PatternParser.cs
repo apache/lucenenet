@@ -369,18 +369,18 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// </summary>
         internal class DtdResolver : XmlUrlResolver
         {
-            internal const string DtdFilename = "hyphenation.dtd";
+            internal const string DTD_FILENAME = "hyphenation.dtd";
 
             public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
             {
-                if (DtdFilename.Equals(absoluteUri?.Segments.LastOrDefault(), StringComparison.Ordinal))
+                if (DTD_FILENAME.Equals(absoluteUri?.Segments.LastOrDefault(), StringComparison.Ordinal))
                 {
-                    return typeof(PatternParser).FindAndGetManifestResourceStream(DtdFilename);
+                    return typeof(PatternParser).FindAndGetManifestResourceStream(DTD_FILENAME);
                 }
 
                 // Only the embedded hyphenation.dtd is a valid external reference. Reject anything
                 // else rather than resolving it from the file system or network.
-                throw new XmlException($"Unexpected external reference in hyphenation data: '{absoluteUri}'. Only '{DtdFilename}' may be referenced.");
+                throw new XmlException($"Unexpected external reference in hyphenation data: '{absoluteUri}'. Only '{DTD_FILENAME}' may be referenced.");
             }
         }
 
