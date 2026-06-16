@@ -1,6 +1,5 @@
 ﻿// Lucene version compatibility level 4.8.1
 #if FEATURE_BREAKITERATOR
-using ICU4N.Support.Text;
 using ICU4N.Text;
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -12,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Th
 {
@@ -44,6 +42,19 @@ namespace Lucene.Net.Analysis.Th
     /// <summary>
     /// Tokenizer that use <see cref="BreakIterator"/> to tokenize Thai text.
     /// </summary>
+    /// <remarks>
+    /// This is an attempt to mimic the behavior of the JDK's <c>java.Text.BreakIterator</c> approach
+    /// to tokenizing Thai text. While it passes the Lucene tests, there may be innumerable differences
+    /// between this implementation and the one in the JDK.
+    /// <para/>
+    /// Unlike the JDK, this implementation is guaranteed to be stable across all supported target frameworks.
+    /// While it does use ICU4N's <see cref="RuleBasedBreakIterator"/>, this implementation doesn't follow
+    /// the UAX #29 specification (http://unicode.org/reports/tr29) and is not guaranteed to behave the same as
+    /// either the one in the JDK or in ICU4J.
+    /// <para/>
+    /// This implementation is provided primarily for API compatibility with Lucene. If strict Unicode compliance
+    /// is desired, it is highly recommended to use the <see cref="Icu.Segmentation.ICUTokenizer"/> instead.
+    /// </remarks>
     public class ThaiTokenizer : SegmentingTokenizerBase
     {
         private static readonly object syncLock = new object(); // LUCENENET specific - workaround until BreakIterator is made thread safe  (LUCENENET TODO: TO REVERT)
