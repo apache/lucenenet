@@ -35,7 +35,7 @@ trap {
 $Here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Resolve-Path (Join-Path $Here '..' '..' '..')
 $Work = Join-Path $Here 'work'
-$Shard = Join-Path $RepoRoot 'src' 'Lucene.Net.Tests._I-J' 'Lucene.Net.Tests._I-J.csproj'
+$Shard = Join-Path $RepoRoot 'src' 'Lucene.Net.Tests._J-S' 'Lucene.Net.Tests._J-S.csproj'
 
 $JavaIndex = Join-Path $Work 'java'
 $DotNetIndex = Join-Path $Work 'dotnet'

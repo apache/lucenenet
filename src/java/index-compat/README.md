@@ -60,8 +60,13 @@ directions end to end:
 
 ```sh
 ./run-compat.sh          # macOS / Linux
-.\run-compat.ps1         # Windows (PowerShell)
+.\run-compat.bat         # Windows (cmd)
+.\run-compat.ps1         # any platform (PowerShell Core)
 ```
+
+All the logic lives in `run-compat.ps1`; the `.sh` and `.bat` files are thin
+wrappers that locate PowerShell Core (`pwsh`) and forward their arguments, so
+`pwsh` must be installed to run any of them.
 
 ### Direction 1: Java writes, .NET reads
 
