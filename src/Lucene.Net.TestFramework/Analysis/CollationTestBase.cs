@@ -43,10 +43,21 @@ namespace Lucene.Net.Analysis
         protected string m_secondRangeBeginningOriginal = "\u0633";
         protected string m_secondRangeEndOriginal = "\u0638";
 
-        // LUCENENET: The all locales may are not available for collation.
-        // LUCENENET: Removed this (only) reference to the ICU library, since it has a lot of data and we don't
-        // want to unnecessarily reference it in all test projects.
-        //protected readonly string[] availableCollationLocales = RuleBasedCollator.GetAvailableCollationLocales().ToArray();
+        /// <summary>
+        /// LUCENENET: The expected ordering of the French field in <see cref="TestCollationKeySort"/> when using
+        /// the platform collator (<see cref="System.Globalization.CompareInfo"/>) depends on the active
+        /// globalization backend. .NET Framework (NLS) applies traditional French (backward) accent ordering and
+        /// produces "EACGI" - the same result as Lucene's <c>java.text.Collator</c> with <c>Locale.FRANCE</c> -
+        /// whereas .NET 5+ (ICU) uses forward accent ordering and produces "ECAGI". <see cref="System.Globalization.CompareInfo"/>
+        /// has no option to select French reverse-accent ordering, and its sort keys are consistent with its
+        /// <see cref="System.Globalization.CompareInfo.Compare(string, string)"/>, so we detect the active behavior
+        /// here rather than hard-coding a single (backend-specific) value. This is only relevant to tests that use
+        /// the platform collator; the ICU-based collation tests have their own expected values.
+        /// </summary>
+        protected static string FrenchResult =>
+            System.Globalization.CompareInfo.GetCompareInfo("fr").Compare("pêche", "péché") < 0
+                ? "EACGI"   // backward (traditional French) accent ordering - NLS backend
+                : "ECAGI";  // forward accent ordering - ICU backend
 
         /// <summary>
         /// Convenience method to perform the same function as CollationKeyFilter.
@@ -169,7 +180,19 @@ namespace Lucene.Net.Analysis
             {
                 // document data:
                 // the tracer field is used to determine which document was hit
-                string[][] sortData = new string[][] { new string[] { "A", "x", "p\u00EAche", "p\u00EAche", "p\u00EAche", "p\u00EAche" }, new string[] { "B", "y", "HAT", "HAT", "HAT", "HAT" }, new string[] { "C", "x", "p\u00E9ch\u00E9", "p\u00E9ch\u00E9", "p\u00E9ch\u00E9", "p\u00E9ch\u00E9" }, new string[] { "D", "y", "HUT", "HUT", "HUT", "HUT" }, new string[] { "E", "x", "peach", "peach", "peach", "peach" }, new string[] { "F", "y", "H\u00C5T", "H\u00C5T", "H\u00C5T", "H\u00C5T" }, new string[] { "G", "x", "sin", "sin", "sin", "sin" }, new string[] { "H", "y", "H\u00D8T", "H\u00D8T", "H\u00D8T", "H\u00D8T" }, new string[] { "I", "x", "s\u00EDn", "s\u00EDn", "s\u00EDn", "s\u00EDn" }, new string[] { "J", "y", "HOT", "HOT", "HOT", "HOT" } };
+                string[][] sortData = new string[][] {
+                    // tracer contents US        France    Sweden (sv_SE)  Denmark (da_DK)
+                    new string[] { "A", "x", "p\u00EAche", "p\u00EAche", "p\u00EAche", "p\u00EAche" },
+                    new string[] { "B", "y", "HAT",   "HAT",   "HAT",   "HAT"   },
+                    new string[] { "C", "x", "p\u00E9ch\u00E9", "p\u00E9ch\u00E9", "p\u00E9ch\u00E9", "p\u00E9ch\u00E9" },
+                    new string[] { "D", "y", "HUT",   "HUT",   "HUT",   "HUT"   },
+                    new string[] { "E", "x", "peach", "peach", "peach", "peach" },
+                    new string[] { "F", "y", "H\u00C5T",   "H\u00C5T",   "H\u00C5T",   "H\u00C5T"   },
+                    new string[] { "G", "x", "sin",   "sin",   "sin",   "sin"   },
+                    new string[] { "H", "y", "H\u00D8T",   "H\u00D8T",   "H\u00D8T",   "H\u00D8T"   },
+                    new string[] { "I", "x", "s\u00EDn",   "s\u00EDn",   "s\u00EDn",   "s\u00EDn"   },
+                    new string[] { "J", "y", "HOT",   "HOT",   "HOT",   "HOT"   },
+                };
 
                 FieldType customType = new FieldType();
                 customType.IsStored = true;
