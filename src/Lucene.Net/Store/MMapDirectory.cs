@@ -738,17 +738,52 @@ namespace Lucene.Net.Store
             // called from the thread that acquired the rent; cross-thread
             // Dispose paths must not call this. Idempotent if no rent is
             // currently held.
+            //
+            // currentChunk is swapped out with Interlocked.Exchange so that
+            // this same-thread release and a concurrent cross-thread
+            // HandOffStrandedRent can never both claim the same rent: whoever
+            // wins the swap of a non-null value owns the matching Release() (the
+            // handoff transfers that obligation to a finalizable releaser). The
+            // remaining cached fields are cleared by the winning thread; they
+            // are not read by any other thread once instanceClosed is set (the
+            // reader has stopped), so plain writes are sufficient.
             private void ReleaseCurrentChunk()
             {
-                Chunk? c = currentChunk;
+                Chunk? c = Interlocked.Exchange(ref currentChunk, null);
                 if (c != null)
                 {
-                    currentChunk = null;
                     readBase = null;
                     currentStart = 0;
                     currentEnd = 0;
                     currentChunkOwnerThreadId = 0;
                     c.Release();
+                }
+            }
+
+            // Hand off a chunk rent that a cross-thread Dispose could not safely
+            // release (see Dispose) to a finalizable releaser, so the rent is
+            // reclaimed once this instance becomes unreachable. We cannot use a
+            // finalizer on MMapIndexInput itself: the base IndexInput.Dispose()
+            // unconditionally calls GC.SuppressFinalize(this) after Dispose(bool)
+            // returns, which would un-arm any finalizer we re-registered here.
+            // The releaser is a separate object with its own finalizer that the
+            // base never suppresses. We keep it referenced from this instance
+            // (the field below) so its lifetime is tied to this instance's
+            // reachability: its finalizer therefore only runs once THIS
+            // MMapIndexInput is unreachable, at which point no thread can be
+            // dereferencing the chunk through it - so releasing the rent (which
+            // may drive the chunk to its terminal unmap state) is AVE-safe, for
+            // the same reason a finalizer directly on this instance would be.
+            // Allocated only on the rare cross-thread-strand path, so the hot
+            // same-thread dispose path stays allocation- and finalizer-free.
+            private StrandedRentReleaser? strandedRentReleaser;
+
+            private void HandOffStrandedRent()
+            {
+                Chunk? c = Interlocked.Exchange(ref currentChunk, null);
+                if (c != null)
+                {
+                    strandedRentReleaser = new StrandedRentReleaser(c);
                 }
             }
 
@@ -788,17 +823,20 @@ namespace Lucene.Net.Store
                     return;
                 }
                 // Cross-thread Dispose safety: only release the chunk rent
-                // if Dispose runs on the same thread that acquired it.
+                // directly if Dispose runs on the same thread that acquired it.
                 // Otherwise (e.g. slicer.Dispose disposing slices being read
-                // on other threads — #1013) the rent is owned by the reader
-                // and we must not touch it. The reader's next Read* call
-                // observes instanceClosed at the start of EnsureCurrentChunk
-                // (and via ReadBytes' guard) and throws AlreadyClosedException
-                // — its slow path ReleaseCurrentChunk runs on the reader's
-                // own thread, releasing the rent safely. If the reader stops
-                // reading entirely without disposing, the rent is released
-                // when the MMapIndexInput is garbage-collected (the chunk
-                // is reachable via SharedMapping → Chunks[i] until then).
+                // on other threads — #1013) the rent is owned by a reader on
+                // another thread and we must not release it here: that reader
+                // may be mid-read, between its instanceClosed guard and the
+                // pointer load, so driving the chunk to its terminal state on
+                // this thread could unmap the view under it (an AVE). Instead we
+                // hand the rent off to a finalizable releaser (HandOffStrandedRent)
+                // so it is reclaimed when this instance becomes unreachable,
+                // rather than leaked. The handoff only swaps the currentChunk
+                // field (it does NOT release the rent here), so an AVE is
+                // impossible; whichever of the handoff and a concurrent
+                // same-thread ReleaseCurrentChunk wins the Interlocked.Exchange
+                // owns the single Release(), so the rent is released exactly once.
                 //
                 // We DO clear currentEnd from any thread, so the reader's
                 // fast path (`pos < currentEnd`) takes the slow path on its
@@ -814,12 +852,45 @@ namespace Lucene.Net.Store
                 {
                     ReleaseCurrentChunk();
                 }
+                else
+                {
+                    HandOffStrandedRent();
+                }
+
                 // Only root instances own the shared mapping. Clones and
                 // slices do not own it; disposing them only flips this
                 // instance's closed flag.
                 if (isRoot)
                 {
                     mapping.Dispose();
+                }
+            }
+
+            // Finalizable holder for a single chunk rent that a cross-thread
+            // Dispose could not safely release on the disposing thread (see
+            // Dispose / HandOffStrandedRent). Its finalizer releases the rent
+            // exactly once. The owning MMapIndexInput references the holder, so
+            // the holder stays alive as long as the input is reachable; the
+            // finalizer therefore runs only after the input is unreachable, at
+            // which point no thread can be reading through the input, making the
+            // Release (and any resulting unmap) AVE-safe. Using a separate
+            // finalizable object rather than a finalizer on MMapIndexInput is
+            // deliberate: the base IndexInput.Dispose() calls
+            // GC.SuppressFinalize(this) on the input after Dispose returns, which
+            // would un-arm a finalizer on the input itself but does not touch
+            // this holder.
+            private sealed class StrandedRentReleaser
+            {
+                private Chunk? chunk;
+
+                internal StrandedRentReleaser(Chunk chunk) => this.chunk = chunk;
+
+                ~StrandedRentReleaser()
+                {
+                    // Release at most once. (A finalizer runs only once per
+                    // object, so the null-guard is just defensive.)
+                    Chunk? c = Interlocked.Exchange(ref chunk, null);
+                    c?.Release();
                 }
             }
         }
@@ -1159,6 +1230,21 @@ namespace Lucene.Net.Store
                 this.BasePtr = basePtr;
                 this.Length = length;
             }
+
+            // LUCENENET specific (PR #1267): for testing only. True once
+            // ReleaseNative has run (the accessor was disposed and its mapped
+            // view released). Lets a test assert that a rent stranded by a
+            // cross-thread Dispose is eventually reclaimed (via the finalizable
+            // StrandedRentReleaser, then chunk Close) rather than leaking the
+            // view's address space forever.
+            internal bool IsNativeReleased => Volatile.Read(ref accessor) is null;
+
+            // LUCENENET specific (PR #1267): for testing only. True when no rent
+            // is outstanding (inFlight == 0), whether or not the chunk has been
+            // closed. A test draining the finalizer queue uses this to detect
+            // that a stranded rent was released (which on an un-closed chunk does
+            // NOT yet run ReleaseNative) before closing the mapping.
+            internal bool IsNativeReleasedOrZeroRent => (Volatile.Read(ref state) & ~CLOSED_BIT) == 0;
 
             /// <summary>
             /// Acquire a rent on this chunk. Returns false if the chunk is
