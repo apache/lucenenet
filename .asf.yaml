@@ -49,7 +49,6 @@ github:
       branches:
         includes:
           - "master"
-          - "release/*"
           - "docs/*"
         excludes: []
       bypass_teams:
@@ -57,6 +56,23 @@ github:
       restrict_deletion: true
       restrict_force_push: true
       required_linear_history: true
+      required_conversation_resolution: true
+      required_pull_request_reviews:
+        dismiss_stale_reviews: false
+        require_last_push_approval: false
+        require_code_owner_reviews: false
+        required_approving_review_count: 0
+    - name: "Release Branch Protection"
+      type: branch
+      branches:
+        includes:
+          - "release/*"
+        excludes: []
+      bypass_teams:
+        - root
+      restrict_deletion: true
+      restrict_force_push: false
+      required_linear_history: false
       required_conversation_resolution: true
       required_pull_request_reviews:
         dismiss_stale_reviews: false
