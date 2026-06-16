@@ -298,7 +298,7 @@ namespace Lucene.Net.Store
                 bufferPosition += count;
                 if (!ok)
                 {
-                    VIntUtils.ThrowInvalidVInt32();
+                    VIntUtils.ThrowIOException_InvalidVInt32();
                 }
                 return value;
             }
@@ -320,7 +320,7 @@ namespace Lucene.Net.Store
                 bufferPosition += count;
                 if (!ok)
                 {
-                    VIntUtils.ThrowInvalidVInt64();
+                    VIntUtils.ThrowIOException_InvalidVInt64();
                 }
                 return value;
             }

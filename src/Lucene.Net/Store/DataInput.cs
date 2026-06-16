@@ -199,7 +199,7 @@ namespace Lucene.Net.Store
             {
                 return i;
             }
-            VIntUtils.ThrowInvalidVInt32();
+            VIntUtils.ThrowIOException_InvalidVInt32();
             return 0; // unreachable; ThrowInvalidVInt32 always throws
         }
 
@@ -297,7 +297,7 @@ namespace Lucene.Net.Store
             {
                 return i;
             }
-            VIntUtils.ThrowInvalidVInt64();
+            VIntUtils.ThrowIOException_InvalidVInt64();
             return 0; // unreachable; ThrowInvalidVInt64 always throws
         }
 

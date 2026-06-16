@@ -148,7 +148,7 @@ namespace Lucene.Net.Store
             pos += count;
             if (!ok)
             {
-                VIntUtils.ThrowInvalidVInt32Runtime();
+                VIntUtils.ThrowRuntimeException_InvalidVInt32();
             }
             return value;
         }
@@ -164,7 +164,7 @@ namespace Lucene.Net.Store
             pos += count;
             if (!ok)
             {
-                VIntUtils.ThrowInvalidVInt64Runtime();
+                VIntUtils.ThrowRuntimeException_InvalidVInt64();
             }
             return value;
         }

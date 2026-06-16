@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
             upto += count;
             if (!ok)
             {
-                VIntUtils.ThrowInvalidVInt32();
+                VIntUtils.ThrowIOException_InvalidVInt32();
             }
             return result;
         }
@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
             upto += count;
             if (!ok)
             {
-                VIntUtils.ThrowInvalidVInt64();
+                VIntUtils.ThrowIOException_InvalidVInt64();
             }
             return result;
         }

@@ -196,7 +196,7 @@ namespace Lucene.Net.Support
         /// </summary>
         [MethodImpl(MethodImplOptions.NoInlining)]
         [DoesNotReturn]
-        public static void ThrowInvalidVInt32()
+        public static void ThrowIOException_InvalidVInt32()
             => throw new IOException(SR.Invalid_VInt32);
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace Lucene.Net.Support
         /// </summary>
         [MethodImpl(MethodImplOptions.NoInlining)]
         [DoesNotReturn]
-        public static void ThrowInvalidVInt64()
+        public static void ThrowIOException_InvalidVInt64()
             => throw new IOException(SR.Invalid_VInt64);
 
         /// <summary>
@@ -216,7 +216,7 @@ namespace Lucene.Net.Support
         /// </summary>
         [MethodImpl(MethodImplOptions.NoInlining)]
         [DoesNotReturn]
-        public static void ThrowInvalidVInt32Runtime()
+        public static void ThrowRuntimeException_InvalidVInt32()
             => throw RuntimeException.Create(SR.Invalid_VInt32);
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace Lucene.Net.Support
         /// </summary>
         [MethodImpl(MethodImplOptions.NoInlining)]
         [DoesNotReturn]
-        public static void ThrowInvalidVInt64Runtime()
+        public static void ThrowRuntimeException_InvalidVInt64()
             => throw RuntimeException.Create(SR.Invalid_VInt64);
 
         private static class SR
