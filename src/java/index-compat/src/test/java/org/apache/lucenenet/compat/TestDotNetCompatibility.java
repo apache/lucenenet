@@ -55,7 +55,7 @@ import static org.junit.Assert.fail;
  * absence of that index is a failure of the pipeline that was supposed to
  * produce it.
  */
-public class ReadDotNetIndexTest {
+public class TestDotNetCompatibility {
 
     @Test
     public void dotNetIndexReadsCleanlyInJava() throws Exception {

@@ -33,7 +33,11 @@ The shared, deterministic document set is defined once, in two mirror
 implementations that must stay in sync:
 
 - Java: [`CompatDocs.java`](src/main/java/org/apache/lucenenet/compat/CompatDocs.java)
-- .NET: `TestJavaCompatibility.cs` in `src/Lucene.Net.Tests/Index`
+- .NET: [`CompatDocs.cs`](../../../src/Lucene.Net.Tests/Support/Index/CompatDocs.cs)
+
+And the corresponding tests:
+- Java: [`TestDotNetCompatibility.java`](src/test/java/org/apache/lucenenet/compat/TestDotNetCompatibility.java)
+- .NET: [`TestJavaCompatibility.cs`](../../../src/Lucene.Net.Tests/Support/Index/TestJavaCompatibility.cs)
 
 ## Requirements
 
