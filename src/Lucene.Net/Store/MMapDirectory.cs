@@ -205,6 +205,7 @@ namespace Lucene.Net.Store
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
+            EnsureCanRead(name); // LUCENENET-specific: backported call site from Lucene 6.0.0 (#1357). Unlike upstream, this no longer routes through OpenInput, so validate here too.
             var file = Path.Combine(Directory.FullName, name);
             SharedMapping mapping = SharedMapping.Create(file, chunkSizePower);
             // Ownership of the mapping transfers to the returned slicer; the
