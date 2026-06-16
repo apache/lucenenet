@@ -1,4 +1,3 @@
-// Lucene version compatibility level 4.8.1
 using System.Globalization;
 
 namespace Lucene.Net.Collation
@@ -25,7 +24,7 @@ namespace Lucene.Net.Collation
     /// (<see cref="CompareInfo"/>) used by <see cref="CollationKeyAnalyzer"/> and
     /// <see cref="CollationAttributeFactory"/>.
     /// </summary>
-    public static class CollationUtil
+    internal static class CollationUtil
     {
         /// <summary>
         /// Indicates whether the active globalization backend is ICU (the default on .NET 5+)

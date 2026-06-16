@@ -112,7 +112,7 @@ namespace Lucene.Net.Collation
 
         private byte[] GetCollationKey()
         {
-#if FEATURE_COMPAREINFO_SPAN_SORTKEY
+#if FEATURE_COMPAREINFO_GETSORTKEY_SPAN
             // LUCENENET: On .NET 5+ with ICU, CompareInfo has a ReadOnlySpan<char> overload of GetSortKey
             // that lets us generate the sort key without converting the term to a string first. The NLS
             // backend does not normalize internally (see CollatedTermAttribute.Normalize), so we still need

@@ -78,7 +78,7 @@
     <DefineConstants>$(DefineConstants);FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_READONLYSET</DefineConstants>
     <!-- CompareInfo.GetSortKey(ReadOnlySpan<char>, Span<byte>, CompareOptions) and GetSortKeyLength(ReadOnlySpan<char>, CompareOptions) -->
-    <DefineConstants>$(DefineConstants);FEATURE_COMPAREINFO_SPAN_SORTKEY</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_COMPAREINFO_GETSORTKEY_SPAN</DefineConstants>
 
   </PropertyGroup>
 

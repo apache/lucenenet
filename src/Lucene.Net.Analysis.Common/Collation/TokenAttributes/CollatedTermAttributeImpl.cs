@@ -56,7 +56,7 @@ namespace Lucene.Net.Collation.TokenAttributes
         public override void FillBytesRef()
         {
             BytesRef bytes = this.BytesRef;
-#if FEATURE_COMPAREINFO_SPAN_SORTKEY
+#if FEATURE_COMPAREINFO_GETSORTKEY_SPAN
             // LUCENENET: On .NET 5+ with ICU, CompareInfo has a ReadOnlySpan<char> overload of GetSortKey
             // that writes directly into a destination buffer, so we can generate the sort key from the term
             // text without the intermediate string allocation. The NLS backend does not normalize internally
@@ -76,11 +76,6 @@ namespace Lucene.Net.Collation.TokenAttributes
             bytes.Offset = 0;
             bytes.Length = keyData.Length;
         }
-
-#if FEATURE_COMPAREINFO_SPAN_SORTKEY
-        // LUCENENET: Returns the term text as a span over the backing buffer, avoiding a string allocation.
-        private ReadOnlySpan<char> AsSpan() => this.Buffer.AsSpan(0, this.Length);
-#endif
 
         // LUCENENET: Normalize the term to Unicode Normalization Form C (NFC) before generating the
         // sort key. ICU-backed collators (.NET 5+) normalize internally, but the NLS-backed collator
