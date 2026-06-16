@@ -1,6 +1,7 @@
 using J2N.Numerics;
 using J2N.Text;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -199,7 +200,11 @@ namespace Lucene.Net.Util
             for (int i = offset; i < roundedEnd; i += 4)
             {
                 // little endian load order
-                int k1 = (((sbyte)data[i]) & 0xff) | ((((sbyte)data[i + 1]) & 0xff) << 8) | ((((sbyte)data[i + 2]) & 0xff) << 16) | (((sbyte)data[i + 3]) << 24);
+                //int k1 = (((sbyte)data[i]) & 0xff) | ((((sbyte)data[i + 1]) & 0xff) << 8) | ((((sbyte)data[i + 2]) & 0xff) << 16) | (((sbyte)data[i + 3]) << 24);
+
+                // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+                int k1 = BinaryPrimitives.ReadInt32LittleEndian(data.AsSpan(i, sizeof(int)));
+
                 k1 *= c1;
                 k1 = BitOperation.RotateLeft(k1, 15);
                 k1 *= c2;
@@ -214,16 +219,20 @@ namespace Lucene.Net.Util
 
             switch (len & 0x03)
             {
+                // LUCENENET: upstream Java reads each tail byte as ((sbyte)data[i]) & 0xff to
+                // undo Java's signed byte before masking back to 0-255. In C# the array element
+                // is already an unsigned byte (0-255), so that round-trip is a no-op; we index
+                // the byte directly.
                 case 3:
-                    k2 = (((sbyte)data[roundedEnd + 2]) & 0xff) << 16;
+                    k2 = data[roundedEnd + 2] << 16;
                     // fallthrough
                     goto case 2;
                 case 2:
-                    k2 |= (((sbyte)data[roundedEnd + 1]) & 0xff) << 8;
+                    k2 |= data[roundedEnd + 1] << 8;
                     // fallthrough
                     goto case 1;
                 case 1:
-                    k2 |= (((sbyte)data[roundedEnd]) & 0xff);
+                    k2 |= data[roundedEnd];
                     k2 *= c1;
                     k2 = BitOperation.RotateLeft(k2, 15);
                     k2 *= c2;

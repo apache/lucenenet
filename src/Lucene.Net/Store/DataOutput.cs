@@ -3,6 +3,7 @@ using Lucene.Net.Support.Buffers;
 using Lucene.Net.Util;
 using System;
 using System.Buffers;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -83,6 +84,9 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataInput.ReadInt32()"/>
         public virtual void WriteInt32(int i)
         {
+            // NOTE: deliberately byte-by-byte (upstream Java parity) - see WriteInt16 below
+            // for why the stackalloc + WriteBytes(Span) rewrite was reverted (#1279). No
+            // DataOutput subclass overrides this, so all of them inherit this base.
             WriteByte((byte)(i >> 24));
             WriteByte((byte)(i >> 16));
             WriteByte((byte)(i >> 8));
@@ -97,6 +101,12 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataInput.ReadInt16()"/>
         public virtual void WriteInt16(short i)
         {
+            // NOTE: deliberately byte-by-byte (upstream Java parity). A stackalloc +
+            // WriteBytes(Span) rewrite was benchmarked and regressed every inheriting
+            // output (e.g. WriteInt16 +231%, GrowableByteArrayDataOutput +132%), because
+            // routing 2 bytes through the virtual WriteBytes adds a fixed ~3ns floor that
+            // dwarfs two inlined WriteByte() calls. No subclass overrides WriteInt16, so
+            // the base implementation is what every output uses. See #1279.
             WriteByte((byte)((ushort)i >> 8));
             WriteByte((byte)(ushort)i);
         }
@@ -208,12 +218,34 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataInput.ReadVInt32()"/>
         public void WriteVInt32(int i)
         {
+            // LUCENENET specific: optimize for single WriteBytes call, was:
+            // while ((i & ~0x7F) != 0)
+            // {
+            //     WriteByte((byte)((i & 0x7F) | 0x80));
+            //     i >>>= 7;
+            // }
+            // WriteByte((byte)i);
+
+            // fast path: if single byte, avoid multibyte allocation and write
+            if ((i & ~0x7F) == 0)
+            {
+                WriteByte((byte)i);
+                return;
+            }
+
+            Span<byte> bytes = stackalloc byte[5];  // max possible byte count is 5
+            int count = 0;
+
             while ((i & ~0x7F) != 0)
             {
-                WriteByte((byte)((i & 0x7F) | 0x80));
+                bytes[count++] = (byte)((i & 0x7F) | 0x80);
                 i >>>= 7;
             }
-            WriteByte((byte)i);
+
+            bytes[count++] = (byte)i;
+
+            // at this point, count will be some int in [1, 5], denoting the number of bytes to write
+            WriteBytes(bytes.Slice(0, count));
         }
 
         /// <summary>
@@ -226,8 +258,13 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataInput.ReadInt64()"/>
         public virtual void WriteInt64(long i)
         {
-            WriteInt32((int)(i >> 32));
-            WriteInt32((int)i);
+            // LUCENENET specific: optimize for single WriteBytes call, was:
+            // WriteInt32((int)(i >> 32));
+            // WriteInt32((int)i);
+
+            Span<byte> bytes = stackalloc byte[8];
+            BinaryPrimitives.WriteInt64BigEndian(bytes, i);
+            WriteBytes(bytes);
         }
 
         /// <summary>
@@ -243,12 +280,35 @@ namespace Lucene.Net.Store
         public void WriteVInt64(long i)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(i >= 0L);
+
+            // LUCENENET specific: optimize for single WriteBytes call, was:
+            // while ((i & ~0x7FL) != 0L)
+            // {
+            //     WriteByte((byte)((i & 0x7FL) | 0x80L));
+            //     i >>>= 7;
+            // }
+            // WriteByte((byte)i);
+
+            // fast path: if single byte, avoid multibyte allocation and write
+            if ((i & ~0x7FL) == 0L)
+            {
+                WriteByte((byte)i);
+                return;
+            }
+
+            Span<byte> bytes = stackalloc byte[9];  // max possible byte count is 9
+            int count = 0;
+
             while ((i & ~0x7FL) != 0L)
             {
-                WriteByte((byte)((i & 0x7FL) | 0x80L));
+                bytes[count++] = (byte)((i & 0x7FL) | 0x80L);
                 i >>>= 7;
             }
-            WriteByte((byte)i);
+
+            bytes[count++] = (byte)i;
+
+            // at this point, count will be some int in [1, 9], denoting the number of bytes to write
+            WriteBytes(bytes.Slice(0, count));
         }
 
         /// <summary>
@@ -281,7 +341,6 @@ namespace Lucene.Net.Store
             {
                 // Fast path - don't allocate if we don't need to
                 WriteVInt32(0);
-                WriteBytes(Array.Empty<byte>());
                 return;
             }
 

@@ -2,6 +2,7 @@ using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Buffers.Binary;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -62,8 +63,11 @@ namespace Lucene.Net.Codecs.Compressing
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int ReadInt32(byte[] buf, int i)
         {
-            return ((((sbyte)buf[i]) & 0xFF) << 24) | ((((sbyte)buf[i + 1]) & 0xFF) << 16) | ((((sbyte)buf[i + 2]) & 0xFF) << 8) |
-                (((sbyte)buf[i + 3]) & 0xFF);
+            // return ((((sbyte)buf[i]) & 0xFF) << 24) | ((((sbyte)buf[i + 1]) & 0xFF) << 16) | ((((sbyte)buf[i + 2]) & 0xFF) << 8) |
+            //     (((sbyte)buf[i + 3]) & 0xFF);
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            return BinaryPrimitives.ReadInt32BigEndian(buf.AsSpan(i, sizeof(int)));
         }
 
         /// <summary>
@@ -106,12 +110,14 @@ namespace Lucene.Net.Codecs.Compressing
         /// </summary>
         public static int Decompress(DataInput compressed, int decompressedLen, byte[] dest, int dOff)
         {
+            // LUCENENET NOTE: `& 0xFF` commented out as that is not needed in .NET, since bytes are unsigned
+
             int destEnd = dest.Length;
 
             do
             {
                 // literals
-                int token = compressed.ReadByte() & 0xFF;
+                int token = compressed.ReadByte() /* & 0xFF */;
                 int literalLen = token >>> 4;
 
                 if (literalLen != 0)
@@ -123,7 +129,7 @@ namespace Lucene.Net.Codecs.Compressing
                         {
                             literalLen += 0xFF;
                         }
-                        literalLen += len & 0xFF;
+                        literalLen += len /* & 0xFF */;
                     }
                     compressed.ReadBytes(dest, dOff, literalLen);
                     dOff += literalLen;
@@ -137,7 +143,7 @@ namespace Lucene.Net.Codecs.Compressing
                 // matchs
                 var byte1 = compressed.ReadByte();
                 var byte2 = compressed.ReadByte();
-                int matchDec = (byte1 & 0xFF) | ((byte2 & 0xFF) << 8);
+                int matchDec = (byte1 /* & 0xFF */) | ((byte2 /* & 0xFF */) << 8);
                 // LUCENENET specific: backported from upstream Lucene 10.4.0 (apache/lucene#15570) - matchDec == 0 is invalid per the LZ4 block format
                 if (matchDec == 0)
                 {
@@ -152,7 +158,7 @@ namespace Lucene.Net.Codecs.Compressing
                     {
                         matchLen += 0xFF;
                     }
-                    matchLen += len & 0xFF;
+                    matchLen += len /* & 0xFF */;
                 }
                 matchLen += MIN_MATCH;
 

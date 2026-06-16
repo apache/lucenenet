@@ -1,10 +1,12 @@
 using J2N.Numerics;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Buffers;
 using Lucene.Net.Util;
 using System;
 using System.Buffers;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -127,7 +129,15 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataOutput.WriteInt16(short)"/>
         public virtual short ReadInt16()
         {
-            return (short)(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
+            // LUCENENET: the 0xFF mask is not needed in C# since bytes are unsigned.
+            // NOTE: deliberately byte-by-byte (upstream Java parity). A stackalloc +
+            // ReadBytes(Span) rewrite was benchmarked and regressed every subclass that
+            // inherits this base method (e.g. RAMInputStream ReadInt16 +327%), because
+            // routing 2 bytes through the virtual ReadBytes adds a fixed ~3ns floor that
+            // dwarfs two inlined ReadByte() calls. Subclasses with a cheap contiguous
+            // buffer (ByteArrayDataInput, BufferedIndexInput, ByteBufferIndexInput)
+            // override this with a BinaryPrimitives fast path instead. See #1279.
+            return (short)((ReadByte() << 8) | ReadByte());
         }
 
         /// <summary>
@@ -138,8 +148,12 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataOutput.WriteInt32(int)"/>
         public virtual int ReadInt32()
         {
-            return ((ReadByte() & 0xFF) << 24) | ((ReadByte() & 0xFF) << 16)
-                | ((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF);
+            // LUCENENET: the 0xFF mask is not needed in C# since bytes are unsigned.
+            // NOTE: deliberately byte-by-byte (upstream Java parity) - see ReadInt16 above
+            // for why the span rewrite was reverted (#1279). Overriding subclasses use a
+            // BinaryPrimitives fast path.
+            return (ReadByte() << 24) | (ReadByte() << 16)
+                | (ReadByte() << 8) | ReadByte();
         }
 
         /// <summary>
@@ -185,7 +199,8 @@ namespace Lucene.Net.Store
             {
                 return i;
             }
-            throw new IOException("Invalid VInt32 detected (too many bits)");
+            VIntUtils.ThrowIOException_InvalidVInt32();
+            return 0; // unreachable; ThrowInvalidVInt32 always throws
         }
 
         /// <summary>
@@ -196,7 +211,13 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataOutput.WriteInt64(long)"/>
         public virtual long ReadInt64()
         {
-            return (((long)ReadInt32()) << 32) | (ReadInt32() & 0xFFFFFFFFL);
+            // LUCENENET specific: optimize for single ReadBytes call, was:
+            // return (((long)ReadInt32()) << 32) | (ReadInt32() & 0xFFFFFFFFL);
+            // Also note: the 0xFF mask is not needed in C# since bytes are unsigned.
+
+            Span<byte> b = stackalloc byte[8];
+            ReadBytes(b);
+            return BinaryPrimitives.ReadInt64BigEndian(b);
         }
 
         /// <summary>
@@ -276,7 +297,8 @@ namespace Lucene.Net.Store
             {
                 return i;
             }
-            throw new IOException("Invalid VInt64 detected (negative values disallowed)");
+            VIntUtils.ThrowIOException_InvalidVInt64();
+            return 0; // unreachable; ThrowInvalidVInt64 always throws
         }
 
 #nullable enable

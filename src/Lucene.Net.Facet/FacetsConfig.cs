@@ -1,8 +1,10 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -283,7 +285,7 @@ namespace Lucene.Net.Facet
         /// (<see cref="FacetField"/> or <see cref="AssociationFacetField"/>).
         ///
         /// <para>
-        /// <b>NOTE:</b> you should add the returned document to <see cref="Index.IndexWriter"/>, not the
+        /// <b>NOTE:</b> you should add the returned document to <see cref="IndexWriter"/>, not the
         /// input one!
         /// </para>
         /// </summary>
@@ -297,7 +299,7 @@ namespace Lucene.Net.Facet
         /// Translates any added <see cref="FacetField"/>s into normal fields for indexing.
         ///
         /// <para>
-        /// <b>NOTE:</b> you should add the returned document to <see cref="Index.IndexWriter"/>, not the
+        /// <b>NOTE:</b> you should add the returned document to <see cref="IndexWriter"/>, not the
         /// input one!
         /// </para>
         /// </summary>
@@ -530,11 +532,17 @@ namespace Lucene.Net.Facet
                     {
                         bytes = ArrayUtil.Grow(bytes, upto + 4);
                     }
-                    // big-endian:
-                    bytes[upto++] = (byte)(ordinal >> 24);
-                    bytes[upto++] = (byte)(ordinal >> 16);
-                    bytes[upto++] = (byte)(ordinal >> 8);
-                    bytes[upto++] = (byte)ordinal;
+
+                    // // big-endian:
+                    // bytes[upto++] = (byte)(ordinal >> 24);
+                    // bytes[upto++] = (byte)(ordinal >> 16);
+                    // bytes[upto++] = (byte)(ordinal >> 8);
+                    // bytes[upto++] = (byte)ordinal;
+
+                    // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+                    BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(upto, sizeof(int)), ordinal);
+                    upto += sizeof(int);
+
                     if (upto + field.Assoc.Length > bytes.Length)
                     {
                         bytes = ArrayUtil.Grow(bytes, upto + field.Assoc.Length);
