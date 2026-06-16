@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Th
     /// <para/>
     /// Unlike the JDK, this implementation is guaranteed to be stable across all supported target frameworks.
     /// While it does use ICU4N's <see cref="RuleBasedBreakIterator"/>, this implementation doesn't follow
-    /// the UAX #29 specification (http://unicode.org/reports/tr29) and is not guranteed to behave the same as
+    /// the UAX #29 specification (http://unicode.org/reports/tr29) and is not guaranteed to behave the same as
     /// either the one in the JDK or in ICU4J.
     /// <para/>
     /// This implementation is provided primarily for API compatibility with Lucene. If strict Unicode compliance
