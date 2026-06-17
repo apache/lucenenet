@@ -40,3 +40,7 @@ ConfigurationRoot\.cs
 ConfigurationSection\.cs
 DateTimeOffsetUtil\.cs
 FileStreamOptions\.cs
+
+# Not deployed with the release (MIT Licensed)
+font-awesome-\d+\.\d+\.\d+\.min\.css
+academicons-\d+\.\d+\.\d+\.min\.css
