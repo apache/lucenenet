@@ -738,6 +738,135 @@ namespace Lucene.Net.Store
                 "under concurrent clone/read vs Dispose.");
         }
 
+        // LUCENENET-specific (#1013): the disposing thread is the SAME thread that
+        // owns and is reading the master, while OTHER threads concurrently read
+        // clones that share the master's mapping. This pins the invariant that a
+        // same-thread Dispose is NOT the Java unmap-hack: disposing the owning input
+        // closes the shared chunks (requesting their unmap), but the SafeHandle
+        // refcount defers the actual unmap until every reader's outstanding
+        // AcquirePointer reference drains, so concurrent readers on sibling clones
+        // are never left dereferencing a freed view. The owning thread only ever
+        // releases ITS OWN reference (safe: it is in Dispose, not mid-dereference);
+        // it never releases a sibling clone's reference. Expected outcomes for the
+        // sibling readers: valid bytes, or AlreadyClosed once they cross into a
+        // closed chunk. Never an AVE, NRE, or torn-down-mapping IOException.
+        // [Nightly]: wall-clock stress loop (~15s).
+        [Test, LuceneNetSpecific, Slow, Nightly, NonParallelizable]
+        public void TestSameThreadOwnerDisposeWhileSiblingClonesRead_NoAVE()
+        {
+            var dirPath = CreateTempDir("testSameThreadDisposeVsSiblingReads");
+            using var mmapDir = new MMapDirectory(dirPath);
+            const string name = "bytes";
+            const int fileSize = 1 << 20; // 1 MiB, spans multiple chunks
+            var random = Random;
+            using (var io = mmapDir.CreateOutput(name, NewIOContext(random)))
+            {
+                var buf = new byte[4096];
+                random.NextBytes(buf);
+                for (int w = 0; w < fileSize; w += buf.Length)
+                    io.WriteBytes(buf, 0, buf.Length);
+            }
+
+            const int siblingReaders = 6;
+            var unexpected = new ConcurrentBag<Exception>();
+            int iterations = 0;
+            var sw = Stopwatch.StartNew();
+
+            while (sw.Elapsed < TimeSpan.FromSeconds(15) && unexpected.IsEmpty)
+            {
+                iterations++;
+
+                // The master is opened, read, AND disposed all on THIS thread.
+                var master = mmapDir.OpenInput(name, NewIOContext(random));
+
+                var start = new ManualResetEventSlim(false);
+                var stop = new ManualResetEventSlim(false);
+                var readers = new Thread[siblingReaders];
+                for (int i = 0; i < readers.Length; i++)
+                {
+                    readers[i] = new Thread(() =>
+                    {
+                        // Each sibling reads its OWN clone, which shares master's
+                        // mapping. Clone before the barrier; if the master is
+                        // already disposed (later iterations race), Clone throws
+                        // AlreadyClosed, which is an acceptable outcome.
+                        IndexInput clone;
+                        try
+                        {
+                            clone = (IndexInput)master.Clone();
+                        }
+                        catch (Exception e) when (e.IsAlreadyClosedException())
+                        {
+                            return;
+                        }
+
+                        start.Wait();
+                        try
+                        {
+                            while (!stop.IsSet)
+                            {
+                                clone.Seek(0);
+                                for (int p = 0; p < fileSize; p++)
+                                    clone.ReadByte();
+                            }
+                        }
+                        catch (Exception e) when (e.IsAlreadyClosedException())
+                        {
+                            // Expected once the owner disposes and we cross into a
+                            // closed chunk.
+                        }
+                        catch (Exception e)
+                        {
+                            unexpected.Add(e);
+                        }
+                    })
+                    { IsBackground = true, Name = $"sibling-reader-{i}" };
+                    readers[i].Start();
+                }
+
+                start.Set();
+
+                // The owning thread reads the master itself for a beat, then
+                // disposes it SAME-THREAD while the siblings are mid-read.
+                try
+                {
+                    master.Seek(0);
+                    for (int p = 0; p < fileSize && p < 64 * 1024; p++)
+                        master.ReadByte();
+                }
+                catch (Exception e) when (e.IsAlreadyClosedException())
+                {
+                    // Not expected here (we haven't disposed yet), but harmless.
+                }
+
+                master.Dispose(); // same-thread close of the owning input
+                stop.Set();
+
+                foreach (var t in readers)
+                {
+                    if (!t.Join(TimeSpan.FromSeconds(10)))
+                    {
+                        unexpected.Add(new TimeoutException(
+                            $"Sibling reader {t.Name} did not exit within 10s after the " +
+                            "owner's same-thread Dispose; expected AlreadyClosed to propagate."));
+                    }
+                }
+            }
+
+            if (!unexpected.IsEmpty)
+            {
+                var ex = unexpected.First();
+                Assert.Fail(
+                    $"Same-thread owner Dispose vs concurrent sibling-clone reads produced an " +
+                    $"unexpected exception after {iterations} iterations: " +
+                    $"{ex.GetType().FullName}: {ex.Message}\n{ex}");
+            }
+
+            Assert.Pass(
+                $"Same-thread owner Dispose did not AVE concurrent sibling readers across " +
+                $"{iterations} iterations in {sw.Elapsed.TotalSeconds:0.0}s.");
+        }
+
         // LUCENENET-specific: race-condition coverage for the new
         // MemoryMappedViewAccessorIndexInput. These tests complement the
         // single-threaded TestCloneClose / TestCloneSliceSafety /
