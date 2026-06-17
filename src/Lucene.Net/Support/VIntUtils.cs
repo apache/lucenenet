@@ -43,8 +43,8 @@ namespace Lucene.Net.Support
 
         /// <summary>
         /// Tries to read a 32-bit VInt from the given <paramref name="source"/>.
-        /// <paramref name="source"/> must be at least <see cref="MaxVInt32Length"/> bytes
-        /// in length to avoid possible out-of-range exceptions.
+        /// <paramref name="source"/> must be at least 1 byte in length, and be well-formed if multibyte,
+        /// to avoid possible out-of-range exceptions.
         /// </summary>
         /// <param name="source">The source bytes to read from.</param>
         /// <param name="value">The decoded value (undefined if the method returns <c>false</c>).</param>
@@ -55,7 +55,7 @@ namespace Lucene.Net.Support
         /// extra high bits set.</returns>
         public static bool TryReadVInt32(ReadOnlySpan<byte> source, out int value, out int count)
         {
-            Debug.Assert(source.Length >= MaxVInt32Length);
+            Debug.Assert(source.Length >= 1);
             byte b = source[0];
             if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
@@ -98,8 +98,8 @@ namespace Lucene.Net.Support
 
         /// <summary>
         /// Tries to read a 64-bit VInt from the given <paramref name="source"/>.
-        /// <paramref name="source"/> must be at least <see cref="MaxVInt64Length"/> bytes
-        /// in length to avoid possible out-of-range exceptions.
+        /// <paramref name="source"/> must be at least 1 byte in length, and be well-formed if multibyte,
+        /// to avoid possible out-of-range exceptions.
         /// </summary>
         /// <param name="source">The source bytes to read from.</param>
         /// <param name="value">The decoded value (undefined if the method returns <c>false</c>).</param>
@@ -109,7 +109,7 @@ namespace Lucene.Net.Support
         /// the continuation bit set (which would indicate a negative value, disallowed).</returns>
         public static bool TryReadVInt64(ReadOnlySpan<byte> source, out long value, out int count)
         {
-            Debug.Assert(source.Length >= MaxVInt64Length);
+            Debug.Assert(source.Length >= 1);
             byte b = source[0];
             if (b <= sbyte.MaxValue)
             {
