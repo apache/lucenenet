@@ -1,7 +1,7 @@
 <footer>
   <div class="container">
     <span class="pull-left">
-      {{{_appFooter}}}{{^_appFooter}}Copyright &copy; 2025 The Apache Software Foundation{{/_appFooter}}
+      {{{_appFooter}}}{{^_appFooter}}Copyright &copy; 2026 The Apache Software Foundation{{/_appFooter}}
     </span>
     <div class="asf-links text-center">
       <a href="{{_asfFoundationHref}}">{{_asfFoundationText}}</a> |
