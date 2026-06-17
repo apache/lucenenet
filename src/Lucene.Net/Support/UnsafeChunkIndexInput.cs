@@ -99,7 +99,7 @@ namespace Lucene.Net.Store
         // only readBase and currentEnd beyond `position`; readBase is precomputed
         // so the load address is a single `*(readBase + pos)`. currentStart is only
         // for Seek cache validation, not read by ReadByte/ReadInt*.
-        private int currentChunkIndex = NoChunk;
+        private int currentChunkIndex = NO_CHUNK;
         private byte* readBase;        // = chunkBase + baseOffset - chunkFileStart
         private long currentStart;     // window-relative start of the cached chunk's intersection with [0, length)
         private long currentEnd;       // window-relative end of the cached chunk's intersection with [0, length)
@@ -110,7 +110,7 @@ namespace Lucene.Net.Store
         // HandOffStrandedReadRef).
         private int currentChunkOwnerThreadId;
 
-        private const int NoChunk = -1;
+        private const int NO_CHUNK = -1;
 
         /// <summary>
         /// Creates an instance viewing <c>[offset, offset + length)</c> of the
@@ -195,7 +195,7 @@ namespace Lucene.Net.Store
             }
             // If the seek stays inside the cached chunk, keep the read reference and
             // just move the cursor; otherwise invalidate so the next read reacquires.
-            if (currentChunkIndex != NoChunk && pos >= currentStart && pos < currentEnd)
+            if (currentChunkIndex != NO_CHUNK && pos >= currentStart && pos < currentEnd)
             {
                 position = pos;
                 return;
@@ -444,8 +444,8 @@ namespace Lucene.Net.Store
         // whoever wins the swap owns the single matching ReleaseChunk. Idempotent.
         private void ReleaseCurrentChunk()
         {
-            int idx = Interlocked.Exchange(ref currentChunkIndex, NoChunk);
-            if (idx != NoChunk)
+            int idx = Interlocked.Exchange(ref currentChunkIndex, NO_CHUNK);
+            if (idx != NO_CHUNK)
             {
                 readBase = null;
                 currentStart = 0;
@@ -465,8 +465,8 @@ namespace Lucene.Net.Store
 
         private void HandOffStrandedReadRef()
         {
-            int idx = Interlocked.Exchange(ref currentChunkIndex, NoChunk);
-            if (idx != NoChunk)
+            int idx = Interlocked.Exchange(ref currentChunkIndex, NO_CHUNK);
+            if (idx != NO_CHUNK)
             {
                 strandedReadRefReleaser = new StrandedReadRefReleaser(this, idx);
             }
@@ -485,7 +485,7 @@ namespace Lucene.Net.Store
         protected void ResetClonedCursor()
         {
             instanceClosed = 0;
-            currentChunkIndex = NoChunk;
+            currentChunkIndex = NO_CHUNK;
             readBase = null;
             currentStart = 0;
             currentEnd = 0;
