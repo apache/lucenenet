@@ -189,15 +189,13 @@ namespace Lucene.Net.Store
             EnsureOpen();
             EnsureCanRead(name); // LUCENENET-specific: backported call site from Lucene 6.0.0
             var file = Path.Combine(Directory.FullName, name); // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
-            // LUCENENET specific: a fresh SharedMapping per OpenInput call.
-            // Matches upstream Java (openInput creates a new FileChannel +
-            // fc.map()) and ensures Length reflects the file's current size.
+            // LUCENENET specific: a fresh SharedMapping per OpenInput call, matching
+            // upstream Java (new FileChannel + fc.map()), so Length reflects the
+            // file's current size.
             SharedMapping mapping = SharedMapping.Create(file, chunkSizePower);
-            // Ownership of the mapping transfers to the returned root
-            // MMapIndexInput (ownsMapping: true); the caller of OpenInput is
-            // responsible for disposing that input, which disposes the mapping.
-            // The constructor only sets fields and cannot throw here, so no
-            // catch/dispose guard is needed.
+            // Ownership transfers to the root input (ownsMapping: true); the caller
+            // disposes it, which disposes the mapping. No try/catch around the ctor:
+            // it only sets fields and cannot throw, so the mapping cannot leak here.
             return new MMapIndexInput($"MMapIndexInput(path=\"{file}\")", ownsMapping: true, mapping, 0, mapping.Length, chunkSizePower);
         }
 
@@ -207,10 +205,9 @@ namespace Lucene.Net.Store
             EnsureCanRead(name); // LUCENENET-specific: backported call site from Lucene 6.0.0 (#1357). Unlike upstream, this no longer routes through OpenInput, so validate here too.
             var file = Path.Combine(Directory.FullName, name);
             SharedMapping mapping = SharedMapping.Create(file, chunkSizePower);
-            // Ownership of the mapping transfers to the returned slicer; the
-            // caller of CreateSlicer is responsible for disposing that slicer,
-            // which disposes the mapping. The constructor only sets fields and
-            // cannot throw here, so no catch/dispose guard is needed.
+            // Ownership transfers to the slicer; the caller disposes it, which
+            // disposes the mapping. No try/catch around the ctor: it only sets
+            // fields and cannot throw, so the mapping cannot leak here.
             return new IndexInputSlicerAnonymousClass(this, file, mapping);
         }
 
@@ -219,16 +216,14 @@ namespace Lucene.Net.Store
             private readonly MMapDirectory outerInstance;
             private readonly string file;
 
-            // The slicer owns the shared mapping; all slices issued from it
-            // piggyback on the slicer's ownership. Disposing the slicer
-            // tears the mapping down once issued slices have been disposed.
+            // The slicer owns the shared mapping; issued slices piggyback on it.
             private readonly SharedMapping mapping;
 
             private int disposed /* = 0 */; // LUCENENET specific - allow double-dispose
 
-            // Track issued slices so that Dispose cascades. Lucene's
-            // contract is that after slicer.Dispose, reads from any slice
-            // (or clone of a slice) throw AlreadyClosedException.
+            // Track issued slices so Dispose cascades: Lucene's contract is that
+            // after slicer.Dispose, reads from any slice (or clone) throw
+            // AlreadyClosedException.
             private readonly SCG.List<MMapIndexInput> issuedSlices = new SCG.List<MMapIndexInput>();
             private readonly object issuedSlicesLock = new object();
 
@@ -240,14 +235,12 @@ namespace Lucene.Net.Store
             }
 
             // Returns a slice the CALLER must dispose. The slice does not own the
-            // mapping (ownsMapping: false); it is also tracked in issuedSlices so
-            // that disposing the slicer cascades to any slices the caller left
-            // open. Note a slice can outlive a Dispose of outerInstance (the
-            // MMapDirectory): we deliberately do not thread outerInstance into the
-            // slice to re-check on every read, because reads against a disposed
-            // mapping already fail fast with AlreadyClosedException via the
-            // mapping's closed flag and per-chunk rent. EnsureOpen here only guards
-            // the act of opening a new slice.
+            // mapping (ownsMapping: false) but is tracked in issuedSlices so
+            // disposing the slicer cascades to any slices left open. A slice can
+            // outlive a Dispose of outerInstance: we deliberately do not re-check
+            // outerInstance on every read because reads against a disposed mapping
+            // already fail fast with AlreadyClosedException via the per-chunk rent.
+            // EnsureOpen here only guards the act of opening a new slice.
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
                 outerInstance.EnsureOpen();
@@ -257,8 +250,8 @@ namespace Lucene.Net.Store
                         "slice() " + sliceDescription + " out of bounds: offset=" + offset
                         + ",length=" + length + ",fileLength=" + mapping.Length + ": " + this);
                 }
-                // Slices reference the slicer's mapping; only the slicer
-                // itself owns the mapping and will dispose it.
+                // Slices reference the slicer's mapping; only the slicer owns and
+                // disposes it.
                 var input = new MMapIndexInput(
                     $"MMapIndexInput({sliceDescription} in path=\"{file}\" slice={offset}:{offset + length})", ownsMapping: false, mapping,
                     offset, length,
@@ -267,8 +260,8 @@ namespace Lucene.Net.Store
                 {
                     if (Volatile.Read(ref disposed) != 0)
                     {
-                        // Slicer was disposed after EnsureOpen but before we
-                        // got the lock. Tear down what we just allocated.
+                        // Slicer disposed after EnsureOpen but before we got the
+                        // lock; tear down what we just allocated.
                         input.Dispose();
                         throw AlreadyClosedException.Create(nameof(IndexInputSlicer), "this IndexInputSlicer is closed");
                     }
@@ -281,13 +274,9 @@ namespace Lucene.Net.Store
             public override IndexInput OpenFullSlice()
             {
                 outerInstance.EnsureOpen();
-                // A full slice is just a slice over the whole mapping. It shares
-                // the slicer's single SharedMapping (same MemoryMappedFile and
-                // FileStream) rather than opening a second mapping, and it is
-                // tracked in issuedSlices like any other slice, so disposing the
-                // slicer disposes it and the one backing FileStream. The mapping's
-                // Length was captured at creation time, so we touch no FileStream
-                // here.
+                // A full slice is a slice over the whole mapping, sharing the
+                // slicer's single SharedMapping rather than opening a second one.
+                // Length was captured at creation time, so we touch no FileStream.
                 return OpenSlice("full-slice", 0, mapping.Length);
             }
 
@@ -306,19 +295,15 @@ namespace Lucene.Net.Store
 
                     IOUtils.DisposeWhileHandlingException(toDispose);
 
-                    // Slicer owns the mapping; tear it down.
+                    // Slicer owns the mapping.
                     mapping.Dispose();
                 }
             }
         }
 
-        // LUCENENET specific: nested IndexInput implementation. The native read
-        // engine (cursor, fast read paths, chunk crossing, and the concurrency/
-        // teardown coordination that has no upstream Java equivalent) lives in the
-        // reusable Support/UnsafeChunkIndexInput base; this subclass only supplies
-        // the chunk source - the MemoryMappedViewAccessor-backed Chunks of a
-        // SharedMapping. See UnsafeChunkIndexInput and the SharedMapping/Chunk doc
-        // for the rationale (#1013, #1151).
+        // LUCENENET specific: the read engine lives in the reusable
+        // Support/UnsafeChunkIndexInput base; this subclass only supplies the
+        // chunk source - the Chunks of a SharedMapping (#1013, #1151).
         /// <summary>
         /// LUCENENET-specific <see cref="IndexInput"/> backed by an array of
         /// memory-mapped <see cref="Chunk"/>s (each a
@@ -337,18 +322,15 @@ namespace Lucene.Net.Store
         /// </summary>
         internal sealed unsafe class MMapIndexInput : UnsafeChunkIndexInput
         {
-            // Non-readonly so that Clone() can mark the cloned instance as a
-            // non-root (see Clone()). A "root" instance is one returned from
-            // OpenInput (it owns the shared mapping). Clones and slices from
-            // IndexInputSlicer are non-root.
+            // A "root" instance is one returned from OpenInput; it owns the shared
+            // mapping. Clones and slicer-issued slices are non-root. Non-readonly
+            // so Clone() can clear it on the clone.
             private bool isRoot;
 
-            // Shared mapping used by this IndexInput. The same SharedMapping is
-            // shared by the root returned from OpenInput and its clones, OR by a
-            // slicer + its issued slices + their clones. Only root instances
-            // (ownsMapping == true) dispose the underlying mapping on Dispose.
-            // Slices and clones do not own it. This is the only state this
-            // subclass adds; the read engine state lives in the base.
+            // Shared mapping for this IndexInput, shared by the root and its clones,
+            // OR by a slicer + its slices + their clones. Only root instances
+            // (ownsMapping == true) dispose it. This is the only state this subclass
+            // adds; the read engine state lives in the base.
             private readonly SharedMapping mapping;
 
             // LUCENENET specific (PR #1267): for testing only. Exposes the shared
@@ -389,12 +371,10 @@ namespace Lucene.Net.Store
             {
                 // A disposed input must not hand out a working clone.
                 ThrowIfDisposed();
-                // Share the same SharedMapping (and thus the same Chunks) with the
-                // parent. The clone does NOT own the mapping; it piggybacks on the
-                // parent's lifetime and acquires its own per-chunk-crossing read
-                // reference on first read. The base ResetClonedCursor clears the
-                // inherited cursor cache so the clone never releases a reference the
-                // parent depends on.
+                // The clone shares the parent's SharedMapping but does NOT own it;
+                // it acquires its own per-chunk-crossing read reference on first
+                // read. ResetClonedCursor clears the inherited cursor cache so the
+                // clone never releases a reference the parent depends on.
                 var clone = (MMapIndexInput)base.Clone();
                 clone.isRoot = false;
                 clone.ResetClonedCursor();
@@ -403,11 +383,10 @@ namespace Lucene.Net.Store
 
             protected override void DisposeChunkSource(bool disposing)
             {
-                // Only root instances own the shared mapping. Clones and slices do
-                // not own it; disposing them only releases this instance's own read
-                // reference (handled by the base). Disposing the mapping closes its
-                // chunk accessors; the SafeHandle refcount defers each chunk's unmap
-                // until any outstanding read reference drains.
+                // Only root instances own the mapping; for clones and slices the
+                // base already released this instance's read reference. Disposing
+                // the mapping closes its chunk accessors; the SafeHandle refcount
+                // defers each chunk's unmap until outstanding read references drain.
                 if (isRoot)
                 {
                     mapping.Dispose();
@@ -451,10 +430,9 @@ namespace Lucene.Net.Store
             private int disposed;
 
             // LUCENENET specific (PR #1267): for testing only. True once Dispose has
-            // run and the owned FileStream (if any) has been disposed. Lets a test
-            // assert that the mapping releases its FileStream deterministically
-            // instead of leaking the object to finalization. Always true for the
-            // zero-length edge case, which owns no FileStream.
+            // run and the owned FileStream (if any) has been disposed, so a test can
+            // assert the mapping releases its FileStream deterministically rather
+            // than leaking it to finalization.
             internal bool IsFileStreamDisposed =>
                 Volatile.Read(ref disposed) != 0 &&
                 (fileStream is null || !fileStream.CanRead);
@@ -470,32 +448,19 @@ namespace Lucene.Net.Store
             internal static SharedMapping Create(string file, int chunkSizePower)
             {
                 // .NET Framework's MemoryMappedFile.CreateFromFile reads
-                // fileStream.Length multiple times non-atomically: once
-                // to materialize a default capacity (when 0 is passed),
-                // then again to enforce `fileStream.Length <= capacity`.
-                // A concurrent extender that grows the file between
-                // those reads trips an ArgumentOutOfRangeException
-                // ("capacity") with message "The capacity may not be
-                // smaller than the file size." See referencesource
-                // System.Core/System/IO/MemoryMappedFiles/
-                // MemoryMappedFile.cs lines 192-243:
-                // https://github.com/microsoft/referencesource/blob/ec9fa9ae770d522a5b5f0607898044b7478574a3/System.Core/System/IO/MemoryMappedFiles/MemoryMappedFile.cs#L192-L243
+                // fileStream.Length twice non-atomically (defaulting capacity from
+                // it, then enforcing `Length <= capacity`), so a concurrent extender
+                // that grows the file between those reads trips an
+                // ArgumentOutOfRangeException ("capacity"). Modern .NET caches the
+                // length into a single local and reuses it, so the race cannot fire
+                // and this loop runs once. (#1090)
+                // FW:     https://github.com/microsoft/referencesource/blob/ec9fa9ae770d522a5b5f0607898044b7478574a3/System.Core/System/IO/MemoryMappedFiles/MemoryMappedFile.cs#L192-L243
+                // modern: https://github.com/dotnet/runtime/blob/550500a978b784658a04110d49b3335dcacf33e0/src/libraries/System.IO.MemoryMappedFiles/src/System/IO/MemoryMappedFiles/MemoryMappedFile.cs#L237-L268
+                //         https://github.com/dotnet/runtime/blob/550500a978b784658a04110d49b3335dcacf33e0/src/libraries/System.IO.MemoryMappedFiles/src/System/IO/MemoryMappedFiles/MemoryMappedFile.Windows.cs#L14-L26
                 //
-                // Modern .NET (dotnet/runtime) caches the length into a
-                // single local fileSize at the top of CreateFromFile
-                // and reuses it for both the defaulting step and the
-                // VerifyMemoryMappedFileAccess guard, so the race
-                // cannot fire and this loop runs once:
-                // https://github.com/dotnet/runtime/blob/550500a978b784658a04110d49b3335dcacf33e0/src/libraries/System.IO.MemoryMappedFiles/src/System/IO/MemoryMappedFiles/MemoryMappedFile.cs#L237-L268
-                // https://github.com/dotnet/runtime/blob/550500a978b784658a04110d49b3335dcacf33e0/src/libraries/System.IO.MemoryMappedFiles/src/System/IO/MemoryMappedFiles/MemoryMappedFile.Windows.cs#L14-L26
-                //
-                // The retry budget is generous because the race window
-                // is small but the retry is cheap (a FileStream reopen
-                // plus another CreateFromFile call), and a tight
-                // extender can keep losing the race for many attempts
-                // in a row. Yield between attempts so the extender
-                // thread can make progress and reach a stable point
-                // between writes. (#1090)
+                // The retry budget is generous because the retry is cheap and a tight
+                // extender can keep winning the race; Yield between attempts so it can
+                // reach a stable point between writes.
                 const int maxAttempts = 32;
                 for (int attempt = 0; ; attempt++)
                 {
@@ -506,9 +471,8 @@ namespace Lucene.Net.Store
                     catch (ArgumentOutOfRangeException e)
                         when (e.ParamName == "capacity" && attempt < maxAttempts - 1)
                     {
-                        // Re-open and retry. The FileStream from the failed
-                        // attempt was disposed by CreateFromFile (leaveOpen:
-                        // false) before the exception propagated.
+                        // CreateAttempt already disposed its FileStream before
+                        // throwing, so just yield and retry.
                         Thread.Yield();
                     }
                 }
@@ -516,23 +480,16 @@ namespace Lucene.Net.Store
 
             private static SharedMapping CreateAttempt(string file, int chunkSizePower)
             {
-                // We open our own FileStream so we control the FileShare
-                // flags. The path-based CreateFromFile overload internally
-                // opens with FileShare.Read, which on Windows blocks
-                // attempts to delete or write to this file while we have
-                // it mapped — breaking callers (e.g. FreeTextSuggester)
-                // that build a temp index, dispose the directory, and
-                // immediately recursively delete the directory. We need
-                // FileShare.Delete in particular: on Windows, a delete
-                // attempt against an open file fails unless the open
-                // share-mode permits FILE_SHARE_DELETE. In Java, FileChannel
-                // uses read+write+delete mode by default and Lucene doesn't
-                // override this.
+                // We open our own FileStream to control the FileShare flags. The
+                // path-based CreateFromFile overload uses FileShare.Read, but on
+                // Windows a delete against an open file fails unless the share-mode
+                // permits FILE_SHARE_DELETE, so we need FileShare.Delete (matching
+                // Java's FileChannel default read+write+delete). Without it, callers
+                // that build a temp index then recursively delete it (e.g.
+                // FreeTextSuggester) break.
                 //
-                // bufferSize: 1 because MemoryMappedFile uses only the
-                // file handle and bypasses the FileStream buffer, so a
-                // 4 KiB default buffer would just be allocated and
-                // immediately discarded.
+                // bufferSize: 1 because the MMF bypasses the FileStream buffer, so a
+                // 4 KiB default buffer would be allocated and immediately discarded.
                 FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read,
                     FileShare.ReadWrite | FileShare.Delete,
                     bufferSize: 1, FileOptions.RandomAccess);
@@ -544,32 +501,20 @@ namespace Lucene.Net.Store
                     if (length == 0)
                     {
                         // CreateViewAccessor rejects zero-length views and
-                        // CreateFromFile rejects capacity 0 on an empty file,
-                        // so handle this edge case ourselves. Dispose the
-                        // FileStream eagerly since there's no MMF to own it.
-                        // Route through DisposeWhileHandlingException so a
-                        // throwing Dispose doesn't escape this success path
-                        // (it would be misleading — we successfully built a
-                        // zero-length mapping).
+                        // CreateFromFile rejects capacity 0, so handle the empty
+                        // file ourselves. Dispose fs through the swallowing overload
+                        // since no MMF will own it and a throwing Dispose must not
+                        // escape this success path.
                         IOUtils.DisposeWhileHandlingException(fs);
                         return new SharedMapping(mmf: null, fileStream: null, chunks: Array.Empty<Chunk>(), length: 0);
                     }
 
-                    // capacity: 0 -> the framework sizes the mapping
-                    // from the file's current length. On modern .NET
-                    // that length is captured into a single local and
-                    // reused, so there is no race; on .NET Framework
-                    // the length is re-read across the defaulting and
-                    // validation steps, which is why Create wraps this
-                    // call in a retry loop.
-                    // leaveOpen: true -> the MMF borrows fs's file handle
-                    // but does not close it; SharedMapping owns the
-                    // FileStream and disposes it (which closes the handle)
-                    // in Dispose. Note that even with leaveOpen: false the
-                    // MMF would close only the handle, never the FileStream
-                    // object itself, so we must track fs either way; using
-                    // leaveOpen: true keeps a single, unambiguous owner of
-                    // the handle and avoids a redundant handle close.
+                    // capacity: 0 -> the framework sizes the mapping from the file's
+                    // current length (the source of the .NET Framework race that
+                    // Create's retry loop handles).
+                    // leaveOpen: true -> the MMF borrows fs's handle but never
+                    // disposes it; SharedMapping owns fs and closes the handle in
+                    // Dispose. This keeps a single unambiguous owner of the handle.
                     mmf = MemoryMappedFile.CreateFromFile(
                         fileStream: fs,
                         mapName: null,
@@ -585,18 +530,12 @@ namespace Lucene.Net.Store
                 }
                 catch (Exception e) when (e.IsThrowable())
                 {
-                    // Cleanup must not mask e. DisposeChunks swallows internally,
-                    // so chunk teardown is safe. We dispose mmf/fs through the
-                    // swallowing overload of DisposeWhileHandlingException (the one
-                    // with no Exception parameter), which suppresses any Dispose
-                    // failure, and then rethrow e with a bare `throw;`. A bare
-                    // rethrow preserves e's original stack trace, and using the
-                    // swallowing overload (rather than the priorException overload,
-                    // which would ALSO throw) avoids a confusing double-throw.
-                    // With leaveOpen: true we always own fs (the MMF never disposes
-                    // it), so dispose both the mmf (if it was created) and fs. mmf
-                    // first so the mapping is torn down before the backing handle
-                    // is closed.
+                    // Cleanup must not mask e: DisposeChunks swallows internally and
+                    // we dispose mmf/fs through the swallowing overload (not the
+                    // priorException overload, which would re-throw), then bare-
+                    // rethrow to preserve e's stack trace. With leaveOpen: true we
+                    // always own fs; dispose mmf first so the mapping is torn down
+                    // before the backing handle closes.
                     DisposeChunks(chunks);
                     IOUtils.DisposeWhileHandlingException(mmf, fs);
                     throw;
@@ -610,10 +549,9 @@ namespace Lucene.Net.Store
             {
                 if (Interlocked.CompareExchange(ref disposed, 1, 0) != 0) return;
                 DisposeChunks(Chunks);
-                // Tear down the mapping before closing the backing handle, then
-                // dispose the FileStream we own (the MMF was created with
-                // leaveOpen: true and never disposes it). fileStream is null for
-                // the zero-length edge case, which the overload tolerates.
+                // mmf first so the mapping is torn down before we close the handle
+                // by disposing the FileStream we own. Both are null for the
+                // zero-length edge case, which the overload tolerates.
                 IOUtils.DisposeWhileHandlingException(memoryMappedFile, fileStream);
             }
 
@@ -629,18 +567,14 @@ namespace Lucene.Net.Store
                 }
 
                 long chunkSize = 1L << chunkSizePower;
-                // LUCENENET specific: ceiling-divide, so nChunks covers exactly
-                // the requested range with no trailing empty slot. Upstream
-                // Java (MMapDirectory.map) instead allocates nrBuffers = floor + 1
-                // and tolerates a final 0-byte ByteBuffer — a sentinel required
-                // because ByteBufferIndexInput's read loop unconditionally
-                // advances the buffer cursor past the end of each buffer, so
-                // indexing `buffers[N]` must be valid after the last byte of a
-                // file whose length is a whole multiple of chunkSize. We don't
-                // need that here: ReadInternal bounds-checks `pos + len` before
-                // indexing and only advances `chunkIdx` while `len > 0`. Also,
-                // MemoryMappedFile.CreateViewAccessor rejects a zero-length view,
-                // so a sentinel would require a special-case code path anyway.
+                // LUCENENET specific: ceiling-divide for an exact cover with no
+                // trailing empty slot. Upstream Java (MMapDirectory.map) instead
+                // allocates floor + 1 and keeps a final 0-byte sentinel ByteBuffer,
+                // because its read loop unconditionally advances the buffer cursor
+                // past each buffer's end. We don't need that: the base read engine
+                // bounds-checks before indexing and only advances the chunk index
+                // while bytes remain. (CreateViewAccessor rejects a zero-length view
+                // anyway, so a sentinel would need a special case.)
                 int nChunks = (int)((length + chunkSize - 1) >> chunkSizePower);
                 var result = new Chunk[nChunks];
 
@@ -652,17 +586,13 @@ namespace Lucene.Net.Store
                         long thisChunkLen = Math.Min(chunkSize, length - ((long)i << chunkSizePower));
 
                         MemoryMappedViewAccessor accessor = mmf.CreateViewAccessor(chunkOffset, thisChunkLen, MemoryMappedFileAccess.Read);
-                        // We do NOT AcquirePointer here. The read pointer is
-                        // acquired per chunk-crossing in Chunk.TryAcquireRead and
-                        // released in Chunk.ReleaseRead, so the SafeHandle's own
-                        // refcount serves as the drain barrier: the view cannot be
-                        // unmapped while a reader holds a per-crossing reference,
-                        // and a crossing after Close fails fast. Holding a map-time
-                        // AcquirePointer instead would keep the handle alive past
-                        // Close and defeat that fail-fast. PointerOffset is the
-                        // distance from the SafeBuffer's base to the first byte of
-                        // the requested view (nonzero when the view starts inside
-                        // an OS page); it is available without acquiring a pointer.
+                        // We do NOT AcquirePointer here: that is done per chunk-
+                        // crossing in Chunk.TryAcquireRead/ReleaseRead so the
+                        // SafeHandle refcount is the drain barrier and a crossing
+                        // after Close fails fast. A map-time AcquirePointer would
+                        // pin the handle past Close and defeat that. PointerOffset
+                        // (the view's offset within its OS page) is available
+                        // without acquiring a pointer.
                         result[i] = new Chunk(accessor, accessor.PointerOffset, thisChunkLen);
                     }
                     return result;
@@ -724,14 +654,13 @@ namespace Lucene.Net.Store
         {
             private readonly MemoryMappedViewAccessor accessor;
             private readonly SafeMemoryMappedViewHandle safe;
-            // Distance from the SafeBuffer's base to the first byte of this
-            // chunk's view (nonzero when the view starts inside an OS page).
+            // The view's offset within its OS page (nonzero when it doesn't start
+            // page-aligned).
             private readonly long pointerOffset;
             internal readonly long Length;
 
-            // Set once Close has disposed the accessor. Read by tests and used to
-            // make Close idempotent; the real teardown synchronization is the
-            // SafeHandle refcount, not this flag.
+            // Set once Close has disposed the accessor; only makes Close idempotent.
+            // The real teardown synchronization is the SafeHandle refcount.
             private int closed;
 
             internal Chunk(MemoryMappedViewAccessor accessor, long pointerOffset, long length)
@@ -743,9 +672,8 @@ namespace Lucene.Net.Store
             }
 
             // LUCENENET specific (PR #1267): for testing only. True once Close has
-            // disposed the accessor (and thus, once all read references drain,
-            // unmapped its view). Lets a test assert that disposing the owning
-            // input deterministically tears the chunk down rather than leaking it.
+            // disposed the accessor, so a test can assert disposing the owning input
+            // tears the chunk down rather than leaking it.
             internal bool IsNativeReleased => Volatile.Read(ref closed) != 0;
 
             /// <summary>
@@ -768,7 +696,7 @@ namespace Lucene.Net.Store
                 }
                 catch (ObjectDisposedException)
                 {
-                    // Close disposed the accessor/handle; treat as closed.
+                    // Close disposed the handle; treat as closed.
                     readBase = null;
                     return false;
                 }
@@ -796,10 +724,9 @@ namespace Lucene.Net.Store
             public void Close()
             {
                 if (Interlocked.CompareExchange(ref closed, 1, 0) != 0) return;
-                // accessor.Dispose() disposes the SafeHandle, which requests the
-                // unmap but defers it until refcount (AcquirePointer references)
-                // reaches zero. Route through the swallowing overload so a
-                // throwing Dispose during cleanup never propagates.
+                // Disposing the accessor disposes the SafeHandle, which requests the
+                // unmap but defers it until the AcquirePointer refcount reaches zero.
+                // Swallowing overload so a throwing Dispose never propagates.
                 IOUtils.DisposeWhileHandlingException(accessor);
             }
         }
