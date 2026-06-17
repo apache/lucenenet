@@ -1,6 +1,7 @@
 using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
+using Microsoft.Win32.SafeHandles;
 using System;
 using System.Buffers.Binary;
 using System.IO;
@@ -373,17 +374,21 @@ namespace Lucene.Net.Store
         /// directly from <c>IndexInput</c> rather than via a buffered base.
         ///
         /// <para/>
-        /// Concurrency: the per-chunk rent (<see cref="Chunk.TryAcquire"/>/
-        /// <see cref="Chunk.Release"/>) is held for as long as this
-        /// <see cref="IndexInput"/> caches a chunk's pointer (i.e., from one
-        /// chunk crossing to the next, or until <see cref="Seek"/>/
-        /// <see cref="Dispose(bool)"/>). <see cref="Chunk.Close"/> sets the
-        /// closed flag immediately and lazily defers <c>UnmapViewOfFile</c>/
-        /// <c>munmap</c> until every outstanding rent has been released. A
-        /// reader that has already entered a chunk completes its reads
-        /// safely on the still-mapped view; any subsequent chunk crossing
-        /// or read after the parent has been disposed fails with
-        /// <see cref="AlreadyClosedException"/>.
+        /// Concurrency: a per-chunk-crossing read reference
+        /// (<see cref="Chunk.TryAcquireRead"/>/<see cref="Chunk.ReleaseRead"/>,
+        /// a balanced <see cref="SafeBuffer.AcquirePointer"/>) is held for as
+        /// long as this <see cref="IndexInput"/> caches a chunk's pointer (i.e.,
+        /// from one chunk crossing to the next, or until <see cref="Seek"/>/
+        /// <see cref="Dispose(bool)"/>). <see cref="Chunk.Close"/> just disposes
+        /// the accessor; the runtime defers <c>UnmapViewOfFile</c>/<c>munmap</c>
+        /// until every outstanding read reference has been released (the
+        /// <see cref="SafeHandle"/> refcount IS the drain barrier - we don't
+        /// hand-roll one). A reader that has already entered a chunk completes
+        /// its reads safely on the still-mapped view; any subsequent chunk
+        /// crossing or read after the parent has been disposed fails with
+        /// <see cref="AlreadyClosedException"/>. The reference is taken once per
+        /// chunk crossing, not per read, so it does not reintroduce #1151's
+        /// per-read refcount contention.
         /// </summary>
         internal sealed unsafe class MMapIndexInput : IndexInput
         {
@@ -424,8 +429,9 @@ namespace Lucene.Net.Store
             private long position;
 
             // Cached current-chunk state. Valid iff currentChunk != null.
-            // currentChunk holds a TryAcquire rent; we Release when switching
-            // chunks, on Seek to a different chunk, or on Dispose.
+            // currentChunk holds a per-crossing read reference (TryAcquireRead);
+            // we ReleaseRead when switching chunks, on Seek to a different chunk,
+            // or on Dispose.
             //
             // The fast path needs only TWO fields beyond `position` to compute
             // the load address:
@@ -443,10 +449,12 @@ namespace Lucene.Net.Store
             private byte* readBase;        // = chunkBasePtr + baseOffset - chunkFileStart
             private long currentStart;     // slice-relative start of the cached chunk's intersection with [0, length)
             private long currentEnd;       // slice-relative end of the cached chunk's intersection with [0, length)
-            // ManagedThreadId of the thread that acquired currentChunk's rent.
-            // Used to keep cross-thread Dispose (e.g., slicer.Dispose disposing
-            // slices being read on other threads) from releasing a rent it
-            // doesn't own — see Dispose for the lifecycle rationale.
+            // ManagedThreadId of the thread that acquired currentChunk's read
+            // reference. A cross-thread Dispose must NOT release that reference
+            // directly: the acquiring thread may be mid-dereference of readBase,
+            // and releasing here could let the chunk's Close unmap the view under
+            // it (an AVE). When the disposer is a different thread we defer the
+            // release to a finalizer instead (see Dispose / HandOffStrandedReadRef).
             private int currentChunkOwnerThreadId;
 
             /// <summary>
@@ -693,10 +701,13 @@ namespace Lucene.Net.Store
                 Seek(newPos);
             }
 
-            // Acquire the chunk containing `slicePos` (slice-relative). Releases
-            // any currently-rented chunk first. Sets currentChunkBasePtr,
-            // currentChunkFileStart, currentStart, and currentEnd. Throws
+            // Acquire a read reference on the chunk containing `slicePos`
+            // (slice-relative). Releases any currently-held chunk reference
+            // first. Sets readBase, currentStart, and currentEnd. Throws
             // AlreadyClosedException if this instance or the chunk is closed.
+            // The read reference is taken once per chunk crossing (not per read),
+            // so it keeps the view mapped for the duration of reads in this chunk
+            // without the per-read refcount cost of #1151.
             private void EnsureCurrentChunk(long slicePos)
             {
                 if (Volatile.Read(ref instanceClosed) != 0)
@@ -709,7 +720,7 @@ namespace Lucene.Net.Store
                 Chunk[] chunks = mapping.Chunks;
                 int chunkIdx = (int)(globalPos >> chunkSizePower);
                 Chunk chunk = chunks[chunkIdx];
-                if (!chunk.TryAcquire())
+                if (!chunk.TryAcquireRead(out byte* chunkBase))
                 {
                     throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
                 }
@@ -726,28 +737,26 @@ namespace Lucene.Net.Store
                 // Precompute readBase so ReadByte/ReadInt* fast-path is
                 // a single load: *(readBase + pos). Algebraically, the
                 // file address of slice byte `pos` is
-                //   chunk.BasePtr + (baseOffset + pos - chunkFileStart)
-                // = (chunk.BasePtr + baseOffset - chunkFileStart) + pos
-                //                ^------- readBase ----^
-                readBase = chunk.BasePtr + (baseOffset - chunkFileStart);
+                //   chunkBase + (baseOffset + pos - chunkFileStart)
+                // = (chunkBase + baseOffset - chunkFileStart) + pos
+                //              ^------- readBase ----^
+                readBase = chunkBase + (baseOffset - chunkFileStart);
                 currentStart = start;
                 currentEnd = end;
                 currentChunkOwnerThreadId = Environment.CurrentManagedThreadId;
             }
 
-            // Release the rent on the currently-cached chunk. Must only be
-            // called from the thread that acquired the rent; cross-thread
-            // Dispose paths must not call this. Idempotent if no rent is
-            // currently held.
-            //
-            // currentChunk is swapped out with Interlocked.Exchange so that
-            // this same-thread release and a concurrent cross-thread
-            // HandOffStrandedRent can never both claim the same rent: whoever
-            // wins the swap of a non-null value owns the matching Release() (the
-            // handoff transfers that obligation to a finalizable releaser). The
-            // remaining cached fields are cleared by the winning thread; they
-            // are not read by any other thread once instanceClosed is set (the
-            // reader has stopped), so plain writes are sufficient.
+            // Release the read reference on the currently-cached chunk. Must be
+            // called by the thread that acquired it (the acquiring reader, on
+            // chunk crossing / Seek, or a SAME-THREAD Dispose). A cross-thread
+            // Dispose must NOT call this - it defers via HandOffStrandedReadRef
+            // instead, because the acquiring thread may be mid-dereference.
+            // currentChunk is swapped out with Interlocked.Exchange so this
+            // release and a concurrent HandOffStrandedReadRef can never both
+            // claim the same reference - whoever wins the swap of a non-null
+            // value owns the single matching ReleaseRead() (the handoff transfers
+            // that obligation to a finalizable releaser). Idempotent if no
+            // reference is held.
             private void ReleaseCurrentChunk()
             {
                 Chunk? c = Interlocked.Exchange(ref currentChunk, null);
@@ -757,34 +766,30 @@ namespace Lucene.Net.Store
                     currentStart = 0;
                     currentEnd = 0;
                     currentChunkOwnerThreadId = 0;
-                    c.Release();
+                    c.ReleaseRead();
                 }
             }
 
-            // Hand off a chunk rent that a cross-thread Dispose could not safely
-            // release (see Dispose) to a finalizable releaser, so the rent is
-            // reclaimed once this instance becomes unreachable. We cannot use a
+            // Hand off a chunk read reference that a cross-thread Dispose could
+            // not safely release on the disposing thread (the acquiring reader
+            // may be mid-dereference of readBase) to a finalizable releaser, so
+            // the reference is released once this instance becomes unreachable -
+            // at which point no thread can be reading through it, making the
+            // ReleaseRead (and any resulting unmap) AVE-safe. We cannot put a
             // finalizer on MMapIndexInput itself: the base IndexInput.Dispose()
-            // unconditionally calls GC.SuppressFinalize(this) after Dispose(bool)
-            // returns, which would un-arm any finalizer we re-registered here.
-            // The releaser is a separate object with its own finalizer that the
-            // base never suppresses. We keep it referenced from this instance
-            // (the field below) so its lifetime is tied to this instance's
-            // reachability: its finalizer therefore only runs once THIS
-            // MMapIndexInput is unreachable, at which point no thread can be
-            // dereferencing the chunk through it - so releasing the rent (which
-            // may drive the chunk to its terminal unmap state) is AVE-safe, for
-            // the same reason a finalizer directly on this instance would be.
-            // Allocated only on the rare cross-thread-strand path, so the hot
-            // same-thread dispose path stays allocation- and finalizer-free.
-            private StrandedRentReleaser? strandedRentReleaser;
+            // calls GC.SuppressFinalize(this) after Dispose(bool) returns. The
+            // releaser is a separate object the base never suppresses, referenced
+            // from this instance so its lifetime is tied to this instance's
+            // reachability. Allocated only on the rare cross-thread-strand path.
+            // ReSharper disable once NotAccessedField.Local - needed to pin lifetime
+            private StrandedReadRefReleaser? strandedReadRefReleaser;
 
-            private void HandOffStrandedRent()
+            private void HandOffStrandedReadRef()
             {
                 Chunk? c = Interlocked.Exchange(ref currentChunk, null);
                 if (c != null)
                 {
-                    strandedRentReleaser = new StrandedRentReleaser(c);
+                    strandedReadRefReleaser = new StrandedReadRefReleaser(c);
                 }
             }
 
@@ -794,16 +799,17 @@ namespace Lucene.Net.Store
                 {
                     throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
                 }
-                // Share the same SharedMapping with the parent. The clone
-                // does NOT acquire its own refcount on the mapping; it
-                // piggybacks on the parent's lifetime. The clone enters
-                // its own chunk rent on first read.
+                // Share the same SharedMapping with the parent. The clone does
+                // NOT own the mapping; it piggybacks on the parent's lifetime.
+                // The clone acquires its own per-chunk-crossing read reference on
+                // first read.
                 var clone = (MMapIndexInput)base.Clone();
                 clone.isRoot = false;
                 clone.instanceClosed = 0;
-                // Critical: do NOT inherit the parent's chunk rent. Otherwise
-                // disposing the clone would ExitRead a rent the parent still
-                // depends on (and vice versa).
+                // Critical: do NOT inherit the parent's chunk read reference.
+                // Each instance acquires and releases its own; sharing the cached
+                // chunk would make disposing the clone release a reference the
+                // parent still depends on (and vice versa).
                 clone.currentChunk = null;
                 clone.readBase = null;
                 clone.currentStart = 0;
@@ -823,39 +829,28 @@ namespace Lucene.Net.Store
                 {
                     return;
                 }
-                // Cross-thread Dispose safety: only release the chunk rent
-                // directly if Dispose runs on the same thread that acquired it.
-                // Otherwise (e.g. slicer.Dispose disposing slices being read
-                // on other threads — #1013) the rent is owned by a reader on
-                // another thread and we must not release it here: that reader
-                // may be mid-read, between its instanceClosed guard and the
-                // pointer load, so driving the chunk to its terminal state on
-                // this thread could unmap the view under it (an AVE). Instead we
-                // hand the rent off to a finalizable releaser (HandOffStrandedRent)
-                // so it is reclaimed when this instance becomes unreachable,
-                // rather than leaked. The handoff only swaps the currentChunk
-                // field (it does NOT release the rent here), so an AVE is
-                // impossible; whichever of the handoff and a concurrent
-                // same-thread ReleaseCurrentChunk wins the Interlocked.Exchange
-                // owns the single Release(), so the rent is released exactly once.
-                //
-                // We DO clear currentEnd from any thread, so the reader's
-                // fast path (`pos < currentEnd`) takes the slow path on its
-                // next call and observes the instanceClosed flag. Use
-                // Interlocked.Exchange so the 64-bit write is atomic on
-                // 32-bit runtimes too (a torn write could otherwise produce
-                // a value that accidentally satisfies pos < currentEnd, so
-                // a disposed reader could return one extra byte before
-                // throwing — the rent keeps the mapping alive, so this is
-                // a correctness nit rather than a memory-safety issue).
+                // Clear currentEnd from any thread so a racing reader's fast path
+                // (`pos < currentEnd`) drops to the slow path on its next call and
+                // observes the instanceClosed flag (Interlocked so the 64-bit
+                // write can't tear on 32-bit runtimes).
                 Interlocked.Exchange(ref currentEnd, 0L);
+                // Release this instance's chunk read reference only if Dispose
+                // runs on the SAME thread that acquired it - that thread is in
+                // Dispose, provably not mid-dereference of readBase, so releasing
+                // is safe. On a cross-thread Dispose (e.g. slicer.Dispose
+                // disposing a slice another thread is reading - #1013) the
+                // acquiring reader may be between its `pos < currentEnd` check and
+                // the `*(readBase + pos)` load; releasing the reference here would
+                // let Chunk.Close unmap the view under it (an AVE). So we hand the
+                // reference to a finalizable releaser, which releases it once this
+                // instance is unreachable (hence no thread is reading through it).
                 if (currentChunkOwnerThreadId == Environment.CurrentManagedThreadId)
                 {
                     ReleaseCurrentChunk();
                 }
                 else
                 {
-                    HandOffStrandedRent();
+                    HandOffStrandedReadRef();
                 }
 
                 // Only root instances own the shared mapping. Clones and
@@ -867,31 +862,25 @@ namespace Lucene.Net.Store
                 }
             }
 
-            // Finalizable holder for a single chunk rent that a cross-thread
-            // Dispose could not safely release on the disposing thread (see
-            // Dispose / HandOffStrandedRent). Its finalizer releases the rent
-            // exactly once. The owning MMapIndexInput references the holder, so
-            // the holder stays alive as long as the input is reachable; the
-            // finalizer therefore runs only after the input is unreachable, at
-            // which point no thread can be reading through the input, making the
-            // Release (and any resulting unmap) AVE-safe. Using a separate
-            // finalizable object rather than a finalizer on MMapIndexInput is
-            // deliberate: the base IndexInput.Dispose() calls
-            // GC.SuppressFinalize(this) on the input after Dispose returns, which
-            // would un-arm a finalizer on the input itself but does not touch
-            // this holder.
-            private sealed class StrandedRentReleaser
+            // Finalizable holder for a chunk read reference that a cross-thread
+            // Dispose could not safely release (see Dispose / HandOffStrandedReadRef).
+            // Its finalizer calls ReleaseRead() exactly once. The owning
+            // MMapIndexInput references the holder, so it stays alive while the
+            // input is reachable; the finalizer therefore runs only after the
+            // input is unreachable, at which point no thread can be dereferencing
+            // through it, making the release (and any resulting unmap) AVE-safe.
+            private sealed class StrandedReadRefReleaser
             {
-                private Chunk? chunk;
+                private readonly Chunk chunk;
 
-                internal StrandedRentReleaser(Chunk chunk) => this.chunk = chunk;
-
-                ~StrandedRentReleaser()
+                internal StrandedReadRefReleaser(Chunk chunk)
                 {
-                    // Release at most once. (A finalizer runs only once per
-                    // object, so the null-guard is just defensive.)
-                    Chunk? c = Interlocked.Exchange(ref chunk, null);
-                    c?.Release();
+                    this.chunk = chunk;
+                }
+
+                ~StrandedReadRefReleaser()
+                {
+                    chunk.ReleaseRead();
                 }
             }
         }
@@ -902,12 +891,13 @@ namespace Lucene.Net.Store
         /// one <see cref="Directory.IndexInputSlicer"/>. Clones and slices
         /// reference it without owning it. The owner calls
         /// <see cref="SharedMapping.Dispose"/> exactly once; the per-chunk
-        /// rent in <see cref="Chunk"/> ensures in-flight reads from
+        /// read reference in <see cref="Chunk"/> (a balanced
+        /// <see cref="SafeBuffer.AcquirePointer"/>) ensures in-flight reads from
         /// non-owning clones/slices either complete safely against the
         /// still-mapped view or fail with <see cref="AlreadyClosedException"/>
         /// rather than dereferencing a freed mapping.
         /// </summary>
-        internal sealed unsafe class SharedMapping : IDisposable
+        internal sealed class SharedMapping : IDisposable
         {
             /// <summary>
             /// The memory-mapped file reference for this mapping.
@@ -1131,27 +1121,18 @@ namespace Lucene.Net.Store
                         long thisChunkLen = Math.Min(chunkSize, length - ((long)i << chunkSizePower));
 
                         MemoryMappedViewAccessor accessor = mmf.CreateViewAccessor(chunkOffset, thisChunkLen, MemoryMappedFileAccess.Read);
-                        byte* ptr = null;
-                        try
-                        {
-                            accessor.SafeMemoryMappedViewHandle.AcquirePointer(ref ptr);
-                        }
-                        catch (Exception e) when (e.IsThrowable())
-                        {
-                            // Don't let accessor.Dispose() mask the original
-                            // AcquirePointer failure: dispose the accessor through the
-                            // swallowing overload (suppressing any Dispose failure),
-                            // then rethrow e with a bare `throw;` that preserves its
-                            // original stack trace. The throw skips the Chunk
-                            // construction below and propagates to the outer catch,
-                            // which disposes the already-built chunks.
-                            IOUtils.DisposeWhileHandlingException(accessor);
-                            throw;
-                        }
-                        // The accessor may be mapped at an offset inside the OS page,
-                        // in which case PointerOffset is the distance from the
-                        // SafeBuffer's base to the first byte of the requested view.
-                        result[i] = new Chunk(accessor, ptr + accessor.PointerOffset, thisChunkLen);
+                        // We do NOT AcquirePointer here. The read pointer is
+                        // acquired per chunk-crossing in Chunk.TryAcquireRead and
+                        // released in Chunk.ReleaseRead, so the SafeHandle's own
+                        // refcount serves as the drain barrier: the view cannot be
+                        // unmapped while a reader holds a per-crossing reference,
+                        // and a crossing after Close fails fast. Holding a map-time
+                        // AcquirePointer instead would keep the handle alive past
+                        // Close and defeat that fail-fast. PointerOffset is the
+                        // distance from the SafeBuffer's base to the first byte of
+                        // the requested view (nonzero when the view starts inside
+                        // an OS page); it is available without acquiring a pointer.
+                        result[i] = new Chunk(accessor, accessor.PointerOffset, thisChunkLen);
                     }
                     return result;
                 }
@@ -1185,145 +1166,110 @@ namespace Lucene.Net.Store
         /// live inside a <see cref="SharedMapping"/>.
         ///
         /// <para/>
-        /// Concurrency model: a reader holds a "rent" on the chunk via
-        /// <see cref="TryAcquire"/>/<see cref="Release"/> for as long as it
-        /// caches the chunk's pointer (i.e., from one chunk crossing to the
-        /// next, or until the owning <see cref="IndexInput"/> is sought to
-        /// a different chunk or disposed). <see cref="Close"/> flips the
-        /// closed flag immediately, so any subsequent <see cref="TryAcquire"/>
-        /// fails. The actual <c>ReleasePointer</c> + <c>accessor.Dispose</c>
-        /// are deferred until the per-chunk in-flight count reaches zero,
-        /// either at <see cref="Close"/> time (no readers) or whenever the
-        /// last reader calls <see cref="Release"/>. This is the "lazy
-        /// unmap" pattern: <see cref="Close"/> never blocks waiting for
-        /// readers, and a reader's cached pointer stays valid for as long
-        /// as it hasn't released. AVEs are structurally impossible because
-        /// <c>UnmapViewOfFile</c>/<c>munmap</c> can't run while any rent is
-        /// outstanding.
+        /// Concurrency model: the <see cref="MemoryMappedViewAccessor"/>'s
+        /// <see cref="SafeBuffer"/> (a refcounted <see cref="SafeHandle"/>) IS
+        /// the drain barrier - we use it directly instead of a hand-rolled
+        /// in-flight count. A reader holds a per-chunk-crossing reference via
+        /// <see cref="TryAcquireRead"/> (a balanced
+        /// <see cref="SafeBuffer.AcquirePointer"/>) for as long as it caches the
+        /// chunk's pointer (from one chunk crossing to the next, or until the
+        /// owning <see cref="IndexInput"/> is sought to a different chunk or
+        /// disposed), and drops it via <see cref="ReleaseRead"/>
+        /// (<see cref="SafeBuffer.ReleasePointer"/>). <see cref="Close"/> just
+        /// disposes the accessor: the runtime defers the actual
+        /// <c>UnmapViewOfFile</c>/<c>munmap</c> until every outstanding
+        /// AcquirePointer reference has been released, and fails any subsequent
+        /// <see cref="TryAcquireRead"/> with <see cref="ObjectDisposedException"/>
+        /// (which the caller maps to <see cref="AlreadyClosedException"/>). So a
+        /// reader that has entered a chunk completes its reads safely on the
+        /// still-mapped view, and any later chunk crossing after Close throws.
+        /// AVEs are structurally impossible because the unmap cannot run while
+        /// any read reference is outstanding - this is the BCL's own guarantee
+        /// for <see cref="SafeHandle"/>, not a custom invariant. The AcquirePointer
+        /// is taken only ONCE PER CHUNK CROSSING (not per read), so it does not
+        /// reintroduce the per-read refcount contention of #1151.
         /// </summary>
         internal sealed unsafe class Chunk
         {
-            private MemoryMappedViewAccessor? accessor;
+            private readonly MemoryMappedViewAccessor accessor;
+            private readonly SafeMemoryMappedViewHandle safe;
+            // Distance from the SafeBuffer's base to the first byte of this
+            // chunk's view (nonzero when the view starts inside an OS page).
+            private readonly long pointerOffset;
             internal readonly long Length;
-            // The chunk's base pointer (already adjusted for PointerOffset).
-            // Stays valid until the last rent has been released AND Close
-            // has run (whichever is later). Per-rent acquisition does NOT
-            // require a fresh AcquirePointer because the mapping's own
-            // AcquirePointer (taken once in MapChunks) keeps the SafeBuffer
-            // alive; the per-chunk inFlight count below is what defers the
-            // matching ReleasePointer.
-            internal readonly byte* BasePtr;
 
-            // Bit 0: closed flag. Bits 1..31: in-flight rent count. Packed
-            // into a single int so closed-then-zero-rent can be observed
-            // atomically and the actual unmap done exactly once.
-            // closed=1, inFlight=0 is the "ready to release native resources"
-            // terminal state; whoever observes that transition does the
-            // ReleasePointer + accessor.Dispose.
-            private int state;
+            // Set once Close has disposed the accessor. Read by tests and used to
+            // make Close idempotent; the real teardown synchronization is the
+            // SafeHandle refcount, not this flag.
+            private int closed;
 
-            private const int CLOSED_BIT = 1;
-            private const int RENT_INC = 2;
-
-            internal Chunk(MemoryMappedViewAccessor accessor, byte* basePtr, long length)
+            internal Chunk(MemoryMappedViewAccessor accessor, long pointerOffset, long length)
             {
                 this.accessor = accessor;
-                this.BasePtr = basePtr;
+                this.safe = accessor.SafeMemoryMappedViewHandle;
+                this.pointerOffset = pointerOffset;
                 this.Length = length;
             }
 
-            // LUCENENET specific (PR #1267): for testing only. True once
-            // ReleaseNative has run (the accessor was disposed and its mapped
-            // view released). Lets a test assert that a rent stranded by a
-            // cross-thread Dispose is eventually reclaimed (via the finalizable
-            // StrandedRentReleaser, then chunk Close) rather than leaking the
-            // view's address space forever.
-            internal bool IsNativeReleased => Volatile.Read(ref accessor) is null;
-
-            // LUCENENET specific (PR #1267): for testing only. True when no rent
-            // is outstanding (inFlight == 0), whether or not the chunk has been
-            // closed. A test draining the finalizer queue uses this to detect
-            // that a stranded rent was released (which on an un-closed chunk does
-            // NOT yet run ReleaseNative) before closing the mapping.
-            internal bool IsNativeReleasedOrZeroRent => (Volatile.Read(ref state) & ~CLOSED_BIT) == 0;
+            // LUCENENET specific (PR #1267): for testing only. True once Close has
+            // disposed the accessor (and thus, once all read references drain,
+            // unmapped its view). Lets a test assert that disposing the owning
+            // input deterministically tears the chunk down rather than leaking it.
+            internal bool IsNativeReleased => Volatile.Read(ref closed) != 0;
 
             /// <summary>
-            /// Acquire a rent on this chunk. Returns false if the chunk is
-            /// closed; otherwise the caller may dereference <see cref="BasePtr"/>
-            /// until it calls <see cref="Release"/>.
+            /// Acquire a per-chunk-crossing read reference and return the chunk's
+            /// base pointer (already adjusted for the view's page offset). The
+            /// caller may dereference the returned pointer until it calls
+            /// <see cref="ReleaseRead"/>. Returns false if the chunk has been
+            /// closed (its accessor disposed): the underlying
+            /// <see cref="SafeBuffer.AcquirePointer"/> throws
+            /// <see cref="ObjectDisposedException"/> in that case, which we
+            /// translate to a clean "closed" result. While a reference is held,
+            /// the runtime cannot unmap the view, so the pointer is safe to read.
             /// </summary>
-            public bool TryAcquire()
+            public bool TryAcquireRead(out byte* readBase)
             {
-                // CAS-loop: increment rent count iff closed bit is clear.
-                while (true)
+                byte* ptr = null;
+                try
                 {
-                    int s = Volatile.Read(ref state);
-                    if ((s & CLOSED_BIT) != 0) return false;
-                    int next = s + RENT_INC;
-                    if (Interlocked.CompareExchange(ref state, next, s) == s) return true;
+                    safe.AcquirePointer(ref ptr);
                 }
+                catch (ObjectDisposedException)
+                {
+                    // Close disposed the accessor/handle; treat as closed.
+                    readBase = null;
+                    return false;
+                }
+                readBase = ptr + pointerOffset;
+                return true;
             }
 
             /// <summary>
-            /// Release a previously-acquired rent. If this was the last
-            /// outstanding rent and the chunk is closed, releases the native
-            /// resources here.
+            /// Release a previously-acquired read reference. Once the last
+            /// outstanding reference is released after <see cref="Close"/>, the
+            /// runtime performs the actual unmap.
             /// </summary>
-            public void Release()
+            public void ReleaseRead()
             {
-                int s = Interlocked.Add(ref state, -RENT_INC);
-                if (s == CLOSED_BIT)
-                {
-                    // closed && inFlight==0: we observed the terminal state.
-                    ReleaseNative();
-                }
+                safe.ReleasePointer();
             }
 
             /// <summary>
-            /// Mark the chunk closed. New <see cref="TryAcquire"/> calls fail.
-            /// If no rents are outstanding, releases native resources
-            /// immediately; otherwise the last <see cref="Release"/> will.
+            /// Dispose this chunk's accessor. The runtime defers the actual
+            /// <c>UnmapViewOfFile</c>/<c>munmap</c> until every outstanding
+            /// <see cref="TryAcquireRead"/> reference is released, so Close never
+            /// unmaps a view out from under a live reader and never blocks
+            /// waiting for one. Idempotent.
             /// </summary>
             public void Close()
             {
-                // CAS-loop: set the closed bit if not already set.
-                while (true)
-                {
-                    int s = Volatile.Read(ref state);
-                    if ((s & CLOSED_BIT) != 0) return; // already closed
-                    int next = s | CLOSED_BIT;
-                    if (Interlocked.CompareExchange(ref state, next, s) == s)
-                    {
-                        if (next == CLOSED_BIT)
-                        {
-                            // No rents outstanding; we own the unmap.
-                            ReleaseNative();
-                        }
-                        return;
-                    }
-                }
-            }
-
-            // Releases the SafeBuffer's mapping-level reference and disposes
-            // the accessor. Must be called exactly once, by whichever thread
-            // observes the (closed=1, inFlight=0) transition.
-            private void ReleaseNative()
-            {
-                MemoryMappedViewAccessor? acc = accessor;
-                if (acc is null) return;
-                accessor = null;
-                try
-                {
-                    acc.SafeMemoryMappedViewHandle.ReleasePointer();
-                }
-                catch
-                {
-                    // Never propagate from cleanup. ReleaseNative runs from
-                    // the last reader's path or from Close, neither of which
-                    // has a meaningful way to surface a teardown failure
-                    // without masking real errors elsewhere.
-                }
-                IOUtils.DisposeWhileHandlingException(acc);
+                if (Interlocked.CompareExchange(ref closed, 1, 0) != 0) return;
+                // accessor.Dispose() disposes the SafeHandle, which requests the
+                // unmap but defers it until refcount (AcquirePointer references)
+                // reaches zero. Route through the swallowing overload so a
+                // throwing Dispose during cleanup never propagates.
+                IOUtils.DisposeWhileHandlingException(accessor);
             }
         }
     }
