@@ -3,11 +3,9 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using Microsoft.Win32.SafeHandles;
 using System;
-using System.Buffers.Binary;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using SCG = System.Collections.Generic;
@@ -314,83 +312,30 @@ namespace Lucene.Net.Store
             }
         }
 
-        // LUCENENET specific: nested IndexInput implementation. This replaces
-        // the upstream ByteBufferIndexInput approach with an
-        // array of MemoryMappedViewAccessor chunks whose raw pointers are
-        // acquired once per chunk. See the class doc for rationale (#1013,
-        // #1151).
+        // LUCENENET specific: nested IndexInput implementation. The native read
+        // engine (cursor, fast read paths, chunk crossing, and the concurrency/
+        // teardown coordination that has no upstream Java equivalent) lives in the
+        // reusable Support/UnsafeChunkIndexInput base; this subclass only supplies
+        // the chunk source - the MemoryMappedViewAccessor-backed Chunks of a
+        // SharedMapping. See UnsafeChunkIndexInput and the SharedMapping/Chunk doc
+        // for the rationale (#1013, #1151).
         /// <summary>
-        /// LUCENENET-specific <see cref="IndexInput"/> that reads from an array of
-        /// <see cref="MemoryMappedViewAccessor"/> chunks via cached raw pointers
-        /// obtained once per chunk from
-        /// <see cref="System.Runtime.InteropServices.SafeBuffer.AcquirePointer(ref byte*)"/>.
-        /// This diverges from the upstream Java implementation (which uses
-        /// <c>ByteBufferIndexInput</c> + <c>ByteBufferGuard</c>) in order to address
-        /// two Lucene.NET-specific issues together:
-        ///
-        /// <list type="bullet">
-        ///   <item><description>
-        ///     <b>#1013</b> — sporadic <c>AccessViolationException</c> in
-        ///     concurrent search with <c>SearcherManager</c>. The <c>SafeHandle</c>
-        ///     refcount incremented by <c>AcquirePointer</c> defers the underlying
-        ///     <c>munmap</c>/<c>UnmapViewOfFile</c> until every outstanding pointer
-        ///     ref is released, which structurally prevents a reader from
-        ///     dereferencing a freed mapping while any clone is still alive.
-        ///     A per-chunk closed-flag checked on each refill observes in-flight
-        ///     Dispose so clones throw <see cref="AlreadyClosedException"/>
-        ///     instead of reading stale bytes.
-        ///   </description></item>
-        ///   <item><description>
-        ///     <b>#1151</b> — MMapDirectory 37–51× slower than
-        ///     SimpleFSDirectory under parallel load. Every
-        ///     <c>MemoryMappedViewAccessor.ReadByte</c>/<c>ReadArray</c> call does
-        ///     its own <c>AcquirePointer</c>/<c>ReleasePointer</c> + range check;
-        ///     that per-call overhead is the hot spot in LZ4 decompression and
-        ///     other one-byte-at-a-time readers. Caching the pointer once per
-        ///     chunk and using <c>Unsafe.CopyBlockUnaligned</c> eliminates that
-        ///     overhead.
-        ///   </description></item>
-        /// </list>
-        ///
-        /// <para/>
-        /// The file is mapped as an array of fixed-size <see cref="Chunk"/>s of
-        /// <c>1 &lt;&lt; chunkSizePower</c> bytes (the last chunk may be smaller),
-        /// mirroring the upstream Java <c>ByteBufferIndexInput</c> shape. Chunking
-        /// avoids huge contiguous virtual-address reservations (helpful on 32-bit
-        /// runtimes and on long-running 64-bit processes where address space can
-        /// fragment), keeps each native mapping small enough to be reclaimed
-        /// predictably, and aligns with Lucene's typical small-working-set access
-        /// patterns.
-        ///
-        /// <para/>
-        /// Reads go directly through cached chunk pointers. <c>ReadByte</c>,
-        /// <c>ReadInt16</c>, <c>ReadInt32</c>, and <c>ReadInt64</c> are
-        /// specialized fast paths that read straight from the cached chunk
-        /// pointer with a single bounds check, avoiding any managed-buffer
-        /// indirection. <c>ReadVInt32</c>, <c>ReadVInt64</c>, <c>ReadString</c>
-        /// etc. inherit from <see cref="DataInput"/> and call our fast
-        /// <c>ReadByte</c>, so they pick up the speed-up automatically. This
-        /// mirrors upstream Java's <c>ByteBufferIndexInput</c>, which derives
-        /// directly from <c>IndexInput</c> rather than via a buffered base.
-        ///
-        /// <para/>
-        /// Concurrency: a per-chunk-crossing read reference
-        /// (<see cref="Chunk.TryAcquireRead"/>/<see cref="Chunk.ReleaseRead"/>,
-        /// a balanced <see cref="SafeBuffer.AcquirePointer"/>) is held for as
-        /// long as this <see cref="IndexInput"/> caches a chunk's pointer (i.e.,
-        /// from one chunk crossing to the next, or until <see cref="Seek"/>/
-        /// <see cref="Dispose(bool)"/>). <see cref="Chunk.Close"/> just disposes
-        /// the accessor; the runtime defers <c>UnmapViewOfFile</c>/<c>munmap</c>
-        /// until every outstanding read reference has been released (the
-        /// <see cref="SafeHandle"/> refcount IS the drain barrier - we don't
-        /// hand-roll one). A reader that has already entered a chunk completes
-        /// its reads safely on the still-mapped view; any subsequent chunk
-        /// crossing or read after the parent has been disposed fails with
-        /// <see cref="AlreadyClosedException"/>. The reference is taken once per
-        /// chunk crossing, not per read, so it does not reintroduce #1151's
-        /// per-read refcount contention.
+        /// LUCENENET-specific <see cref="IndexInput"/> backed by an array of
+        /// memory-mapped <see cref="Chunk"/>s (each a
+        /// <see cref="MemoryMappedViewAccessor"/> whose raw pointer is acquired per
+        /// chunk crossing). The read logic is inherited from
+        /// <see cref="UnsafeChunkIndexInput"/>; this type wires that engine to a
+        /// <see cref="SharedMapping"/>. The chunked, cached-pointer design
+        /// addresses two Lucene.NET-specific issues together: <b>#1013</b>
+        /// (sporadic <c>AccessViolationException</c> under concurrent search with
+        /// <c>SearcherManager</c>, avoided by the per-chunk-crossing read reference
+        /// + the SafeHandle refcount that defers <c>UnmapViewOfFile</c>/<c>munmap</c>
+        /// until references drain), and <b>#1151</b> (MMapDirectory far slower than
+        /// SimpleFSDirectory under parallel load, because
+        /// <c>MemoryMappedViewAccessor</c>'s per-call <c>AcquirePointer</c>/range
+        /// check contends; caching the pointer per chunk removes it).
         /// </summary>
-        internal sealed unsafe class MMapIndexInput : IndexInput
+        internal sealed unsafe class MMapIndexInput : UnsafeChunkIndexInput
         {
             // Non-readonly so that Clone() can mark the cloned instance as a
             // non-root (see Clone()). A "root" instance is one returned from
@@ -398,64 +343,18 @@ namespace Lucene.Net.Store
             // IndexInputSlicer are non-root.
             private bool isRoot;
 
-            // Per-instance closed flag: tracks whether THIS IndexInput
-            // instance has been disposed. Independent of the shared mapping's
-            // per-chunk closed flags, so that disposing a clone does not
-            // affect the root or sibling clones.
-            private int instanceClosed;
-
-            // Shared mapping used by this IndexInput. The same SharedMapping
-            // is shared by the root returned from OpenInput and its clones,
-            // OR by a slicer + its issued slices + their clones. Only root
-            // instances (ownsMapping == true) dispose the underlying mapping
-            // on Dispose. Slices and clones do not own it.
+            // Shared mapping used by this IndexInput. The same SharedMapping is
+            // shared by the root returned from OpenInput and its clones, OR by a
+            // slicer + its issued slices + their clones. Only root instances
+            // (ownsMapping == true) dispose the underlying mapping on Dispose.
+            // Slices and clones do not own it. This is the only state this
+            // subclass adds; the read engine state lives in the base.
             private readonly SharedMapping mapping;
 
             // LUCENENET specific (PR #1267): for testing only. Exposes the shared
             // mapping so a test can assert that disposing a root input
             // deterministically disposes the mapping's backing FileStream.
             internal SharedMapping Mapping => mapping;
-
-            // The window into the shared mapping that this IndexInput sees.
-            // For OpenInput this is [0, mapping.Length); for OpenSlice it is
-            // the requested slice range. All offsets in the cached chunk
-            // fields below are slice-relative; chunk lookup translates via
-            // baseOffset.
-            private readonly long baseOffset;
-            private readonly long length;
-            private readonly int chunkSizePower;
-
-            // Slice-relative read cursor. 0 <= position <= length.
-            private long position;
-
-            // Cached current-chunk state. Valid iff currentChunk != null.
-            // currentChunk holds a per-crossing read reference (TryAcquireRead);
-            // we ReleaseRead when switching chunks, on Seek to a different chunk,
-            // or on Dispose.
-            //
-            // The fast path needs only TWO fields beyond `position` to compute
-            // the load address:
-            //   readBase: a precomputed pointer such that the file byte at
-            //             slice-relative position `pos` is `*(readBase + pos)`.
-            //             This collapses chunkBasePtr + baseOffset -
-            //             chunkFileStart into a single value, removing two
-            //             field loads from the per-byte hot path.
-            //   currentEnd: slice-relative end of the cached chunk's
-            //             intersection with [0, length); fast path is
-            //             `pos < currentEnd`.
-            // currentStart is kept only for backward-seek cache validation
-            // in Seek(); it isn't read by ReadByte/ReadInt*.
-            private Chunk? currentChunk;
-            private byte* readBase;        // = chunkBasePtr + baseOffset - chunkFileStart
-            private long currentStart;     // slice-relative start of the cached chunk's intersection with [0, length)
-            private long currentEnd;       // slice-relative end of the cached chunk's intersection with [0, length)
-            // ManagedThreadId of the thread that acquired currentChunk's read
-            // reference. A cross-thread Dispose must NOT release that reference
-            // directly: the acquiring thread may be mid-dereference of readBase,
-            // and releasing here could let the chunk's Close unmap the view under
-            // it (an AVE). When the disposer is a different thread we defer the
-            // release to a finalizer instead (see Dispose / HandOffStrandedReadRef).
-            private int currentChunkOwnerThreadId;
 
             /// <summary>
             /// Creates an <see cref="IndexInput"/> viewing <c>[offset, offset+length)</c>
@@ -466,424 +365,56 @@ namespace Lucene.Net.Store
             internal MMapIndexInput(string resourceDescription,
                 bool ownsMapping, SharedMapping mapping,
                 long offset, long length, int chunkSizePower)
-                : base(resourceDescription)
+                : base(resourceDescription, offset, length, chunkSizePower)
             {
                 this.isRoot = ownsMapping;
                 this.mapping = mapping ?? throw new ArgumentNullException(nameof(mapping));
-                this.baseOffset = offset;
-                this.length = length;
-                this.chunkSizePower = chunkSizePower;
             }
 
-            public override long Length => length;
+            // --- UnsafeChunkIndexInput chunk source ---------------------------
 
-            public override long Position => position;
+            protected override int ChunkCount => mapping.Chunks.Length;
 
-            public override void Seek(long pos)
-            {
-                if (pos < 0 || pos > length)
-                {
-                    throw new IOException("Seek position is out of bounds: " + pos);
-                }
-                if (Volatile.Read(ref instanceClosed) != 0)
-                {
-                    throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
-                }
-                // If the seek lands inside the currently-rented chunk, we
-                // can keep the rent and just move the cursor. Otherwise,
-                // invalidate the cache so the next read takes the slow path
-                // and acquires the new chunk.
-                if (currentChunk != null && pos >= currentStart && pos < currentEnd)
-                {
-                    position = pos;
-                    return;
-                }
-                ReleaseCurrentChunk();
-                position = pos;
-            }
+            protected override bool TryAcquireChunk(int index, out byte* chunkBase)
+                => mapping.Chunks[index].TryAcquireRead(out chunkBase);
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override byte ReadByte()
-            {
-                long pos = position;
-                if (pos < currentEnd)
-                {
-                    byte b = *(readBase + pos);
-                    position = pos + 1;
-                    return b;
-                }
-                return ReadByteSlow();
-            }
+            protected override void ReleaseChunk(int index)
+                => mapping.Chunks[index].ReleaseRead();
 
-            // Slow path: cache miss, EOF, or instance disposed. Acquires the
-            // chunk that contains `position` (or throws), then retries the
-            // single-byte read.
-            [MethodImpl(MethodImplOptions.NoInlining)]
-            private byte ReadByteSlow()
-            {
-                long pos = position;
-                if (pos >= length)
-                {
-                    throw EOFException.Create("read past EOF: " + this);
-                }
-                EnsureCurrentChunk(pos);
-                byte b = *(readBase + pos);
-                position = pos + 1;
-                return b;
-            }
+            protected override long ChunkLength(int index) => mapping.Chunks[index].Length;
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override short ReadInt16()
-            {
-                long pos = position;
-                if (pos + 2 <= currentEnd)
-                {
-                    ushort raw = Unsafe.ReadUnaligned<ushort>(readBase + pos);
-                    short v = (short)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
-                    position = pos + 2;
-                    return v;
-                }
-                // Slow path: 2 bytes straddle a chunk boundary. Fill via
-                // ReadBytes (which handles the crossing) and decode big-endian
-                // to match the fast path. Avoids the 2× virtcall round-trip
-                // through base.ReadInt16 -> ReadByte.
-                Span<byte> buf = stackalloc byte[2];
-                ReadBytes(buf);
-                return BinaryPrimitives.ReadInt16BigEndian(buf);
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override int ReadInt32()
-            {
-                long pos = position;
-                if (pos + 4 <= currentEnd)
-                {
-                    uint raw = Unsafe.ReadUnaligned<uint>(readBase + pos);
-                    int v = (int)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
-                    position = pos + 4;
-                    return v;
-                }
-                // Slow path: see ReadInt16.
-                Span<byte> buf = stackalloc byte[4];
-                ReadBytes(buf);
-                return BinaryPrimitives.ReadInt32BigEndian(buf);
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override long ReadInt64()
-            {
-                long pos = position;
-                if (pos + 8 <= currentEnd)
-                {
-                    ulong raw = Unsafe.ReadUnaligned<ulong>(readBase + pos);
-                    long v = (long)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
-                    position = pos + 8;
-                    return v;
-                }
-                // Slow path: see ReadInt16.
-                Span<byte> buf = stackalloc byte[8];
-                ReadBytes(buf);
-                return BinaryPrimitives.ReadInt64BigEndian(buf);
-            }
-
-            public override void ReadBytes(byte[] b, int offset, int len)
-            {
-                if (b is null)
-                {
-                    throw new ArgumentNullException(nameof(b));
-                }
-                if ((uint)offset > (uint)b.Length || (uint)len > (uint)(b.Length - offset))
-                {
-                    throw new ArgumentOutOfRangeException(nameof(offset),
-                        $"offset/len out of range: offset={offset}, len={len}, b.Length={b.Length}");
-                }
-                if (len == 0) return;
-
-                ReadBytesCore(ref b[offset], len);
-            }
-
-            public override void ReadBytes(Span<byte> destination)
-            {
-                int len = destination.Length;
-                if (len == 0) return;
-
-                ReadBytesCore(ref MemoryMarshal.GetReference(destination), len);
-            }
-
-            // Shared inner loop for both ReadBytes overloads. Takes a raw
-            // ref + length so the byte[] path doesn't pay for a Span ctor +
-            // GetReference round-trip, and the per-iteration slice/GetReference
-            // pair is replaced with a single Unsafe.Add.
-            //
-            // The byte[] overload is responsible for its own bounds checking
-            // (Span's ctor checks for free; here we have to do it manually).
-            private void ReadBytesCore(ref byte destination, int length)
-            {
-                if (Volatile.Read(ref instanceClosed) != 0)
-                {
-                    throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
-                }
-
-                long pos = position;
-                if (pos + length > this.length)
-                {
-                    throw EOFException.Create("read past EOF: " + this);
-                }
-
-                int remaining = length;
-                int dstOff = 0;
-
-                while (remaining > 0)
-                {
-                    if (pos >= currentEnd)
-                    {
-                        EnsureCurrentChunk(pos);
-                    }
-
-                    long available = currentEnd - pos;
-                    int inChunk = (int)(available < remaining ? available : remaining);
-
-                    ref byte src = ref Unsafe.AsRef<byte>(readBase + pos);
-                    ref byte dst = ref Unsafe.Add(ref destination, dstOff);
-
-                    // Small-copy fast path (≤ 8 bytes). Unsafe.CopyBlockUnaligned
-                    // has nontrivial entry overhead for tiny copies; using a
-                    // sized read/write avoids it for the common short-read case
-                    // (e.g., the slow path of ReadInt16/Int32/Int64).
-                    if (inChunk <= 8)
-                    {
-                        switch (inChunk)
-                        {
-                            case 8:
-                                Unsafe.WriteUnaligned(ref dst, Unsafe.ReadUnaligned<ulong>(ref src));
-                                break;
-                            case 4:
-                                Unsafe.WriteUnaligned(ref dst, Unsafe.ReadUnaligned<uint>(ref src));
-                                break;
-                            case 2:
-                                Unsafe.WriteUnaligned(ref dst, Unsafe.ReadUnaligned<ushort>(ref src));
-                                break;
-                            case 1:
-                                dst = src;
-                                break;
-                            default:
-                                // 3, 5, 6, 7 — uncommon; fall through to byte loop.
-                                for (int i = 0; i < inChunk; i++)
-                                {
-                                    Unsafe.Add(ref dst, i) = Unsafe.Add(ref src, i);
-                                }
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        Unsafe.CopyBlockUnaligned(ref dst, ref src, (uint)inChunk);
-                    }
-
-                    pos += inChunk;
-                    dstOff += inChunk;
-                    remaining -= inChunk;
-                }
-                position = pos;
-            }
-
-            public override void SkipBytes(long numBytes)
-            {
-                if (numBytes < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(numBytes), "numBytes must not be negative");
-                }
-                long newPos = position + numBytes;
-                if (newPos < 0 || newPos > length)
-                {
-                    throw EOFException.Create("skip past EOF: " + this);
-                }
-                Seek(newPos);
-            }
-
-            // Acquire a read reference on the chunk containing `slicePos`
-            // (slice-relative). Releases any currently-held chunk reference
-            // first. Sets readBase, currentStart, and currentEnd. Throws
-            // AlreadyClosedException if this instance or the chunk is closed.
-            // The read reference is taken once per chunk crossing (not per read),
-            // so it keeps the view mapped for the duration of reads in this chunk
-            // without the per-read refcount cost of #1151.
-            private void EnsureCurrentChunk(long slicePos)
-            {
-                if (Volatile.Read(ref instanceClosed) != 0)
-                {
-                    throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
-                }
-                ReleaseCurrentChunk();
-
-                long globalPos = baseOffset + slicePos;
-                Chunk[] chunks = mapping.Chunks;
-                int chunkIdx = (int)(globalPos >> chunkSizePower);
-                Chunk chunk = chunks[chunkIdx];
-                if (!chunk.TryAcquireRead(out byte* chunkBase))
-                {
-                    throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
-                }
-
-                long chunkFileStart = (long)chunkIdx << chunkSizePower;
-                long chunkFileEnd = chunkFileStart + chunk.Length;
-                // Slice-relative interval = chunk's file interval clipped to
-                // [baseOffset, baseOffset + length] and translated.
-                long sliceFileEnd = baseOffset + length;
-                long start = Math.Max(chunkFileStart, baseOffset) - baseOffset;
-                long end = Math.Min(chunkFileEnd, sliceFileEnd) - baseOffset;
-
-                currentChunk = chunk;
-                // Precompute readBase so ReadByte/ReadInt* fast-path is
-                // a single load: *(readBase + pos). Algebraically, the
-                // file address of slice byte `pos` is
-                //   chunkBase + (baseOffset + pos - chunkFileStart)
-                // = (chunkBase + baseOffset - chunkFileStart) + pos
-                //              ^------- readBase ----^
-                readBase = chunkBase + (baseOffset - chunkFileStart);
-                currentStart = start;
-                currentEnd = end;
-                currentChunkOwnerThreadId = Environment.CurrentManagedThreadId;
-            }
-
-            // Release the read reference on the currently-cached chunk. Must be
-            // called by the thread that acquired it (the acquiring reader, on
-            // chunk crossing / Seek, or a SAME-THREAD Dispose). A cross-thread
-            // Dispose must NOT call this - it defers via HandOffStrandedReadRef
-            // instead, because the acquiring thread may be mid-dereference.
-            // currentChunk is swapped out with Interlocked.Exchange so this
-            // release and a concurrent HandOffStrandedReadRef can never both
-            // claim the same reference - whoever wins the swap of a non-null
-            // value owns the single matching ReleaseRead() (the handoff transfers
-            // that obligation to a finalizable releaser). Idempotent if no
-            // reference is held.
-            private void ReleaseCurrentChunk()
-            {
-                Chunk? c = Interlocked.Exchange(ref currentChunk, null);
-                if (c != null)
-                {
-                    readBase = null;
-                    currentStart = 0;
-                    currentEnd = 0;
-                    currentChunkOwnerThreadId = 0;
-                    c.ReleaseRead();
-                }
-            }
-
-            // Hand off a chunk read reference that a cross-thread Dispose could
-            // not safely release on the disposing thread (the acquiring reader
-            // may be mid-dereference of readBase) to a finalizable releaser, so
-            // the reference is released once this instance becomes unreachable -
-            // at which point no thread can be reading through it, making the
-            // ReleaseRead (and any resulting unmap) AVE-safe. We cannot put a
-            // finalizer on MMapIndexInput itself: the base IndexInput.Dispose()
-            // calls GC.SuppressFinalize(this) after Dispose(bool) returns. The
-            // releaser is a separate object the base never suppresses, referenced
-            // from this instance so its lifetime is tied to this instance's
-            // reachability. Allocated only on the rare cross-thread-strand path.
-            // ReSharper disable once NotAccessedField.Local - needed to pin lifetime
-            private StrandedReadRefReleaser? strandedReadRefReleaser;
-
-            private void HandOffStrandedReadRef()
-            {
-                Chunk? c = Interlocked.Exchange(ref currentChunk, null);
-                if (c != null)
-                {
-                    strandedReadRefReleaser = new StrandedReadRefReleaser(c);
-                }
-            }
+            // --- Clone / dispose ----------------------------------------------
 
             public override object Clone()
             {
-                if (Volatile.Read(ref instanceClosed) != 0)
-                {
-                    throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
-                }
-                // Share the same SharedMapping with the parent. The clone does
-                // NOT own the mapping; it piggybacks on the parent's lifetime.
-                // The clone acquires its own per-chunk-crossing read reference on
-                // first read.
+                // A disposed input must not hand out a working clone.
+                ThrowIfDisposed();
+                // Share the same SharedMapping (and thus the same Chunks) with the
+                // parent. The clone does NOT own the mapping; it piggybacks on the
+                // parent's lifetime and acquires its own per-chunk-crossing read
+                // reference on first read. The base ResetClonedCursor clears the
+                // inherited cursor cache so the clone never releases a reference the
+                // parent depends on.
                 var clone = (MMapIndexInput)base.Clone();
                 clone.isRoot = false;
-                clone.instanceClosed = 0;
-                // Critical: do NOT inherit the parent's chunk read reference.
-                // Each instance acquires and releases its own; sharing the cached
-                // chunk would make disposing the clone release a reference the
-                // parent still depends on (and vice versa).
-                clone.currentChunk = null;
-                clone.readBase = null;
-                clone.currentStart = 0;
-                clone.currentEnd = 0;
-                clone.currentChunkOwnerThreadId = 0;
+                clone.ResetClonedCursor();
                 return clone;
             }
 
-            protected override void Dispose(bool disposing)
+            protected override void DisposeChunkSource(bool disposing)
             {
-                if (!disposing)
-                {
-                    return;
-                }
-                // Mark this instance closed. Idempotent.
-                if (Interlocked.CompareExchange(ref instanceClosed, 1, 0) != 0)
-                {
-                    return;
-                }
-                // Clear currentEnd from any thread so a racing reader's fast path
-                // (`pos < currentEnd`) drops to the slow path on its next call and
-                // observes the instanceClosed flag (Interlocked so the 64-bit
-                // write can't tear on 32-bit runtimes).
-                Interlocked.Exchange(ref currentEnd, 0L);
-                // Release this instance's chunk read reference only if Dispose
-                // runs on the SAME thread that acquired it - that thread is in
-                // Dispose, provably not mid-dereference of readBase, so releasing
-                // is safe. On a cross-thread Dispose (e.g. slicer.Dispose
-                // disposing a slice another thread is reading - #1013) the
-                // acquiring reader may be between its `pos < currentEnd` check and
-                // the `*(readBase + pos)` load; releasing the reference here would
-                // let Chunk.Close unmap the view under it (an AVE). So we hand the
-                // reference to a finalizable releaser, which releases it once this
-                // instance is unreachable (hence no thread is reading through it).
-                if (currentChunkOwnerThreadId == Environment.CurrentManagedThreadId)
-                {
-                    ReleaseCurrentChunk();
-                }
-                else
-                {
-                    HandOffStrandedReadRef();
-                }
-
-                // Only root instances own the shared mapping. Clones and
-                // slices do not own it; disposing them only flips this
-                // instance's closed flag.
+                // Only root instances own the shared mapping. Clones and slices do
+                // not own it; disposing them only releases this instance's own read
+                // reference (handled by the base). Disposing the mapping closes its
+                // chunk accessors; the SafeHandle refcount defers each chunk's unmap
+                // until any outstanding read reference drains.
                 if (isRoot)
                 {
                     mapping.Dispose();
                 }
             }
-
-            // Finalizable holder for a chunk read reference that a cross-thread
-            // Dispose could not safely release (see Dispose / HandOffStrandedReadRef).
-            // Its finalizer calls ReleaseRead() exactly once. The owning
-            // MMapIndexInput references the holder, so it stays alive while the
-            // input is reachable; the finalizer therefore runs only after the
-            // input is unreachable, at which point no thread can be dereferencing
-            // through it, making the release (and any resulting unmap) AVE-safe.
-            private sealed class StrandedReadRefReleaser
-            {
-                private readonly Chunk chunk;
-
-                internal StrandedReadRefReleaser(Chunk chunk)
-                {
-                    this.chunk = chunk;
-                }
-
-                ~StrandedReadRefReleaser()
-                {
-                    chunk.ReleaseRead();
-                }
-            }
         }
+
 
         /// <summary>
         /// LUCENENET specific: a single memory-mapped file plus its chunk
