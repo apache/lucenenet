@@ -43,6 +43,11 @@ github:
     merge: false
     rebase: false
 
+  copilot_code_review:
+    enabled: true
+    review_drafts: true
+    review_on_push: true
+
   rulesets:
     - name: "Branch Protection"
       type: branch
