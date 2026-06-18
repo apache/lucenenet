@@ -4,7 +4,7 @@ function Properties {
         Define a scriptblock that contains assignments to variables that will be available to all tasks in the build script
 
         .DESCRIPTION
-        A build script may declare a "Properies" function which allows you to define variables that will be available to all the "Task" functions in the build script.
+        A build script may declare a "Properties" function which allows you to define variables that will be available to all the "Task" functions in the build script.
 
         .PARAMETER properties
         The script block containing all the variable assignment statements

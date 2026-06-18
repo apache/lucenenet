@@ -233,7 +233,7 @@ namespace Lucene.Net.Search
                 // Need to find waitingGen inside lock as its used to determine
                 // stale time
                 waitingGen = Math.Max(waitingGen, targetGen);
-                reopenCond.Set();                                   // LUCENENET NOTE: gives Run() an oppertunity to notice one is now waiting if one wasn't before.
+                reopenCond.Set();                                   // LUCENENET NOTE: gives Run() an opportunity to notice one is now waiting if one wasn't before.
                 m_notify.Reset();                                   // LUCENENET specific: required to "close the door". Java's notifyAll keyword didn't need this.
             }
             finally

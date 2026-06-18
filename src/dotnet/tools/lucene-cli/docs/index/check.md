@@ -38,7 +38,7 @@ Cross-check term vectors.
 
 `-dir|--directory-type <DIRECTORY_TYPE>`
 
-The FSDirectory implementation to use. If ommitted, it defaults to the optimal FSDirectory for your OS platform.
+The FSDirectory implementation to use. If omitted, it defaults to the optimal FSDirectory for your OS platform.
 
 `-s|--segment <SEGMENT>`
 

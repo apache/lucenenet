@@ -131,7 +131,7 @@ It is recommended that all .NET Framework users migrate as soon as possible.
 * [#580](https://github.com/apache/lucenenet/pull/580) - `Lucene.Net.QueryParsers.Flexible.Standard.Config.NumberDateFormat`: Added `NumericRepresentation` property to set the representation to use for both `Format()` and `Parse()`.
 * [#580](https://github.com/apache/lucenenet/pull/580) - `Lucene.Net.QueryParsers` - Added support for `TimeZoneInfo` when converting to/from string (Classic and Flexible query parsers)
 * [#580](https://github.com/apache/lucenenet/pull/580) - `Lucene.Net.QueryParsers.Classic.QueryParserBase`: Use `TryParse()` instead of `Parse()` to parse numeric values. Use the current culture, but fall back to invariant culture.
-* [#582](https://github.com/apache/lucenenet/pull/582) - **PERFORAMANCE:** `Lucene.Net.Search.FieldCacheRangeFilter`: Eliminated boxing in `Equals()` check
+* [#582](https://github.com/apache/lucenenet/pull/582) - **PERFORMANCE:** `Lucene.Net.Search.FieldCacheRangeFilter`: Eliminated boxing in `Equals()` check
 * [#584](https://github.com/apache/lucenenet/pull/584) - `Lucene.Net.Expressions.SimpleBindings`: Added collection initializer support. Updated `DistanceFacetsExample` and `ExpressionAggregationFacetsExample` to demonstrate usage.
 * [#586](https://github.com/apache/lucenenet/pull/586) - **SWEEP:** Removed conditional compilation for MSTest/xUnit and the following features:
    - TESTFRAMEWORK_MSTEST

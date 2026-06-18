@@ -998,7 +998,7 @@ namespace Lucene.Net.Store
                                 }
 
                                 // its possible we cannot delete the segments_N on windows if someone has it open and
-                                // maybe other files too, depending on timing. normally someone on windows wouldnt have
+                                // maybe other files too, depending on timing. normally someone on Windows wouldn't have
                                 // an issue (IFD would nuke this stuff eventually), but we pass NoDeletionPolicy...
                                 foreach (string file in pendingDeletions)
                                 {
