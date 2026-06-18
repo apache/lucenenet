@@ -4,6 +4,50 @@
 [![Azure DevOps builds (master)](https://img.shields.io/azure-devops/build/lucene-net/6ba240c9-9598-47e7-a793-0ed8a4ba2f8b/3/master)](https://dev.azure.com/lucene-net/Lucene.NET/_build?definitionId=3&_a=summary)
 [![GitHub](https://img.shields.io/github/license/apache/lucenenet)](https://github.com/apache/lucenenet/blob/master/LICENSE.txt)
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Powerful Full-text search for .NET](#powerful-full-text-search-for-net)
+- [Supported Frameworks](#supported-frameworks)
+  - [Lucene.NET 3.0.3](#lucenenet-303)
+  - [Lucene.NET 4.8.0](#lucenenet-480)
+- [Status](#status)
+- [Download](#download)
+  - [Lucene.NET 3.0.3](#lucenenet-303-1)
+      - [Core Library](#core-library)
+      - [All Packages](#all-packages)
+  - [Lucene.NET 4.8.0](#lucenenet-480-1)
+      - [Core Library](#core-library-1)
+      - [All Packages](#all-packages-1)
+- [Documentation](#documentation)
+  - [Legacy Versions](#legacy-versions)
+- [Demos & Tools](#demos--tools)
+- [How to Contribute](#how-to-contribute)
+  - [Join Mailing Lists](#join-mailing-lists)
+  - [Ask a Question](#ask-a-question)
+  - [Report a Bug](#report-a-bug)
+  - [Start a Discussion](#start-a-discussion)
+  - [Submit a Pull Request](#submit-a-pull-request)
+- [Building and Testing](#building-and-testing)
+  - [Command Line](#command-line)
+      - [Prerequisites](#prerequisites)
+      - [Execution](#execution)
+        - [Windows](#windows)
+        - [Linux or macOS](#linux-or-macos)
+      - [Build Options](#build-options)
+        - [Windows](#windows-1)
+        - [Linux or macOS](#linux-or-macos-1)
+  - [Visual Studio](#visual-studio)
+    - [Prerequisites](#prerequisites-1)
+    - [Execution](#execution-1)
+  - [Azure DevOps](#azure-devops)
+    - [Prerequisites](#prerequisites-2)
+    - [Execution](#execution-2)
+      - [If you don't already have a pipeline set up:](#if-you-dont-already-have-a-pipeline-set-up)
+      - [If you already have a pipeline set up:](#if-you-already-have-a-pipeline-set-up)
+
+<!-- END doctoc -->
+
 ## Powerful Full-text search for .NET
 
 Apache Lucene.NET is an open-source full-text search library written in C#. It is a port of the popular Java Apache Lucene project.
