@@ -335,6 +335,48 @@ namespace Lucene.Net.Search.Grouping
             dir.Dispose();
         }
 
+        // LUCENENET specific - regression test for #1362
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestSetAllGroups_GroupOffsetBeyondGroupCount_TotalGroupCountNotNull()
+        {
+            // When groupOffset exceeds the number of groups, topSearchGroups is null and
+            // the early return path must still populate TotalGroupCount from allGroupsCollector.
+            using Directory dir = NewDirectory();
+            RandomIndexWriter w = new RandomIndexWriter(
+                Random,
+                dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT,
+                    new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
+
+            // Index 2 documents in the same group.
+            Document doc = new Document();
+            doc.Add(new StringField("group", "foo", Field.Store.NO));
+            doc.Add(new TextField("content", "hello world", Field.Store.NO));
+            w.AddDocument(doc);
+
+            doc = new Document();
+            doc.Add(new StringField("group", "foo", Field.Store.NO));
+            doc.Add(new TextField("content", "hello world", Field.Store.NO));
+            w.AddDocument(doc);
+
+            IndexSearcher indexSearcher = NewSearcher(w.GetReader());
+            w.Dispose();
+
+            // groupOffset=5 exceeds the 1 matching group, so topSearchGroups will be null
+            // in the first-pass collector. With SetAllGroups(true), TotalGroupCount must
+            // still be set to the real group count (1), not left null.
+            var gs = GroupingSearch.ByField("group");
+            gs.SetAllGroups(true);
+            TopGroups<BytesRef> groups = gs.Search(indexSearcher, null, new TermQuery(new Index.Term("content", "hello")), 5, 10);
+
+            assertNotNull("TotalGroupCount must not be null when SetAllGroups(true) and groupOffset exceeds group count", groups.TotalGroupCount);
+            assertEquals(1, groups.TotalGroupCount.GetValueOrDefault());
+            assertEquals(0, groups.Groups.Length);
+
+            indexSearcher.IndexReader.Dispose();
+        }
+
         // LUCENENET specific - tests for the CancellationToken support
         // added to GroupingSearch. See #922.
 
