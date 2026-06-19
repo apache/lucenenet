@@ -134,15 +134,21 @@ namespace Lucene.Net.Support
             // read paths). If this drains the last reference after a Close, runs the
             // deferred unmap; otherwise Close's own scan will reclaim once it sees
             // Depth back at 0.
+            // <para/>
+            // The decrement MUST be a release store. The protected pointer load in the
+            // caller and this Depth-- have no data dependency, so on a weakly-ordered
+            // CPU (ARM64) a plain store could be globally visible BEFORE the load
+            // retires - letting Close's scan see Depth==0 and unmap the page while the
+            // load is still outstanding -> AVE. Volatile.Write is a release barrier:
+            // no preceding memory op (incl. the load) may move after it, so the load
+            // is guaranteed complete before this slot looks drained. (The asymmetric
+            // process-wide barrier in Close only covers the Enter/announce side; the
+            // Exit/retire side needs this release. The net462 fallback already had it.)
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void Exit()
             {
-#if FEATURE_MEMORYBARRIER_PROCESSWIDE
-                int depth = --Depth;
-#else
-                int depth = Volatile.Read(ref Depth) - 1;
+                int depth = Depth - 1;
                 Volatile.Write(ref Depth, depth);
-#endif
                 if (depth == 0 && owner._closed)
                 {
                     owner.TryReclaim();
