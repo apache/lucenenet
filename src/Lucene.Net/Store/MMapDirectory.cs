@@ -1,5 +1,6 @@
 using J2N.Numerics;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Microsoft.Win32.SafeHandles;
 using System;
@@ -347,7 +348,7 @@ namespace Lucene.Net.Store
             internal MMapIndexInput(string resourceDescription,
                 bool ownsMapping, SharedMapping mapping,
                 long offset, long length, int chunkSizePower)
-                : base(resourceDescription, offset, length, chunkSizePower)
+                : base(mapping.Reclaimer, resourceDescription, offset, length, chunkSizePower)
             {
                 this.isRoot = ownsMapping;
                 this.mapping = mapping ?? throw new ArgumentNullException(nameof(mapping));
@@ -357,11 +358,10 @@ namespace Lucene.Net.Store
 
             protected override int ChunkCount => mapping.Chunks.Length;
 
-            protected override bool TryAcquireChunk(int index, out byte* chunkBase)
-                => mapping.Chunks[index].TryAcquireRead(out chunkBase);
-
-            protected override void ReleaseChunk(int index)
-                => mapping.Chunks[index].ReleaseRead();
+            // The chunk caches its base pointer for the mapping's lifetime, so this
+            // is a plain field read; the reclaimer (not a per-crossing acquire)
+            // keeps the view valid against a concurrent close.
+            protected override byte* ChunkBase(int index) => mapping.Chunks[index].BasePtr;
 
             protected override long ChunkLength(int index) => mapping.Chunks[index].Length;
 
@@ -383,10 +383,9 @@ namespace Lucene.Net.Store
 
             protected override void DisposeChunkSource(bool disposing)
             {
-                // Only root instances own the mapping; for clones and slices the
-                // base already released this instance's read reference. Disposing
-                // the mapping closes its chunk accessors; the SafeHandle refcount
-                // defers each chunk's unmap until outstanding read references drain.
+                // Only root instances own the mapping. Disposing it closes the
+                // mapping's reclaimer, which defers the actual unmap of every chunk
+                // until in-flight reads from clones and slices have drained.
                 if (isRoot)
                 {
                     mapping.Dispose();
@@ -400,12 +399,12 @@ namespace Lucene.Net.Store
         /// array, owned by exactly one <see cref="MMapIndexInput"/> root or
         /// one <see cref="Directory.IndexInputSlicer"/>. Clones and slices
         /// reference it without owning it. The owner calls
-        /// <see cref="SharedMapping.Dispose"/> exactly once; the per-chunk
-        /// read reference in <see cref="Chunk"/> (a balanced
-        /// <see cref="SafeBuffer.AcquirePointer"/>) ensures in-flight reads from
-        /// non-owning clones/slices either complete safely against the
-        /// still-mapped view or fail with <see cref="AlreadyClosedException"/>
-        /// rather than dereferencing a freed mapping.
+        /// <see cref="SharedMapping.Dispose"/> exactly once; the mapping's
+        /// <see cref="IMMapReclaimer"/> defers the actual unmap until in-flight
+        /// reads from non-owning clones/slices have drained, so those reads
+        /// either complete safely against the still-mapped view or fail with
+        /// <see cref="AlreadyClosedException"/> rather than dereferencing a freed
+        /// mapping.
         /// </summary>
         internal sealed class SharedMapping : IDisposable
         {
@@ -428,6 +427,13 @@ namespace Lucene.Net.Store
             /// </summary>
             private readonly FileStream? fileStream;
             private int disposed;
+
+            // The reclaimer that defers this mapping's chunk unmaps until in-flight
+            // readers drain. Shared by every input over this mapping (root, clones,
+            // slices); each registers itself and brackets its reads with it.
+            private readonly IMMapReclaimer reclaimer = new HazardMMapReclaimer();
+
+            internal IMMapReclaimer Reclaimer => reclaimer;
 
             // LUCENENET specific (PR #1267): for testing only. True once Dispose has
             // run and the owned FileStream (if any) has been disposed, so a test can
@@ -543,16 +549,21 @@ namespace Lucene.Net.Store
             }
 
             /// <summary>
-            /// Dispose the underlying native resources. Idempotent.
+            /// Dispose the underlying native resources. Idempotent. The actual
+            /// unmap is deferred through the reclaimer until in-flight readers
+            /// drain, so it never frees a view a clone or slice is mid-read.
             /// </summary>
             public void Dispose()
             {
                 if (Interlocked.CompareExchange(ref disposed, 1, 0) != 0) return;
-                DisposeChunks(Chunks);
-                // mmf first so the mapping is torn down before we close the handle
-                // by disposing the FileStream we own. Both are null for the
-                // zero-length edge case, which the overload tolerates.
-                IOUtils.DisposeWhileHandlingException(memoryMappedFile, fileStream);
+                reclaimer.Close(() =>
+                {
+                    DisposeChunks(Chunks);
+                    // mmf first so the mapping is torn down before we close the
+                    // handle by disposing the FileStream we own. Both are null for
+                    // the zero-length edge case, which the overload tolerates.
+                    IOUtils.DisposeWhileHandlingException(memoryMappedFile, fileStream);
+                });
             }
 
             internal Chunk[] Chunks { get; }
@@ -611,7 +622,7 @@ namespace Lucene.Net.Store
                 {
                     try
                     {
-                        c.Close();
+                        c.Release();
                     }
                     catch
                     {
@@ -627,106 +638,77 @@ namespace Lucene.Net.Store
         /// live inside a <see cref="SharedMapping"/>.
         ///
         /// <para/>
-        /// Concurrency model: the <see cref="MemoryMappedViewAccessor"/>'s
-        /// <see cref="SafeBuffer"/> (a refcounted <see cref="SafeHandle"/>) IS
-        /// the drain barrier - we use it directly instead of a hand-rolled
-        /// in-flight count. A reader holds a per-chunk-crossing reference via
-        /// <see cref="TryAcquireRead"/> (a balanced
-        /// <see cref="SafeBuffer.AcquirePointer"/>) for as long as it caches the
-        /// chunk's pointer (from one chunk crossing to the next, or until the
-        /// owning <see cref="IndexInput"/> is sought to a different chunk or
-        /// disposed), and drops it via <see cref="ReleaseRead"/>
-        /// (<see cref="SafeBuffer.ReleasePointer"/>). <see cref="Close"/> just
-        /// disposes the accessor: the runtime defers the actual
-        /// <c>UnmapViewOfFile</c>/<c>munmap</c> until every outstanding
-        /// AcquirePointer reference has been released, and fails any subsequent
-        /// <see cref="TryAcquireRead"/> with <see cref="ObjectDisposedException"/>
-        /// (which the caller maps to <see cref="AlreadyClosedException"/>). So a
-        /// reader that has entered a chunk completes its reads safely on the
-        /// still-mapped view, and any later chunk crossing after Close throws.
-        /// AVEs are structurally impossible because the unmap cannot run while
-        /// any read reference is outstanding - this is the BCL's own guarantee
-        /// for <see cref="SafeHandle"/>, not a custom invariant. The AcquirePointer
-        /// is taken only ONCE PER CHUNK CROSSING (not per read), so it does not
-        /// reintroduce the per-read refcount contention of #1151.
+        /// Concurrency model: the chunk acquires its raw base pointer ONCE, at
+        /// construction, and caches it for the mapping's whole lifetime. Reads go
+        /// straight to that cached pointer with no per-read or per-crossing
+        /// <see cref="SafeBuffer.AcquirePointer"/> - the per-crossing acquire was
+        /// the #1151 contention, so it is gone. The drain barrier that keeps the
+        /// mapping valid under a concurrent close is now the mapping's
+        /// <see cref="IMMapReclaimer"/>: a reader brackets each dereference with
+        /// <c>Enter</c>/<c>Exit</c>, and the reclaimer's <c>Close</c> defers the
+        /// actual <c>UnmapViewOfFile</c>/<c>munmap</c> (this chunk's
+        /// <see cref="Release"/>) until every in-flight reader has drained. So an
+        /// AVE is still structurally impossible - the unmap cannot run while a
+        /// reader is mid-dereference - but liveness is proven by the reclaimer's
+        /// hazard handshake rather than by a per-access SafeHandle refcount.
         /// </summary>
         internal sealed unsafe class Chunk
         {
             private readonly MemoryMappedViewAccessor accessor;
             private readonly SafeMemoryMappedViewHandle safe;
-            // The view's offset within its OS page (nonzero when it doesn't start
-            // page-aligned).
-            private readonly long pointerOffset;
+            // The cached base pointer, adjusted for the view's page offset. Acquired
+            // once in the ctor and held (one matching ReleasePointer in Release) for
+            // the chunk's whole lifetime, so reads never re-acquire.
+            private readonly byte* basePtr;
+            private bool acquired;
             internal readonly long Length;
 
-            // Set once Close has disposed the accessor; only makes Close idempotent.
-            // The real teardown synchronization is the SafeHandle refcount.
+            // Set once Release has disposed the accessor; only makes Release
+            // idempotent. The real teardown synchronization is the reclaimer.
             private int closed;
 
             internal Chunk(MemoryMappedViewAccessor accessor, long pointerOffset, long length)
             {
                 this.accessor = accessor;
                 this.safe = accessor.SafeMemoryMappedViewHandle;
-                this.pointerOffset = pointerOffset;
+                byte* ptr = null;
+                safe.AcquirePointer(ref ptr);
+                this.acquired = true;
+                this.basePtr = ptr + pointerOffset;
                 this.Length = length;
             }
 
-            // LUCENENET specific (PR #1267): for testing only. True once Close has
+            // LUCENENET specific (PR #1267): for testing only. True once Release has
             // disposed the accessor, so a test can assert disposing the owning input
             // tears the chunk down rather than leaking it.
             internal bool IsNativeReleased => Volatile.Read(ref closed) != 0;
 
             /// <summary>
-            /// Acquire a per-chunk-crossing read reference and return the chunk's
-            /// base pointer (already adjusted for the view's page offset). The
-            /// caller may dereference the returned pointer until it calls
-            /// <see cref="ReleaseRead"/>. Returns false if the chunk has been
-            /// closed (its accessor disposed): the underlying
-            /// <see cref="SafeBuffer.AcquirePointer"/> throws
-            /// <see cref="ObjectDisposedException"/> in that case, which we
-            /// translate to a clean "closed" result. While a reference is held,
-            /// the runtime cannot unmap the view, so the pointer is safe to read.
+            /// The chunk's cached base pointer (already adjusted for the view's
+            /// page offset). Valid for the chunk's whole lifetime; a reader must
+            /// only dereference it while inside the mapping reclaimer's
+            /// <c>Enter</c>/<c>Exit</c> bracket so a concurrent close cannot unmap
+            /// the view mid-dereference.
             /// </summary>
-            public bool TryAcquireRead(out byte* readBase)
-            {
-                byte* ptr = null;
-                try
-                {
-                    safe.AcquirePointer(ref ptr);
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Close disposed the handle; treat as closed.
-                    readBase = null;
-                    return false;
-                }
-                readBase = ptr + pointerOffset;
-                return true;
-            }
+            public byte* BasePtr => basePtr;
 
             /// <summary>
-            /// Release a previously-acquired read reference. Once the last
-            /// outstanding reference is released after <see cref="Close"/>, the
-            /// runtime performs the actual unmap.
+            /// Release the cached pointer and dispose this chunk's accessor,
+            /// performing the actual <c>UnmapViewOfFile</c>/<c>munmap</c>. The
+            /// reclaimer only calls this once all in-flight readers have drained,
+            /// so it never unmaps a view out from under a live reader. Idempotent.
             /// </summary>
-            public void ReleaseRead()
-            {
-                safe.ReleasePointer();
-            }
-
-            /// <summary>
-            /// Dispose this chunk's accessor. The runtime defers the actual
-            /// <c>UnmapViewOfFile</c>/<c>munmap</c> until every outstanding
-            /// <see cref="TryAcquireRead"/> reference is released, so Close never
-            /// unmaps a view out from under a live reader and never blocks
-            /// waiting for one. Idempotent.
-            /// </summary>
-            public void Close()
+            public void Release()
             {
                 if (Interlocked.CompareExchange(ref closed, 1, 0) != 0) return;
-                // Disposing the accessor disposes the SafeHandle, which requests the
-                // unmap but defers it until the AcquirePointer refcount reaches zero.
-                // Swallowing overload so a throwing Dispose never propagates.
+                if (acquired)
+                {
+                    safe.ReleasePointer();
+                    acquired = false;
+                }
+                // Disposing the accessor disposes the SafeHandle; with our matching
+                // ReleasePointer above the refcount reaches zero and the runtime
+                // unmaps. Swallowing overload so a throwing Dispose never propagates.
                 IOUtils.DisposeWhileHandlingException(accessor);
             }
         }

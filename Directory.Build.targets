@@ -106,6 +106,7 @@
 
     <DefineConstants>$(DefineConstants);FEATURE_ARRAY_FILL</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_MEMORYBARRIER_PROCESSWIDE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ENCODING_GETSTRING_READONLYSPAN</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN</DefineConstants>

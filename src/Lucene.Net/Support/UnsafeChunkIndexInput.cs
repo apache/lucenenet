@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Buffers.Binary;
 using System.IO;
@@ -46,13 +46,11 @@ namespace Lucene.Net.Store
     /// <para/>
     /// <b>Chunk model.</b> The readable region is partitioned into chunks of
     /// <c>1 &lt;&lt; chunkSizePower</c> bytes (the last chunk may be shorter).
-    /// A subclass exposes <see cref="ChunkCount"/> chunks; for each chunk it can
-    /// acquire a per-crossing <i>read reference</i> that yields a base pointer
-    /// (<see cref="TryAcquireChunk"/>), release that reference
-    /// (<see cref="ReleaseChunk"/>), and report the chunk's length
-    /// (<see cref="ChunkLength"/>). This base never sees the underlying chunk
-    /// implementation (a <c>MemoryMappedViewAccessor</c>, a pinned managed array
-    /// in tests, etc.) - only those three operations.
+    /// A subclass exposes <see cref="ChunkCount"/> chunks; for each chunk it
+    /// supplies a cached base pointer (<see cref="ChunkBase"/>) and the chunk's
+    /// length (<see cref="ChunkLength"/>). This base never sees the underlying
+    /// chunk implementation (a <c>MemoryMappedViewAccessor</c>, a pinned managed
+    /// array in tests, etc.) - only those two operations.
     ///
     /// <para/>
     /// <b>Window.</b> An instance views <c>[baseOffset, baseOffset + length)</c>
@@ -61,20 +59,22 @@ namespace Lucene.Net.Store
     /// translates through <c>baseOffset</c>.
     ///
     /// <para/>
-    /// <b>Concurrency / teardown.</b> A read reference is held for as long as the
-    /// instance caches a chunk's pointer (from one chunk crossing to the next, or
-    /// until <see cref="Seek"/>/<see cref="Dispose(bool)"/>) - once per crossing,
-    /// not per read, so it does not add per-read overhead. A subclass is expected
-    /// to defer the actual release of a chunk's native memory until every
-    /// outstanding read reference has been released (e.g. via the SafeHandle
-    /// refcount behind a memory-mapped view), so a reader that has entered a chunk
-    /// completes its reads safely. A cross-thread <see cref="Dispose(bool)"/>
-    /// (e.g. a slicer disposing a slice another thread is reading) must NOT
-    /// release the reader's reference directly - the reader may be between its
-    /// bounds check and its pointer dereference - so this base hands the reference
-    /// to a finalizable releaser, which releases it once this instance is
-    /// unreachable (hence no thread is reading through it). A same-thread Dispose
-    /// releases immediately.
+    /// <b>Concurrency / teardown.</b> A chunk's base pointer is valid for the whole
+    /// lifetime of the backing region, so the read paths cache it across reads with
+    /// no per-read or per-crossing native call (this is what removes the #1151
+    /// contention). Liveness against a concurrent close is provided by an
+    /// <see cref="IMMapReclaimer"/> shared by every instance over a region (a root,
+    /// its clones, and any slices): each instance registers once, and every pointer
+    /// dereference on the read paths is bracketed by the reclaimer's
+    /// <c>Enter</c>/<c>Exit</c>. Closing the region calls <c>Close</c> on the
+    /// reclaimer, which defers the actual unmap until all in-flight readers have
+    /// drained, and makes any later <c>Enter</c> throw <see cref="AlreadyClosedException"/>.
+    /// Because the announce-then-check in <c>Enter</c> is symmetric to the
+    /// publish-then-scan in <c>Close</c>, a reader is never left dereferencing a
+    /// freed view - even when a different thread (a slicer disposing a slice this
+    /// thread is reading) triggers the close. Only the region owner (the root)
+    /// closes the reclaimer; disposing a clone or slice just invalidates that
+    /// instance's cursor.
     /// </summary>
     // LUCENENET specific
     internal abstract unsafe class UnsafeChunkIndexInput : IndexInput
@@ -82,6 +82,14 @@ namespace Lucene.Net.Store
         // Per-instance closed flag, independent of per-chunk state, so disposing
         // a clone does not affect the original or sibling clones.
         private int instanceClosed;
+
+        // The mapping-wide reclaimer (shared by the root, its clones, and any
+        // slices) and this instance's own reader token. Each instance must have its
+        // OWN token: tokens carry a per-reader re-entrancy depth, and a clone reads
+        // concurrently with its parent, so they cannot share one. Clone() copies
+        // readerToken by reference, so ResetClonedCursor re-registers to replace it.
+        private readonly IMMapReclaimer reclaimer;
+        private IMMapReclaimer.IReaderToken readerToken;
 
         // The window into the chunked region this instance sees (slice range for a
         // slice, [0, regionLength) for a root). Cached-chunk offsets below are
@@ -103,12 +111,6 @@ namespace Lucene.Net.Store
         private byte* readBase;        // = chunkBase + baseOffset - chunkFileStart
         private long currentStart;     // window-relative start of the cached chunk's intersection with [0, length)
         private long currentEnd;       // window-relative end of the cached chunk's intersection with [0, length)
-        // ManagedThreadId of the thread that acquired the cached chunk's read
-        // reference. A cross-thread Dispose must NOT release directly: the acquiring
-        // thread may be mid-dereference of readBase, so freeing the view under it
-        // would AVE. The disposer defers to a finalizer instead (see Dispose /
-        // HandOffStrandedReadRef).
-        private int currentChunkOwnerThreadId;
 
         private const int NO_CHUNK = -1;
 
@@ -120,10 +122,12 @@ namespace Lucene.Net.Store
         /// <param name="offset">Window start (window-relative positions are added to this for chunk lookup).</param>
         /// <param name="length">Window length in bytes.</param>
         /// <param name="chunkSizePower">log2 of the chunk size; chunks are <c>1 &lt;&lt; chunkSizePower</c> bytes (last may be shorter).</param>
-        protected UnsafeChunkIndexInput(string resourceDescription,
+        protected UnsafeChunkIndexInput(IMMapReclaimer reclaimer, string resourceDescription,
             long offset, long length, int chunkSizePower)
             : base(resourceDescription)
         {
+            this.reclaimer = reclaimer;
+            this.readerToken = reclaimer.Register(this);
             this.baseOffset = offset;
             this.length = length;
             this.chunkSizePower = chunkSizePower;
@@ -153,23 +157,13 @@ namespace Lucene.Net.Store
         protected abstract int ChunkCount { get; }
 
         /// <summary>
-        /// Acquire a per-crossing read reference on the chunk at <paramref name="index"/>
-        /// and return its base pointer (already adjusted for any page offset). The
-        /// caller may dereference the returned pointer until it calls
-        /// <see cref="ReleaseChunk"/> with the same index. Returns <c>false</c> if
-        /// that chunk has been closed/torn down, which this base translates to an
-        /// <see cref="AlreadyClosedException"/>. While a reference is held, the
-        /// subclass must keep the chunk's memory valid (deferring any unmap/free
-        /// until the reference is released).
+        /// The cached base pointer of the chunk at <paramref name="index"/>
+        /// (already adjusted for any page offset). The pointer is valid for the
+        /// chunk's whole lifetime; callers only dereference it inside the
+        /// reclaimer's <c>Enter</c>/<c>Exit</c> bracket so a concurrent close cannot
+        /// unmap the chunk mid-dereference.
         /// </summary>
-        protected abstract bool TryAcquireChunk(int index, out byte* chunkBase);
-
-        /// <summary>
-        /// Release a read reference previously acquired on the chunk at
-        /// <paramref name="index"/> via <see cref="TryAcquireChunk"/>. Must be
-        /// callable from any thread.
-        /// </summary>
-        protected abstract void ReleaseChunk(int index);
+        protected abstract byte* ChunkBase(int index);
 
         /// <summary>
         /// The length in bytes of the chunk at <paramref name="index"/> (the last
@@ -210,9 +204,17 @@ namespace Lucene.Net.Store
             long pos = position;
             if (pos < currentEnd)
             {
-                byte b = *(readBase + pos);
-                position = pos + 1;
-                return b;
+                reclaimer.Enter(readerToken);
+                try
+                {
+                    byte b = *(readBase + pos);
+                    position = pos + 1;
+                    return b;
+                }
+                finally
+                {
+                    reclaimer.Exit(readerToken);
+                }
             }
             return ReadByteSlow();
         }
@@ -228,9 +230,18 @@ namespace Lucene.Net.Store
                 throw EOFException.Create("read past EOF: " + this);
             }
             EnsureCurrentChunk(pos);
-            byte b = *(readBase + pos);
-            position = pos + 1;
-            return b;
+
+            reclaimer.Enter(readerToken);
+            try
+            {
+                byte b = *(readBase + pos);
+                position = pos + 1;
+                return b;
+            }
+            finally
+            {
+                reclaimer.Exit(readerToken);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -239,10 +250,18 @@ namespace Lucene.Net.Store
             long pos = position;
             if (pos + 2 <= currentEnd)
             {
-                ushort raw = Unsafe.ReadUnaligned<ushort>(readBase + pos);
-                short v = (short)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
-                position = pos + 2;
-                return v;
+                reclaimer.Enter(readerToken);
+                try
+                {
+                    ushort raw = Unsafe.ReadUnaligned<ushort>(readBase + pos);
+                    short v = (short)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
+                    position = pos + 2;
+                    return v;
+                }
+                finally
+                {
+                    reclaimer.Exit(readerToken);
+                }
             }
             // Slow path: bytes straddle a chunk boundary. Fill via ReadBytes (which
             // handles the crossing) and decode big-endian to match the fast path;
@@ -258,10 +277,18 @@ namespace Lucene.Net.Store
             long pos = position;
             if (pos + 4 <= currentEnd)
             {
-                uint raw = Unsafe.ReadUnaligned<uint>(readBase + pos);
-                int v = (int)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
-                position = pos + 4;
-                return v;
+                reclaimer.Enter(readerToken);
+                try
+                {
+                    uint raw = Unsafe.ReadUnaligned<uint>(readBase + pos);
+                    int v = (int)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
+                    position = pos + 4;
+                    return v;
+                }
+                finally
+                {
+                    reclaimer.Exit(readerToken);
+                }
             }
             // Slow path: see ReadInt16.
             Span<byte> buf = stackalloc byte[4];
@@ -275,10 +302,18 @@ namespace Lucene.Net.Store
             long pos = position;
             if (pos + 8 <= currentEnd)
             {
-                ulong raw = Unsafe.ReadUnaligned<ulong>(readBase + pos);
-                long v = (long)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
-                position = pos + 8;
-                return v;
+                reclaimer.Enter(readerToken);
+                try
+                {
+                    ulong raw = Unsafe.ReadUnaligned<ulong>(readBase + pos);
+                    long v = (long)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
+                    position = pos + 8;
+                    return v;
+                }
+                finally
+                {
+                    reclaimer.Exit(readerToken);
+                }
             }
             // Slow path: see ReadInt16.
             Span<byte> buf = stackalloc byte[8];
@@ -339,40 +374,49 @@ namespace Lucene.Net.Store
                 long available = currentEnd - pos;
                 int inChunk = (int)(available < remaining ? available : remaining);
 
-                ref byte src = ref Unsafe.AsRef<byte>(readBase + pos);
-                ref byte dst = ref Unsafe.Add(ref destination, dstOff);
-
-                // Small-copy fast path (<= 8 bytes): CopyBlockUnaligned has notable
-                // entry overhead for tiny copies, so a sized read/write is cheaper
-                // for the common short read (e.g. the ReadInt16/Int32/Int64 slow path).
-                if (inChunk <= 8)
+                reclaimer.Enter(readerToken);
+                try
                 {
-                    switch (inChunk)
+                    ref byte src = ref Unsafe.AsRef<byte>(readBase + pos);
+                    ref byte dst = ref Unsafe.Add(ref destination, dstOff);
+
+                    // Small-copy fast path (<= 8 bytes): CopyBlockUnaligned has notable
+                    // entry overhead for tiny copies, so a sized read/write is cheaper
+                    // for the common short read (e.g. the ReadInt16/Int32/Int64 slow path).
+                    if (inChunk <= 8)
                     {
-                        case 8:
-                            Unsafe.WriteUnaligned(ref dst, Unsafe.ReadUnaligned<ulong>(ref src));
-                            break;
-                        case 4:
-                            Unsafe.WriteUnaligned(ref dst, Unsafe.ReadUnaligned<uint>(ref src));
-                            break;
-                        case 2:
-                            Unsafe.WriteUnaligned(ref dst, Unsafe.ReadUnaligned<ushort>(ref src));
-                            break;
-                        case 1:
-                            dst = src;
-                            break;
-                        default:
-                            // 3, 5, 6, 7 - uncommon; fall through to byte loop.
-                            for (int i = 0; i < inChunk; i++)
-                            {
-                                Unsafe.Add(ref dst, i) = Unsafe.Add(ref src, i);
-                            }
-                            break;
+                        switch (inChunk)
+                        {
+                            case 8:
+                                Unsafe.WriteUnaligned(ref dst, Unsafe.ReadUnaligned<ulong>(ref src));
+                                break;
+                            case 4:
+                                Unsafe.WriteUnaligned(ref dst, Unsafe.ReadUnaligned<uint>(ref src));
+                                break;
+                            case 2:
+                                Unsafe.WriteUnaligned(ref dst, Unsafe.ReadUnaligned<ushort>(ref src));
+                                break;
+                            case 1:
+                                dst = src;
+                                break;
+                            default:
+                                // 3, 5, 6, 7 - uncommon; fall through to byte loop.
+                                for (int i = 0; i < inChunk; i++)
+                                {
+                                    Unsafe.Add(ref dst, i) = Unsafe.Add(ref src, i);
+                                }
+
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Unsafe.CopyBlockUnaligned(ref dst, ref src, (uint)inChunk);
                     }
                 }
-                else
+                finally
                 {
-                    Unsafe.CopyBlockUnaligned(ref dst, ref src, (uint)inChunk);
+                    reclaimer.Exit(readerToken);
                 }
 
                 pos += inChunk;
@@ -398,11 +442,12 @@ namespace Lucene.Net.Store
 
         // --- Chunk crossing + teardown ----------------------------------------
 
-        // Acquire a read reference on the chunk containing window-relative
-        // `windowPos`, releasing any held reference first, and set readBase /
-        // currentStart / currentEnd. Throws AlreadyClosedException if this instance
-        // or the chunk is closed. The reference is taken once per crossing (not per
-        // read), keeping the chunk valid without a per-read refcount cost.
+        // Point the cursor cache at the chunk containing window-relative
+        // `windowPos`: set readBase / currentStart / currentEnd. Throws
+        // AlreadyClosedException if this instance is closed. No read reference is
+        // taken here - the chunk's base pointer is valid for the mapping's lifetime
+        // and the reclaimer's Enter/Exit (around each dereference) is what keeps a
+        // concurrent close from unmapping it mid-read.
         private void EnsureCurrentChunk(long windowPos)
         {
             if (Volatile.Read(ref instanceClosed) != 0)
@@ -413,10 +458,7 @@ namespace Lucene.Net.Store
 
             long globalPos = baseOffset + windowPos;
             int chunkIdx = (int)(globalPos >> chunkSizePower);
-            if (!TryAcquireChunk(chunkIdx, out byte* chunkBase))
-            {
-                throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
-            }
+            byte* chunkBase = ChunkBase(chunkIdx);
 
             long chunkFileStart = (long)chunkIdx << chunkSizePower;
             long chunkFileEnd = chunkFileStart + ChunkLength(chunkIdx);
@@ -433,15 +475,12 @@ namespace Lucene.Net.Store
             readBase = chunkBase + (baseOffset - chunkFileStart);
             currentStart = start;
             currentEnd = end;
-            currentChunkOwnerThreadId = Environment.CurrentManagedThreadId;
         }
 
-        // Release the cached chunk's read reference. Only the acquiring thread may
-        // call this (on crossing / Seek, or a SAME-THREAD Dispose); a cross-thread
-        // Dispose defers via HandOffStrandedReadRef because the acquirer may be
-        // mid-dereference. currentChunkIndex is swapped with Interlocked.Exchange so
-        // this release and a concurrent handoff can't both claim the same reference:
-        // whoever wins the swap owns the single matching ReleaseChunk. Idempotent.
+        // Invalidate the cached chunk cursor so the next read reacquires via
+        // EnsureCurrentChunk. There is no native reference to drop (the chunk's
+        // pointer is owned by the mapping and reclaimed only when the mapping
+        // closes), so this just clears the cached fields. Idempotent.
         private void ReleaseCurrentChunk()
         {
             int idx = Interlocked.Exchange(ref currentChunkIndex, NO_CHUNK);
@@ -450,37 +489,18 @@ namespace Lucene.Net.Store
                 readBase = null;
                 currentStart = 0;
                 currentEnd = 0;
-                currentChunkOwnerThreadId = 0;
-                ReleaseChunk(idx);
-            }
-        }
-
-        // Hand a cross-thread-stranded read reference to a finalizable releaser so it
-        // is released once this instance is unreachable (no thread can be reading
-        // through it, making the unmap/free AVE-safe). A finalizer on the instance
-        // itself won't do: base IndexInput.Dispose() calls GC.SuppressFinalize(this).
-        // The releaser is a separate, never-suppressed object kept alive by this
-        // instance. Allocated only on the rare cross-thread-strand path.
-        private StrandedReadRefReleaser? strandedReadRefReleaser;
-
-        private void HandOffStrandedReadRef()
-        {
-            int idx = Interlocked.Exchange(ref currentChunkIndex, NO_CHUNK);
-            if (idx != NO_CHUNK)
-            {
-                strandedReadRefReleaser = new StrandedReadRefReleaser(this, idx);
             }
         }
 
         // --- Clone / Dispose ---------------------------------------------------
 
         /// <summary>
-        /// Resets the cursor cache on a freshly-cloned instance. Subclasses MUST
-        /// call this from their <c>Clone()</c> override (after <c>base.Clone()</c>)
-        /// so the clone does not inherit the parent's cached chunk read reference -
-        /// each instance acquires and releases its own; sharing the cached chunk
-        /// would make disposing the clone release a reference the parent still
-        /// depends on (and vice versa).
+        /// Resets a freshly-cloned instance. Subclasses MUST call this from their
+        /// <c>Clone()</c> override (after <c>base.Clone()</c>) so the clone does not
+        /// share the parent's cached cursor or reader token: it gets its own token
+        /// (its own re-entrancy depth in the reclaimer) and an empty cursor cache,
+        /// so the clone and parent read independently and disposing one never
+        /// affects the other.
         /// </summary>
         protected void ResetClonedCursor()
         {
@@ -489,8 +509,9 @@ namespace Lucene.Net.Store
             readBase = null;
             currentStart = 0;
             currentEnd = 0;
-            currentChunkOwnerThreadId = 0;
-            strandedReadRefReleaser = null;
+            // base.Clone() copied the parent's token by reference; replace it with a
+            // fresh registration so this clone has its own depth slot.
+            readerToken = reclaimer.Register(this);
         }
 
         protected override void Dispose(bool disposing)
@@ -507,53 +528,24 @@ namespace Lucene.Net.Store
             // drops to the slow path and observes instanceClosed. Interlocked so the
             // 64-bit write can't tear on 32-bit runtimes.
             Interlocked.Exchange(ref currentEnd, 0L);
-            // Same-thread Dispose can release directly (this thread is in Dispose,
-            // provably not mid-dereference). A cross-thread Dispose (e.g. a slicer
-            // disposing a slice another thread is reading, #1013) must hand off: the
-            // reader may be between its `pos < currentEnd` check and `*(readBase + pos)`
-            // load, so releasing here could free the memory under it (an AVE).
-            if (currentChunkOwnerThreadId == Environment.CurrentManagedThreadId)
-            {
-                ReleaseCurrentChunk();
-            }
-            else
-            {
-                HandOffStrandedReadRef();
-            }
+
+            // Invalidate this instance's cursor cache. This only affects this input;
+            // the shared mapping (and its reclaimer) is closed by the owning root's
+            // DisposeChunkSource, NOT here, so disposing a clone or slice never tears
+            // down the mapping that sibling readers still depend on.
+            ReleaseCurrentChunk();
 
             DisposeChunkSource(disposing);
         }
 
         /// <summary>
-        /// Called at the end of <see cref="Dispose(bool)"/> (after this instance's
-        /// own chunk read reference has been released or handed off) so a subclass
-        /// can tear down the backing chunk source it owns. For example, only a
-        /// root input owns the shared mapping; clones and slices override this to
-        /// do nothing. The default is a no-op.
+        /// Called at the end of <see cref="Dispose(bool)"/> so a subclass can tear
+        /// down the backing chunk source it owns. Only a root input owns the shared
+        /// mapping (and so closes its reclaimer, deferring the unmap until readers
+        /// drain); clones and slices leave this a no-op. The default is a no-op.
         /// </summary>
         protected virtual void DisposeChunkSource(bool disposing)
         {
-        }
-
-        // Finalizable holder for a cross-thread-stranded chunk read reference (see
-        // HandOffStrandedReadRef). Its finalizer calls ReleaseChunk(index) once,
-        // only after the owning instance is unreachable, so no thread can be reading
-        // through it.
-        private sealed class StrandedReadRefReleaser
-        {
-            private readonly UnsafeChunkIndexInput owner;
-            private readonly int chunkIndex;
-
-            internal StrandedReadRefReleaser(UnsafeChunkIndexInput owner, int chunkIndex)
-            {
-                this.owner = owner;
-                this.chunkIndex = chunkIndex;
-            }
-
-            ~StrandedReadRefReleaser()
-            {
-                owner.ReleaseChunk(chunkIndex);
-            }
         }
     }
 }

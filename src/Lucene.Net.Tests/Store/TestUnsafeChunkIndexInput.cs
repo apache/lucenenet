@@ -1,4 +1,5 @@
 using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -36,12 +37,12 @@ namespace Lucene.Net.Store
     /// <list type="bullet">
     ///   <item><description>assert read correctness across chunk boundaries with
     ///   exact expected bytes (a bug is a wrong value, not a process crash);</description></item>
-    ///   <item><description>force the fail-fast path (close a chunk, assert the next
+    ///   <item><description>force the fail-fast path (close the region, assert the next
     ///   read throws <see cref="AlreadyClosedException"/>) deterministically;</description></item>
-    ///   <item><description>force the cross-thread "stranded read reference" path with
-    ///   a barrier that pauses a reader exactly between its bounds check and its
-    ///   pointer dereference, and assert the disposer does NOT release the reader's
-    ///   reference (which would be an AccessViolation against real memory).</description></item>
+    ///   <item><description>force the cross-thread close path with a reclaimer that
+    ///   parks a reader exactly inside the <c>Enter</c>/<c>Exit</c> bracket, and
+    ///   assert the close defers the unmap until that reader drains (running it now
+    ///   would be an AccessViolation against real memory).</description></item>
     /// </list>
     /// A managed array is never freed under a live reader, so these tests cannot
     /// reproduce a true unmap-vs-read AccessViolationException - that native-safety
@@ -60,10 +61,9 @@ namespace Lucene.Net.Store
         /// A managed chunk source: the bytes of a logical region split into
         /// fixed-size chunks, each backed by a pinned <see cref="byte"/>[]. Shared
         /// by a root <see cref="ManagedChunkIndexInput"/> and its clones, mirroring
-        /// how a real <c>SharedMapping</c> is shared. Tracks per-chunk acquire/
-        /// release counts and a closed flag so tests can assert the engine's
-        /// reference and fail-fast behavior, and exposes an optional barrier so a
-        /// test can pause a reader inside <c>TryAcquire</c>.
+        /// how a real <c>SharedMapping</c> is shared, including owning an
+        /// <see cref="IMMapReclaimer"/> that defers the chunk close until in-flight
+        /// readers drain.
         /// </summary>
         internal sealed unsafe class ManagedChunkRegion : IDisposable
         {
@@ -74,18 +74,7 @@ namespace Lucene.Net.Store
                 internal readonly byte* BasePtr;
                 internal readonly long Length;
 
-                // Net outstanding references (acquires - releases). A leaked
-                // reference shows up as a nonzero value after teardown.
-                internal int OutstandingRefs;
-                // Total acquires/releases ever, for assertions about call counts.
-                internal int TotalAcquires;
-                internal int TotalReleases;
                 private int closed;
-
-                // Optional test hook: if set, TryAcquire blocks on this until
-                // signaled, AFTER recording the acquire intent - lets a test hold a
-                // reader "mid-acquire" while another thread disposes.
-                internal ManualResetEventSlim? PauseInAcquire;
 
                 internal FakeChunk(byte[] data)
                 {
@@ -96,26 +85,6 @@ namespace Lucene.Net.Store
                 }
 
                 internal bool IsClosed => Volatile.Read(ref closed) != 0;
-
-                internal bool TryAcquire(out byte* basePtr)
-                {
-                    if (Volatile.Read(ref closed) != 0)
-                    {
-                        basePtr = null;
-                        return false;
-                    }
-                    Interlocked.Increment(ref TotalAcquires);
-                    Interlocked.Increment(ref OutstandingRefs);
-                    PauseInAcquire?.Wait();
-                    basePtr = BasePtr;
-                    return true;
-                }
-
-                internal void Release()
-                {
-                    Interlocked.Increment(ref TotalReleases);
-                    Interlocked.Decrement(ref OutstandingRefs);
-                }
 
                 internal void Close()
                 {
@@ -130,10 +99,19 @@ namespace Lucene.Net.Store
 
             internal readonly FakeChunk[] Chunks;
             internal readonly long Length;
+            private readonly IMMapReclaimer reclaimer;
             private int disposed;
 
+            internal IMMapReclaimer Reclaimer => reclaimer;
+
             internal ManagedChunkRegion(byte[] data, int chunkSizePower)
+                : this(data, chunkSizePower, new HazardMMapReclaimer())
             {
+            }
+
+            internal ManagedChunkRegion(byte[] data, int chunkSizePower, IMMapReclaimer reclaimer)
+            {
+                this.reclaimer = reclaimer;
                 Length = data.Length;
                 long chunkSize = 1L << chunkSizePower;
                 int nChunks = data.Length == 0 ? 0 : (int)((data.Length + chunkSize - 1) >> chunkSizePower);
@@ -150,13 +128,17 @@ namespace Lucene.Net.Store
 
             internal bool IsDisposed => Volatile.Read(ref disposed) != 0;
 
-            // Mirrors SharedMapping.Dispose: closes every chunk. Real teardown of
-            // the pin happens in FreeAllPins (test-controlled), so an AVE is never
-            // possible here - managed memory stays valid.
+            // Mirrors SharedMapping.Dispose: closes every chunk through the
+            // reclaimer, which defers the close until in-flight readers drain. Real
+            // teardown of the pin happens in FreeAllPins (test-controlled), so an
+            // AVE is never possible here - managed memory stays valid.
             public void Dispose()
             {
                 if (Interlocked.CompareExchange(ref disposed, 1, 0) != 0) return;
-                foreach (var c in Chunks) c.Close();
+                reclaimer.Close(() =>
+                {
+                    foreach (var c in Chunks) c.Close();
+                });
             }
 
             internal void FreeAllPins()
@@ -179,7 +161,7 @@ namespace Lucene.Net.Store
 
             internal ManagedChunkIndexInput(string desc, bool ownsRegion, ManagedChunkRegion region,
                 long offset, long length, int chunkSizePower)
-                : base(desc, offset, length, chunkSizePower)
+                : base(region.Reclaimer, desc, offset, length, chunkSizePower)
             {
                 this.isRoot = ownsRegion;
                 this.region = region;
@@ -187,11 +169,7 @@ namespace Lucene.Net.Store
 
             protected override int ChunkCount => region.Chunks.Length;
 
-            protected override bool TryAcquireChunk(int index, out byte* chunkBase)
-                => region.Chunks[index].TryAcquire(out chunkBase);
-
-            protected override void ReleaseChunk(int index)
-                => region.Chunks[index].Release();
+            protected override byte* ChunkBase(int index) => region.Chunks[index].BasePtr;
 
             protected override long ChunkLength(int index) => region.Chunks[index].Length;
 
@@ -225,6 +203,65 @@ namespace Lucene.Net.Store
         {
             region = new ManagedChunkRegion(data, chunkSizePower);
             return new ManagedChunkIndexInput("root", ownsRegion: true, region, 0, data.Length, chunkSizePower);
+        }
+
+        private static ManagedChunkIndexInput OpenRoot(byte[] data, int chunkSizePower,
+            IMMapReclaimer reclaimer, out ManagedChunkRegion region)
+        {
+            region = new ManagedChunkRegion(data, chunkSizePower, reclaimer);
+            return new ManagedChunkIndexInput("root", ownsRegion: true, region, 0, data.Length, chunkSizePower);
+        }
+
+        /// <summary>
+        /// An <see cref="IMMapReclaimer"/> decorator that lets a test pause a reader
+        /// thread DELIBERATELY inside the <c>Enter</c>/<c>Exit</c> bracket - i.e.
+        /// after the reclaimer has admitted the reader but before it dereferences -
+        /// so the test can deterministically drive a concurrent <c>Close</c> while a
+        /// reader is mid-bracket. Wraps a real <see cref="HazardMMapReclaimer"/>.
+        /// </summary>
+        internal sealed class PausingReclaimer : IMMapReclaimer
+        {
+            private readonly IMMapReclaimer inner = new HazardMMapReclaimer();
+
+            // Signaled by the paused reader once it is inside the bracket; the test
+            // waits on this to know the reader is parked.
+            internal readonly ManualResetEventSlim Entered = new(false);
+            // The test sets this to release the paused reader.
+            internal readonly ManualResetEventSlim Resume = new(false);
+            // Only the token registered while ArmFor is set is paused.
+            internal IMMapReclaimer.IReaderToken? ArmFor;
+
+            public IMMapReclaimer.IReaderToken Register(object input)
+            {
+                var token = inner.Register(input);
+                if (ArmFor is null && Volatile.Read(ref armNext) != 0)
+                {
+                    ArmFor = token;
+                    Volatile.Write(ref armNext, 0);
+                }
+                return token;
+            }
+
+            private int armNext;
+            internal void ArmNextRegistration() => Volatile.Write(ref armNext, 1);
+
+            public void Enter(IMMapReclaimer.IReaderToken token)
+            {
+                inner.Enter(token);
+                if (ReferenceEquals(token, ArmFor))
+                {
+                    // We are admitted (inner.Enter bumped our depth); now park inside
+                    // the bracket so a concurrent Close must wait for us to drain.
+                    Entered.Set();
+                    Resume.Wait();
+                }
+            }
+
+            public void Exit(IMMapReclaimer.IReaderToken token) => inner.Exit(token);
+
+            public void Close(System.Action unmap) => inner.Close(unmap);
+
+            public bool IsClosed => inner.IsClosed;
         }
 
         // ------------------------------------------------------------------
@@ -278,61 +315,59 @@ namespace Lucene.Net.Store
         }
 
         [Test]
-        public void TestSeekKeepsReferenceWithinChunk()
+        public void TestSeekWithinChunkReadsCorrectlyWithoutRecrossing()
         {
             var data = MakeData(64);
             using var input = OpenRoot(data, chunkSizePower: 4, out var region); // 16-byte chunks
             input.Seek(0);
-            input.ReadByte(); // acquire chunk 0
-            int acquiresAfterFirst = region.Chunks[0].TotalAcquires;
-            // Seek within the same chunk - must NOT re-acquire.
+            input.ReadByte();
+            // Seek within the same chunk, then across a boundary; both must read the
+            // expected bytes. (The cached base pointer is reused within a chunk and
+            // recomputed on a crossing; correctness is the observable invariant now
+            // that there is no per-crossing native reference to count.)
             input.Seek(5);
             Assert.AreEqual(data[5], input.ReadByte());
-            Assert.AreEqual(acquiresAfterFirst, region.Chunks[0].TotalAcquires,
-                "seek within the cached chunk must not re-acquire a read reference");
-            // Seek into chunk 1 - must release chunk 0 and acquire chunk 1.
             input.Seek(20);
             Assert.AreEqual(data[20], input.ReadByte());
-            Assert.AreEqual(1, region.Chunks[1].TotalAcquires, "crossing to chunk 1 acquires it once");
-            Assert.AreEqual(0, region.Chunks[0].OutstandingRefs, "chunk 0 reference released on crossing");
             region.FreeAllPins();
         }
 
         // ------------------------------------------------------------------
-        // Reference lifecycle / leak (NightOwl888 #1267 concern, logic level)
+        // Dispose / region lifecycle
         // ------------------------------------------------------------------
 
         [Test]
-        public void TestDisposeReleasesReadReferenceDeterministically()
+        public void TestDisposeClosesRegionDeterministically()
         {
             var data = MakeData(64);
             var input = OpenRoot(data, chunkSizePower: 4, out var region);
             input.Seek(0);
-            input.ReadByte(); // acquire chunk 0
-            Assert.AreEqual(1, region.Chunks[0].OutstandingRefs);
+            input.ReadByte();
 
-            input.Dispose(); // same-thread dispose: releases immediately, no GC
-            Assert.AreEqual(0, region.Chunks[0].OutstandingRefs,
-                "same-thread Dispose must release the read reference deterministically");
+            input.Dispose(); // same-thread dispose: no in-flight reader, so the
+                             // reclaimer reclaims inline and closes the region now.
             Assert.IsTrue(region.IsDisposed, "disposing the root disposes the region");
+            Assert.IsTrue(region.Chunks[0].IsClosed,
+                "the reclaimer must run the chunk close inline when no reader is active");
             region.FreeAllPins();
         }
 
         [Test]
-        public void TestCloneDisposeDoesNotReleaseParentReference()
+        public void TestCloneDisposeLeavesRegionOpenForRoot()
         {
             var data = MakeData(64);
             using var root = OpenRoot(data, chunkSizePower: 4, out var region);
             root.Seek(0);
-            root.ReadByte(); // root acquires chunk 0
+            root.ReadByte();
             var clone = (IndexInput)root.Clone();
             clone.Seek(0);
-            clone.ReadByte(); // clone acquires its OWN reference on chunk 0
-            Assert.AreEqual(2, region.Chunks[0].OutstandingRefs, "root + clone each hold a reference");
+            clone.ReadByte();
 
-            clone.Dispose();
-            Assert.AreEqual(1, region.Chunks[0].OutstandingRefs,
-                "disposing the clone releases only the clone's reference, not the root's");
+            clone.Dispose(); // a non-owning clone must NOT close the shared region.
+            Assert.IsFalse(region.IsDisposed,
+                "disposing a clone must not dispose the shared region");
+            Assert.IsFalse(region.Chunks[0].IsClosed,
+                "disposing a clone must not close a chunk the root still reads");
             // Root still works.
             root.Seek(10);
             Assert.AreEqual(data[10], root.ReadByte());
@@ -392,64 +427,69 @@ namespace Lucene.Net.Store
         }
 
         // ------------------------------------------------------------------
-        // Forced cross-thread strand: the deferral path, deterministically
+        // Forced cross-thread close: the reclaimer defers the unmap, deterministically
         // ------------------------------------------------------------------
 
         [Test]
-        public void TestCrossThreadDisposeDoesNotReleaseStrandedReference()
+        public void TestCrossThreadCloseDefersUnmapUntilReaderDrains()
         {
-            // Force the exact interleaving the StrandedReadRefReleaser exists for:
-            // a reader (thread A) is INSIDE TryAcquireChunk for chunk 0 (paused on
-            // a barrier), holding its acquire, while thread B disposes the same
-            // clone. Because B is a different thread than the acquirer, the engine
-            // must NOT release A's reference directly (which against real memory
-            // could AVE a reader mid-dereference) - it hands it to the finalizable
-            // releaser instead. We assert deterministically that the reference is
-            // NOT released by B's Dispose.
+            // Force the exact interleaving #1013 is about: a reader (thread A) is
+            // INSIDE the reclaimer's Enter/Exit bracket (admitted but parked just
+            // before its dereference) on a clone, while thread B closes the shared
+            // region by disposing the owning root. The reclaimer MUST defer the
+            // actual chunk close (the unmap, against real memory) until A drains -
+            // running it now would free a view under a mid-dereference reader and
+            // AVE. We assert deterministically that the chunk is NOT closed while A
+            // is parked, and IS closed once A exits the bracket.
             //
-            // The complementary property - that the deferred reference is
-            // eventually released once the input is unreachable - is GC/finalizer
-            // timing-dependent, so it is NOT asserted here (it would be flaky);
-            // it is covered against real mappings by
-            // TestMultiMMap.TestCrossThreadCloneDisposeReleasesReadRefDeterministically
-            // (which observes deterministic release via the owner's Dispose) and
-            // the nightly concurrent race tests.
+            // True native unmap-vs-read AVE-safety under load is covered against
+            // real mappings by the nightly stress tests in TestMultiMMap; here we
+            // pin down the deferral handshake at the engine's logic level.
             var data = MakeData(64);
-            using var root = OpenRoot(data, chunkSizePower: 4, out var region);
+            var reclaimer = new PausingReclaimer();
+            using var root = OpenRoot(data, chunkSizePower: 4, reclaimer, out var region);
 
-            var pause = new ManualResetEventSlim(false);
-            region.Chunks[0].PauseInAcquire = pause;
-
+            // Arm the NEXT registered reader (the clone) to park inside its bracket.
+            reclaimer.ArmNextRegistration();
             var clone = (IndexInput)root.Clone();
+
             var reader = new Thread(static state =>
             {
                 var c = (IndexInput)state!;
                 c.Seek(0);
-                c.ReadByte(); // blocks inside TryAcquire on the chunk's PauseInAcquire
+                c.ReadByte(); // admitted by Enter, then parks inside the bracket
             }) { IsBackground = true };
             reader.Start(clone);
 
-            // Spin until the acquire is recorded (reader is parked on the barrier
-            // holding its reference).
-            for (int i = 0; i < 2000 && Volatile.Read(ref region.Chunks[0].OutstandingRefs) == 0; i++)
-                Thread.Sleep(1);
-            Assert.AreEqual(1, region.Chunks[0].OutstandingRefs,
-                "reader should be parked inside TryAcquire holding its reference");
+            // Wait until the reader is parked inside the bracket.
+            Assert.IsTrue(reclaimer.Entered.Wait(TimeSpan.FromSeconds(5)),
+                "reader should reach the inside of the Enter/Exit bracket");
 
-            // Dispose the clone from THIS (different) thread while the reader holds
-            // the reference: the engine must defer, not release.
-            clone.Dispose();
-            Assert.AreEqual(1, region.Chunks[0].OutstandingRefs,
-                "a cross-thread Dispose must NOT release the reader's reference; " +
-                "it must hand it to the finalizable releaser (releasing it here " +
-                "could unmap a view under a mid-dereference reader against real memory)");
+            // Close the region from THIS (different) thread while the reader is
+            // mid-bracket: the reclaimer must NOT run the unmap yet.
+            var disposer = new Thread(static state => ((IDisposable)state!).Dispose())
+            { IsBackground = true };
+            disposer.Start(root);
 
-            // Let the reader finish (its ReadByte completes against still-valid
-            // managed memory) and join before the test tears down.
-            pause.Set();
+            // Give the close a chance to (wrongly) reclaim; it must still be parked
+            // because a reader is active. The chunk close is the observable unmap.
+            Thread.Sleep(100);
+            Assert.IsFalse(region.Chunks[0].IsClosed,
+                "a cross-thread close must NOT unmap a chunk while a reader is " +
+                "inside the bracket (against real memory this would AVE)");
+            Assert.IsTrue(reclaimer.IsClosed, "the region was closed (Close was called)");
+
+            // Release the reader: its Exit drains the last reference and runs the
+            // deferred unmap, so the chunk closes now.
+            reclaimer.Resume.Set();
             Assert.IsTrue(reader.Join(TimeSpan.FromSeconds(5)), "reader thread should finish");
+            Assert.IsTrue(disposer.Join(TimeSpan.FromSeconds(5)), "disposer thread should finish");
 
-            region.Chunks[0].PauseInAcquire = null;
+            // After the reader drains, the deferred unmap has run.
+            for (int i = 0; i < 2000 && !region.Chunks[0].IsClosed; i++) Thread.Sleep(1);
+            Assert.IsTrue(region.Chunks[0].IsClosed,
+                "once the reader exits the bracket, the deferred unmap must run");
+
             region.FreeAllPins();
         }
     }
