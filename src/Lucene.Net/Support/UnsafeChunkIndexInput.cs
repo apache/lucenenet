@@ -63,7 +63,7 @@ namespace Lucene.Net.Store
     /// lifetime of the backing region, so the read paths cache it across reads with
     /// no per-read or per-crossing native call (this is what removes the #1151
     /// contention). Liveness against a concurrent close is provided by an
-    /// <see cref="IMMapReclaimer"/> shared by every instance over a region (a root,
+    /// <see cref="HazardMMapReclaimer"/> shared by every instance over a region (a root,
     /// its clones, and any slices): each instance registers once, and every pointer
     /// dereference on the read paths is bracketed by the reclaimer's
     /// <c>Enter</c>/<c>Exit</c>. Closing the region calls <c>Close</c> on the
@@ -84,12 +84,14 @@ namespace Lucene.Net.Store
         private int instanceClosed;
 
         // The mapping-wide reclaimer (shared by the root, its clones, and any
-        // slices) and this instance's own reader token. Each instance must have its
-        // OWN token: tokens carry a per-reader re-entrancy depth, and a clone reads
+        // slices) and this instance's own reader slot. Each instance must have its
+        // OWN slot: slots carry a per-reader re-entrancy depth, and a clone reads
         // concurrently with its parent, so they cannot share one. Clone() copies
-        // readerToken by reference, so ResetClonedCursor re-registers to replace it.
-        private readonly IMMapReclaimer reclaimer;
-        private IMMapReclaimer.IReaderToken readerToken;
+        // readerSlot by reference, so ResetClonedCursor re-registers to replace it.
+        // Both are concrete (not an interface) so the hot-path Enter/Exit bracket
+        // inlines with no virtual dispatch.
+        private readonly HazardMMapReclaimer reclaimer;
+        private HazardMMapReclaimer.Slot readerSlot;
 
         // The window into the chunked region this instance sees (slice range for a
         // slice, [0, regionLength) for a root). Cached-chunk offsets below are
@@ -122,16 +124,22 @@ namespace Lucene.Net.Store
         /// <param name="offset">Window start (window-relative positions are added to this for chunk lookup).</param>
         /// <param name="length">Window length in bytes.</param>
         /// <param name="chunkSizePower">log2 of the chunk size; chunks are <c>1 &lt;&lt; chunkSizePower</c> bytes (last may be shorter).</param>
-        protected UnsafeChunkIndexInput(IMMapReclaimer reclaimer, string resourceDescription,
+        protected UnsafeChunkIndexInput(HazardMMapReclaimer reclaimer, string resourceDescription,
             long offset, long length, int chunkSizePower)
             : base(resourceDescription)
         {
             this.reclaimer = reclaimer;
-            this.readerToken = reclaimer.Register(this);
+            this.readerSlot = reclaimer.Register();
             this.baseOffset = offset;
             this.length = length;
             this.chunkSizePower = chunkSizePower;
         }
+
+        // Test-only: install a callback that this instance's reader slot invokes
+        // INSIDE the Enter/Exit bracket (after admission, before returning to the
+        // read), so a test can park this reader mid-dereference and drive a
+        // concurrent Close. Not on any production path (the slot's hook is null).
+        internal void SetOnEnterForTest(Action onEnter) => readerSlot.OnEnterForTest = onEnter;
 
         /// <summary>
         /// Throws <see cref="AlreadyClosedException"/> if this instance has been
@@ -204,17 +212,16 @@ namespace Lucene.Net.Store
             long pos = position;
             if (pos < currentEnd)
             {
-                reclaimer.Enter(readerToken);
-                try
-                {
-                    byte b = *(readBase + pos);
-                    position = pos + 1;
-                    return b;
-                }
-                finally
-                {
-                    reclaimer.Exit(readerToken);
-                }
+                // EnterCore/Exit bracket the raw load with no try-finally (it inhibits
+                // enregistration); the load can only AVE (uncatchable) and never throws
+                // a managed exception, so Exit is always reached. The other read paths
+                // below follow the same contract - keep the bracketed body throw-free.
+                // See HazardMMapReclaimer.Slot.EnterCore.
+                readerSlot.EnterCore();
+                byte b = *(readBase + pos);
+                readerSlot.Exit();
+                position = pos + 1;
+                return b;
             }
             return ReadByteSlow();
         }
@@ -231,17 +238,11 @@ namespace Lucene.Net.Store
             }
             EnsureCurrentChunk(pos);
 
-            reclaimer.Enter(readerToken);
-            try
-            {
-                byte b = *(readBase + pos);
-                position = pos + 1;
-                return b;
-            }
-            finally
-            {
-                reclaimer.Exit(readerToken);
-            }
+            readerSlot.EnterCore();
+            byte b = *(readBase + pos);
+            readerSlot.Exit();
+            position = pos + 1;
+            return b;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -250,18 +251,11 @@ namespace Lucene.Net.Store
             long pos = position;
             if (pos + 2 <= currentEnd)
             {
-                reclaimer.Enter(readerToken);
-                try
-                {
-                    ushort raw = Unsafe.ReadUnaligned<ushort>(readBase + pos);
-                    short v = (short)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
-                    position = pos + 2;
-                    return v;
-                }
-                finally
-                {
-                    reclaimer.Exit(readerToken);
-                }
+                readerSlot.EnterCore();
+                ushort raw = Unsafe.ReadUnaligned<ushort>(readBase + pos);
+                readerSlot.Exit();
+                position = pos + 2;
+                return (short)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
             }
             // Slow path: bytes straddle a chunk boundary. Fill via ReadBytes (which
             // handles the crossing) and decode big-endian to match the fast path;
@@ -277,18 +271,11 @@ namespace Lucene.Net.Store
             long pos = position;
             if (pos + 4 <= currentEnd)
             {
-                reclaimer.Enter(readerToken);
-                try
-                {
-                    uint raw = Unsafe.ReadUnaligned<uint>(readBase + pos);
-                    int v = (int)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
-                    position = pos + 4;
-                    return v;
-                }
-                finally
-                {
-                    reclaimer.Exit(readerToken);
-                }
+                readerSlot.EnterCore();
+                uint raw = Unsafe.ReadUnaligned<uint>(readBase + pos);
+                readerSlot.Exit();
+                position = pos + 4;
+                return (int)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
             }
             // Slow path: see ReadInt16.
             Span<byte> buf = stackalloc byte[4];
@@ -302,18 +289,11 @@ namespace Lucene.Net.Store
             long pos = position;
             if (pos + 8 <= currentEnd)
             {
-                reclaimer.Enter(readerToken);
-                try
-                {
-                    ulong raw = Unsafe.ReadUnaligned<ulong>(readBase + pos);
-                    long v = (long)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
-                    position = pos + 8;
-                    return v;
-                }
-                finally
-                {
-                    reclaimer.Exit(readerToken);
-                }
+                readerSlot.EnterCore();
+                ulong raw = Unsafe.ReadUnaligned<ulong>(readBase + pos);
+                readerSlot.Exit();
+                position = pos + 8;
+                return (long)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
             }
             // Slow path: see ReadInt16.
             Span<byte> buf = stackalloc byte[8];
@@ -374,8 +354,7 @@ namespace Lucene.Net.Store
                 long available = currentEnd - pos;
                 int inChunk = (int)(available < remaining ? available : remaining);
 
-                reclaimer.Enter(readerToken);
-                try
+                readerSlot.EnterCore();
                 {
                     ref byte src = ref Unsafe.AsRef<byte>(readBase + pos);
                     ref byte dst = ref Unsafe.Add(ref destination, dstOff);
@@ -414,10 +393,7 @@ namespace Lucene.Net.Store
                         Unsafe.CopyBlockUnaligned(ref dst, ref src, (uint)inChunk);
                     }
                 }
-                finally
-                {
-                    reclaimer.Exit(readerToken);
-                }
+                readerSlot.Exit();
 
                 pos += inChunk;
                 dstOff += inChunk;
@@ -511,7 +487,7 @@ namespace Lucene.Net.Store
             currentEnd = 0;
             // base.Clone() copied the parent's token by reference; replace it with a
             // fresh registration so this clone has its own depth slot.
-            readerToken = reclaimer.Register(this);
+            readerSlot = reclaimer.Register();
         }
 
         protected override void Dispose(bool disposing)

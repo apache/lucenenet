@@ -62,7 +62,7 @@ namespace Lucene.Net.Store
         /// fixed-size chunks, each backed by a pinned <see cref="byte"/>[]. Shared
         /// by a root <see cref="ManagedChunkIndexInput"/> and its clones, mirroring
         /// how a real <c>SharedMapping</c> is shared, including owning an
-        /// <see cref="IMMapReclaimer"/> that defers the chunk close until in-flight
+        /// <see cref="HazardMMapReclaimer"/> that defers the chunk close until in-flight
         /// readers drain.
         /// </summary>
         internal sealed unsafe class ManagedChunkRegion : IDisposable
@@ -99,19 +99,13 @@ namespace Lucene.Net.Store
 
             internal readonly FakeChunk[] Chunks;
             internal readonly long Length;
-            private readonly IMMapReclaimer reclaimer;
+            private readonly HazardMMapReclaimer reclaimer = new HazardMMapReclaimer();
             private int disposed;
 
-            internal IMMapReclaimer Reclaimer => reclaimer;
+            internal HazardMMapReclaimer Reclaimer => reclaimer;
 
             internal ManagedChunkRegion(byte[] data, int chunkSizePower)
-                : this(data, chunkSizePower, new HazardMMapReclaimer())
             {
-            }
-
-            internal ManagedChunkRegion(byte[] data, int chunkSizePower, IMMapReclaimer reclaimer)
-            {
-                this.reclaimer = reclaimer;
                 Length = data.Length;
                 long chunkSize = 1L << chunkSizePower;
                 int nChunks = data.Length == 0 ? 0 : (int)((data.Length + chunkSize - 1) >> chunkSizePower);
@@ -205,64 +199,6 @@ namespace Lucene.Net.Store
             return new ManagedChunkIndexInput("root", ownsRegion: true, region, 0, data.Length, chunkSizePower);
         }
 
-        private static ManagedChunkIndexInput OpenRoot(byte[] data, int chunkSizePower,
-            IMMapReclaimer reclaimer, out ManagedChunkRegion region)
-        {
-            region = new ManagedChunkRegion(data, chunkSizePower, reclaimer);
-            return new ManagedChunkIndexInput("root", ownsRegion: true, region, 0, data.Length, chunkSizePower);
-        }
-
-        /// <summary>
-        /// An <see cref="IMMapReclaimer"/> decorator that lets a test pause a reader
-        /// thread DELIBERATELY inside the <c>Enter</c>/<c>Exit</c> bracket - i.e.
-        /// after the reclaimer has admitted the reader but before it dereferences -
-        /// so the test can deterministically drive a concurrent <c>Close</c> while a
-        /// reader is mid-bracket. Wraps a real <see cref="HazardMMapReclaimer"/>.
-        /// </summary>
-        internal sealed class PausingReclaimer : IMMapReclaimer
-        {
-            private readonly IMMapReclaimer inner = new HazardMMapReclaimer();
-
-            // Signaled by the paused reader once it is inside the bracket; the test
-            // waits on this to know the reader is parked.
-            internal readonly ManualResetEventSlim Entered = new(false);
-            // The test sets this to release the paused reader.
-            internal readonly ManualResetEventSlim Resume = new(false);
-            // Only the token registered while ArmFor is set is paused.
-            internal IMMapReclaimer.IReaderToken? ArmFor;
-
-            public IMMapReclaimer.IReaderToken Register(object input)
-            {
-                var token = inner.Register(input);
-                if (ArmFor is null && Volatile.Read(ref armNext) != 0)
-                {
-                    ArmFor = token;
-                    Volatile.Write(ref armNext, 0);
-                }
-                return token;
-            }
-
-            private int armNext;
-            internal void ArmNextRegistration() => Volatile.Write(ref armNext, 1);
-
-            public void Enter(IMMapReclaimer.IReaderToken token)
-            {
-                inner.Enter(token);
-                if (ReferenceEquals(token, ArmFor))
-                {
-                    // We are admitted (inner.Enter bumped our depth); now park inside
-                    // the bracket so a concurrent Close must wait for us to drain.
-                    Entered.Set();
-                    Resume.Wait();
-                }
-            }
-
-            public void Exit(IMMapReclaimer.IReaderToken token) => inner.Exit(token);
-
-            public void Close(System.Action unmap) => inner.Close(unmap);
-
-            public bool IsClosed => inner.IsClosed;
-        }
 
         // ------------------------------------------------------------------
         // Read correctness across chunk boundaries
@@ -446,14 +382,20 @@ namespace Lucene.Net.Store
             // real mappings by the nightly stress tests in TestMultiMMap; here we
             // pin down the deferral handshake at the engine's logic level.
             var data = MakeData(64);
-            var reclaimer = new PausingReclaimer();
-            using var root = OpenRoot(data, chunkSizePower: 4, reclaimer, out var region);
+            using var root = OpenRoot(data, chunkSizePower: 4, out var region);
+            var clone = (ManagedChunkIndexInput)root.Clone();
 
-            // Arm the NEXT registered reader (the clone) to park inside its bracket.
-            reclaimer.ArmNextRegistration();
-            var clone = (IndexInput)root.Clone();
+            var entered = new ManualResetEventSlim(false);
+            var resume = new ManualResetEventSlim(false);
+            // Park the clone's reader INSIDE its Enter/Exit bracket (admitted, before
+            // the dereference returns) so a concurrent Close must wait for it.
+            clone.SetOnEnterForTest(() =>
+            {
+                entered.Set();
+                resume.Wait();
+            });
 
-            var reader = new Thread(static state =>
+            var reader = new Thread(state =>
             {
                 var c = (IndexInput)state!;
                 c.Seek(0);
@@ -462,12 +404,12 @@ namespace Lucene.Net.Store
             reader.Start(clone);
 
             // Wait until the reader is parked inside the bracket.
-            Assert.IsTrue(reclaimer.Entered.Wait(TimeSpan.FromSeconds(5)),
+            Assert.IsTrue(entered.Wait(TimeSpan.FromSeconds(5)),
                 "reader should reach the inside of the Enter/Exit bracket");
 
             // Close the region from THIS (different) thread while the reader is
             // mid-bracket: the reclaimer must NOT run the unmap yet.
-            var disposer = new Thread(static state => ((IDisposable)state!).Dispose())
+            var disposer = new Thread(state => ((IDisposable)state!).Dispose())
             { IsBackground = true };
             disposer.Start(root);
 
@@ -477,11 +419,11 @@ namespace Lucene.Net.Store
             Assert.IsFalse(region.Chunks[0].IsClosed,
                 "a cross-thread close must NOT unmap a chunk while a reader is " +
                 "inside the bracket (against real memory this would AVE)");
-            Assert.IsTrue(reclaimer.IsClosed, "the region was closed (Close was called)");
+            Assert.IsTrue(region.Reclaimer.IsClosed, "the region was closed (Close was called)");
 
             // Release the reader: its Exit drains the last reference and runs the
             // deferred unmap, so the chunk closes now.
-            reclaimer.Resume.Set();
+            resume.Set();
             Assert.IsTrue(reader.Join(TimeSpan.FromSeconds(5)), "reader thread should finish");
             Assert.IsTrue(disposer.Join(TimeSpan.FromSeconds(5)), "disposer thread should finish");
 

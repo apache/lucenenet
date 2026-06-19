@@ -400,7 +400,7 @@ namespace Lucene.Net.Store
         /// one <see cref="Directory.IndexInputSlicer"/>. Clones and slices
         /// reference it without owning it. The owner calls
         /// <see cref="SharedMapping.Dispose"/> exactly once; the mapping's
-        /// <see cref="IMMapReclaimer"/> defers the actual unmap until in-flight
+        /// <see cref="HazardMMapReclaimer"/> defers the actual unmap until in-flight
         /// reads from non-owning clones/slices have drained, so those reads
         /// either complete safely against the still-mapped view or fail with
         /// <see cref="AlreadyClosedException"/> rather than dereferencing a freed
@@ -431,9 +431,9 @@ namespace Lucene.Net.Store
             // The reclaimer that defers this mapping's chunk unmaps until in-flight
             // readers drain. Shared by every input over this mapping (root, clones,
             // slices); each registers itself and brackets its reads with it.
-            private readonly IMMapReclaimer reclaimer = new HazardMMapReclaimer();
+            private readonly HazardMMapReclaimer reclaimer = new HazardMMapReclaimer();
 
-            internal IMMapReclaimer Reclaimer => reclaimer;
+            internal HazardMMapReclaimer Reclaimer => reclaimer;
 
             // LUCENENET specific (PR #1267): for testing only. True once Dispose has
             // run and the owned FileStream (if any) has been disposed, so a test can
@@ -644,7 +644,7 @@ namespace Lucene.Net.Store
         /// <see cref="SafeBuffer.AcquirePointer"/> - the per-crossing acquire was
         /// the #1151 contention, so it is gone. The drain barrier that keeps the
         /// mapping valid under a concurrent close is now the mapping's
-        /// <see cref="IMMapReclaimer"/>: a reader brackets each dereference with
+        /// <see cref="HazardMMapReclaimer"/>: a reader brackets each dereference with
         /// <c>Enter</c>/<c>Exit</c>, and the reclaimer's <c>Close</c> defers the
         /// actual <c>UnmapViewOfFile</c>/<c>munmap</c> (this chunk's
         /// <see cref="Release"/>) until every in-flight reader has drained. So an
