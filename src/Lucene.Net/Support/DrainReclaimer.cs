@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
+#nullable enable
+
 namespace Lucene.Net.Support
 {
     /*
@@ -66,7 +68,7 @@ namespace Lucene.Net.Support
             // Test-only hook: when set, Enter parks here (inside the bracket) so a
             // test can drive a concurrent Close while this reader is mid-dereference.
             // Null on every production read; a single predictably-not-taken branch.
-            internal Action OnEnterForTest;
+            internal Action? OnEnterForTest;
 
             internal Slot(DrainReclaimer owner) => this.owner = owner;
 
@@ -188,7 +190,7 @@ namespace Lucene.Net.Support
         private readonly List<Slot> _slots = new();
 
         private volatile bool _closed;
-        private Action _unmap;
+        private Action? _unmap;
         private int _reclaimed;
 
         // Upper bound on how long Close actively spins waiting for readers to drain
@@ -261,10 +263,12 @@ namespace Lucene.Net.Support
                 return false;
             }
 
-            // First caller to win the swap runs the unmap exactly once.
+            // First caller to win the swap runs the unmap exactly once. _unmap is
+            // non-null here: Close assigns it before publishing _closed, and we only
+            // reach this branch with _closed == true and _reclaimed won from 0.
             if (Interlocked.Exchange(ref _reclaimed, 1) == 0)
             {
-                _unmap();
+                _unmap!();
                 _unmap = null;
             }
             return true;
