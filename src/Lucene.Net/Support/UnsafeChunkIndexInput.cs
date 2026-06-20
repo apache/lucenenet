@@ -63,7 +63,7 @@ namespace Lucene.Net.Store
     /// lifetime of the backing region, so the read paths cache it across reads with
     /// no per-read or per-crossing native call (this is what removes the #1151
     /// contention). Liveness against a concurrent close is provided by an
-    /// <see cref="HazardMMapReclaimer"/> shared by every instance over a region (a root,
+    /// <see cref="DrainReclaimer"/> shared by every instance over a region (a root,
     /// its clones, and any slices): each instance registers once, and every pointer
     /// dereference on the read paths is bracketed by the reclaimer's
     /// <c>Enter</c>/<c>Exit</c>. Closing the region calls <c>Close</c> on the
@@ -90,8 +90,8 @@ namespace Lucene.Net.Store
         // readerSlot by reference, so ResetClonedCursor re-registers to replace it.
         // Both are concrete (not an interface) so the hot-path Enter/Exit bracket
         // inlines with no virtual dispatch.
-        private readonly HazardMMapReclaimer reclaimer;
-        private HazardMMapReclaimer.Slot readerSlot;
+        private readonly DrainReclaimer reclaimer;
+        private DrainReclaimer.Slot readerSlot;
 
         // The window into the chunked region this instance sees (slice range for a
         // slice, [0, regionLength) for a root). Cached-chunk offsets below are
@@ -103,12 +103,12 @@ namespace Lucene.Net.Store
         // Window-relative read cursor. 0 <= position <= length.
         private long position;
 
-        // Cached current-chunk state, valid iff currentChunkIndex >= 0. The cached
-        // chunk holds a per-crossing read reference (TryAcquireChunk); released on
-        // chunk switch, Seek to a different chunk, or Dispose. The fast path needs
-        // only readBase and currentEnd beyond `position`; readBase is precomputed
-        // so the load address is a single `*(readBase + pos)`. currentStart is only
-        // for Seek cache validation, not read by ReadByte/ReadInt*.
+        // Cached current-chunk state, valid iff currentChunkIndex >= 0. Holds the
+        // chunk's cached base pointer (from ChunkBase) and is invalidated on a chunk
+        // switch, a Seek to a different chunk, or Dispose. The fast path needs only
+        // readBase and currentEnd beyond `position`; readBase is precomputed so the
+        // load address is a single `*(readBase + pos)`. currentStart is only for Seek
+        // cache validation, not read by ReadByte/ReadInt*.
         private int currentChunkIndex = NO_CHUNK;
         private byte* readBase;        // = chunkBase + baseOffset - chunkFileStart
         private long currentStart;     // window-relative start of the cached chunk's intersection with [0, length)
@@ -124,7 +124,7 @@ namespace Lucene.Net.Store
         /// <param name="offset">Window start (window-relative positions are added to this for chunk lookup).</param>
         /// <param name="length">Window length in bytes.</param>
         /// <param name="chunkSizePower">log2 of the chunk size; chunks are <c>1 &lt;&lt; chunkSizePower</c> bytes (last may be shorter).</param>
-        protected UnsafeChunkIndexInput(HazardMMapReclaimer reclaimer, string resourceDescription,
+        protected UnsafeChunkIndexInput(DrainReclaimer reclaimer, string resourceDescription,
             long offset, long length, int chunkSizePower)
             : base(resourceDescription)
         {
@@ -195,7 +195,7 @@ namespace Lucene.Net.Store
             {
                 throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
             }
-            // If the seek stays inside the cached chunk, keep the read reference and
+            // If the seek stays inside the cached chunk, keep the cached pointer and
             // just move the cursor; otherwise invalidate so the next read reacquires.
             if (currentChunkIndex != NO_CHUNK && pos >= currentStart && pos < currentEnd)
             {
@@ -216,7 +216,7 @@ namespace Lucene.Net.Store
                 // enregistration); the load can only AVE (uncatchable) and never throws
                 // a managed exception, so Exit is always reached. The other read paths
                 // below follow the same contract - keep the bracketed body throw-free.
-                // See HazardMMapReclaimer.Slot.EnterCore.
+                // See DrainReclaimer.Slot.EnterCore.
                 readerSlot.EnterCore();
                 byte b = *(readBase + pos);
                 readerSlot.Exit();
@@ -354,7 +354,11 @@ namespace Lucene.Net.Store
                 long available = currentEnd - pos;
                 int inChunk = (int)(available < remaining ? available : remaining);
 
-                readerSlot.EnterCore();
+                // Bulk copies amortize the bracket over a whole chunk, so unlike the
+                // single-value reads above this path uses the using/ReadScope form: the
+                // try-finally cost is negligible here and the body is larger (more
+                // likely to be edited), so the guaranteed Exit is worth it.
+                using (readerSlot.Enter())
                 {
                     ref byte src = ref Unsafe.AsRef<byte>(readBase + pos);
                     ref byte dst = ref Unsafe.Add(ref destination, dstOff);
@@ -393,7 +397,6 @@ namespace Lucene.Net.Store
                         Unsafe.CopyBlockUnaligned(ref dst, ref src, (uint)inChunk);
                     }
                 }
-                readerSlot.Exit();
 
                 pos += inChunk;
                 dstOff += inChunk;

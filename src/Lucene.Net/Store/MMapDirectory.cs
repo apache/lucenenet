@@ -308,15 +308,15 @@ namespace Lucene.Net.Store
         /// <summary>
         /// LUCENENET-specific <see cref="IndexInput"/> backed by an array of
         /// memory-mapped <see cref="Chunk"/>s (each a
-        /// <see cref="MemoryMappedViewAccessor"/> whose raw pointer is acquired per
-        /// chunk crossing). The read logic is inherited from
+        /// <see cref="MemoryMappedViewAccessor"/> whose raw pointer is acquired once
+        /// and cached for the mapping's lifetime). The read logic is inherited from
         /// <see cref="UnsafeChunkIndexInput"/>; this type wires that engine to a
         /// <see cref="SharedMapping"/>. The chunked, cached-pointer design
         /// addresses two Lucene.NET-specific issues together: <b>#1013</b>
         /// (sporadic <c>AccessViolationException</c> under concurrent search with
-        /// <c>SearcherManager</c>, avoided by the per-chunk-crossing read reference
-        /// + the SafeHandle refcount that defers <c>UnmapViewOfFile</c>/<c>munmap</c>
-        /// until references drain), and <b>#1151</b> (MMapDirectory far slower than
+        /// <c>SearcherManager</c>, avoided by the mapping's <see cref="DrainReclaimer"/>
+        /// that defers <c>UnmapViewOfFile</c>/<c>munmap</c> until in-flight reads
+        /// drain), and <b>#1151</b> (MMapDirectory far slower than
         /// SimpleFSDirectory under parallel load, because
         /// <c>MemoryMappedViewAccessor</c>'s per-call <c>AcquirePointer</c>/range
         /// check contends; caching the pointer per chunk removes it).
@@ -371,10 +371,10 @@ namespace Lucene.Net.Store
             {
                 // A disposed input must not hand out a working clone.
                 ThrowIfDisposed();
-                // The clone shares the parent's SharedMapping but does NOT own it;
-                // it acquires its own per-chunk-crossing read reference on first
-                // read. ResetClonedCursor clears the inherited cursor cache so the
-                // clone never releases a reference the parent depends on.
+                // The clone shares the parent's SharedMapping but does NOT own it.
+                // ResetClonedCursor clears the inherited cursor cache and gives the
+                // clone its own reclaimer slot, so the clone and parent read
+                // independently and disposing one never affects the other.
                 var clone = (MMapIndexInput)base.Clone();
                 clone.isRoot = false;
                 clone.ResetClonedCursor();
@@ -400,7 +400,7 @@ namespace Lucene.Net.Store
         /// one <see cref="Directory.IndexInputSlicer"/>. Clones and slices
         /// reference it without owning it. The owner calls
         /// <see cref="SharedMapping.Dispose"/> exactly once; the mapping's
-        /// <see cref="HazardMMapReclaimer"/> defers the actual unmap until in-flight
+        /// <see cref="DrainReclaimer"/> defers the actual unmap until in-flight
         /// reads from non-owning clones/slices have drained, so those reads
         /// either complete safely against the still-mapped view or fail with
         /// <see cref="AlreadyClosedException"/> rather than dereferencing a freed
@@ -431,9 +431,9 @@ namespace Lucene.Net.Store
             // The reclaimer that defers this mapping's chunk unmaps until in-flight
             // readers drain. Shared by every input over this mapping (root, clones,
             // slices); each registers itself and brackets its reads with it.
-            private readonly HazardMMapReclaimer reclaimer = new HazardMMapReclaimer();
+            private readonly DrainReclaimer reclaimer = new DrainReclaimer();
 
-            internal HazardMMapReclaimer Reclaimer => reclaimer;
+            internal DrainReclaimer Reclaimer => reclaimer;
 
             // LUCENENET specific (PR #1267): for testing only. True once Dispose has
             // run and the owned FileStream (if any) has been disposed, so a test can
@@ -597,14 +597,18 @@ namespace Lucene.Net.Store
                         long thisChunkLen = Math.Min(chunkSize, length - ((long)i << chunkSizePower));
 
                         MemoryMappedViewAccessor accessor = mmf.CreateViewAccessor(chunkOffset, thisChunkLen, MemoryMappedFileAccess.Read);
-                        // We do NOT AcquirePointer here: that is done per chunk-
-                        // crossing in Chunk.TryAcquireRead/ReleaseRead so the
-                        // SafeHandle refcount is the drain barrier and a crossing
-                        // after Close fails fast. A map-time AcquirePointer would
-                        // pin the handle past Close and defeat that. PointerOffset
-                        // (the view's offset within its OS page) is available
-                        // without acquiring a pointer.
-                        result[i] = new Chunk(accessor, accessor.PointerOffset, thisChunkLen);
+                        // The Chunk ctor acquires the view's pointer (a fallible native
+                        // call). If it throws, the accessor isn't in result[] yet, so
+                        // DisposeChunks below would miss it - dispose it here instead.
+                        try
+                        {
+                            result[i] = new Chunk(accessor, accessor.PointerOffset, thisChunkLen);
+                        }
+                        catch
+                        {
+                            IOUtils.DisposeWhileHandlingException(accessor);
+                            throw;
+                        }
                     }
                     return result;
                 }
@@ -644,7 +648,7 @@ namespace Lucene.Net.Store
         /// <see cref="SafeBuffer.AcquirePointer"/> - the per-crossing acquire was
         /// the #1151 contention, so it is gone. The drain barrier that keeps the
         /// mapping valid under a concurrent close is now the mapping's
-        /// <see cref="HazardMMapReclaimer"/>: a reader brackets each dereference with
+        /// <see cref="DrainReclaimer"/>: a reader brackets each dereference with
         /// <c>Enter</c>/<c>Exit</c>, and the reclaimer's <c>Close</c> defers the
         /// actual <c>UnmapViewOfFile</c>/<c>munmap</c> (this chunk's
         /// <see cref="Release"/>) until every in-flight reader has drained. So an

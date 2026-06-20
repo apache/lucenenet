@@ -62,7 +62,7 @@ namespace Lucene.Net.Store
         /// fixed-size chunks, each backed by a pinned <see cref="byte"/>[]. Shared
         /// by a root <see cref="ManagedChunkIndexInput"/> and its clones, mirroring
         /// how a real <c>SharedMapping</c> is shared, including owning an
-        /// <see cref="HazardMMapReclaimer"/> that defers the chunk close until in-flight
+        /// <see cref="DrainReclaimer"/> that defers the chunk close until in-flight
         /// readers drain.
         /// </summary>
         internal sealed unsafe class ManagedChunkRegion : IDisposable
@@ -99,10 +99,10 @@ namespace Lucene.Net.Store
 
             internal readonly FakeChunk[] Chunks;
             internal readonly long Length;
-            private readonly HazardMMapReclaimer reclaimer = new HazardMMapReclaimer();
+            private readonly DrainReclaimer reclaimer = new DrainReclaimer();
             private int disposed;
 
-            internal HazardMMapReclaimer Reclaimer => reclaimer;
+            internal DrainReclaimer Reclaimer => reclaimer;
 
             internal ManagedChunkRegion(byte[] data, int chunkSizePower)
             {

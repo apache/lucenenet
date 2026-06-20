@@ -24,56 +24,63 @@ namespace Lucene.Net.Support
      */
 
     /// <summary>
-    /// LUCENENET specific: a lock-free reclaimer that defers the unmap of a
-    /// memory-mapped region until every in-flight reader has drained, so a
-    /// concurrent close can never unmap a view out from under a reader
-    /// mid-dereference (the #1013 <c>AccessViolationException</c>) without the
-    /// per-access native refcount that caused #1151.
+    /// LUCENENET specific: a lock-free reclaimer that defers a cleanup action on a
+    /// shared resource until every in-flight user has drained, so the cleanup can
+    /// never run while a user is still touching the resource. It is a per-user drain
+    /// barrier (hazard-pointer-inspired, but using a re-entrancy counter per user
+    /// rather than tagging a specific pointer).
     /// <para/>
-    /// One reclaimer is owned by one mapping and shared by every reader that views
-    /// it (a root <see cref="Store.IndexInput"/>, its clones, and any slices). Each
-    /// reader calls <see cref="Register"/> once to obtain its own <see cref="Slot"/>,
-    /// then brackets each pointer dereference with <c>using (slot.Enter()) { ... }</c>.
-    /// <see cref="Close"/> runs the supplied unmap action once all in-flight readers
+    /// In Lucene.NET it backs <see cref="Store.MMapDirectory"/>: one reclaimer per shared
+    /// memory mapping, deferring the unmap until in-flight reads drain, which avoids
+    /// the #1013 <c>AccessViolationException</c> (a concurrent close unmapping a view
+    /// out from under a reader) without the per-access native refcount that caused
+    /// #1151. It is not tied to memory mapping, though.
+    /// <para/>
+    /// One reclaimer is shared by every user of the resource. Each user calls
+    /// <see cref="Register"/> once to obtain its own <see cref="Slot"/>, then brackets
+    /// each access with <c>using (slot.Enter()) { ... }</c> (or
+    /// <see cref="Slot.EnterCore"/>/<see cref="Slot.Exit"/> directly on hot paths).
+    /// <see cref="Close"/> runs the supplied cleanup action once all in-flight users
     /// have drained.
     /// <para/>
-    /// The handshake is a hazard-pointer-style announce/scan: <see cref="Slot.Enter"/>
-    /// bumps a reader-private depth then reads the shared closed flag, and
-    /// <see cref="Close"/> publishes the flag then scans every slot's depth. With
-    /// asymmetric fencing (see <see cref="Slot.Enter"/>/<see cref="Close"/>) the
-    /// reader's bracket is fence-free on the hot path; the heavy barrier lives only
-    /// in the rare <see cref="Close"/>.
+    /// The handshake is an announce/scan: <see cref="Slot.EnterCore"/> bumps a
+    /// user-private depth then reads the shared closed flag, and <see cref="Close"/>
+    /// publishes the flag then scans every slot's depth. With asymmetric fencing (see
+    /// <see cref="Slot.EnterCore"/>/<see cref="Close"/>) the user's bracket is
+    /// fence-free on the hot path; the heavy barrier lives only in the rare
+    /// <see cref="Close"/>.
     /// </summary>
-    internal sealed class HazardMMapReclaimer
+    internal sealed class DrainReclaimer
     {
         /// <summary>
-        /// Per-reader state: a re-entrancy depth plus a back-reference to the owning
-        /// reclaimer. One <see cref="Slot"/> per reader (root, clone, or slice); a
-        /// reader is single-threaded, so only its own thread writes <see cref="Depth"/>
-        /// (a concurrent <see cref="Close"/> scan only reads it).
+        /// Per-user state: a re-entrancy depth plus a back-reference to the owning
+        /// reclaimer. One <see cref="Slot"/> per user; a user is single-threaded, so
+        /// only its own thread writes <see cref="Depth"/> (a concurrent
+        /// <see cref="Close"/> scan only reads it).
         /// </summary>
         internal sealed class Slot
         {
             internal int Depth;
-            private readonly HazardMMapReclaimer owner;
+            private readonly DrainReclaimer owner;
 
             // Test-only hook: when set, Enter parks here (inside the bracket) so a
             // test can drive a concurrent Close while this reader is mid-dereference.
             // Null on every production read; a single predictably-not-taken branch.
             internal Action OnEnterForTest;
 
-            internal Slot(HazardMMapReclaimer owner) => this.owner = owner;
+            internal Slot(DrainReclaimer owner) => this.owner = owner;
 
             /// <summary>
             /// Begin a dereference. Returns a <see cref="ReadScope"/> whose
             /// <c>Dispose</c> ends it; use with <c>using</c>. Throws
-            /// <see cref="AlreadyClosedException"/> if the mapping is already closed.
+            /// <see cref="AlreadyClosedException"/> if the resource is already closed.
             /// <para/>
-            /// The hot read paths avoid the <c>using</c>/<c>try-finally</c> frame
-            /// (which inhibits enregistration across the protected region) by calling
-            /// <see cref="Enter"/> and <see cref="Exit"/> directly: the bracketed body
-            /// is a single raw load that can only AVE (uncatchable) and never throws a
-            /// managed exception, so a <c>finally</c> would never have anything to do.
+            /// This is the convenient form, used where the bracket is amortized over a
+            /// bulk operation. The hottest single-value paths instead call
+            /// <see cref="EnterCore"/>/<see cref="Exit"/> directly to skip the
+            /// <c>using</c>/<c>try-finally</c> frame (which inhibits enregistration
+            /// across the protected region); see <see cref="EnterCore"/> for the
+            /// invariant that makes skipping the <c>finally</c> safe there.
             /// </summary>
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public ReadScope Enter()
@@ -109,7 +116,7 @@ namespace Lucene.Net.Support
                 if (owner._closed)
                 {
                     Depth--;
-                    throw AlreadyClosedException.Create(nameof(HazardMMapReclaimer), "Already closed: mapping is closed");
+                    throw AlreadyClosedException.Create(nameof(DrainReclaimer), "Already closed: mapping is closed");
                 }
 #else
                 // No process-wide barrier on this TFM (net462 / netstandard2.0): fall
@@ -121,7 +128,7 @@ namespace Lucene.Net.Support
                 if (owner._closed)
                 {
                     Volatile.Write(ref Depth, Volatile.Read(ref Depth) - 1);
-                    throw AlreadyClosedException.Create(nameof(HazardMMapReclaimer), "Already closed: mapping is closed");
+                    throw AlreadyClosedException.Create(nameof(DrainReclaimer), "Already closed: mapping is closed");
                 }
 #endif
                 if (OnEnterForTest != null)
