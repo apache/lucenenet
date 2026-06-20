@@ -240,7 +240,7 @@ namespace Lucene.Net.Store
             // disposing the slicer cascades to any slices left open. A slice can
             // outlive a Dispose of outerInstance: we deliberately do not re-check
             // outerInstance on every read because reads against a disposed mapping
-            // already fail fast with AlreadyClosedException via the per-chunk rent.
+            // already fail fast with AlreadyClosedException via the reclaimer.
             // EnsureOpen here only guards the act of opening a new slice.
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {

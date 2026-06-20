@@ -281,7 +281,7 @@ namespace Lucene.Net.Store
             Assert.AreEqual(10, sliceA.ReadInt32());
 
             // Dispose the remaining slice-side instances. The root IndexInput
-            // still holds a refcount, so the underlying mapping must stay alive.
+            // owns its own mapping, so it must stay alive and readable.
             sliceA.Dispose();
             sliceB.Dispose();
             slicer.Dispose();
@@ -289,8 +289,8 @@ namespace Lucene.Net.Store
             root.Seek(12);
             Assert.AreEqual(40, root.ReadInt32());
 
-            // Final referrer — this should bring the refcount to zero, tear
-            // down the MemoryMappedFile, and remove the dictionary entry.
+            // Disposing the root tears down its MemoryMappedFile and backing
+            // FileStream.
             root.Dispose();
 
             // If any OS file handle is still open, this delete will fail on
@@ -602,8 +602,8 @@ namespace Lucene.Net.Store
         // AVE (which crashes the test host), never an NRE, never an IOE
         // from a half-torn-down mapping.
         //
-        // Under the new MemoryMappedViewAccessorIndexInput design, clones
-        // observe the shared View's closed flag and throw AlreadyClosed
+        // Under the chunked, reclaimer-backed design, clones observe the closed
+        // mapping (a chunk crossing after close throws) and throw AlreadyClosed
         // promptly after the root is disposed. A successful pass here is
         // therefore a *positive* result — not Inconclusive — because the
         // expected behavior is that the invariant holds throughout.
@@ -695,20 +695,20 @@ namespace Lucene.Net.Store
                 Thread.Sleep(random.Next(1, 5));
                 master.Dispose();
 
-                // Join every reader. The View's drain barrier ensures Dispose
-                // only returns after in-flight reads complete, and clones
-                // then observe view.IsClosed via TryEnterRead and exit via
-                // the expected-AlreadyClosed catch. So Join timing out would
-                // itself be a defect — either the drain barrier is leaking
-                // or a reader is stuck in a broken state. Record that and
-                // fail rather than silently abandoning the thread.
+                // Join every reader. The reclaimer defers the unmap until
+                // in-flight reads drain, and clones that cross into a closed
+                // chunk observe it and exit via the expected-AlreadyClosed
+                // catch. So Join timing out would itself be a defect - either
+                // the reclaimer is leaking or a reader is stuck in a broken
+                // state. Record that and fail rather than silently abandoning
+                // the thread.
                 foreach (var t in threads)
                 {
                     if (!t.Join(TimeSpan.FromSeconds(10)))
                     {
                         unexpectedExceptions.Add(new TimeoutException(
                             $"Reader thread {t.Name} did not exit within 10s after master.Dispose(); " +
-                            "expected AlreadyClosed to propagate out of ReadInternal/TryEnterRead."));
+                            "expected AlreadyClosed to propagate out of the read path."));
                         Interlocked.Exchange(ref raceObserved, 1);
                         // Continue joining the rest so we don't leak live
                         // threads holding IndexInput clones into later
@@ -742,14 +742,12 @@ namespace Lucene.Net.Store
         // owns and is reading the master, while OTHER threads concurrently read
         // clones that share the master's mapping. This pins the invariant that a
         // same-thread Dispose is NOT the Java unmap-hack: disposing the owning input
-        // closes the shared chunks (requesting their unmap), but the SafeHandle
-        // refcount defers the actual unmap until every reader's outstanding
-        // AcquirePointer reference drains, so concurrent readers on sibling clones
-        // are never left dereferencing a freed view. The owning thread only ever
-        // releases ITS OWN reference (safe: it is in Dispose, not mid-dereference);
-        // it never releases a sibling clone's reference. Expected outcomes for the
-        // sibling readers: valid bytes, or AlreadyClosed once they cross into a
-        // closed chunk. Never an AVE, NRE, or torn-down-mapping IOException.
+        // closes the shared mapping (requesting its unmap), but the DrainReclaimer
+        // defers the actual unmap until every in-flight reader drains, so concurrent
+        // readers on sibling clones are never left dereferencing a freed view.
+        // Expected outcomes for the sibling readers: valid bytes, or AlreadyClosed
+        // once they cross into a closed chunk. Never an AVE, NRE, or
+        // torn-down-mapping IOException.
         // [Nightly]: wall-clock stress loop (~15s).
         [Test, LuceneNetSpecific, Slow, Nightly, NonParallelizable]
         public void TestSameThreadOwnerDisposeWhileSiblingClonesRead_NoAVE()
@@ -867,8 +865,8 @@ namespace Lucene.Net.Store
                 $"{iterations} iterations in {sw.Elapsed.TotalSeconds:0.0}s.");
         }
 
-        // LUCENENET-specific: race-condition coverage for the new
-        // MemoryMappedViewAccessorIndexInput. These tests complement the
+        // LUCENENET-specific: race-condition coverage for the chunked,
+        // reclaimer-backed MMapIndexInput. These tests complement the
         // single-threaded TestCloneClose / TestCloneSliceSafety /
         // TestCloneSliceClose tests by exercising concurrent Dispose vs.
         // read, Dispose vs. Clone, and slicer-cascade scenarios.
@@ -877,8 +875,8 @@ namespace Lucene.Net.Store
         // threads repeatedly call Clone() + ReadByte(). Invariants:
         //   - No AVE / NRE / memory corruption.
         //   - Once master.Dispose has returned and the cloner thread has
-        //     observed that (via TryEnterRead), subsequent reads on its
-        //     current clone throw AlreadyClosed.
+        //     observed that, subsequent reads on its current clone throw
+        //     AlreadyClosed.
         //   - After join, calling Clone() + read on the disposed master
         //     from the main thread throws AlreadyClosed — pinning that a
         //     disposed root cannot silently hand out a working clone.
@@ -1008,8 +1006,8 @@ namespace Lucene.Net.Store
                     {
                         // Each reader uses its OWN clone — contract says
                         // IndexInput isn't thread-safe. We want to stress
-                        // the drain barrier on the shared View, not on the
-                        // single IndexInput.
+                        // the reclaimer on the shared mapping, not a single
+                        // IndexInput.
                         IndexInput clone;
                         try { clone = (IndexInput)input.Clone(); }
                         catch (Exception e) when (e.IsAlreadyClosedException()) { return; }
@@ -1180,10 +1178,10 @@ namespace Lucene.Net.Store
 
         // Clone-after-Dispose: pins the current contract that Clone() on a
         // disposed root does NOT throw (MemberwiseClone is just a managed
-        // object copy), but the cloned IndexInput observes the shared
-        // View's closed flag on its first read and throws AlreadyClosed.
-        // Likewise, disposing a clone does not close the shared View, so
-        // the root + sibling clones stay alive.
+        // object copy), but the cloned IndexInput observes the closed
+        // mapping on its first read and throws AlreadyClosed. Likewise,
+        // disposing a clone does not close the shared mapping, so the root
+        // + sibling clones stay alive.
         [Test, LuceneNetSpecific]
         public void TestCloneAfterDispose_ReadsThrowAlreadyClosed()
         {
@@ -1198,7 +1196,7 @@ namespace Lucene.Net.Store
             var root = mmapDir.OpenInput("bytes", NewIOContext(Random));
 
             // Clone taken BEFORE the root is disposed: must fail on read
-            // after the root is disposed, because the shared View is closed.
+            // after the root is disposed, because the shared mapping is closed.
             var preDisposeClone = (IndexInput)root.Clone();
 
             root.Dispose();
@@ -1482,7 +1480,7 @@ namespace Lucene.Net.Store
         // file; every worker must observe the exact bytes that were
         // written. Existing concurrent tests only check that reads don't
         // throw — this test pins that readers also don't observe torn or
-        // stale bytes under contention over the shared View.basePtr.
+        // stale bytes under contention over the shared chunk base pointers.
         [Test, LuceneNetSpecific, Slow]
         public void TestConcurrentClonesReadIdenticalBytes()
         {
@@ -2077,7 +2075,7 @@ namespace Lucene.Net.Store
             // Parent reads chunk 0.
             parent.Seek(2);
             Assert.AreEqual(bytes[2], parent.ReadByte());
-            // Clone: independent position, independent chunk rent.
+            // Clone: independent position and independent cursor cache.
             var clone = (IndexInput)parent.Clone();
             try
             {
@@ -2191,7 +2189,7 @@ namespace Lucene.Net.Store
             using var mmapDir = new MMapDirectory(CreateTempDir("doubleDispose"), null, 1 << 2);
             WriteFile(mmapDir, "f", 16);
             var ii = mmapDir.OpenInput("f", NewIOContext(Random));
-            ii.ReadByte(); // populate chunk rent
+            ii.ReadByte(); // populate the chunk cursor cache
             ii.Dispose();
             ii.Dispose(); // must not throw
             try
@@ -2253,71 +2251,68 @@ namespace Lucene.Net.Store
         [Test, LuceneNetSpecific]
         public void TestCrossThreadCloneDisposeReleasesReadRefDeterministically()
         {
-            // Regression (#1013): a clone that acquired its per-chunk-crossing
-            // read reference on one thread, then is disposed on a DIFFERENT
-            // thread (e.g. a slicer cascade disposing slices other threads had
-            // read), releases that reference ON THE DISPOSING THREAD -
-            // deterministically, with no GC/finalizer dependency.
-            // SafeBuffer.ReleasePointer is thread-safe, and the runtime defers
-            // the actual unmap until all references drain, so this is AVE-safe.
-            // Because the reference is gone the moment Dispose returns, the
-            // owner's subsequent Dispose unmaps every chunk immediately.
+            // Regression (#1013): a clone that read on one thread, then is disposed
+            // on a DIFFERENT thread (e.g. a slicer cascade disposing slices other
+            // threads had read), drains cleanly. Because the clone holds no read
+            // bracket open across calls (each read brackets only its own deref via
+            // the DrainReclaimer), once the clone has finished reading it is already
+            // drained, so the owner's subsequent Dispose unmaps every chunk
+            // immediately - no GC/finalizer dependency.
             //
             // This test deliberately does NOT call GC.Collect /
             // WaitForPendingFinalizers anywhere: if cleanup were still
             // finalizer-dependent, the final assertion would fail.
             using var mmapDir = new MMapDirectory(CreateTempDir("crossThreadDispose"), null, 1 << 4);
-            // 16-byte chunks, multi-chunk file so a chunk read reference is taken.
+            // 16-byte chunks, multi-chunk file.
             WriteFile(mmapDir, "f", 256);
             var parent = (MMapDirectory.MMapIndexInput)mmapDir.OpenInput("f", NewIOContext(Random));
             MMapDirectory.Chunk[] chunks = parent.Mapping.Chunks;
             Assert.IsTrue(chunks.Length > 1, "expected a multi-chunk mapping");
 
-            // A clone reads chunk 0's first byte on a dedicated thread (so the
-            // read reference is acquired on a thread other than this one), then
-            // this thread disposes the clone - the cross-thread Dispose path.
+            // A clone reads chunk 0's first byte on a dedicated thread (so the read
+            // happens on a thread other than this one), then this thread disposes
+            // the clone - the cross-thread Dispose path.
             DisposeCloneCrossThread(parent);
 
-            // The clone's read reference was released by its own (cross-thread)
-            // Dispose, synchronously. Disposing the root now closes (disposes)
-            // every chunk accessor; with no references outstanding the runtime
-            // unmaps them immediately, with no finalizer step.
+            // The clone finished reading and was disposed (cross-thread), so it is
+            // fully drained. Disposing the root now closes the mapping; with no
+            // reader in-flight the reclaimer unmaps every chunk immediately, with
+            // no finalizer step.
             parent.Dispose();
 
             foreach (var c in chunks)
             {
                 Assert.IsTrue(c.IsNativeReleased,
-                    "every chunk accessor must be closed synchronously by the " +
-                    "root's Dispose; a stranded cross-thread read reference would " +
-                    "have deferred this to the finalizer");
+                    "every chunk accessor must be unmapped synchronously by the " +
+                    "root's Dispose; a stranded in-flight reader would have deferred " +
+                    "this until it drained");
             }
             Assert.IsTrue(parent.Mapping.IsFileStreamDisposed,
                 "the backing FileStream must be disposed deterministically too");
         }
 
         // Reads chunk 0's first byte on a fresh clone of `parent` from a
-        // dedicated reader thread (acquiring the read reference on THAT thread),
-        // then disposes the clone from THIS thread - exercising the cross-thread
+        // dedicated reader thread (so the read happens on THAT thread), then
+        // disposes the clone from THIS thread - exercising the cross-thread
         // Dispose path. Static and self-contained so the clone and reader thread
         // are unreachable once this returns.
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
         private static void DisposeCloneCrossThread(MMapDirectory.MMapIndexInput parent)
         {
             IndexInput clone = (IndexInput)parent.Clone();
-            // Acquire the read reference on a different thread via a parameterized
-            // start so the clone is NOT captured into a closure that the Thread
-            // object would keep alive. The Thread is local and gone after return.
+            // Read on a different thread via a parameterized start so the clone is
+            // NOT captured into a closure that the Thread object would keep alive.
+            // The Thread is local and gone after return.
             var reader = new System.Threading.Thread(static state =>
             {
                 var c = (IndexInput)state!;
                 c.Seek(0);
-                c.ReadByte(); // acquires chunk 0's read reference on THIS thread
+                c.ReadByte(); // reads chunk 0 on THIS thread, then drains
             });
             reader.Start(clone);
             reader.Join();
-            // Reader has exited holding chunk 0's read reference. Dispose from
-            // this thread (cross-thread relative to the acquirer): the reference
-            // is released here, deterministically.
+            // Reader has exited (drained). Dispose from this thread (cross-thread
+            // relative to the reader): no reader is in-flight, so this is clean.
             clone.Dispose();
         }
 
@@ -2325,17 +2320,17 @@ namespace Lucene.Net.Store
         public void TestCloneDisposeReleasesViewsDeterministically()
         {
             // Regression (#1267, NightOwl888 leak concern): a clone holds no
-            // native resource of its own beyond a per-chunk-crossing read
-            // reference it acquires while reading. Disposing the clone (on its
-            // own thread, the normal path) must release that reference
-            // deterministically, and disposing the root must then unmap every
-            // chunk view and the backing FileStream synchronously - with NO
-            // GC/finalizer step. This closes the gap that MockDirectoryWrapper's
-            // open-files gate cannot see: it does not track clones, so a clone
-            // leaking its view on its own Dispose would not fail that gate, but
-            // it WOULD leave the file mapped (on Windows, blocking a later
-            // overwrite/delete - exactly NightOwl888's "Cannot overwrite"
-            // symptom). This test never calls GC.Collect/WaitForPendingFinalizers.
+            // native resource of its own - it shares the root's mapping and only
+            // brackets each read with the reclaimer. Disposing the clone (on its
+            // own thread, the normal path) must NOT tear down the shared mapping,
+            // and disposing the root must then unmap every chunk view and the
+            // backing FileStream synchronously - with NO GC/finalizer step. This
+            // closes the gap that MockDirectoryWrapper's open-files gate cannot
+            // see: it does not track clones, so a clone leaking a view on its own
+            // Dispose would not fail that gate, but it WOULD leave the file mapped
+            // (on Windows, blocking a later overwrite/delete - exactly
+            // NightOwl888's "Cannot overwrite" symptom). This test never calls
+            // GC.Collect/WaitForPendingFinalizers.
             using var mmapDir = new MMapDirectory(CreateTempDir("cloneDisposeLeak"), null, 1 << 4);
             // 16-byte chunks, multi-chunk file.
             WriteFile(mmapDir, "f", 256);
@@ -2343,18 +2338,15 @@ namespace Lucene.Net.Store
             MMapDirectory.Chunk[] chunks = root.Mapping.Chunks;
             Assert.IsTrue(chunks.Length > 1, "expected a multi-chunk mapping");
 
-            // Read through a clone on THIS thread so it acquires (and the cache
-            // holds) a per-chunk read reference, then dispose the clone. Reading
-            // a few bytes that cross a chunk boundary exercises acquire+release
-            // across chunks; the final read leaves a reference cached that the
-            // clone's Dispose must release.
+            // Read through a clone on THIS thread (crossing a chunk boundary), then
+            // dispose it. The clone is drained the moment each ReadByte returns, so
+            // disposing it must leave the shared mapping untouched.
             var clone = (IndexInput)root.Clone();
             clone.Seek(0);
             for (int i = 0; i < 32; i++) clone.ReadByte(); // crosses chunk 0 -> chunk 1
             clone.Dispose();
 
-            // The clone is gone; its read reference was released by its own
-            // Dispose. The root still holds the file open, so chunks remain
+            // The clone is gone. The root still owns the mapping, so chunks remain
             // mapped (a clone Dispose must NOT tear down the shared mapping).
             foreach (var c in chunks)
             {
@@ -2364,22 +2356,123 @@ namespace Lucene.Net.Store
             Assert.IsFalse(root.Mapping.IsFileStreamDisposed,
                 "the root still holds the file open after the clone is disposed");
 
-            // The root can still read - proves the clone's Dispose released its
-            // reference cleanly without disturbing the shared mapping.
+            // The root can still read - proves the clone's Dispose did not disturb
+            // the shared mapping.
             root.Seek(0);
             root.ReadByte();
 
             // Disposing the root unmaps every chunk and the backing FileStream,
-            // synchronously, with no finalizer dependency. If the clone had
-            // leaked its read reference, a chunk's view would stay mapped here.
+            // synchronously, with no finalizer dependency.
             root.Dispose();
             foreach (var c in chunks)
             {
                 Assert.IsTrue(c.IsNativeReleased,
-                    "disposing the root must unmap every chunk view synchronously; " +
-                    "a leaked clone read reference would have kept one mapped");
+                    "disposing the root must unmap every chunk view synchronously");
             }
             Assert.IsTrue(root.Mapping.IsFileStreamDisposed,
+                "the backing FileStream must be disposed deterministically");
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestCloseWhileCloneReadingDefersUnmapThenReleasesOnDrain()
+        {
+            // The core determinism guarantee of the DrainReclaimer design, against
+            // REAL mapped memory: when the owner (root) is disposed WHILE a clone is
+            // still inside a read (mid-bracket), the unmap is deferred - the chunks
+            // stay mapped - and then runs the instant that last reader drains, with
+            // NO GC/finalizer step. (TestCrossThreadCloneDispose... covers disposing
+            // the clone first; this covers the harder close-while-reading ordering.)
+            //
+            // The reader is parked deterministically inside the bracket via the
+            // existing zero-cost SetOnEnterForTest seam (a null-check already on the
+            // hot path; it adds no production overhead). This test never calls
+            // GC.Collect/WaitForPendingFinalizers - if cleanup were finalizer-paced,
+            // the post-drain assertion would hang/fail.
+            using var mmapDir = new MMapDirectory(CreateTempDir("closeWhileReading"), null, 1 << 4);
+            WriteFile(mmapDir, "f", 256); // 16-byte chunks, multi-chunk
+            var root = (MMapDirectory.MMapIndexInput)mmapDir.OpenInput("f", NewIOContext(Random));
+            MMapDirectory.Chunk[] chunks = root.Mapping.Chunks;
+            Assert.IsTrue(chunks.Length > 1, "expected a multi-chunk mapping");
+
+            var clone = (MMapDirectory.MMapIndexInput)root.Clone();
+            var entered = new ManualResetEventSlim(false);
+            var resume = new ManualResetEventSlim(false);
+            // Park the clone INSIDE its read bracket (admitted, before the load
+            // returns) so the owner's close must observe it as an active reader.
+            clone.SetOnEnterForTest(() => { entered.Set(); resume.Wait(); });
+
+            var reader = new Thread(() => { clone.Seek(0); clone.ReadByte(); })
+            { IsBackground = true };
+            reader.Start();
+            Assert.IsTrue(entered.Wait(TimeSpan.FromSeconds(5)),
+                "the clone's reader should park inside the bracket");
+
+            // Dispose the owner while the clone is mid-read. Close spins briefly then
+            // defers; the chunks must NOT be unmapped yet.
+            var disposer = new Thread(() => root.Dispose()) { IsBackground = true };
+            disposer.Start();
+            Assert.IsTrue(disposer.Join(TimeSpan.FromSeconds(5)),
+                "the owner's Dispose must return (deferring), not block forever");
+
+            foreach (var c in chunks)
+            {
+                Assert.IsFalse(c.IsNativeReleased,
+                    "the unmap must be deferred while a reader is inside the bracket; " +
+                    "unmapping now would free a view under a mid-read clone (AVE)");
+            }
+
+            // Release the reader. Its drain (Exit) must run the deferred unmap of
+            // every chunk deterministically - poll briefly, never GC.
+            resume.Set();
+            Assert.IsTrue(reader.Join(TimeSpan.FromSeconds(5)), "reader thread should finish");
+
+            foreach (var c in chunks)
+            {
+                for (int i = 0; i < 5000 && !c.IsNativeReleased; i++) Thread.Sleep(1);
+                Assert.IsTrue(c.IsNativeReleased,
+                    "once the last reader drains, every chunk must be unmapped " +
+                    "deterministically (no finalizer step)");
+            }
+            Assert.IsTrue(root.Mapping.IsFileStreamDisposed,
+                "the backing FileStream must be disposed deterministically on drain");
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestLastSliceFinishedThenSlicerDisposeUnmapsDeterministically()
+        {
+            // The slice variant of the determinism guarantee: a slice reads to
+            // completion (drained, but not yet disposed), then the slicer (the
+            // owner) is disposed - the unmap of every chunk and the FileStream is
+            // immediate and deterministic, with no GC/finalizer step. This is the
+            // "last slice finished reading -> deterministic cleanup" case.
+            using var mmapDir = new MMapDirectory(CreateTempDir("lastSliceDrain"), null, 1 << 4);
+            WriteFile(mmapDir, "f", 256); // 16-byte chunks, multi-chunk
+            var slicer = mmapDir.CreateSlicer("f", NewIOContext(Random));
+            var slice = (MMapDirectory.MMapIndexInput)slicer.OpenSlice("s", 0, 256);
+            MMapDirectory.Chunk[] chunks = slice.Mapping.Chunks;
+            Assert.IsTrue(chunks.Length > 1, "expected a multi-chunk mapping");
+
+            // Read the whole slice (crossing every chunk), then the slice is idle
+            // (its bracket is closed after each read - no reference is held open).
+            slice.Seek(0);
+            for (int i = 0; i < 256; i++) slice.ReadByte();
+
+            foreach (var c in chunks)
+            {
+                Assert.IsFalse(c.IsNativeReleased,
+                    "chunks stay mapped while the slicer is open");
+            }
+
+            // Dispose the slicer. With the slice idle (drained), Close reclaims
+            // inline: every chunk unmaps and the FileStream closes synchronously.
+            slicer.Dispose();
+            foreach (var c in chunks)
+            {
+                Assert.IsTrue(c.IsNativeReleased,
+                    "disposing the slicer after the slice has drained must unmap " +
+                    "every chunk synchronously (no finalizer step)");
+            }
+            Assert.IsTrue(slice.Mapping.IsFileStreamDisposed,
                 "the backing FileStream must be disposed deterministically");
         }
 
@@ -2469,7 +2562,7 @@ namespace Lucene.Net.Store
             }
 
             // Each scenario opens a fresh input, optionally primes the
-            // chunk-rent cache, disposes from another thread, and verifies
+            // chunk cursor cache, disposes from another thread, and verifies
             // the named operation throws AlreadyClosed on the original
             // (reader) thread.
             void Scenario(string name, bool primeCache, Action<IndexInput> op)
@@ -2492,7 +2585,7 @@ namespace Lucene.Net.Store
                 }
             }
 
-            // Cold cache (no rent held when Dispose ran).
+            // Cold cache (no chunk cached when Dispose ran).
             Scenario("ReadByte cold", false, ii => ii.ReadByte());
             Scenario("ReadInt16 cold", false, ii => ii.ReadInt16());
             Scenario("ReadInt32 cold", false, ii => ii.ReadInt32());
@@ -2501,9 +2594,9 @@ namespace Lucene.Net.Store
             Scenario("Seek cold", false, ii => ii.Seek(8));
             Scenario("SkipBytes cold", false, ii => ii.SkipBytes(4));
 
-            // Warm cache (reader had a rent at Dispose time; the reader
-            // observes instanceClosed on its next op and must release the
-            // rent on its own thread before throwing).
+            // Warm cache (reader had a chunk cached at Dispose time; the reader
+            // observes instanceClosed on its next op and throws, invalidating
+            // its own cursor cache).
             Scenario("ReadByte warm", true, ii => { for (int i = 0; i < 100; i++) ii.ReadByte(); });
             Scenario("ReadInt16 warm", true, ii => ii.ReadInt16());
             Scenario("ReadInt32 warm", true, ii => ii.ReadInt32());
