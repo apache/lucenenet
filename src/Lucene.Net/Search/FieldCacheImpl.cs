@@ -358,7 +358,7 @@ namespace Lucene.Net.Search
                         readerCache.AddOrUpdate(readerKey, innerCache);
                         wrapper.InitReader(reader);
                     }
-                    // LUCENENET: The creation steps above will ensure the placehoder already exists by
+                    // LUCENENET: The creation steps above will ensure the placeholder already exists by
                     // this point only in the case where the dictionary is being added.
                     // But we need to cover
                     // 1) the case where the cache already has a dictionary but no value

@@ -33,7 +33,7 @@ namespace Lucene.Net.Support.IO
     /// The primary purpose is for using a <see cref="TextWriter"/> instance within a non-disposable
     /// parent object. Since the creator of the <see cref="TextWriter"/> ultimately is responsible for
     /// disposing it, our non-disposable object has no way of knowing whether it is safe to use the <see cref="TextWriter"/>.
-    /// Wraping the <see cref="TextWriter"/> within a <see cref="SafeTextWriterWrapper"/> ensures the
+    /// Wrapping the <see cref="TextWriter"/> within a <see cref="SafeTextWriterWrapper"/> ensures the
     /// non-disposable object can continue to make calls to the <see cref="TextWriter"/> without raising
     /// exceptions (it is presumed that the <see cref="TextWriter"/> functionality is optional).
     /// </summary>

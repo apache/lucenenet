@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs.Lucene40
     ///        an additional sentinel ordinal+address is always written (so there are NumValues+1 ordinals). To
     ///        determine the length, ord+1's address is looked up as well.</description></item>
     ///    <item><description><see cref="LegacyDocValuesType.BYTES_VAR_STRAIGHT"/> in contrast to other straight
-    ///        variants uses a <c>.idx</c> file to improve lookup perfromance. In contrast to
+    ///        variants uses a <c>.idx</c> file to improve lookup performance. In contrast to
     ///        <see cref="LegacyDocValuesType.BYTES_VAR_DEREF"/> it doesn't apply deduplication of the document values.
     ///    </description></item>
     /// </list>

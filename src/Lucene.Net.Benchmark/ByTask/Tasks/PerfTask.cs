@@ -63,7 +63,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         private readonly PerfRunData runData;
 
-        // propeties that all tasks have
+        // properties that all tasks have
         private string name;
         private int depth = 0;
         protected int m_logStep;
