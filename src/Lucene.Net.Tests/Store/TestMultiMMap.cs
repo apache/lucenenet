@@ -236,7 +236,7 @@ namespace Lucene.Net.Store
         // (b) disposing in arbitrary order keeps siblings functional, and
         // (c) once the last referrer is disposed the OS handle is released
         // (on Windows a still-open mapping would prevent the file delete).
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestSharedMappingLifecycle()
         {
             var tempDir = CreateTempDir("testSharedMappingLifecycle");
@@ -642,7 +642,7 @@ namespace Lucene.Net.Store
             {
                 iteration++;
 
-                var master = mmapDir.OpenInput(name, NewIOContext(random));
+                var primary = mmapDir.OpenInput(name, NewIOContext(random));
                 var start = new ManualResetEventSlim(false);
                 var threads = new Thread[readerThreads];
                 long totalReads = 0;
@@ -659,7 +659,7 @@ namespace Lucene.Net.Store
                                 IndexInput clone;
                                 try
                                 {
-                                    clone = (IndexInput)master.Clone();
+                                    clone = (IndexInput)primary.Clone();
                                 }
                                 catch (Exception e) when (e.IsAlreadyClosedException())
                                 {
@@ -693,9 +693,9 @@ namespace Lucene.Net.Store
                 start.Set();
 
                 Thread.Sleep(random.Next(1, 5));
-                master.Dispose();
+                primary.Dispose();
 
-                // Join every reader. The reclaimer defers the unmap until
+                // Join every reader. The reclaimer blocks the unmap until
                 // in-flight reads drain, and clones that cross into a closed
                 // chunk observe it and exit via the expected-AlreadyClosed
                 // catch. So Join timing out would itself be a defect - either
@@ -707,7 +707,7 @@ namespace Lucene.Net.Store
                     if (!t.Join(TimeSpan.FromSeconds(10)))
                     {
                         unexpectedExceptions.Add(new TimeoutException(
-                            $"Reader thread {t.Name} did not exit within 10s after master.Dispose(); " +
+                            $"Reader thread {t.Name} did not exit within 10s after primary.Dispose(); " +
                             "expected AlreadyClosed to propagate out of the read path."));
                         Interlocked.Exchange(ref raceObserved, 1);
                         // Continue joining the rest so we don't leak live
@@ -739,11 +739,11 @@ namespace Lucene.Net.Store
         }
 
         // LUCENENET-specific (#1013): the disposing thread is the SAME thread that
-        // owns and is reading the master, while OTHER threads concurrently read
-        // clones that share the master's mapping. This pins the invariant that a
+        // owns and is reading the primary, while OTHER threads concurrently read
+        // clones that share the primary's mapping. This pins the invariant that a
         // same-thread Dispose is NOT the Java unmap-hack: disposing the owning input
         // closes the shared mapping (requesting its unmap), but the DrainReclaimer
-        // defers the actual unmap until every in-flight reader drains, so concurrent
+        // blocks the actual unmap until every in-flight reader drains, so concurrent
         // readers on sibling clones are never left dereferencing a freed view.
         // Expected outcomes for the sibling readers: valid bytes, or AlreadyClosed
         // once they cross into a closed chunk. Never an AVE, NRE, or
@@ -774,8 +774,8 @@ namespace Lucene.Net.Store
             {
                 iterations++;
 
-                // The master is opened, read, AND disposed all on THIS thread.
-                var master = mmapDir.OpenInput(name, NewIOContext(random));
+                // The primary is opened, read, AND disposed all on THIS thread.
+                var primary = mmapDir.OpenInput(name, NewIOContext(random));
 
                 var start = new ManualResetEventSlim(false);
                 var stop = new ManualResetEventSlim(false);
@@ -784,14 +784,14 @@ namespace Lucene.Net.Store
                 {
                     readers[i] = new Thread(() =>
                     {
-                        // Each sibling reads its OWN clone, which shares master's
-                        // mapping. Clone before the barrier; if the master is
+                        // Each sibling reads its OWN clone, which shares primary's
+                        // mapping. Clone before the barrier; if the primary is
                         // already disposed (later iterations race), Clone throws
                         // AlreadyClosed, which is an acceptable outcome.
                         IndexInput clone;
                         try
                         {
-                            clone = (IndexInput)master.Clone();
+                            clone = (IndexInput)primary.Clone();
                         }
                         catch (Exception e) when (e.IsAlreadyClosedException())
                         {
@@ -824,20 +824,20 @@ namespace Lucene.Net.Store
 
                 start.Set();
 
-                // The owning thread reads the master itself for a beat, then
+                // The owning thread reads the primary itself for a beat, then
                 // disposes it SAME-THREAD while the siblings are mid-read.
                 try
                 {
-                    master.Seek(0);
+                    primary.Seek(0);
                     for (int p = 0; p < fileSize && p < 64 * 1024; p++)
-                        master.ReadByte();
+                        primary.ReadByte();
                 }
                 catch (Exception e) when (e.IsAlreadyClosedException())
                 {
                     // Not expected here (we haven't disposed yet), but harmless.
                 }
 
-                master.Dispose(); // same-thread close of the owning input
+                primary.Dispose(); // same-thread close of the owning input
                 stop.Set();
 
                 foreach (var t in readers)
@@ -874,10 +874,10 @@ namespace Lucene.Net.Store
         // Concurrent Clone during Dispose: the root is disposed while many
         // threads repeatedly call Clone() + ReadByte(). Invariants:
         //   - No AVE / NRE / memory corruption.
-        //   - Once master.Dispose has returned and the cloner thread has
+        //   - Once primary.Dispose has returned and the cloner thread has
         //     observed that, subsequent reads on its current clone throw
         //     AlreadyClosed.
-        //   - After join, calling Clone() + read on the disposed master
+        //   - After join, calling Clone() + read on the disposed primary
         //     from the main thread throws AlreadyClosed — pinning that a
         //     disposed root cannot silently hand out a working clone.
         // [Nightly]: wall-clock stress loop (~15s). See Issue1013 rationale.
@@ -903,7 +903,7 @@ namespace Lucene.Net.Store
             while (sw.Elapsed < TimeSpan.FromSeconds(15))
             {
                 iterations++;
-                var master = mmapDir.OpenInput(name, NewIOContext(random));
+                var primary = mmapDir.OpenInput(name, NewIOContext(random));
                 var start = new ManualResetEventSlim(false);
                 var cloners = new Thread[6];
                 for (int i = 0; i < cloners.Length; i++)
@@ -916,7 +916,7 @@ namespace Lucene.Net.Store
                             while (true)
                             {
                                 IndexInput c;
-                                try { c = (IndexInput)master.Clone(); }
+                                try { c = (IndexInput)primary.Clone(); }
                                 catch (Exception e) when (e.IsAlreadyClosedException()) { return; }
                                 // Touch a byte on the clone — but don't read past dispose to keep the test focused on Clone itself.
                                 try { c.ReadByte(); }
@@ -929,13 +929,13 @@ namespace Lucene.Net.Store
                 }
                 start.Set();
                 Thread.Sleep(random.Next(0, 3));
-                master.Dispose();
+                primary.Dispose();
                 foreach (var t in cloners)
                 {
                     if (!t.Join(TimeSpan.FromSeconds(5)))
                     {
                         unexpected.Add(new TimeoutException(
-                            "Cloner thread did not exit within 5s after master.Dispose()."));
+                            "Cloner thread did not exit within 5s after primary.Dispose()."));
                     }
                 }
 
@@ -946,12 +946,12 @@ namespace Lucene.Net.Store
                 // bytes from a released mapping.
                 try
                 {
-                    var postDisposeClone = (IndexInput)master.Clone();
+                    var postDisposeClone = (IndexInput)primary.Clone();
                     try
                     {
                         postDisposeClone.ReadByte();
                         unexpected.Add(new InvalidOperationException(
-                            "Clone() + ReadByte() on disposed master returned without throwing AlreadyClosed."));
+                            "Clone() + ReadByte() on disposed primary returned without throwing AlreadyClosed."));
                     }
                     catch (Exception e) when (e.IsAlreadyClosedException())
                     {
