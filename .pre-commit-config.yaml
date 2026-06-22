@@ -106,3 +106,11 @@ repos:
       - id: gitleaks
         name: run gitleaks
         description: check for secrets with gitleaks
+  - repo: https://github.com/PyCQA/bandit
+    rev: 92ae8b82fb422a639f0ed8d99e96cea769594e08 # frozen: 1.9.4
+    hooks:
+      - id: bandit
+        name: run bandit
+        description: check Python code for security issues
+        args: ['-c=pyproject.toml']
+        additional_dependencies: ['bandit[toml]']
