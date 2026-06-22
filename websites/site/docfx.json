@@ -35,6 +35,7 @@
       }
     ],
     "globalMetadata": {
+      "_appName": "Apache Lucene.NET Search Engine Library",
       "_appTitle": "Apache Lucene.NET 4.8.0",
       "_disableContribution": false,
       "_disableBreadcrumb": false,
