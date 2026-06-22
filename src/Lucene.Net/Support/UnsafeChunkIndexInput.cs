@@ -503,16 +503,22 @@ namespace Lucene.Net.Store
             {
                 return;
             }
-            // Clear currentEnd so a racing reader's fast path (`pos < currentEnd`)
+            // Clear currentEnd so a future read's fast path (`pos < currentEnd`)
             // drops to the slow path and observes instanceClosed. Interlocked so the
             // 64-bit write can't tear on 32-bit runtimes.
+            //
+            // We deliberately do NOT null readBase here. Disposing an instance while
+            // another thread reads it (e.g. a slicer cascade disposing a slice that
+            // thread is mid-read, or a cross-thread clone Dispose) is racy: that
+            // reader may sit between its `pos < currentEnd` check and its
+            // `*(readBase + pos)` load, so nulling readBase under it would NRE/AVE.
+            // There is no native reference tied to the cursor (the reclaimer owns
+            // reclamation), so leaving readBase stale is harmless - the zeroed
+            // currentEnd already fails-fast every subsequent read, and the in-flight
+            // read completes safely against the still-mapped view (the reclaimer
+            // keeps it mapped until the owning root closes). The fields are GC'd with
+            // the instance.
             Interlocked.Exchange(ref currentEnd, 0L);
-
-            // Invalidate this instance's cursor cache. This only affects this input;
-            // the shared mapping (and its reclaimer) is closed by the owning root's
-            // DisposeChunkSource, NOT here, so disposing a clone or slice never tears
-            // down the mapping that sibling readers still depend on.
-            ReleaseCurrentChunk();
 
             DisposeChunkSource(disposing);
         }
