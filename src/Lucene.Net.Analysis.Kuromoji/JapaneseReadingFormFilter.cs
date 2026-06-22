@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.Ja
                     else
                     {
                         buffer.Length = 0;
-                        ToStringUtil.GetRomanization(buffer, reading.AsSpan());
+                        ToStringUtil.GetRomanization(buffer, reading);
                         termAttr.SetEmpty().Append(buffer);
                     }
                 }

@@ -375,13 +375,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         ///        hyphenation point. </param>
         /// <returns> a <see cref="Hyphenation"/> object representing the
         ///         hyphenated word or null if word is not hyphenated. </returns>
+        // LUCENENET: string overload retained here for public API for non-C#-14 callers
         public virtual Hyphenation Hyphenate(string word, int remainCharCount, int pushCharCount)
         {
             // LUCENENET: use Span instead of ToCharArray
             return Hyphenate(word.AsSpan(), 0, word.Length, remainCharCount, pushCharCount);
         }
-
-
 
         /// <summary>
         /// Hyphenate word and return an array of hyphenation points.

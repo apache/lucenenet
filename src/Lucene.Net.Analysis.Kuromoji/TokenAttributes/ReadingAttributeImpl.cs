@@ -67,9 +67,9 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
                 throw new ArgumentNullException(nameof(reflector));
 
             string? reading = GetReading();
-            string? readingEN = reading is null ? null : ToStringUtil.GetRomanization(reading.AsSpan());
+            string? readingEN = reading is null ? null : ToStringUtil.GetRomanization(reading);
             string? pronunciation = GetPronunciation();
-            string? pronunciationEN = pronunciation is null ? null : ToStringUtil.GetRomanization(pronunciation.AsSpan());
+            string? pronunciationEN = pronunciation is null ? null : ToStringUtil.GetRomanization(pronunciation);
             reflector.Reflect<IReadingAttribute>("reading", reading);
             reflector.Reflect<IReadingAttribute>("reading (en)", readingEN);
             reflector.Reflect<IReadingAttribute>("pronunciation", pronunciation);

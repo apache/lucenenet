@@ -636,13 +636,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                             // exact match
                             return new RPatternHelper(isMatchSB: (input) =>
                             {
-                                return input.Length == 1 && Contains(bContent.AsSpan(), input[0]) == shouldMatch;
+                                return input.Length == 1 && Contains(bContent, input[0]) == shouldMatch;
                             }, isMatchStr: (input) =>
                             {
-                                return input.Length == 1 && Contains(bContent.AsSpan(), input[0]) == shouldMatch;
+                                return input.Length == 1 && Contains(bContent, input[0]) == shouldMatch;
                             }, isMatchCS: (input) =>
                             {
-                                return input.Length == 1 && Contains(bContent.AsSpan(), input[0]) == shouldMatch;
+                                return input.Length == 1 && Contains(bContent, input[0]) == shouldMatch;
                             });
                         }
                         else if (startsWith)
@@ -650,13 +650,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                             // first char
                             return new RPatternHelper(isMatchSB: (input) =>
                             {
-                                return input.Length > 0 && Contains(bContent.AsSpan(), input[0]) == shouldMatch;
+                                return input.Length > 0 && Contains(bContent, input[0]) == shouldMatch;
                             }, isMatchStr: (input) =>
                             {
-                                return input.Length > 0 && Contains(bContent.AsSpan(), input[0]) == shouldMatch;
+                                return input.Length > 0 && Contains(bContent, input[0]) == shouldMatch;
                             }, isMatchCS: (input) =>
                             {
-                                return input.Length > 0 && Contains(bContent.AsSpan(), input[0]) == shouldMatch;
+                                return input.Length > 0 && Contains(bContent, input[0]) == shouldMatch;
                             });
                         }
                         else if (endsWith)
@@ -664,13 +664,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                             // last char
                             return new RPatternHelper(isMatchSB: (input) =>
                             {
-                                return input.Length > 0 && Contains(bContent.AsSpan(), input[input.Length - 1]) == shouldMatch;
+                                return input.Length > 0 && Contains(bContent, input[input.Length - 1]) == shouldMatch;
                             }, isMatchStr: (input) =>
                             {
-                                return input.Length > 0 && Contains(bContent.AsSpan(), input[input.Length - 1]) == shouldMatch;
+                                return input.Length > 0 && Contains(bContent, input[input.Length - 1]) == shouldMatch;
                             }, isMatchCS: (input) =>
                             {
-                                return input.Length > 0 && Contains(bContent.AsSpan(), input[input.Length - 1]) == shouldMatch;
+                                return input.Length > 0 && Contains(bContent, input[input.Length - 1]) == shouldMatch;
                             });
                         }
                     }
