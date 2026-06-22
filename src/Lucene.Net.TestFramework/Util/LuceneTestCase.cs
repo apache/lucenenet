@@ -1321,7 +1321,7 @@ namespace Lucene.Net.Util
             {
                 while (iter.MoveNext())
                 {
-                    stream.WriteLine(Collections.ToString(iter.Current));
+                    stream.WriteLine(string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", iter.Current));
                 }
             }
             stream.WriteLine("*** END " + label + " ***");
