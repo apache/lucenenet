@@ -105,7 +105,7 @@ namespace Lucene.Net.Support
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void EnterCore()
             {
-#if FEATURE_MEMORYBARRIER_PROCESSWIDE
+#if FEATURE_INTERLOCKED_MEMORYBARRIERPROCESSWIDE
                 // Asymmetric fencing: NO StoreLoad barrier on the hot path. Announce
                 // with a plain store (this slot is reader-private) then read _closed
                 // plain. The store and read may reorder on this core, but Close issues
@@ -225,7 +225,7 @@ namespace Lucene.Net.Support
             // used by hazard-pointer reclamation and the JVM's shared Arena). Without a
             // process-wide barrier the hot path fences per read instead (see Enter), so
             // a plain barrier here suffices to pair with it.
-#if FEATURE_MEMORYBARRIER_PROCESSWIDE
+#if FEATURE_INTERLOCKED_MEMORYBARRIERPROCESSWIDE
             Interlocked.MemoryBarrierProcessWide();
 #else
             Interlocked.MemoryBarrier();
