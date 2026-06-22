@@ -1,9 +1,7 @@
 using J2N.Threading;
 using Lucene.Net.Documents;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
-using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
