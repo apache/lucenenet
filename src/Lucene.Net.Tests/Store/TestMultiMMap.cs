@@ -2374,20 +2374,19 @@ namespace Lucene.Net.Store
         }
 
         [Test, LuceneNetSpecific]
-        public void TestCloseWhileCloneReadingDefersUnmapThenReleasesOnDrain()
+        public void TestCloseWhileCloneReadingBlocksUntilDrainThenUnmaps()
         {
-            // The core determinism guarantee of the DrainReclaimer design, against
-            // REAL mapped memory: when the owner (root) is disposed WHILE a clone is
-            // still inside a read (mid-bracket), the unmap is deferred - the chunks
-            // stay mapped - and then runs the instant that last reader drains, with
-            // NO GC/finalizer step. (TestCrossThreadCloneDispose... covers disposing
-            // the clone first; this covers the harder close-while-reading ordering.)
+            // The core teardown guarantee of the DrainReclaimer design, against REAL
+            // mapped memory: when the owner (root) is disposed WHILE a clone is still
+            // inside a read (mid-bracket), Dispose BLOCKS - the chunks stay mapped and
+            // Dispose does not return - until that last reader drains, then unmaps
+            // inline. So teardown is synchronous: by the time Dispose returns, the
+            // views are unmapped. (TestCrossThreadCloneDispose... covers disposing the
+            // clone first; this covers the harder close-while-reading ordering.)
             //
             // The reader is parked deterministically inside the bracket via the
             // existing zero-cost SetOnEnterForTest seam (a null-check already on the
-            // hot path; it adds no production overhead). This test never calls
-            // GC.Collect/WaitForPendingFinalizers - if cleanup were finalizer-paced,
-            // the post-drain assertion would hang/fail.
+            // hot path; it adds no production overhead).
             using var mmapDir = new MMapDirectory(CreateTempDir("closeWhileReading"), null, 1 << 4);
             WriteFile(mmapDir, "f", 256); // 16-byte chunks, multi-chunk
             var root = (MMapDirectory.MMapIndexInput)mmapDir.OpenInput("f", NewIOContext(Random));
@@ -2407,34 +2406,34 @@ namespace Lucene.Net.Store
             Assert.IsTrue(entered.Wait(TimeSpan.FromSeconds(5)),
                 "the clone's reader should park inside the bracket");
 
-            // Dispose the owner while the clone is mid-read. Close spins briefly then
-            // defers; the chunks must NOT be unmapped yet.
+            // Dispose the owner while the clone is mid-read: it must BLOCK (spin-wait)
+            // until the reader drains, NOT return, and the chunks must stay mapped.
             var disposer = new Thread(() => root.Dispose()) { IsBackground = true };
             disposer.Start();
-            Assert.IsTrue(disposer.Join(TimeSpan.FromSeconds(5)),
-                "the owner's Dispose must return (deferring), not block forever");
-
+            Thread.Sleep(150); // give Dispose time to spin
+            Assert.IsFalse(disposer.Join(TimeSpan.FromMilliseconds(1)),
+                "the owner's Dispose must BLOCK while a reader is inside the bracket");
             foreach (var c in chunks)
             {
                 Assert.IsFalse(c.IsNativeReleased,
-                    "the unmap must be deferred while a reader is inside the bracket; " +
+                    "no chunk may be unmapped while a reader is inside the bracket; " +
                     "unmapping now would free a view under a mid-read clone (AVE)");
             }
 
-            // Release the reader. Its drain (Exit) must run the deferred unmap of
-            // every chunk deterministically - poll briefly, never GC.
+            // Release the reader. Dispose observes the drain, finishes, and unmaps
+            // every chunk inline - so once Dispose returns, the views are GONE.
             resume.Set();
             Assert.IsTrue(reader.Join(TimeSpan.FromSeconds(5)), "reader thread should finish");
+            Assert.IsTrue(disposer.Join(TimeSpan.FromSeconds(5)),
+                "Dispose must return once the reader has drained");
 
             foreach (var c in chunks)
             {
-                for (int i = 0; i < 5000 && !c.IsNativeReleased; i++) Thread.Sleep(1);
                 Assert.IsTrue(c.IsNativeReleased,
-                    "once the last reader drains, every chunk must be unmapped " +
-                    "deterministically (no finalizer step)");
+                    "every chunk must be unmapped synchronously by the time Dispose returns");
             }
             Assert.IsTrue(root.Mapping.IsFileStreamDisposed,
-                "the backing FileStream must be disposed deterministically on drain");
+                "the backing FileStream must be disposed synchronously by Dispose");
         }
 
         [Test, LuceneNetSpecific]

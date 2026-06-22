@@ -148,10 +148,11 @@ namespace Lucene.Net.Support
         }
 
         [Test]
-        public void TestCloseDefersCleanupWhileUserActive()
+        public void TestCloseBlocksUntilUserDrainsThenCleansUp()
         {
-            // A user parked inside the bracket on another thread must hold off the
-            // cleanup; once it exits, the cleanup runs.
+            // A user parked inside the bracket on another thread must BLOCK Close
+            // (which spin-waits until the user drains) and hold off the cleanup; once
+            // the user exits, Close finishes and runs the cleanup inline.
             var r = new DrainReclaimer();
             var slot = r.Register();
 
@@ -169,30 +170,32 @@ namespace Lucene.Net.Support
 
             Assert.IsTrue(entered.Wait(TimeSpan.FromSeconds(5)), "user should park inside the bracket");
 
-            // Close from this thread while the user is active: must NOT clean up yet.
+            // Close on another thread while the user is active: it must BLOCK (not
+            // return) and must NOT clean up while the user is inside the bracket.
             var closer = new Thread(() => r.Close(() => Interlocked.Increment(ref cleaned)))
             { IsBackground = true };
             closer.Start();
 
-            Thread.Sleep(150); // let Close's bounded spin run and give up
+            Thread.Sleep(150); // give Close time to spin
+            Assert.IsFalse(closer.Join(TimeSpan.FromMilliseconds(1)),
+                "Close must block while a user is inside the bracket, not return");
             Assert.AreEqual(0, Volatile.Read(ref cleaned),
-                "cleanup must be deferred while a user is inside the bracket");
+                "cleanup must not run while a user is inside the bracket");
 
-            // Release the user: its Exit drains the last reference and runs cleanup.
+            // Release the user: Close observes the drain, finishes, and runs cleanup.
             resume.Set();
             Assert.IsTrue(user.Join(TimeSpan.FromSeconds(5)), "user thread should finish");
-            Assert.IsTrue(closer.Join(TimeSpan.FromSeconds(5)), "closer thread should finish");
-
-            for (int i = 0; i < 2000 && Volatile.Read(ref cleaned) == 0; i++) Thread.Sleep(1);
+            Assert.IsTrue(closer.Join(TimeSpan.FromSeconds(5)),
+                "Close must return once the user has drained");
             Assert.AreEqual(1, Volatile.Read(ref cleaned),
-                "once the user exits the bracket, the deferred cleanup must run exactly once");
+                "Close runs the cleanup exactly once, synchronously, after the drain");
         }
 
         [Test]
         public void TestCleanupRunsExactlyOnce()
         {
-            // Many users active at Close; cleanup must fire exactly once no matter
-            // which thread (a draining Exit, or Close's own scan) wins the race.
+            // Many users active at Close; Close blocks until all drain, then fires the
+            // cleanup exactly once.
             const int users = 8;
             var r = new DrainReclaimer();
             var slots = new DrainReclaimer.Slot[users];

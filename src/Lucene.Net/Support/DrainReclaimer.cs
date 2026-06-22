@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -26,24 +25,24 @@ namespace Lucene.Net.Support
      */
 
     /// <summary>
-    /// LUCENENET specific: a lock-free reclaimer that defers a cleanup action on a
-    /// shared resource until every in-flight user has drained, so the cleanup can
+    /// LUCENENET specific: a lock-free reclaimer that runs a cleanup action on a
+    /// shared resource only once every in-flight user has drained, so the cleanup can
     /// never run while a user is still touching the resource. It is a per-user drain
     /// barrier (hazard-pointer-inspired, but using a re-entrancy counter per user
     /// rather than tagging a specific pointer).
     /// <para/>
     /// In Lucene.NET it backs <see cref="Store.MMapDirectory"/>: one reclaimer per shared
-    /// memory mapping, deferring the unmap until in-flight reads drain, which avoids
-    /// the #1013 <c>AccessViolationException</c> (a concurrent close unmapping a view
-    /// out from under a reader) without the per-access native refcount that caused
-    /// #1151. It is not tied to memory mapping, though.
+    /// memory mapping. <see cref="Close"/> blocks until in-flight reads drain, then
+    /// unmaps - which avoids the #1013 <c>AccessViolationException</c> (a concurrent
+    /// close unmapping a view out from under a reader) without the per-access native
+    /// refcount that caused #1151. It is not tied to memory mapping, though.
     /// <para/>
     /// One reclaimer is shared by every user of the resource. Each user calls
     /// <see cref="Register"/> once to obtain its own <see cref="Slot"/>, then brackets
     /// each access with <c>using (slot.Enter()) { ... }</c> (or
     /// <see cref="Slot.EnterCore"/>/<see cref="Slot.Exit"/> directly on hot paths).
-    /// <see cref="Close"/> runs the supplied cleanup action once all in-flight users
-    /// have drained.
+    /// <see cref="Close"/> spin-waits for all in-flight users to drain and then runs
+    /// the cleanup inline, so teardown is synchronous from the caller's point of view.
     /// <para/>
     /// The handshake is an announce/scan: <see cref="Slot.EnterCore"/> bumps a
     /// user-private depth then reads the shared closed flag, and <see cref="Close"/>
@@ -98,9 +97,9 @@ namespace Lucene.Net.Support
             /// MUST be allocation-free and unable to throw a managed exception (a bare
             /// pointer read/copy qualifies). A true AccessViolation there is
             /// uncatchable and tears down the process, so a <c>finally</c> would never
-            /// run anyway; the only thing a skipped <see cref="Exit"/> would cost is a
-            /// stuck <c>Depth</c> that defers this mapping's unmap to process exit (a
-            /// bounded native leak, never an AVE or wrong data). Do NOT add a throwing
+            /// run anyway. A skipped <see cref="Exit"/> would leave <c>Depth</c> stuck
+            /// above zero, which would make a concurrent <see cref="Close"/> spin-wait
+            /// forever (it blocks until every slot drains) - so do NOT add a throwing
             /// call between <see cref="EnterCore"/> and <see cref="Exit"/>.
             /// </summary>
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -140,9 +139,9 @@ namespace Lucene.Net.Support
             }
 
             // Ends a dereference (called by ReadScope.Dispose or directly by the hot
-            // read paths). If this drains the last reference after a Close, runs the
-            // deferred unmap; otherwise Close's own scan will reclaim once it sees
-            // Depth back at 0.
+            // read paths). Just publishes the decrement; a concurrent Close blocks
+            // until it observes every slot drained and then unmaps itself, so Exit
+            // never has to run the cleanup.
             // <para/>
             // The decrement MUST be a release store. The protected pointer load in the
             // caller and this Depth-- have no data dependency, so on a weakly-ordered
@@ -156,12 +155,7 @@ namespace Lucene.Net.Support
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void Exit()
             {
-                int depth = Depth - 1;
-                Volatile.Write(ref Depth, depth);
-                if (depth == 0 && owner._closed)
-                {
-                    owner.TryReclaim();
-                }
+                Volatile.Write(ref Depth, Depth - 1);
             }
         }
 
@@ -190,14 +184,6 @@ namespace Lucene.Net.Support
         private readonly List<Slot> _slots = new();
 
         private volatile bool _closed;
-        private Action? _unmap;
-        private int _reclaimed;
-
-        // Upper bound on how long Close actively spins waiting for readers to drain
-        // before handing the unmap off to the last reader's Exit. Reads are short,
-        // so a drain is near-immediate; the bound only caps a pathological stall.
-        private static readonly long _spinBoundTicks =
-            (long)(TimeSpan.FromMilliseconds(100).TotalSeconds * Stopwatch.Frequency);
 
         public bool IsClosed => _closed;
 
@@ -216,13 +202,21 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// Close the mapping. New <see cref="Slot.Enter"/> calls throw from now on;
-        /// the supplied <paramref name="unmap"/> action runs once all in-flight
-        /// readers have drained (immediately if none are active).
+        /// Close the resource. New <see cref="Slot.Enter"/> calls throw from now on,
+        /// and this BLOCKS (spin-waiting) until every in-flight user has drained, then
+        /// runs the supplied <paramref name="unmap"/> action inline. So when
+        /// <see cref="Close"/> returns, the cleanup has definitely happened - the
+        /// caller (e.g. <c>SharedMapping.Dispose</c>) gets a synchronous teardown.
+        /// <para/>
+        /// This is safe from deadlock under the one-input-per-thread contract: a
+        /// bracket is never held across calls (each read closes its own
+        /// <see cref="Slot.Enter"/>/<see cref="Slot.Exit"/> before returning), so the
+        /// thread that calls <see cref="Close"/> can never itself be holding a bracket
+        /// open. The wait therefore only ever blocks on OTHER threads' short reads,
+        /// the same basis the JVM shared-Arena close relies on.
         /// </summary>
         public void Close(Action unmap)
         {
-            _unmap = unmap;
             _closed = true;
             // The one place the heavy synchronization lives. After this barrier, every
             // reader's prior Depth store is visible to AnyReaderActive below, and every
@@ -237,41 +231,20 @@ namespace Lucene.Net.Support
             Interlocked.MemoryBarrier();
 #endif
 
-            if (TryReclaim())
-            {
-                return; // nobody active; reclaimed inline
-            }
-
-            // Spin briefly for in-flight readers to drain; if they outlast the
-            // bound, the draining reader's Exit will run the unmap instead.
+            // Block until all in-flight users drain. SpinOnce escalates from a busy
+            // spin to yielding, so a briefly-descheduled reader (e.g. one that page-
+            // faults on a cold mmap page mid-read) does not pin a core. Reads are
+            // short and bounded (a bracket spans at most one chunk copy), so this
+            // returns promptly in practice.
             var spin = new SpinWait();
-            long deadline = Stopwatch.GetTimestamp() + _spinBoundTicks;
-            while (Stopwatch.GetTimestamp() < deadline)
+            while (AnyReaderActive())
             {
-                if (TryReclaim())
-                {
-                    return;
-                }
                 spin.SpinOnce();
             }
-        }
 
-        private bool TryReclaim()
-        {
-            if (!_closed || AnyReaderActive())
-            {
-                return false;
-            }
-
-            // First caller to win the swap runs the unmap exactly once. _unmap is
-            // non-null here: Close assigns it before publishing _closed, and we only
-            // reach this branch with _closed == true and _reclaimed won from 0.
-            if (Interlocked.Exchange(ref _reclaimed, 1) == 0)
-            {
-                _unmap!();
-                _unmap = null;
-            }
-            return true;
+            // No user is active and none can newly enter (_closed is published), so
+            // this runs exactly once, here, with no outstanding reader.
+            unmap();
         }
 
         private bool AnyReaderActive()
