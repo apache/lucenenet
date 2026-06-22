@@ -439,6 +439,41 @@ namespace Lucene.Net.Store
         }
 
         [Test]
+        [LuceneNetSpecific]
+        public virtual void TestFSIndexOutputFlushesBeforeMarkedStale()
+        {
+            DirectoryInfo path = CreateTempDir("flushBeforeMarkedStale");
+            using var dir = new FlushObservingSimpleFSDirectory(path);
+
+            byte[] bytes = new byte[1];
+            Random.NextBytes(bytes);
+
+            using (IndexOutput output = dir.CreateOutput("afile", NewIOContext(Random)))
+            {
+                output.WriteBytes(bytes, bytes.Length);
+            }
+
+            Assert.AreEqual(bytes.Length, dir.LengthObservedOnIndexOutputClosed,
+                "FSDirectory must flush FileStream's managed buffer before marking a file stale for fsync.");
+        }
+
+        private sealed class FlushObservingSimpleFSDirectory : SimpleFSDirectory
+        {
+            public FlushObservingSimpleFSDirectory(DirectoryInfo path)
+                : base(path)
+            {
+            }
+
+            public long LengthObservedOnIndexOutputClosed { get; private set; } = -1;
+
+            protected override void OnIndexOutputClosed(FSIndexOutput io)
+            {
+                LengthObservedOnIndexOutputClosed = new FileInfo(Path.Combine(m_directory.FullName, io.name)).Length;
+                base.OnIndexOutputClosed(io);
+            }
+        }
+
+        [Test]
         [Slow]
         [LuceneNetSpecific]
         public virtual void ConcurrentIndexAccessThrowsWithoutSynchronizedStaleFiles()
