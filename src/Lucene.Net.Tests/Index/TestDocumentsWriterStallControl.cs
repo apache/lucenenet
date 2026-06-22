@@ -1,6 +1,5 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -174,7 +173,7 @@ namespace Lucene.Net.Index
                     sync.leftCheckpoint.Wait();
                 }
                 Assert.IsFalse(checkPoint);
-                Assert.AreEqual(0, sync.waiter.Count);
+                Assert.AreEqual(0, sync.waiter.CurrentCount);
                 if (checkPointProbability >= Random.NextSingle())
                 {
                     sync.Reset(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
@@ -273,7 +272,7 @@ namespace Lucene.Net.Index
                             }
                             catch (Exception e) when (e.IsInterruptedException())
                             {
-                                Console.WriteLine("[Waiter] got interrupted - wait count: " + sync.waiter.Count);
+                                Console.WriteLine("[Waiter] got interrupted - wait count: " + sync.waiter.CurrentCount);
                                 throw new Util.ThreadInterruptedException(e);
                             }
                         }
@@ -327,7 +326,7 @@ namespace Lucene.Net.Index
                             }
                             catch (Exception e) when (e.IsInterruptedException())
                             {
-                                Console.WriteLine("[Updater] got interrupted - wait count: " + sync.waiter.Count);
+                                Console.WriteLine("[Updater] got interrupted - wait count: " + sync.waiter.CurrentCount);
                                 throw new Util.ThreadInterruptedException(e);
                             }
                             // LUCENENET: Not sure why this catch block was added, but I suspect it was for debugging purposes. Commented it rather than removing it because

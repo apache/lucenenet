@@ -1,10 +1,8 @@
 using J2N.Threading;
 using Lucene.Net.Documents;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
-using System.IO;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -41,7 +39,7 @@ namespace Lucene.Net.Index
         public class ReaderHolder
         {
             internal volatile DirectoryReader reader;
-            internal volatile bool stop = false;
+            internal volatile bool stop;
         }
 
         [Test]
@@ -53,7 +51,7 @@ namespace Lucene.Net.Index
             ReaderHolder holder = new ReaderHolder();
             ReaderThread[] threads = new ReaderThread[AtLeast(3)];
             CountdownLatch latch = new CountdownLatch(1);
-            WriterThread writerThread = new WriterThread(holder, writer, AtLeast(500), Random, latch);
+            WriterThread writerThread = new WriterThread(holder, writer, AtLeast(500), latch);
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ReaderThread(holder, latch);
@@ -90,8 +88,7 @@ namespace Lucene.Net.Index
             internal readonly CountdownLatch latch;
             internal Exception failed;
 
-            internal WriterThread(ReaderHolder holder, IndexWriter writer, int numOps, Random random, CountdownLatch latch)
-                : base()
+            internal WriterThread(ReaderHolder holder, IndexWriter writer, int numOps, CountdownLatch latch)
             {
                 this.holder = holder;
                 this.writer = writer;
@@ -102,7 +99,7 @@ namespace Lucene.Net.Index
             public override void Run()
             {
                 DirectoryReader currentReader = null;
-                Random random = LuceneTestCase.Random;
+                Random random = Random;
                 try
                 {
                     Document doc = new Document();
@@ -188,7 +185,6 @@ namespace Lucene.Net.Index
             internal Exception failed;
 
             internal ReaderThread(ReaderHolder holder, CountdownLatch latch)
-                : base()
             {
                 this.holder = holder;
                 this.latch = latch;
@@ -228,7 +224,6 @@ namespace Lucene.Net.Index
                             }
                             failed = e;
                             holder.stop = true;
-                            return;
                         }
                         finally
                         {

@@ -1,9 +1,9 @@
+using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -311,7 +311,7 @@ namespace Lucene.Net.Index
             IndexWriter w = new IndexWriter(dir, iwc);
             Document doc = new Document();
             doc.Add(NewField("field", "field", TextField.TYPE_NOT_STORED));
-            while (enoughMergesWaiting.Count != 0 && !failed)
+            while (enoughMergesWaiting.CurrentCount != 0 && !failed)
             {
                 for (int i = 0; i < 10; i++)
                 {
