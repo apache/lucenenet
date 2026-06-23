@@ -12,8 +12,6 @@ aliase
 aline
 alle
 allo
-allocte
-allong
 alot
 alpha-numeric
 alredy
@@ -25,7 +23,6 @@ analyer
 andd
 ane
 anothers
-appropropriate
 arent
 assemblie
 ative
@@ -49,8 +46,6 @@ childs
 classs
 collapsable
 commend
-commiting
-commmand
 commun
 comparision
 compatability

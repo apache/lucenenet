@@ -128,7 +128,7 @@ version: 4.8.0-beta00017
 - Renamed classes from using Iterable and Iterator to Enumerable and Enumerator, where appropriate - some were missed in [#698](https://github.com/apache/lucenenet/pull/698).
 - Normalize anonymous class names/accessibility. Fixes [#666](https://github.com/apache/lucenenet/pull/666).
 - Lucene.Net.Util.Fst.BytesStore: Suffix anonymous classes with "AnonymousClass". See [#666](https://github.com/apache/lucenenet/pull/666).
-- Renamed classes from using Iterable and Iterator to Enumerable and Enumerator, where appropropriate. See [#279](https://github.com/apache/lucenenet/pull/279).
+- Renamed classes from using Iterable and Iterator to Enumerable and Enumerator, where appropriate. See [#279](https://github.com/apache/lucenenet/pull/279).
 - Add a nested comment explaining why this method is empty. Fixes [#681](https://github.com/apache/lucenenet/pull/681).
 - Lucene.Net.Benchmark.Support.TagSoup: Reviewed API for accessibility issues. Fixed error handling and guard clauses. Changed to generic collections. Renamed method arguments.
 - Prefer 'AsSpan' over 'Substring' when span-based overloads are available. Fixes [#675](https://github.com/apache/lucenenet/pull/675).

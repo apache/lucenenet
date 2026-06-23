@@ -88,7 +88,7 @@ namespace Lucene.Net.Tests.Cli
 
         [Test]
         [LuceneNetSpecific]
-        public virtual void TestWithoutCommmand()
+        public virtual void TestWithoutCommand()
         {
             // Try running without any command. We should get the usage on the stdOut.
             // This is just a smoke test to make sure we can run the tool after it is installed.
