@@ -803,7 +803,7 @@ namespace Lucene.Net.Codecs.Memory
                 else if (Term.Equals(text))
                 {
                     // TODO: add SeekStatus to FSTEnum like in https://issues.apache.org/jira/browse/LUCENE-3729
-                    // to remove this comparision?
+                    // to remove this comparison?
                     return SeekStatus.FOUND;
                 }
                 else

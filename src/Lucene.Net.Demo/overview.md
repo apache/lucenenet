@@ -63,7 +63,7 @@ To __search the index__ type:
 
 You'll be prompted for a query. Type in a gibberish or made up word (for example:
 "supercalifragilisticexpialidocious").
-You'll see that there are no maching results in the lucene source code.
+You'll see that there are no matching results in the lucene source code.
 Now try entering the word "string". That should return a whole bunch
 of documents. The results will page at every tenth result and ask you whether
 you want more results.

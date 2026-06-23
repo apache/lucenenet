@@ -111,7 +111,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                     //
                     // However, in version 6.2 of Lucene (latest) it mentions we should also estimate the parent node.
                     // https://github.com/apache/lucene-solr/blob/764d0f19151dbff6f5fcd9fc4b2682cf934590c5/lucene/suggest/src/java/org/apache/lucene/search/suggest/jaspell/JaspellTernarySearchTrie.java#L104
-                    // Not sure what the reason for that is, but it seems like a recipe for innaccuracy.
+                    // Not sure what the reason for that is, but it seems like a recipe for inaccuracy.
                     if (node != null && node != relatives[PARENT])
                     {
                         mem += node.GetSizeInBytes();
