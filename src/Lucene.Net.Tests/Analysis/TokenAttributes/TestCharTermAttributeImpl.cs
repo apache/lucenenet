@@ -182,14 +182,14 @@ namespace Lucene.Net.Analysis.TokenAttributes
             Assert.AreEqual("12345678901234", t.ToString());
             t.Append(t.ToString()); // LUCENENET: CharTermAttribute no longer implements ICharSequence
             Assert.AreEqual("1234567890123412345678901234", t.ToString());
-            t.Append(new StringBuilder("0123456789").ToString().AsSpan(5, 7 - 5)); // LUCENENET: StringBuilder doesn't implement ICharSequence, corrected 3rd argument
+            t.Append(new StringBuilder("0123456789").ToString().AsSpan(5, 7 - 5)); // LUCENENET: StringBuilder doesn't implement ICharSequence, corrected argument
             Assert.AreEqual("123456789012341234567890123456", t.ToString());
             t.Append(new StringBuilder(t.ToString()));
             Assert.AreEqual("123456789012341234567890123456123456789012341234567890123456", t.ToString()); // LUCENENET: StringBuilder doesn't implement ICharSequence
             // very wierd, to test if a subSlice is wrapped correct :)
-            CharBuffer buf = CharBuffer.Wrap("0123456789".ToCharArray(), 3, 5);
+            var buf = "0123456789".ToCharArray().AsSpan(3, 5);
             Assert.AreEqual("34567", buf.ToString());
-            t.SetEmpty().Append(buf, 1, 2 - 1); // LUCENENET: Corrected 3rd parameter
+            t.SetEmpty().Append(buf.Slice(1, 2 - 1)); // LUCENENET: Corrected parameter
             Assert.AreEqual("4", t.ToString());
             ICharTermAttribute t2 = new CharTermAttribute();
             t2.Append("test");
@@ -210,7 +210,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             try
             {
-                t.Append(t2.AsSpan(1, 0 - 1)); // LUCENENET: Corrected 3rd parameter
+                t.Append(t2.AsSpan(1, 0 - 1)); // LUCENENET: Corrected parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
             catch (ArgumentOutOfRangeException /*iobe*/)
@@ -284,7 +284,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             Assert.AreEqual("0123456789012345678901234567890123456789012345678934567890123456789012345678901234567890123456789", t.ToString());
             t.SetEmpty();
             t.Append("01234567890123456789012345678901234567890123456789".AsSpan());
-            t.Append(CharBuffer.Wrap("01234567890123456789012345678901234567890123456789".ToCharArray()), 3, 50 - 3); // LUCENENET: Corrected 3rd parameter
+            t.Append("01234567890123456789012345678901234567890123456789".ToCharArray().AsSpan(3, 50 - 3)); // LUCENENET: Corrected parameter
             //              "01234567890123456789012345678901234567890123456789"
             Assert.AreEqual("0123456789012345678901234567890123456789012345678934567890123456789012345678901234567890123456789", t.ToString());
             t.SetEmpty().Append(new StringBuilder("01234567890123456789"), 5, 17 - 5); // LUCENENET: StringBuilder doesn't implement ICharSequence
@@ -292,9 +292,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
             t.Append(new StringBuilder(t.ToString()));
             Assert.AreEqual("567890123456567890123456", t.ToString());
             // very wierd, to test if a subSlice is wrapped correct :)
-            CharBuffer buf = CharBuffer.Wrap("012345678901234567890123456789".ToCharArray(), 3, 15);
+            var buf = "012345678901234567890123456789".ToCharArray().AsSpan(3, 15);
             Assert.AreEqual("345678901234567", buf.ToString());
-            t.SetEmpty().Append(buf, 1, 14 - 1);
+            t.SetEmpty().Append(buf.Slice(1, 14 - 1));
             Assert.AreEqual("4567890123456", t.ToString());
 
             // finally use a completely custom ReadOnlySpan that is not catched by instanceof checks

@@ -210,43 +210,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
             return this;
         }
 
-        public CharTermAttribute Append(CharBuffer value)
-        {
-            if (value is null)
-            {
-                return this; // No-op
-            }
-
-            return Append(value, 0, value.Length);
-        }
-
-        public CharTermAttribute Append(CharBuffer value, int startIndex, int charCount)
-        {
-            if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} must not be negative.");
-            if (charCount < 0)
-                throw new ArgumentOutOfRangeException(nameof(charCount), $"{nameof(charCount)} must not be negative.");
-
-            if (value is null)
-            {
-                if (startIndex == 0 && charCount == 0)
-                    return this;
-                throw new ArgumentNullException(nameof(value));
-            }
-            if (charCount == 0)
-                return this;
-            if (startIndex > value.Length - charCount)
-                throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
-
-            int end = startIndex + charCount;
-            for (int i = startIndex; i < end; i++)
-            {
-                Append(value[i]);
-            }
-
-            return this;
-        }
-
         public CharTermAttribute Append(ICharTermAttribute value)
         {
             if (value is null) // needed for Appendable compliance

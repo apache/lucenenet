@@ -186,44 +186,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             return this;
         }
 
-        public virtual CharBlockArray Append(CharBuffer? value)
-        {
-            if (value is null)
-            {
-                return this; // No-op
-            }
-
-            return Append(value, 0, value.Length);
-        }
-
-        public virtual CharBlockArray Append(CharBuffer? value, int startIndex, int length)
-        {
-            // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
-            if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} must not be negative.");
-            if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} must not be negative.");
-
-            if (value is null)
-            {
-                if (startIndex == 0 && length == 0)
-                    return this;
-                throw new ArgumentNullException(nameof(value));
-            }
-            if (length == 0)
-                return this;
-            if (startIndex > value.Length - length)
-                throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(length)} <= {nameof(Length)}.");
-
-            int end = startIndex + length;
-            for (int i = startIndex; i < end; i++)
-            {
-                Append(value[i]);
-            }
-
-            return this;
-        }
-
         public virtual CharBlockArray Append(StringBuilder? value)
         {
             if (value is null) // needed for Appendable compliance

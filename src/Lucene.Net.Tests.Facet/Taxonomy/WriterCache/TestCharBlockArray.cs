@@ -141,10 +141,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             t.Append(new StringBuilder(t.ToString())); // LUCENENET: StringBuilder doesn't implement ICharSequence
             Assert.AreEqual("123456789012341234567890123456123456789012341234567890123456", t.ToString());
             // very wierd, to test if a subSlice is wrapped correct :)
-            CharBuffer buf = CharBuffer.Wrap("0123456789".ToCharArray(), 3, 5);
+            var buf = "0123456789".ToCharArray().AsSpan(3, 5);
             Assert.AreEqual("34567", buf.ToString());
             t = new CharBlockArray();
-            t.Append(buf, 1, 2 - 1); // LUCENENET: Corrected 3rd parameter
+            t.Append(buf.Slice(1, 2 - 1)); // LUCENENET: Corrected 3rd parameter
             Assert.AreEqual("4", t.ToString());
             CharBlockArray t2 = new CharBlockArray();
             t2.Append("test");
@@ -261,10 +261,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             t.Append(new StringBuilder(t.ToString()));
             Assert.AreEqual("567890123456567890123456", t.ToString());
             // very wierd, to test if a subSlice is wrapped correct :)
-            CharBuffer buf = CharBuffer.Wrap("012345678901234567890123456789".ToCharArray(), 3, 15);
+            var buf = "012345678901234567890123456789".ToCharArray().AsSpan(3, 15);
             Assert.AreEqual("345678901234567", buf.ToString());
             t = new CharBlockArray();
-            t.Append(buf, 1, 14 - 1);
+            t.Append(buf.Slice(1, 14 - 1));
             Assert.AreEqual("4567890123456", t.ToString());
 
             // finally use a completely custom ReadOnlySpan<char> that is not catched by instanceof checks
