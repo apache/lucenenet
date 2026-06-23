@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
         internal static IDictionary<string, Directory> oldIndexDirs;
 
         /// <summary>
-        /// Randomizes the use of some of hte constructor variations
+        /// Randomizes the use of some of the constructor variations
         /// </summary>
         private static IndexUpgrader NewIndexUpgrader(Directory dir)
         {

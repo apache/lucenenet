@@ -2116,7 +2116,7 @@ namespace Lucene.Net.Util.Fst
         // that we can find an arc using binary search.  We do
         // this when number of arcs is > NUM_ARCS_ARRAY:
 
-        // If set, thie target node is delta coded vs current position:
+        // If set, the target node is delta coded vs current position:
         internal const int BIT_TARGET_DELTA = 1 << 6;
 
         // We use this as a marker (because this one flag is

@@ -21,7 +21,7 @@ namespace Lucene.Net.Cli.SourceCode
      */
 
     /// <summary>
-    /// Idenitifies sections of code based on tokens to transform
+    /// Identifies sections of code based on tokens to transform
     /// the output code to either contain extra code sections or
     /// remove unwanted code sections.
     /// <para/>

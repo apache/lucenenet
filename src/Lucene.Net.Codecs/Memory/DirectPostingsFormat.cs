@@ -1928,7 +1928,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        // Docs + freqs + positions/offets:
+        // Docs + freqs + positions/offsets:
         private sealed class LowFreqDocsEnum : DocsEnum
         {
             private int[] postings;
