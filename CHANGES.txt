@@ -1300,7 +1300,7 @@ New features
     new expert getReader() method.  this method returns a reader that
     searches the full index, including any uncommitted changes in the
     current IndexWriter session.  this should result in a faster
-    turnaround than the normal approach of commiting the changes and
+    turnaround than the normal approach of committing the changes and
     then reopening a reader.  (Jason Rutherglen via Mike McCandless)
 
  * LUCENE-1603: Added new MultiTermQueryWrapperFilter, to wrap any

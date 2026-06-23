@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             writer.ForceMerge(1);
 
-            // Open a reader before closing (commiting) the writer:
+            // Open a reader before closing (committing) the writer:
             DirectoryReader reader = DirectoryReader.Open(dir);
 
             // Reader should see index as multi-seg at this

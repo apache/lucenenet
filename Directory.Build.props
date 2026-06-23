@@ -107,7 +107,7 @@
 
   <!-- Settings to override the above Version of Builds. These can be used to
       "freeze" the build number for a release, so whether building within
-      an IDE or from the commmand line, the version is always what is
+      an IDE or from the command line, the version is always what is
       in Version.props, if it exists and the PrepareForBuild argument
       passed into build.ps1 is 'false'. -->
   <Import Project="version.props" Condition="Exists('version.props')" />
