@@ -47,10 +47,6 @@ classs
 collapsable
 commend
 commun
-comparision
-compatability
-compatibity
-confguration
 connexion
 contro
 convertable
@@ -58,7 +54,6 @@ conveyer
 coo
 corelate
 corespondent
-correcty
 corse
 countr
 covert
@@ -72,7 +67,6 @@ deines
 dependant
 despatch
 despatches
-diposing
 discreet
 discus
 displaing
@@ -120,12 +114,8 @@ idenitifies
 identifer
 iif
 imbed
-implementatation
 implementor
 implementors
-implmeneted
-improvment
-imrovements
 inate
 incase
 indexin
@@ -133,11 +123,8 @@ ine
 ines
 informations
 ingenuous
-innaccuracy
-instace
 instaed
 intance
-interger
 interruted
 isnt
 isse
@@ -151,16 +138,13 @@ lama
 lief
 loner
 longwinded
-maching
 maka
 makin
-malicous
 mane
 mange
 manger
 matchs
 maxium
-maxumum
 ment
 meny
 meu
@@ -169,7 +153,6 @@ millenium
 millepede
 mimicing
 mimicks
-mininum
 mis
 mot
 msbuid
@@ -179,7 +162,6 @@ nam
 nce
 nd
 ned
-nessesary
 nin
 noe
 noen
@@ -237,7 +219,6 @@ reproducability
 reproducable
 rime
 rouge
-rougly
 rute
 sate
 sav
@@ -249,7 +230,6 @@ seperate
 seperated
 seperator
 ser
-serialzation
 sie
 sightly
 similiarty

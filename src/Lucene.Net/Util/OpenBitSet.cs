@@ -973,7 +973,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        // some BitSet compatability methods
+        // some BitSet compatibility methods
 
         /// <summary>see <see cref="Intersect(OpenBitSet)"/></summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

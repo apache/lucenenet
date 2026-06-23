@@ -272,7 +272,7 @@ namespace Lucene.Net.Search
         internal readonly T? min, max;
         internal readonly bool minInclusive, maxInclusive;
 
-        // used to handle float/double infinity correcty
+        // used to handle float/double infinity correctly
         /// <summary>
         /// NOTE: This was LONG_NEGATIVE_INFINITY in Lucene
         /// </summary>

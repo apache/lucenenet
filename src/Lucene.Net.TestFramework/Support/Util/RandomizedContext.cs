@@ -1,4 +1,4 @@
-// Rougly similar to: https://github.com/randomizedtesting/randomizedtesting/blob/release/2.7.8/randomized-runner/src/main/java/com/carrotsearch/randomizedtesting/RandomizedContext.java
+// Roughly similar to: https://github.com/randomizedtesting/randomizedtesting/blob/release/2.7.8/randomized-runner/src/main/java/com/carrotsearch/randomizedtesting/RandomizedContext.java
 
 using Lucene.Net.Support.Threading;
 using NUnit.Framework.Interfaces;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Util
         public long TestSeed => Interlocked.Read(ref this.testSeed);
 
         /// <summary>
-        /// Gets the RandomGenerator specific to this Test and thread. This random generator implementatation
+        /// Gets the RandomGenerator specific to this Test and thread. This random generator implementation
         /// is not platform specific, so random numbers generated on one operating system will work on another.
         /// <para/>
         /// NOTE: NUnit doesn't currently set the <see cref="Test.Seed"/> property for the test fixtures

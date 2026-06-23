@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
             {
                 // LUCENENET specific: We created the segments names wrong in 4.8.0-beta00001 - 4.8.0-beta00015,
                 // so we added a switch to be able to read these indexes in later versions. This logic as well as an
-                // optimization on the first 100 segment values is implmeneted in SegmentInfos.SegmentNumberToString().
+                // optimization on the first 100 segment values is implemented in SegmentInfos.SegmentNumberToString().
                 string segmentSuffix = info.FieldInfosGen == -1 ? string.Empty : SegmentInfos.SegmentNumberToString(info.FieldInfosGen);
                 return info.Info.Codec.FieldInfosFormat.FieldInfosReader.Read(dir, info.Info.Name, segmentSuffix, IOContext.READ_ONCE);
             }
