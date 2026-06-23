@@ -90,7 +90,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 }
 
                 // LUCENENET specific - calculate the hash code without the allocation caused by Subsequence() and ToString()
-                if (!charBlockArray.Equals(offset, len, cp.Components[i].AsSpan())) // LUCENENET: Corrected 2nd parameter
+                if (!charBlockArray.Equals(offset, len, cp.Components[i])) // LUCENENET: Corrected 2nd parameter
                 {
                     return false;
                 }

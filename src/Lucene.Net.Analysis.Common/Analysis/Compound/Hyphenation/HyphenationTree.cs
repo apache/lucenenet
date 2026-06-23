@@ -366,31 +366,13 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         }
 
         /// <summary>
-        /// Hyphenate word and return a <see cref="Hyphenation"/> object.
-        /// </summary>
-        /// <param name="word"> the word to be hyphenated </param>
-        /// <param name="remainCharCount"> Minimum number of characters allowed before the
-        ///        hyphenation point. </param>
-        /// <param name="pushCharCount"> Minimum number of characters allowed after the
-        ///        hyphenation point. </param>
-        /// <returns> a <see cref="Hyphenation"/> object representing the
-        ///         hyphenated word or null if word is not hyphenated. </returns>
-        public virtual Hyphenation Hyphenate(string word, int remainCharCount, int pushCharCount)
-        {
-            // LUCENENET: use Span instead of ToCharArray
-            return Hyphenate(word.AsSpan(), 0, word.Length, remainCharCount, pushCharCount);
-        }
-
-
-
-        /// <summary>
         /// Hyphenate word and return an array of hyphenation points.
         /// </summary>
         /// <remarks>
-        /// w = "****nnllllllnnn*****", where n is a non-letter, l is a letter, all n
-        /// may be absent, the first n is at offset, the first l is at offset +
-        /// iIgnoreAtBeginning; word = ".llllll.'\0'***", where all l in w are copied
-        /// into word. In the first part of the routine len = w.length, in the second
+        /// w = "****nnllllllnnn*****".AsSpan(offset, len), where n is a non-letter,
+        /// l is a letter, all n may be absent, the first n is at offset, the first l is
+        /// at offset + iIgnoreAtBeginning; word = ".llllll.'\0'***", where all l in w are
+        /// copied into word. In the first part of the routine len = w.length, in the second
         /// part of the routine len = word.length. Three indices are used: index(w),
         /// the index in w, index(word), the index in word, letterindex(word), the
         /// index in the letter part of word. The following relations exist: index(w) =
@@ -399,18 +381,22 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// offset - 1 + iIgnoreAtBeginning index(w) = letterindex(word) + offset +
         /// iIgnoreAtBeginning
         /// </remarks>
-        /// <param name="w"> char array that contains the word </param>
-        /// <param name="offset"> Offset to first character in word </param>
-        /// <param name="len"> Length of word </param>
-        /// <param name="remainCharCount"> Minimum number of characters allowed before the
-        ///        hyphenation point. </param>
-        /// <param name="pushCharCount"> Minimum number of characters allowed after the
-        ///        hyphenation point. </param>
-        /// <returns> a <see cref="Hyphenation"/> object representing the
-        ///         hyphenated word or null if word is not hyphenated. </returns>
-        public virtual Hyphenation Hyphenate(ReadOnlySpan<char> w, int offset, int len, int remainCharCount, int pushCharCount)
+        /// <param name="w">
+        /// <see cref="ReadOnlySpan{T}"/> that contains the word. This should be sliced
+        /// to the desired offset and length before passing in if necessary.
+        /// </param>
+        /// <param name="remainCharCount">
+        /// Minimum number of characters allowed before the hyphenation point.
+        /// </param>
+        /// <param name="pushCharCount">
+        /// Minimum number of characters allowed after the hyphenation point.
+        /// </param>
+        /// <returns>
+        /// a <see cref="Hyphenation"/> object representing the hyphenated word or null if word is not hyphenated.
+        /// </returns>
+        public virtual Hyphenation Hyphenate(ReadOnlySpan<char> w, int remainCharCount, int pushCharCount)
         {
-            int i;
+            int i, len = w.Length;
             // LUCENENET: optimized method for Span and stackalloc
             Span<char> word = (len + 3) * sizeof(char) > Constants.MaxStackByteLimit ? new char[len + 3] : stackalloc char[len + 3];
 
@@ -421,7 +407,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             bool bEndOfLetters = false;
             for (i = 1; i <= len; i++)
             {
-                c[0] = w[offset + i - 1];
+                c[0] = w[i - 1];
                 int nc = m_classmap.Find(c, 0);
                 if (nc < 0) // found a non-letter character ...
                 {

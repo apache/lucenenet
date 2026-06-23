@@ -188,7 +188,7 @@ namespace Lucene.Net.Analysis.Compound
         protected override void Decompose()
         {
             // get the hyphenation points
-            Hyphenation.Hyphenation hyphens = hyphenator.Hyphenate(m_termAtt.Buffer, 0, m_termAtt.Length, 1, 1);
+            Hyphenation.Hyphenation hyphens = hyphenator.Hyphenate(m_termAtt.AsSpan(), 1, 1);
             // No hyphen points found -> exit
             if (hyphens is null)
             {
