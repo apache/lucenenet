@@ -42,7 +42,7 @@ on:
     branches:
     - docs/**
     # 2026-06-23 - the docs/** branches should be "filtered" manaually to ensure no unwanted changes are ever committed. But if so, the PR that this automation
-    # creates can be rejected and the errantly commited changes can be reverted before rebuilding the API docs site.
+    # creates can be rejected and the errantly committed changes can be reverted before rebuilding the API docs site.
     #paths:
     #- 'websites/apidocs/**/*'
     #- 'src/docs/LuceneDocsPlugins/**/*'
