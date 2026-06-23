@@ -648,11 +648,11 @@ namespace Lucene.Net.Analysis.Util
             }
 
             /// <summary>
-            /// Gets the current value as a <see cref="CharArrayCharSequence"/>.
+            /// Gets the current value as a <see cref="ReadOnlySpan{T}"/>.
             /// </summary>
-            // LUCENENET specific - quick access to ICharSequence interface
-            public ICharSequence CurrentValueCharSequence
-                => enumerator.CurrentKeyCharSequence;
+            // LUCENENET specific - quick access to ReadOnlySpan<char>
+            public ReadOnlySpan<char> CurrentValueSpan
+                => enumerator.CurrentKeySpan;
 
             /// <summary>
             /// Gets the current value... do not modify the returned char[].
