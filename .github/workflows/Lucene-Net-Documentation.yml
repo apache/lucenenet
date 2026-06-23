@@ -142,6 +142,13 @@ jobs:
               echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
           }
 
+      - name: Set PR branch name
+        run: |
+          $shortSHA = $Env:GITHUB_SHA.Substring(0, 7)
+          
+          echo ("PR_BRANCH=docs-build-" + $Env:RELEASE_VERSION + "-" + $shortSHA) >> $env:GITHUB_ENV
+        shell: powershell
+
       - name: Verify environment variables
         run: |
           echo "CURRENT_TAG=$Env:CURRENT_TAG"
@@ -159,13 +166,6 @@ jobs:
       #    git --git-dir "$Env:GIT_MAIN_REPO" checkout -b "docs/${{ env.RELEASE_VERSION }}"
       #  shell: powershell
       
-      - name: Set PR branch name
-        run: |
-          $shortSHA = $Env:GITHUB_SHA.Substring(0, 7)
-          
-          echo ("PR_BRANCH=docs-build-" + $Env:RELEASE_VERSION + "-" + $shortSHA) >> $env:GITHUB_ENV
-        shell: powershell
-
       - name: Setup .NET 6 SDK
         uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
         with:
