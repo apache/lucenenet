@@ -103,7 +103,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 return true;
             }
 
-            public bool IsMatch(ICharSequence input)
+            public bool IsMatch(ReadOnlySpan<char> input)
             {
                 return true;
             }
@@ -173,8 +173,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         private static string CreateResourceName(NameType nameType, RuleType rt, string lang)
         {
-            return string.Format("{0}_{1}_{2}.txt",
-                                 nameType.GetName(), rt.GetName(), lang);
+            return $"{nameType.GetName()}_{rt.GetName()}_{lang}.txt";
         }
 
         private static TextReader CreateScanner(NameType nameType, RuleType rt, string lang)
@@ -192,7 +191,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         private static TextReader CreateScanner(string lang)
         {
-            string resName = string.Format("{0}.txt", lang);
+            string resName = $"{lang}.txt";
             Stream rulesIS = typeof(Languages).FindAndGetManifestResourceStream(resName);
 
             if (rulesIS is null)
@@ -203,7 +202,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             return new StreamReader(rulesIS, ResourceConstants.ENCODING);
         }
 
-        private static bool EndsWith(ICharSequence input, string suffix)
+        private static bool EndsWith(ReadOnlySpan<char> input, string suffix)
         {
             if (suffix.Length > input.Length)
             {
@@ -504,11 +503,14 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         private class RPatternHelper : IRPattern
         {
-            private readonly Func<StringBuilder, bool> isMatchSB;
-            private readonly Func<string, bool> isMatchStr;
-            private readonly Func<ICharSequence, bool> isMatchCS;
+            // LUCENENET specific: needed to work around ReadOnlySpan<char> not being eligible for Predicate<T>
+            public delegate bool SpanPredicate(ReadOnlySpan<char> input);
 
-            public RPatternHelper(Func<StringBuilder, bool> isMatchSB, Func<string, bool> isMatchStr, Func<ICharSequence, bool> isMatchCS)
+            private readonly Predicate<StringBuilder> isMatchSB;
+            private readonly Predicate<string> isMatchStr;
+            private readonly SpanPredicate isMatchCS;
+
+            public RPatternHelper(Predicate<StringBuilder> isMatchSB, Predicate<string> isMatchStr, SpanPredicate isMatchCS)
             {
                 this.isMatchSB = isMatchSB;
                 this.isMatchStr = isMatchStr;
@@ -525,7 +527,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 return isMatchStr(input);
             }
 
-            public bool IsMatch(ICharSequence input)
+            public bool IsMatch(ReadOnlySpan<char> input)
             {
                 return isMatchCS(input);
             }
@@ -551,30 +553,18 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                     if (content.Length == 0)
                     {
                         // empty
-                        return new RPatternHelper(isMatchSB: (input) =>
-                        {
-                            return input.Length == 0;
-                        }, isMatchStr: (input) =>
-                        {
-                            return input.Length == 0;
-                        }, isMatchCS: (input) =>
-                        {
-                            return input.Length == 0;
-                        });
+                        return new RPatternHelper(
+                            isMatchSB: input => input.Length == 0,
+                            isMatchStr: input => input.Length == 0,
+                            isMatchCS: input => input.Length == 0);
                     }
                     else
                     {
 
-                        return new RPatternHelper(isMatchSB: (input) =>
-                        {
-                            return input.Equals(content);
-                        }, isMatchStr: (input) =>
-                        {
-                            return input.Equals(content);
-                        }, isMatchCS: (input) =>
-                        {
-                            return input.Equals(content);
-                        });
+                        return new RPatternHelper(
+                            isMatchSB: input => input.Equals(content),
+                            isMatchStr: input => input.Equals(content),
+                            isMatchCS: input => input.SequenceEqual(content));
                     }
                 }
                 else if ((startsWith || endsWith) && content.Length == 0)
@@ -585,31 +575,19 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 else if (startsWith)
                 {
                     // matches from start
-                    return new RPatternHelper(isMatchSB: (input) =>
-                    {
-                        return StartsWith(input, content);
-                    }, isMatchStr: (input) =>
-                    {
-                        return StartsWith(input, content);
-                    }, isMatchCS: (input) =>
-                    {
-                        return StartsWith(input, content);
-                    });
+                    return new RPatternHelper(
+                        isMatchSB: input => StartsWith(input, content),
+                        isMatchStr: input => StartsWith(input, content),
+                        isMatchCS: input => StartsWith(input, content));
 
                 }
                 else if (endsWith)
                 {
                     // matches from start
-                    return new RPatternHelper(isMatchSB: (input) =>
-                    {
-                        return EndsWith(input, content);
-                    }, isMatchStr: (input) =>
-                    {
-                        return EndsWith(input, content);
-                    }, isMatchCS: (input) =>
-                    {
-                        return EndsWith(input, content);
-                    });
+                    return new RPatternHelper(
+                        isMatchSB: input => EndsWith(input, content),
+                        isMatchStr: input => EndsWith(input, content),
+                        isMatchCS: input => EndsWith(input, content));
                 }
             }
             else
@@ -634,66 +612,49 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                         if (startsWith && endsWith)
                         {
                             // exact match
-                            return new RPatternHelper(isMatchSB: (input) =>
-                            {
-                                return input.Length == 1 && Contains(bContent, input[0]) == shouldMatch;
-                            }, isMatchStr: (input) =>
-                            {
-                                return input.Length == 1 && Contains(bContent, input[0]) == shouldMatch;
-                            }, isMatchCS: (input) =>
-                            {
-                                return input.Length == 1 && Contains(bContent, input[0]) == shouldMatch;
-                            });
+                            return new RPatternHelper(
+                                isMatchSB: input => input.Length == 1 && Contains(bContent, input[0]) == shouldMatch,
+                                isMatchStr: input => input.Length == 1 && Contains(bContent, input[0]) == shouldMatch,
+                                isMatchCS: input => input.Length == 1 && Contains(bContent, input[0]) == shouldMatch);
                         }
                         else if (startsWith)
                         {
                             // first char
-                            return new RPatternHelper(isMatchSB: (input) =>
-                            {
-                                return input.Length > 0 && Contains(bContent, input[0]) == shouldMatch;
-                            }, isMatchStr: (input) =>
-                            {
-                                return input.Length > 0 && Contains(bContent, input[0]) == shouldMatch;
-                            }, isMatchCS: (input) =>
-                            {
-                                return input.Length > 0 && Contains(bContent, input[0]) == shouldMatch;
-                            });
+                            return new RPatternHelper(
+                                isMatchSB: input => input.Length > 0 && Contains(bContent, input[0]) == shouldMatch,
+                                isMatchStr: input => input.Length > 0 && Contains(bContent, input[0]) == shouldMatch,
+                                isMatchCS: input => input.Length > 0 && Contains(bContent, input[0]) == shouldMatch);
                         }
                         else if (endsWith)
                         {
                             // last char
-                            return new RPatternHelper(isMatchSB: (input) =>
-                            {
-                                return input.Length > 0 && Contains(bContent, input[input.Length - 1]) == shouldMatch;
-                            }, isMatchStr: (input) =>
-                            {
-                                return input.Length > 0 && Contains(bContent, input[input.Length - 1]) == shouldMatch;
-                            }, isMatchCS: (input) =>
-                            {
-                                return input.Length > 0 && Contains(bContent, input[input.Length - 1]) == shouldMatch;
-                            });
+                            return new RPatternHelper(
+                                isMatchSB: input => input.Length > 0 && Contains(bContent, input[input.Length - 1]) == shouldMatch,
+                                isMatchStr: input => input.Length > 0 && Contains(bContent, input[input.Length - 1]) == shouldMatch,
+                                isMatchCS: input => input.Length > 0 && Contains(bContent, input[input.Length - 1]) == shouldMatch);
                         }
                     }
                 }
             }
+
             Regex pattern = new Regex(regex, RegexOptions.Compiled);
 
-            return new RPatternHelper(isMatchSB: (input) =>
+            return new RPatternHelper(isMatchSB: input =>
             {
                 Match matcher = pattern.Match(input.ToString());
                 return matcher.Success;
-            }, isMatchStr: (input) =>
+            }, isMatchStr: input =>
             {
                 Match matcher = pattern.Match(input);
                 return matcher.Success;
-            }, isMatchCS: (input) =>
+            }, isMatchCS: input =>
             {
                 Match matcher = pattern.Match(input.ToString());
                 return matcher.Success;
             });
         }
 
-        private static bool StartsWith(ICharSequence input, string prefix)
+        private static bool StartsWith(ReadOnlySpan<char> input, string prefix)
         {
             if (prefix.Length > input.Length)
             {
@@ -804,10 +765,10 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         /// <see cref="LContext"/> matches <paramref name="input"/> up to <paramref name="i"/>, <see cref="Pattern"/> matches at <paramref name="i"/> and
         /// <see cref="RContext"/> matches from the end of the match of <see cref="Pattern"/> to the end of <paramref name="input"/>.
         /// </summary>
-        /// <param name="input">The input <see cref="ICharSequence"/>.</param>
+        /// <param name="input">The input <see cref="ReadOnlySpan{T}"/>.</param>
         /// <param name="i">The int position within the input.</param>
         /// <returns><c>true</c> if the pattern and left/right context match, <c>false</c> otherwise.</returns>
-        public virtual bool PatternAndContextMatches(ICharSequence input, int i)
+        public virtual bool PatternAndContextMatches(ReadOnlySpan<char> input, int i)
         {
             if (i < 0)
             {
@@ -825,15 +786,15 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
             // evaluate the pattern, left context and right context
             // fail early if any of the evaluations is not successful
-            if (!input.Subsequence(i, ipl - i).Equals(this.pattern)) // LUCENENET: Corrected 2nd Subsequence parameter
+            if (!input.Slice(i, ipl - i).SequenceEqual(this.pattern)) // LUCENENET: Corrected 2nd Subsequence parameter
             {
                 return false;
             }
-            else if (!this.rContext.IsMatch(input.Subsequence(ipl, input.Length - ipl))) // LUCENENET: Corrected 2nd Subsequence parameter
+            else if (!this.rContext.IsMatch(input.Slice(ipl, input.Length - ipl))) // LUCENENET: Corrected 2nd Subsequence parameter
             {
                 return false;
             }
-            return this.lContext.IsMatch(input.Subsequence(0, i - 0)); // LUCENENET: Corrected 2nd Subsequence parameter
+            return this.lContext.IsMatch(input.Slice(0, i - 0)); // LUCENENET: Corrected 2nd Subsequence parameter
         }
 
         /// <summary>
@@ -963,7 +924,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             this.languages = languages;
         }
 
-        public Phoneme(ICharSequence phonemeText, LanguageSet languages)
+        public Phoneme(ReadOnlySpan<char> phonemeText, LanguageSet languages)
         {
             this.phonemeText = new StringBuilder(phonemeText.ToString());
             this.languages = languages;
@@ -1024,7 +985,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
     /// </summary>
     public interface IRPattern
     {
-        bool IsMatch(ICharSequence input);
+        bool IsMatch(ReadOnlySpan<char> input);
         bool IsMatch(string input);
         bool IsMatch(StringBuilder input);
     }
