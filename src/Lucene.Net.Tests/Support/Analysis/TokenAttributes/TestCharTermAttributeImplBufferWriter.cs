@@ -248,7 +248,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         // performs its bounds check purely arithmetically (termLength vs. termBuffer.Length);
         // Advance() itself never touches buffer memory, and WriteData only touches the first 1,000
         // chars. If the allocation fails with OutOfMemoryException, the test is a no-op. Marked
-        // [Slow] due to the large allocation.
+        // [Nightly] due to the large allocation.
         //
         // NOTE: The upstream ArrayBufferWriter test gated this on Windows/macOS, and so do we. The
         // risk is real on Linux but comes from the allocation itself, not from Advance(): under memory
@@ -256,7 +256,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         // zero-initialization of the array touches every page, which can invoke the OOM killer (an
         // uncatchable SIGKILL, not an OutOfMemoryException) and tear down the whole test run.
         [Test]
-        [Slow]
+        [Nightly]
         public void InvalidAdvance_Large()
         {
             // LUCENENET specific: skip on Linux (see note above); the large allocation can be killed

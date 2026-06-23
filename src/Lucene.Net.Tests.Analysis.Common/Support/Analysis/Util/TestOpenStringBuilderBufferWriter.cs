@@ -302,7 +302,7 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific: This test allocates a very large buffer to verify that Advance()
         // performs its bounds check purely arithmetically (m_len vs. m_buf.Length); Advance() itself
         // never touches buffer memory, and WriteData only touches the first 1,000 chars. If the
-        // allocation fails with OutOfMemoryException, the test is a no-op. Marked [Slow] due to the
+        // allocation fails with OutOfMemoryException, the test is a no-op. Marked [Nightly] due to the
         // large allocation.
         //
         // NOTE: The upstream ArrayBufferWriter test gated this on Windows/macOS, and so do we. The
@@ -311,7 +311,7 @@ namespace Lucene.Net.Analysis.Util
         // zero-initialization of the array touches every page, which can invoke the OOM killer (an
         // uncatchable SIGKILL, not an OutOfMemoryException) and tear down the whole test run.
         [Test]
-        [Slow]
+        [Nightly]
         public void InvalidAdvance_Large()
         {
             // LUCENENET specific: skip on Linux (see note above); the large allocation can be killed
