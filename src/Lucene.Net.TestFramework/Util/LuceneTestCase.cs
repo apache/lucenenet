@@ -896,6 +896,11 @@ namespace Lucene.Net.Util
         {
             // LUCENENET TODO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
+
+            // LUCENENET specific: capture the thread running the test method so that
+            // IsTestThread can distinguish it from background threads (e.g. ConcurrentMergeScheduler
+            // merge threads). This mirrors Java's ThreadAndTestNameRule.testCaseThread.
+            testCaseThread = Thread.CurrentThread;
         }
 
         /// <summary>
@@ -982,6 +987,11 @@ namespace Lucene.Net.Util
                 NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] An exception occurred during TearDown:");
                 RandomizedContext.PrintStackTrace(ex, NUnit.Framework.TestContext.Error);
                 throw; // LUCENENET: Throw to preserve stack details of original throw.
+            }
+            finally
+            {
+                // LUCENENET specific: clear the captured test thread (see SetUp()).
+                testCaseThread = null;
             }
         }
 
@@ -1148,14 +1158,22 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
+        /// LUCENENET specific: the thread that is executing the current test method, captured
+        /// in <see cref="SetUp()"/> and cleared in <see cref="TearDown()"/>. Used by
+        /// <see cref="IsTestThread"/>. This is <c>[ThreadStatic]</c> so that tests running in
+        /// parallel each track their own test thread, and background threads (which never run
+        /// <see cref="SetUp()"/>) see <c>null</c>.
+        /// </summary>
+        [ThreadStatic]
+        private static Thread testCaseThread;
+
+        /// <summary>
         /// Returns true if and only if the calling thread is the primary thread
         /// executing the test case.
-        /// <para/>
-        /// LUCENENET: Not Implemented - always returns true
         /// </summary>
-        /*Assert.IsNotNull(ThreadAndTestNameRule.TestCaseThread, "Test case thread not set?");
-                return Thread.CurrentThread == ThreadAndTestNameRule.TestCaseThread;*/
-        internal static bool IsTestThread => true; // LUCENENET specific - changed from public to internal since there is no way to support it
+        // LUCENENET specific - changed from public to internal since IsTestThread is only meaningful
+        // within the test framework. Mirrors Java's check against ThreadAndTestNameRule.testCaseThread.
+        internal static bool IsTestThread => testCaseThread != null && Thread.CurrentThread == testCaseThread;
 
         /// <summary>
         /// Asserts that <see cref="FieldCacheSanityChecker"/> does not detect any
