@@ -16,6 +16,29 @@ To submit changes for the website, create a Pull Request to the [Lucene Git repo
 
 ## Website
 
+### Lifecycle
+
+The source of truth of the website is on the `master` branch.
+
+```
+feature branch
+    ↓
+PR
+    ↓
+master
+    ↓
+website workflow
+    ↓
+lucenenet-site PR
+    ↓
+publish website
+```
+
+- All website changes that should be publicly visible must eventually exist on the `master` branch.
+- Release branches may temporarily contain website changes, but those changes must be cherry-picked (or in some cases merged) back to `master` if they should remain part of the published website.
+
+This ensures the website is always synched with the `master` branch and PRs that affect the website are automatically built for deployment.
+
 ### Build script
 
 To build the website and run it on your machine, run the PowerShell script: `./websites/site/site.ps1` with the `-ServeDocs` flag. For example:
@@ -59,6 +82,58 @@ The file/folder structure is within `./websites/site`:
 - Review and merge the Pull Request. The new version of the website will be live. If the amount of new files committed is large, the new files may take some time to become live.
 
 ## API Docs
+
+### Lifecycle
+
+The source of truth of an API docs build is the corresponding `docs/[PackageVersion]` branch. For example, the `docs/4.8.0-beta00017` branch is set up to build the docs for 4.8.0-beta00017.
+
+- Only documentation-related changes should be committed to docs branches.
+- Changes that apply to legacy docs versions may be cherry-picked to older docs branches to build releases for them, but this is optional.
+- Docs infrastructure changes generally are committed to `master` first, then cherry-picked to the relevant `docs` branches for release. Ensure the `master` branch contains the docs build infrastructure changes for all future docs API releases.
+
+#### Release Lifecycle
+
+```
+master
+    ↓
+release/x.y.z
+    ↓
+create docs/x.y.z
+    ↓
+cherry-pick documentation fixes
+    ↓
+push docs/x.y.z
+    ↓
+docs workflow
+    ↓
+lucenenet-site PR
+    ↓
+publish docs site
+```
+
+#### Docs Infrastructure Lifecycle
+
+```
+master
+    ↓
+feature branch
+    ↓
+PR
+    ↓
+master
+    ↓
+cherry-pick documentation infrastructure fixes
+    ↓
+checkout docs/x.y.z
+    ↓
+push docs/x.y.z
+    ↓
+docs workflow
+    ↓
+lucenenet-site PR
+    ↓
+publish docs site
+```
 
 ### Build script
 
