@@ -59,9 +59,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
         {
         }
 
-        // LUCENENET specific - ICharSequence member from J2N
-        bool ICharSequence.HasValue => termBuffer != null;
-
         public void CopyBuffer(char[] buffer, int offset, int length)
         {
             // LUCENENET: Added guard clauses.
@@ -164,25 +161,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
                 termBuffer[index] = value;
             }
-        }
-
-        public ICharSequence Subsequence(int startIndex, int length)
-        {
-            // From Apache Harmony String class
-            if (termBuffer is null || (startIndex == 0 && length == termBuffer.Length))
-            {
-                return new CharArrayCharSequence(termBuffer);
-            }
-            if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} must not be negative.");
-            if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} must not be negative.");
-            if (startIndex > Length - length) // Checks for int overflow
-                throw new ArgumentOutOfRangeException(nameof(length), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(length)} <= {nameof(Length)}.");
-
-            char[] result = new char[length];
-            Arrays.Copy(termBuffer, startIndex, result, 0, length);
-            return new CharArrayCharSequence(result);
         }
 
         // *** Appendable interface ***

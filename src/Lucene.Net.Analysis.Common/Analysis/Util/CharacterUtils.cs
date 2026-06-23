@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns the code point at the given index of the <see cref="string"/>.
+        /// Returns the code point at the given index of the <see cref="ReadOnlySpan{T}"/>.
         /// Depending on the <see cref="LuceneVersion"/> passed to
         /// <see cref="CharacterUtils.GetInstance(LuceneVersion)"/> this method mimics the behavior
         /// of <c>Character.CodePointAt(char[], int)</c> as it would have been
@@ -85,12 +85,10 @@ namespace Lucene.Net.Analysis.Util
         ///          the offset to the char values in the chars array to be converted
         /// </param>
         /// <returns> the Unicode code point at the given index </returns>
-        /// <exception cref="ArgumentNullException">
-        ///           - if the sequence is null. </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         ///           - if the value offset is negative or not less than the length of
         ///           the character sequence. </exception>
-        public abstract int CodePointAt(string seq, int offset);
+        public abstract int CodePointAt(ReadOnlySpan<char> seq, int offset);
 
         /// <summary>
         /// Returns the code point at the given index of the <see cref="ICharSequence"/>.
@@ -138,6 +136,10 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Return the number of characters in <paramref name="seq"/>. </summary>
         public abstract int CodePointCount(string seq);
+
+        /// <summary>
+        /// Return the number of characters in <paramref name="seq"/>. </summary>
+        public abstract int CodePointCount(ReadOnlySpan<char> seq);
 
         /// <summary>
         /// Return the number of characters in <paramref name="seq"/>. </summary>
@@ -359,10 +361,11 @@ namespace Lucene.Net.Analysis.Util
 
         private sealed class Java5CharacterUtils : CharacterUtils
         {
-            public override int CodePointAt(string seq, int offset)
+            public override int CodePointAt(ReadOnlySpan<char> seq, int offset)
             {
                 return Character.CodePointAt(seq, offset);
             }
+
             public override int CodePointAt(ICharSequence seq, int offset)
             {
                 return Character.CodePointAt(seq, offset);
@@ -423,6 +426,11 @@ namespace Lucene.Net.Analysis.Util
                 return Character.CodePointCount(seq, 0, seq.Length);
             }
 
+            public override int CodePointCount(ReadOnlySpan<char> seq)
+            {
+                return Character.CodePointCount(seq);
+            }
+
             public override int CodePointCount(ICharSequence seq)
             {
                 if (seq is null)
@@ -458,11 +466,9 @@ namespace Lucene.Net.Analysis.Util
         // and TestCharArraySet.TestSingleHighSurrogateBWComapt() tests.
         private class Java4CharacterUtils : CharacterUtils
         {
-            public override int CodePointAt(string seq, int offset)
+            public override int CodePointAt(ReadOnlySpan<char> seq, int offset)
             {
                 // LUCENENET specific - added guard clauses
-                if (seq is null)
-                    throw new ArgumentNullException(nameof(seq));
                 if (offset < 0 || offset >= seq.Length)
                     throw new ArgumentOutOfRangeException(nameof(offset));
 
@@ -515,6 +521,11 @@ namespace Lucene.Net.Analysis.Util
                 if (seq is null)
                     throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
 
+                return seq.Length;
+            }
+
+            public override int CodePointCount(ReadOnlySpan<char> seq)
+            {
                 return seq.Length;
             }
 

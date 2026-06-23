@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     /// <summary>
     /// The term text of a <see cref="Token"/>.
     /// </summary>
-    public interface ICharTermAttribute : IAttribute, ICharSequence, IAppendable,
+    public interface ICharTermAttribute : IAttribute, IAppendable,
         IBufferWriter<char> // LUCENENET specific
     {
         /// <summary>
@@ -78,10 +78,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// chaining is not required.
         /// </remarks>
         /// <seealso cref="CharTermAttributeExtensions.SetLength{T}(T, int)"/>
-        new int Length { get; set; }
+        int Length { get; set; }
 
         // LUCENENET specific: Redefining this[] to make it settable
-        new char this[int index] { get; set; }
+        char this[int index] { get; set; }
 
         /// <summary>
         /// Clears the values in this attribute and resets it to its

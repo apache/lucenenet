@@ -268,6 +268,18 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Contains(string text)
         {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            return map.ContainsKey(text.AsSpan()); // LUCENENET: use ReadOnlySpan<char> overload
+        }
+
+        /// <summary>
+        /// <c>true</c> if the <see cref="ReadOnlySpan{T}"/> is in the set.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool Contains(ReadOnlySpan<char> text)
+        {
             return map.ContainsKey(text);
         }
 
@@ -312,6 +324,20 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Add(string text)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            return map.Put(text.AsSpan()); // LUCENENET: use ReadOnlySpan<char> overload
+        }
+
+        /// <summary>
+        /// Adds a <see cref="ReadOnlySpan{T}"/> into the set
+        /// </summary>
+        /// <param name="text">The text to be added to the set.</param>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool Add(ReadOnlySpan<char> text)
         {
             return map.Put(text);
         }

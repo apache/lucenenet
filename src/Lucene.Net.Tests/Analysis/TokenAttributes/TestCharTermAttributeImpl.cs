@@ -160,33 +160,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             });
         }
 
-        [Test]
-        public virtual void TestCharSequenceInterface()
-        {
-            const string s = "0123456789";
-            CharTermAttribute t = new CharTermAttribute();
-            t.Append(s);
-
-            Assert.AreEqual(s.Length, t.Length);
-            Assert.AreEqual("12", t.Subsequence(1, 3 - 1).ToString()); // LUCENENET: Corrected 2nd parameter of Subsequence
-            Assert.AreEqual(s, t.Subsequence(0, s.Length - 0).ToString()); // LUCENENET: Corrected 2nd parameter of Subsequence
-
-            Assert.IsTrue(Regex.IsMatch(t.ToString(), "01\\d+"));
-            Assert.IsTrue(Regex.IsMatch(t.Subsequence(3, 5 - 3).ToString(), "34")); // LUCENENET: Corrected 2nd parameter of Subsequence
-
-            Assert.AreEqual(s.Substring(3, 4), t.Subsequence(3, 7 - 3).ToString()); // LUCENENET: Corrected 2nd parameter of Subsequence
-
-            for (int i = 0; i < s.Length; i++)
-            {
-                Assert.IsTrue(t[i] == s[i]);
-            }
-
-            // LUCENENET specific to test indexer
-            for (int i = 0; i < s.Length; i++)
-            {
-                Assert.IsTrue(t[i] == s[i]);
-            }
-        }
+        // LUCENENET: removed TestCharSequenceInterface
 
         [Test]
         public virtual void TestAppendableInterface()
@@ -209,7 +183,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             Assert.AreEqual("123456789012", t.ToString());
             t.Append(/*(ICharSequence)*/ CharBuffer.Wrap("0123456789".ToCharArray()), 3, 5 - 3); // LUCENENET: Corrected 3rd parameter
             Assert.AreEqual("12345678901234", t.ToString());
-            t.Append((ICharSequence)t);
+            t.Append((ICharSequence)new StringCharSequence(t.ToString())); // LUCENENET: CharTermAttribute no longer implements ICharSequence
             Assert.AreEqual("1234567890123412345678901234", t.ToString());
             t.Append(/*(ICharSequence)*/ new StringBuilder("0123456789").ToString(), 5, 7 - 5); // LUCENENET: StringBuilder doesn't implement ICharSequence, corrected 3rd argument
             Assert.AreEqual("123456789012341234567890123456", t.ToString());
@@ -222,14 +196,15 @@ namespace Lucene.Net.Analysis.TokenAttributes
             Assert.AreEqual("4", t.ToString());
             ICharTermAttribute t2 = new CharTermAttribute();
             t2.Append("test");
-            t.Append((ICharSequence)t2);
+            // LUCENENET: CharTermAttribute no longer implements ICharSequence, so wrap its text in a StringCharSequence
+            t.Append((ICharSequence)new StringCharSequence(t2.ToString()));
             Assert.AreEqual("4test", t.ToString());
-            t.Append((ICharSequence)t2, 1, 2 - 1); // LUCENENET: Corrected 3rd parameter
+            t.Append((ICharSequence)new StringCharSequence(t2.ToString()), 1, 2 - 1); // LUCENENET: Corrected 3rd parameter
             Assert.AreEqual("4teste", t.ToString());
 
             try
             {
-                t.Append((ICharSequence)t2, 1, 5 - 1); // LUCENENET: Corrected 3rd parameter
+                t.Append((ICharSequence)new StringCharSequence(t2.ToString()), 1, 5 - 1); // LUCENENET: Corrected 3rd parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
             catch (ArgumentOutOfRangeException /*iobe*/)
@@ -238,7 +213,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             try
             {
-                t.Append((ICharSequence)t2, 1, 0 - 1); // LUCENENET: Corrected 3rd parameter
+                t.Append((ICharSequence)new StringCharSequence(t2.ToString()), 1, 0 - 1); // LUCENENET: Corrected 3rd parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
             catch (ArgumentOutOfRangeException /*iobe*/)
@@ -316,9 +291,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
             //              "01234567890123456789012345678901234567890123456789"
             Assert.AreEqual("0123456789012345678901234567890123456789012345678934567890123456789012345678901234567890123456789", t.ToString());
             t.SetEmpty().Append(/*(ICharSequence)*/ new StringBuilder("01234567890123456789"), 5, 17 - 5); // LUCENENET: StringBuilder doesn't implement ICharSequence
-            Assert.AreEqual((ICharSequence)new StringCharSequence("567890123456"), t /*.ToString()*/);
+            Assert.AreEqual("567890123456", t.ToString());
             t.Append(new StringBuilder(t.ToString()));
-            Assert.AreEqual((ICharSequence)new StringCharSequence("567890123456567890123456"), t /*.ToString()*/);
+            Assert.AreEqual("567890123456567890123456", t.ToString());
             // very wierd, to test if a subSlice is wrapped correct :)
             CharBuffer buf = CharBuffer.Wrap("012345678901234567890123456789".ToCharArray(), 3, 15);
             Assert.AreEqual("345678901234567", buf.ToString());
@@ -430,23 +405,24 @@ namespace Lucene.Net.Analysis.TokenAttributes
             {
             }
 
-            try
-            {
-                _ = t.Subsequence(0, 5 - 0); // LUCENENET: Corrected 2nd parameter of Subsequence
-                Assert.Fail("Should throw ArgumentOutOfRangeException");
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-            }
-
-            try
-            {
-                _ = t.Subsequence(5, 0 - 5); // LUCENENET: Corrected 2nd parameter of Subsequence
-                Assert.Fail("Should throw ArgumentOutOfRangeException");
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-            }
+            // LUCENENET: removed ICharSequence support
+            // try
+            // {
+            //     _ = t.Subsequence(0, 5 - 0); // LUCENENET: Corrected 2nd parameter of Subsequence
+            //     Assert.Fail("Should throw ArgumentOutOfRangeException");
+            // }
+            // catch (ArgumentOutOfRangeException)
+            // {
+            // }
+            //
+            // try
+            // {
+            //     _ = t.Subsequence(5, 0 - 5); // LUCENENET: Corrected 2nd parameter of Subsequence
+            //     Assert.Fail("Should throw ArgumentOutOfRangeException");
+            // }
+            // catch (ArgumentOutOfRangeException)
+            // {
+            // }
         }
 
         /*

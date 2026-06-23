@@ -583,8 +583,8 @@ namespace Lucene.Net.Util
             return true;
         }
 
-        // LUCENENET specific overload because string doesn't implement ICharSequence
-        public static bool ValidUTF16String(string s)
+        // LUCENENET specific overload because ReadOnlySpan<char> doesn't implement ICharSequence
+        public static bool ValidUTF16String(ReadOnlySpan<char> s)
         {
             int size = s.Length;
             for (int i = 0; i < size; i++)
