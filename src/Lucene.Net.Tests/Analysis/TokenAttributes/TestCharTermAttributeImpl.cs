@@ -1,12 +1,9 @@
 using J2N.IO;
-using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
@@ -177,34 +174,34 @@ namespace Lucene.Net.Analysis.TokenAttributes
             Assert.AreEqual("12345678", t.ToString());
             t.Append('9');
             Assert.AreEqual("123456789", t.ToString());
-            t.Append(new StringCharSequence("0"));
+            t.Append("0".AsSpan());
             Assert.AreEqual("1234567890", t.ToString());
-            t.Append(new StringCharSequence("0123456789"), 1, 3 - 1); // LUCENENET: Corrected 3rd parameter
+            t.Append("0123456789".AsSpan(1, 3 - 1)); // LUCENENET: Corrected parameter
             Assert.AreEqual("123456789012", t.ToString());
-            t.Append(/*(ICharSequence)*/ CharBuffer.Wrap("0123456789".ToCharArray()), 3, 5 - 3); // LUCENENET: Corrected 3rd parameter
+            t.Append("0123456789".ToCharArray().AsSpan(3, 5 - 3)); // LUCENENET: Corrected parameter
             Assert.AreEqual("12345678901234", t.ToString());
-            t.Append((ICharSequence)new StringCharSequence(t.ToString())); // LUCENENET: CharTermAttribute no longer implements ICharSequence
+            t.Append(t.ToString()); // LUCENENET: CharTermAttribute no longer implements ICharSequence
             Assert.AreEqual("1234567890123412345678901234", t.ToString());
-            t.Append(/*(ICharSequence)*/ new StringBuilder("0123456789").ToString(), 5, 7 - 5); // LUCENENET: StringBuilder doesn't implement ICharSequence, corrected 3rd argument
+            t.Append(new StringBuilder("0123456789").ToString().AsSpan(5, 7 - 5)); // LUCENENET: StringBuilder doesn't implement ICharSequence, corrected 3rd argument
             Assert.AreEqual("123456789012341234567890123456", t.ToString());
-            t.Append(/*(ICharSequence)*/ new StringBuilder(t.ToString()));
+            t.Append(new StringBuilder(t.ToString()));
             Assert.AreEqual("123456789012341234567890123456123456789012341234567890123456", t.ToString()); // LUCENENET: StringBuilder doesn't implement ICharSequence
             // very wierd, to test if a subSlice is wrapped correct :)
             CharBuffer buf = CharBuffer.Wrap("0123456789".ToCharArray(), 3, 5);
             Assert.AreEqual("34567", buf.ToString());
-            t.SetEmpty().Append(/*(ICharSequence)*/ buf, 1, 2 - 1); // LUCENENET: Corrected 3rd parameter
+            t.SetEmpty().Append(buf, 1, 2 - 1); // LUCENENET: Corrected 3rd parameter
             Assert.AreEqual("4", t.ToString());
             ICharTermAttribute t2 = new CharTermAttribute();
             t2.Append("test");
             // LUCENENET: CharTermAttribute no longer implements ICharSequence, so wrap its text in a StringCharSequence
-            t.Append((ICharSequence)new StringCharSequence(t2.ToString()));
+            t.Append(t2.AsSpan());
             Assert.AreEqual("4test", t.ToString());
-            t.Append((ICharSequence)new StringCharSequence(t2.ToString()), 1, 2 - 1); // LUCENENET: Corrected 3rd parameter
+            t.Append(t2.AsSpan(1, 2 - 1)); // LUCENENET: Corrected parameter
             Assert.AreEqual("4teste", t.ToString());
 
             try
             {
-                t.Append((ICharSequence)new StringCharSequence(t2.ToString()), 1, 5 - 1); // LUCENENET: Corrected 3rd parameter
+                t.Append(t2.AsSpan(1, 5 - 1)); // LUCENENET: Corrected parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
             catch (ArgumentOutOfRangeException /*iobe*/)
@@ -213,14 +210,14 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             try
             {
-                t.Append((ICharSequence)new StringCharSequence(t2.ToString()), 1, 0 - 1); // LUCENENET: Corrected 3rd parameter
+                t.Append(t2.AsSpan(1, 0 - 1)); // LUCENENET: Corrected 3rd parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
             catch (ArgumentOutOfRangeException /*iobe*/)
             {
             }
 
-            t.Append((ICharSequence)null); // LUCENENET specific: No-op for appending null
+            t.Append((string)null); // LUCENENET specific: No-op for appending null
             // LUCENENET specific: Excluding "null" from the result string
             // because in .NET `StringBuilder.Append((string)null)` is a no-op
             // rather than appending the string "null", so we do the same to match.
@@ -230,7 +227,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             // LUCENENET specific - test string overloads
             try
             {
-                t.Append((string)t2.ToString(), 1, 5 - 1); // LUCENENET: Corrected 3rd parameter
+                t.Append(t2.AsSpan(1, 5 - 1)); // LUCENENET: Corrected parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
             catch (ArgumentOutOfRangeException /*iobe*/)
@@ -239,7 +236,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             try
             {
-                t.Append((string)t2.ToString(), 1, 0 - 1); // LUCENENET: Corrected 3rd parameter
+                t.Append(t2.AsSpan(1, 0 - 1)); // LUCENENET: Corrected parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
             catch (ArgumentOutOfRangeException /*iobe*/)
@@ -252,7 +249,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             // LUCENENET specific - test char[] overloads
             try
             {
-                t.Append((char[])t2.ToString().ToCharArray(), 1, 5 - 1); // LUCENENET: Corrected 3rd parameter
+                t.Append(t2.ToString()!.ToCharArray().AsSpan(1, 5 - 1)); // LUCENENET: Corrected parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
             catch (ArgumentOutOfRangeException /*iobe*/)
@@ -261,7 +258,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             try
             {
-                t.Append((char[])t2.ToString().ToCharArray(), 1, 0 - 1); // LUCENENET: Corrected 3rd parameter
+                t.Append(t2.ToString()!.ToCharArray().AsSpan(1, 0 - 1)); // LUCENENET: Corrected parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
             catch (ArgumentOutOfRangeException /*iobe*/)
@@ -278,19 +275,19 @@ namespace Lucene.Net.Analysis.TokenAttributes
             CharTermAttribute t = new CharTermAttribute();
             t.Append("01234567890123456789012345678901234567890123456789"); // LUCENENET specific overload that accepts string
             assertEquals("01234567890123456789012345678901234567890123456789", t.ToString());
-            t.Append("01234567890123456789012345678901234567890123456789", 3, 50 - 3); // LUCENENET specific overload that accepts string, startIndex, charCount
+            t.Append("01234567890123456789012345678901234567890123456789".AsSpan(3, 50 - 3)); // LUCENENET specific overload that accepts string, startIndex, charCount
             Assert.AreEqual("0123456789012345678901234567890123456789012345678934567890123456789012345678901234567890123456789", t.ToString());
             t.SetEmpty();
             t.Append("01234567890123456789012345678901234567890123456789".ToCharArray()); // LUCENENET specific overload that accepts char[]
             assertEquals("01234567890123456789012345678901234567890123456789", t.ToString());
-            t.Append("01234567890123456789012345678901234567890123456789".ToCharArray(), 3, 50 - 3); // LUCENENET specific overload that accepts char[], startIndex, charCount
+            t.Append("01234567890123456789012345678901234567890123456789".ToCharArray().AsSpan(3, 50 - 3)); // LUCENENET specific overload that accepts char[], startIndex, charCount
             Assert.AreEqual("0123456789012345678901234567890123456789012345678934567890123456789012345678901234567890123456789", t.ToString());
             t.SetEmpty();
-            t.Append(new StringCharSequence("01234567890123456789012345678901234567890123456789"));
-            t.Append(/*(ICharSequence)*/ CharBuffer.Wrap("01234567890123456789012345678901234567890123456789".ToCharArray()), 3, 50 - 3); // LUCENENET: Corrected 3rd parameter
+            t.Append("01234567890123456789012345678901234567890123456789".AsSpan());
+            t.Append(CharBuffer.Wrap("01234567890123456789012345678901234567890123456789".ToCharArray()), 3, 50 - 3); // LUCENENET: Corrected 3rd parameter
             //              "01234567890123456789012345678901234567890123456789"
             Assert.AreEqual("0123456789012345678901234567890123456789012345678934567890123456789012345678901234567890123456789", t.ToString());
-            t.SetEmpty().Append(/*(ICharSequence)*/ new StringBuilder("01234567890123456789"), 5, 17 - 5); // LUCENENET: StringBuilder doesn't implement ICharSequence
+            t.SetEmpty().Append(new StringBuilder("01234567890123456789"), 5, 17 - 5); // LUCENENET: StringBuilder doesn't implement ICharSequence
             Assert.AreEqual("567890123456", t.ToString());
             t.Append(new StringBuilder(t.ToString()));
             Assert.AreEqual("567890123456567890123456", t.ToString());
@@ -300,9 +297,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
             t.SetEmpty().Append(buf, 1, 14 - 1);
             Assert.AreEqual("4567890123456", t.ToString());
 
-            // finally use a completely custom ICharSequence that is not catched by instanceof checks
+            // finally use a completely custom ReadOnlySpan that is not catched by instanceof checks
             const string longTestString = "012345678901234567890123456789";
-            t.Append(new CharSequenceAnonymousClass(longTestString));
+            t.Append(longTestString.AsSpan());
             Assert.AreEqual("4567890123456" + longTestString, t.ToString());
         }
 
@@ -327,38 +324,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
             // test with a long span slice
             t.Append("01234567890123456789012345678901234567890123456789".AsSpan(3, 50 - 3));
             Assert.AreEqual("0123456789012345678901234567890123456789012345678934567890123456789012345678901234567890123456789", t.ToString());
-        }
-
-        private sealed class CharSequenceAnonymousClass : ICharSequence
-        {
-            private readonly string longTestString;
-
-            public CharSequenceAnonymousClass(string longTestString)
-            {
-                this.longTestString = longTestString;
-            }
-
-            bool ICharSequence.HasValue => longTestString != null; // LUCENENET specific (implementation of ICharSequence)
-
-            public char CharAt(int i)
-            {
-                return longTestString[i];
-            }
-
-            // LUCENENET specific - Added to .NETify
-            public char this[int i] => longTestString[i];
-
-            public int Length => longTestString.Length;
-
-            public ICharSequence Subsequence(int startIndex, int length) // LUCENENET: Changed semantics to startIndex/length to match .NET
-            {
-                return new StringCharSequence(longTestString.Substring(startIndex, length));
-            }
-
-            public override string ToString()
-            {
-                return longTestString;
-            }
         }
 
         [Test]

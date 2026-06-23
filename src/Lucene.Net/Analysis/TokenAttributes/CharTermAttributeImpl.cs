@@ -1,3 +1,4 @@
+using J2N.IO;
 using J2N.Text;
 using Lucene.Net.Support;
 using System;
@@ -165,78 +166,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         // *** Appendable interface ***
 
-        public CharTermAttribute Append(string value, int startIndex, int charCount)
-        {
-            // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
-            if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} must not be negative.");
-            if (charCount < 0)
-                throw new ArgumentOutOfRangeException(nameof(charCount), $"{nameof(charCount)} must not be negative.");
-
-            if (value is null)
-            {
-                if (startIndex == 0 && charCount == 0)
-                    return this;
-                throw new ArgumentNullException(nameof(value));
-            }
-            if (charCount == 0)
-                return this;
-            if (startIndex > value.Length - charCount)
-                throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
-
-            value.CopyTo(startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
-            Length += charCount;
-
-            return this;
-        }
-
         public CharTermAttribute Append(char value)
         {
             ResizeBuffer(termLength + 1)[termLength++] = value;
             return this;
-        }
-
-        public CharTermAttribute Append(char[] value)
-        {
-            if (value is null)
-                //return AppendNull();
-                return this; // No-op
-
-            int len = value.Length;
-            value.CopyTo(InternalResizeBuffer(termLength + len), termLength);
-            Length += len;
-
-            return this;
-        }
-
-        public CharTermAttribute Append(char[] value, int startIndex, int charCount)
-        {
-            // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
-            if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} must not be negative.");
-            if (charCount < 0)
-                throw new ArgumentOutOfRangeException(nameof(charCount), $"{nameof(charCount)} must not be negative.");
-
-            if (value is null)
-            {
-                if (startIndex == 0 && charCount == 0)
-                    return this;
-                throw new ArgumentNullException(nameof(value));
-            }
-            if (charCount == 0)
-                return this;
-            if (startIndex > value.Length - charCount)
-                throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
-
-            Arrays.Copy(value, startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
-            Length += charCount;
-
-            return this;
-        }
-
-        public CharTermAttribute Append(string value)
-        {
-            return Append(value, 0, value?.Length ?? 0);
         }
 
         public CharTermAttribute Append(StringBuilder value)
@@ -277,31 +210,18 @@ namespace Lucene.Net.Analysis.TokenAttributes
             return this;
         }
 
-        public CharTermAttribute Append(ICharTermAttribute value)
-        {
-            if (value is null) // needed for Appendable compliance
-            {
-                //return AppendNull();
-                return this; // No-op
-            }
-            int len = value.Length;
-            Arrays.Copy(value.Buffer, 0, ResizeBuffer(termLength + len), termLength, len);
-            termLength += len;
-            return this;
-        }
-
-        public CharTermAttribute Append(ICharSequence value)
+        public CharTermAttribute Append(CharBuffer value)
         {
             if (value is null)
-                //return AppendNull();
+            {
                 return this; // No-op
+            }
 
             return Append(value, 0, value.Length);
         }
 
-        public CharTermAttribute Append(ICharSequence value, int startIndex, int charCount)
+        public CharTermAttribute Append(CharBuffer value, int startIndex, int charCount)
         {
-            // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
             if (startIndex < 0)
                 throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} must not be negative.");
             if (charCount < 0)
@@ -318,11 +238,25 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (startIndex > value.Length - charCount)
                 throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
 
-            ResizeBuffer(termLength + charCount);
+            int end = startIndex + charCount;
+            for (int i = startIndex; i < end; i++)
+            {
+                Append(value[i]);
+            }
 
-            for (int i = 0; i < charCount; i++)
-                termBuffer[termLength++] = value[startIndex + i];
+            return this;
+        }
 
+        public CharTermAttribute Append(ICharTermAttribute value)
+        {
+            if (value is null) // needed for Appendable compliance
+            {
+                //return AppendNull();
+                return this; // No-op
+            }
+            int len = value.Length;
+            Arrays.Copy(value.Buffer, 0, ResizeBuffer(termLength + len), termLength, len);
+            termLength += len;
             return this;
         }
 
@@ -456,19 +390,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         #region ICharTermAttribute Members
 
-        ICharTermAttribute ICharTermAttribute.Append(ICharSequence value) => Append(value);
-
-        ICharTermAttribute ICharTermAttribute.Append(ICharSequence value, int startIndex, int count) => Append(value, startIndex, count);
-
         ICharTermAttribute ICharTermAttribute.Append(char value) => Append(value);
-
-        ICharTermAttribute ICharTermAttribute.Append(char[] value) => Append(value);
-
-        ICharTermAttribute ICharTermAttribute.Append(char[] value, int startIndex, int count) => Append(value, startIndex, count);
-
-        ICharTermAttribute ICharTermAttribute.Append(string value) => Append(value);
-
-        ICharTermAttribute ICharTermAttribute.Append(string value, int startIndex, int count) => Append(value, startIndex, count);
 
         ICharTermAttribute ICharTermAttribute.Append(StringBuilder value) => Append(value);
 
@@ -486,7 +408,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         IAppendable IAppendable.Append(string value) => Append(value);
 
-        IAppendable IAppendable.Append(string value, int startIndex, int count) => Append(value, startIndex, count);
+        IAppendable IAppendable.Append(string value, int startIndex, int count) => Append(value.AsSpan(startIndex, count));
 
         IAppendable IAppendable.Append(StringBuilder value) => Append(value);
 
@@ -494,11 +416,11 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         IAppendable IAppendable.Append(char[] value) => Append(value);
 
-        IAppendable IAppendable.Append(char[] value, int startIndex, int count) => Append(value, startIndex, count);
+        IAppendable IAppendable.Append(char[] value, int startIndex, int count) => Append(value.AsSpan(startIndex, count));
 
-        IAppendable IAppendable.Append(ICharSequence value) => Append(value);
+        IAppendable IAppendable.Append(ICharSequence value) => Append(value?.ToString());
 
-        IAppendable IAppendable.Append(ICharSequence value, int startIndex, int count) => Append(value, startIndex, count);
+        IAppendable IAppendable.Append(ICharSequence value, int startIndex, int count) => Append(value == null ? ReadOnlySpan<char>.Empty : value.ToString().AsSpan(startIndex, count));
 
         #endregion
 

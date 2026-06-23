@@ -91,26 +91,6 @@ namespace Lucene.Net.Analysis.Util
         public abstract int CodePointAt(ReadOnlySpan<char> seq, int offset);
 
         /// <summary>
-        /// Returns the code point at the given index of the <see cref="ICharSequence"/>.
-        /// Depending on the <see cref="LuceneVersion"/> passed to
-        /// <see cref="CharacterUtils.GetInstance(LuceneVersion)"/> this method mimics the behavior
-        /// of <c>Character.CodePointAt(char[], int)</c> as it would have been
-        /// available on a Java 1.4 JVM or on a later virtual machine version.
-        /// </summary>
-        /// <param name="seq">
-        ///          a character sequence </param>
-        /// <param name="offset">
-        ///          the offset to the char values in the chars array to be converted
-        /// </param>
-        /// <returns> the Unicode code point at the given index </returns>
-        /// <exception cref="ArgumentNullException">
-        ///           - if the sequence is null. </exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        ///           - if the value offset is negative or not less than the length of
-        ///           the character sequence. </exception>
-        public abstract int CodePointAt(ICharSequence seq, int offset);
-
-        /// <summary>
         /// Returns the code point at the given index of the char array where only elements
         /// with index less than the limit are used.
         /// Depending on the <see cref="LuceneVersion"/> passed to
@@ -135,19 +115,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Return the number of characters in <paramref name="seq"/>. </summary>
-        public abstract int CodePointCount(string seq);
-
-        /// <summary>
-        /// Return the number of characters in <paramref name="seq"/>. </summary>
         public abstract int CodePointCount(ReadOnlySpan<char> seq);
-
-        /// <summary>
-        /// Return the number of characters in <paramref name="seq"/>. </summary>
-        public abstract int CodePointCount(ICharSequence seq);
-
-        /// <summary>
-        /// Return the number of characters in <paramref name="seq"/>. </summary>
-        public abstract int CodePointCount(char[] seq);
 
         /// <summary>
         /// Return the number of characters in <paramref name="seq"/>. </summary>
@@ -366,11 +334,6 @@ namespace Lucene.Net.Analysis.Util
                 return Character.CodePointAt(seq, offset);
             }
 
-            public override int CodePointAt(ICharSequence seq, int offset)
-            {
-                return Character.CodePointAt(seq, offset);
-            }
-
             public override int CodePointAt(char[] chars, int offset, int limit)
             {
                 return Character.CodePointAt(chars, offset, limit);
@@ -418,33 +381,9 @@ namespace Lucene.Net.Analysis.Util
                 return result;
             }
 
-            public override int CodePointCount(string seq)
-            {
-                if (seq is null)
-                    throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
-
-                return Character.CodePointCount(seq, 0, seq.Length);
-            }
-
             public override int CodePointCount(ReadOnlySpan<char> seq)
             {
                 return Character.CodePointCount(seq);
-            }
-
-            public override int CodePointCount(ICharSequence seq)
-            {
-                if (seq is null)
-                    throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
-
-                return Character.CodePointCount(seq, 0, seq.Length);
-            }
-
-            public override int CodePointCount(char[] seq)
-            {
-                if (seq is null)
-                    throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
-
-                return Character.CodePointCount(seq, 0, seq.Length);
             }
 
             public override int CodePointCount(StringBuilder seq)
@@ -469,17 +408,6 @@ namespace Lucene.Net.Analysis.Util
             public override int CodePointAt(ReadOnlySpan<char> seq, int offset)
             {
                 // LUCENENET specific - added guard clauses
-                if (offset < 0 || offset >= seq.Length)
-                    throw new ArgumentOutOfRangeException(nameof(offset));
-
-                return seq[offset];
-            }
-
-            public override int CodePointAt(ICharSequence seq, int offset)
-            {
-                // LUCENENET specific - added guard clauses
-                if (seq is null)
-                    throw new ArgumentNullException(nameof(seq));
                 if (offset < 0 || offset >= seq.Length)
                     throw new ArgumentOutOfRangeException(nameof(offset));
 
@@ -516,32 +444,8 @@ namespace Lucene.Net.Analysis.Util
                 return read == numChars;
             }
 
-            public override int CodePointCount(string seq)
-            {
-                if (seq is null)
-                    throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
-
-                return seq.Length;
-            }
-
             public override int CodePointCount(ReadOnlySpan<char> seq)
             {
-                return seq.Length;
-            }
-
-            public override int CodePointCount(ICharSequence seq)
-            {
-                if (seq is null)
-                    throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
-
-                return seq.Length;
-            }
-
-            public override int CodePointCount(char[] seq)
-            {
-                if (seq is null)
-                    throw new ArgumentNullException(nameof(seq)); // LUCENENET specific - added null guard clause
-
                 return seq.Length;
             }
 

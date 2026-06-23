@@ -942,7 +942,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             this.phonemeText.Append(phonemeRight.phonemeText);
         }
 
-        public Phoneme Append(string str)
+        public Phoneme Append(ReadOnlySpan<char> str)
         {
             this.phonemeText.Append(str);
             return this;
