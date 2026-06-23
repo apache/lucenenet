@@ -425,6 +425,18 @@ namespace Lucene.Net.Analysis.Util
         // See ArrayBufferWriter for an inspiration and reference implementation:
         // https://github.com/dotnet/runtime/blob/v10.0.6/src/libraries/Common/src/System/Buffers/ArrayBufferWriter.cs
 
+        /// <summary>
+        /// Notifies <see cref="IBufferWriter{T}"/> that <paramref name="count"/> amount of data was written to the output <see cref="Span{T}"/>/<see cref="Memory{T}"/>
+        /// </summary>
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="count"/> is negative.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when attempting to advance past the end of the underlying buffer.
+        /// </exception>
+        /// <remarks>
+        /// You must request a new buffer after calling Advance to continue writing more data and cannot write to a previously acquired buffer.
+        /// </remarks>
         public void Advance(int count)
         {
             if (count < 0)
@@ -436,6 +448,20 @@ namespace Lucene.Net.Analysis.Util
             m_len += count;
         }
 
+        /// <summary>
+        /// Returns a <see cref="Memory{T}"/> to write to that is at least the requested length (specified by <paramref name="sizeHint"/>).
+        /// If no <paramref name="sizeHint"/> is provided (or it's equal to <c>0</c>), some buffer of minimum length 16 is returned.
+        /// </summary>
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="sizeHint"/> is negative.
+        /// </exception>
+        /// <remarks>
+        /// This will never return an empty <see cref="Memory{T}"/>.
+        /// <para />
+        /// There is no guarantee that successive calls will return the same buffer or the same-sized buffer.
+        /// <para />
+        /// You must request a new buffer after calling <see cref="Advance"/> to continue writing more data and cannot write to a previously acquired buffer.
+        /// </remarks>
         public Memory<char> GetMemory(int sizeHint = 0)
         {
             CheckAndResizeBufferForBufferWriter(sizeHint);
@@ -443,6 +469,20 @@ namespace Lucene.Net.Analysis.Util
             return m_buf.AsMemory(m_len);
         }
 
+        /// <summary>
+        /// Returns a <see cref="Span{T}"/> to write to that is at least the requested length (specified by <paramref name="sizeHint"/>).
+        /// If no <paramref name="sizeHint"/> is provided (or it's equal to <c>0</c>), some buffer of minimum length 16 is returned.
+        /// </summary>
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="sizeHint"/> is negative.
+        /// </exception>
+        /// <remarks>
+        /// This will never return an empty <see cref="Span{T}"/>.
+        /// <para />
+        /// There is no guarantee that successive calls will return the same buffer or the same-sized buffer.
+        /// <para />
+        /// You must request a new buffer after calling <see cref="Advance"/> to continue writing more data and cannot write to a previously acquired buffer.
+        /// </remarks>
         public Span<char> GetSpan(int sizeHint = 0)
         {
             CheckAndResizeBufferForBufferWriter(sizeHint);
@@ -459,7 +499,12 @@ namespace Lucene.Net.Analysis.Util
 
             if (sizeHint == 0)
             {
-                sizeHint = 1;
+                // LUCENENET NOTE: 16 is a reasonable, arbitrary minimum for text.
+                // ArrayBufferWriter uses 1, just to ensure that it does not return
+                // an empty buffer. If the caller does not care what size they get
+                // back (by not providing a sizeHint), they have to work with what
+                // is returned. This value should be enough for most short strings.
+                sizeHint = 16;
             }
 
             EnsureCapacity(sizeHint);

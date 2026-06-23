@@ -570,19 +570,15 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// <summary>
         /// Returns a <see cref="Memory{T}"/> to write to, starting at the current
         /// term length, that is at least <paramref name="sizeHint"/> characters in
-        /// length. The buffer is grown if necessary; the returned memory is never
-        /// empty.
+        /// length (or 10, if not provided or <c>0</c>). The buffer is grown if necessary;
+        /// the returned memory is never empty.
         /// <para/>
         /// LUCENENET specific - implements <see cref="System.Buffers.IBufferWriter{T}"/>.
         /// </summary>
         /// <param name="sizeHint">
         /// The minimum requested length of the returned <see cref="Memory{T}"/>.
-        /// A value of <c>0</c> requests a non-empty buffer of unspecified size.
+        /// A value of <c>0</c> requests a buffer of minimum length 10.
         /// </param>
-        /// <returns>
-        /// A <see cref="Memory{T}"/> of at least <paramref name="sizeHint"/>
-        /// characters (and at least one character).
-        /// </returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="sizeHint"/> is negative.
         /// </exception>
@@ -596,19 +592,15 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// <summary>
         /// Returns a <see cref="Span{T}"/> to write to, starting at the current
         /// term length, that is at least <paramref name="sizeHint"/> characters in
-        /// length. The buffer is grown if necessary; the returned span is never
-        /// empty.
+        /// length (or 10, if not provided or <c>0</c>). The buffer is grown if necessary;
+        /// the returned span is never empty.
         /// <para/>
         /// LUCENENET specific - implements <see cref="System.Buffers.IBufferWriter{T}"/>.
         /// </summary>
         /// <param name="sizeHint">
         /// The minimum requested length of the returned <see cref="Span{T}"/>.
-        /// A value of <c>0</c> requests a non-empty buffer of unspecified size.
+        /// A value of <c>0</c> requests a buffer of minimum length 10.
         /// </param>
-        /// <returns>
-        /// A <see cref="Span{T}"/> of at least <paramref name="sizeHint"/>
-        /// characters (and at least one character).
-        /// </returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="sizeHint"/> is negative.
         /// </exception>
@@ -628,7 +620,12 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             if (sizeHint == 0)
             {
-                sizeHint = 1;
+                // LUCENENET NOTE: 10 is a reasonable, arbitrary minimum for text.
+                // ArrayBufferWriter uses 1, just to ensure that it does not return
+                // an empty buffer. If the caller does not care what size they get
+                // back (by not providing a sizeHint), they have to work with what
+                // is returned. This value should be enough for most short strings.
+                sizeHint = MIN_BUFFER_SIZE;
             }
 
             _ = InternalResizeBuffer(termLength + sizeHint);
