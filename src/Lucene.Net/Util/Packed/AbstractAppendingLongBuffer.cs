@@ -1,5 +1,7 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
@@ -26,7 +28,8 @@ namespace Lucene.Net.Util.Packed
     /// <para/>
     /// NOTE: This was AbstractAppendingLongBuffer in Lucene
     /// </summary>
-    public abstract class AbstractAppendingInt64Buffer : Int64Values // LUCENENET NOTE: made public rather than internal because has public subclasses
+    public abstract class AbstractAppendingInt64Buffer : Int64Values, // LUCENENET NOTE: made public rather than internal because has public subclasses
+        IEnumerable<long> // LUCENENET specific
     {
         internal const int MIN_PAGE_SIZE = 64;
 
@@ -105,7 +108,7 @@ namespace Lucene.Net.Util.Packed
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void Grow(int newBlockCount)
         {
-            Array.Resize<PackedInt32s.Reader>(ref values, newBlockCount);
+            Array.Resize(ref values, newBlockCount);
         }
 
         internal abstract void PackPendingValues();
@@ -144,12 +147,16 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Return an iterator over the values of this buffer.
         /// </summary>
-        public virtual Iterator GetIterator()
+        public virtual Enumerator GetEnumerator()
         {
-            return new Iterator(this);
+            return new Enumerator(this);
         }
 
-        public sealed class Iterator
+        IEnumerator<long> IEnumerable<long>.GetEnumerator() => GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public sealed class Enumerator : IEnumerator<long>
         {
             private readonly AbstractAppendingInt64Buffer outerInstance;
 
@@ -157,20 +164,10 @@ namespace Lucene.Net.Util.Packed
             internal int vOff, pOff;
             internal int currentCount; // number of entries of the current page
 
-            internal Iterator(AbstractAppendingInt64Buffer outerInstance)
+            internal Enumerator(AbstractAppendingInt64Buffer outerInstance)
             {
                 this.outerInstance = outerInstance;
-                vOff = pOff = 0;
-                if (outerInstance.valuesOff == 0)
-                {
-                    currentValues = outerInstance.pending;
-                    currentCount = outerInstance.pendingOff;
-                }
-                else
-                {
-                    currentValues = new long[outerInstance.values[0].Count];
-                    FillValues();
-                }
+                Reset(); // LUCENENET specific - moved from ctor
             }
 
             internal void FillValues()
@@ -191,15 +188,24 @@ namespace Lucene.Net.Util.Packed
             }
 
             /// <summary>
-            /// Whether or not there are remaining values. </summary>
-            public bool HasNext => pOff < currentCount;
+            /// Gets the current value.
+            /// </summary>
+            public long Current { get; private set; }
+
+            object IEnumerator.Current => Current;
 
             /// <summary>
-            /// Return the next long in the buffer. </summary>
-            public long Next()
+            /// Advances the enumerator to the next value.
+            /// </summary>
+            public bool MoveNext()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(HasNext);
-                long result = currentValues[pOff++];
+                if (pOff >= currentCount)
+                {
+                    return false;
+                }
+
+                Current = currentValues[pOff++];
+
                 if (pOff == currentCount)
                 {
                     vOff += 1;
@@ -213,7 +219,33 @@ namespace Lucene.Net.Util.Packed
                         currentCount = 0;
                     }
                 }
-                return result;
+
+                return true;
+            }
+
+            /// <summary>
+            /// Resets the enumerator to its initial position.
+            /// </summary>
+            public void Reset()
+            {
+                vOff = pOff = 0;
+                if (outerInstance.valuesOff == 0)
+                {
+                    currentValues = outerInstance.pending;
+                    currentCount = outerInstance.pendingOff;
+                }
+                else
+                {
+                    currentValues = new long[outerInstance.values[0].Count];
+                    FillValues();
+                }
+            }
+
+            /// <summary>
+            /// Dispose of the resources used by the <see cref="Enumerator"/>.
+            /// </summary>
+            public void Dispose()
+            {
             }
         }
 

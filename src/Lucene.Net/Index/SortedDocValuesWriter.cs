@@ -123,16 +123,16 @@ namespace Lucene.Net.Index
                 ordMap[sortedValues[ord]] = ord;
             }
 
-            dvConsumer.AddSortedField(fieldInfo, GetBytesRefEnumberable(valueCount, sortedValues),
+            dvConsumer.AddSortedField(fieldInfo, GetBytesRefEnumerable(valueCount, sortedValues),
                                       // doc -> ord
-                                      GetOrdsEnumberable(maxDoc, ordMap));
+                                      GetOrdsEnumerable(maxDoc, ordMap));
         }
 
         public override void Abort()
         {
         }
 
-        private IEnumerable<BytesRef> GetBytesRefEnumberable(int valueCount, int[] sortedValues)
+        private IEnumerable<BytesRef> GetBytesRefEnumerable(int valueCount, int[] sortedValues)
         {
             var scratch = new BytesRef();
 
@@ -142,14 +142,15 @@ namespace Lucene.Net.Index
             }
         }
 
-        private IEnumerable<long?> GetOrdsEnumberable(int maxDoc, int[] ordMap)
+        private IEnumerable<long?> GetOrdsEnumerable(int maxDoc, int[] ordMap)
         {
-            AppendingDeltaPackedInt64Buffer.Iterator iter = pending.GetIterator();
+            using var enumerator = pending.GetEnumerator();
             if (Debugging.AssertsEnabled) Debugging.Assert(pending.Count == maxDoc);
 
             for (int i = 0; i < maxDoc; ++i)
             {
-                int ord = (int)iter.Next();
+                enumerator.MoveNext();
+                int ord = (int)enumerator.Current;
                 yield return ord == -1 ? ord : ordMap[ord];
             }
         }

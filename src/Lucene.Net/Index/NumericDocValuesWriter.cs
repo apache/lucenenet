@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
         private IEnumerable<long?> GetNumericIterator(int maxDoc)
         {
             // LUCENENET specific: using yield return instead of custom iterator type. Much less code.
-            AbstractAppendingInt64Buffer.Iterator iter = pending.GetIterator();
+            using var enumerator = pending.GetEnumerator();
             int size = (int)pending.Count;
             int upto = 0;
 
@@ -111,7 +111,8 @@ namespace Lucene.Net.Index
                 long? value;
                 if (upto < size)
                 {
-                    var v = iter.Next();
+                    enumerator.MoveNext();
+                    var v = enumerator.Current;
                     if (docsWithField is null || docsWithField.Get(upto))
                     {
                         value = v;

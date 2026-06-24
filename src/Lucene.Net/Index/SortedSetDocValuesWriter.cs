@@ -202,13 +202,14 @@ namespace Lucene.Net.Index
         [SuppressMessage("ReSharper", "AccessToStaticMemberViaDerivedType", Justification = "Matches Lucene")]
         private IEnumerable<long?> GetOrdCountEnumerable(int maxDoc)
         {
-            AppendingDeltaPackedInt64Buffer.Iterator iter = pendingCounts.GetIterator();
+            using var enumerator = pendingCounts.GetEnumerator();
 
             if (Debugging.AssertsEnabled) Debugging.Assert(pendingCounts.Count == maxDoc, "MaxDoc: {0}, pending.Count: {1}", maxDoc, pending.Count);
 
             for (int docUpto = 0; docUpto < maxDoc; ++docUpto)
             {
-                yield return iter.Next();
+                enumerator.MoveNext();
+                yield return enumerator.Current;
             }
         }
 
@@ -216,8 +217,8 @@ namespace Lucene.Net.Index
         private IEnumerable<long?> GetOrdsEnumerable(int[] ordMap, int maxCountPerDoc)
         {
             int currentUpTo = 0, currentLength = 0;
-            AppendingPackedInt64Buffer.Iterator iter = pending.GetIterator();
-            AppendingDeltaPackedInt64Buffer.Iterator counts = pendingCounts.GetIterator();
+            using var enumerator = pending.GetEnumerator();
+            using var counts = pendingCounts.GetEnumerator();
             int[] cd = new int[maxCountPerDoc]; // LUCENENET specific - renamed from currentDoc to cd to prevent conflict
 
             for (long ordUpto = 0; ordUpto < pending.Count; ++ordUpto)
@@ -226,10 +227,12 @@ namespace Lucene.Net.Index
                 {
                     // refill next doc, and sort remapped ords within the doc.
                     currentUpTo = 0;
-                    currentLength = (int)counts.Next();
+                    counts.MoveNext();
+                    currentLength = (int)counts.Current;
                     for (int j = 0; j < currentLength; j++)
                     {
-                        cd[j] = ordMap[(int)iter.Next()];
+                        enumerator.MoveNext();
+                        cd[j] = ordMap[(int)enumerator.Current];
                     }
                     Array.Sort(cd, 0, currentLength);
                 }
