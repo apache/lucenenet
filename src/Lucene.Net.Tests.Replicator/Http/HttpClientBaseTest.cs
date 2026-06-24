@@ -54,7 +54,8 @@ namespace Lucene.Net.Replicator.Http
 
         private sealed class MockHttpMessageHandler : HttpMessageHandler
         {
-            public Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> Handler { get; init; } =
+            // ReSharper disable once PropertyCanBeMadeInitOnly.Local - not trivially supported on .NET Framework
+            public Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> Handler { get; set; } =
                 (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("ok") });
 
             protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
