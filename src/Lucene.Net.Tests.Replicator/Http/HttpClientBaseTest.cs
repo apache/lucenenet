@@ -169,7 +169,8 @@ namespace Lucene.Net.Replicator.Http
             using var client = new TestableHttpClientBase("http://example/", new HttpClient(handler));
 
             var task = client.ExecuteGetAsync("action", parameters: null, cts.Token);
-            await cts.CancelAsync();
+            // ReSharper disable once MethodHasAsyncOverload - not supported on .NET Framework
+            cts.Cancel();
 
             try
             {
@@ -315,7 +316,8 @@ namespace Lucene.Net.Replicator.Http
             using var client = new TestableHttpClientBase("http://example/", new HttpClient(handler));
 
             var task = client.ExecutePostAsync("action", new StringContent("x"), cts.Token);
-            await cts.CancelAsync();
+            // ReSharper disable once MethodHasAsyncOverload - not supported on .NET Framework
+            cts.Cancel();
 
             try
             {
