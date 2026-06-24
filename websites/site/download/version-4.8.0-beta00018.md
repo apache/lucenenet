@@ -1,4 +1,4 @@
-﻿---
+---
 uid: download/4.8.0-beta00018
 version: 4.8.0-beta00018
 ---
