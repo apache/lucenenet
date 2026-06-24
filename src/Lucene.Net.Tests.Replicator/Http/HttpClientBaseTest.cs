@@ -250,7 +250,8 @@ namespace Lucene.Net.Replicator.Http
 
             try
             {
-                await using var stream = await replicator.ObtainFileAsync("s", "src", "file.dat");
+                // ReSharper disable once UseAwaitUsing - not supported on .NET Framework
+                using var stream = await replicator.ObtainFileAsync("s", "src", "file.dat");
                 fail("expected exception");
             }
             catch (Exception e) when (e.IsThrowable())
