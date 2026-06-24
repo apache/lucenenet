@@ -1173,7 +1173,7 @@ namespace Lucene.Net.Util
         /// </summary>
         // LUCENENET specific - changed from public to internal since IsTestThread is only meaningful
         // within the test framework. Mirrors Java's check against ThreadAndTestNameRule.testCaseThread.
-        internal static bool IsTestThread => testCaseThread != null && Thread.CurrentThread == testCaseThread;
+        internal static bool IsTestThread => Thread.CurrentThread == testCaseThread;
 
         /// <summary>
         /// Asserts that <see cref="FieldCacheSanityChecker"/> does not detect any
