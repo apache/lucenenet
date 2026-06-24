@@ -122,6 +122,7 @@ jobs:
           repository: ${{ env.SITE_REPO }}
           ref: asf-site
           path: website-repo
+          persist-credentials: false
 
       - name: Copy website files
         run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\site\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo" -Recurse -Force
