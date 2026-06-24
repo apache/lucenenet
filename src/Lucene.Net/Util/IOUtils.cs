@@ -5,11 +5,9 @@ using Lucene.Net.Support.IO;
 using Lucene.Net.Support.Text;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Lucene.Net.Util
