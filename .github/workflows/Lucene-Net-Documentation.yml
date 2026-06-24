@@ -146,7 +146,7 @@ jobs:
         run: |
           $shortSHA = $Env:GITHUB_SHA.Substring(0, 7)
 
-          echo ("PR_BRANCH=docs-build-" + $Env:RELEASE_VERSION + "-" + $shortSHA) >> $env:GITHUB_ENV
+          echo ("PR_BRANCH=docs-build-" + $Env:RELEASE_VERSION + "-" + $shortSHA + "-" + $Env:GITHUB_RUN_NUMBER) >> $env:GITHUB_ENV
         shell: powershell
 
       - name: Verify environment variables
