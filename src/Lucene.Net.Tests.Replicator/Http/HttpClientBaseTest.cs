@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+#nullable enable
 
 namespace Lucene.Net.Replicator.Http
 {
@@ -44,19 +45,17 @@ namespace Lucene.Net.Replicator.Http
             {
             }
 
-            public new Task<HttpResponseMessage> ExecuteGetAsync(string request, string[] parameters, CancellationToken cancellationToken)
+            public new Task<HttpResponseMessage> ExecuteGetAsync(string request, string[]? parameters, CancellationToken cancellationToken)
                 => base.ExecuteGetAsync(request, parameters, cancellationToken);
 
-            public new Task<HttpResponseMessage> ExecutePostAsync(string request, HttpContent content, CancellationToken cancellationToken, params string[] parameters)
+            public new Task<HttpResponseMessage> ExecutePostAsync(string request, HttpContent content, CancellationToken cancellationToken, params string[]? parameters)
                 => base.ExecutePostAsync(request, content, cancellationToken, parameters);
         }
 
         private sealed class MockHttpMessageHandler : HttpMessageHandler
         {
-            public Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> Handler { get; set; } =
-                (_, __) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("ok") });
-
-            public HttpCompletionOption? LastCompletionOption { get; set; }
+            public Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> Handler { get; init; } =
+                (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("ok") });
 
             protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
             {
@@ -102,7 +101,7 @@ namespace Lucene.Net.Replicator.Http
         {
             var handler = new MockHttpMessageHandler
             {
-                Handler = (_, __) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                Handler = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError)
                 {
                     ReasonPhrase = "boom",
                     Content = new StringContent("server failed"),
@@ -130,8 +129,9 @@ namespace Lucene.Net.Replicator.Http
             using var gate = new ManualResetEventSlim(false);
             var handler = new MockHttpMessageHandler
             {
-                Handler = (_, __) =>
+                Handler = (_, _) =>
                 {
+                    // ReSharper disable once AccessToDisposedClosure
                     var content = new StreamContent(new BlockingStream(gate));
                     var resp = new HttpResponseMessage(HttpStatusCode.OK) { Content = content };
                     return Task.FromResult(resp);
@@ -168,7 +168,7 @@ namespace Lucene.Net.Replicator.Http
             using var client = new TestableHttpClientBase("http://example/", new HttpClient(handler));
 
             var task = client.ExecuteGetAsync("action", parameters: null, cts.Token);
-            cts.Cancel();
+            await cts.CancelAsync();
 
             try
             {
@@ -186,7 +186,7 @@ namespace Lucene.Net.Replicator.Http
         {
             var handler = new MockHttpMessageHandler
             {
-                Handler = (_, __) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.BadGateway)
+                Handler = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.BadGateway)
                 {
                     ReasonPhrase = "bad gateway",
                     Content = new StringContent(string.Empty),
@@ -217,7 +217,7 @@ namespace Lucene.Net.Replicator.Http
             private int disposeCount;
             public int DisposeCount => disposeCount;
 
-            public DisposeTrackingResponse(System.Net.HttpStatusCode status) : base(status) { }
+            public DisposeTrackingResponse(HttpStatusCode status) : base(status) { }
 
             protected override void Dispose(bool disposing)
             {
@@ -231,11 +231,11 @@ namespace Lucene.Net.Replicator.Http
         {
             // Regression test for response-leak bug: ObtainFileAsync hands response
             // ownership to the returned stream only on success; on failure the
-            // response must be disposed.
+            // response must be disposed of.
             DisposeTrackingResponse? capturedResponse = null;
             var handler = new MockHttpMessageHandler
             {
-                Handler = (_, __) =>
+                Handler = (_, _) =>
                 {
                     capturedResponse = new DisposeTrackingResponse(HttpStatusCode.OK)
                     {
@@ -248,7 +248,7 @@ namespace Lucene.Net.Replicator.Http
 
             try
             {
-                using var stream = await replicator.ObtainFileAsync("s", "src", "file.dat");
+                await using var stream = await replicator.ObtainFileAsync("s", "src", "file.dat");
                 fail("expected exception");
             }
             catch (Exception e) when (e.IsThrowable())
@@ -261,12 +261,12 @@ namespace Lucene.Net.Replicator.Http
         }
 
         /// <summary>
-        /// HttpContent whose stream creation throws — used to simulate the
+        /// <see cref="HttpContent"/> whose stream creation throws — used to simulate the
         /// post-headers failure path in ObtainFileAsync.
         /// </summary>
         private sealed class ThrowingContent : HttpContent
         {
-            protected override Task SerializeToStreamAsync(Stream stream, System.Net.TransportContext? context)
+            protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)
                 => throw new IOException("simulated body failure");
 
             protected override bool TryComputeLength(out long length)
@@ -314,7 +314,7 @@ namespace Lucene.Net.Replicator.Http
             using var client = new TestableHttpClientBase("http://example/", new HttpClient(handler));
 
             var task = client.ExecutePostAsync("action", new StringContent("x"), cts.Token);
-            cts.Cancel();
+            await cts.CancelAsync();
 
             try
             {
