@@ -1,3 +1,4 @@
+using Lucene.Net.Reflection;
 using System;
 
 namespace Lucene.Net.Search
@@ -27,6 +28,7 @@ namespace Lucene.Net.Search
     /// list of collectors and wraps them with <see cref="MultiCollector"/>, while
     /// filtering out the <c>null</c> ones.
     /// </summary>
+    [LuceneBaseTypeDifference("Uses ICollector interface instead of Collector abstract base class")]
     public class MultiCollector : ICollector
     {
         /// <summary>

@@ -1,4 +1,6 @@
 // Lucene version compatibility level 8.2.0
+
+using Lucene.Net.Reflection;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -29,6 +31,7 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
     /// Morphosyntactic annotations for surface forms.
     /// </summary>
     /// <seealso cref="IMorphosyntacticTagsAttribute"/>
+    [LuceneType("org.apache.lucene.analysis.morfologik", "MorphosyntacticTagsAttributeImpl", Justification = "Namespace/package mismatch, not able to be inferred by convention")]
     public class MorphosyntacticTagsAttribute : Attribute, IMorphosyntacticTagsAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         /// <summary>Initializes this attribute with no tags</summary>

@@ -15,6 +15,7 @@
 * limitations under the License.
 */
 
+using Lucene.Net.Reflection;
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -35,3 +36,5 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("2e4a99a0-c52e-4e66-9246-69ef75124b61")]
+
+[assembly: LuceneMavenMapping("org.apache.lucene", "lucene-analyzers-morfologik", "4.8.1")]
