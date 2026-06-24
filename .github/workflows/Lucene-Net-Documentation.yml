@@ -33,13 +33,19 @@ name: 'Lucene.Net.Documentation'
 on:
   workflow_dispatch:
   push:
+    # 2026-06-23 - when both tags and branches are used, they are ORed. However, note that when paths is used, it is ANDed to each of them.
     tags:
     - Docs_*
-    #branches:
-    #- master
-    paths:
-    - 'websites/apidocs/**/*'
-    - 'src/docs/LuceneDocsPlugins/**/*'
+    # 2026-06-23 - the docs/** branch is the source of truth for each docs site build. Those branches must be carefully managed to ensure that nothing is committed
+    # to them that deviates from the state of the API at the time of the release. Updates to the spelling or explanation of an API are usually okay. Updates to the
+    # API parameter lists or other criteria that define the public signature are not.
+    branches:
+    - docs/**
+    # 2026-06-23 - the docs/** branches should be "filtered" manaually to ensure no unwanted changes are ever committed. But if so, the PR that this automation
+    # creates can be rejected and the errantly committed changes can be reverted before rebuilding the API docs site.
+    #paths:
+    #- 'websites/apidocs/**/*'
+    #- 'src/docs/LuceneDocsPlugins/**/*'
 
 env:
   # If a tag is specified, the tag will be in the format: Docs_4_8_0_beta00013
@@ -62,71 +68,113 @@ jobs:
           path: main-repo
           fetch-depth: 0
 
-      - name: Set version from tag
+      - name: Set version from ref
         run: |
           # initialize to SHA
-          echo ("CURRENT_TAG=" + $Env:GITHUB_SHA) >> $env:GITHUB_ENV
+          echo ("CURRENT_REF=" + $Env:GITHUB_SHA) >> $env:GITHUB_ENV
+
           $ref = $Env:GITHUB_REF
 
-          if ($ref.StartsWith("refs/tags/")) {
-            $tag = $ref.Substring(10)
-            echo "extracted tag name from refs/tags as $tag"
-          }
-          else {
-            echo "Get the latest Lucene.Net_ tag"
-            $tag = & git --git-dir "$Env:GIT_MAIN_REPO" tag --list --sort=-version:refname 'Lucene.Net_[0-9]_[0-9]_[0-9]*' | select -first 1
+          if ($ref.StartsWith("refs/heads/docs/")) {
+
+              $version = $ref.Substring("refs/heads/docs/".Length)
+
+              echo "Detected docs branch version: $version"
+
+              echo ("CURRENT_REF=" + $Env:GITHUB_REF_NAME) >> $env:GITHUB_ENV
+              echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
+          } elseif ($ref.StartsWith("refs/heads/release/")) {
+
+              $version = $ref.Substring("refs/heads/release/".Length)
+
+              echo "Detected release branch version: $version"
+
+              echo ("CURRENT_REF=" + $Env:GITHUB_REF_NAME) >> $env:GITHUB_ENV
+              echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
+          } elseif ($ref.StartsWith("refs/tags/Docs_")) {
+
+              $tag = $ref.Substring(10)
+
+              echo "Detected docs tag: $tag"
+
+              $parts = $tag.Split("_")
+
+              $version = ''
+              for ($i = 1; $i -lt $parts.Length; $i++) {
+                  $version += $parts[$i]
+
+                  if ($i -eq ($parts.Length - 2)) {
+                      $version += "-"
+                  }
+                  elseif ($i -lt ($parts.Length - 1)) {
+                      $version += "."
+                  }
+              }
+
+              echo ("CURRENT_REF=" + $tag) >> $env:GITHUB_ENV
+              echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
+          } else {
+
+              echo "No versioned branch detected. Falling back to latest Lucene.Net tag."
+
+              $tag = & git --git-dir "$Env:GIT_MAIN_REPO" tag --list --sort=-version:refname 'Lucene.Net_[0-9]_[0-9]_[0-9]*' | select -first 1
+
+              if ($tag -eq $null) {
+                  echo "::error::Could not determine current version"
+                  exit 1
+              }
+
+              $parts = $tag.Split("_")
+
+              $version = ''
+              for ($i = 1; $i -lt $parts.Length; $i++) {
+                  $version += $parts[$i]
+
+                  if ($i -eq ($parts.Length - 2)) {
+                      $version += "-"
+                  }
+                  elseif ($i -lt ($parts.Length - 1)) {
+                      $version += "."
+                  }
+              }
+
+              echo ("CURRENT_REF=" + $tag) >> $env:GITHUB_ENV
+              echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
           }
 
-          if ($tag -eq $null) {
-            echo "::error::Could not determine current version tag"
-            exit 1
-          }
+      - name: Set PR branch name
+        run: |
+          $shortSHA = $Env:GITHUB_SHA.Substring(0, 7)
 
-          # write the environment var
-          echo ("CURRENT_TAG=" + $tag) >> $env:GITHUB_ENV
-
-          $parts = $tag.Split("_")
-          $version = '';
-          For ($i=1; $i -le $parts.Length; $i++) {
-            $version += $parts[$i]
-            if ($i -eq ($parts.Length - 2)) {
-              $version += "-"
-            }
-            elseif ($i -lt ($parts.Length - 1)) {
-              $version += "."
-            }
-          }
-
-          if ($version -ne '') {
-            # the tag parsed to the correct version format, write the environment var
-            echo ("RELEASE_VERSION=" + $version) >> $env:GITHUB_ENV
-          }
-          else {
-            echo "::error::Could not parse current version tag"
-            exit 1
-          }
+          echo ("PR_BRANCH=docs-build-" + $Env:RELEASE_VERSION + "-" + $shortSHA + "-" + $Env:GITHUB_RUN_NUMBER) >> $env:GITHUB_ENV
         shell: powershell
 
       - name: Verify environment variables
         run: |
           echo "CURRENT_TAG=$Env:CURRENT_TAG"
+          echo "GITHUB_REF=$Env:GITHUB_REF"
+          echo "GITHUB_REF_NAME=$Env:GITHUB_REF_NAME"
+          echo "GITHUB_SHA=$Env:GITHUB_SHA"
+          echo "CURRENT_REF=$Env:CURRENT_REF"
           echo "RELEASE_VERSION=$Env:RELEASE_VERSION"
+          echo "PR_BRANCH=$Env:PR_BRANCH"
         shell: powershell
 
-      - name: Change branch
-        run: |
-          git --git-dir "$Env:GIT_MAIN_REPO" checkout -b "docs/${{ env.RELEASE_VERSION }}"
-        shell: powershell
-
-      - name: Setup .NET 6 SDK
-        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
-        with:
-          dotnet-version: '6.0.x'
+      # NOTE: It isn't clear why we were doing this, but removing because this could cause errors when using either docs/VERSION or release/VERSION style branches
+      #- name: Change branch
+      #  run: |
+      #    git --git-dir "$Env:GIT_MAIN_REPO" checkout -b "docs/${{ env.RELEASE_VERSION }}"
+      #  shell: powershell
 
       - name: Setup .NET 8 SDK
         uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
         with:
           dotnet-version: '8.0.x'
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
+        with:
+          dotnet-version: '10.0.x'
 
       - name: Build docs
         run: ./main-repo/websites/apidocs/docs.ps1 -Clean -LuceneNetVersion ${{ env.RELEASE_VERSION }}
@@ -147,7 +195,17 @@ jobs:
           path: website-repo
 
       - name: Copy documentation site files
-        run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\apidocs\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo\docs\$Env:RELEASE_VERSION" -Recurse -Force
+        run: |
+          $source = "$Env:GITHUB_WORKSPACE\main-repo\websites\apidocs\_site"
+          $dest = "$Env:GITHUB_WORKSPACE\website-repo\docs\$Env:RELEASE_VERSION"
+
+          if (Test-Path $dest) {
+              Remove-Item $dest -Recurse -Force
+          }
+
+          New-Item -ItemType Directory -Path $dest -Force | Out-Null
+
+          Copy-Item "$source\*" -Destination $dest -Recurse -Force
         shell: powershell
 
       # Always push to the same branch based on the CURRENT_TAG (latest version tag)
@@ -161,11 +219,11 @@ jobs:
           commit-message: New documentation version built
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          branch: ${{ env.CURRENT_TAG }}
+          branch: ${{ env.PR_BRANCH }}
           delete-branch: true
-          title: 'New documentation version built ${{ env.CURRENT_TAG }}'
+          title: 'New documentation version built ${{ env.PR_BRANCH }}'
           body: |
-            New documentation version built ${{ env.CURRENT_TAG }}
+            New documentation version built from ${{ github.sha }}
             - For version ${{ env.RELEASE_VERSION }}
 
       - name: Check outputs
