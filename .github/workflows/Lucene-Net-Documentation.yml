@@ -42,7 +42,7 @@ on:
     branches:
     - docs/**
     # 2026-06-23 - the docs/** branches should be "filtered" manaually to ensure no unwanted changes are ever committed. But if so, the PR that this automation
-    # creates can be rejected and the errantly commited changes can be reverted before rebuilding the API docs site.
+    # creates can be rejected and the errantly committed changes can be reverted before rebuilding the API docs site.
     #paths:
     #- 'websites/apidocs/**/*'
     #- 'src/docs/LuceneDocsPlugins/**/*'
@@ -163,7 +163,7 @@ jobs:
         run: |
           $shortSHA = $Env:GITHUB_SHA.Substring(0, 7)
 
-          echo ("PR_BRANCH=docs-build-" + $Env:RELEASE_VERSION + "-" + $shortSHA) >> $env:GITHUB_ENV
+          echo ("PR_BRANCH=docs-build-" + $Env:RELEASE_VERSION + "-" + $shortSHA + "-" + $Env:GITHUB_RUN_NUMBER) >> $env:GITHUB_ENV
         shell: powershell
 
       - name: Setup .NET 6 SDK
@@ -207,17 +207,6 @@ jobs:
 
           Copy-Item "$source\*" -Destination $dest -Recurse -Force
         shell: powershell
-
-      - name: Verify structure
-        shell: powershell
-        run: |
-          $dest = "$Env:GITHUB_WORKSPACE\website-repo\docs\$Env:RELEASE_VERSION"
-
-          Write-Host "Directories at root:"
-          Get-ChildItem $dest -Directory | Select-Object Name
-
-          Write-Host "API exists?"
-          Test-Path "$dest\api"
 
       # Always push to the same branch based on the CURRENT_TAG (latest version tag)
       # Because we are always building the docs against a consistent version
