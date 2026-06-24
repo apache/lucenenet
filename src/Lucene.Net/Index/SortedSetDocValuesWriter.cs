@@ -208,7 +208,8 @@ namespace Lucene.Net.Index
 
             for (int docUpto = 0; docUpto < maxDoc; ++docUpto)
             {
-                enumerator.MoveNext();
+                bool moved = enumerator.MoveNext();
+                if (Debugging.AssertsEnabled) Debugging.Assert(moved);
                 yield return enumerator.Current;
             }
         }
@@ -227,11 +228,13 @@ namespace Lucene.Net.Index
                 {
                     // refill next doc, and sort remapped ords within the doc.
                     currentUpTo = 0;
-                    counts.MoveNext();
+                    bool countsMoved = counts.MoveNext();
+                    if (Debugging.AssertsEnabled) Debugging.Assert(countsMoved);
                     currentLength = (int)counts.Current;
                     for (int j = 0; j < currentLength; j++)
                     {
-                        enumerator.MoveNext();
+                        bool moved = enumerator.MoveNext();
+                        if (Debugging.AssertsEnabled) Debugging.Assert(moved);
                         cd[j] = ordMap[(int)enumerator.Current];
                     }
                     Array.Sort(cd, 0, currentLength);

@@ -149,7 +149,8 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < maxDoc; ++i)
             {
-                enumerator.MoveNext();
+                bool moved = enumerator.MoveNext();
+                if (Debugging.AssertsEnabled) Debugging.Assert(moved);
                 int ord = (int)enumerator.Current;
                 yield return ord == -1 ? ord : ordMap[ord];
             }

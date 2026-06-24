@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 
@@ -147,7 +148,8 @@ namespace Lucene.Net.Index
                 BytesRef v = null;
                 if (upto < size)
                 {
-                    lengthsEnumerator.MoveNext();
+                    bool moved = lengthsEnumerator.MoveNext();
+                    if (Debugging.AssertsEnabled) Debugging.Assert(moved);
                     int length = (int)lengthsEnumerator.Current;
                     value.Grow(length);
                     value.Length = length;

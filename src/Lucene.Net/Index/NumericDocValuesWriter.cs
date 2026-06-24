@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
@@ -111,7 +112,8 @@ namespace Lucene.Net.Index
                 long? value;
                 if (upto < size)
                 {
-                    enumerator.MoveNext();
+                    bool moved = enumerator.MoveNext();
+                    if (Debugging.AssertsEnabled) Debugging.Assert(moved);
                     var v = enumerator.Current;
                     if (docsWithField is null || docsWithField.Get(upto))
                     {
