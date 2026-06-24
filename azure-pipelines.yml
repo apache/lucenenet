@@ -25,7 +25,7 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 # GenerateDocs: (Optional. Only builds documentation website if set to 'true'.)
 # GenerateWebsite: (Optional. Only builds lucene.net website if set to 'true'.)
 # IsRelease: (Optional. By default the Release job is disabled, setting this to 'true' will enable it)
-# GeneratePackages: (Optional. Defaults to 'true'. Setting to 'false' will cut about 1 minute from the build time by skipping packing the NuGet files and subsequent artiact upload. If ArtifactFeedID is provided or IsRelease is 'true', this setting has no effect.)
+# GeneratePackages: (Optional. Defaults to 'true'. Setting to 'false' will cut about 1 minute from the build time by skipping packing the NuGet files and subsequent artifact upload. If ArtifactFeedID is provided or IsRelease is 'true', this setting has no effect.)
 
 # Versioning Variables
 
@@ -660,7 +660,7 @@ stages:
       vmImage: 'windows-latest'
 
     steps:
-    # We checkout here because we need to publish the source code along with the binaries per Apache's releae policy
+    # We checkout here because we need to publish the source code along with the binaries per Apache's release policy
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       fetchDepth: '1'  # the depth of commits to ask Git to fetch
 

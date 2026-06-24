@@ -22,7 +22,7 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// A LUCENENET specific class that represents a numeric format. This class
-    /// mimicks the design of Java's NumberFormat class, which unlike the
+    /// mimics the design of Java's NumberFormat class, which unlike the
     /// <see cref="NumberFormatInfo"/> class in .NET, can be subclassed.
     /// </summary>
     // LUCENENET NOTE: Ideally, the design of Lucene.NET would be changed to accept a

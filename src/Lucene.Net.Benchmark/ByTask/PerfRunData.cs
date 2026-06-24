@@ -85,7 +85,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         private ITaxonomyWriter taxonomyWriter;
         private TaxonomyReader taxonomyReader;
 
-        // we use separate (identical) instances for each "read" task type, so each can iterate the quries separately.
+        // we use separate (identical) instances for each "read" task type, so each can iterate the queries separately.
         private readonly IDictionary<Type, IQueryMaker> readTaskQueryMaker;
         private readonly Type qmkrClass;
 

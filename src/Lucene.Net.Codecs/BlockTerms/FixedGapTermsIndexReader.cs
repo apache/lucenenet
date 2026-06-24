@@ -374,7 +374,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                             PackedInt32s.IReaderIterator termOffsetsIter = PackedInt32s.GetReaderIterator(clone2, PackedInt32s.DEFAULT_BUFFER_SIZE);
 
                             // TODO: often we can get by w/ fewer bits per
-                            // value, below.. .but this'd be more complex:
+                            // value, below.. .but this would be more complex:
                             // we'd have to try @ fewer bits and then grow
                             // if we overflowed it.
 

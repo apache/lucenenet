@@ -69,7 +69,6 @@ despatch
 despatches
 discreet
 discus
-displaing
 doen
 dum
 ect
@@ -83,13 +82,11 @@ ened
 equest
 euclidian
 everytime
-faild
 failue
 fallow
 finis
 floatation
 fo
-formated
 formen
 formes
 fount
@@ -110,8 +107,6 @@ hendler
 highligh
 hove
 hte
-idenitifies
-identifer
 iif
 imbed
 implementor
@@ -123,7 +118,6 @@ ine
 ines
 informations
 ingenuous
-instaed
 intance
 interruted
 isnt
@@ -144,7 +138,6 @@ mane
 mange
 manger
 matchs
-maxium
 ment
 meny
 meu
@@ -152,7 +145,6 @@ meus
 millenium
 millepede
 mimicing
-mimicks
 mis
 mot
 msbuid
@@ -173,7 +165,6 @@ notin
 nowe
 occurances
 oder
-offets
 oint
 oje
 olt
@@ -198,10 +189,8 @@ prevend
 probablistic
 programer
 pronounciation
-propery
 querys
 ques
-quries
 racoon
 raison
 re-use
@@ -212,8 +201,6 @@ ream
 reasearch
 recipies
 refering
-relativly
-releae
 repot
 reproducability
 reproducable
@@ -223,7 +210,6 @@ rute
 sate
 sav
 scrip
-seach
 selv
 sentances
 seperate
@@ -256,8 +242,6 @@ thats
 therefor
 theses
 thi
-thie
-this'd
 ths
 tittle
 tje
