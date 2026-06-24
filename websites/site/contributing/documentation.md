@@ -41,17 +41,24 @@ This ensures the website is always synched with the `master` branch and PRs that
 
 ### Build script
 
+#### Local Build and Host
+
 To build the website and run it on your machine, run the PowerShell script: `./websites/site/site.ps1` with the `-ServeDocs` flag. For example:
 
-```
+```console
 ./websites/site/site.ps1 -ServeDocs
 ```
 
 When executed this will build the site and host it at [http://localhost:8081](http://localhost:8081).
 
+#### Release Build
+
+> [!IMPORTANT]
+> The following steps are automated in the `Lucene-Net-Website.yml` workflow. This workflow runs automatically when a PR or branch that contains website changes is merged/pushed to the `master` branch. The workflow submits a new PR with the compiled website content to the `lucenenet-site` repository. The below information is provided in case the automation fails and the release needs to be done manually.
+
 To build the website for release, run the script:
 
-```
+```console
 ./websites/site/site.ps1
 ```
 
@@ -137,17 +144,25 @@ publish docs site
 
 ### Build script
 
+#### Local Build and Host
+
 To build the api docs and run it on your machine, run the PowerShell script: `./websites/apidocs/docs.ps1`. For example:
 
-```
+```console
 ./websites/apidocs/docs.ps1 -ServeDocs -LuceneNetVersion 4.8.0-beta00008 -BaseUrl http://localhost:8080
 ```
 
 When executed this will build the site and host it at [http://localhost:8080](http://localhost:8080). _(Ensure to pass in the current version of Lucene.Net you are building.)_
 
+#### Release Build
+
+> [!IMPORTANT]
+> The following steps are automated in the `Lucene-Net-Documentation.yml` workflow. This workflow runs automatically when changes are pushed to the corresponding `docs/[Version]` branch. The workflow submits a new PR with the compiled API documentation content to the `lucenenet-site` repository. The below information is provided in case the automation fails and the release needs to be done manually.
+
+
 To build the api docs for release, run the script:
 
-```
+```console
 ./websites/apidocs/docs.ps1 -LuceneNetVersion 4.8.0-beta00008
 ```
 
@@ -156,13 +171,13 @@ This will build the site with all live parameters configured correctly and outpu
 The script parameters are:
 
 - `-LuceneNetVersion` _(mandatory)_ This is the Lucene.Net version including pre-release information that is being built. For example: `4.8.0-beta00008`. _(This value will correspond to the folder and branch name where the docs get hosted, see below)_
-* `-ServeDocs` _(optional)_ A boolean switch. If present, it will build the docs and host the site. If not present it will build the static site to be hosted elsewhere.
-* `-Clean` _(optional)_ A boolean switch.  If present, it will clear all caches and tool files before it builds again. This is handy if a new version of docfx is available or if there's odd things occurring with the incremental build.
-* `-DisableMetaData` _(optional)_ A boolean switch. If present it will disable the docfx metadata build operation of the docs build. Can be handy when debugging the docs build.
-* `-DisableBuild` _(optional)_ A boolean switch. If present it will disable the site building operation of the docs build. Can be handy when debugging the docs build.
-* `-DisablePlugins` _(optional)_ A boolean switch. If present it will not build the custom Lucene.Net `DocumentationTools.sln` docsfx plugins and exclude them from the build.
-* `-LogLevel` _(optional)_ Default is Warning. Options are: Diagnostic, Verbose, Info, Warning, Error.
-* `-BaseUrl` _(optional)_ Default is https://lucenenet.apache.org/docs/. Used to set the base URL of the docfx xref map files for cross linking between project builds.
+- `-ServeDocs` _(optional)_ A boolean switch. If present, it will build the docs and host the site. If not present it will build the static site to be hosted elsewhere.
+- `-Clean` _(optional)_ A boolean switch.  If present, it will clear all caches and tool files before it builds again. This is handy if a new version of docfx is available or if there's odd things occurring with the incremental build.
+- `-DisableMetaData` _(optional)_ A boolean switch. If present it will disable the docfx metadata build operation of the docs build. Can be handy when debugging the docs build.
+- `-DisableBuild` _(optional)_ A boolean switch. If present it will disable the site building operation of the docs build. Can be handy when debugging the docs build.
+- `-DisablePlugins` _(optional)_ A boolean switch. If present it will not build the custom Lucene.Net `DocumentationTools.sln` docsfx plugins and exclude them from the build.
+- `-LogLevel` _(optional)_ Default is Warning. Options are: Diagnostic, Verbose, Info, Warning, Error.
+- `-BaseUrl` _(optional)_ Default is https://lucenenet.apache.org/docs/. Used to set the base URL of the docfx xref map files for cross linking between project builds.
 
 ### File/folder structure
 
@@ -194,12 +209,12 @@ To use the dotnet tool you must download the current tag of the Java Lucene proj
 
 Then install the tool:
 
-```
+```console
 dotnet tool install javadoc2markdown --add-source https://pkgs.dev.azure.com/lucene-net/_packaging/lucene-net-tools/nuget/v3/index.json --tool-path ./
 ```
 
 Then run the command:
-```
+```console
 javadoc2markdown <LUCENE DIRECTORY> <LUCENENET DIRECTORY>
 ```
 
