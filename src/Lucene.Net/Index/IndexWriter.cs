@@ -797,7 +797,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Used internally to throw an <see cref="ObjectDisposedException"/> if this
-        /// <see cref="IndexWriter"/> has been disposed or is in the process of diposing.
+        /// <see cref="IndexWriter"/> has been disposed or is in the process of disposing.
         /// </summary>
         /// <param name="failIfDisposing">
         ///          if <c>true</c>, also fail when <see cref="IndexWriter"/> is in the process of

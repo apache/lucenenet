@@ -328,7 +328,7 @@ namespace Lucene.Net.Index
                 AtomicReader reader = mergeState.Readers[i];
                 // TODO: we may be able to broaden this to
                 // non-SegmentReaders, since FieldInfos is now
-                // required?  But... this'd also require exposing
+                // required?  But... this would also require exposing
                 // bulk-copy (TVs and stored fields) API in foreign
                 // readers..
                 if (reader is SegmentReader segmentReader)

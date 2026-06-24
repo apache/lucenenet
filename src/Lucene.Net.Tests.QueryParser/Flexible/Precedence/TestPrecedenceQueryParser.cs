@@ -343,7 +343,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
 
             /*
              * Tests to see that wild card terms are (or are not) properly lower-cased
-             * with propery parser configuration
+             * with property parser configuration
              */
             // First prefix queries:
             // by default, convert to lowercase:

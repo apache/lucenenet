@@ -319,7 +319,7 @@ namespace Lucene.Net.Search
             int numHits = expected.Length;
 
             // now do a boolean where which also contains a
-            // ConstantScoreRangeQuery and make sure hte order is the same
+            // ConstantScoreRangeQuery and make sure the order is the same
 
             BooleanQuery q = new BooleanQuery();
             q.Add(rq, Occur.MUST); // T, F);

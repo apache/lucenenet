@@ -44,7 +44,7 @@ namespace Lucene.Net.Store
         {
             byte[] bytes = new byte[10];
             ByteArrayDataOutput @out = new ByteArrayDataOutput(bytes);
-            @out.WriteChars("ABC".AsSpan());
+            @out.WriteChars("ABC");
 
             ByteArrayDataInput @in = new ByteArrayDataInput(bytes);
             Assert.AreEqual("ABC", @in.ReadString());

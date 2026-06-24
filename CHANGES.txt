@@ -290,7 +290,7 @@ Improvement
 •	Lucene.Net.Documents.Field: Added NumericType property that returns an enum so the Field type can be determined without boxing/unboxing.
 •	Lucene.Net.Documents.Field: Added extension methods GetXXXValueOrDefault() to easily retrieve the numeric value if it is not a
 	concern that it could be null.
-•	BREAKING: Lucene.Net.Facet.Taxonomy.WriterCache.CharBlockArray: Refactored to use BinaryReader/BinaryWriter for serialzation
+•	BREAKING: Lucene.Net.Facet.Taxonomy.WriterCache.CharBlockArray: Refactored to use BinaryReader/BinaryWriter for serialization
 	and eliminated the 2 serialization support classes StreamUtils and CharBlockArrayConverter
 •	BREAKING: Removed indescriminate use of [Serializable] and chose specific targets to make serializable,
 	namely types that maintain a single value, collection, or array.
@@ -433,7 +433,7 @@ Bug
 •[LUCENENET-500] - Lucene fails to run in medium trust ASP.NET Application
 
 Improvement
-•[LUCENENET-179] - SnowballFilter speed improvment
+•[LUCENENET-179] - SnowballFilter speed improvement
 •[LUCENENET-407] - Signing the assembly
 •[LUCENENET-408] - Mark assembly as CLS compliant; make AlreadyClosedException serializable
 •[LUCENENET-466] - optimisation for the GermanStemmer.vb‏
@@ -1300,7 +1300,7 @@ New features
     new expert getReader() method.  this method returns a reader that
     searches the full index, including any uncommitted changes in the
     current IndexWriter session.  this should result in a faster
-    turnaround than the normal approach of commiting the changes and
+    turnaround than the normal approach of committing the changes and
     then reopening a reader.  (Jason Rutherglen via Mike McCandless)
 
  * LUCENE-1603: Added new MultiTermQueryWrapperFilter, to wrap any
@@ -1472,7 +1472,7 @@ Optimizations
 
 Documentation
 
- * LUCENE-1908: Scoring documentation imrovements in Similarity javadocs.
+ * LUCENE-1908: Scoring documentation improvements in Similarity javadocs.
    (Mark Miller, Shai Erera, Ted Dunning, Jiri Kuhn, Marvin Humphrey, Doron Cohen)
 
  * LUCENE-1872: NumericField javadoc improvements

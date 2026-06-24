@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
         ///        caller is waiting for a specific generation to
         ///        become visible.
         /// </param>
-        /// <param name="targetMinStaleSec"> Mininum time until a new
+        /// <param name="targetMinStaleSec"> Minimum time until a new
         ///        reader can be opened; this sets the lower bound
         ///        on how quickly reopens may occur, when a caller
         ///        is waiting for a specific generation to

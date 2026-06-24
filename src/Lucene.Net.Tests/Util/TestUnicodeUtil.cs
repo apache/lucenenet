@@ -404,7 +404,7 @@ namespace Lucene.Net.Util
             string unicode = TestUtil.RandomRealisticUnicodeString(Random);
             var utf8 = new byte[IOUtils.ENCODING_UTF_8_NO_BOM.GetMaxByteCount(unicode.Length)];
 
-            bool success = UnicodeUtil.TryUTF16toUTF8(unicode.AsSpan(), utf8.AsSpan(), out int bytesWritten);
+            bool success = UnicodeUtil.TryUTF16toUTF8(unicode, utf8, out int bytesWritten);
 
             Assert.IsTrue(success);
             Assert.AreEqual(unicode, IOUtils.ENCODING_UTF_8_NO_BOM.GetString(utf8, 0, bytesWritten));

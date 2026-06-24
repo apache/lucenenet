@@ -3827,7 +3827,7 @@ namespace Lucene.Net.Analysis.Util
 
 #if FEATURE_SPANFORMATTABLE
             else if (key is ISpanFormattable spanFormattable &&
-                spanFormattable.TryFormat(reuse, out int charsWritten, string.Empty.AsSpan(), invariant))
+                spanFormattable.TryFormat(reuse, out int charsWritten, ReadOnlySpan<char>.Empty, invariant))
             {
                 chars = reuse.Slice(0, charsWritten).ToArray();
                 return CharReturnType.CharArray;

@@ -825,7 +825,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // into the FST output, so we more efficiently hone
                     // in on the exact surface-form match.  Still, I
                     // suspect very little time is spent in this linear
-                    // seach: it's bounded by how many prefix start
+                    // search: it's bounded by how many prefix start
                     // nodes we have and the
                     // maxSurfaceFormsPerAnalyzedForm:
                     foreach (var completion in completions)

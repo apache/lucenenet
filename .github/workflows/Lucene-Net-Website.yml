@@ -29,10 +29,14 @@ name: 'Lucene.Net.Website'
 on:
   workflow_dispatch:
   push:
+    # 2026-06-23 - when only tags and paths are used, they are ANDed together, not ORed, so the presence of a Website_* tag blocked the automation from triggering.
+    # Howevever, if both tags and branches are present then we have 1) tags AND paths OR 2) branches AND paths. So, we need to specify them all if we want either or.
     tags:
     - Website_*
-    #branches:
-    #- master
+    # 2026-06-23 - we purposely make the master branch the source of truth for the website, as it is supposed to contain the latest state of our project.
+    # master is always the source of truth for the website. Release branches that update website pages should cherry-pick those changes back to master.
+    branches:
+    - master
     paths:
     - 'websites/site/**/*'
 

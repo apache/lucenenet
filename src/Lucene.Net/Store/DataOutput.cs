@@ -322,7 +322,7 @@ namespace Lucene.Net.Store
         {
             if (s is null)
                 throw new ArgumentNullException(nameof(s));
-            WriteChars(s.AsSpan());
+            WriteChars(s);
         }
 
 #nullable enable

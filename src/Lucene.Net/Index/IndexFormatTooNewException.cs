@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
         /// <param name="resourceDesc"> describes the file that was too old </param>
         /// <param name="version"> the version of the file that was too old </param>
         /// <param name="minVersion"> the minimum version accepted </param>
-        /// <param name="maxVersion"> the maxium version accepted </param>
+        /// <param name="maxVersion"> the maximum version accepted </param>
         public IndexFormatTooNewException(string resourceDesc, int version, int minVersion, int maxVersion)
             : base("Format version is not supported (resource: " + resourceDesc + "): " + version + " (needs to be between " + minVersion + " and " + maxVersion + ")")
         {
@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
         /// <param name="input"> the open file that's too old </param>
         /// <param name="version"> the version of the file that was too old </param>
         /// <param name="minVersion"> the minimum version accepted </param>
-        /// <param name="maxVersion"> the maxium version accepted </param>
+        /// <param name="maxVersion"> the maximum version accepted </param>
         public IndexFormatTooNewException(DataInput input, int version, int minVersion, int maxVersion)
             : this(input.ToString(), version, minVersion, maxVersion)
         {

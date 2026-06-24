@@ -16,7 +16,7 @@ The Java Lucene 4.8 repository indicates that the following development environm
 + IntelliJ - IntelliJ IDEA can import the project out of the box.
 + NetBeans - Not tested.
 
-In this document however, we will be using Eclipse because it's open source and widely used. Because Java Lucene 4.8 uses an old version of the Java JDK that has known security issues, the approach we take here is to setup a virtual machine vis VirtualBox to quarantine our use of the insecure JDK.
+In this document however, we will be using Eclipse because it's open source and widely used. Because Java Lucene 4.8 uses an old version of the Java JDK that has known security issues, the approach we take here is to setup a virtual machine via VirtualBox to quarantine our use of the insecure JDK.
 
 
 ## Setting up VirtualBox

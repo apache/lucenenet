@@ -116,7 +116,7 @@ namespace Lucene.Net.Util.Fst
         /// works when the outputs are ascending in order with
         /// the inputs.
         /// For example, simple ordinals (0, 1,
-        /// 2, ...), or file offets (when appending to a file)
+        /// 2, ...), or file offsets (when appending to a file)
         /// fit this.
         /// </summary>
         public static Int32sRef GetByOutput(FST<Int64> fst, long targetOutput)

@@ -499,7 +499,7 @@ namespace Lucene.Net.QueryParsers.Util
             assertTrue(GetQuery("term*germ") is WildcardQuery);
 
             /* Tests to see that wild card terms are (or are not) properly
-               * lower-cased with propery parser configuration
+               * lower-cased with property parser configuration
                */
             // First prefix queries:
             // by default, convert to lowercase:

@@ -125,7 +125,7 @@ namespace Lucene.Net.Search.Similarities
         /// True if overlap tokens (tokens with a position of increment of zero) are
         /// discounted from the document's length.
         /// </summary>
-        private bool discountOverlaps = true; // LUCENENET specific: made private, since value can be set/get through propery
+        private bool discountOverlaps = true; // LUCENENET specific: made private, since value can be set/get through property
 
         /// <summary>
         /// Gets or Sets whether overlap tokens (Tokens with 0 position increment) are

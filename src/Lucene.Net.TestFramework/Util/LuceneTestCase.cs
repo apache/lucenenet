@@ -504,7 +504,7 @@ namespace Lucene.Net.Util
                 TestAwaitsFix = SystemProperties.GetPropertyAsBoolean(SYSPROP_AWAITSFIX, false);
                 TestSlow = SystemProperties.GetPropertyAsBoolean(SYSPROP_SLOW, true); // LUCENENET specific - made default true, as per the docs
                 TestThrottling = TestNightly ? Throttling.SOMETIMES : Throttling.NEVER;
-                LeaveTemporary = LoadLeaveTemorary();
+                LeaveTemporary = LoadLeaveTemporary();
                 FailOnTestFixtureOneTimeSetUpError = SystemProperties.GetPropertyAsBoolean("tests:failontestfixtureonetimesetuperror", true);
             }
 
@@ -569,7 +569,7 @@ namespace Lucene.Net.Util
             /// Leave temporary files on disk, even on successful runs. </summary>
             public bool LeaveTemporary { get; }
 
-            private static bool LoadLeaveTemorary()
+            private static bool LoadLeaveTemporary()
             {
                 bool defaultValue = false;
                 // LUCENENET specific - reformatted with :
@@ -1162,7 +1162,7 @@ namespace Lucene.Net.Util
         /// problems with <see cref="FieldCache.DEFAULT"/>.
         /// <para>
         /// If any problems are found, they are logged to <see cref="Console.Error"/>
-        /// (allong with the msg) when the Assertion is thrown.
+        /// (along with the msg) when the Assertion is thrown.
         /// </para>
         /// <para>
         /// This method is called by <see cref="TearDown()"/> after every test method,
@@ -1321,7 +1321,7 @@ namespace Lucene.Net.Util
             {
                 while (iter.MoveNext())
                 {
-                    stream.WriteLine(Collections.ToString(iter.Current));
+                    stream.WriteLine(string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", iter.Current));
                 }
             }
             stream.WriteLine("*** END " + label + " ***");
@@ -3140,7 +3140,7 @@ namespace Lucene.Net.Util
                 tempDirBasePath = tempDirBase?.FullName;
                 tempDirBase = null;
 
-                // LUCENENET: The stack order is alredy reversed, so no need to do that here as in Lucene
+                // LUCENENET: The stack order is already reversed, so no need to do that here as in Lucene
                 everything = cleanupQueue.ToArray();
                 cleanupQueue.Clear();
             }
