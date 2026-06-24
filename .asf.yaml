@@ -41,7 +41,7 @@ github:
     # can either be: DEFAULT | PR_TITLE | PR_TITLE_AND_COMMIT_DETAILS | PR_TITLE_AND_DESC
     squash_commit_message: PR_TITLE
     merge: false
-    rebase: false
+    rebase: true
 
   rulesets:
     - name: "Main Branch Protection"
