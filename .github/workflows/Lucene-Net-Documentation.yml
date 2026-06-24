@@ -158,11 +158,11 @@ jobs:
       #  run: |
       #    git --git-dir "$Env:GIT_MAIN_REPO" checkout -b "docs/${{ env.RELEASE_VERSION }}"
       #  shell: powershell
-      
+
       - name: Set PR branch name
         run: |
           $shortSHA = $Env:GITHUB_SHA.Substring(0, 7)
-          
+
           echo ("PR_BRANCH=docs-build-" + $Env:RELEASE_VERSION + "-" + $shortSHA) >> $env:GITHUB_ENV
         shell: powershell
 
@@ -197,6 +197,17 @@ jobs:
       - name: Copy documentation site files
         run: Get-ChildItem -Path "$Env:GITHUB_WORKSPACE\main-repo\websites\apidocs\_site" | Copy-Item -Destination "$Env:GITHUB_WORKSPACE\website-repo\docs\$Env:RELEASE_VERSION" -Recurse -Force
         shell: powershell
+
+      - name: Verify structure
+        shell: powershell
+        run: |
+          $dest = "$Env:GITHUB_WORKSPACE\website-repo\docs\$Env:RELEASE_VERSION"
+
+          Write-Host "Directories at root:"
+          Get-ChildItem $dest -Directory | Select-Object Name
+
+          Write-Host "API exists?"
+          Test-Path "$dest\api"
 
       # Always push to the same branch based on the CURRENT_TAG (latest version tag)
       # Because we are always building the docs against a consistent version
