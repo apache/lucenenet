@@ -37,6 +37,14 @@
     <Compile Include="..\Lucene.Net.Tests\Support\**\*.cs" LinkBase="Support" Exclude="..\Lucene.Net.Tests\Support\ExceptionHandling\**\*" />
     <Compile Include="..\Lucene.Net.Tests\Util\TestNumericUtils.cs" Link="Util\TestNumericUtils.cs" />
     <EmbeddedResource Include="..\Lucene.Net.Tests\Store\LUCENENET521.zip" Link="Store\LUCENENET521.zip" />
+    <!--
+      3.x CFS index fixtures, re-linked into the Store namespace so
+      TestMultiMMap can exercise the MMapDirectory IndexInputSlicer
+      OpenFullSlice path used by CompoundFileDirectory when reading
+      CFS files from 3.x indexes.
+    -->
+    <EmbeddedResource Include="..\Lucene.Net.Tests\Index\index.30.cfs.zip" Link="Store\index.30.cfs.zip" />
+    <EmbeddedResource Include="..\Lucene.Net.Tests\Index\index.31.cfs.zip" Link="Store\index.31.cfs.zip" />
   </ItemGroup>
 
   <ItemGroup>
