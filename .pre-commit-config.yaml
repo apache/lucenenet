@@ -16,6 +16,25 @@
 # under the License.
 
 ---
+# prek-style priority keys enables prek to run independent hooks in parallel, improving pre-commit check times.
+# The priority values are assigned to structure the hook execution into logical stages, ensuring correct ordering of
+# file modifications and maximum concurrency of read-only checks.
+
+# Priority Levels: Hooks can be assigned different priority numbers. Hooks with a priority of 0 (or a higher numerical
+# value, depending on configuration) run first or alongside other zero-priority hooks to decrease total end-to-end
+# execution time.
+
+# Priority Groups and Ordering Design
+
+# | Stage / Priority | Hooks | Rationale |
+# |---|---|---|
+# | **Priority 10** | `identity`, `check-hooks-apply` | **Meta & Setup**: Ensure environment is valid before executing heavy checks. |
+# | **Priority 20** | `fix-byte-order-marker` | **File Cleanups (Broad)**: Fix BOM first so subsequent steps work with clean UTF-8 text. |
+# | **Priority 30** | `trailing-whitespace` | **Formatting (Broad)**: Cleans up whitespace on files before other hooks validate them. |
+# | **Priority 40** | `doctoc`, `oxipng`, `file-contents-sorter` | **Disjoint Modifiers**: These modify different sets of files (`README.md`, `.png` files, and `codespell.txt` respectively). Running them concurrently is safe. |
+# | **Priority 50** | `codespell`, `check-ast`, `check-builtin-literals`, `check-case-conflict`, `check-executables-have-shebangs`, `check-illegal-windows-names`, `check-json`, `check-merge-conflict`, `check-vcs-permalinks`, `check-xml`, `check-yaml`, `debug-statements`, `detect-aws-credentials`, `detect-private-key`, `forbid-submodules`, `gitleaks`, `bandit`|
+# |                 | **Read-Only / Syntax / Security**: The bulk of the suite. These hooks only read and validate files without modifying them, allowing full parallel execution. |
+
 # https://prek.j178.dev/installation/
 default_stages: [pre-commit, pre-push]
 default_language_version:
