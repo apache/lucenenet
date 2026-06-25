@@ -38,69 +38,102 @@ namespace Lucene.Net.Support.ExceptionHandling
     [LuceneNetSpecific]
     public abstract class ExceptionScanningTestCase : AssemblyScanningTestCase
     {
+        // LUCENENET specific: Several of the static type lookups below probe for types that only
+        // exist on .NET Framework (e.g. "System.Security.HostProtectionException, mscorlib"). On
+        // modern .NET these types do not exist, and Type.GetType() is expected to return null.
+        //
+        // However, when the requested type cannot be found, the runtime raises the
+        // AssemblyLoadContext.Resolving event. NUnit's test host (NUnit.Engine.Internal.TestAssemblyResolver
+        // / AdditionalRuntimesStrategy, introduced with the NUnit3TestAdapter TestAssemblyLoadContext
+        // rework) handles that event by probing other installed runtime packs and attempting to load a
+        // matching file from Microsoft.WindowsDesktop.App. There it finds a reference (Version=0.0.0.0)
+        // copy of System.Security.Permissions.dll and calls LoadFromAssemblyPath() on it. Reference
+        // assemblies cannot be loaded for execution, so it throws BadImageFormatException. That exception
+        // is raised synchronously inside our Type.GetType() call and would otherwise escape this static
+        // constructor, turning into a TypeInitializationException that fails every test in this class.
+        //
+        // (NUnit 3's host did not hook the Resolving event this way, which is why this only began
+        // failing after the NUnit 4 upgrade. See nunit/nunit3-vs-adapter#1066 and nunit/nunit-console#1330.)
+        //
+        // SafeGetType() restores the intended behavior: it returns null when the type is genuinely
+        // absent, swallowing the load failures that NUnit's resolver surfaces. This removes no coverage,
+        // since these probes only ever resolve a non-null type on .NET Framework, where the types load
+        // from the real mscorlib and no resolver fallback occurs.
+        private static Type SafeGetType(string typeName)
+        {
+            try
+            {
+                return Type.GetType(typeName, throwOnError: false);
+            }
+            catch (Exception e) when (e is BadImageFormatException || e is FileLoadException)
+            {
+                return null;
+            }
+        }
+
         // Internal types references
         private static readonly Type DebugAssertExceptionType =
             // .NET 5/.NET Core 3.x
-            Type.GetType("System.Diagnostics.DebugProvider+DebugAssertException, System.Private.CoreLib")
+            SafeGetType("System.Diagnostics.DebugProvider+DebugAssertException, System.Private.CoreLib")
             // .NET Core 2.x
-            ?? Type.GetType("System.Diagnostics.Debug+DebugAssertException, System.Private.CoreLib");
+            ?? SafeGetType("System.Diagnostics.Debug+DebugAssertException, System.Private.CoreLib");
         // .NET Framework doesn't throw in this case
 
         private static readonly Type MetadataExceptionType =
             // .NET Core/5.0
-            Type.GetType("System.Reflection.MetadataException, System.Private.CoreLib") ??
+            SafeGetType("System.Reflection.MetadataException, System.Private.CoreLib") ??
             // .NET Framework
-            Type.GetType("System.Reflection.MetadataException, mscorlib");
+            SafeGetType("System.Reflection.MetadataException, mscorlib");
 
         private static readonly Type CrossAppDomainMarshaledExceptionType =
              // .NET Core 2.1 Only
-             Type.GetType("System.CrossAppDomainMarshaledException, System.Private.CoreLib");
+             SafeGetType("System.CrossAppDomainMarshaledException, System.Private.CoreLib");
 
         private static readonly Type SwitchExpressionExceptionType =
             // No .NET Framework or .NET Core 2.x support
             // .NET Core 3.1
-            Type.GetType("System.Runtime.CompilerServices.SwitchExpressionException, System.Runtime.Extensions") ??
+            SafeGetType("System.Runtime.CompilerServices.SwitchExpressionException, System.Runtime.Extensions") ??
             // .NET 5
-            Type.GetType("System.Runtime.CompilerServices.SwitchExpressionException, System.Private.CoreLib");
+            SafeGetType("System.Runtime.CompilerServices.SwitchExpressionException, System.Private.CoreLib");
 
         private static readonly Type RemotingExceptionType =
             // .NET Framework only
-            Type.GetType("System.Runtime.Remoting.RemotingException, mscorlib");
+            SafeGetType("System.Runtime.Remoting.RemotingException, mscorlib");
 
         private static readonly Type RemotingTimeoutExceptionType =
             // .NET Framework only
-            Type.GetType("System.Runtime.Remoting.RemotingTimeoutException, mscorlib");
+            SafeGetType("System.Runtime.Remoting.RemotingTimeoutException, mscorlib");
 
         private static readonly Type RemotingServerExceptionType =
             // .NET Framework only
-            Type.GetType("System.Runtime.Remoting.ServerException, mscorlib");
+            SafeGetType("System.Runtime.Remoting.ServerException, mscorlib");
 
         private static readonly Type CryptographicUnexpectedOperationExceptionType =
             // .NET Framework only
-            Type.GetType("System.Security.Cryptography.CryptographicUnexpectedOperationException, mscorlib");
+            SafeGetType("System.Security.Cryptography.CryptographicUnexpectedOperationException, mscorlib");
 
         private static readonly Type HostProtectionExceptionType =
             // .NET Framework only
-            Type.GetType("System.Security.HostProtectionException, mscorlib");
+            SafeGetType("System.Security.HostProtectionException, mscorlib");
 
         private static readonly Type PolicyExceptionType =
             // .NET Framework only
-            Type.GetType("System.Security.Policy.PolicyException, mscorlib");
+            SafeGetType("System.Security.Policy.PolicyException, mscorlib");
 
         private static readonly Type IdentityNotMappedExceptionType =
             // .NET Framework only
-            Type.GetType("System.Security.Principal.IdentityNotMappedException, mscorlib");
+            SafeGetType("System.Security.Principal.IdentityNotMappedException, mscorlib");
 
         private static readonly Type XmlSyntaxExceptionType =
             // .NET Framework only
-            Type.GetType("System.Security.XmlSyntaxException, mscorlib");
+            SafeGetType("System.Security.XmlSyntaxException, mscorlib");
 
         private static readonly Type PrivilegeNotHeldExceptionType =
             // .NET Framework only
-            Type.GetType("System.Security.AccessControl.PrivilegeNotHeldException, mscorlib");
+            SafeGetType("System.Security.AccessControl.PrivilegeNotHeldException, mscorlib");
 
         private static readonly Type NUnitFrameworkInternalInvalidPlatformExceptionType =
-            Type.GetType("NUnit.Framework.Internal.InvalidPlatformException, NUnit.Framework");
+            SafeGetType("NUnit.Framework.Internal.InvalidPlatformException, NUnit.Framework");
 
 
         // Base class Exception
