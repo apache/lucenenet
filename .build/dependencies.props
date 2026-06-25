@@ -66,7 +66,7 @@
     <NETStandardLibrary20PackageVersion>2.0.3</NETStandardLibrary20PackageVersion>
     <NOpenNLPPackageVersion>1.9.5-beta.2</NOpenNLPPackageVersion>
     <NUnit3TestAdapterPackageVersion>6.2.0</NUnit3TestAdapterPackageVersion>
-    <NUnitPackageVersion>4.6.0</NUnitPackageVersion>
+    <NUnitPackageVersion>4.6.1</NUnitPackageVersion>
     <RandomizedTestingGeneratorsPackageVersion>2.7.8</RandomizedTestingGeneratorsPackageVersion>
     <SharpZipLibPackageVersion>1.4.2</SharpZipLibPackageVersion>
     <SpanToolsValueStringBuilderGeneratorPackageVersion>1.0.0-alpha.113</SpanToolsValueStringBuilderGeneratorPackageVersion>
