@@ -101,25 +101,21 @@ namespace Lucene.Net.Analysis.Ja
         /// <summary>
         /// LUCENENET-specific regression test for <a href="https://github.com/apache/lucenenet/issues/1072">#1072</a>.
         /// <para/>
-        /// With a <c>minimumLength</c> of <c>0</c>, a zero-length token (such as the single empty token a
-        /// <see cref="KeywordTokenizer"/> emits for empty input) would skip the length check in <c>Stem()</c>,
-        /// <c>IsKatakana</c> would vacuously return <c>true</c>, and the <c>term[length - 1]</c> access would
-        /// read <c>term[-1]</c>, throwing <see cref="IndexOutOfRangeException"/>. This was a residual
-        /// <c>TestRandomChains</c> failure reported on PR #1348 (e.g. seed
-        /// <c>0x951afd480395f9b7:0x63fc16274945f1a3</c>); upstream Java has the same latent read but never
-        /// exercises the kuromoji filters from its own random-chains test.
+        /// Verifies the LUCENE-10352 guard: the constructor must reject a <c>minimumLength</c> less than
+        /// <c>1</c>. A <c>minimumLength</c> of <c>0</c> would let a zero-length token (such as the single empty
+        /// token a <see cref="KeywordTokenizer"/> emits for empty input) skip the length check in <c>Stem()</c>,
+        /// after which the <c>term[length - 1]</c> access reads <c>term[-1]</c> and throws. This surfaced as a
+        /// residual <c>TestRandomChains</c> failure reported on PR #1348 (e.g. seed
+        /// <c>0x951afd480395f9b7:0x63fc16274945f1a3</c>).
         /// </summary>
         [Test]
         [LuceneNetSpecific] // Issue #1072
-        public void TestEmptyTermWithZeroMinimumLengthDoesNotThrow()
+        public void TestMinimumLengthLessThanOneThrows()
         {
-            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
-            {
-                Tokenizer tokenizer = new KeywordTokenizer(reader);
-                return new TokenStreamComponents(tokenizer, new JapaneseKatakanaStemFilter(tokenizer, minimumLength: 0));
-            });
+            Tokenizer tokenizer = new KeywordTokenizer(new System.IO.StringReader(""));
 
-            CheckOneTerm(a, "", "");
+            Assert.Throws<ArgumentOutOfRangeException>(() => new JapaneseKatakanaStemFilter(tokenizer, minimumLength: 0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new JapaneseKatakanaStemFilter(tokenizer, minimumLength: -1));
         }
     }
 }
