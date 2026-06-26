@@ -83,6 +83,18 @@ namespace Lucene.Net.Analysis.Ja
 
         private int Stem(char[] term, int length)
         {
+            // LUCENENET specific (#1072): guard against a zero-length term. When
+            // minimumKatakanaLength == 0 a zero-length token (e.g. the single empty token a
+            // KeywordTokenizer emits for empty input) passes the length check below, IsKatakana
+            // vacuously returns true, and the term[length - 1] access below reads term[-1].
+            // Upstream Java has the same latent term[-1] read, but its TestRandomChains never
+            // exercises the kuromoji filters (separate module), so it never surfaces there.
+            // There is nothing to stem in a zero-length term, so return it unchanged.
+            if (length == 0)
+            {
+                return length;
+            }
+
             if (length < minimumKatakanaLength)
             {
                 return length;
