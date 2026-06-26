@@ -1,31 +1,31 @@
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using Microsoft.Win32.SafeHandles;
 using System;
-using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
+#if FEATURE_SUPPORTEDOSPLATFORMATTRIBUTE
+using System.Runtime.Versioning;
+#endif
 
-namespace org.apache.lucene.store
+namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements. See the NOTICE file distributed with this
-     * work for additional information regarding copyright ownership. The ASF
-     * licenses this file to You under the Apache License, Version 2.0 (the
-     * "License"); you may not use this file except in compliance with the License.
-     * You may obtain a copy of the License at
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
      *
-     * http://www.apache.org/licenses/LICENSE-2.0
+     *     http://www.apache.org/licenses/LICENSE-2.0
      *
      * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-     * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-     * License for the specific language governing permissions and limitations under
-     * the License.
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
      */
-
-    ignore
-    import java.nio.channels.FileChannel;
-
-    import org.apache.lucene.store.Directory; // javadoc
-    import org.apache.lucene.store.IOContext.Context;
 
     // TODO
     //   - newer Linux kernel versions (after 2.6.29) have
@@ -35,493 +35,606 @@ namespace org.apache.lucene.store
     //     IO when context is merge
 
     /// <summary>
-    /// A <seealso cref="Directory"/> implementation for all Unixes that uses
+    /// A <see cref="Directory"/> implementation for all Unixes that uses
     /// DIRECT I/O to bypass OS level IO caching during
     /// merging.  For all other cases (searching, writing) we delegate
-    /// to the provided Directory instance.
+    /// to the provided <see cref="Directory"/> instance.
     ///
-    /// <para>See <a
-    /// href="{@docRoot}/overview-summary.html#NativeUnixDirectory">Overview</a>
-    /// for more details.
+    /// <para>LUCENENET specific: the original Lucene implementation reached the OS through a JNI
+    /// shim (<c>NativePosixUtil.cpp</c>) plus Java NIO <c>FileChannel</c>s. This port replaces the
+    /// native build step with direct P/Invoke into <c>libc</c> (see <see cref="NativePosixUtil"/>),
+    /// so no native compilation is required, but it can only be used on Unix-like platforms
+    /// (Linux and macOS); it is not supported on Microsoft Windows.</para>
     ///
-    /// </para>
-    /// <para>To use this you must compile
-    /// NativePosixUtil.cpp (exposes Linux-specific APIs through
-    /// JNI) for your platform, by running <code>ant
-    /// build-native-unix</code>, and then putting the resulting
-    /// <code>libNativePosixUtil.so</code> (from
-    /// <code>lucene/build/native</code>) onto your dynamic
-    /// linker search path.
-    ///
-    /// </para>
     /// <para><b>WARNING</b>: this code is very new and quite easily
     /// could contain horrible bugs.  For example, here's one
-    /// known issue: if you use seek in <code>IndexOutput</code>, and then
+    /// known issue: if you use seek in <see cref="IndexOutput"/>, and then
     /// write more than one buffer's worth of bytes, then the
     /// file will be wrong.  Lucene does not do this today (only writes
-    /// small number of bytes after seek), but that may change.
+    /// small number of bytes after seek), but that may change.</para>
     ///
-    /// </para>
-    /// <para>This directory passes Solr and Lucene tests on Linux
-    /// and OS X; other Unixes should work but have not been
-    /// tested!  Use at your own risk.
+    /// <para>Direct I/O requires that reads and writes are aligned to the device block size
+    /// (here <c>512</c> bytes) and that the underlying filesystem supports it; some filesystems
+    /// (e.g. tmpfs) and overlay/virtual mounts do not.</para>
     ///
     /// @lucene.experimental
-    /// </para>
     /// </summary>
-    public class NativeUnixDirectory extends FSDirectory
+#if FEATURE_SUPPORTEDOSPLATFORMATTRIBUTE
+    [UnsupportedOSPlatform("windows")]
+#endif
+    public class NativeUnixDirectory : FSDirectory
     {
+        // TODO: this is OS dependent, but likely 512 is the LCD
+        private const long ALIGN = 512;
+        private const long ALIGN_NOT_MASK = ~(ALIGN - 1);
 
-      // TODO: this is OS dependent, but likely 512 is the LCD
-      private final static long ALIGN = 512;
-      private final static long ALIGN_NOT_MASK = ~(ALIGN - 1);
+        /// <summary>
+        /// Default buffer size before writing to disk (256 KB);
+        /// larger means less IO load but more RAM and direct
+        /// buffer storage space consumed during merging.
+        /// </summary>
+        public const int DEFAULT_MERGE_BUFFER_SIZE = 262144;
 
-      /// <summary>
-      /// Default buffer size before writing to disk (256 KB);
-      ///  larger means less IO load but more RAM and direct
-      ///  buffer storage space consumed during merging.
-      /// </summary>
+        /// <summary>
+        /// Default min expected merge size before direct IO is
+        /// used (10 MB):
+        /// </summary>
+        public const long DEFAULT_MIN_BYTES_DIRECT = 10 * 1024 * 1024;
 
-      public final static int DEFAULT_MERGE_BUFFER_SIZE = 262144;
+        private readonly int mergeBufferSize;
+        private readonly long minBytesDirect;
+        private readonly Directory m_delegate;
 
-      /// <summary>
-      /// Default min expected merge size before direct IO is
-      ///  used (10 MB):
-      /// </summary>
-      public final static long DEFAULT_MIN_BYTES_DIRECT = 10 * 1024 * 1024;
-
-      private final int mergeBufferSize;
-      private final long minBytesDirect;
-      private final Directory @delegate;
-
-      /// <summary>
-      /// Create a new NIOFSDirectory for the named location.
-      /// </summary>
-      /// <param name="path"> the path of the directory </param>
-      /// <param name="mergeBufferSize"> Size of buffer to use for
-      ///    merging.  See <seealso cref="#DEFAULT_MERGE_BUFFER_SIZE"/>. </param>
-      /// <param name="minBytesDirect"> Merges, or files to be opened for
-      ///   reading, smaller than this will
-      ///   not use direct IO.  See {@link
-      ///   #DEFAULT_MIN_BYTES_DIRECT} </param>
-      /// <param name="delegate"> fallback Directory for non-merges </param>
-      /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-      public NativeUnixDirectory(File path, int mergeBufferSize, long minBytesDirect, Directory @delegate) throws IOException
-      {
-        base(path, @delegate.LockFactory);
-        if ((mergeBufferSize & ALIGN) != 0)
+        /// <summary>
+        /// Create a new <see cref="NativeUnixDirectory"/> for the named location.
+        /// </summary>
+        /// <param name="path"> the path of the directory </param>
+        /// <param name="mergeBufferSize"> Size of buffer to use for
+        ///    merging.  See <see cref="DEFAULT_MERGE_BUFFER_SIZE"/>. </param>
+        /// <param name="minBytesDirect"> Merges, or files to be opened for
+        ///   reading, smaller than this will
+        ///   not use direct IO.  See <see cref="DEFAULT_MIN_BYTES_DIRECT"/> </param>
+        /// <param name="delegate"> fallback <see cref="Directory"/> for non-merges </param>
+        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
+        /// <exception cref="PlatformNotSupportedException"> If running on Microsoft Windows </exception>
+        public NativeUnixDirectory(DirectoryInfo path, int mergeBufferSize, long minBytesDirect, Directory @delegate)
+            : base(path, @delegate.LockFactory)
         {
-          throw new System.ArgumentException("mergeBufferSize must be 0 mod " + ALIGN + " (got: " + mergeBufferSize + ")");
-        }
-        this.mergeBufferSize = mergeBufferSize;
-        this.minBytesDirect = minBytesDirect;
-        this.@delegate = @delegate;
-      }
-
-      /// <summary>
-      /// Create a new NIOFSDirectory for the named location.
-      /// </summary>
-      /// <param name="path"> the path of the directory </param>
-      /// <param name="delegate"> fallback Directory for non-merges </param>
-      /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-      public NativeUnixDirectory(File path, Directory @delegate) throws IOException
-      {
-        this(path, DEFAULT_MERGE_BUFFER_SIZE, DEFAULT_MIN_BYTES_DIRECT, @delegate);
-      }
-
-      public IndexInput openInput(string name, IOContext context) throws IOException
-      {
-        ensureOpen();
-        if (context.context != Context.MERGE || context.mergeInfo.estimatedMergeBytes < minBytesDirect || fileLength(name) < minBytesDirect)
-        {
-          return @delegate.openInput(name, context);
-        }
-        else
-        {
-          return new NativeUnixIndexInput(new File(Directory, name), mergeBufferSize);
-        }
-      }
-
-      public IndexOutput createOutput(string name, IOContext context) throws IOException
-      {
-        ensureOpen();
-        if (context.context != Context.MERGE || context.mergeInfo.estimatedMergeBytes < minBytesDirect)
-        {
-          return @delegate.createOutput(name, context);
-        }
-        else
-        {
-          ensureCanWrite(name);
-          return new NativeUnixIndexOutput(new File(Directory, name), mergeBufferSize);
-        }
-      }
-
-      private final static class NativeUnixIndexOutput extends IndexOutput
-      {
-        private final ByteBuffer buffer;
-        private final FileOutputStream fos;
-        private final FileChannel channel;
-        private final int bufferSize;
-
-        //private final File path;
-
-        private int bufferPos;
-        private long filePos;
-        private long fileLength;
-        private bool isOpen;
-
-        public NativeUnixIndexOutput(File path, int bufferSize) throws IOException
-        {
-          //this.path = path;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.FileDescriptor fd = NativePosixUtil.open_direct(path.toString(), false);
-          FileDescriptor fd = NativePosixUtil.open_direct(path.ToString(), false);
-          fos = new FileOutputStream(fd);
-          //fos = new FileOutputStream(path);
-          channel = fos.Channel;
-          buffer = ByteBuffer.allocateDirect(bufferSize);
-          this.bufferSize = bufferSize;
-          isOpen = true;
-        }
-
-        public void writeByte(sbyte b) throws IOException
-        {
-          Debug.Assert(bufferPos == buffer.position(), "bufferPos=" + bufferPos + " vs buffer.position()=" + buffer.position());
-          buffer.put(b);
-          if (++bufferPos == bufferSize)
-          {
-            dump();
-          }
-        }
-
-        public void writeBytes(sbyte[] src, int offset, int len) throws IOException
-        {
-          int toWrite = len;
-          while (true)
-          {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int left = bufferSize - bufferPos;
-            int left = bufferSize - bufferPos;
-            if (left <= toWrite)
+            EnsureUnix();
+            if ((mergeBufferSize & ALIGN) != 0)
             {
-              buffer.put(src, offset, left);
-              toWrite -= left;
-              offset += left;
-              bufferPos = bufferSize;
-              dump();
+                throw new ArgumentException("mergeBufferSize must be 0 mod " + ALIGN + " (got: " + mergeBufferSize + ")");
+            }
+            this.mergeBufferSize = mergeBufferSize;
+            this.minBytesDirect = minBytesDirect;
+            this.m_delegate = @delegate;
+        }
+
+        /// <summary>
+        /// Create a new <see cref="NativeUnixDirectory"/> for the named location.
+        /// </summary>
+        /// <param name="path"> the path of the directory </param>
+        /// <param name="delegate"> fallback <see cref="Directory"/> for non-merges </param>
+        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
+        /// <exception cref="PlatformNotSupportedException"> If running on Microsoft Windows </exception>
+        public NativeUnixDirectory(DirectoryInfo path, Directory @delegate)
+            : this(path, DEFAULT_MERGE_BUFFER_SIZE, DEFAULT_MIN_BYTES_DIRECT, @delegate)
+        {
+        }
+
+        /// <summary>
+        /// Create a new <see cref="NativeUnixDirectory"/> for the named location.
+        /// <para/>
+        /// LUCENENET specific overload for convenience using string instead of <see cref="DirectoryInfo"/>.
+        /// </summary>
+        public NativeUnixDirectory(string path, int mergeBufferSize, long minBytesDirect, Directory @delegate)
+            : this(new DirectoryInfo(path), mergeBufferSize, minBytesDirect, @delegate)
+        {
+        }
+
+        /// <summary>
+        /// Create a new <see cref="NativeUnixDirectory"/> for the named location.
+        /// <para/>
+        /// LUCENENET specific overload for convenience using string instead of <see cref="DirectoryInfo"/>.
+        /// </summary>
+        public NativeUnixDirectory(string path, Directory @delegate)
+            : this(new DirectoryInfo(path), @delegate)
+        {
+        }
+
+        private static void EnsureUnix()
+        {
+            if (Constants.WINDOWS)
+            {
+                throw new PlatformNotSupportedException(
+                    $"{nameof(NativeUnixDirectory)} requires Linux or macOS direct I/O and is not supported on Microsoft Windows.");
+            }
+        }
+
+        public override IndexInput OpenInput(string name, IOContext context)
+        {
+            EnsureOpen();
+            if (context.Context != IOContext.UsageContext.MERGE || context.MergeInfo.EstimatedMergeBytes < minBytesDirect || FileLength(name) < minBytesDirect)
+            {
+                return m_delegate.OpenInput(name, context);
             }
             else
             {
-              buffer.put(src, offset, toWrite);
-              bufferPos += toWrite;
-              break;
+                return new NativeUnixIndexInput(Path.Combine(Directory.FullName, name), mergeBufferSize);
             }
-          }
         }
 
-        //@Override
-        //public void setLength() throws IOException {
-        //   TODO -- how to impl this?  neither FOS nor
-        //   FileChannel provides an API?
-        //}
-
-        public void flush()
+        public override IndexOutput CreateOutput(string name, IOContext context)
         {
-          // TODO -- I don't think this method is necessary?
-        }
-
-        private void dump() throws IOException
-        {
-          buffer.flip();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long limit = filePos + buffer.limit();
-          long limit = filePos + buffer.limit();
-          if (limit > fileLength)
-          {
-            // this dump extends the file
-            fileLength = limit;
-          }
-          else
-          {
-            // we had seek'd back & wrote some changes
-          }
-
-          // must always round to next block
-          buffer.limit((int)((buffer.limit() + ALIGN - 1) & ALIGN_NOT_MASK));
-
-          assert(buffer.limit() & ALIGN_NOT_MASK) == buffer.limit() : "limit=" + buffer.limit() + " vs " + (buffer.limit() & ALIGN_NOT_MASK);
-          assert(filePos & ALIGN_NOT_MASK) == filePos;
-          //System.out.println(Thread.currentThread().getName() + ": dump to " + filePos + " limit=" + buffer.limit() + " fos=" + fos);
-          channel.write(buffer, filePos);
-          filePos += bufferPos;
-          bufferPos = 0;
-          buffer.clear();
-          //System.out.println("dump: done");
-
-          // TODO: the case where we'd seek'd back, wrote an
-          // entire buffer, we must here read the next buffer;
-          // likely Lucene won't trip on this since we only
-          // write smallish amounts on seeking back
-        }
-
-        public long FilePointer
-        {
-          return filePos + bufferPos;
-        }
-
-        // TODO: seek is fragile at best; it can only properly
-        // handle seek & then change bytes that fit entirely
-        // within one buffer
-        public void seek(long pos) throws IOException
-        {
-          if (pos != FilePointer)
-          {
-            dump();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long alignedPos = pos & ALIGN_NOT_MASK;
-            long alignedPos = pos & ALIGN_NOT_MASK;
-            filePos = alignedPos;
-            int n = (int) NativePosixUtil.pread(fos.FD, filePos, buffer);
-            if (n < bufferSize)
+            EnsureOpen();
+            if (context.Context != IOContext.UsageContext.MERGE || context.MergeInfo.EstimatedMergeBytes < minBytesDirect)
             {
-              buffer.limit(n);
+                return m_delegate.CreateOutput(name, context);
             }
-            //System.out.println("seek refill=" + n);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int delta = (int)(pos - alignedPos);
-            int delta = (int)(pos - alignedPos);
-            buffer.position(delta);
-            bufferPos = delta;
-          }
-        }
-
-        public long length()
-        {
-          return fileLength + bufferPos;
-        }
-
-        public long Checksum throws IOException
-        {
-          throw new System.NotSupportedException("this directory currently does not work at all!");
-        }
-
-        public void close() throws IOException
-        {
-          if (isOpen)
-          {
-            isOpen = false;
-            try
+            else
             {
-              dump();
+                EnsureCanWrite(name);
+                return new NativeUnixIndexOutput(Path.Combine(Directory.FullName, name), mergeBufferSize);
             }
-            finally
+        }
+
+        // ----- libc helpers for the operations the original code performed via FileChannel -----
+
+        private static int Fd(SafeFileHandle handle) => (int)handle.DangerousGetHandle();
+
+        private static void PWrite(SafeFileHandle fd, IntPtr buffer, int length, long pos)
+        {
+            long written = (long)NativeMethods.pwrite(Fd(fd), buffer, (nuint)length, pos);
+            if (written < 0)
             {
-              try
-              {
-                //System.out.println("direct close set len=" + fileLength + " vs " + channel.size() + " path=" + path);
-                channel.truncate(fileLength);
-                //System.out.println("  now: " + channel.size());
-              }
-              finally
-              {
+                int errno = Marshal.GetLastWin32Error();
+                // LUCENENET: surface errno as the HResult (see NativePosixUtil.NewIOException) so callers
+                // such as NativeFSLock, which inspect IOException.HResult, still see the underlying error.
+                throw new IOException($"pwrite failed (errno {errno})", errno);
+            }
+        }
+
+        private static void FTruncate(SafeFileHandle fd, long length)
+        {
+            if (NativeMethods.ftruncate(Fd(fd), length) < 0)
+            {
+                int errno = Marshal.GetLastWin32Error();
+                // LUCENENET: surface errno as the HResult (see PWrite).
+                throw new IOException($"ftruncate failed (errno {errno})", errno);
+            }
+        }
+
+        private static long FileSize(SafeFileHandle fd)
+        {
+            // The original used FileChannel.size(). All reads here are positioned (pread), so
+            // moving the file offset with lseek(SEEK_END) to learn the size is harmless.
+            long size = NativeMethods.lseek(Fd(fd), 0, NativeMethods.SEEK_END);
+            if (size < 0)
+            {
+                int errno = Marshal.GetLastWin32Error();
+                // LUCENENET: surface errno as the HResult (see PWrite).
+                throw new IOException($"lseek failed (errno {errno})", errno);
+            }
+            return size;
+        }
+
+        /// <summary>
+        /// A small native, block-aligned buffer that mimics the subset of Java's direct
+        /// <c>ByteBuffer</c> behavior used by the index input/output (position/limit, relative
+        /// get/put, flip/clear/rewind). Direct I/O requires the buffer to be aligned to the
+        /// device block size, which <see cref="Marshal.AllocHGlobal(int)"/> does not guarantee, so
+        /// we over-allocate and align manually.
+        /// </summary>
+        private sealed unsafe class AlignedByteBuffer : IDisposable
+        {
+            private IntPtr basePtr;
+            private readonly byte* alignedPtr;
+            private readonly int capacity;
+            private int position;
+            private int limit;
+
+            public AlignedByteBuffer(int capacity, int alignment)
+            {
+                this.capacity = capacity;
+                basePtr = Marshal.AllocHGlobal(capacity + alignment - 1);
+                long addr = basePtr.ToInt64();
+                long aligned = (addr + alignment - 1) & ~((long)alignment - 1);
+                alignedPtr = (byte*)aligned;
+                Clear();
+            }
+
+            ~AlignedByteBuffer()
+            {
+                // Clones are never disposed by Lucene, so free native memory as a backstop.
+                Free();
+            }
+
+            public int Capacity => capacity;
+            public int Position { get => position; set => position = value; }
+            public int Limit { get => limit; set => limit = value; }
+            public IntPtr Pointer => (IntPtr)alignedPtr;
+
+            public void Clear() { position = 0; limit = capacity; }
+            public void Flip() { limit = position; position = 0; }
+            public void Rewind() { position = 0; }
+
+            public void Put(byte b) => alignedPtr[position++] = b;
+            public byte Get() => alignedPtr[position++];
+
+            public void Put(ReadOnlySpan<byte> src)
+            {
+                src.CopyTo(new Span<byte>(alignedPtr + position, src.Length));
+                position += src.Length;
+            }
+
+            public void Get(Span<byte> dst)
+            {
+                new ReadOnlySpan<byte>(alignedPtr + position, dst.Length).CopyTo(dst);
+                position += dst.Length;
+            }
+
+            private void Free()
+            {
+                if (basePtr != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(basePtr);
+                    basePtr = IntPtr.Zero;
+                }
+            }
+
+            public void Dispose()
+            {
+                Free();
+                GC.SuppressFinalize(this);
+            }
+        }
+
+        private sealed class NativeUnixIndexOutput : IndexOutput
+        {
+            private readonly AlignedByteBuffer buffer;
+            private readonly SafeFileHandle fd;
+            private readonly int bufferSize;
+            // LUCENENET specific: track a running CRC32 over the bytes written (in logical order), so
+            // Checksum can return it like FSIndexOutput does. Upstream left getChecksum() unsupported.
+            private readonly CRC32 crc = new CRC32();
+
+            private int bufferPos;
+            private long filePos;
+            private long fileLength;
+            private bool isOpen;
+
+            public NativeUnixIndexOutput(string path, int bufferSize)
+            {
+                fd = NativePosixUtil.OpenDirect(path, read: false);
+                buffer = new AlignedByteBuffer(bufferSize, (int)ALIGN);
+                this.bufferSize = bufferSize;
+                isOpen = true;
+            }
+
+            public override void WriteByte(byte b)
+            {
+                crc.Update(b);
+                buffer.Put(b);
+                if (++bufferPos == bufferSize)
+                {
+                    Dump();
+                }
+            }
+
+            public override void WriteBytes(ReadOnlySpan<byte> source)
+            {
+                crc.Update(source);
+                int offset = 0;
+                int toWrite = source.Length;
+                while (true)
+                {
+                    int left = bufferSize - bufferPos;
+                    if (left <= toWrite)
+                    {
+                        buffer.Put(source.Slice(offset, left));
+                        toWrite -= left;
+                        offset += left;
+                        bufferPos = bufferSize;
+                        Dump();
+                    }
+                    else
+                    {
+                        buffer.Put(source.Slice(offset, toWrite));
+                        bufferPos += toWrite;
+                        break;
+                    }
+                }
+            }
+
+            public override void Flush()
+            {
+                // TODO -- I don't think this method is necessary?
+            }
+
+            private void Dump()
+            {
+                buffer.Flip();
+                long limit = filePos + buffer.Limit;
+                if (limit > fileLength)
+                {
+                    // this dump extends the file
+                    fileLength = limit;
+                }
+                // else: we had seek'd back & wrote some changes
+
+                // must always round to next block
+                buffer.Limit = (int)((buffer.Limit + ALIGN - 1) & ALIGN_NOT_MASK);
+
+                PWrite(fd, buffer.Pointer, buffer.Limit, filePos);
+                filePos += bufferPos;
+                bufferPos = 0;
+                buffer.Clear();
+
+                // TODO: the case where we'd seek'd back, wrote an
+                // entire buffer, we must here read the next buffer;
+                // likely Lucene won't trip on this since we only
+                // write smallish amounts on seeking back
+            }
+
+            public override long Position => filePos + bufferPos;
+
+            // TODO: seek is fragile at best; it can only properly
+            // handle seek & then change bytes that fit entirely
+            // within one buffer
+            [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
+            public override void Seek(long pos)
+            {
+                if (pos != Position)
+                {
+                    Dump();
+                    long alignedPos = pos & ALIGN_NOT_MASK;
+                    filePos = alignedPos;
+                    int n = (int)NativePosixUtil.Pread(fd, filePos, buffer.Pointer, bufferSize);
+                    if (n < bufferSize)
+                    {
+                        buffer.Limit = n;
+                    }
+                    int delta = (int)(pos - alignedPos);
+                    buffer.Position = delta;
+                    bufferPos = delta;
+                }
+            }
+
+            public override long Length
+            {
+                get => fileLength + bufferPos;
+                set { /* not supported: length is managed internally */ }
+            }
+
+            // LUCENENET specific: upstream left getChecksum() unsupported; we maintain a running CRC32
+            // over the written bytes (like FSIndexOutput) so the checksum footer can be written.
+            public override long Checksum => crc.Value;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (isOpen)
+                {
+                    isOpen = false;
+                    try
+                    {
+                        Dump();
+                    }
+                    finally
+                    {
+                        try
+                        {
+                            FTruncate(fd, fileLength);
+                        }
+                        finally
+                        {
+                            fd.Dispose();
+                            buffer.Dispose();
+                        }
+                    }
+                }
+            }
+        }
+
+        private sealed class NativeUnixIndexInput : IndexInput
+        {
+            private readonly AlignedByteBuffer buffer;
+            private readonly SafeFileHandle fd;        // owned descriptor; null for clones
+            private readonly SafeFileHandle sharedFd;  // descriptor used for reads (own, or the original's)
+            private readonly int bufferSize;
+
+            private bool isOpen;
+            private readonly bool isClone;
+            private long filePos;
+            private int bufferPos;
+
+            public NativeUnixIndexInput(string path, int bufferSize)
+                : base("NativeUnixIndexInput(path=\"" + path + "\")")
+            {
+                fd = NativePosixUtil.OpenDirect(path, read: true);
+                sharedFd = fd;
+                this.bufferSize = bufferSize;
+                buffer = new AlignedByteBuffer(bufferSize, (int)ALIGN);
+                isOpen = true;
+                isClone = false;
+                filePos = -bufferSize;
+                bufferPos = bufferSize;
+            }
+
+            // for clone
+            private NativeUnixIndexInput(NativeUnixIndexInput other)
+                : base(other.ToString())
+            {
+                fd = null;
+                sharedFd = other.sharedFd;
+                bufferSize = other.bufferSize;
+                buffer = new AlignedByteBuffer(bufferSize, (int)ALIGN);
+                filePos = -bufferSize;
+                bufferPos = bufferSize;
+                isOpen = true;
+                isClone = true;
+                Seek(other.Position);
+            }
+
+            public override long Position => filePos + bufferPos;
+
+            public override void Seek(long pos)
+            {
+                if (pos != Position)
+                {
+                    long alignedPos = pos & ALIGN_NOT_MASK;
+                    filePos = alignedPos - bufferSize;
+
+                    int delta = (int)(pos - alignedPos);
+                    if (delta != 0)
+                    {
+                        Refill();
+                        buffer.Position = delta;
+                        bufferPos = delta;
+                    }
+                    else
+                    {
+                        // force refill on next read
+                        bufferPos = bufferSize;
+                    }
+                }
+            }
+
+            public override long Length
+            {
+                get
+                {
+                    try
+                    {
+                        return FileSize(sharedFd);
+                    }
+                    catch (Exception ioe) when (ioe.IsIOException())
+                    {
+                        // LUCENENET: upstream wraps in a RuntimeException here (IndexInput.Length cannot
+                        // throw a checked IOException in Java). Preserve the original HResult so callers
+                        // that inspect it (e.g. NativeFSLock) still see the underlying error. The HResult
+                        // setter is only public on modern TFMs; on net462/netstandard2.0 it is protected,
+                        // so the detail is retained in the message there instead.
+                        Exception wrapped = RuntimeException.Create("IOException during Length: " + this, ioe);
+#if !(NETSTANDARD2_0 || NET462)
+                        wrapped.HResult = ioe.HResult;
+#endif
+                        throw wrapped;
+                    }
+                }
+            }
+
+            public override byte ReadByte()
+            {
+                // NOTE: we don't guard against EOF here... ie the
+                // "final" buffer will typically be filled to less
+                // than bufferSize
+                if (bufferPos == bufferSize)
+                {
+                    Refill();
+                }
+                bufferPos++;
+                return buffer.Get();
+            }
+
+            private void Refill()
+            {
+                buffer.Clear();
+                filePos += bufferSize;
+                bufferPos = 0;
+                long n;
                 try
                 {
-                  channel.close();
+                    n = NativePosixUtil.Pread(sharedFd, filePos, buffer.Pointer, bufferSize);
                 }
-                finally
+                catch (Exception ioe) when (ioe.IsIOException())
                 {
-                  fos.close();
-                  //System.out.println("  final len=" + path.length());
+                    // LUCENENET: surface the original HResult (via the ctor that accepts it, which is
+                    // public on all target frameworks) so callers such as NativeFSLock still see the
+                    // underlying error. The inner detail is retained in the message.
+                    throw new IOException(ioe.Message + ": " + this, ioe.HResult);
                 }
-              }
+                // Upstream used FileChannel.read(), which returns -1 at EOF. Here Pread() wraps libc
+                // pread(), which returns 0 at EOF (a genuine error already threw above), so a refill that
+                // reads nothing means we have stepped entirely past the end of the file.
+                if (n <= 0)
+                {
+                    throw EOFException.Create("read past EOF: " + this);
+                }
+                buffer.Rewind();
             }
-          }
-        }
-      }
 
-      private final static class NativeUnixIndexInput extends IndexInput
-      {
-        private final ByteBuffer buffer;
-        private final FileInputStream fis;
-        private final FileChannel channel;
-        private final int bufferSize;
-
-        private bool isOpen;
-        private bool isClone;
-        private long filePos;
-        private int bufferPos;
-
-        public NativeUnixIndexInput(File path, int bufferSize) throws IOException
-        {
-          base("NativeUnixIndexInput(path=\"" + path.Path + "\")");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.FileDescriptor fd = NativePosixUtil.open_direct(path.toString(), true);
-          FileDescriptor fd = NativePosixUtil.open_direct(path.ToString(), true);
-          fis = new FileInputStream(fd);
-          channel = fis.Channel;
-          this.bufferSize = bufferSize;
-          buffer = ByteBuffer.allocateDirect(bufferSize);
-          isOpen = true;
-          isClone = false;
-          filePos = -bufferSize;
-          bufferPos = bufferSize;
-          //System.out.println("D open " + path + " this=" + this);
-        }
-
-        // for clone
-        public NativeUnixIndexInput(NativeUnixIndexInput other) throws IOException
-        {
-          base(other.ToString());
-          this.fis = null;
-          channel = other.channel;
-          this.bufferSize = other.bufferSize;
-          buffer = ByteBuffer.allocateDirect(bufferSize);
-          filePos = -bufferSize;
-          bufferPos = bufferSize;
-          isOpen = true;
-          isClone = true;
-          //System.out.println("D clone this=" + this);
-          seek(other.FilePointer);
-        }
-
-        public void close() throws IOException
-        {
-          if (isOpen && !isClone)
-          {
-            try
+            public override void ReadBytes(Span<byte> destination)
             {
-              channel.close();
+                int offset = 0;
+                int toRead = destination.Length;
+                while (true)
+                {
+                    int left = bufferSize - bufferPos;
+                    if (left < toRead)
+                    {
+                        buffer.Get(destination.Slice(offset, left));
+                        toRead -= left;
+                        offset += left;
+                        Refill();
+                    }
+                    else
+                    {
+                        buffer.Get(destination.Slice(offset, toRead));
+                        bufferPos += toRead;
+                        break;
+                    }
+                }
             }
-            finally
+
+            public override object Clone()
             {
-              if (!isClone)
-              {
-                fis.close();
-              }
+                try
+                {
+                    return new NativeUnixIndexInput(this);
+                }
+                catch (Exception ioe) when (ioe.IsIOException())
+                {
+                    // LUCENENET: as in Length above, upstream wraps in a RuntimeException (Clone cannot
+                    // throw a checked IOException in Java). Preserve the original HResult where the setter
+                    // is public (modern TFMs); on net462/netstandard2.0 the detail stays in the message.
+                    Exception wrapped = RuntimeException.Create("IOException during clone: " + this, ioe);
+#if !(NETSTANDARD2_0 || NET462)
+                    wrapped.HResult = ioe.HResult;
+#endif
+                    throw wrapped;
+                }
             }
-          }
-        }
 
-        public long FilePointer
-        {
-          return filePos + bufferPos;
-        }
-
-        public void seek(long pos) throws IOException
-        {
-          if (pos != FilePointer)
-          {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long alignedPos = pos & ALIGN_NOT_MASK;
-            long alignedPos = pos & ALIGN_NOT_MASK;
-            filePos = alignedPos - bufferSize;
-
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int delta = (int)(pos - alignedPos);
-            int delta = (int)(pos - alignedPos);
-            if (delta != 0)
+            protected override void Dispose(bool disposing)
             {
-              refill();
-              buffer.position(delta);
-              bufferPos = delta;
+                if (isOpen && !isClone)
+                {
+                    isOpen = false;
+                    fd.Dispose();
+                }
+                // each instance (including clones) owns its own native buffer
+                buffer.Dispose();
             }
-            else
-            {
-              // force refill on next read
-              bufferPos = bufferSize;
-            }
-          }
         }
 
-        public long length()
+        /// <summary>
+        /// P/Invoke declarations for the <c>libc</c> functions that the original implementation
+        /// reached through Java NIO <c>FileChannel</c>s (positioned write, truncate, size).
+        /// </summary>
+        private static class NativeMethods
         {
-          try
-          {
-            return channel.size();
-          }
-          catch (IOException ioe)
-          {
-            throw new Exception("IOException during length(): " + this, ioe);
-          }
-        }
+            private const string LIBC = "libc";
 
-        public sbyte readByte() throws IOException
-        {
-          // NOTE: we don't guard against EOF here... ie the
-          // "final" buffer will typically be filled to less
-          // than bufferSize
-          if (bufferPos == bufferSize)
-          {
-            refill();
-          }
-          Debug.Assert(bufferPos == buffer.position(), "bufferPos=" + bufferPos + " vs buffer.position()=" + buffer.position());
-          bufferPos++;
-          return buffer.get();
-        }
+            internal const int SEEK_END = 2;
 
-        private void refill() throws IOException
-        {
-          buffer.clear();
-          filePos += bufferSize;
-          bufferPos = 0;
-          assert(filePos & ALIGN_NOT_MASK) == filePos : "filePos=" + filePos + " anded=" + (filePos & ALIGN_NOT_MASK);
-          //System.out.println("X refill filePos=" + filePos);
-          int n;
-          try
-          {
-            n = channel.read(buffer, filePos);
-          }
-          catch (IOException ioe)
-          {
-            throw new IOException(ioe.Message + ": " + this, ioe);
-          }
-          if (n < 0)
-          {
-            throw new EOFException("read past EOF: " + this);
-          }
-          buffer.rewind();
-        }
+            [DllImport(LIBC, SetLastError = true)]
+            internal static extern nint pwrite(int fd, IntPtr buf, nuint count, long offset);
 
-        public void readBytes(sbyte[] dst, int offset, int len) throws IOException
-        {
-          int toRead = len;
-          //System.out.println("\nX readBytes len=" + len + " fp=" + getFilePointer() + " size=" + length() + " this=" + this);
-          while (true)
-          {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int left = bufferSize - bufferPos;
-            int left = bufferSize - bufferPos;
-            if (left < toRead)
-            {
-              //System.out.println("  copy " + left);
-              buffer.get(dst, offset, left);
-              toRead -= left;
-              offset += left;
-              refill();
-            }
-            else
-            {
-              //System.out.println("  copy " + toRead);
-              buffer.get(dst, offset, toRead);
-              bufferPos += toRead;
-              //System.out.println("  readBytes done");
-              break;
-            }
-          }
-        }
+            [DllImport(LIBC, SetLastError = true)]
+            internal static extern int ftruncate(int fd, long length);
 
-        public NativeUnixIndexInput MemberwiseClone()
-        {
-          try
-          {
-            return new NativeUnixIndexInput(this);
-          }
-          catch (IOException ioe)
-          {
-            throw new Exception("IOException during clone: " + this, ioe);
-          }
+            [DllImport(LIBC, SetLastError = true)]
+            internal static extern long lseek(int fd, long offset, int whence);
         }
-      }
     }
-
 }

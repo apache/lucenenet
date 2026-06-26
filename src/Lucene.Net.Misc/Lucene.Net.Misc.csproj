@@ -36,13 +36,8 @@
     <PackageTags>$(PackageTags);miscellaneous</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-
-
-
-  <ItemGroup>
-    <Compile Remove="Store\*" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
