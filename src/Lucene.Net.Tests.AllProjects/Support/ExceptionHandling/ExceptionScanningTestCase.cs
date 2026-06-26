@@ -53,7 +53,11 @@ namespace Lucene.Net.Support.ExceptionHandling
         // constructor, turning into a TypeInitializationException that fails every test in this class.
         //
         // (NUnit 3's host did not hook the Resolving event this way, which is why this only began
-        // failing after the NUnit 4 upgrade. See nunit/nunit3-vs-adapter#1066 and nunit/nunit-console#1330.)
+        // failing after the NUnit 4 upgrade.)
+        //
+        // This is a bug in NUnit's engine assembly resolver, reported upstream at
+        // https://github.com/nunit/nunit-console/issues/1835. SafeGetType() is a workaround that can be
+        // removed once that issue is fixed and we are on an NUnit3TestAdapter version that includes the fix.
         //
         // SafeGetType() restores the intended behavior: it returns null when the type is genuinely
         // absent, swallowing the load failures that NUnit's resolver surfaces. This removes no coverage,
