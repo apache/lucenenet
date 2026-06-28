@@ -244,7 +244,11 @@ namespace Lucene.Net.Analysis.Compound
                             m_tokens.Enqueue(new CompoundToken(this, start, partLength));
                         }
                     }
-                    else if (m_dictionary.Contains(m_termAtt.Buffer, start, partLength - 1))
+                    // LUCENENET specific - guard against a negative length (partLength == 0).
+                    // Upstream Java relies on CharArrayMap silently treating a negative length as
+                    // "not found", but Lucene.NET's CharArrayMap validates its arguments and throws
+                    // ArgumentOutOfRangeException. See the BOGUS/BROKEN/FUNKY/WACKO note above.
+                    else if (partLength - 1 >= 0 && m_dictionary.Contains(m_termAtt.Buffer, start, partLength - 1))
                     {
                         // check the dictionary again with a word that is one character
                         // shorter

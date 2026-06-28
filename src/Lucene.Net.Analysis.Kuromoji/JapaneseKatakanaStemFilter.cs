@@ -51,9 +51,11 @@ namespace Lucene.Net.Analysis.Ja
         public JapaneseKatakanaStemFilter(TokenStream input, int minimumLength)
             : base(input)
         {
-            // LUCENENET: Added guard clause
-            if (minimumLength < 0)
-                throw new ArgumentOutOfRangeException(nameof(minimumLength), "Minimum length must be a non-negative integer.");
+            // LUCENENET: Backport of the LUCENE-10352 guard clause. Enforcing minimumLength >= 1
+            // prevents a zero-length term (e.g. the single empty token a KeywordTokenizer emits for
+            // empty input) from reaching the term[length - 1] read in Stem() with length == 0.
+            if (minimumLength < 1)
+                throw new ArgumentOutOfRangeException(nameof(minimumLength), "minimumLength must be >=1");
 
             this.minimumKatakanaLength = minimumLength;
             this.termAttr = AddAttribute<ICharTermAttribute>();
