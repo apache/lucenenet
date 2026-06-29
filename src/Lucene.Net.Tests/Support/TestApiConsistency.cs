@@ -38,7 +38,7 @@ namespace Lucene.Net
         [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
         public override void TestPrivateFieldNames(Type typeFromTargetAssembly)
         {
-            base.TestPrivateFieldNames(typeFromTargetAssembly, @"^Lucene\.Net\.Support\.(?:ConcurrentHashSet|PlatformHelper|DateTimeOffsetUtil|Arrays|IO\.FileSupport)|^Lucene\.ExceptionExtensions|^Lucene\.Net\.Util\.Constants\.MaxStackByteLimit|^Lucene\.Net\.Search\.TopDocs\.ShardByteSize|^Lucene\.Net\.Store\.BaseDirectory\.(?:True|False)|CharStackBufferSize$");
+            base.TestPrivateFieldNames(typeFromTargetAssembly, @"^Lucene\.Net\.Support\.(?:ConcurrentHashSet|PlatformHelper|DateTimeOffsetUtil|Arrays|IO\.FileSupport)|^Lucene\.ExceptionExtensions|^Lucene\.Net\.Util\.Constants\.MaxStackByteLimit|^Lucene\.Net\.Search\.TopDocs\.ShardByteSize|^Lucene\.Net\.Store\.BaseDirectory\.(?:True|False)|^Lucene\.Net\.Store\.MMapDirectory\+Chunk\.(?:BasePtr|Length)$|^Lucene\.Net\.Support\.DrainReclaimer\+Slot\.(?:Depth|OnEnterForTest)$|CharStackBufferSize$");
         }
 
         [Test, LuceneNetSpecific]

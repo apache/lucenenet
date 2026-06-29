@@ -104,14 +104,15 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ARRAY_FILL</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ENCODING_GETSTRING_READONLYSPAN</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_INTERLOCKED_MEMORYBARRIERPROCESSWIDE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_NUMBER_PARSE_READONLYSPAN</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_QUEUE_TRYDEQUEUE_TRYPEEK</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_STREAM_READ_SPAN</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_STRINGBUILDER_APPEND_READONLYSPAN</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_QUEUE_TRYDEQUEUE_TRYPEEK</DefineConstants>
 
   </PropertyGroup>
 
