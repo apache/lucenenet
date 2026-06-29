@@ -1195,16 +1195,17 @@ namespace Lucene.Net.Util.Packed
                         Assert.AreEqual(arr[i], buf.Get(i));
                     }
 
-                    AbstractAppendingInt64Buffer.Iterator it = buf.GetIterator();
+                    using var it = buf.GetEnumerator();
                     for (int i = 0; i < arr.Length; ++i)
                     {
+                        bool hasNext = it.MoveNext();
                         if (Random.NextBoolean())
                         {
-                            Assert.IsTrue(it.HasNext);
+                            Assert.IsTrue(hasNext);
                         }
-                        Assert.AreEqual(arr[i], it.Next());
+                        Assert.AreEqual(arr[i], it.Current);
                     }
-                    Assert.IsFalse(it.HasNext);
+                    Assert.IsFalse(it.MoveNext());
 
 
                     long[] target = new long[arr.Length + 1024]; // check the request for more is OK.
