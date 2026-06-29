@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Spatial4n.Context;
 using Spatial4n.Shapes;
 using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Spatial.Vector
 {

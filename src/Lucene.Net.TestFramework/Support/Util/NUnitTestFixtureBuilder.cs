@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TestParameters = NUnit.Framework.Internal.TestParameters;
 
 namespace Lucene.Net.Util
 {
@@ -163,16 +164,8 @@ namespace Lucene.Net.Util
             }
             else
             {
-                //var argDisplayNames = (testFixtureData as NUnit.Framework.Internal.TestParameters)?.ArgDisplayNames;
-                var testParameters = testFixtureData as NUnit.Framework.Internal.TestParameters;
-                string[] argDisplayNames = null;
-                if (testParameters != null)
-                {
-                    // Hack so we can call the same internal field that NUnit does
-                    BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-                    FieldInfo field = typeof(NUnit.Framework.Internal.TestParameters).GetField("_argDisplayNames", bindFlags);
-                    argDisplayNames = (string[])field.GetValue(testFixtureData);
-                }
+                var argDisplayNames = (testFixtureData as TestParameters)?.ArgDisplayNames;
+
                 if (argDisplayNames != null)
                 {
                     fixture.Name = typeInfo.GetDisplayName();

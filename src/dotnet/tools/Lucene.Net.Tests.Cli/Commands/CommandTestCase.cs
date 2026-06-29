@@ -113,7 +113,7 @@ namespace Lucene.Net.Cli.Commands
             var output = new MockConsoleApp();
             var cmd = CreateConfiguration(output);
             Assert.IsNotNull(cmd.Description);
-            NUnit.Framework.Assert.IsNotEmpty(cmd.Description);
+            Assert.IsNotEmpty(cmd.Description);
         }
 
         [Test]

@@ -7,6 +7,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -46,7 +47,7 @@ namespace Lucene.Net.Index
     /// Tests for IndexWriter when the disk runs out of space
     /// </summary>
     [TestFixture]
-    [Timeout(1_200_000)] // 20 minutes
+    [CancelAfter(1_200_000)] // 20 minutes
     public class TestIndexWriterOnDiskFull : LuceneTestCase
     {
         /*
@@ -56,7 +57,7 @@ namespace Lucene.Net.Index
          */
 
         [Test]
-        public virtual void TestAddDocumentOnDiskFull()
+        public virtual void TestAddDocumentOnDiskFull(CancellationToken cancellationToken)
         {
             for (int pass = 0; pass < 2; pass++)
             {
@@ -68,6 +69,8 @@ namespace Lucene.Net.Index
                 long diskFree = TestUtil.NextInt32(Random, 100, 300);
                 while (true)
                 {
+                    cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
+
                     if (Verbose)
                     {
                         Console.WriteLine("TEST: cycle: diskFree=" + diskFree);
@@ -182,7 +185,7 @@ namespace Lucene.Net.Index
          */
 
         [Test]
-        public virtual void TestAddIndexOnDiskFull()
+        public virtual void TestAddIndexOnDiskFull(CancellationToken cancellationToken)
         {
             // MemoryCodec, since it uses FST, is not necessarily
             // "additive", ie if you add up N small FSTs, then merge
@@ -261,6 +264,8 @@ namespace Lucene.Net.Index
 
             for (int iter = 0; iter < 3; iter++)
             {
+                cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
+
                 if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + iter);
@@ -290,6 +295,8 @@ namespace Lucene.Net.Index
 
                 while (!done)
                 {
+                    cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
+
                     if (Verbose)
                     {
                         Console.WriteLine("TEST: cycle...");
@@ -589,6 +596,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-2593
+        // LUCENENET NOTE: There isn't a good seam to introduce a CancellationToken here for CancelAfter support as specified on the class
         [Test]
         public virtual void TestCorruptionAfterDiskFullDuringMerge()
         {
@@ -630,9 +638,10 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        // LUCENE-1130: make sure immeidate disk full on creating
+        // LUCENE-1130: make sure immediate disk full on creating
         // an IndexWriter (hit during DW.ThreadState.Init()) is
         // OK:
+        // LUCENENET NOTE: There isn't a good seam to introduce a CancellationToken here for CancelAfter support as specified on the class
         [Test]
         public virtual void TestImmediateDiskFull()
         {
@@ -680,7 +689,7 @@ namespace Lucene.Net.Index
 
         // TODO: these are also in TestIndexWriter... add a simple doc-writing method
         // like this to LuceneTestCase?
-        private void AddDoc(IndexWriter writer)
+        private static void AddDoc(IndexWriter writer)
         {
             Document doc = new Document();
             doc.Add(NewTextField("content", "aaa", Field.Store.NO));
@@ -691,7 +700,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
-        private void AddDocWithIndex(IndexWriter writer, int index)
+        private static void AddDocWithIndex(IndexWriter writer, int index)
         {
             Document doc = new Document();
             doc.Add(NewTextField("content", "aaa " + index, Field.Store.NO));
