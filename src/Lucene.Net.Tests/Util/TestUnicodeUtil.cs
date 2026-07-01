@@ -196,46 +196,6 @@ namespace Lucene.Net.Util
         }
 
         [Test, LuceneNetSpecific]
-        public virtual void TestUTF8toUTF32_ICharSequence()
-        {
-            BytesRef utf8 = new BytesRef(20);
-            Int32sRef utf32 = new Int32sRef(20);
-            int[] codePoints = new int[20];
-            int num = AtLeast(50000);
-            for (int i = 0; i < num; i++)
-            {
-                string s = TestUtil.RandomUnicodeString(Random);
-                UnicodeUtil.UTF16toUTF8(s.AsCharSequence(), 0, s.Length, utf8);
-                UnicodeUtil.UTF8toUTF32(utf8, utf32);
-
-                int charUpto = 0;
-                int intUpto = 0;
-
-                while (charUpto < s.Length)
-                {
-                    int cp = Character.CodePointAt(s, charUpto);
-                    codePoints[intUpto++] = cp;
-                    charUpto += Character.CharCount(cp);
-                }
-                if (!ArrayUtil.Equals(codePoints, 0, utf32.Int32s, utf32.Offset, intUpto))
-                {
-                    Console.WriteLine("FAILED");
-                    for (int j = 0; j < s.Length; j++)
-                    {
-                        Console.WriteLine("  char[" + j + "]=" + ((int)s[j]).ToString("x"));
-                    }
-                    Console.WriteLine();
-                    Assert.AreEqual(intUpto, utf32.Length);
-                    for (int j = 0; j < intUpto; j++)
-                    {
-                        Console.WriteLine("  " + utf32.Int32s[j].ToString("x") + " vs " + codePoints[j].ToString("x"));
-                    }
-                    Assert.Fail("mismatch");
-                }
-            }
-        }
-
-        [Test, LuceneNetSpecific]
         public virtual void TestUTF8toUTF32_CharArray()
         {
             BytesRef utf8 = new BytesRef(20);

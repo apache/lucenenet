@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+using System.Runtime.InteropServices;
+#endif
 
 namespace Lucene.Net.Util
 {
@@ -38,7 +40,7 @@ namespace Lucene.Net.Util
     [Serializable]
 #endif
     // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
-    public sealed class CharsRef : IComparable<CharsRef>, ICharSequence, IEquatable<CharsRef> // LUCENENET specific - implemented IEquatable<CharsRef>
+    public sealed class CharsRef : IComparable<CharsRef>, IEquatable<CharsRef> // LUCENENET specific - implemented IEquatable<CharsRef>
     {
         /// <summary>
         /// An empty character array for convenience </summary>
@@ -46,8 +48,6 @@ namespace Lucene.Net.Util
         [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
         [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
         public static readonly char[] EMPTY_CHARS = Array.Empty<char>();
-
-        bool ICharSequence.HasValue => true;
 
         /// <summary>
         /// The contents of the <see cref="CharsRef"/>. Should never be <c>null</c>.
@@ -343,26 +343,6 @@ namespace Lucene.Net.Util
                 }
                 return chars[Offset + index];
             }
-        }
-
-        public ICharSequence Subsequence(int startIndex, int length)
-        {
-            // NOTE: must do a real check here to meet the specs of CharSequence
-            //if (start < 0 || end > Length || start > end)
-            //{
-            //    throw new IndexOutOfRangeException();
-            //}
-
-            // LUCENENET specific - changed semantics from start/end to startIndex/length to match .NET
-            // From Apache Harmony String class
-            if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
-            if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length));
-            if (startIndex > Length - length) // LUCENENET: Checks for int overflow
-                throw new ArgumentOutOfRangeException(nameof(length), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(length)} <= {nameof(Length)}.");
-
-            return new CharsRef(chars, Offset + startIndex, length);
         }
 
         /// @deprecated this comparer is only a transition mechanism
