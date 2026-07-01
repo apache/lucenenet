@@ -9,6 +9,8 @@ using System.Text.RegularExpressions;
 using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
 
+#nullable enable
+
 namespace Lucene.Net.Replicator
 {
     /*
@@ -57,10 +59,10 @@ namespace Lucene.Net.Replicator
         public const string INFO_STREAM_COMPONENT = "IndexReplicationHandler";
 
         private readonly Directory indexDirectory;
-        private readonly Action callback;
+        private readonly Action? callback;
 
-        private volatile IDictionary<string, IList<RevisionFile>> currentRevisionFiles;
-        private volatile string currentVersion;
+        private volatile IDictionary<string, IList<RevisionFile>>? currentRevisionFiles;
+        private volatile string? currentVersion;
         private volatile InfoStream infoStream;
 
         //Note: LUCENENET Specific Utility Method
@@ -78,7 +80,7 @@ namespace Lucene.Net.Replicator
         /// <c>null</c> if there are no commits.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public static IndexCommit GetLastCommit(Directory directory)
+        public static IndexCommit? GetLastCommit(Directory directory)
         {
             try
             {
@@ -106,7 +108,7 @@ namespace Lucene.Net.Replicator
         /// The reason why the code fails instead of putting segments_N file last is
         /// that this indicates an error in the <see cref="IRevision"/> implementation.
         /// </summary>
-        public static string GetSegmentsFile(IList<string> files, bool allowEmpty)
+        public static string? GetSegmentsFile(IList<string> files, bool allowEmpty)
         {
             if (files.Count == 0)
             {
@@ -121,7 +123,7 @@ namespace Lucene.Net.Replicator
             if (!segmentsFile.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal) || segmentsFile.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal))
             {
                 throw IllegalStateException.Create(
-                    string.Format("last file to copy+sync must be segments_N but got {0}; check your Revision implementation!", segmentsFile));
+                    $"last file to copy+sync must be segments_N but got {segmentsFile}; check your Revision implementation!");
             }
             return segmentsFile;
         }
@@ -157,11 +159,11 @@ namespace Lucene.Net.Replicator
         /// directory. It suppresses any exceptions that occur, as this can be retried
         /// the next time.
         /// </remarks>
-        public static void CleanupOldIndexFiles(Directory directory, string segmentsFile)
+        public static void CleanupOldIndexFiles(Directory directory, string? segmentsFile)
         {
             try
             {
-                IndexCommit commit = GetLastCommit(directory);
+                IndexCommit? commit = GetLastCommit(directory);
                 // commit is null means weird IO errors occurred, ignore them
                 // if there were any IO errors reading the expected commit point (i.e.
                 // segments files mismatch), then ignore that commit either.
@@ -218,7 +220,7 @@ namespace Lucene.Net.Replicator
         /// the generation from the given <paramref name="segmentsFile"/>. If it is <c>null</c>,
         /// this method deletes segments.gen from the directory.
         /// </summary>
-        public static void WriteSegmentsGen(string segmentsFile, Directory directory)
+        public static void WriteSegmentsGen(string? segmentsFile, Directory directory)
         {
             if (segmentsFile != null)
             {
@@ -240,9 +242,9 @@ namespace Lucene.Net.Replicator
         /// Constructor with the given index directory and callback to notify when the
         /// indexes were updated.
         /// </summary>
-        public IndexReplicationHandler(Directory indexDirectory, Action callback)
+        public IndexReplicationHandler(Directory indexDirectory, Action? callback)
         {
-            this.InfoStream = InfoStream.Default;
+            infoStream = InfoStream.Default;
             this.callback = callback;
             this.indexDirectory = indexDirectory;
 
@@ -258,25 +260,26 @@ namespace Lucene.Net.Replicator
                 currentRevisionFiles = IndexRevision.RevisionFiles(commit);
 
                 WriteToInfoStream(
-                    string.Format("constructor(): currentVersion={0} currentRevisionFiles={1}", currentVersion, currentRevisionFiles),
-                    string.Format("constructor(): commit={0}", commit));
+                    $"constructor(): currentVersion={currentVersion} currentRevisionFiles={currentRevisionFiles}",
+                    $"constructor(): commit={commit}");
             }
         }
 
-        public virtual string CurrentVersion => currentVersion;
+        public virtual string? CurrentVersion => currentVersion;
 
-        public virtual IDictionary<string, IList<RevisionFile>> CurrentRevisionFiles => currentRevisionFiles;
+        public virtual IDictionary<string, IList<RevisionFile>>? CurrentRevisionFiles => currentRevisionFiles;
 
         public virtual void RevisionReady(string version,
             IDictionary<string, IList<RevisionFile>> revisionFiles,
             IDictionary<string, IList<string>> copiedFiles,
             IDictionary<string, Directory> sourceDirectory)
         {
-            if (revisionFiles.Count > 1) throw new ArgumentException(string.Format("this handler handles only a single source; got {0}", revisionFiles.Keys));
+            if (revisionFiles.Count > 1)
+                throw new ArgumentException($"this handler handles only a single source; got {revisionFiles.Keys}");
 
             Directory clientDirectory = sourceDirectory.Values.First();
             IList<string> files = copiedFiles.Values.First();
-            string segmentsFile = GetSegmentsFile(files, false);
+            string segmentsFile = GetSegmentsFile(files, false)!; // [!]: verified by GetSegmentsFile
 
             bool success = false;
             try
@@ -306,7 +309,7 @@ namespace Lucene.Net.Replicator
             currentRevisionFiles = revisionFiles;
             currentVersion = version;
 
-            WriteToInfoStream(string.Format("revisionReady(): currentVersion={0} currentRevisionFiles={1}", currentVersion, currentRevisionFiles));
+            WriteToInfoStream($"revisionReady(): currentVersion={currentVersion} currentRevisionFiles={currentRevisionFiles}");
 
             // update the segments.gen file
             WriteSegmentsGen(segmentsFile, indexDirectory);
@@ -339,6 +342,7 @@ namespace Lucene.Net.Replicator
         public virtual InfoStream InfoStream
         {
             get => infoStream;
+            // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
             set => infoStream = value ?? InfoStream.NO_OUTPUT;
         }
     }

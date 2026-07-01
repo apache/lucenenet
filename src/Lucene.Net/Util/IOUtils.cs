@@ -5,11 +5,9 @@ using Lucene.Net.Support.IO;
 using Lucene.Net.Support.Text;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -627,13 +625,14 @@ namespace Lucene.Net.Util
             }
         }
 
+        #nullable enable
         /// <summary>
         /// Simple utility method that takes a previously caught
         /// <see cref="Exception"/> and rethrows either
         /// <see cref="IOException"/> or an unchecked exception.  If the
         /// argument is <c>null</c> then this method does nothing.
         /// </summary>
-        public static void ReThrow(Exception th)
+        public static void ReThrow(Exception? th)
         {
             if (th != null)
             {
@@ -650,7 +649,7 @@ namespace Lucene.Net.Util
         /// <see cref="Exception"/> and rethrows it as an unchecked exception.
         /// If the argument is <c>null</c> then this method does nothing.
         /// </summary>
-        public static void ReThrowUnchecked(Exception th)
+        public static void ReThrowUnchecked(Exception? th)
         {
             if (th != null)
             {
@@ -661,6 +660,7 @@ namespace Lucene.Net.Util
                 throw RuntimeException.Create(th);
             }
         }
+        #nullable restore
 
         // LUCENENET specific: using string instead of FileSystemInfo to avoid extra allocation
         public static void Fsync(string fileToSync, bool isDir)
