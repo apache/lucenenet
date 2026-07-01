@@ -7,13 +7,11 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading;
 using static Lucene.Net.Index.TermsEnum;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
@@ -3243,7 +3241,7 @@ namespace Lucene.Net.Index
             using DirectoryReader ir = DirectoryReader.Open(dir);
             int numThreads = TestUtil.NextInt32(Random, 2, 7);
             ThreadJob[] threads = new ThreadJob[numThreads];
-            using CountdownEvent startingGun = new CountdownEvent(1);
+            using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousClass(ir, startingGun);
@@ -3259,9 +3257,9 @@ namespace Lucene.Net.Index
         private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly DirectoryReader ir;
-            private readonly CountdownEvent startingGun;
+            private readonly CountdownLatch startingGun;
 
-            public ThreadAnonymousClass(DirectoryReader ir, CountdownEvent startingGun)
+            public ThreadAnonymousClass(DirectoryReader ir, CountdownLatch startingGun)
             {
                 this.ir = ir;
                 this.startingGun = startingGun;
@@ -3379,7 +3377,7 @@ namespace Lucene.Net.Index
             using DirectoryReader ir = DirectoryReader.Open(dir);
             int numThreads = TestUtil.NextInt32(Random, 2, 7);
             ThreadJob[] threads = new ThreadJob[numThreads];
-            using CountdownEvent startingGun = new CountdownEvent(1);
+            using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousClass2(ir, startingGun);
@@ -3395,9 +3393,9 @@ namespace Lucene.Net.Index
         private sealed class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly DirectoryReader ir;
-            private readonly CountdownEvent startingGun;
+            private readonly CountdownLatch startingGun;
 
-            public ThreadAnonymousClass2(DirectoryReader ir, CountdownEvent startingGun)
+            public ThreadAnonymousClass2(DirectoryReader ir, CountdownLatch startingGun)
             {
                 this.ir = ir;
                 this.startingGun = startingGun;

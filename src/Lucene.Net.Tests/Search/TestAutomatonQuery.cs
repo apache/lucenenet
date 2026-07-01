@@ -2,7 +2,6 @@ using J2N.Threading;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
-using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
@@ -230,7 +229,7 @@ namespace Lucene.Net.Search
             {
                 queries[i] = new AutomatonQuery(new Term("bogus", "bogus"), AutomatonTestUtil.RandomAutomaton(Random));
             }
-            CountdownEvent startingGun = new CountdownEvent(1);
+            using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             int numThreads = TestUtil.NextInt32(Random, 2, 5);
             ThreadJob[] threads = new ThreadJob[numThreads];
             for (int threadID = 0; threadID < numThreads; threadID++)
@@ -249,9 +248,9 @@ namespace Lucene.Net.Search
         private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly AutomatonQuery[] queries;
-            private readonly CountdownEvent startingGun;
+            private readonly CountdownLatch startingGun;
 
-            public ThreadAnonymousClass(AutomatonQuery[] queries, CountdownEvent startingGun)
+            public ThreadAnonymousClass(AutomatonQuery[] queries, CountdownLatch startingGun)
             {
                 this.queries = queries;
                 this.startingGun = startingGun;

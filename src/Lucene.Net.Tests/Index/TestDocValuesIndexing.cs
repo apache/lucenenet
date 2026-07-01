@@ -5,7 +5,6 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using NUnit.Framework;
 using System;
-using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
@@ -513,7 +512,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
-            CountdownEvent startingGun = new CountdownEvent(1);
+            using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             AtomicBoolean hitExc = new AtomicBoolean();
             ThreadJob[] threads = new ThreadJob[3];
             for (int i = 0; i < 3; i++)
@@ -552,11 +551,11 @@ namespace Lucene.Net.Index
         private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly IndexWriter w;
-            private readonly CountdownEvent startingGun;
+            private readonly CountdownLatch startingGun;
             private readonly AtomicBoolean hitExc;
             private readonly Document doc;
 
-            public ThreadAnonymousClass(IndexWriter w, CountdownEvent startingGun, AtomicBoolean hitExc, Document doc)
+            public ThreadAnonymousClass(IndexWriter w, CountdownLatch startingGun, AtomicBoolean hitExc, Document doc)
             {
                 this.w = w;
                 this.startingGun = startingGun;

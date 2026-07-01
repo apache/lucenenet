@@ -1263,6 +1263,78 @@ namespace Lucene.Net.Index
             }
         }
 
+        /// <summary>
+        /// If IW hits OOME during indexing, it should refuse to commit any further changes. </summary>
+        // LUCENENET: backport LUCENE-5871 (Lucene 4.10.0) test
+        [Test]
+        public virtual void TestOutOfMemoryErrorRollback()
+        {
+            AtomicBoolean thrown = new AtomicBoolean(false);
+            Directory dir = NewDirectory();
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetInfoStream(new TOOMRollbackInfoStreamAnonymousClass(thrown)));
+            writer.AddDocument(new Document());
+
+            try
+            {
+                writer.Commit();
+                Assert.Fail("OutOfMemoryError expected");
+            }
+            catch (Exception expected) when (expected.IsOutOfMemoryError())
+            {
+            }
+
+            try
+            {
+                writer.Dispose();
+            }
+            catch (Exception ise) when (ise.IsIllegalStateException())
+            {
+                // expected
+            }
+
+            try
+            {
+                writer.AddDocument(new Document());
+            }
+            catch (Exception ace) when (ace.IsAlreadyClosedException())
+            {
+                // expected
+            }
+
+            // IW should have done rollback() during close, since it hit OOME, and so no index should exist:
+            Assert.IsFalse(DirectoryReader.IndexExists(dir));
+
+            dir.Dispose();
+        }
+
+        private sealed class TOOMRollbackInfoStreamAnonymousClass : InfoStream
+        {
+            private readonly AtomicBoolean thrown;
+
+            public TOOMRollbackInfoStreamAnonymousClass(AtomicBoolean thrown)
+            {
+                this.thrown = thrown;
+            }
+
+            public override void Message(string component, string message)
+            {
+                if (message.Contains("startFullFlush") && thrown.CompareAndSet(false, true))
+                {
+                    throw OutOfMemoryError.Create("fake OOME at " + message);
+                }
+            }
+
+            public override bool IsEnabled(string component)
+            {
+                return true;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+            }
+        }
+
         // LUCENE-1347
         private sealed class TestPoint4 : ITestPoint
         {
@@ -2223,6 +2295,12 @@ namespace Lucene.Net.Index
                             Console.WriteLine("  now close writer");
                         }
                         doClose = true;
+                        // LUCENENET: w.Commit() before w.Dispose() ported from upstream
+                        // LUCENE-5871 (commit 2cfcdcc, first released in 4.10.0), pulled in
+                        // alongside the LUCENE-5871 IndexWriter close fix (#1284). The new
+                        // Shutdown contract throws IllegalStateException if a prepareCommit
+                        // is outstanding, so we commit first.
+                        w.Commit();
                         w.Dispose();
                         w = null;
                     }

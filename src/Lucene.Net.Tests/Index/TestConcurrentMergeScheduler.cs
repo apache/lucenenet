@@ -1,3 +1,4 @@
+using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
@@ -260,7 +261,9 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 writer.Commit();
 
+#pragma warning disable 612, 618
                 writer.Dispose(false);
+#pragma warning restore 612, 618
 
                 IndexReader reader = DirectoryReader.Open(directory);
                 Assert.AreEqual((1 + iter) * 182, reader.NumDocs);
@@ -286,7 +289,7 @@ namespace Lucene.Net.Index
 
             int maxMergeCount = TestUtil.NextInt32(Random, 1, 5);
             int maxMergeThreads = TestUtil.NextInt32(Random, 1, maxMergeCount);
-            CountdownEvent enoughMergesWaiting = new CountdownEvent(maxMergeCount);
+            using CountdownLatch enoughMergesWaiting = new CountdownLatch(maxMergeCount); // LUCENENET: CountdownLatch is disposable in .NET
             AtomicInt32 runningMergeCount = new AtomicInt32(0);
             AtomicBoolean failed = new AtomicBoolean();
 
@@ -315,18 +318,20 @@ namespace Lucene.Net.Index
                     w.AddDocument(doc);
                 }
             }
+#pragma warning disable 612, 618
             w.Dispose(false);
+#pragma warning restore 612, 618
             dir.Dispose();
         }
 
         private sealed class ConcurrentMergeSchedulerAnonymousClass : ConcurrentMergeScheduler
         {
             private readonly int maxMergeCount;
-            private readonly CountdownEvent enoughMergesWaiting;
+            private readonly CountdownLatch enoughMergesWaiting;
             private readonly AtomicInt32 runningMergeCount;
             private readonly AtomicBoolean failed;
 
-            public ConcurrentMergeSchedulerAnonymousClass(int maxMergeCount, CountdownEvent enoughMergesWaiting, AtomicInt32 runningMergeCount, AtomicBoolean failed)
+            public ConcurrentMergeSchedulerAnonymousClass(int maxMergeCount, CountdownLatch enoughMergesWaiting, AtomicInt32 runningMergeCount, AtomicBoolean failed)
             {
                 this.maxMergeCount = maxMergeCount;
                 this.enoughMergesWaiting = enoughMergesWaiting;

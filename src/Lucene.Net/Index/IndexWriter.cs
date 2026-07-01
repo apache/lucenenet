@@ -1041,56 +1041,79 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
+        /// Gracefully closes (commits, waits for merges), but calls rollback
+        /// if there's an exc so the IndexWriter is always closed.
+        /// </summary>
+        // LUCENENET: ported from upstream LUCENE-5871 (commit 2cfcdcc, first released in
+        // 4.10.0) to fix #1284. Previously the close path's straight-line cleanup leaked
+        // the reader pool, deleter, and write.lock when CommitInternal threw an I/O exception.
+        private void Shutdown(bool waitForMerges)
+        {
+            if (pendingCommit != null)
+            {
+                throw IllegalStateException.Create("cannot close: prepareCommit was already called with no corresponding call to commit");
+            }
+            // Ensure that only one thread actually gets to do the
+            // closing
+            if (ShouldClose())
+            {
+                bool success = false;
+                try
+                {
+                    if (infoStream.IsEnabled("IW"))
+                    {
+                        infoStream.Message("IW", "now flush at close");
+                    }
+                    Flush(true, true);
+                    FinishMerges(waitForMerges);
+                    CommitInternal();
+                    RollbackInternal(); // ie close, since we just committed
+                    success = true;
+                }
+                finally
+                {
+                    if (success == false)
+                    {
+                        // Be certain to close the index on any exception
+                        try
+                        {
+                            RollbackInternal();
+                        }
+                        catch (Exception t) when (t.IsThrowable())
+                        {
+                            // Suppress so we keep throwing original exception
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Commits all changes to an index, waits for pending merges
-        /// to complete, and closes all associated files.
+        /// to complete, closes all associated files and releases the
+        /// write lock.
         /// <para/>
-        /// This is a "slow graceful shutdown" which may take a long time
-        /// especially if a big merge is pending: If you only want to close
-        /// resources use <see cref="Rollback()"/>. If you only want to commit
-        /// pending changes and close resources see <see cref="Dispose(bool)"/>.
+        /// Note that:
+        /// <list type="bullet">
+        ///     <item><description>If you called <see cref="PrepareCommit()"/> but failed to call <see cref="Commit()"/>, this
+        ///         method will throw <see cref="InvalidOperationException"/> and the <see cref="IndexWriter"/>
+        ///         will not be disposed.</description></item>
+        ///     <item><description>If this method throws any other exception, the <see cref="IndexWriter"/>
+        ///         will be disposed, but changes may have been lost.</description></item>
+        /// </list>
         /// <para/>
         /// Note that this may be a costly
         /// operation, so, try to re-use a single writer instead of
         /// closing and opening a new one.  See <see cref="Commit()"/> for
         /// caveats about write caching done by some IO devices.
-        ///
-        /// <para> If an <see cref="Exception"/> is hit during close, eg due to disk
-        /// full or some other reason, then both the on-disk index
-        /// and the internal state of the <see cref="IndexWriter"/> instance will
-        /// be consistent.  However, the close will not be complete
-        /// even though part of it (flushing buffered documents)
-        /// may have succeeded, so the write lock will still be
-        /// held.</para>
-        ///
-        /// <para> If you can correct the underlying cause (eg free up
-        /// some disk space) then you can call <see cref="Dispose()"/> again.
-        /// Failing that, if you want to force the write lock to be
-        /// released (dangerous, because you may then lose buffered
-        /// docs in the <see cref="IndexWriter"/> instance) then you can do
-        /// something like this:</para>
-        ///
-        /// <code>
-        /// try
-        /// {
-        ///     writer.Dispose();
-        /// }
-        /// finally
-        /// {
-        ///     if (IndexWriter.IsLocked(directory))
-        ///     {
-        ///         IndexWriter.Unlock(directory);
-        ///     }
-        /// }
-        /// </code>
-        ///
-        /// after which, you must be certain not to use the writer
-        /// instance anymore.
-        ///
-        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
-        /// you should immediately dispose the writer, again.  See
-        /// <see cref="IndexWriter"/> for details.</para>
+        /// <para/>
+        /// <b>NOTE</b>: You must ensure no other threads are still making
+        /// changes at the same time that this method is invoked.
         /// </summary>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        // LUCENENET: doc-comment updated to match upstream LUCENE-5871 (commit 2cfcdcc, first
+        // released in 4.10.0); the previous text described the pre-fix behavior where the
+        // write lock could remain held on exception, which no longer applies after #1284.
         [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler and TestIndexWriterWithThreads
         public void Dispose()
         {
@@ -1102,18 +1125,17 @@ namespace Lucene.Net.Index
         /// Disposes the index with or without waiting for currently
         /// running merges to finish.  This is only meaningful when
         /// using a <see cref="MergeScheduler"/> that runs merges in background
-        /// threads.
-        ///
-        /// <para><b>NOTE</b>: If this method hits an <see cref="OutOfMemoryException"/>
-        /// you should immediately dispose the writer, again.  See
-        /// <see cref="IndexWriter"/> for details.</para>
+        /// threads.  See <see cref="Dispose()"/> for details on behavior
+        /// when exceptions are thrown.
         ///
         /// <para><b>NOTE</b>: It is dangerous to always call
         /// <c>Dispose(false)</c>, especially when <see cref="IndexWriter"/> is not open
         /// for very long, because this can result in "merge
         /// starvation" whereby long merges will never have a
         /// chance to finish.  This will cause too many segments in
-        /// your index over time.</para>
+        /// your index over time, which leads to all sorts of
+        /// problems like slow searches, too much RAM and too
+        /// many file descriptors used by readers, etc.</para>
         ///
         /// <para><b>NOTE</b>: This overload should not be called when implementing a finalizer.
         /// Instead, call <see cref="Dispose(bool, bool)"/> with <c>disposing</c> set to
@@ -1124,6 +1146,18 @@ namespace Lucene.Net.Index
         /// running merges to abort, wait until those merges have
         /// finished (which should be at most a few seconds), and
         /// then return. </param>
+        // LUCENENET: doc-comment updated and [Obsolete] applied to match upstream LUCENE-5871
+        // (commit 2cfcdcc, first released in 4.10.0). Upstream marked this overload @Deprecated
+        // because the new Shutdown contract makes "close without waiting for merges" easy to
+        // misuse; prefer Commit() followed by Rollback() to abort merges and then close.
+        //
+        // The deprecation generates CS0618 warnings on existing in-tree callers. This mirrors
+        // upstream's posture exactly: branch_4x kept javac [deprecation] warnings at the
+        // method's call sites and did not migrate them when 2cfcdcc landed. The intent was
+        // always to remove the overload entirely on the next major release: trunk did exactly
+        // that in LUCENE-4246 (commit 8559eaf, Lucene 5.0), deleting close(boolean) and
+        // migrating all the trunk call sites in the same commit.
+        [Obsolete("To abort merges and then close, call Commit() and then Rollback() instead.")]
         [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler and TestIndexWriterWithThreads
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Usage", "CA1816:Dispose methods should call SuppressFinalize", Justification = "This is Lucene's alternate path to Dispose() and we must suppress the finalizer here.")]
@@ -1188,45 +1222,16 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.AggressiveInlining)] // LUCENENET NOTE: this will interfere with stack trace inspection in tests, but that case should be covered by Dispose above which is NoInlining
         internal void Close(bool waitForMerges) // LUCENENET: made internal for test purposes
         {
-            // Ensure that only one thread actually gets to do the
-            // closing, and make sure no commit is also in progress:
-            UninterruptableMonitor.Enter(commitLock);
-            try
-            {
-                if (ShouldClose())
-                {
-                    // If any methods have hit OutOfMemoryError, then abort
-                    // on close, in case the internal state of IndexWriter
-                    // or DocumentsWriter is corrupt
-                    if (hitOOM)
-                    {
-                        RollbackInternal();
-                    }
-                    else
-                    {
-                        CloseInternal(waitForMerges, true);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(AssertEventQueueAfterClose());
-                    }
-                }
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(commitLock);
-            }
+            Shutdown(waitForMerges);
         }
 
-        private bool AssertEventQueueAfterClose()
-        {
-            if (eventQueue.IsEmpty)
-            {
-                return true;
-            }
-            foreach (IEvent e in eventQueue)
-            {
-                if (Debugging.AssertsEnabled) Debugging.Assert(e is DocumentsWriter.MergePendingEvent, "{0}", e);
-            }
-            return true;
-        }
+        // LUCENENET: upstream 2cfcdcc had private assertEventQueueAfterClose() between
+        // close(boolean) and shouldClose() (and closeInternal(boolean, boolean) immediately
+        // after shouldClose()). The LUCENE-5871 rewrite of close(boolean) stranded both as
+        // dead code: shutdown(boolean) replaced their only callers, and neither is referenced
+        // anywhere else in the file at 2cfcdcc. Trunk LUCENE-4246 (commit 8559eaf, Lucene 5.0)
+        // removed both alongside the rest of the close(boolean) cleanup; we follow that 5.0
+        // end state here rather than carrying the dead branch_4x leftovers.
 
         /// <summary>
         /// Returns <c>true</c> if this thread should attempt to close, or
@@ -1267,184 +1272,8 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void CloseInternal(bool waitForMerges, bool doFlush)
-        {
-            bool interrupted = false;
-            try
-            {
-                if (pendingCommit != null)
-                {
-                    throw IllegalStateException.Create("cannot close: prepareCommit was already called with no corresponding call to commit");
-                }
-
-                if (infoStream.IsEnabled("IW"))
-                {
-                    infoStream.Message("IW", "now flush at close waitForMerges=" + waitForMerges);
-                }
-
-                docWriter.Dispose();
-
-                try
-                {
-                    // Only allow a new merge to be triggered if we are
-                    // going to wait for merges:
-                    if (doFlush)
-                    {
-                        Flush(waitForMerges, true);
-                    }
-                    else
-                    {
-                        docWriter.Abort(this); // already closed -- never sync on IW
-                    }
-                }
-                finally
-                {
-                    try
-                    {
-                        // LUCENENET specific - Java calls Thread.interrupted(), which resets and returns the
-                        // initial "interrupted status". .NET has no such method. However, following the logic
-                        // carefully below, we call Thread.CurrentThread.Interrupted() if interrupted is true.
-                        // If the current thread is already in "interrupted status", there is no reason to call
-                        // Thread.CurrentThread.Interrupted() since it is already in that state.
-
-                        // clean up merge scheduler in all cases, although flushing may have failed:
-                        //interrupted = ThreadJob.Interrupted();
-
-                        if (waitForMerges)
-                        {
-                            try
-                            {
-                                // Give merge scheduler last chance to run, in case
-                                // any pending merges are waiting:
-                                mergeScheduler.Merge(this, MergeTrigger.CLOSING, false);
-                            }
-                            catch (Util.ThreadInterruptedException)
-                            {
-                                // ignore any interruption, does not matter
-                                interrupted = true;
-                                if (infoStream.IsEnabled("IW"))
-                                {
-                                    infoStream.Message("IW", "interrupted while waiting for final merges");
-                                }
-                            }
-                        }
-
-                        UninterruptableMonitor.Enter(this);
-                        try
-                        {
-                            for (; ; )
-                            {
-                                try
-                                {
-                                    FinishMerges(waitForMerges && !interrupted);
-                                    break;
-                                }
-                                catch (Util.ThreadInterruptedException)
-                                {
-                                    // by setting the interrupted status, the
-                                    // next call to finishMerges will pass false,
-                                    // so it will not wait
-                                    interrupted = true;
-                                    if (infoStream.IsEnabled("IW"))
-                                    {
-                                        infoStream.Message("IW", "interrupted while waiting for merges to finish");
-                                    }
-                                }
-                            }
-                            stopMerges = true;
-                        }
-                        finally
-                        {
-                            UninterruptableMonitor.Exit(this);
-                        }
-                    }
-                    finally
-                    {
-                        // shutdown policy, scheduler and all threads (this call is not interruptible):
-                        IOUtils.DisposeWhileHandlingException(mergePolicy, mergeScheduler);
-                    }
-                }
-
-                if (infoStream.IsEnabled("IW"))
-                {
-                    infoStream.Message("IW", "now call final commit()");
-                }
-
-                if (doFlush)
-                {
-                    CommitInternal();
-                }
-                ProcessEvents(false, true);
-                UninterruptableMonitor.Enter(this);
-                try
-                {
-                    // commitInternal calls ReaderPool.commit, which
-                    // writes any pending liveDocs from ReaderPool, so
-                    // it's safe to drop all readers now:
-                    readerPool.DropAll(true);
-                    deleter.Dispose();
-                }
-                finally
-                {
-                    UninterruptableMonitor.Exit(this);
-                }
-
-                if (infoStream.IsEnabled("IW"))
-                {
-                    infoStream.Message("IW", "at close: " + SegString());
-                }
-
-                if (writeLock != null)
-                {
-                    writeLock.Dispose(); // release write lock
-                    writeLock = null;
-                }
-                UninterruptableMonitor.Enter(this);
-                try
-                {
-                    closed = true;
-                }
-                finally
-                {
-                    UninterruptableMonitor.Exit(this);
-                }
-                if (Debugging.AssertsEnabled)
-                {
-                    // LUCENENET specific - store the number of states so we don't have to call this method twice
-                    int numDeactivatedThreadStates = docWriter.perThreadPool.NumDeactivatedThreadStates();
-                    Debugging.Assert(numDeactivatedThreadStates == docWriter.perThreadPool.MaxThreadStates, "{0} {1}", numDeactivatedThreadStates, docWriter.perThreadPool.MaxThreadStates);
-                }
-            }
-            catch (Exception oom) when (oom.IsOutOfMemoryError())
-            {
-                HandleOOM(oom, "CloseInternal");
-            }
-            finally
-            {
-                UninterruptableMonitor.Enter(this);
-                try
-                {
-                    closing = false;
-                    UninterruptableMonitor.PulseAll(this);
-                    if (!closed)
-                    {
-                        if (infoStream.IsEnabled("IW"))
-                        {
-                            infoStream.Message("IW", "hit exception while closing");
-                        }
-                    }
-                }
-                finally
-                {
-                    UninterruptableMonitor.Exit(this);
-                }
-                // finally, restore interrupt status:
-                if (interrupted)
-                {
-                    Thread.CurrentThread.Interrupt();
-                }
-            }
-        }
+        // LUCENENET: upstream 2cfcdcc had private closeInternal(boolean waitForMerges,
+        // boolean doFlush) here. See the note above ShouldClose() for why it is dropped.
 
         /// <summary>
         /// Gets the <see cref="Store.Directory"/> used by this index. </summary>

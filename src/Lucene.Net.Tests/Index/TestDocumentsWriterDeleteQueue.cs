@@ -6,7 +6,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
@@ -258,7 +257,7 @@ namespace Lucene.Net.Index
                 ids[i] = Random.Next();
                 uniqueValues.Add(new Term("id", ids[i].ToString()));
             }
-            CountdownEvent latch = new CountdownEvent(1);
+            using CountdownLatch latch = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             AtomicInt32 index = new AtomicInt32(0);
             int numThreads = 2 + Random.Next(5);
             UpdateThread[] threads = new UpdateThread[numThreads];
@@ -301,9 +300,9 @@ namespace Lucene.Net.Index
             internal readonly int[] ids;
             internal readonly DeleteSlice slice;
             internal readonly BufferedUpdates deletes;
-            internal readonly CountdownEvent latch;
+            internal readonly CountdownLatch latch;
 
-            protected internal UpdateThread(DocumentsWriterDeleteQueue queue, AtomicInt32 index, int[] ids, CountdownEvent latch)
+            protected internal UpdateThread(DocumentsWriterDeleteQueue queue, AtomicInt32 index, int[] ids, CountdownLatch latch)
             {
                 this.queue = queue;
                 this.index = index;

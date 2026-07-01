@@ -197,7 +197,9 @@ namespace Lucene.Net.Index
                 // Make sure once disk space is avail again, we can
                 // cleanly close:
                 dir.MaxSizeInBytes = 0;
+#pragma warning disable 612, 618
                 writer.Dispose(false);
+#pragma warning restore 612, 618
                 dir.Dispose();
             }
         }
@@ -267,7 +269,9 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("\nTEST: now close");
                 }
+#pragma warning disable 612, 618
                 writer.Dispose(false);
+#pragma warning restore 612, 618
 
                 // Make sure threads that are adding docs are not hung:
                 for (int i = 0; i < NUM_THREADS; i++)
@@ -343,13 +347,17 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
+#pragma warning disable 612, 618
                     writer.Dispose(false);
+#pragma warning restore 612, 618
                     success = true;
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
                     failure.ClearDoFail();
+#pragma warning disable 612, 618
                     writer.Dispose(false);
+#pragma warning restore 612, 618
                 }
                 if (Verbose)
                 {
@@ -408,7 +416,9 @@ namespace Lucene.Net.Index
             }
             failure.ClearDoFail();
             writer.AddDocument(doc);
+#pragma warning disable 612, 618
             writer.Dispose(false);
+#pragma warning restore 612, 618
             dir.Dispose();
         }
 
@@ -551,7 +561,7 @@ namespace Lucene.Net.Index
         public virtual void TestOpenTwoIndexWritersOnDifferentThreads()
         {
             Directory dir = NewDirectory();
-            CountdownEvent oneIWConstructed = new CountdownEvent(1);
+            using CountdownLatch oneIWConstructed = new CountdownLatch(1); // LUCENENET: CoutdownLatch is disposable in .NET
 
             DelayedIndexAndCloseRunnable thread1 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed);
             DelayedIndexAndCloseRunnable thread2 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed);
@@ -584,18 +594,22 @@ namespace Lucene.Net.Index
             finally
             {
                 dir.Dispose();
+
+                // LUCENENET: CountdownLatch is disposable in .NET
+                thread1.Dispose();
+                thread2.Dispose();
             }
         }
 
-        internal class DelayedIndexAndCloseRunnable : ThreadJob
+        internal class DelayedIndexAndCloseRunnable : ThreadJob, IDisposable
         {
             private readonly Directory dir;
             internal bool failed = false;
             internal Exception failure = null;
-            private readonly CountdownEvent startIndexing = new CountdownEvent(1);
-            private CountdownEvent iwConstructed;
+            private readonly CountdownLatch startIndexing = new CountdownLatch(1);
+            private CountdownLatch iwConstructed;
 
-            public DelayedIndexAndCloseRunnable(Directory dir, CountdownEvent iwConstructed)
+            public DelayedIndexAndCloseRunnable(Directory dir, CountdownLatch iwConstructed)
             {
                 this.dir = dir;
                 this.iwConstructed = iwConstructed;
@@ -614,10 +628,7 @@ namespace Lucene.Net.Index
                     Field field = NewTextField("field", "testData", Field.Store.YES);
                     doc.Add(field);
                     using IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-                    if (iwConstructed.CurrentCount > 0)
-                    {
-                        iwConstructed.Signal();
-                    }
+                    iwConstructed.Signal();
                     startIndexing.Wait();
                     writer.AddDocument(doc);
                 }
@@ -628,6 +639,12 @@ namespace Lucene.Net.Index
                     failure.PrintStackTrace(Console.Out);
                     // return; // LUCENENET: redundant return
                 }
+            }
+
+            // LUCENENET: CountdownLatch is disposable in .NET
+            public void Dispose()
+            {
+                startIndexing?.Dispose();
             }
         }
 

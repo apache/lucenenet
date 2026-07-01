@@ -5,7 +5,6 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -355,8 +354,9 @@ namespace Lucene.Net.Index
             RandomIndexWriter modifier = new RandomIndexWriter(Random, dir);
             int numThreads = AtLeast(2);
             ThreadJob[] threads = new ThreadJob[numThreads];
-            CountdownEvent latch = new CountdownEvent(1);
-            CountdownEvent doneLatch = new CountdownEvent(numThreads);
+            // LUCENENET: CountdownLatch is disposable in .NET
+            using CountdownLatch latch = new CountdownLatch(1);
+            using CountdownLatch doneLatch = new CountdownLatch(numThreads);
             for (int i = 0; i < numThreads; i++)
             {
                 int offset = i;
@@ -393,11 +393,11 @@ namespace Lucene.Net.Index
         private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly RandomIndexWriter modifier;
-            private readonly CountdownEvent latch;
-            private readonly CountdownEvent doneLatch;
+            private readonly CountdownLatch latch;
+            private readonly CountdownLatch doneLatch;
             private readonly int offset;
 
-            public ThreadAnonymousClass(RandomIndexWriter modifier, CountdownEvent latch, CountdownEvent doneLatch, int offset)
+            public ThreadAnonymousClass(RandomIndexWriter modifier, CountdownLatch latch, CountdownLatch doneLatch, int offset)
             {
                 this.modifier = modifier;
                 this.latch = latch;

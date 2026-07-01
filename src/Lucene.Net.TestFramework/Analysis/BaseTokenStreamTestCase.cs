@@ -629,7 +629,7 @@ namespace Lucene.Net.Analysis
             internal readonly bool simple;
             internal readonly bool offsetsAreCorrect;
             internal readonly RandomIndexWriter iw;
-            private readonly CountdownEvent latch;
+            private readonly CountdownLatch latch;
 
             // NOTE: not volatile because we don't want the tests to
             // add memory barriers (ie alter how threads
@@ -637,7 +637,7 @@ namespace Lucene.Net.Analysis
             public bool Failed { get; set; }
             public Exception FirstException { get; set; } = null;
 
-            internal AnalysisThread(long seed, CountdownEvent latch, Analyzer a, int iterations, int maxWordLength,
+            internal AnalysisThread(long seed, CountdownLatch latch, Analyzer a, int iterations, int maxWordLength,
                 bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
             {
                 this.seed = seed;
@@ -710,7 +710,7 @@ namespace Lucene.Net.Analysis
                 // now test with multiple threads: note we do the EXACT same thing we did before in each thread,
                 // so this should only really fail from another thread if its an actual thread problem
                 int numThreads = TestUtil.NextInt32(random, 2, 4);
-                var startingGun = new CountdownEvent(1);
+                using var startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
                 var threads = new AnalysisThread[numThreads];
                 for (int i = 0; i < threads.Length; i++)
                 {

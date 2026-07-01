@@ -5,7 +5,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -68,7 +67,7 @@ namespace Lucene.Net.Search
                 Console.WriteLine(numThreads + " threads");
             }
 
-            CountdownEvent startingGun = new CountdownEvent(1);
+            using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             IList<ThreadJob> threads = new JCG.List<ThreadJob>();
 
             int iters = AtLeast(1000);
@@ -140,7 +139,7 @@ namespace Lucene.Net.Search
             private readonly SearcherManager mgr;
             private readonly int? missing;
             private readonly LiveFieldValues<IndexSearcher, int?> rt;
-            private readonly CountdownEvent startingGun;
+            private readonly CountdownLatch startingGun;
             private readonly int iters;
             private readonly int idCount;
             private readonly double reopenChance;
@@ -150,7 +149,7 @@ namespace Lucene.Net.Search
             private readonly int threadID;
             private readonly Random threadRandom;
 
-            public ThreadAnonymousClass(IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<IndexSearcher, int?> rt, CountdownEvent startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
+            public ThreadAnonymousClass(IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<IndexSearcher, int?> rt, CountdownLatch startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
             {
                 this.w = w;
                 this.mgr = mgr;
