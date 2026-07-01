@@ -710,7 +710,7 @@ namespace Lucene.Net.Analysis
                 // now test with multiple threads: note we do the EXACT same thing we did before in each thread,
                 // so this should only really fail from another thread if its an actual thread problem
                 int numThreads = TestUtil.NextInt32(random, 2, 4);
-                using var startingGun = new CountdownLatch(1);
+                using var startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
                 var threads = new AnalysisThread[numThreads];
                 for (int i = 0; i < threads.Length; i++)
                 {

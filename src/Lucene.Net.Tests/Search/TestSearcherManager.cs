@@ -272,8 +272,9 @@ namespace Lucene.Net.Search
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(new ConcurrentMergeScheduler()));
             writer.AddDocument(new Document());
             writer.Commit();
-            CountdownLatch awaitEnterWarm = new CountdownLatch(1);
-            CountdownLatch awaitClose = new CountdownLatch(1);
+            // LUCENENET: CountdownLatch is disposable in .NET
+            using CountdownLatch awaitEnterWarm = new CountdownLatch(1);
+            using CountdownLatch awaitClose = new CountdownLatch(1);
             AtomicBoolean triedReopen = new AtomicBoolean(false);
             //TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory("testIntermediateClose"));
             TaskScheduler es = Random.NextBoolean() ? null : TaskScheduler.Default;

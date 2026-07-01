@@ -1265,6 +1265,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// If IW hits OOME during indexing, it should refuse to commit any further changes. </summary>
+        // LUCENENET: backport LUCENE-5871 (Lucene 4.10.0) test
         [Test]
         public virtual void TestOutOfMemoryErrorRollback()
         {

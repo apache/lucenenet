@@ -90,7 +90,7 @@ namespace Lucene.Net.Search
 
             if (answers.Count > 0)
             {
-                CountdownLatch startingGun = new CountdownLatch(1);
+                using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
                 int numThreads = TestUtil.NextInt32(Random, 2, 5);
                 ThreadJob[] threads = new ThreadJob[numThreads];
                 for (int threadID = 0; threadID < numThreads; threadID++)

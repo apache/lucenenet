@@ -561,7 +561,7 @@ namespace Lucene.Net.Index
         public virtual void TestOpenTwoIndexWritersOnDifferentThreads()
         {
             Directory dir = NewDirectory();
-            CountdownLatch oneIWConstructed = new CountdownLatch(1);
+            using CountdownLatch oneIWConstructed = new CountdownLatch(1); // LUCENENET: CoutdownLatch is disposable in .NET
 
             DelayedIndexAndCloseRunnable thread1 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed);
             DelayedIndexAndCloseRunnable thread2 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed);
@@ -594,10 +594,14 @@ namespace Lucene.Net.Index
             finally
             {
                 dir.Dispose();
+
+                // LUCENENET: CountdownLatch is disposable in .NET
+                thread1.Dispose();
+                thread2.Dispose();
             }
         }
 
-        internal class DelayedIndexAndCloseRunnable : ThreadJob
+        internal class DelayedIndexAndCloseRunnable : ThreadJob, IDisposable
         {
             private readonly Directory dir;
             internal bool failed = false;
@@ -635,6 +639,12 @@ namespace Lucene.Net.Index
                     failure.PrintStackTrace(Console.Out);
                     // return; // LUCENENET: redundant return
                 }
+            }
+
+            // LUCENENET: CountdownLatch is disposable in .NET
+            public void Dispose()
+            {
+                startIndexing?.Dispose();
             }
         }
 

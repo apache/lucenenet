@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, conf);
             ReaderHolder holder = new ReaderHolder();
             ReaderThread[] threads = new ReaderThread[AtLeast(3)];
-            CountdownLatch latch = new CountdownLatch(1);
+            using CountdownLatch latch = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             WriterThread writerThread = new WriterThread(holder, writer, AtLeast(500), latch);
             for (int i = 0; i < threads.Length; i++)
             {

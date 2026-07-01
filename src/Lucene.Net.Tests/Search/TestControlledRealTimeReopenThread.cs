@@ -396,8 +396,9 @@ namespace Lucene.Net.Search
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             conf.SetMergePolicy(Random.NextBoolean() ? NoMergePolicy.COMPOUND_FILES : NoMergePolicy.NO_COMPOUND_FILES);
             Directory d = NewDirectory();
-            CountdownLatch latch = new CountdownLatch(1);
-            CountdownLatch signal = new CountdownLatch(1);
+            // LUCENENET: CountdownLatch is disposable in .NET
+            using CountdownLatch latch = new CountdownLatch(1);
+            using CountdownLatch signal = new CountdownLatch(1);
 
             LatchedIndexWriter _writer = new LatchedIndexWriter(d, conf, latch, signal);
             TrackingIndexWriter writer = new TrackingIndexWriter(_writer);

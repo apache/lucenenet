@@ -3241,7 +3241,7 @@ namespace Lucene.Net.Index
             using DirectoryReader ir = DirectoryReader.Open(dir);
             int numThreads = TestUtil.NextInt32(Random, 2, 7);
             ThreadJob[] threads = new ThreadJob[numThreads];
-            using CountdownLatch startingGun = new CountdownLatch(1);
+            using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousClass(ir, startingGun);
@@ -3377,7 +3377,7 @@ namespace Lucene.Net.Index
             using DirectoryReader ir = DirectoryReader.Open(dir);
             int numThreads = TestUtil.NextInt32(Random, 2, 7);
             ThreadJob[] threads = new ThreadJob[numThreads];
-            using CountdownLatch startingGun = new CountdownLatch(1);
+            using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousClass2(ir, startingGun);

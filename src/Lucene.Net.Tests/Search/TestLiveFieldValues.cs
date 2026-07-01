@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
                 Console.WriteLine(numThreads + " threads");
             }
 
-            CountdownLatch startingGun = new CountdownLatch(1);
+            using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             IList<ThreadJob> threads = new JCG.List<ThreadJob>();
 
             int iters = AtLeast(1000);

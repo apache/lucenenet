@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
 
             int numThreads = TestUtil.NextInt32(Random, 2, 5);
             IList<ThreadJob> threads = new JCG.List<ThreadJob>();
-            CountdownLatch startingGun = new CountdownLatch(1);
+            using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             for (int t = 0; t < numThreads; t++)
             {
                 Random threadRandom = new J2N.Randomizer(Random.NextInt64());

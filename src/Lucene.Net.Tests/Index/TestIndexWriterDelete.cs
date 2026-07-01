@@ -354,8 +354,9 @@ namespace Lucene.Net.Index
             RandomIndexWriter modifier = new RandomIndexWriter(Random, dir);
             int numThreads = AtLeast(2);
             ThreadJob[] threads = new ThreadJob[numThreads];
-            CountdownLatch latch = new CountdownLatch(1);
-            CountdownLatch doneLatch = new CountdownLatch(numThreads);
+            // LUCENENET: CountdownLatch is disposable in .NET
+            using CountdownLatch latch = new CountdownLatch(1);
+            using CountdownLatch doneLatch = new CountdownLatch(numThreads);
             for (int i = 0; i < numThreads; i++)
             {
                 int offset = i;

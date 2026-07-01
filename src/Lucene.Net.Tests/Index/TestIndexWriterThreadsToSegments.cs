@@ -42,15 +42,16 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-            CountdownLatch startingGun = new CountdownLatch(1);
-            CountdownLatch startDone = new CountdownLatch(2);
-            CountdownLatch middleGun = new CountdownLatch(1);
-            CountdownLatch finalGun = new CountdownLatch(1);
+            // LUCENENET: CountdownLatch is disposable in .NET
+            using CountdownLatch startingGun = new CountdownLatch(1);
+            using CountdownLatch startDone = new CountdownLatch(2);
+            using CountdownLatch middleGun = new CountdownLatch(1);
+            using CountdownLatch finalGun = new CountdownLatch(1);
             ThreadJob[] threads = new ThreadJob[2];
             for (int i = 0; i < threads.Length; i++)
             {
                 int threadID = i;
-                threads[i] = new ThreadAnonymousClassForSegmentCountOnFlushBasic(w, threadID, startingGun, startDone, middleGun, finalGun);
+                threads[i] = new ThreadSegmentCountOnFlushBasicAnonymousClass(w, threadID, startingGun, startDone, middleGun, finalGun);
                 threads[i].Start();
             }
 
@@ -80,7 +81,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private sealed class ThreadAnonymousClassForSegmentCountOnFlushBasic : ThreadJob
+        private sealed class ThreadSegmentCountOnFlushBasicAnonymousClass : ThreadJob
         {
             private readonly IndexWriter w;
             private readonly int threadID;
@@ -89,7 +90,7 @@ namespace Lucene.Net.Index
             private readonly CountdownLatch middleGun;
             private readonly CountdownLatch finalGun;
 
-            public ThreadAnonymousClassForSegmentCountOnFlushBasic(IndexWriter w, int threadID, CountdownLatch startingGun, CountdownLatch startDone, CountdownLatch middleGun, CountdownLatch finalGun)
+            public ThreadSegmentCountOnFlushBasicAnonymousClass(IndexWriter w, int threadID, CountdownLatch startingGun, CountdownLatch startDone, CountdownLatch middleGun, CountdownLatch finalGun)
             {
                 this.w = w;
                 this.threadID = threadID;
@@ -309,7 +310,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter w = new RandomIndexWriter(Random, dir);
             w.DoRandomForceMerge = false;
             ThreadJob[] threads = new ThreadJob[TestUtil.NextInt32(Random, 4, 30)];
-            CountdownLatch startingGun = new CountdownLatch(1);
+            using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousClassForManyThreadsClose(w, startingGun);
@@ -387,7 +388,7 @@ namespace Lucene.Net.Index
             iwc.SetCodec(codec);
             iwc.SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES);
             IndexWriter w = new IndexWriter(dir, iwc);
-            CountdownLatch startingGun = new CountdownLatch(1);
+            using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             ThreadJob[] threads = new ThreadJob[2];
             for (int i = 0; i < threads.Length; i++)
             {

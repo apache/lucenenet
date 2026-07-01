@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
             int numStallers = AtLeast(1);
             int numReleasers = AtLeast(1);
             int numWaiters = AtLeast(1);
-            var sync = new Synchronizer(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
+            using var sync = new Synchronizer(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
             var threads = new ThreadJob[numReleasers + numStallers + numWaiters];
             IList<Exception> exceptions = new SynchronizedList<Exception>();
             for (int i = 0; i < numReleasers; i++)
@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public sealed class Synchronizer
+        public sealed class Synchronizer : IDisposable // LUCENENET: CountdownLatch is disposable in .NET
         {
             internal volatile CountdownLatch waiter;
             internal volatile CountdownLatch updateJoin;
@@ -461,6 +461,13 @@ namespace Lucene.Net.Index
             public bool Await()
             {
                 return waiter.Wait(TimeSpan.FromSeconds(10));
+            }
+
+            public void Dispose()
+            {
+                waiter?.Dispose();
+                updateJoin?.Dispose();
+                leftCheckpoint?.Dispose();
             }
         }
     }

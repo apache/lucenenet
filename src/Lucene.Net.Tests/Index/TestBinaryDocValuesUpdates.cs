@@ -1199,7 +1199,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
             }
 
-            CountdownLatch done = new CountdownLatch(numThreads);
+            using CountdownLatch done = new CountdownLatch(numThreads); // LUCENENET: CountdownLatch is disposable in .NET
             AtomicInt32 numUpdates = new AtomicInt32(AtLeast(100));
 
             // same thread updates a field as well as reopens

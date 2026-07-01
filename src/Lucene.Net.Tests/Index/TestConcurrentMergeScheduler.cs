@@ -289,7 +289,7 @@ namespace Lucene.Net.Index
 
             int maxMergeCount = TestUtil.NextInt32(Random, 1, 5);
             int maxMergeThreads = TestUtil.NextInt32(Random, 1, maxMergeCount);
-            CountdownLatch enoughMergesWaiting = new CountdownLatch(maxMergeCount);
+            using CountdownLatch enoughMergesWaiting = new CountdownLatch(maxMergeCount); // LUCENENET: CountdownLatch is disposable in .NET
             AtomicInt32 runningMergeCount = new AtomicInt32(0);
             AtomicBoolean failed = new AtomicBoolean();
 

@@ -2430,7 +2430,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        // LUCENENET: this test was removed upstream in commit 2cfcdcc (LUCENE-5871),
+        // LUCENENET: TestOtherFiles2 was removed upstream in commit 2cfcdcc (LUCENE-5871),
         // which is the backport that fixes #1284. The fix changes Dispose() so that a
         // graceful close runs a final CommitInternal followed by RollbackInternal,
         // which checkpoints the deleter and removes unreferenced files. The original
@@ -2438,36 +2438,6 @@ namespace Lucene.Net.Index
         // Dispose() therefore no longer holds — _a.frq is now deleted on the very
         // first close, before the second IndexWriter is opened. We keep the test
         // commented out at its original location for porting reference.
-        //
-        //// here we do better, there is no current segments file, so we don't delete anything.
-        //// however, if you actually go and make a commit, the next time you run indexwriter
-        //// this file will be gone.
-        //[Test]
-        //public virtual void TestOtherFiles2()
-        //{
-        //    Directory dir = NewDirectory();
-        //    try
-        //    {
-        //        // Create my own random file:
-        //        IndexOutput @out = dir.CreateOutput("_a.frq", NewIOContext(Random));
-        //        @out.WriteByte((byte)42);
-        //        @out.Dispose();
-        //
-        //        new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).Dispose();
-        //
-        //        Assert.IsTrue(SlowFileExists(dir, "_a.frq"));
-        //
-        //        IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-        //        iw.AddDocument(new Document());
-        //        iw.Dispose();
-        //
-        //        Assert.IsFalse(SlowFileExists(dir, "_a.frq"));
-        //    }
-        //    finally
-        //    {
-        //        dir.Dispose();
-        //    }
-        //}
 
         // LUCENE-4398
         [Test]
@@ -2950,11 +2920,13 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+
+        // LUCENENET: backport LUCENE-4246 (Lucene 5.0) test
         [Test]
         public virtual void TestHasUncommittedChangesAfterException()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
-            AssumeTrue("requires doc values", DefaultCodecSupportsDocValues);
+            AssumeTrue("requires doc values", DefaultCodecSupportsDocValues); // LUCENENET: ensure codec supports doc values
 
             Directory directory = NewDirectory();
             // we don't use RandomIndexWriter because it might add more docvalues than we expect !!!!
@@ -2979,6 +2951,7 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
+        // LUCENENET: backport LUCENE-4246 (Lucene 5.0) test
         [Test]
         public virtual void TestDoubleClose()
         {
@@ -2991,6 +2964,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+        // LUCENENET: backport LUCENE-4246 (Lucene 5.0) test
         [Test]
         public virtual void TestRollbackThenClose()
         {
@@ -3003,6 +2977,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+        // LUCENENET: backport LUCENE-4246 (Lucene 5.0) test
         [Test]
         public virtual void TestCloseThenRollback()
         {
@@ -3015,13 +2990,15 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+        [LuceneNetSpecific]
         [Test]
         public virtual void TestRollbackWhileMergeIsRunning()
         {
             Directory dir = NewDirectory();
 
-            CountdownLatch mergeStarted = new CountdownLatch(1);
-            CountdownLatch closeStarted = new CountdownLatch(1);
+            // LUCENENET: CountdownLatch is disposable in .NET
+            using CountdownLatch mergeStarted = new CountdownLatch(1);
+            using CountdownLatch closeStarted = new CountdownLatch(1);
 
             IndexWriterConfig iwc = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             LogDocMergePolicy mp = new LogDocMergePolicy();
@@ -3144,11 +3121,13 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Make sure that close waits for any still-running commits. </summary>
+        // LUCENENET: backport LUCENE-4246 (Lucene 5.0) test
         [Test]
         public virtual void TestCloseDuringCommit()
         {
-            CountdownLatch startCommit = new CountdownLatch(1);
-            CountdownLatch finishCommit = new CountdownLatch(1);
+            // LUCENENET: CountdownLatch is disposable in .NET
+            using CountdownLatch startCommit = new CountdownLatch(1);
+            using CountdownLatch finishCommit = new CountdownLatch(1);
 
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, null);

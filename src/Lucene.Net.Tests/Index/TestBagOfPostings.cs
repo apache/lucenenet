@@ -1,14 +1,12 @@
 using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Documents;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
@@ -96,7 +94,7 @@ namespace Lucene.Net.Index
             }
 
             ThreadJob[] threads = new ThreadJob[threadCount];
-            CountdownLatch startingGun = new CountdownLatch(1);
+            using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
 
             for (int threadID = 0; threadID < threadCount; threadID++)
             {
