@@ -538,11 +538,12 @@ namespace Lucene.Net.Index
                 int dwptNumDocs = dwpt.NumDocsInRAM;
                 try
                 {
-                    // LUCENENET: backport fix from Lucene 4.10 in LUCENE-5871
+                    // LUCENENET: backport fix from Lucene 4.10.0 in LUCENE-5871
                     dwpt.UpdateDocuments(docs, analyzer, delTerm);
                 }
                 finally
                 {
+                    // LUCENENET: backport fix from Lucene 4.10.0 in LUCENE-5871
                     // We don't know how many documents were actually
                     // counted as indexed, so we must subtract here to
                     // accumulate our separate counter:
@@ -589,9 +590,11 @@ namespace Lucene.Net.Index
                 try
                 {
                     dwpt.UpdateDocument(doc, analyzer, delTerm);
+                    // LUCENENET: removed incrementAndGet call in backport of fix from Lucene 4.10.0 in LUCENE-5871
                 }
                 finally
                 {
+                    // LUCENENET: backport fix from Lucene 4.10.0 in LUCENE-5871
                     // We don't know whether the document actually
                     // counted as being indexed, so we must subtract here to
                     // accumulate our separate counter:
@@ -739,6 +742,7 @@ namespace Lucene.Net.Index
             {
                 oldValue = numDocsInRAM;
             }
+            // LUCENENET: backport fix from Lucene 4.10.0 in LUCENE-5871
             if (Debugging.AssertsEnabled) Debugging.Assert(numDocsInRAM >= 0);
         }
 
