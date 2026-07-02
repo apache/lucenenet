@@ -538,6 +538,7 @@ namespace Lucene.Net.Index
                 int dwptNumDocs = dwpt.NumDocsInRAM;
                 try
                 {
+                    // LUCENENET: backport fix from Lucene 4.10 in LUCENE-5871
                     dwpt.UpdateDocuments(docs, analyzer, delTerm);
                 }
                 finally
