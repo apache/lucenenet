@@ -17,7 +17,9 @@
 package org.apache.lucenenet.compat;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.BinaryDocValuesField;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.DoubleDocValuesField;
@@ -31,16 +33,17 @@ import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.SortedSetDocValuesField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.CheckIndex;
+import org.apache.lucene.index.*;
 import org.apache.lucene.index.FieldInfo.IndexOptions;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.LogByteSizeMergePolicy;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.Version;
 
 import java.io.PrintStream;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
  * The single source of truth for the deterministic document set shared between
@@ -99,7 +102,7 @@ public final class CompatDocs {
             .setMaxBufferedDocs(10)
             .setOpenMode(IndexWriterConfig.OpenMode.APPEND);
         writer = new IndexWriter(dir, conf);
-        writer.deleteDocuments(new org.apache.lucene.index.Term("id", Integer.toString(DELETED_ID)));
+        writer.deleteDocuments(new Term("id", Integer.toString(DELETED_ID)));
         writer.close();
     }
 
@@ -184,19 +187,17 @@ public final class CompatDocs {
      * cross-runtime contract for the UTF-8 edge cases. Computed by re-running the
      * analyzer so it stays correct if the constant changes.
      */
-    public static java.util.List<String> expectedUtf8Terms() throws Exception {
-        java.util.TreeSet<String> terms = new java.util.TreeSet<>();
-        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_48);
-        org.apache.lucene.analysis.TokenStream ts = analyzer.tokenStream("utf8",
-            new java.io.StringReader(UTF8_VALUE));
-        org.apache.lucene.analysis.tokenattributes.CharTermAttribute termAttr =
-            ts.addAttribute(org.apache.lucene.analysis.tokenattributes.CharTermAttribute.class);
-        ts.reset();
-        while (ts.incrementToken()) {
-            terms.add(termAttr.toString());
+    public static List<String> expectedUtf8Terms() throws Exception {
+        TreeSet<String> terms = new TreeSet<>();
+        try (Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_48);
+            TokenStream ts = analyzer.tokenStream("utf8", new StringReader(UTF8_VALUE))) {
+            CharTermAttribute termAttr = ts.addAttribute(CharTermAttribute.class);
+            ts.reset();
+            while (ts.incrementToken()) {
+                terms.add(termAttr.toString());
+            }
+            ts.end();
         }
-        ts.end();
-        ts.close();
-        return new java.util.ArrayList<>(terms);
+        return new ArrayList<>(terms);
     }
 }
