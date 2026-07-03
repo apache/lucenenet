@@ -35,6 +35,7 @@ public static class DiffUtility
 
     public static async Task<ApiDiffResult> GenerateDiff(ApiCheckConfig config,
         FileInfo extractorJarPath,
+        DirectoryInfo extractorDownloadPath,
         DirectoryInfo outputPath)
     {
         Console.WriteLine("Generating diff...");
@@ -64,6 +65,7 @@ public static class DiffUtility
             .ToList();
 
         var javaLibraries = await JarToolIntegration.ExtractApi(extractorJarPath,
+            extractorDownloadPath,
             new FileInfo(Path.Combine(outputPath.FullName, "lucene-api.json")),
             libraries.Select(i => i.MavenCoordinates).ToList(),
             mavenDependencies);
@@ -711,7 +713,17 @@ public static class DiffUtility
 
     internal static IReadOnlyList<Type> GetAssemblyTypesForComparison(Assembly assembly)
     {
-        return assembly.GetTypes()
+        Type[] types;
+        try
+        {
+            types = assembly.GetTypes();
+        }
+        catch (ReflectionTypeLoadException ex)
+        {
+            types = ex.Types.Where(t => t != null).Cast<Type>().ToArray();
+        }
+
+        return types
             .Where(t => (t.IsPublic || t.IsNestedPublic) && !t.HasNoLuceneEquivalent())
             .ToList();
     }

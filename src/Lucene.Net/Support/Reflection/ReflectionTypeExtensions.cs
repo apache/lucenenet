@@ -30,7 +30,7 @@ namespace Lucene.Net.Reflection
     [NoLuceneEquivalent]
     public static class ReflectionTypeExtensions
     {
-        private static readonly Regex luceneNetNamespaceRegex = new("^Lucene.Net.", RegexOptions.Compiled);
+        private static readonly Regex luceneNetNamespaceRegex = new("^Lucene\\.Net\\.", RegexOptions.Compiled);
 
         /// <summary>
         /// Gets the <see cref="LuceneTypeInfo"/> for the specified type.

@@ -27,7 +27,10 @@ public static class DiffCommand
     {
         var config = await globalOptions.LoadConfig();
 
-        var diff = await DiffUtility.GenerateDiff(config, globalOptions.ExtractorJarPath, outputPath);
+        var diff = await DiffUtility.GenerateDiff(config,
+            globalOptions.ExtractorJarPath,
+            globalOptions.ExtractorDownloadPath,
+            outputPath);
 
         var fileName = Path.Join(outputPath.FullName, "api-diff.json");
         await File.WriteAllTextAsync(fileName, JsonSerializer.Serialize(diff));

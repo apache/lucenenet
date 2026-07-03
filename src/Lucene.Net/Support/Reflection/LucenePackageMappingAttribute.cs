@@ -26,8 +26,8 @@ namespace Lucene.Net.Reflection
     /// <remarks>
     /// This attribute should only be used when the package name cannot be correctly inferred from the namespace.
     /// Note that <c>org.apache.lucene</c> can always be inferred from the namespace <c>Lucene.Net</c>,
-    /// and any sub-packages can be inferred from the sub-namespaces of <c>Lucene.Net</c> by capitalizing the first
-    /// letter. For example, <c>Lucene.Net.Codecs</c> maps to <c>org.apache.lucene.codecs</c>.
+    /// and any sub-packages can be inferred from the sub-namespaces of <c>Lucene.Net</c> by lowercasing the remaining
+    /// namespace segments. For example, <c>Lucene.Net.Codecs</c> maps to <c>org.apache.lucene.codecs</c>.
     /// </remarks>
     /// <example>
     /// <code>

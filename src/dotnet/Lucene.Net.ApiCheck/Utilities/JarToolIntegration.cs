@@ -16,16 +16,16 @@
  */
 
 using Lucene.Net.ApiCheck.Models;
-using Lucene.Net.ApiCheck.Models.Config;
 using Lucene.Net.ApiCheck.Models.JavaApi;
+using Lucene.Net.Util;
 using System.Diagnostics;
-using System.Text;
 
 namespace Lucene.Net.ApiCheck.Utilities;
 
 public static class JarToolIntegration
 {
     public static async Task<IReadOnlyList<LibraryResult>> ExtractApi(FileInfo jarToolPath,
+        DirectoryInfo extractorDownloadPath,
         FileInfo outputPath,
         IReadOnlyList<MavenCoordinates> luceneLibraries,
         IReadOnlyList<MavenCoordinates> mavenDependencies)
@@ -38,6 +38,8 @@ public static class JarToolIntegration
             "extract",
             "-o",
             outputPath.FullName,
+            "-dd",
+            extractorDownloadPath.FullName,
             "-lib",
         };
 
@@ -49,30 +51,31 @@ public static class JarToolIntegration
             arguments.AddRange(mavenDependencies.Select(mavenDependency => mavenDependency.ToString()));
         }
 
-        var process = new Process
+        var startInfo = new ProcessStartInfo
         {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = "java",
-                Arguments = string.Join(" ", arguments),
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            },
+            FileName = "java",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        startInfo.ArgumentList.AddRange(arguments);
+
+        using var process = new Process
+        {
+            StartInfo = startInfo,
         };
 
         process.Start();
 
-        string? line;
-        StringBuilder output = new();
-        while ((line = await process.StandardOutput.ReadLineAsync()) != null)
-        {
-            output.AppendLine(line);
-        }
+        var stdoutTask = process.StandardOutput.ReadToEndAsync();
+        var stderrTask = process.StandardError.ReadToEndAsync();
 
-        var error = await process.StandardError.ReadToEndAsync();
         await process.WaitForExitAsync();
+
+        var output = await stdoutTask;
+        var error = await stderrTask;
 
         if (process.ExitCode != 0)
         {
