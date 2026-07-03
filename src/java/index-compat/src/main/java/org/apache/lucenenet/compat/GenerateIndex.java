@@ -66,8 +66,14 @@ public final class GenerateIndex {
     private static void write(Path indexPath, boolean useCompoundFile) throws Exception {
         File dirFile = indexPath.toFile();
         if (dirFile.exists()) {
-            for (File f : dirFile.listFiles()) {
-                f.delete();
+            File[] files = dirFile.listFiles();
+            if (files == null) {
+                throw new IllegalStateException("Index path exists but is not a directory: " + dirFile.getAbsolutePath());
+            }
+            for (File f : files) {
+                if (!f.delete()) {
+                    throw new IllegalStateException("Failed to delete existing file: " + f.getAbsolutePath());
+                }
             }
         } else {
             Files.createDirectories(indexPath);

@@ -31,7 +31,8 @@ on:
     paths:
     # The compatibility harness itself
     - 'src/java/index-compat/**/*'
-    - 'src/Lucene.Net.Tests/Index/TestJavaCompatibility.cs'
+    - 'src/Lucene.Net.Tests/Support/Index/CompatDocs.cs'
+    - 'src/Lucene.Net.Tests/Support/Index/TestJavaCompatibility.cs'
     # Production code whose on-disk format the harness validates
     - 'src/Lucene.Net/Codecs/**/*'
     - 'src/Lucene.Net/Index/**/*'
