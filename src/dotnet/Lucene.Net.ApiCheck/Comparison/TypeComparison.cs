@@ -51,7 +51,7 @@ public static class TypeComparison
         [typeof(TextReader)] = ["java.io.Reader"],
         // Lucene.NET ports java.io.PrintStream to TextWriter (see Support/IO/SafeTextWriterWrapper)
         // since both are character-oriented sinks. PrintStream is rare in the public API.
-        [typeof(TextWriter)] = ["java.io.Writer", "java.io.PrintStream"],
+        [typeof(TextWriter)] = ["java.io.Writer", "java.io.PrintStream", "java.io.PrintWriter"],
         [typeof(Stream)] = ["java.io.InputStream", "java.io.OutputStream"],
         // java.io.File is a path that can refer to either a file or a directory; .NET ports
         // typically use FileInfo or DirectoryInfo depending on intent.
@@ -104,9 +104,6 @@ public static class TypeComparison
         [typeof(TimeZoneInfo)] = ["java.util.TimeZone"],
         [typeof(System.Text.Encoding)] = ["java.nio.charset.Charset"],
         [typeof(DateTime)] = ["java.util.Date"],
-        // Lucene.NET ports java.io.PrintWriter to TextWriter (alongside java.io.Writer/PrintStream
-        // already mapped above) since all are character sinks.
-        [typeof(TextWriter)] = ["java.io.Writer", "java.io.PrintStream", "java.io.PrintWriter"],
         [typeof(System.Xml.XmlElement)] = ["org.w3c.dom.Element"],
         // J2N boxed-numeric replacements for java.lang.* wrapper types. These are the J2N.Numerics
         // forms Lucene.NET exposes where Java has the boxed wrapper; the primitive forms are mapped

@@ -22,23 +22,27 @@ var extractorJarPath = new Option<FileInfo>("-j", "--jar")
 {
     Description = "Path to the lucene-api-extractor JAR file",
     Recursive = true,
+    Required = true,
 };
 
 var extractorDownloadPath = new Option<DirectoryInfo>("-d", "--download")
 {
     Description = "Path to store the files downloaded by the extractor",
     Recursive = true,
+    Required = true,
 };
 
 var outputPath = new Option<DirectoryInfo>("-o", "--output")
 {
     Description = "Path to save the output files to",
+    Required = true,
 };
 
 var configFilePath = new Option<FileInfo>("-c", "--config")
 {
     Description = "Path to the configuration file",
     Recursive = true,
+    Required = true,
 };
 
 var diffCommand = new Command("diff", "Generates a raw diff JSON data file of the API differences between Lucene and Lucene.NET")

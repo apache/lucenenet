@@ -19,6 +19,7 @@ using System.Text.Json.Serialization;
 
 namespace Lucene.Net.ApiCheck.Models.Diff;
 
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
 [JsonDerivedType(typeof(FieldReference), "field")]
 [JsonDerivedType(typeof(MethodReference), "method")]
 [JsonDerivedType(typeof(PropertyReference), "property")]

@@ -36,7 +36,7 @@ public static class ReportCommand
 
         foreach (var file in filesToCopy)
         {
-            Stream resourceStream = GetEmbeddedResourceStream(file);
+            await using Stream resourceStream = GetEmbeddedResourceStream(file);
 
             var filePath = Path.Combine(outputPath.FullName, file);
 

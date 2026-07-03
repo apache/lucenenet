@@ -35,7 +35,7 @@ namespace Lucene.Net.Reflection
     /// An optional <see cref="Justification"/> can be added to communicate why the discrepancy exists.
     /// Example:
     /// <code>
-    /// [LuceneEquivalent("org.apache.lucene.document", "FloatField", Justification = ".NET numeric type naming conventions")]
+    /// [LuceneType("org.apache.lucene.document", "FloatField", Justification = ".NET numeric type naming conventions")]
     /// </code>
     /// <para />
     /// For nested/inner classes, specify the full hierarchy of the class using dot notation.
@@ -44,7 +44,7 @@ namespace Lucene.Net.Reflection
     /// </remarks>
     /// <example>
     /// <code>
-    /// [LuceneEquivalent("org.apache.lucene.document", "FloatField")]
+    /// [LuceneType("org.apache.lucene.document", "FloatField")]
     /// public sealed class SingleField : Field { ... }
     /// </code>
     /// </example>
