@@ -39,11 +39,21 @@ namespace Lucene.Net.Support.ExceptionHandling
     public abstract class ExceptionScanningTestCase : AssemblyScanningTestCase
     {
         // Internal types references
-        private static readonly Type DebugAssertExceptionType =
+        private static readonly Type ClrDebugAssertExceptionType =
             // .NET 5/.NET Core 3.x
             Type.GetType("System.Diagnostics.DebugProvider+DebugAssertException, System.Private.CoreLib")
             // .NET Core 2.x
             ?? Type.GetType("System.Diagnostics.Debug+DebugAssertException, System.Private.CoreLib");
+
+        private static readonly Type TestHostDebugAssertExceptionType =
+            // Microsoft.NET.Test.Sdk 16.6.0+ (used by Visual Studio Test Explorer)
+            Type.GetType("Microsoft.VisualStudio.TestPlatform.TestHost.DebugAssertException, testhost");
+
+        private static readonly Type DebugAssertExceptionType =
+            // Microsoft.NET.Test.Sdk 16.6.0+ (used by Visual Studio Test Explorer)
+            TestHostDebugAssertExceptionType
+            // .NET Core
+            ?? ClrDebugAssertExceptionType;
         // .NET Framework doesn't throw in this case
 
         private static readonly Type MetadataExceptionType =
@@ -465,15 +475,28 @@ namespace Lucene.Net.Support.ExceptionHandling
             };
 
             // Special case - this doesn't exist on .NET Framework, so we only add it if not null
-            if (DebugAssertExceptionType is not null)
+            if (ClrDebugAssertExceptionType is not null)
             {
-                result[DebugAssertExceptionType] = (exceptionType, message) =>
+                result[ClrDebugAssertExceptionType] = (exceptionType, message) =>
                 {
                     //private sealed class DebugAssertException : Exception
                     //{
                     //    internal DebugAssertException(string? message, string? detailMessage, string? stackTrace)
                     BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
-                    return Activator.CreateInstance(DebugAssertExceptionType, flags, null, new object[] { message, null, null }, CultureInfo.InvariantCulture);
+                    return Activator.CreateInstance(ClrDebugAssertExceptionType, flags, null, new object[] { message, null, null }, CultureInfo.InvariantCulture);
+                };
+            }
+
+            // Special case - Microsoft.NET.Test.Sdk 16.6.0+ contains its own Debug.Assert type that is thrown when debugging tests
+            if (TestHostDebugAssertExceptionType is not null)
+            {
+                result[TestHostDebugAssertExceptionType] = (exceptionType, message) =>
+                {
+                    //internal sealed class DebugAssertException : Exception
+                    //{
+                    //public DebugAssertException(string message, string stackTrace) : base(message)
+                    BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
+                    return Activator.CreateInstance(TestHostDebugAssertExceptionType, flags, null, new object[] { message, string.Empty }, CultureInfo.InvariantCulture);
                 };
             }
 
