@@ -171,5 +171,93 @@ namespace Lucene.Net.Support
             assertEquals(VIntUtils.MaxVInt32Length, EncodeVInt32(-1).Length);
             assertEquals(VIntUtils.MaxVInt64Length, EncodeVInt64(long.MaxValue).Length);
         }
+
+#if DEBUG
+
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(127)]
+        [TestCase(128)]
+        [TestCase(16383)]
+        [TestCase(16384)]
+        [TestCase(2097151)]
+        [TestCase(2097152)]
+        [TestCase(268435455)]
+        [TestCase(int.MaxValue)]
+        [TestCase(-1)]
+        [LuceneNetSpecific]
+        public void TestReadVInt32_DebugAssertRequiresCompleteSpan(int value)
+        {
+            byte[] encoded = EncodeVInt32(value);
+
+            // Every prefix shorter than the encoded value should assert.
+            for (int length = 0; length < encoded.Length; length++)
+            {
+                Assert.Throws(Lucene.ExceptionExtensions.DebugAssertExceptionType, () =>
+                {
+                    VIntUtils.TryReadVInt32(encoded.AsSpan(0, length), out _, out _);
+                }, $"Expected {Lucene.ExceptionExtensions.DebugAssertExceptionType.AssemblyQualifiedName} for value {value} with span length {length}.");
+            }
+
+            // The exact encoded length should succeed.
+            {
+                Assert.DoesNotThrow(() =>
+                {
+                    bool ok = VIntUtils.TryReadVInt32(encoded, out int result, out int count);
+
+                    assertTrue(ok);
+                    assertEquals(value, result);
+                    assertEquals(encoded.Length, count);
+                });
+            }
+        }
+
+        [TestCase(0L)]
+        [TestCase(1L)]
+        [TestCase(127L)]
+        [TestCase(128L)]
+        [TestCase(16383L)]
+        [TestCase(16384L)]
+        [TestCase(2097151L)]
+        [TestCase(2097152L)]
+        [TestCase(268435455L)]
+        [TestCase(268435456L)]
+        [TestCase(34359738367L)]
+        [TestCase(34359738368L)]
+        [TestCase(4398046511103L)]
+        [TestCase(4398046511104L)]
+        [TestCase(562949953421311L)]
+        [TestCase(562949953421312L)]
+        [TestCase(72057594037927935L)]
+        [TestCase(72057594037927936L)]
+        [TestCase(long.MaxValue)]
+        [LuceneNetSpecific]
+        public void TestReadVInt64_DebugAssertRequiresCompleteSpan(long value)
+        {
+            byte[] encoded = EncodeVInt64(value);
+
+            // Every prefix shorter than the encoded value should assert.
+            for (int length = 0; length < encoded.Length; length++)
+            {
+                Assert.Throws(Lucene.ExceptionExtensions.DebugAssertExceptionType, () =>
+                {
+                    VIntUtils.TryReadVInt64(encoded.AsSpan(0, length), out _, out _);
+                }, $"Expected {Lucene.ExceptionExtensions.DebugAssertExceptionType.AssemblyQualifiedName} for value {value} with span length {length}.");
+            }
+
+            // The exact encoded length should succeed.
+            {
+                Assert.DoesNotThrow(() =>
+                {
+                    bool ok = VIntUtils.TryReadVInt64(encoded, out long result, out int count);
+
+                    assertTrue(ok);
+                    assertEquals(value, result);
+                    assertEquals(encoded.Length, count);
+                });
+            }
+        }
+
+#endif
     }
 }
