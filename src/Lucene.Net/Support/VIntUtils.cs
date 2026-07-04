@@ -55,7 +55,7 @@ namespace Lucene.Net.Support
         /// extra high bits set.</returns>
         public static bool TryReadVInt32(ReadOnlySpan<byte> source, out int value, out int count)
         {
-            Debug.Assert(source.Length >= 1);
+            AssertCanContainVInt32(source);
             byte b = source[0];
             if (b <= sbyte.MaxValue) // LUCENENET: Optimized equivalent of "if ((sbyte)b >= 0)"
             {
@@ -109,7 +109,7 @@ namespace Lucene.Net.Support
         /// the continuation bit set (which would indicate a negative value, disallowed).</returns>
         public static bool TryReadVInt64(ReadOnlySpan<byte> source, out long value, out int count)
         {
-            Debug.Assert(source.Length >= 1);
+            AssertCanContainVInt64(source);
             byte b = source[0];
             if (b <= sbyte.MaxValue)
             {
@@ -179,6 +179,42 @@ namespace Lucene.Net.Support
             count = 9;
             value = i;
             return b <= sbyte.MaxValue;
+        }
+
+        [Conditional("DEBUG")]
+        private static void AssertCanContainVInt32(ReadOnlySpan<byte> source)
+        {
+            int length = source.Length;
+            if (length >= MaxVInt32Length) return;
+
+            int limit = Math.Min(length, MaxVInt32Length);
+
+            for (int i = 0; i < limit; i++)
+            {
+                if ((source[i] & 0x80) == 0)
+                    return;
+            }
+
+            Debug.Assert(length >= MaxVInt32Length,
+                "The span is too short to contain a complete VInt32.");
+        }
+
+        [Conditional("DEBUG")]
+        private static void AssertCanContainVInt64(ReadOnlySpan<byte> source)
+        {
+            int length = source.Length;
+            if (length >= MaxVInt64Length) return;
+
+            int limit = Math.Min(length, MaxVInt64Length);
+
+            for (int i = 0; i < limit; i++)
+            {
+                if ((source[i] & 0x80) == 0)
+                    return;
+            }
+
+            Debug.Assert(length >= MaxVInt64Length,
+                "The span is too short to contain a complete VInt64.");
         }
 
         // LUCENENET: The throw sites below are factored into dedicated, non-inlined helpers so the

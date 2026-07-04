@@ -3,7 +3,6 @@ using Lucene.Net.Configuration;
 using NUnit.Framework;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 
 namespace Lucene.Net.Util
 {
@@ -358,11 +357,13 @@ namespace Lucene.Net.Util
             // Identify the Debug.Assert() exception so it can be excluded from being swallowed by catch blocks.
             // These types are internal, so we can identify them using Reflection.
             Lucene.ExceptionExtensions.DebugAssertExceptionType =
+                // Microsoft.NET.Test.Sdk 16.6.0+ (used by Visual Studio Test Explorer)
+                Type.GetType("Microsoft.VisualStudio.TestPlatform.TestHost.DebugAssertException, testhost")
                 // .NET 5/.NET Core 3.x
-                Type.GetType("System.Diagnostics.DebugProvider+DebugAssertException, System.Private.CoreLib")
+                ?? Type.GetType("System.Diagnostics.DebugProvider+DebugAssertException, System.Private.CoreLib")
                 // .NET Core 2.x
                 ?? Type.GetType("System.Diagnostics.Debug+DebugAssertException, System.Private.CoreLib");
-                // .NET Framework doesn't throw in this case
+            // .NET Framework doesn't throw in this case
         }
 
         /// <summary>
