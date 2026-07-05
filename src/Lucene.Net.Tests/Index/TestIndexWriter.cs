@@ -3121,7 +3121,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Make sure that close waits for any still-running commits. </summary>
-        // LUCENENET: backport LUCENE-4246 (Lucene 5.0) test
+        // LUCENENET: backport LUCENE-5871 (Lucene 4.10.0) test
         [Test]
         public virtual void TestCloseDuringCommit()
         {
