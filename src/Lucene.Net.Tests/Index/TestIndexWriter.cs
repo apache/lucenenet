@@ -3004,9 +3004,9 @@ namespace Lucene.Net.Index
             LogDocMergePolicy mp = new LogDocMergePolicy();
             mp.MergeFactor = 2;
             iwc.SetMergePolicy(mp);
-            iwc.SetInfoStream(new InfoStreamAnonymousClassForRollbackWhileMergeIsRunning(closeStarted));
+            iwc.SetInfoStream(new RollbackWhileMergeIsRunningInfoStreamAnonymousClass(closeStarted));
 
-            iwc.SetMergeScheduler(new ConcurrentMergeSchedulerAnonymousClassForRollbackWhileMergeIsRunning(mergeStarted, closeStarted));
+            iwc.SetMergeScheduler(new RollbackWhileMergeIsRunningConcurrentMergeSchedulerAnonymousClass(mergeStarted, closeStarted));
             IndexWriter w = new IndexWriter(dir, iwc);
             w.AddDocument(new Document());
             w.Commit();
@@ -3016,11 +3016,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private sealed class InfoStreamAnonymousClassForRollbackWhileMergeIsRunning : InfoStream
+        private sealed class RollbackWhileMergeIsRunningInfoStreamAnonymousClass : InfoStream
         {
             private readonly CountdownLatch closeStarted;
 
-            public InfoStreamAnonymousClassForRollbackWhileMergeIsRunning(CountdownLatch closeStarted)
+            public RollbackWhileMergeIsRunningInfoStreamAnonymousClass(CountdownLatch closeStarted)
             {
                 this.closeStarted = closeStarted;
             }
@@ -3043,12 +3043,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        private sealed class ConcurrentMergeSchedulerAnonymousClassForRollbackWhileMergeIsRunning : ConcurrentMergeScheduler
+        private sealed class RollbackWhileMergeIsRunningConcurrentMergeSchedulerAnonymousClass : ConcurrentMergeScheduler
         {
             private readonly CountdownLatch mergeStarted;
             private readonly CountdownLatch closeStarted;
 
-            public ConcurrentMergeSchedulerAnonymousClassForRollbackWhileMergeIsRunning(CountdownLatch mergeStarted, CountdownLatch closeStarted)
+            public RollbackWhileMergeIsRunningConcurrentMergeSchedulerAnonymousClass(CountdownLatch mergeStarted, CountdownLatch closeStarted)
             {
                 this.mergeStarted = mergeStarted;
                 this.closeStarted = closeStarted;
@@ -3132,10 +3132,10 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, null);
             // infostream that "takes a long time" to commit
-            iwc.SetInfoStream(new InfoStreamAnonymousClassForCloseDuringCommit(startCommit));
+            iwc.SetInfoStream(new CloseDuringCommitInfoStreamAnonymousClass(startCommit));
             IndexWriter iw = new IndexWriter(dir, iwc);
             Document doc = new Document();
-            new ThreadAnonymousClassForCloseDuringCommit(iw, finishCommit).Start();
+            new CloseDuringCommitThreadAnonymousClass(iw, finishCommit).Start();
             startCommit.Wait();
             try
             {
@@ -3150,11 +3150,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private sealed class InfoStreamAnonymousClassForCloseDuringCommit : InfoStream
+        private sealed class CloseDuringCommitInfoStreamAnonymousClass : InfoStream
         {
             private readonly CountdownLatch startCommit;
 
-            public InfoStreamAnonymousClassForCloseDuringCommit(CountdownLatch startCommit)
+            public CloseDuringCommitInfoStreamAnonymousClass(CountdownLatch startCommit)
             {
                 this.startCommit = startCommit;
             }
@@ -3185,12 +3185,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        private sealed class ThreadAnonymousClassForCloseDuringCommit : ThreadJob
+        private sealed class CloseDuringCommitThreadAnonymousClass : ThreadJob
         {
             private readonly IndexWriter iw;
             private readonly CountdownLatch finishCommit;
 
-            public ThreadAnonymousClassForCloseDuringCommit(IndexWriter iw, CountdownLatch finishCommit)
+            public CloseDuringCommitThreadAnonymousClass(IndexWriter iw, CountdownLatch finishCommit)
             {
                 this.iw = iw;
                 this.finishCommit = finishCommit;

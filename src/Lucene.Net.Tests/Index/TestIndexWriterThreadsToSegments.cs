@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < threads.Length; i++)
             {
-                threads[i] = new ThreadAnonymousClassForSegmentCountOnFlushRandom(w, indexingCount, maxThreadCount, barrier, ITERS);
+                threads[i] = new SegmentCountOnFlushRandomThreadAnonymousClass(w, indexingCount, maxThreadCount, barrier, ITERS);
                 threads[i].Start();
             }
 
@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
             IOUtils.Dispose(checker, w, dir);
         }
 
-        private sealed class ThreadAnonymousClassForSegmentCountOnFlushRandom : ThreadJob
+        private sealed class SegmentCountOnFlushRandomThreadAnonymousClass : ThreadJob
         {
             private readonly IndexWriter w;
             private readonly AtomicInt32 indexingCount;
@@ -255,7 +255,7 @@ namespace Lucene.Net.Index
             private readonly Barrier barrier;
             private readonly int iters;
 
-            public ThreadAnonymousClassForSegmentCountOnFlushRandom(IndexWriter w, AtomicInt32 indexingCount, AtomicInt32 maxThreadCount, Barrier barrier, int iters)
+            public SegmentCountOnFlushRandomThreadAnonymousClass(IndexWriter w, AtomicInt32 indexingCount, AtomicInt32 maxThreadCount, Barrier barrier, int iters)
             {
                 this.w = w;
                 this.indexingCount = indexingCount;
@@ -313,7 +313,7 @@ namespace Lucene.Net.Index
             using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             for (int i = 0; i < threads.Length; i++)
             {
-                threads[i] = new ThreadAnonymousClassForManyThreadsClose(w, startingGun);
+                threads[i] = new ManyThreadsCloseThreadAnonymousClass(w, startingGun);
                 threads[i].Start();
             }
 
@@ -340,12 +340,12 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private sealed class ThreadAnonymousClassForManyThreadsClose : ThreadJob
+        private sealed class ManyThreadsCloseThreadAnonymousClass : ThreadJob
         {
             private readonly RandomIndexWriter w;
             private readonly CountdownLatch startingGun;
 
-            public ThreadAnonymousClassForManyThreadsClose(RandomIndexWriter w, CountdownLatch startingGun)
+            public ManyThreadsCloseThreadAnonymousClass(RandomIndexWriter w, CountdownLatch startingGun)
             {
                 this.w = w;
                 this.startingGun = startingGun;
@@ -393,7 +393,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < threads.Length; i++)
             {
                 int threadID = i;
-                threads[i] = new ThreadAnonymousClassForDocsStuckInRAMForever(w, threadID, startingGun);
+                threads[i] = new DocsStuckInRAMForeverThreadAnonymousClass(w, threadID, startingGun);
                 threads[i].Start();
             }
 
@@ -445,13 +445,13 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private sealed class ThreadAnonymousClassForDocsStuckInRAMForever : ThreadJob
+        private sealed class DocsStuckInRAMForeverThreadAnonymousClass : ThreadJob
         {
             private readonly IndexWriter w;
             private readonly int threadID;
             private readonly CountdownLatch startingGun;
 
-            public ThreadAnonymousClassForDocsStuckInRAMForever(IndexWriter w, int threadID, CountdownLatch startingGun)
+            public DocsStuckInRAMForeverThreadAnonymousClass(IndexWriter w, int threadID, CountdownLatch startingGun)
             {
                 this.w = w;
                 this.threadID = threadID;
