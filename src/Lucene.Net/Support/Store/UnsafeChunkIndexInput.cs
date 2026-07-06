@@ -304,7 +304,7 @@ namespace Lucene.Net.Store
         public override long ReadInt64()
         {
             long pos = position;
-            if (pos + 8 <= currentEnd)
+            if (pos <= currentEnd - 8)
             {
                 readerSlot.EnterCore();
                 ulong raw = Unsafe.ReadUnaligned<ulong>(readBase + pos);
