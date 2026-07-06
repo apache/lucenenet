@@ -523,7 +523,7 @@ namespace Lucene.Net.Store
         //   ERROR_ACCESS_DENIED on view creation), which is also
         //   unrelated to the capacity race. A few hundred iterations
         //   are plenty to repeatedly hit the race window.
-        [Test, LuceneNetSpecific, Slow]
+        [Test, LuceneNetSpecific, Nightly]
         public void TestOpenInputConcurrentFileExtension_Issue1090()
         {
             var dir = CreateTempDir("testOpenInputConcurrentFileExtension");
