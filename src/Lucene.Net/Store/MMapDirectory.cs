@@ -370,7 +370,7 @@ namespace Lucene.Net.Store
             public override object Clone()
             {
                 // A disposed input must not hand out a working clone.
-                ThrowIfDisposed();
+                EnsureOpen();
                 // The clone shares the parent's SharedMapping but does NOT own it.
                 // ResetClonedCursor clears the inherited cursor cache and gives the
                 // clone its own reclaimer slot, so the clone and parent read

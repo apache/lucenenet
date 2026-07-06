@@ -169,7 +169,7 @@ namespace Lucene.Net.Store
 
             public override object Clone()
             {
-                ThrowIfDisposed();
+                EnsureOpen();
                 var clone = (ManagedChunkIndexInput)base.Clone();
                 clone.isRoot = false;
                 clone.ResetClonedCursor();

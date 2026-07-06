@@ -146,7 +146,7 @@ namespace Lucene.Net.Store
         /// disposed. Subclasses call this from <c>Clone()</c> (a disposed input
         /// must not hand out a working clone); the base calls it on the read paths.
         /// </summary>
-        protected void ThrowIfDisposed()
+        protected void EnsureOpen()
         {
             if (Volatile.Read(ref instanceClosed) != 0)
             {
