@@ -59,4 +59,3 @@ namespace Lucene.Net.Codecs.Appending
         }
     }
 }
-

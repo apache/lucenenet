@@ -38,4 +38,3 @@ namespace Lucene.Net.Cli.Commands.Demo
         }
     }
 }
-

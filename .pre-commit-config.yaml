@@ -31,6 +31,7 @@
 # | **Priority 10** | `identity`, `check-hooks-apply` | **Meta & Setup**: Ensure environment is valid before executing heavy checks. |
 # | **Priority 20** | `fix-byte-order-marker` | **File Cleanups (Broad)**: Fix BOM first so subsequent steps work with clean UTF-8 text. |
 # | **Priority 30** | `trailing-whitespace` | **Formatting (Broad)**: Cleans up whitespace on files before other hooks validate them. |
+# | **Priority 35** | `end-of-file-fixer` | **File Cleanups (Broad)**: Makes sure files end in a newline and only a newline. |
 # | **Priority 40** | `doctoc`, `oxipng`, `file-contents-sorter` | **Disjoint Modifiers**: These modify different sets of files (`README.md`, `.png` files, and `codespell.txt` respectively). Running them concurrently is safe. |
 # | **Priority 50** | `codespell`, `check-ast`, `check-builtin-literals`, `check-case-conflict`, `check-executables-have-shebangs`, `check-illegal-windows-names`, `check-json`, `check-merge-conflict`, `check-vcs-permalinks`, `check-xml`, `check-yaml`, `debug-statements`, `detect-aws-credentials`, `detect-private-key`, `forbid-submodules`, `gitleaks`, `bandit`|
 # |                 | **Read-Only / Syntax / Security**: The bulk of the suite. These hooks only read and validate files without modifying them, allowing full parallel execution. |
@@ -80,6 +81,11 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
+      - id: end-of-file-fixer
+        name: run end-of-file-fixer
+        description: makes sure files end in a newline and only a newline
+        files: \.cs$
+        priority: 35
       - id: trailing-whitespace
         name: run trailing-whitespace
         description: trims trailing whitespace
