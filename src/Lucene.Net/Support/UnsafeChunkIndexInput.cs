@@ -257,12 +257,19 @@ namespace Lucene.Net.Store
                 position = pos + 2;
                 return (short)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
             }
-            // Slow path: bytes straddle a chunk boundary. Fill via ReadBytes (which
-            // handles the crossing) and decode big-endian to match the fast path;
-            // avoids the per-byte virtcall round-trip through base.ReadInt16.
-            Span<byte> buf = stackalloc byte[2];
-            ReadBytes(buf);
-            return BinaryPrimitives.ReadInt16BigEndian(buf);
+
+            return ReadInt16Slow();
+
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            short ReadInt16Slow()
+            {
+                // Slow path: bytes straddle a chunk boundary. Fill via ReadBytes (which
+                // handles the crossing) and decode big-endian to match the fast path;
+                // avoids the per-byte virtcall round-trip through base.ReadInt16.
+                Span<byte> buf = stackalloc byte[2];
+                ReadBytes(buf);
+                return BinaryPrimitives.ReadInt16BigEndian(buf);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -277,10 +284,17 @@ namespace Lucene.Net.Store
                 position = pos + 4;
                 return (int)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
             }
-            // Slow path: see ReadInt16.
-            Span<byte> buf = stackalloc byte[4];
-            ReadBytes(buf);
-            return BinaryPrimitives.ReadInt32BigEndian(buf);
+
+            return ReadInt32Slow();
+
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            int ReadInt32Slow()
+            {
+                // Slow path: see ReadInt16.
+                Span<byte> buf = stackalloc byte[4];
+                ReadBytes(buf);
+                return BinaryPrimitives.ReadInt32BigEndian(buf);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -295,10 +309,17 @@ namespace Lucene.Net.Store
                 position = pos + 8;
                 return (long)(BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw) : raw);
             }
-            // Slow path: see ReadInt16.
-            Span<byte> buf = stackalloc byte[8];
-            ReadBytes(buf);
-            return BinaryPrimitives.ReadInt64BigEndian(buf);
+
+            return ReadInt64Slow();
+
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            long ReadInt64Slow()
+            {
+                // Slow path: see ReadInt16.
+                Span<byte> buf = stackalloc byte[8];
+                ReadBytes(buf);
+                return BinaryPrimitives.ReadInt64BigEndian(buf);
+            }
         }
 
         public override void ReadBytes(byte[] b, int offset, int len)
