@@ -47,7 +47,7 @@ We are going to create a console application that uses Lucene.NET to index three
 This is actually pretty simple to do in Lucene.NET but since this in our very first Lucene.NET application we are going to walk through it step by step and provide a lot of explanation along the way.
 
 ### Create a Directory for the Project
-Create a directory where you would like this project to live on your hard drive and call that directory `lucene-example1`. In my case that will be ` C:\Users\Ron\source\repos\lucene-example1` but you can chose any location you like.  Then make that directory the current directory in PowerShell.
+Create a directory where you would like this project to live on your hard drive and call that directory `lucene-example1`. In my case that will be `C:\Users\Ron\source\repos\lucene-example1` but you can chose any location you like.  Then make that directory the current directory in PowerShell.
 
 In my case, since I'm on Windows, I'll create the directory using the GUI and use the `cd` command in PowerShell to change directory to the one I created.  So the exact PowerShell command I used was  `cd C:\Users\Ron\source\repos\lucene-example1` but you will need to modify that command to specify the directory you created.
 
@@ -324,7 +324,7 @@ Create a directory where you would like this project to live, call it `lucene-ex
 
 You can use whatever tool you choose for Example 1 to accomplish these steps. In my case I will created the directory in the GUI then make it the current directory in PowerShell and then execute these commands in PowerShell one at a time (similar to how I did it in Example 1):
 
-` dotnet new console`
+`dotnet new console`
 
 `dotnet add package Lucene.Net --prerelease`
 
