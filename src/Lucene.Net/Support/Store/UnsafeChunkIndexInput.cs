@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Buffers.Binary;
@@ -461,6 +462,12 @@ namespace Lucene.Net.Store
 
             long globalPos = baseOffset + windowPos;
             int chunkIdx = (int)(globalPos >> chunkSizePower);
+
+            if (Debugging.AssertsEnabled) Debugging.Assert((uint)chunkIdx < (uint)ChunkCount,
+                $"Computed chunk index {chunkIdx} is outside the valid range [0, {ChunkCount}). " +
+                $"windowPos={windowPos}, globalPos={globalPos}, baseOffset={baseOffset}, " +
+                $"length={length}, chunkSizePower={chunkSizePower}");
+
             byte* chunkBase = ChunkBase(chunkIdx);
 
             long chunkFileStart = (long)chunkIdx << chunkSizePower;
