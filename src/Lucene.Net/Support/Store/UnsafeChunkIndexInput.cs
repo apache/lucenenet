@@ -187,14 +187,16 @@ namespace Lucene.Net.Store
 
         public override void Seek(long pos)
         {
-            if (pos < 0 || pos > length)
+            if ((uint)pos > (uint)length)
             {
-                throw new IOException("Seek position is out of bounds: " + pos);
+                throw new ArgumentOutOfRangeException(nameof(pos), $"Seek position is out of bounds: {pos}");
             }
+
             if (Volatile.Read(ref instanceClosed) != 0)
             {
                 throw AlreadyClosedException.Create(this.GetType().FullName, "Already disposed: " + this);
             }
+
             // If the seek stays inside the cached chunk, keep the cached pointer and
             // just move the cursor; otherwise invalidate so the next read reacquires.
             if (currentChunkIndex != NO_CHUNK && pos >= currentStart && pos < currentEnd)
@@ -202,6 +204,7 @@ namespace Lucene.Net.Store
                 position = pos;
                 return;
             }
+
             ReleaseCurrentChunk();
             position = pos;
         }
