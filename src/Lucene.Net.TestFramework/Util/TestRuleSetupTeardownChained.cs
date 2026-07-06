@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Make sure <seealso cref="LuceneTestCase#setUp()"/> and <seealso cref="LuceneTestCase#tearDown()"/> were invoked even if they
-    /// have been overriden. We assume nobody will call these out of non-overriden
+    /// have been overridden. We assume nobody will call these out of non-overridden
     /// methods (they have to be public by contract, unfortunately). The top-level
     /// methods just set a flag that is checked upon successful execution of each test
     /// case.

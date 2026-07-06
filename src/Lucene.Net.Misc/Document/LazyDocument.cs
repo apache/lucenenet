@@ -56,7 +56,7 @@ namespace Lucene.Net.Documents
         /// <para>
         /// <b>NOTE:</b> This method must be called once for each value of the field
         /// name specified in sequence that the values exist.  This method may not be
-        /// used to generate multiple, lazy, IndexableField instances refering to
+        /// used to generate multiple, lazy, IndexableField instances referring to
         /// the same underlying IndexableField instance.
         /// </para>
         /// <para>

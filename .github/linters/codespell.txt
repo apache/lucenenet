@@ -118,8 +118,6 @@ ine
 ines
 informations
 ingenuous
-intance
-interruted
 isnt
 isse
 isses
@@ -158,12 +156,9 @@ nin
 noe
 noen
 noes
-non-existant
-nonexistant
 noone
 notin
 nowe
-occurances
 oder
 oint
 oje
@@ -174,8 +169,6 @@ ony
 ore
 ot
 overide
-overriden
-ovewrite
 padd
 pard
 parms
@@ -186,7 +179,6 @@ posin
 pre-pended
 pres
 prevend
-probablistic
 programer
 pronounciation
 querys
@@ -200,7 +192,6 @@ re-using
 ream
 reasearch
 recipies
-refering
 repot
 reproducability
 reproducable

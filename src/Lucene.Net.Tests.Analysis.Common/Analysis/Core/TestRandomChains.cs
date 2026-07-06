@@ -178,7 +178,7 @@ namespace Lucene.Net.Analysis.Core
             allowedTokenFilterArgs = new JCG.HashSet<Type>(IdentityEqualityComparer<Type>.Default);
             allowedTokenFilterArgs.addAll(argProducers.Keys);
             allowedTokenFilterArgs.Add(typeof(TokenStream));
-            // TODO: fix this one, thats broken:
+            // TODO: fix this one, that's broken:
             allowedTokenFilterArgs.Add(typeof(CommonGramsFilter));
 
             allowedCharFilterArgs = new JCG.HashSet<Type>(IdentityEqualityComparer<Type>.Default);
@@ -970,7 +970,7 @@ namespace Lucene.Net.Analysis.Core
                 }
                 else if (paramType == typeof(CommonGramsFilter))
                 {
-                    // TODO: fix this one, thats broken: CommonGramsQueryFilter takes this one explicitly
+                    // TODO: fix this one, that's broken: CommonGramsQueryFilter takes this one explicitly
                     args[i] = new CommonGramsFilter(TEST_VERSION_CURRENT, stream, NewRandomArg<CharArraySet>(random, typeof(CharArraySet)));
                 }
                 else
@@ -1066,7 +1066,7 @@ namespace Lucene.Net.Analysis.Core
                         || ite.InnerException.GetType().Equals(typeof(NotSupportedException))))
                     {
 
-                        // thats ok, ignore
+                        // that's ok, ignore
                         if (Verbose)
                         {
                             Console.WriteLine("Ignoring IAE/UOE from ctor:");

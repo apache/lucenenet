@@ -125,7 +125,7 @@ function Invoke-psake {
         $psake.context                      # holds onto the current state of all variables
         $psake.run_by_psake_build_tester    # indicates that build is being run by psake-BuildTester
         $psake.config_default               # contains default configuration
-                                            # can be overriden in psake-config.ps1 in directory with psake.psm1 or in directory with current build script
+                                            # can be overridden in psake-config.ps1 in directory with psake.psm1 or in directory with current build script
         $psake.build_success                # indicates that the current build was successful
         $psake.build_script_file            # contains a System.IO.FileInfo for the current build script
         $psake.build_script_dir             # contains the fully qualified path to the current build script

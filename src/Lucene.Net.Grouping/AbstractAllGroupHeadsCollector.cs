@@ -200,7 +200,7 @@ namespace Lucene.Net.Search.Grouping
     /// <summary>
     /// LUCENENET specific class used to reference an
     /// <see cref="AbstractAllGroupHeadsCollector{GH}"/> subclass
-    /// without refering to its generic closing type.
+    /// without referring to its generic closing type.
     /// </summary>
     public abstract class AbstractAllGroupHeadsCollector : ICollector
     {
