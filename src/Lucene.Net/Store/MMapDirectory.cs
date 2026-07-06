@@ -1,6 +1,7 @@
 using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using Microsoft.Win32.SafeHandles;
 using System;
@@ -242,32 +243,46 @@ namespace Lucene.Net.Store
             // outerInstance on every read because reads against a disposed mapping
             // already fail fast with AlreadyClosedException via the reclaimer.
             // EnsureOpen here only guards the act of opening a new slice.
-            public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
+            public override IndexInput OpenSlice(string? sliceDescription, long offset, long length)
             {
                 outerInstance.EnsureOpen();
-                if (offset < 0 || length < 0 || offset + length > mapping.Length)
-                {
-                    throw new ArgumentException(
-                        "slice() " + sliceDescription + " out of bounds: offset=" + offset
-                        + ",length=" + length + ",fileLength=" + mapping.Length + ": " + this);
-                }
+                if ((ulong)offset >= (ulong)mapping.Length)
+                    throw new ArgumentOutOfRangeException(nameof(offset),
+                        $"slice() {sliceDescription ?? "(null)"} offset out of bounds: " +
+                        $"offset={offset},length={length},fileLength={mapping.Length}: {this}");
+                if ((ulong)length > (ulong)mapping.Length)
+                    throw new ArgumentOutOfRangeException(nameof(length),
+                        $"slice() {sliceDescription ?? "(null)"} length out of bounds: " +
+                        $"offset={offset},length={length},fileLength={mapping.Length}: {this}");
+                if ((ulong)offset + (ulong)length > (ulong)mapping.Length)
+                    throw new ArgumentOutOfRangeException(
+                        $"slice() {sliceDescription ?? "(null)"} parameters out of bounds: " +
+                        $"offset={offset},length={length},fileLength={mapping.Length}: {this}");
+
                 // Slices reference the slicer's mapping; only the slicer owns and
                 // disposes it.
                 var input = new MMapIndexInput(
-                    $"MMapIndexInput({sliceDescription} in path=\"{file}\" slice={offset}:{offset + length})", ownsMapping: false, mapping,
-                    offset, length,
-                    outerInstance.chunkSizePower);
-                lock (issuedSlicesLock)
+                    $"MMapIndexInput({sliceDescription ?? "(null)"} in path=\"{file}\" slice={offset}..{offset + length})",
+                    ownsMapping: false, mapping, offset, length, outerInstance.chunkSizePower);
+
+                UninterruptableMonitor.Enter(issuedSlicesLock);
+                try
                 {
                     if (Volatile.Read(ref disposed) != 0)
                     {
                         // Slicer disposed after EnsureOpen but before we got the
                         // lock; tear down what we just allocated.
                         input.Dispose();
-                        throw AlreadyClosedException.Create(nameof(IndexInputSlicer), "this IndexInputSlicer is closed");
+                        throw AlreadyClosedException.Create(nameof(IndexInputSlicer), "this IndexInputSlicer is disposed");
                     }
+
                     issuedSlices.Add(input);
                 }
+                finally
+                {
+                    UninterruptableMonitor.Exit(issuedSlicesLock);
+                }
+
                 return input;
             }
 
@@ -288,10 +303,16 @@ namespace Lucene.Net.Store
                 if (disposing)
                 {
                     IDisposable[] toDispose;
-                    lock (issuedSlicesLock)
+
+                    UninterruptableMonitor.Enter(issuedSlicesLock);
+                    try
                     {
                         toDispose = issuedSlices.OfType<IDisposable>().ToArray();
                         issuedSlices.Clear();
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(issuedSlicesLock);
                     }
 
                     IOUtils.DisposeWhileHandlingException(toDispose);
@@ -534,7 +555,7 @@ namespace Lucene.Net.Store
                     chunks = MapChunks(mmf, 0, length, chunkSizePower);
                     return new SharedMapping(mmf, fs, chunks, length);
                 }
-                catch (Exception e) when (e.IsThrowable())
+                catch (Exception /* e */) // when (e.IsThrowable())
                 {
                     // Cleanup must not mask e: DisposeChunks swallows internally and
                     // we dispose mmf/fs through the swallowing overload (not the
