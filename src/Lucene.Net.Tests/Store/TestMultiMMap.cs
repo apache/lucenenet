@@ -2613,13 +2613,13 @@ namespace Lucene.Net.Store
             using var slicer = mmapDir.CreateSlicer("f", NewIOContext(Random));
 
             // Negative offset.
-            Assert.Throws<ArgumentException>(() => slicer.OpenSlice("neg-off", -1, 4));
+            Assert.Throws<ArgumentOutOfRangeException>(() => slicer.OpenSlice("neg-off", -1, 4));
             // Negative length.
-            Assert.Throws<ArgumentException>(() => slicer.OpenSlice("neg-len", 0, -1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => slicer.OpenSlice("neg-len", 0, -1));
             // offset + length past end of file.
-            Assert.Throws<ArgumentException>(() => slicer.OpenSlice("past-end", 8, 10));
+            Assert.Throws<ArgumentOutOfRangeException>(() => slicer.OpenSlice("past-end", 8, 10));
             // offset alone past end of file.
-            Assert.Throws<ArgumentException>(() => slicer.OpenSlice("off-past-end", 17, 0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => slicer.OpenSlice("off-past-end", 17, 0));
 
             // Edge: offset == length == 0 is fine on a non-empty file.
             using (var s = slicer.OpenSlice("empty", 0, 0)) { Assert.AreEqual(0L, s.Length); }

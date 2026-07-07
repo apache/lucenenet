@@ -246,7 +246,8 @@ namespace Lucene.Net.Store
             public override IndexInput OpenSlice(string? sliceDescription, long offset, long length)
             {
                 outerInstance.EnsureOpen();
-                if ((ulong)offset >= (ulong)mapping.Length)
+                // LUCENENET NOTE: TestSeekSliceZero invariant allows 0 offset with 0 length
+                if (offset != 0 && (ulong)offset >= (ulong)mapping.Length)
                     throw new ArgumentOutOfRangeException(nameof(offset),
                         $"slice() {sliceDescription ?? "(null)"} offset out of bounds: " +
                         $"offset={offset},length={length},fileLength={mapping.Length}: {this}");
