@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,9 +46,9 @@ namespace Lucene.Net.Store
     /// <summary>
     /// Tests MMapDirectory's MultiMMapIndexInput
     /// <para/>
-    /// Because Java's ByteBuffer uses an int to address the
-    /// values, it's necessary to access a file >
-    /// Integer.MAX_VALUE in size using multiple byte buffers.
+    /// Because .NET's <see cref="Span{T}"/> and <see cref="ReadOnlySpan{T}"/> use an int to address the
+    /// values, and because we use a similar chunking approach to Lucene, it's necessary to access a file >
+    /// <see cref="Int32.MaxValue"/> in size using multiple byte buffers.
     /// </summary>
     [TestFixture]
     public class TestMultiMMap : LuceneTestCase
@@ -536,7 +537,7 @@ namespace Lucene.Net.Store
             using var mmapDir = new MMapDirectory(dir);
 
             const long maxFileSize = 64L * 1024 * 1024; // 64 MiB safety cap
-            var stop = new ManualResetEventSlim(false);
+            using var stop = new ManualResetEventSlim(false);
             Exception writerError = null;
 
             var writer = new Thread(() =>
@@ -544,6 +545,7 @@ namespace Lucene.Net.Store
                 var chunk = new byte[64];
                 try
                 {
+                    // ReSharper disable once AccessToDisposedClosure - thread joined below
                     while (!stop.IsSet)
                     {
                         using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
@@ -643,7 +645,7 @@ namespace Lucene.Net.Store
                 iteration++;
 
                 var primary = mmapDir.OpenInput(name, NewIOContext(random));
-                var start = new ManualResetEventSlim(false);
+                using var start = new ManualResetEventSlim(false);
                 var threads = new Thread[readerThreads];
                 long totalReads = 0;
 
@@ -651,6 +653,7 @@ namespace Lucene.Net.Store
                 {
                     threads[i] = new Thread(() =>
                     {
+                        // ReSharper disable once AccessToDisposedClosure - thread joined below
                         start.Wait();
                         try
                         {
@@ -659,6 +662,7 @@ namespace Lucene.Net.Store
                                 IndexInput clone;
                                 try
                                 {
+                                    // ReSharper disable once AccessToDisposedClosure - thread joined below
                                     clone = (IndexInput)primary.Clone();
                                 }
                                 catch (Exception e) when (e.IsAlreadyClosedException())
@@ -777,8 +781,8 @@ namespace Lucene.Net.Store
                 // The primary is opened, read, AND disposed all on THIS thread.
                 var primary = mmapDir.OpenInput(name, NewIOContext(random));
 
-                var start = new ManualResetEventSlim(false);
-                var stop = new ManualResetEventSlim(false);
+                using var start = new ManualResetEventSlim(false);
+                using var stop = new ManualResetEventSlim(false);
                 var readers = new Thread[siblingReaders];
                 for (int i = 0; i < readers.Length; i++)
                 {
@@ -791,6 +795,7 @@ namespace Lucene.Net.Store
                         IndexInput clone;
                         try
                         {
+                            // ReSharper disable once AccessToDisposedClosure - thread joined below
                             clone = (IndexInput)primary.Clone();
                         }
                         catch (Exception e) when (e.IsAlreadyClosedException())
@@ -798,9 +803,11 @@ namespace Lucene.Net.Store
                             return;
                         }
 
+                        // ReSharper disable once AccessToDisposedClosure - thread joined below
                         start.Wait();
                         try
                         {
+                            // ReSharper disable once AccessToDisposedClosure - thread joined below
                             while (!stop.IsSet)
                             {
                                 clone.Seek(0);
@@ -904,18 +911,20 @@ namespace Lucene.Net.Store
             {
                 iterations++;
                 var primary = mmapDir.OpenInput(name, NewIOContext(random));
-                var start = new ManualResetEventSlim(false);
+                using var start = new ManualResetEventSlim(false);
                 var cloners = new Thread[6];
                 for (int i = 0; i < cloners.Length; i++)
                 {
                     cloners[i] = new Thread(() =>
                     {
+                        // ReSharper disable once AccessToDisposedClosure - thread joined below
                         start.Wait();
                         try
                         {
                             while (true)
                             {
                                 IndexInput c;
+                                // ReSharper disable once AccessToDisposedClosure - thread joined below
                                 try { c = (IndexInput)primary.Clone(); }
                                 catch (Exception e) when (e.IsAlreadyClosedException()) { return; }
                                 // Touch a byte on the clone — but don't read past dispose to keep the test focused on Clone itself.
@@ -998,7 +1007,7 @@ namespace Lucene.Net.Store
             {
                 iterations++;
                 var input = mmapDir.OpenInput(name, NewIOContext(random));
-                var start = new ManualResetEventSlim(false);
+                using var start = new ManualResetEventSlim(false);
                 var readers = new Thread[4];
                 for (int i = 0; i < readers.Length; i++)
                 {
@@ -1009,9 +1018,11 @@ namespace Lucene.Net.Store
                         // the reclaimer on the shared mapping, not a single
                         // IndexInput.
                         IndexInput clone;
+                        // ReSharper disable once AccessToDisposedClosure - thread joined below
                         try { clone = (IndexInput)input.Clone(); }
                         catch (Exception e) when (e.IsAlreadyClosedException()) { return; }
 
+                        // ReSharper disable once AccessToDisposedClosure - thread joined below
                         start.Wait();
                         try
                         {
@@ -1070,7 +1081,7 @@ namespace Lucene.Net.Store
             {
                 iterations++;
                 var slicer = mmapDir.CreateSlicer(name, NewIOContext(random));
-                var start = new ManualResetEventSlim(false);
+                using var start = new ManualResetEventSlim(false);
                 var readers = new Thread[4];
                 for (int i = 0; i < readers.Length; i++)
                 {
@@ -1080,10 +1091,12 @@ namespace Lucene.Net.Store
                         IndexInput slice;
                         try
                         {
+                            // ReSharper disable once AccessToDisposedClosure - thread joined below
                             slice = slicer.OpenSlice("slice" + sliceIndex, 0, fileSize);
                         }
                         catch (Exception e) when (e.IsAlreadyClosedException()) { return; }
 
+                        // ReSharper disable once AccessToDisposedClosure - thread joined below
                         start.Wait();
                         try
                         {
@@ -1511,7 +1524,7 @@ namespace Lucene.Net.Store
                 clones[i] = (IndexInput)root.Clone();
             }
 
-            var start = new ManualResetEventSlim(false);
+            using var start = new ManualResetEventSlim(false);
             var threads = new Thread[numWorkers];
             for (int i = 0; i < numWorkers; i++)
             {
@@ -1519,6 +1532,7 @@ namespace Lucene.Net.Store
                 threads[i] = new Thread(() =>
                 {
                     var buf = new byte[fileSize];
+                    // ReSharper disable once AccessToDisposedClosure - thread joined below
                     start.Wait();
                     for (int pass = 0; pass < passesPerWorker && errors.IsEmpty; pass++)
                     {
@@ -2296,7 +2310,7 @@ namespace Lucene.Net.Store
         // disposes the clone from THIS thread - exercising the cross-thread
         // Dispose path. Static and self-contained so the clone and reader thread
         // are unreachable once this returns.
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void DisposeCloneCrossThread(MMapDirectory.MMapIndexInput parent)
         {
             IndexInput clone = (IndexInput)parent.Clone();
@@ -2394,11 +2408,17 @@ namespace Lucene.Net.Store
             Assert.IsTrue(chunks.Length > 1, "expected a multi-chunk mapping");
 
             var clone = (MMapDirectory.MMapIndexInput)root.Clone();
-            var entered = new ManualResetEventSlim(false);
-            var resume = new ManualResetEventSlim(false);
+            using var entered = new ManualResetEventSlim(false);
+            using var resume = new ManualResetEventSlim(false);
             // Park the clone INSIDE its read bracket (admitted, before the load
             // returns) so the owner's close must observe it as an active reader.
-            clone.SetOnEnterForTest(() => { entered.Set(); resume.Wait(); });
+            clone.SetOnEnterForTest(() =>
+            {
+                // ReSharper disable once AccessToDisposedClosure - runs synchronously
+                entered.Set();
+                // ReSharper disable once AccessToDisposedClosure - runs synchronously
+                resume.Wait();
+            });
 
             var reader = new Thread(() => { clone.Seek(0); clone.ReadByte(); })
             { IsBackground = true };
