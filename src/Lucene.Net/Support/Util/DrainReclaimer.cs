@@ -1,3 +1,4 @@
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -5,7 +6,7 @@ using System.Threading;
 
 #nullable enable
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Util
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -194,9 +195,14 @@ namespace Lucene.Net.Support
         public Slot Register()
         {
             var slot = new Slot(this);
-            lock (_slots)
+            UninterruptableMonitor.Enter(_slots);
+            try
             {
                 _slots.Add(slot);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(_slots);
             }
             return slot;
         }
@@ -249,7 +255,8 @@ namespace Lucene.Net.Support
 
         private bool AnyReaderActive()
         {
-            lock (_slots)
+            UninterruptableMonitor.Enter(_slots);
+            try
             {
                 foreach (Slot slot in _slots)
                 {
@@ -258,6 +265,10 @@ namespace Lucene.Net.Support
                         return true;
                     }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(_slots);
             }
             return false;
         }

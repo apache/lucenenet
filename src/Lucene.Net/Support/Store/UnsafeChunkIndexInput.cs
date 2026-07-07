@@ -1,8 +1,7 @@
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Buffers.Binary;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -228,25 +227,25 @@ namespace Lucene.Net.Store
                 return b;
             }
             return ReadByteSlow();
-        }
 
-        // Slow path: cache miss, EOF, or disposed. Acquires the chunk containing
-        // `position` (or throws), then retries the read.
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private byte ReadByteSlow()
-        {
-            long pos = position;
-            if (pos >= length)
+            // Slow path: cache miss, EOF, or disposed. Acquires the chunk containing
+            // `position` (or throws), then retries the read.
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            byte ReadByteSlow()
             {
-                throw EOFException.Create("read past EOF: " + this);
-            }
-            EnsureCurrentChunk(pos);
+                long pos = position;
+                if (pos >= length)
+                {
+                    throw EOFException.Create("read past EOF: " + this);
+                }
+                EnsureCurrentChunk(pos);
 
-            readerSlot.EnterCore();
-            byte b = *(readBase + pos);
-            readerSlot.Exit();
-            position = pos + 1;
-            return b;
+                readerSlot.EnterCore();
+                byte b = *(readBase + pos);
+                readerSlot.Exit();
+                position = pos + 1;
+                return b;
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
