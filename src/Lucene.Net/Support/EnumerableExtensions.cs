@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Support
 {
@@ -119,26 +118,5 @@ namespace Lucene.Net.Support
                     yield return buffer.Dequeue();
             }
         }
-
-#if !FEATURE_IENUMERABLE_APPEND
-        /// <summary>
-        /// Appends a value to the end of the sequence.
-        /// </summary>
-        /// <param name="source">The source sequence.</param>
-        /// <param name="element">The element to append.</param>
-        /// <typeparam name="T">The type of the elements of <paramref name="source"/>.</typeparam>
-        /// <returns>A new sequence that ends with <paramref name="element"/>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="source"/> is <see langword="null"/>.</exception>
-        public static IEnumerable<T> Append<T>(this IEnumerable<T> source, T element)
-        {
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
-
-            foreach (T x in source)
-                yield return x;
-
-            yield return element;
-        }
-#endif
     }
 }

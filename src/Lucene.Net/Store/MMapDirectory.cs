@@ -630,8 +630,7 @@ namespace Lucene.Net.Store
                 // With leaveOpen: true we always own fs; dispose mmf first after chunks so the mapping is torn down
                 // before the backing handle closes.
                 var disposables = ((SCG.IEnumerable<IDisposable?>)(chunks ?? []))
-                    .Append(mmf)
-                    .Append(fs);
+                    .Concat([mmf, fs]);
 
                 // DisposeWhileHandlingException tolerates null disposables
                 IOUtils.DisposeWhileHandlingException(priorException, disposables);
