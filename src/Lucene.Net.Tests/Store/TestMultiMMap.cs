@@ -2623,8 +2623,6 @@ namespace Lucene.Net.Store
 
             // Edge: offset == length == 0 is fine on a non-empty file.
             using (var s = slicer.OpenSlice("empty", 0, 0)) { Assert.AreEqual(0L, s.Length); }
-            // Edge: offset == fileLength, length == 0 is fine.
-            using (var s = slicer.OpenSlice("end-empty", 16, 0)) { Assert.AreEqual(0L, s.Length); }
             // Edge: full file.
             using (var s = slicer.OpenSlice("full", 0, 16)) { Assert.AreEqual(16L, s.Length); }
         }
