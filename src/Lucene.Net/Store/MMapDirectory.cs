@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using SCG = System.Collections.Generic;
@@ -534,7 +535,7 @@ namespace Lucene.Net.Store
                         // since no MMF will own it and a throwing Dispose must not
                         // escape this success path.
                         IOUtils.DisposeWhileHandlingException(fs);
-                        return new SharedMapping(mmf: null, fileStream: null, chunks: Array.Empty<Chunk>(), length: 0);
+                        return new SharedMapping(mmf: null, fileStream: null, chunks: [], length: 0);
                     }
 
                     // capacity: 0 -> the framework sizes the mapping from the file's
@@ -556,17 +557,10 @@ namespace Lucene.Net.Store
                     chunks = MapChunks(mmf, 0, length, chunkSizePower);
                     return new SharedMapping(mmf, fs, chunks, length);
                 }
-                catch (Exception /* e */) // when (e.IsThrowable())
+                catch (Exception e) // when (e.IsThrowable())
                 {
-                    // Cleanup must not mask e: DisposeChunks swallows internally and
-                    // we dispose mmf/fs through the swallowing overload (not the
-                    // priorException overload, which would re-throw), then bare-
-                    // rethrow to preserve e's stack trace. With leaveOpen: true we
-                    // always own fs; dispose mmf first so the mapping is torn down
-                    // before the backing handle closes.
-                    DisposeChunks(chunks);
-                    IOUtils.DisposeWhileHandlingException(mmf, fs);
-                    throw;
+                    DisposeResourcesWhileHandlingException(e, chunks, mmf, fs);
+                    return null!; // unreachable
                 }
             }
 
@@ -580,11 +574,7 @@ namespace Lucene.Net.Store
                 if (Interlocked.CompareExchange(ref disposed, 1, 0) != 0) return;
                 reclaimer.Close(() =>
                 {
-                    DisposeChunks(Chunks);
-                    // mmf first so the mapping is torn down before we close the
-                    // handle by disposing the FileStream we own. Both are null for
-                    // the zero-length edge case, which the overload tolerates.
-                    IOUtils.DisposeWhileHandlingException(memoryMappedFile, fileStream);
+                    DisposeResourcesWhileHandlingException(null, Chunks, memoryMappedFile, fileStream);
                 });
             }
 
@@ -596,7 +586,7 @@ namespace Lucene.Net.Store
             {
                 if (length == 0 || mmf == null)
                 {
-                    return Array.Empty<Chunk>();
+                    return [];
                 }
 
                 long chunkSize = 1L << chunkSizePower;
@@ -611,50 +601,40 @@ namespace Lucene.Net.Store
                 int nChunks = (int)((length + chunkSize - 1) >> chunkSizePower);
                 var result = new Chunk[nChunks];
 
-                try
+                for (int i = 0; i < nChunks; i++)
                 {
-                    for (int i = 0; i < nChunks; i++)
-                    {
-                        long chunkOffset = offset + ((long)i << chunkSizePower);
-                        long thisChunkLen = Math.Min(chunkSize, length - ((long)i << chunkSizePower));
+                    long chunkOffset = offset + ((long)i << chunkSizePower);
+                    long thisChunkLen = Math.Min(chunkSize, length - ((long)i << chunkSizePower));
 
-                        MemoryMappedViewAccessor accessor = mmf.CreateViewAccessor(chunkOffset, thisChunkLen, MemoryMappedFileAccess.Read);
-                        // The Chunk ctor acquires the view's pointer (a fallible native
-                        // call). If it throws, the accessor isn't in result[] yet, so
-                        // DisposeChunks below would miss it - dispose it here instead.
-                        try
-                        {
-                            result[i] = new Chunk(accessor, accessor.PointerOffset, thisChunkLen);
-                        }
-                        catch
-                        {
-                            IOUtils.DisposeWhileHandlingException(accessor);
-                            throw;
-                        }
-                    }
-                    return result;
-                }
-                catch
-                {
-                    DisposeChunks(result);
-                    throw;
-                }
-            }
-
-            private static void DisposeChunks(Chunk[]? chunks)
-            {
-                if (chunks == null) return;
-                foreach (var c in chunks)
-                {
+                    MemoryMappedViewAccessor accessor = mmf.CreateViewAccessor(chunkOffset, thisChunkLen, MemoryMappedFileAccess.Read);
+                    // The Chunk ctor acquires the view's pointer (a fallible native
+                    // call). If it throws, the accessor isn't in result[] yet, so
+                    // DisposeChunks in the caller would miss it - dispose it here instead.
                     try
                     {
-                        c.Release();
+                        result[i] = new Chunk(accessor, accessor.PointerOffset, thisChunkLen);
                     }
-                    catch
+                    catch (Exception e)
                     {
-                         /* never propagate from cleanup */
+                        IOUtils.DisposeWhileHandlingException(e, accessor);
+                        return null!; // unreachable
                     }
                 }
+
+                return result;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private static void DisposeResourcesWhileHandlingException(Exception? priorException, Chunk[]? chunks, MemoryMappedFile? mmf, FileStream? fs)
+            {
+                // With leaveOpen: true we always own fs; dispose mmf first after chunks so the mapping is torn down
+                // before the backing handle closes.
+                var disposables = ((SCG.IEnumerable<IDisposable?>)(chunks ?? []))
+                    .Append(mmf)
+                    .Append(fs);
+
+                // DisposeWhileHandlingException tolerates null disposables
+                IOUtils.DisposeWhileHandlingException(priorException, disposables);
             }
         }
 
@@ -671,14 +651,14 @@ namespace Lucene.Net.Store
         /// the #1151 contention, so it is gone. The drain barrier that keeps the
         /// mapping valid under a concurrent close is now the mapping's
         /// <see cref="DrainReclaimer"/>: a reader brackets each dereference with
-        /// <c>Enter</c>/<c>Exit</c>, and the reclaimer's <c>Close</c> defers the
+        /// <c>Enter</c>/<c>Exit</c>, and the recl aimer's <c>Close</c> defers the
         /// actual <c>UnmapViewOfFile</c>/<c>munmap</c> (this chunk's
-        /// <see cref="Release"/>) until every in-flight reader has drained. So an
+        /// <see cref="Dispose"/>) until every in-flight reader has drained. So an
         /// AVE is still structurally impossible - the unmap cannot run while a
         /// reader is mid-dereference - but liveness is proven by the reclaimer's
         /// hazard handshake rather than by a per-access SafeHandle refcount.
         /// </summary>
-        internal sealed unsafe class Chunk
+        internal sealed unsafe class Chunk : IDisposable
         {
             private readonly MemoryMappedViewAccessor accessor;
             private readonly SafeMemoryMappedViewHandle safe;
@@ -724,7 +704,7 @@ namespace Lucene.Net.Store
             /// reclaimer only calls this once all in-flight readers have drained,
             /// so it never unmaps a view out from under a live reader. Idempotent.
             /// </summary>
-            public void Release()
+            public void Dispose()
             {
                 if (Interlocked.CompareExchange(ref closed, 1, 0) != 0) return;
                 if (acquired)
