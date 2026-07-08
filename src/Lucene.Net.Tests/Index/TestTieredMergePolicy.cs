@@ -6,6 +6,10 @@ using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
+#if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
+using RandomizedTesting.Generators; // for Random.NextInt64 extension method
+#endif
+
 namespace Lucene.Net.Index
 {
     /*
@@ -279,14 +283,14 @@ namespace Lucene.Net.Index
         [Test]
         public void TestUnbalancedMergeSelection()
         {
-            Directory dir = NewDirectory();
+            using Directory dir = NewDirectory();
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             TieredMergePolicy tmp = (TieredMergePolicy)iwc.MergePolicy;
             tmp.FloorSegmentMB = 0.00001;
             iwc.MergeScheduler = new SerialMergeScheduler();
             iwc.MaxBufferedDocs = 100;
             iwc.RAMBufferSizeMB = -1;
-            IndexWriter w = new IndexWriter(dir, iwc);
+            using IndexWriter w = new IndexWriter(dir, iwc);
             for (int i = 0; i < 100000; i++)
             {
                 Document doc = new Document();
@@ -294,7 +298,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            IndexReader r = DirectoryReader.Open(w, true);
+            using IndexReader r = DirectoryReader.Open(w, true);
 
             // Make sure TMP always merged equal-number-of-docs segments:
             foreach (AtomicReaderContext ctx in r.Leaves)
@@ -303,9 +307,10 @@ namespace Lucene.Net.Index
                 Assert.IsTrue(numDocs == 100 || numDocs == 1000 || numDocs == 10000, $"got numDocs={numDocs}");
             }
 
-            r.Dispose();
-            w.Dispose();
-            dir.Dispose();
+            // LUCENENET: disposed via `using` statement
+            // r.Dispose();
+            // w.Dispose();
+            // dir.Dispose();
         }
     }
 }
