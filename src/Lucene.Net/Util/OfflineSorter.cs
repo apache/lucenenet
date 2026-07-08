@@ -683,6 +683,10 @@ namespace Lucene.Net.Util
                 if (off > bytes.Length - len) // Checks for int overflow
                     throw new ArgumentException("Index and length must refer to a location within the array.");
 
+                // Lucene 4.8.1 commit 9d10d6f92cc (no JIRA number given)
+                if (len > short.MaxValue)
+                    throw new ArgumentOutOfRangeException(nameof(len), $"len must be <= {short.MaxValue}; got {len}");
+
                 os.Write((short)len);
                 os.Write(bytes, off, len);
             }
