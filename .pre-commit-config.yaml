@@ -85,7 +85,7 @@ repos:
       - id: end-of-file-fixer
         name: run end-of-file-fixer
         description: makes sure files end in a newline and only a newline
-        files: \.cs$
+        files: \.(cs|md)$
         priority: 35
       - id: trailing-whitespace
         name: run trailing-whitespace

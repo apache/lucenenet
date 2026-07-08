@@ -61,4 +61,3 @@ Normalize the entries using normalization form KC.
 ```console
 lucene analysis kuromoji-build-dictionary IPADIC X:\kuromoji-data X:\kuromoji-dictionary --normalize
 ```
-

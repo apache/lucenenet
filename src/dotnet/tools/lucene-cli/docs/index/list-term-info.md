@@ -41,4 +41,3 @@ List the term information from the index located at `C:\project-index\`:
 ```console
 lucene index list-term-info C:\project-index
 ```
-

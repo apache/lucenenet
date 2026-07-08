@@ -153,4 +153,3 @@ Searching for: +"clam chowder" +manhattan
   [ ... two documents contain the phrase "clam chowder" and the word "manhattan" ... ]
   [ Note: "+" and "-" are canonical, but "AND", "OR" and "NOT" may be used. ]
 ```
-

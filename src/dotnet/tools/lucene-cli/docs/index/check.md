@@ -58,4 +58,3 @@ Check the index located at `C:\taxonomy\` using the `MMapDirectory` memory-mappe
 ```console
 lucene index check C:\taxonomy --directory-type MMapDirectory
 ```
-

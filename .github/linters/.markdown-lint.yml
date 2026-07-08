@@ -108,9 +108,6 @@ MD045: false
 # MD046/code-block-style Code block style
 MD046: false
 
-# MD047/single-trailing-newline Files should end with a single newline character
-MD047: false
-
 # MD049/emphasis-style Emphasis style
 MD049: false
 

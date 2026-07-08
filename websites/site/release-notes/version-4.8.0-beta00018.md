@@ -43,4 +43,3 @@ version: 4.8.0-beta00018
 * @zka26 made their first contribution in https://github.com/apache/lucenenet/pull/1198
 
 **Full Changelog**: https://github.com/apache/lucenenet/compare/Lucene.Net_4_8_0_beta00017...Lucene.Net_4_8_0_beta00018
-
