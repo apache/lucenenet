@@ -112,4 +112,3 @@ namespace Lucene
         public static Exception Create(Exception cause) => new ArgumentOutOfRangeException(cause.Message, cause);
     }
 }
-
