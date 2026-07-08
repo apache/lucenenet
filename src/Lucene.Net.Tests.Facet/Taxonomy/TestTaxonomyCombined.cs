@@ -412,6 +412,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
             }
             // (also test invalid categories:)
+            // LUCENENET specific: Fixed the spelling of the word non-existent (upstream was non-existant)
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, tr.GetOrdinal(new FacetLabel("non-existent")));
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, tr.GetOrdinal(new FacetLabel("Author", "Jules Verne")));
 
