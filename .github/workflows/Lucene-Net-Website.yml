@@ -49,6 +49,8 @@ env:
 
 jobs:
   build:
+    # CRITICAL FIX: Only run this job if it is executing on the main upstream repository
+    if: github.repository == 'apache/lucenenet'
     runs-on: windows-latest
     steps:
 
