@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Pattern
 
     /// <summary>
     /// A TokenFilter which applies a <see cref="Regex"/> to each token in the stream,
-    /// replacing match occurances with the specified replacement string.
+    /// replacing match occurrences with the specified replacement string.
     ///
     /// <para>
     /// <b>Note:</b> Depending on the input and the pattern used and the input
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Pattern
         private readonly Regex pattern;
 
         /// <summary>
-        /// Constructs an instance to replace either the first, or all occurances
+        /// Constructs an instance to replace either the first, or all occurrences
         /// </summary>
         /// <param name="in"> the <see cref="TokenStream"/> to process </param>
         /// <param name="pattern"> the pattern (a <see cref="Regex"/> object) to apply to each <see cref="Token"/> </param>

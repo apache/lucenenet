@@ -4355,7 +4355,7 @@ Infrastructure
    erases the directory contents, even when the directory
    has already been accessed in this JVM.
  - RangeQuery: Fix issue where an inclusive range query would
-   include the nearest term in the index above a non-existant
+   include the nearest term in the index above a non-existent
    specified upper term.
  - SegmentTermEnum: Fix NullPointerException in clone() method
    when the Term is null.

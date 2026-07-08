@@ -98,7 +98,7 @@ namespace Lucene.Net.Util
                     }
                     else
                     {
-                        // a has some extra trailing tokens. if these are all zeroes, thats ok.
+                        // a has some extra trailing tokens. if these are all zeroes, that's ok.
                         if (aToken != 0)
                         {
                             return 1;
@@ -106,7 +106,7 @@ namespace Lucene.Net.Util
                     }
                 }
 
-                // b has some extra trailing tokens. if these are all zeroes, thats ok.
+                // b has some extra trailing tokens. if these are all zeroes, that's ok.
                 while (bTokens.MoveNext())
                 {
                     if (Convert.ToInt32(bTokens.Current, CultureInfo.InvariantCulture) != 0)

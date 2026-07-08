@@ -242,7 +242,7 @@ namespace Lucene.Net.Util
             else if ("CheapBastard".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal)
                 || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) && randomVal == 8 && !ShouldAvoidCodec("CheapBastard") && !ShouldAvoidCodec("Lucene41")))
             {
-                // we also avoid this codec if Lucene41 is avoided, since thats the postings format it uses.
+                // we also avoid this codec if Lucene41 is avoided, since that's the postings format it uses.
                 codec = new CheapBastardCodec();
             }
             else if ("Asserting".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal)

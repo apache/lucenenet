@@ -1993,7 +1993,7 @@ namespace Lucene.Net.Util.Fst
                                 // somehow (rarely, possibly never) we use
                                 // more bytesPerArc in this rewrite than the
                                 // incoming FST did... but in this case we
-                                // will retry (below) so it's OK to ovewrite
+                                // will retry (below) so it's OK to overwrite
                                 // bytes:
                                 //wasted += bytesPerArc - arcBytes;
                                 writer.SkipBytes((int)(arcStartPos + bytesPerArc - writer.Position));

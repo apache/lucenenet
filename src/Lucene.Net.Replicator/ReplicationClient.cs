@@ -108,7 +108,7 @@ namespace Lucene.Net.Replicator
                         }
                         catch (Exception e) when (e.IsInterruptedException())
                         {
-                            // if we were interruted, somebody wants to terminate us, so just
+                            // if we were interrupted, somebody wants to terminate us, so just
                             // throw the exception further.
                             Thread.CurrentThread.Interrupt();
                             throw new Util.ThreadInterruptedException(e);
