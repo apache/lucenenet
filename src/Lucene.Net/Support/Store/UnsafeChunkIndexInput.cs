@@ -252,7 +252,7 @@ namespace Lucene.Net.Store
         public override short ReadInt16()
         {
             long pos = position;
-            if (pos + 2 <= currentEnd)
+            if (pos <= currentEnd - 2)
             {
                 readerSlot.EnterCore();
                 ushort raw = Unsafe.ReadUnaligned<ushort>(readBase + pos);
@@ -279,7 +279,7 @@ namespace Lucene.Net.Store
         public override int ReadInt32()
         {
             long pos = position;
-            if (pos + 4 <= currentEnd)
+            if (pos <= currentEnd - 4)
             {
                 readerSlot.EnterCore();
                 uint raw = Unsafe.ReadUnaligned<uint>(readBase + pos);
