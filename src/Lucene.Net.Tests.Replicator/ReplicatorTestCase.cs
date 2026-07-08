@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 #else
 using Lucene.Net.Replicator.Net;
 #endif
@@ -85,78 +86,86 @@ namespace Lucene.Net.Replicator
         {
             if (useStartupClass)
             {
-                var builder = new WebHostBuilder()
-                    .ConfigureServices(container =>
+                var hostBuilder = new HostBuilder()
+                    .ConfigureWebHostDefaults(webBuilder =>
                     {
-                        container.AddSingleton(service);
-                        container.AddSingleton(mockErrorConfig);
+                        webBuilder.ConfigureServices(container =>
+                        {
+                            container.AddSingleton(service);
+                            container.AddSingleton(mockErrorConfig);
+                        });
+
+                        if (useSynchronousIO)
+                        {
+                            webBuilder.UseStartup<SynchronousReplicationServlet>();
+                        }
+                        else
+                        {
+                            webBuilder.UseStartup<ReplicationServlet>();
+                        }
                     });
 
-                if (useSynchronousIO)
-                {
-                    builder.UseStartup<SynchronousReplicationServlet>();
-                }
-                else
-                {
-                    builder.UseStartup<ReplicationServlet>();
-                }
-
-                var server = new TestServer(builder);
+                var host = hostBuilder.Build();
+                var server = host.GetTestServer();
                 server.BaseAddress = new Uri("http://localhost" + ReplicationService.REPLICATION_CONTEXT);
                 return server;
             }
             else
             {
-                var builder = new WebHostBuilder()
-                    .ConfigureServices(container =>
+                var hostBuilder = new HostBuilder()
+                    .ConfigureWebHostDefaults(webBuilder =>
                     {
-                        container.AddRouting();
-                        container.AddSingleton(service);
-                        container.AddSingleton(mockErrorConfig);
-                        if (useSynchronousIO)
+                        webBuilder.ConfigureServices(container =>
                         {
-                            container.AddSingleton<SynchronousReplicationServiceMiddleware>();
-                            container.AddSingleton<EnableSynchronousIOMiddleware>();
-                        }
-                        else
-                        {
-                            container.AddSingleton<ReplicationServiceMiddleware>();
-                        }
-                        container.AddSingleton<MockErrorMiddleware>();
-                    })
-                    .Configure(app =>
-                    {
-                        app.UseRouting();
-
-                        // Middleware so we can mock a server exception and toggle the exception on and off.
-                        app.UseMiddleware<MockErrorMiddleware>();
-
-                        if (useSynchronousIO)
-                        {
-                            app.UseMiddleware<EnableSynchronousIOMiddleware>();
-                        }
-
-                        app.UseEndpoints(endpoints =>
-                        {
-                            // This is to define the endpoint for Replicator.
-                            // All URLs with the pattern /replicate/{shard?}/{action?} terminate here and any middleware that
-                            // is expected to run for Replicator must be registered before this call.
-                            string pattern = ReplicationService.REPLICATION_CONTEXT + "/{shard?}/{action?}";
+                            container.AddRouting();
+                            container.AddSingleton(service);
+                            container.AddSingleton(mockErrorConfig);
                             if (useSynchronousIO)
-                                endpoints.MapReplicator<SynchronousReplicationServiceMiddleware>(pattern);
-                            else
-                                endpoints.MapReplicator<ReplicationServiceMiddleware>(pattern);
-
-                            endpoints.MapGet("/{controller?}/{action?}/{id?}", async context =>
                             {
-                                // This is just to demonstrate allowing requests to other services/controllers in the same
-                                // application. This isn't required, but is allowed.
-                                await context.Response.WriteAsync("Hello World!");
+                                container.AddSingleton<SynchronousReplicationServiceMiddleware>();
+                                container.AddSingleton<EnableSynchronousIOMiddleware>();
+                            }
+                            else
+                            {
+                                container.AddSingleton<ReplicationServiceMiddleware>();
+                            }
+                            container.AddSingleton<MockErrorMiddleware>();
+                        })
+                        .Configure(app =>
+                        {
+                            app.UseRouting();
+
+                            // Middleware so we can mock a server exception and toggle the exception on and off.
+                            app.UseMiddleware<MockErrorMiddleware>();
+
+                            if (useSynchronousIO)
+                            {
+                                app.UseMiddleware<EnableSynchronousIOMiddleware>();
+                            }
+
+                            app.UseEndpoints(endpoints =>
+                            {
+                                // This is to define the endpoint for Replicator.
+                                // All URLs with the pattern /replicate/{shard?}/{action?} terminate here and any middleware that
+                                // is expected to run for Replicator must be registered before this call.
+                                string pattern = ReplicationService.REPLICATION_CONTEXT + "/{shard?}/{action?}";
+                                if (useSynchronousIO)
+                                    endpoints.MapReplicator<SynchronousReplicationServiceMiddleware>(pattern);
+                                else
+                                    endpoints.MapReplicator<ReplicationServiceMiddleware>(pattern);
+
+                                endpoints.MapGet("/{controller?}/{action?}/{id?}", async context =>
+                                {
+                                    // This is just to demonstrate allowing requests to other services/controllers in the same
+                                    // application. This isn't required, but is allowed.
+                                    await context.Response.WriteAsync("Hello World!");
+                                });
                             });
                         });
                     });
-                var server = new TestServer(builder);
-                return server;
+
+                var host = hostBuilder.Build();
+                return host.GetTestServer();
             }
         }
 
