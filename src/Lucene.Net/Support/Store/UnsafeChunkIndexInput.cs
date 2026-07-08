@@ -360,7 +360,7 @@ namespace Lucene.Net.Store
             }
 
             long pos = position;
-            if (pos + length > this.length)
+            if ((ulong)pos + (ulong)length > (ulong)this.length)
             {
                 throw EOFException.Create("read past EOF: " + this);
             }
