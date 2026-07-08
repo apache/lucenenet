@@ -274,5 +274,38 @@ namespace Lucene.Net.Index
 
             // TODO: Add more checks for other non-double setters!
         }
+
+        // LUCENE-5668
+        [Test]
+        public void TestUnbalancedMergeSelection()
+        {
+            Directory dir = NewDirectory();
+            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            TieredMergePolicy tmp = (TieredMergePolicy)iwc.MergePolicy;
+            tmp.FloorSegmentMB = 0.00001;
+            iwc.MergeScheduler = new SerialMergeScheduler();
+            iwc.MaxBufferedDocs = 100;
+            iwc.RAMBufferSizeMB = -1;
+            IndexWriter w = new IndexWriter(dir, iwc);
+            for (int i = 0; i < 100000; i++)
+            {
+                Document doc = new Document();
+                doc.Add(NewTextField("id", Random.NextInt64() + "" + Random.NextInt64(), Field.Store.YES));
+                w.AddDocument(doc);
+            }
+
+            IndexReader r = DirectoryReader.Open(w, true);
+
+            // Make sure TMP always merged equal-number-of-docs segments:
+            foreach (AtomicReaderContext ctx in r.Leaves)
+            {
+                int numDocs = ctx.Reader.NumDocs;
+                Assert.IsTrue(numDocs == 100 || numDocs == 1000 || numDocs == 10000, $"got numDocs={numDocs}");
+            }
+
+            r.Dispose();
+            w.Dispose();
+            dir.Dispose();
+        }
     }
 }
