@@ -187,7 +187,7 @@ namespace Lucene.Net.Store
 
         public override void Seek(long pos)
         {
-            if ((uint)pos > (uint)length)
+            if ((uint)pos >= (uint)length)
             {
                 throw new ArgumentOutOfRangeException(nameof(pos), $"Seek position is out of bounds: {pos}");
             }
@@ -436,7 +436,7 @@ namespace Lucene.Net.Store
                 throw new ArgumentOutOfRangeException(nameof(numBytes), "numBytes must not be negative");
             }
             long newPos = position + numBytes;
-            if ((ulong)newPos > (ulong)length)
+            if ((ulong)newPos >= (ulong)length)
             {
                 throw EOFException.Create("skip past EOF: " + this);
             }

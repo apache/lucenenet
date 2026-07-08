@@ -633,7 +633,14 @@ namespace Lucene.Net.Store
                     .Concat([mmf, fs]);
 
                 // DisposeWhileHandlingException tolerates null disposables
-                IOUtils.DisposeWhileHandlingException(priorException, disposables);
+                if (priorException is null)
+                {
+                    IOUtils.DisposeWhileHandlingException(disposables);
+                }
+                else
+                {
+                    IOUtils.DisposeWhileHandlingException(priorException, disposables);
+                }
             }
         }
 
