@@ -28,7 +28,7 @@ namespace Lucene.Net.Util.Packed
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public sealed class AppendingPackedInt64Buffer : AbstractAppendingInt64Buffer
+    internal sealed class AppendingPackedInt64Buffer : AbstractAppendingInt64Buffer // LUCENENET: made internal until LUCENE-5792 lands
     {
         /// <summary>
         /// Initialize a <see cref="AppendingPackedInt64Buffer"/>. </summary>

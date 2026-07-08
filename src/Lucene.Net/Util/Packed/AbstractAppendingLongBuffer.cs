@@ -28,7 +28,7 @@ namespace Lucene.Net.Util.Packed
     /// <para/>
     /// NOTE: This was AbstractAppendingLongBuffer in Lucene
     /// </summary>
-    public abstract class AbstractAppendingInt64Buffer : Int64Values, // LUCENENET NOTE: made public rather than internal because has public subclasses
+    internal abstract class AbstractAppendingInt64Buffer : Int64Values,
         IEnumerable<long> // LUCENENET specific
     {
         internal const int MIN_PAGE_SIZE = 64;
