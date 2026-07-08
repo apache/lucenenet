@@ -1,5 +1,6 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
+using Lucene.Net.Reflection;
 using Lucene.Net.Support.Threading;
 using System;
 
@@ -40,6 +41,7 @@ namespace Lucene.Net.Search
     /// exceeded, the search thread is stopped by throwing a
     /// <see cref="TimeExceededException"/>.
     /// </summary>
+    [LuceneBaseTypeDifference("Uses ICollector interface instead of Collector abstract base class")]
     public class TimeLimitingCollector : ICollector
     {
         /// <summary>

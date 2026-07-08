@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Reflection;
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -34,3 +35,6 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("5c8e810f-4bf7-472f-9785-8d80a0de6ea8")]
+
+[assembly: LuceneMavenMapping("org.apache.lucene", "lucene-spatial", "4.8.1")]
+[assembly: LucenePackageMapping("Lucene.Net.Spatial.Queries", "org.apache.lucene.spatial.query")]

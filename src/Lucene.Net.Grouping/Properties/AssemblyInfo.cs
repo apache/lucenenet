@@ -19,6 +19,7 @@
  *
 */
 
+using Lucene.Net.Reflection;
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -39,4 +40,5 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("02bab603-067d-48b1-aedd-316849652568")]
 
-
+[assembly: LuceneMavenMapping("org.apache.lucene", "lucene-grouping", "4.8.1")]
+[assembly: LucenePackageMapping("Lucene.Net.Search.Grouping.Terms", "org.apache.lucene.search.grouping.term")]

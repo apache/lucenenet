@@ -1,5 +1,7 @@
 // Lucene version compatibility level 4.8.1
 
+using Lucene.Net.Reflection;
+
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
     /*
@@ -30,6 +32,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// <para/>
     /// @lucene.experimental
     /// </summary>
+    [LuceneType("org.apache.lucene.facet.taxonomy.writercache", "NameHashIntCacheLRU")]
     public class NameHashInt32CacheLru : IInternalNameInt32CacheLru // LUCENENET specific - added interface
     {
         private readonly IInternalNameInt32CacheLru cache;

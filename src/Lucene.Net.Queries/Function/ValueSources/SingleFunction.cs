@@ -1,4 +1,6 @@
 // Lucene version compatibility level 4.8.1
+
+using Lucene.Net.Reflection;
 using Lucene.Net.Search;
 using System;
 using System.Collections;
@@ -25,8 +27,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <summary>
     /// A function with a single (one) argument.
     /// <para/>
-    /// NOTE: This was SingleFunction in Lucene, changed to avoid conusion with operations on the datatype <see cref="System.Single"/>.
+    /// NOTE: This was SingleFunction in Lucene, changed to avoid confusion with operations on the datatype <see cref="System.Single"/>.
     /// </summary>
+    [LuceneType("org.apache.lucene.queries.function.valuesource", "SingleFunction", Justification = "Name change to avoid confusion with System.Single")]
     public abstract class SingularFunction : ValueSource
     {
         protected readonly ValueSource m_source;

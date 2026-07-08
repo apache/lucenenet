@@ -1,4 +1,6 @@
 // Lucene version compatibility level 8.2.0
+
+using Lucene.Net.Reflection;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Text;
@@ -27,6 +29,7 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
     /// surface forms. For the exact format and description of these,
     /// see the project's documentation.
     /// </summary>
+    [LuceneType("org.apache.lucene.analysis.morfologik", "MorphosyntacticTagsAttribute", Justification = "Namespace/package mismatch, not able to be inferred by convention")]
     public interface IMorphosyntacticTagsAttribute : IAttribute
     {
         /// <summary>
