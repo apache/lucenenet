@@ -436,7 +436,7 @@ namespace Lucene.Net.Store
                 throw new ArgumentOutOfRangeException(nameof(numBytes), "numBytes must not be negative");
             }
             long newPos = position + numBytes;
-            if (newPos < 0 || newPos > length)
+            if ((ulong)newPos > (ulong)length)
             {
                 throw EOFException.Create("skip past EOF: " + this);
             }
