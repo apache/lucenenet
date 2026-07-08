@@ -127,7 +127,6 @@
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONROOT_PROVIDERS</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_IENUMERABLE_APPEND</DefineConstants>
 
   </PropertyGroup>
 
