@@ -33,7 +33,8 @@
 # | **Priority 30** | `trailing-whitespace` | **Formatting (Broad)**: Cleans up whitespace on files before other hooks validate them. |
 # | **Priority 35** | `end-of-file-fixer` | **File Cleanups (Broad)**: Makes sure files end in a newline and only a newline. |
 # | **Priority 40** | `doctoc`, `oxipng`, `file-contents-sorter` | **Disjoint Modifiers**: These modify different sets of files (`README.md`, `.png` files, and `codespell.txt` respectively). Running them concurrently is safe. |
-# | **Priority 50** | `codespell`, `check-ast`, `check-builtin-literals`, `check-case-conflict`, `check-executables-have-shebangs`, `check-illegal-windows-names`, `check-json`, `check-merge-conflict`, `check-vcs-permalinks`, `check-xml`, `check-yaml`, `debug-statements`, `detect-aws-credentials`, `detect-private-key`, `forbid-submodules`, `gitleaks`, `bandit`|
+# | **Priority 50** | `codespell`, `check-ast`, `check-builtin-literals`, `check-case-conflict`, `check-executables-have-shebangs`, `check-illegal-windows-names`, `check-json`, `check-merge-conflict`, `check-vcs-permalinks` |
+# |                 | `check-xml`, `check-yaml`, `debug-statements`, `detect-aws-credentials`, `detect-private-key`, `forbid-submodules`, `gitleaks`, `bandit`, `yamllint` |
 # |                 | **Read-Only / Syntax / Security**: The bulk of the suite. These hooks only read and validate files without modifying them, allowing full parallel execution. |
 
 # https://prek.j178.dev/installation/
@@ -185,4 +186,14 @@ repos:
         exclude: ^\.github/.*$
         types: [markdown]
         files: \.md$
+        priority: 50
+  - repo: https://github.com/adrienverge/yamllint
+    rev: cba56bcde1fdd01c1deb3f945e69764c291a6530 # frozen: v1.38.0
+    hooks:
+      - id: yamllint
+        name: run yamllint
+        description: check YAML files with yamllint
+        args: [--strict, -c=.github/linters/.yaml-lint.yml]
+        types: [yaml]
+        files: \.ya?ml$
         priority: 50
