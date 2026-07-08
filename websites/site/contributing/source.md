@@ -46,6 +46,3 @@ Once you have made your change to a newly created branch of your local repo, pus
 Someone will get back to you with feedback if needed, or will directly merge your changes into the official repo.  Any action they take on the PR will trigger an email to the email address of your GitHub account so that you have visibility as to what's going on with your submission.
 
 In addition to what has been written here, there are lots of blog post on the web about how to get started with Open Source like [this one](https://www.freecodecamp.org/news/how-to-contribute-to-open-source-projects-beginners-guide/) which provides a great orientation and top level overview.  
-
-
-

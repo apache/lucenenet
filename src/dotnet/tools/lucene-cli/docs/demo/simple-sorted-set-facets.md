@@ -29,5 +29,3 @@ Outputs the source code to the specified directory.
 ```console
 lucene demo simple-sorted-set-facets
 ```
-
-

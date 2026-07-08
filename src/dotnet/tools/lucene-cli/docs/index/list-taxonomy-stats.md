@@ -40,4 +40,3 @@ List the taxonomy statistics from the index located at `X:\category-taxonomy-ind
 ```console
 lucene index list-taxonomy-stats X:\category-taxonomy-index -tree
 ```
-

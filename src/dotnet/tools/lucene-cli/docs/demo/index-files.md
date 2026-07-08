@@ -50,4 +50,3 @@ Indexes the contents of `C:\Users\BGates\Documents\` and places the Lucene.Net i
 ```console
 lucene demo index-files X:\test-index C:\Users\BGates\Documents
 ```
-

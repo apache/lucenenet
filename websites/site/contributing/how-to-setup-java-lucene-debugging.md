@@ -532,4 +532,3 @@ When you clone the repository locally, it only shows the default branch that you
 
 ### Disable Java Update Checker
 One more thing you might want to do is to disable the Java update check so it doesn't accidentally get rid of Java 8.  See: https://thegeekpage.com/turn-off-java-update-notification-in-windows-10/
-
