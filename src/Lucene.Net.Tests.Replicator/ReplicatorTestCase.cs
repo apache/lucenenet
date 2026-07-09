@@ -87,10 +87,10 @@ namespace Lucene.Net.Replicator
             if (useStartupClass)
             {
                 var hostBuilder = new HostBuilder()
-                    .ConfigureWebHostDefaults(webBuilder =>
+                    .ConfigureWebHost(webBuilder =>
                     {
-                        webBuilder.UseTestServer();
-                        webBuilder.ConfigureServices(container =>
+                        webBuilder.UseTestServer()
+                        .ConfigureServices(container =>
                         {
                             container.AddSingleton(service);
                             container.AddSingleton(mockErrorConfig);
@@ -114,10 +114,10 @@ namespace Lucene.Net.Replicator
             else
             {
                 var hostBuilder = new HostBuilder()
-                    .ConfigureWebHostDefaults(webBuilder =>
+                    .ConfigureWebHost(webBuilder =>
                     {
-                        webBuilder.UseTestServer();
-                        webBuilder.ConfigureServices(container =>
+                        webBuilder.UseTestServer()
+                        .ConfigureServices(container =>
                         {
                             container.AddRouting();
                             container.AddSingleton(service);
