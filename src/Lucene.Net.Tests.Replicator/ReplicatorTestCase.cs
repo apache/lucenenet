@@ -89,6 +89,7 @@ namespace Lucene.Net.Replicator
                 var hostBuilder = new HostBuilder()
                     .ConfigureWebHostDefaults(webBuilder =>
                     {
+                        webBuilder.UseTestServer();
                         webBuilder.ConfigureServices(container =>
                         {
                             container.AddSingleton(service);
@@ -115,6 +116,7 @@ namespace Lucene.Net.Replicator
                 var hostBuilder = new HostBuilder()
                     .ConfigureWebHostDefaults(webBuilder =>
                     {
+                        webBuilder.UseTestServer();
                         webBuilder.ConfigureServices(container =>
                         {
                             container.AddRouting();
