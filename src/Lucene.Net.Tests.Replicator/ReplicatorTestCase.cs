@@ -107,6 +107,7 @@ namespace Lucene.Net.Replicator
                     });
 
                 var host = hostBuilder.Build();
+                host.Start();
                 var server = host.GetTestServer();
                 server.BaseAddress = new Uri("http://localhost" + ReplicationService.REPLICATION_CONTEXT);
                 return server;
@@ -167,6 +168,7 @@ namespace Lucene.Net.Replicator
                     });
 
                 var host = hostBuilder.Build();
+                host.Start();
                 return host.GetTestServer();
             }
         }
