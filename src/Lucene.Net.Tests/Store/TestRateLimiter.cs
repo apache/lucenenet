@@ -1,5 +1,11 @@
+using J2N;
+using J2N.Threading;
+using J2N.Threading.Atomic;
+using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 using Assert = Lucene.Net.TestFramework.Assert;
+using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
 namespace Lucene.Net.Store
 {
@@ -45,6 +51,68 @@ namespace Lucene.Net.Store
             long convert = pause / 1000000;
             Assert.IsTrue(convert < 2000L, "we should sleep less than 2 seconds but did: " + convert + " millis");
             Assert.IsTrue(convert > 1000L, "we should sleep at least 1 second but did only: " + convert + " millis");
+        }
+
+        [Test]
+        public void TestThreads()
+        {
+            double targetMBPerSec = 10.0 + 20 * Random.NextDouble();
+            SimpleRateLimiter limiter = new SimpleRateLimiter(targetMBPerSec);
+
+            CountdownLatch startingGun = new CountdownLatch(1);
+
+            ThreadJob[] threads = new ThreadJob[TestUtil.NextInt32(Random, 3, 6)];
+            AtomicInt64 totBytes = new AtomicInt64();
+            for (int i = 0; i < threads.Length; i++)
+            {
+                threads[i] = new TestThreadsThreadJobAnonymousClass(startingGun, totBytes, limiter);
+                threads[i].Start();
+            }
+
+            long startNS = Time.NanoTime();
+            startingGun.Signal();
+            foreach (ThreadJob thread in threads)
+            {
+                thread.Join();
+            }
+            long endNS = Time.NanoTime();
+            double actualMBPerSec = (totBytes.Value/1024.0/1024.0)/((endNS-startNS)/1000000000.0);
+
+            // TODO: this may false trip .... could be we can only assert that it never exceeds the max, so slow jenkins doesn't trip:
+            double ratio = actualMBPerSec/targetMBPerSec;
+            Assert.IsTrue(ratio >= 0.9 && ratio <= 1.1, $"targetMBPerSec={targetMBPerSec} actualMBPerSec={actualMBPerSec}");
+        }
+
+        private class TestThreadsThreadJobAnonymousClass(
+            CountdownLatch startingGun,
+            AtomicInt64 totBytes,
+            SimpleRateLimiter limiter)
+            : ThreadJob
+        {
+            public override void Run()
+            {
+                try
+                {
+                    startingGun.Wait();
+                }
+                catch (Exception ie) when (ie.IsInterruptedException())
+                {
+                    throw new ThreadInterruptedException(ie);
+                }
+
+                long bytesSinceLastPause = 0;
+                for (int i = 0; i < 500; i++)
+                {
+                    long numBytes = TestUtil.NextInt32(Random, 1000, 10000);
+                    totBytes.AddAndGet(numBytes);
+                    bytesSinceLastPause += numBytes;
+                    if (bytesSinceLastPause > limiter.MinPauseCheckBytes)
+                    {
+                        limiter.Pause(bytesSinceLastPause);
+                        bytesSinceLastPause = 0;
+                    }
+                }
+            }
         }
     }
 }
