@@ -1,5 +1,8 @@
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
+using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -272,70 +275,193 @@ namespace Lucene.Net.Util.Automaton
             return accept;
         }
 
+        private class PathNode
+        {
+            /// <summary>
+            /// Which state the path node ends on, whose
+            /// transitions we are enumerating.
+            /// </summary>
+            public State state;
+
+            /// <summary>
+            /// Which state the current transition leads to.
+            /// </summary>
+            public State to;
+
+            /// <summary>
+            /// Which transition we are on.
+            /// </summary>
+            public int transition;
+
+            /// <summary>
+            /// Which label we are on, in the min-max range of the
+            /// current Transition
+            /// </summary>
+            public int label;
+
+            public void ResetState(State state)
+            {
+                if (Debugging.AssertsEnabled) Debugging.Assert(state.NumTransitions != 0);
+                this.state = state;
+                transition = 0;
+                Transition t = state.TransitionsArray[transition];
+                label = t.min;
+                to = t.to;
+            }
+
+            /// <summary>
+            /// Returns next label of current transition, or
+            /// advances to next transition and returns its first
+            /// label, if current one is exhausted.  If there are
+            /// no more transitions, returns -1.
+            /// </summary>
+            public int NextLabel()
+            {
+                if (label > state.TransitionsArray[transition].max)
+                {
+                    // We've exhausted the current transition's labels;
+                    // move to next transitions:
+                    transition++;
+                    if (transition >= state.NumTransitions)
+                    {
+                        // We're done iterating transitions leaving this state
+                        return -1;
+                    }
+                    Transition t = state.TransitionsArray[transition];
+                    label = t.min;
+                    to = t.to;
+                }
+                return label++;
+            }
+        }
+
+        private static PathNode GetNode(PathNode[] nodes, int index)
+        {
+            if (Debugging.AssertsEnabled) Debugging.Assert(index < nodes.Length);
+            if (nodes[index] == null)
+            {
+                nodes[index] = new PathNode();
+            }
+            return nodes[index];
+        }
+
         // TODO: this is a dangerous method ... Automaton could be
         // huge ... and it's better in general for caller to
         // enumerate & process in a single walk:
 
         /// <summary>
-        /// Returns the set of accepted strings, assuming that at most
-        /// <paramref name="limit"/> strings are accepted. If more than <paramref name="limit"/>
-        /// strings are accepted, the first limit strings found are returned. If <paramref name="limit"/>&lt;0, then
-        /// the limit is infinite.
+        /// Returns the set of accepted strings, up to at most
+        /// <paramref name="limit"/> strings. If more than <paramref name="limit"/>
+        /// strings are accepted, the first limit strings found are returned. If <paramref name="limit"/> == -1, then
+        /// the limit is infinite. If the <see cref="Automaton"/> has
+        /// cycles then this method might throw <see cref="ArgumentOutOfRangeException"/>
+        /// but that is not guaranteed when the limit is set.
         /// </summary>
         public static ISet<Int32sRef> GetFiniteStrings(Automaton a, int limit)
         {
-            JCG.HashSet<Int32sRef> strings = new JCG.HashSet<Int32sRef>();
+            JCG.HashSet<Int32sRef> results = new JCG.HashSet<Int32sRef>();
+
+            if (limit == -1 || limit > 0)
+            {
+                // OK
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(nameof(limit),
+                    $"limit must be -1 (which means no limit), or > 0; got: {limit}");
+            }
+
             if (a.IsSingleton)
             {
-                if (limit > 0)
-                {
-                    strings.Add(Util.ToUTF32(a.Singleton, new Int32sRef()));
-                }
+                // Easy case: automaton accepts only 1 string
+                results.Add(Util.ToUTF32(a.singleton, new Int32sRef()));
             }
-            else if (!GetFiniteStrings(a.initial, new JCG.HashSet<State>(), strings, new Int32sRef(), limit))
+            else
             {
-                return strings;
-            }
-            return strings;
-        }
+                if (a.initial.accept)
+                {
+                    // Special case the empty string, as usual:
+                    results.Add(new Int32sRef());
+                }
 
-        /// <summary>
-        /// Returns the strings that can be produced from the given state, or
-        /// <c>false</c> if more than <paramref name="limit"/> strings are found.
-        /// <paramref name="limit"/>&lt;0 means "infinite".
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool GetFiniteStrings(State s, JCG.HashSet<State> pathstates, JCG.HashSet<Int32sRef> strings, Int32sRef path, int limit)
-        {
-            pathstates.Add(s);
-            foreach (Transition t in s.GetTransitions())
-            {
-                if (pathstates.Contains(t.to))
+                if (a.initial.NumTransitions > 0 && (limit == -1 || results.Count < limit))
                 {
-                    return false;
-                }
-                for (int n = t.min; n <= t.max; n++)
-                {
-                    path.Grow(path.Length + 1);
-                    path.Int32s[path.Length] = n;
-                    path.Length++;
-                    if (t.to.accept)
+                    // TODO: we could use state numbers here and just
+                    // alloc array, but asking for states array can be
+                    // costly (it's lazily computed):
+
+                    // Tracks which states are in the current path, for
+                    // cycle detection:
+                    JCG.HashSet<State> pathStates = new JCG.HashSet<State>();
+
+                    // Stack to hold our current state in the
+                    // recursion/iteration:
+                    PathNode[] nodes = new PathNode[4];
+
+                    pathStates.Add(a.initial);
+                    PathNode root = GetNode(nodes, 0);
+                    root.ResetState(a.initial);
+
+                    Int32sRef @string = new Int32sRef(1);
+                    @string.Length = 1;
+
+                    while (@string.Length > 0)
                     {
-                        strings.Add(Int32sRef.DeepCopyOf(path));
-                        if (limit >= 0 && strings.Count > limit)
+                        PathNode node = nodes[@string.Length - 1];
+
+                        // Get next label leaving the current node:
+                        int label = node.NextLabel();
+
+                        if (label != -1)
                         {
-                            return false;
+                            @string.Int32s[@string.Length - 1] = label;
+
+                            if (node.to.accept)
+                            {
+                                // This transition leads to an accept state,
+                                // so we save the current string:
+                                results.Add(Int32sRef.DeepCopyOf(@string));
+                                if (results.Count == limit)
+                                {
+                                    break;
+                                }
+                            }
+
+                            if (node.to.NumTransitions != 0)
+                            {
+                                // Now recurse: the destination of this transition has
+                                // outgoing transitions:
+                                if (pathStates.Contains(node.to))
+                                {
+                                    throw new ArgumentException("automaton has cycles");
+                                }
+                                pathStates.Add(node.to);
+
+                                // Push node onto stack:
+                                if (nodes.Length == @string.Length)
+                                {
+                                    PathNode[] newNodes = new PathNode[ArrayUtil.Oversize(nodes.Length+1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                                    Arrays.Copy(nodes, 0, newNodes, 0, nodes.Length);
+                                    nodes = newNodes;
+                                }
+                                GetNode(nodes, @string.Length).ResetState(node.to);
+                                @string.Length++;
+                                @string.Grow(@string.Length);
+                            }
+                        }
+                        else
+                        {
+                            // No more transitions leaving this state,
+                            // pop/return back to previous state:
+                            if (Debugging.AssertsEnabled) Debugging.Assert(pathStates.Contains(node.state));
+                            pathStates.Remove(node.state);
+                            @string.Length--;
                         }
                     }
-                    if (!GetFiniteStrings(t.to, pathstates, strings, path, limit))
-                    {
-                        return false;
-                    }
-                    path.Length--;
                 }
             }
-            pathstates.Remove(s);
-            return true;
+
+            return results;
         }
     }
 }

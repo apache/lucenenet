@@ -1,6 +1,5 @@
 using J2N;
 using J2N.Runtime.CompilerServices;
-using Lucene.Net.Support;
 using Lucene.Net.Diagnostics;
 using RandomizedTesting.Generators;
 using System;
@@ -49,7 +48,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 try
                 {
-                    new RegExp(regexp, RegExpSyntax.NONE);
+                    _ = new RegExp(regexp, RegExpSyntax.NONE);
                     return regexp;
                 }
                 catch (Exception e) when (e.IsException())
@@ -353,6 +352,84 @@ namespace Lucene.Net.Util.Automaton
             a.deterministic = true;
             a.ClearNumberedStates();
             a.RemoveDeadTransitions();
+        }
+
+        /// <summary>
+        /// Simple, original implementation of getFiniteStrings.
+        ///
+        /// <para/>
+        /// Returns the set of accepted strings, assuming that at most
+        /// <paramref name="limit"/> strings are accepted. If more than <paramref name="limit"/>
+        /// strings are accepted, the first <paramref name="limit"/> strings found are returned. If <paramref name="limit"/>&lt;0, then
+        /// the limit is infinite.
+        ///
+        /// <para/>
+        /// This implementation is recursive: it uses one stack
+        /// frame for each digit in the returned strings (i.e., max
+        /// is the max length returned string).
+        /// </summary>
+        /// <param name="a">The automaton.</param>
+        /// <param name="limit">The maximum number of strings to return.</param>
+        /// <returns>A set of accepted strings.</returns>
+        public static ISet<Int32sRef> GetFiniteStringsRecursive(Automaton a, int limit)
+        {
+            JCG.HashSet<Int32sRef> strings = new JCG.HashSet<Int32sRef>();
+            if (a.IsSingleton)
+            {
+                if (limit > 0)
+                {
+                    strings.Add(Fst.Util.ToUTF32(a.Singleton, new Int32sRef()));
+                }
+            }
+            else if (!GetFiniteStrings(a.initial, new JCG.HashSet<State>(), strings, new Int32sRef(), limit))
+            {
+                return strings;
+            }
+
+            return strings;
+        }
+
+        /// <summary>
+        /// Returns the strings that can be produced from the given state, or
+        /// false if more than <paramref name="limit"/> strings are found.
+        /// <paramref name="limit"/>&lt;0 means "infinite".
+        /// </summary>
+        private static bool GetFiniteStrings(State s, JCG.HashSet<State> pathstates,
+            JCG.HashSet<Int32sRef> strings, Int32sRef path, int limit)
+        {
+            pathstates.Add(s);
+            foreach (Transition t in s.GetTransitions())
+            {
+                if (pathstates.Contains(t.to))
+                {
+                    return false;
+                }
+
+                for (int n = t.min; n <= t.max; n++)
+                {
+                    path.Grow(path.Length + 1);
+                    path.Int32s[path.Length] = n;
+                    path.Length++;
+                    if (t.to.accept)
+                    {
+                        strings.Add(Int32sRef.DeepCopyOf(path));
+                        if (limit >= 0 && strings.Count > limit)
+                        {
+                            return false;
+                        }
+                    }
+
+                    if (!GetFiniteStrings(t.to, pathstates, strings, path, limit))
+                    {
+                        return false;
+                    }
+
+                    path.Length--;
+                }
+            }
+
+            pathstates.Remove(s);
+            return true;
         }
 
         /// <summary>
