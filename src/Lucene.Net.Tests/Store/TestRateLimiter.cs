@@ -80,7 +80,11 @@ namespace Lucene.Net.Store
 
             // TODO: this may false trip .... could be we can only assert that it never exceeds the max, so slow jenkins doesn't trip:
             double ratio = actualMBPerSec/targetMBPerSec;
-            Assert.IsTrue(ratio >= 0.9 && ratio <= 1.1, $"targetMBPerSec={targetMBPerSec} actualMBPerSec={actualMBPerSec}");
+
+            // LUCENENET: backport commit 090b804 with test fix from Lucene 6.0.0
+            // Only enforce that it wasn't too fast; if machine is bogged down (can't schedule threads / sleep properly) then it may falsely be too slow:
+            //assertTrue("targetMBPerSec=" + targetMBPerSec + " actualMBPerSec=" + actualMBPerSec, ratio >= 0.9 && ratio <= 1.1);
+            Assert.IsTrue(ratio <= 1.1, "targetMBPerSec=" + targetMBPerSec + " actualMBPerSec=" + actualMBPerSec);
         }
 
         private class TestThreadsThreadJobAnonymousClass(
