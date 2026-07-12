@@ -81,9 +81,9 @@ namespace Lucene.Net.Store
             // TODO: this may false trip .... could be we can only assert that it never exceeds the max, so slow jenkins doesn't trip:
             double ratio = actualMBPerSec/targetMBPerSec;
 
-            // LUCENENET: backport commit 090b804 with test fix from Lucene 6.0.0
+            // LUCENENET: backport commits 090b804 (Lucene 6.0.0) and a893aaa (Lucene 7.0.0) with assertion fixes for test reliability
             // Only enforce that it wasn't too fast; if machine is bogged down (can't schedule threads / sleep properly) then it may falsely be too slow:
-            //assertTrue("targetMBPerSec=" + targetMBPerSec + " actualMBPerSec=" + actualMBPerSec, ratio >= 0.9 && ratio <= 1.1);
+            AssumeTrue("actualMBPerSec=" + actualMBPerSec + " targetMBPerSec=" + targetMBPerSec, 0.9 <= ratio);
             Assert.IsTrue(ratio <= 1.1, "targetMBPerSec=" + targetMBPerSec + " actualMBPerSec=" + actualMBPerSec);
         }
 
