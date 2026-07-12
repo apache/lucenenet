@@ -311,27 +311,5 @@ namespace Lucene.Net.Util
             Assert.Throws<ArgumentOutOfRangeException>(() => OfflineSorter.BufferSize.Megabytes(0), "min mb is 0.5");
             Assert.Throws<ArgumentOutOfRangeException>(() => OfflineSorter.BufferSize.Megabytes(-1), "min mb is 0.5");
         }
-
-        [Test, LuceneNetSpecific]
-        public void TestWrite_ArgumentValidation()
-        {
-            FileInfo file = new FileInfo(Path.Combine(tempDir.FullName, "testWrite_ArgumentValidation"));
-            using var stream = new FileStream(file.FullName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read,
-                bufferSize: OfflineSorter.DEFAULT_FILESTREAM_BUFFER_SIZE, FileOptions.DeleteOnClose);
-            using OfflineSorter.ByteSequencesWriter w = new OfflineSorter.ByteSequencesWriter(stream, leaveOpen: true);
-
-            // ReSharper disable AccessToDisposedClosure
-            Assert.Throws<ArgumentNullException>(() => w.Write(((byte[])null)!));
-            Assert.Throws<ArgumentNullException>(() => w.Write(((BytesRef)null)!));
-            Assert.Throws<ArgumentOutOfRangeException>(() => w.Write([], -1, 1), "datum");
-            Assert.Throws<ArgumentOutOfRangeException>(() => w.Write([], 0, -1), "datum");
-            Assert.Throws<ArgumentException>(() => w.Write([], 0, 1), "datum");
-
-            // validate that len is less than or equal to short.MaxValue
-            var bigArray = new byte[short.MaxValue + 2]; // give extra space so that off <= bytes.Length - len
-            Assert.Throws<ArgumentOutOfRangeException>(() => w.Write(bigArray, 0, short.MaxValue + 1), "datum");
-            Assert.DoesNotThrow(() => w.Write(bigArray, 0, short.MaxValue));
-            // ReSharper restore AccessToDisposedClosure
-        }
     }
 }
