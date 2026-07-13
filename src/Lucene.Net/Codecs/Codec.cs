@@ -96,6 +96,24 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
+        /// Creates a new codec with the given name.
+        /// <para/>
+        /// The <see cref="Codec.Name"/> will be written into the index segment: in order for
+        /// the segment to be read this class should be registered by subclassing <see cref="DefaultCodecFactory"/> and
+        /// calling <see cref="DefaultCodecFactory.ScanForCodecs(System.Reflection.Assembly)"/> in the class constructor.
+        /// The new <see cref="ICodecFactory"/> can be registered by calling <see cref="SetCodecFactory"/> at application startup.
+        /// </summary>
+        /// <param name="name">The name of the codec.</param>
+        /// <remarks>
+        /// LUCENENET specific overload to allow for specifying the name of the codec when it is not possible
+        /// to register the codec with the factory, such as when decorating a codec and needing to use the delegate's name.
+        /// </remarks>
+        protected Codec(string name)
+        {
+            this.name = name;
+        }
+
+        /// <summary>
         /// Returns this codec's name. </summary>
         public string Name => name;
 
