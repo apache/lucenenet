@@ -116,6 +116,24 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
+        /// Creates a new postings format with the given name.
+        /// <para/>
+        /// The provided name will be written into the index segment in some configurations
+        /// (such as when using <see cref="PerField.PerFieldPostingsFormat"/>): in such configurations,
+        /// for the segment to be read this class should be registered by subclassing <see cref="DefaultPostingsFormatFactory"/> and
+        /// calling <see cref="DefaultPostingsFormatFactory.ScanForPostingsFormats(System.Reflection.Assembly)"/> in the class constructor.
+        /// The new <see cref="IPostingsFormatFactory"/> can be registered by calling <see cref="SetPostingsFormatFactory(IPostingsFormatFactory)"/> at application startup.</summary>
+        /// <param name="name">The name of the format.</param>
+        /// <remarks>
+        /// LUCENENET specific overload to allow for specifying the name of the format when it is not possible
+        /// to register the format with the factory, such as when decorating a format and needing to use the delegate's name.
+        /// </remarks>
+        protected PostingsFormat(string name)
+        {
+            this.name = name;
+        }
+
+        /// <summary>
         /// Returns this posting format's name. </summary>
         public string Name => name;
 
