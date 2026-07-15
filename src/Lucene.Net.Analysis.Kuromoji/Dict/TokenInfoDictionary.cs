@@ -1,4 +1,5 @@
 using Lucene.Net.Store;
+using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.IO;
@@ -35,11 +36,28 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
         private TokenInfoDictionary()
         {
+            Stream @is = null;
             FST<Int64> fst = null;
-            using (Stream @is = GetResource(FST_FILENAME_SUFFIX))
+            bool success = false;
+
+            try
             {
+                @is = GetResource(FST_FILENAME_SUFFIX);
                 fst = new FST<Int64>(new InputStreamDataInput(@is), PositiveInt32Outputs.Singleton);
+                success = true;
             }
+            finally
+            {
+                if (success)
+                {
+                    IOUtils.Dispose(@is);
+                }
+                else
+                {
+                    IOUtils.DisposeWhileHandlingException(@is);
+                }
+            }
+
             // TODO: some way to configure?
             this.fst = new TokenInfoFST(fst, true);
         }

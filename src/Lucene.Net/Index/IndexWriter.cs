@@ -6283,8 +6283,8 @@ namespace Lucene.Net.Index
             // Now merge all added files
             ICollection<string> files = info.GetFiles();
             CompoundFileDirectory cfsDir = new CompoundFileDirectory(directory, fileName, context, true);
-            // LUCENENET: Ported changes to this method from 4.8.1
             bool success = false;
+
             try
             {
                 foreach (string file in files)

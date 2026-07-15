@@ -276,7 +276,7 @@ namespace Lucene.Net.Analysis
             for (int i = 0; i < numTestPoints; i++)
             {
                 string term = TestUtil.RandomSimpleString(Random);
-                Exception priorException = null; // LUCENENET: No need to cast to IOException
+                // LUCENENET NOTE: can't use `using` like try-with-resources upstream because TokenStream is ICloseable, not IDisposable
                 TokenStream ts = analyzer.GetTokenStream("fake", new StringReader(term));
                 try
                 {
@@ -290,13 +290,9 @@ namespace Lucene.Net.Analysis
                     Assert.IsFalse(ts.IncrementToken());
                     ts.End();
                 }
-                catch (Exception e) when (e.IsIOException())
-                {
-                    priorException = e;
-                }
                 finally
                 {
-                    IOUtils.CloseWhileHandlingException(priorException, ts);
+                    ts.Close();
                 }
             }
 
@@ -334,7 +330,7 @@ namespace Lucene.Net.Analysis
                     {
                         string term = mapping.Key;
                         BytesRef expected = mapping.Value;
-                        Exception priorException = null; // LUCENENET: No need to cast to IOException
+                        // LUCENENET NOTE: can't use `using` like try-with-resources upstream because TokenStream is ICloseable, not IDisposable
                         TokenStream ts = this.analyzer.GetTokenStream("fake", new StringReader(term));
                         try
                         {
@@ -347,13 +343,9 @@ namespace Lucene.Net.Analysis
                             Assert.IsFalse(ts.IncrementToken());
                             ts.End();
                         }
-                        catch (Exception e) when (e.IsIOException())
-                        {
-                            priorException = e;
-                        }
                         finally
                         {
-                            IOUtils.CloseWhileHandlingException(priorException, ts);
+                            ts.Close();
                         }
                     }
                 }
