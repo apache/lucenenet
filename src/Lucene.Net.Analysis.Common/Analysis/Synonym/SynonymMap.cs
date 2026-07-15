@@ -360,7 +360,7 @@ namespace Lucene.Net.Analysis.Synonym
             /// </summary>
             public virtual CharsRef Analyze(string text, CharsRef reuse)
             {
-                Exception priorException = null;
+                // LUCENENET NOTE: can't use `using` like try-with-resources upstream because TokenStream is ICloseable, not IDisposable
                 TokenStream ts = analyzer.GetTokenStream("", text);
                 try
                 {
@@ -395,13 +395,9 @@ namespace Lucene.Net.Analysis.Synonym
 
                     ts.End();
                 }
-                catch (Exception e) when (e.IsIOException())
-                {
-                    priorException = e;
-                }
                 finally
                 {
-                    IOUtils.CloseWhileHandlingException(priorException, ts);
+                    ts.Close();
                 }
 
                 if (reuse.Length == 0)

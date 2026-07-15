@@ -610,7 +610,7 @@ namespace Lucene.Net.Store
                 // so only the first thread proceeds.
                 if (disposing && 0 == Interlocked.CompareExchange(ref disposed, 1, 0))
                 {
-                    Exception priorE = null; // LUCENENET: No need to cast to IOException
+                    bool success = false;
 
                     UninterruptableMonitor.Enter(parent.m_syncLock);
                     try
@@ -627,22 +627,24 @@ namespace Lucene.Net.Store
                         // Keep the FileStream flush and stale-file bookkeeping atomic with FSDirectory.Sync()
                         // (which also takes m_syncLock) so a file is never considered synced until all managed
                         // FileStream buffers have at least reached the OS.
-                        try
-                        {
-                            file.Flush(flushToDisk: false);
-                        }
-                        catch (Exception ioe) when (ioe.IsIOException())
-                        {
-                            priorE = ioe;
-                        }
+                        file.Flush(flushToDisk: false);
 
                         parent.OnIndexOutputClosed(this);
+                        success = true;
                     }
                     finally
                     {
                         UninterruptableMonitor.Exit(parent.m_syncLock);
                         isOpen = false;
-                        IOUtils.DisposeWhileHandlingException(priorE, file);
+
+                        if (success)
+                        {
+                            IOUtils.Dispose(file);
+                        }
+                        else
+                        {
+                            IOUtils.DisposeWhileHandlingException(file);
+                        }
                     }
                 }
                 //base.Dispose(disposing); // LUCENENET: No need to call base class, we are not using the functionality of BufferedIndexOutput

@@ -1,5 +1,6 @@
 using Lucene.Net.Codecs;
 using Lucene.Net.Store;
+using Lucene.Net.Util;
 using System;
 using System.IO;
 
@@ -61,15 +62,33 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
         private CharacterDefinition()
         {
-            using Stream @is = BinaryDictionary.GetTypeResource(GetType(), FILENAME_SUFFIX);
-            using var @in = new InputStreamDataInput(@is, leaveOpen: true); // LUCENENET: CA2000: Use using statement
-            CodecUtil.CheckHeader(@in, HEADER, VERSION, VERSION);
-            @in.ReadBytes(characterCategoryMap, 0, characterCategoryMap.Length);
-            for (int i = 0; i < CLASS_COUNT; i++)
+            Stream @is = null;
+            bool success = false;
+
+            try
             {
-                byte b = @in.ReadByte();
-                invokeMap[i] = (b & 0x01) != 0;
-                groupMap[i] = (b & 0x02) != 0;
+                @is = BinaryDictionary.GetTypeResource(GetType(), FILENAME_SUFFIX);
+                using var @in = new InputStreamDataInput(@is, leaveOpen: true); // LUCENENET: CA2000: Use using statement
+                CodecUtil.CheckHeader(@in, HEADER, VERSION, VERSION);
+                @in.ReadBytes(characterCategoryMap, 0, characterCategoryMap.Length);
+                for (int i = 0; i < CLASS_COUNT; i++)
+                {
+                    byte b = @in.ReadByte();
+                    invokeMap[i] = (b & 0x01) != 0;
+                    groupMap[i] = (b & 0x02) != 0;
+                }
+                success = true;
+            }
+            finally
+            {
+                if (success)
+                {
+                    IOUtils.Dispose(@is);
+                }
+                else
+                {
+                    IOUtils.DisposeWhileHandlingException(@is);
+                }
             }
         }
 
