@@ -6,6 +6,10 @@ using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
+#if !FEATURE_QUEUE_TRYDEQUEUE_TRYPEEK
+using Lucene.Net.Support;
+#endif
+
 namespace Lucene.Net.Util.Automaton
 {
     /*
