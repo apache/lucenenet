@@ -4,7 +4,6 @@ using Lucene.Net.Codecs.Asserting;
 using Lucene.Net.Codecs.Cranky;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using NUnit.Framework;
