@@ -780,9 +780,9 @@ button:focus-visible {
       width: auto !important; /* back to natural width */
     }
 
-    /* Reverts 9.1 sideaffix margin change, so they are more uniform with the desktop mode one */
+    /* Keep the right affix below the wrapped sticky header */
     .sideaffix {
-      margin-top: 50px !important;
+      margin-top: 100px !important;
     }
   }
 
