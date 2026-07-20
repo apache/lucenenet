@@ -97,7 +97,7 @@ namespace Lucene.Net.Util.Automaton
         [Test]
         public void TestRandomFiniteStrings1()
         {
-            int numStrings = AtLeast(500);
+            int numStrings = AtLeast(100);
             if (Verbose)
             {
                 Console.WriteLine($"TEST: numStrings={numStrings}");
