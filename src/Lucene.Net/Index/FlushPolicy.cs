@@ -122,18 +122,27 @@ namespace Lucene.Net.Index
             ThreadState maxRamUsingThreadState = perThreadState;
             if (Debugging.AssertsEnabled) Debugging.Assert(!perThreadState.flushPending, "DWPT should have flushed");
             using IEnumerator<ThreadState> activePerThreadsIterator = control.AllActiveThreadStates();
+            int count = 0;
             while (activePerThreadsIterator.MoveNext())
             {
                 ThreadState next = activePerThreadsIterator.Current;
                 if (!next.flushPending)
                 {
                     long nextRam = next.bytesUsed;
-                    if (nextRam > maxRamSoFar && next.dwpt.NumDocsInRAM > 0)
+                    if (nextRam > 0 && next.dwpt.NumDocsInRAM > 0)
                     {
-                        maxRamSoFar = nextRam;
-                        maxRamUsingThreadState = next;
+                        count++;
+                        if (nextRam > maxRamSoFar)
+                        {
+                            maxRamSoFar = nextRam;
+                            maxRamUsingThreadState = next;
+                        }
                     }
                 }
+            }
+            if (m_infoStream.IsEnabled("FP"))
+            {
+                m_infoStream.Message("FP", $"{count} in-use non-flushing threads states");
             }
             if (Debugging.AssertsEnabled) Debugging.Assert(AssertMessage("set largest ram consuming thread pending on lower watermark"));
             return maxRamUsingThreadState;
