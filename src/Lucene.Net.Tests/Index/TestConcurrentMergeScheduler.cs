@@ -408,7 +408,7 @@ namespace Lucene.Net.Index
                 // no
                 iwc.SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat()));
             }
-            RandomIndexWriter w = new RandomIndexWriter(Random, d, iwc);
+            IndexWriter w = new IndexWriter(d, iwc);
             for (int i = 0; i < 1000; i++)
             {
                 Document doc = new Document();
@@ -420,7 +420,7 @@ namespace Lucene.Net.Index
                     w.DeleteDocuments(new Term("id", "" + Random.Next(i + 1)));
                 }
             }
-            Assert.IsTrue(((TrackingCMS)w.IndexWriter.Config.MergeScheduler).totMergedBytes != 0);
+            Assert.IsTrue(((TrackingCMS)w.Config.MergeScheduler).totMergedBytes != 0);
             w.Dispose();
             d.Dispose();
         }

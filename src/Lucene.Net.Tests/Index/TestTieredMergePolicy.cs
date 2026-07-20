@@ -170,8 +170,7 @@ namespace Lucene.Net.Index
             tmp.ForceMergeDeletesPctAllowed = 0.0;
             conf.SetMergePolicy(tmp);
 
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, conf);
-            w.DoRandomForceMerge = false;
+            IndexWriter w = new IndexWriter(dir, conf);
 
             int numDocs = AtLeast(200);
             for (int i = 0; i < numDocs; i++)
