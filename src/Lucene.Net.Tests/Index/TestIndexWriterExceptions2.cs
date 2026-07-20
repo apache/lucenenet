@@ -65,16 +65,16 @@ namespace Lucene.Net.Index
                 // emit some payloads
                 if (fieldName.Contains("payloads"))
                 {
-                    stream = new MockVariableLengthPayloadFilter(new Random((int)analyzerSeed), stream); // LUCENENET specific - cast seed to int
+                    stream = new MockVariableLengthPayloadFilter(new J2N.Randomizer(analyzerSeed), stream); // LUCENENET specific - use J2N.Randomizer for long seed
                 }
-                stream = new CrankyTokenFilter(stream, new Random((int)analyzerSeed)); // LUCENENET specific - cast seed to int
+                stream = new CrankyTokenFilter(stream, new J2N.Randomizer(analyzerSeed)); // LUCENENET specific - use J2N.Randomizer for long seed
                 return new TokenStreamComponents(tokenizer, stream);
             });
 
             // create lots of aborting exceptions with a broken codec
             // we don't need a random codec, as we aren't trying to find bugs in the codec here.
             Codec inner = RandomMultiplier > 1 ? Codec.Default : new AssertingCodec();
-            Codec codec = new CrankyCodec(inner, new Random(Random.Next())); // LUCENENET specific - use int for seed
+            Codec codec = new CrankyCodec(inner, new J2N.Randomizer(Random.NextInt64())); // LUCENENET specific - use J2N.Randomizer for long seed
 
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             // just for now, try to keep this test reproducible

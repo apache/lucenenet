@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
                 // emit some payloads
                 if (fieldName.Contains("payloads"))
                 {
-                    stream = new MockVariableLengthPayloadFilter(new Random((int)analyzerSeed), stream); // LUCENENET: cast seed to int
+                    stream = new MockVariableLengthPayloadFilter(new J2N.Randomizer(analyzerSeed), stream); // LUCENENET specific - use J2N.Randomizer for long seed
                 }
 
                 return new TokenStreamComponents(tokenizer, stream);
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
 
                     IndexWriter iw = new IndexWriter(dir, conf);
 
-                    Random r = new Random((int)Random.NextInt64()); // LUCENENET: cast to int
+                    J2N.Randomizer r = new J2N.Randomizer(Random.NextInt64()); // LUCENENET: use J2N.Randomizer for long seed
                     dir.FailOn(new TestBasicsFailureAnonymousClass(r));
 
                     for (int i = 0; i < numDocs; i++)
