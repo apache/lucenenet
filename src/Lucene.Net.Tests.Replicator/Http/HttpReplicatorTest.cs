@@ -4,7 +4,6 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Directory = Lucene.Net.Store.Directory;
@@ -129,7 +128,6 @@ namespace Lucene.Net.Replicator.Http
             reader = newReader;
         }
 
-
         [Test]
         public void TestBasic()
         {
@@ -176,7 +174,7 @@ namespace Lucene.Net.Replicator.Http
                 ReopenReader();
                 assertEquals(5, int.Parse(reader.IndexCommit.UserData["ID"], NumberStyles.HexNumber));
 
-                client.Dispose();
+                // client.Dispose(); // LUCENENET: Handled by 'using' statement
             }
             finally
             {

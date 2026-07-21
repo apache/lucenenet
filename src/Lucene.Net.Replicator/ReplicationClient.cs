@@ -6,11 +6,14 @@ using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Directory = Lucene.Net.Store.Directory;
 using JCG = J2N.Collections.Generic;
+
+#nullable enable
 
 namespace Lucene.Net.Replicator
 {
@@ -130,50 +133,58 @@ namespace Lucene.Net.Replicator
         private readonly IReplicationHandler handler;
         private readonly ISourceDirectoryFactory factory;
 
-        private readonly byte[] copyBuffer = new byte[16384];
+        private const int copyBufferSize = 16384;
         private readonly ReentrantLock updateLock = new ReentrantLock();
         private readonly object syncLock = new object(); // LUCENENET specific to avoid lock (this)
 
-        private ReplicationThread updateThread;
-        private bool disposed = false;
+        private ReplicationThread? updateThread;
+        private volatile bool disposed /* = false */;
         private InfoStream infoStream = InfoStream.Default;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="replicator">The <see cref="IReplicator"/> used for checking for updates</param>
+        /// <param name="replicator">The <see cref="IReplicator"/> used for checking for updates.</param>
         /// <param name="handler">The <see cref="IReplicationHandler"/> notified when new revisions are ready</param>
         /// <param name="factory">The <see cref="ISourceDirectoryFactory"/> for returning a <see cref="Directory"/> for a given source and session</param>
         public ReplicationClient(IReplicator replicator, IReplicationHandler handler, ISourceDirectoryFactory factory)
         {
-            this.replicator = replicator;
-            this.handler = handler;
-            this.factory = factory;
+            this.replicator = replicator ?? throw new ArgumentNullException(nameof(replicator));
+            this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         /// <exception cref="IOException"></exception>
-        private void CopyBytes(IndexOutput output, Stream input)
+        private static void CopyBytes(IndexOutput output, Stream input)
         {
-            int numBytes;
-            while ((numBytes = input.Read(copyBuffer, 0, copyBuffer.Length)) > 0)
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(copyBufferSize);
+            try
             {
-                output.WriteBytes(copyBuffer, 0, numBytes);
+                int numBytes;
+                while ((numBytes = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    output.WriteBytes(buffer, 0, numBytes);
+                }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
             }
         }
 
         /// <exception cref="IOException"></exception>
         private void DoUpdate()
         {
-            SessionToken session = null;
+            SessionToken? session = null;
             JCG.Dictionary<string, Directory> sourceDirectory = new JCG.Dictionary<string, Directory>();
             JCG.Dictionary<string, IList<string>> copiedFiles = new JCG.Dictionary<string, IList<string>>();
             bool notify = false;
             try
             {
-                string version = handler.CurrentVersion;
+                string? version = handler.CurrentVersion;
                 session = replicator.CheckForUpdate(version);
 
-                WriteToInfoStream(string.Format("DoUpdate(): handlerVersion={0} session={1}", version, session));
+                WriteToInfoStream($"DoUpdate(): handlerVersion={version} session={session}");
 
                 if (session is null)
                     return;
@@ -183,7 +194,7 @@ namespace Lucene.Net.Replicator
                 foreach (KeyValuePair<string, IList<RevisionFile>> pair in requiredFiles)
                 {
                     string source = pair.Key;
-                    Directory directory = factory.GetDirectory(session.Id, source);
+                    Directory directory = factory.GetDirectory(session.Id!, source);
 
                     sourceDirectory.Add(source, directory);
                     IList<string> cpFiles = new JCG.List<string>();
@@ -197,11 +208,11 @@ namespace Lucene.Net.Replicator
                             return;
                         }
 
-                        Stream input = null;
-                        IndexOutput output = null;
+                        Stream? input = null;
+                        IndexOutput? output = null;
                         try
                         {
-                            input = replicator.ObtainFile(session.Id, source, file.FileName);
+                            input = replicator.ObtainFile(session.Id!, source, file.FileName);
                             output = directory.CreateOutput(file.FileName, IOContext.DEFAULT);
 
                             CopyBytes(output, input);
@@ -244,7 +255,8 @@ namespace Lucene.Net.Replicator
             try
             {
                 if (notify && !disposed)
-                { // no use to notify if we are closed already
+                {
+                    // no use to notify if we are closed already
                     // LUCENENET specific - pass the copiedFiles as read only
                     handler.RevisionReady(session.Version, session.SourceFiles, Collections.AsReadOnly(copiedFiles), sourceDirectory);
                 }
@@ -252,7 +264,8 @@ namespace Lucene.Net.Replicator
             finally
             {
                 IOUtils.Dispose(sourceDirectory.Values);
-                //TODO: Resharper Message, Expression is always true -> Verify and if so then we can remove the null check.
+
+                // Guard required because finally executes even if session was never assigned
                 if (session != null)
                 {
                     factory.CleanupSession(session.Id);
@@ -300,7 +313,7 @@ namespace Lucene.Net.Replicator
         /// </summary>
         protected virtual IDictionary<string, IList<RevisionFile>> RequiredFiles(IDictionary<string, IList<RevisionFile>> newRevisionFiles)
         {
-            IDictionary<string, IList<RevisionFile>> handlerRevisionFiles = handler.CurrentRevisionFiles;
+            IDictionary<string, IList<RevisionFile>>? handlerRevisionFiles = handler.CurrentRevisionFiles;
             if (handlerRevisionFiles is null)
                 return newRevisionFiles;
 
@@ -333,10 +346,14 @@ namespace Lucene.Net.Replicator
 
         protected virtual void Dispose(bool disposing)
         {
+            // LUCENENET: bail early before taking lock
+            if (disposed || !disposing)
+                return;
+
             UninterruptableMonitor.Enter(syncLock);
             try
             {
-                if (disposed || !disposing)
+                if (disposed)
                     return;
 
                 StopUpdateThread();
@@ -362,20 +379,20 @@ namespace Lucene.Net.Replicator
         /// will be set.
         /// </summary>
         /// <exception cref="InvalidOperationException"> if the thread has already been started </exception>
-        public virtual void StartUpdateThread(long intervalInMilliseconds, string threadName)
+        public virtual void StartUpdateThread(long intervalInMilliseconds, string? threadName)
         {
             UninterruptableMonitor.Enter(syncLock);
             try
             {
                 EnsureOpen();
-                if (updateThread != null && updateThread.IsAlive)
+                if (updateThread is not null && updateThread.IsAlive)
                     throw IllegalStateException.Create("cannot start an update thread when one is running, must first call 'stopUpdateThread()'");
 
                 threadName = threadName is null ? INFO_STREAM_COMPONENT : "ReplicationThread-" + threadName;
                 updateThread = new ReplicationThread(intervalInMilliseconds, threadName, DoUpdate, HandleUpdateException, updateLock);
                 updateThread.Start();
                 // we rely on isAlive to return true in isUpdateThreadAlive, assert to be on the safe side
-                if (Debugging.AssertsEnabled) Debugging.Assert(updateThread.IsAlive, "updateThread started but not alive?");
+                if (Debugging.AssertsEnabled) Debugging.Assert(updateThread?.IsAlive == true, "updateThread started but not alive?");
             }
             finally
             {
@@ -392,11 +409,10 @@ namespace Lucene.Net.Replicator
             UninterruptableMonitor.Enter(syncLock);
             try
             {
-                if (updateThread != null)
+                if (updateThread is not null)
                 {
-                    // this will trigger the thread to terminate if it awaits the lock.
-                    // otherwise, if it's in the middle of replication, we wait for it to
-                    // stop.
+                    // this will unblock the thread if it is sleeping between intervals.
+                    // if it is in the middle of replication, we wait for it to finish below.
                     updateThread.stop.Signal();
                     try
                     {
@@ -430,7 +446,7 @@ namespace Lucene.Net.Replicator
                 UninterruptableMonitor.Enter(syncLock);
                 try
                 {
-                    return updateThread != null && updateThread.IsAlive;
+                    return updateThread is not null && updateThread.IsAlive;
                 }
                 finally
                 {
@@ -442,8 +458,11 @@ namespace Lucene.Net.Replicator
         public override string ToString()
         {
             if (updateThread is null)
+            {
                 return "ReplicationClient";
-            return string.Format("ReplicationClient ({0})", updateThread.Name);
+            }
+
+            return $"ReplicationClient ({updateThread.Name})";
         }
 
         /// <summary>
@@ -473,6 +492,7 @@ namespace Lucene.Net.Replicator
         public virtual InfoStream InfoStream
         {
             get => infoStream;
+            // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
             set => infoStream = value ?? InfoStream.NO_OUTPUT;
         }
     }
@@ -482,10 +502,10 @@ namespace Lucene.Net.Replicator
     public interface IReplicationHandler
     {
         /// <summary>Returns the current revision files held by the handler.</summary>
-        string CurrentVersion { get; }
+        string? CurrentVersion { get; }
 
         /// <summary>Returns the current revision version held by the handler.</summary>
-        IDictionary<string, IList<RevisionFile>> CurrentRevisionFiles { get; }
+        IDictionary<string, IList<RevisionFile>>? CurrentRevisionFiles { get; }
 
         /// <summary>
         /// Called when a new revision was obtained and is available (i.e. all needed files were successfully copied).
@@ -516,12 +536,12 @@ namespace Lucene.Net.Replicator
         /// </summary>
         /// <exception cref="IOException"></exception>
         /// <seealso cref="CleanupSession(string)"/>
-        Directory GetDirectory(string sessionId, string source); //throws IOException;
+        Directory GetDirectory(string? sessionId, string source); //throws IOException;
 
         /// <summary>
         /// Called to denote that the replication actions for this session were finished and the directory is no longer needed.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        void CleanupSession(string sessionId);
+        void CleanupSession(string? sessionId);
     }
 }

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using Directory = Lucene.Net.Store.Directory;
 
+#nullable enable
+
 namespace Lucene.Net.Replicator
 {
     /*
@@ -50,17 +52,17 @@ namespace Lucene.Net.Replicator
 
         private readonly Directory indexDirectory;
         private readonly Directory taxonomyDirectory;
-        private readonly Action callback;
+        private readonly Action? callback;
 
-        private volatile IDictionary<string, IList<RevisionFile>> currentRevisionFiles;
-        private volatile string currentVersion;
+        private volatile IDictionary<string, IList<RevisionFile>>? currentRevisionFiles;
+        private volatile string? currentVersion;
         private volatile InfoStream infoStream = InfoStream.Default;
 
         /// <summary>
         /// Constructor with the given index directory and callback to notify when the indexes were updated.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public IndexAndTaxonomyReplicationHandler(Directory indexDirectory, Directory taxonomyDirectory, Action callback)
+        public IndexAndTaxonomyReplicationHandler(Directory indexDirectory, Directory taxonomyDirectory, Action? callback)
         {
             this.indexDirectory = indexDirectory;
             this.taxonomyDirectory = taxonomyDirectory;
@@ -73,24 +75,24 @@ namespace Lucene.Net.Replicator
             bool taxonomyExists = DirectoryReader.IndexExists(taxonomyDirectory);
 
             if (indexExists != taxonomyExists)
-                throw IllegalStateException.Create(string.Format("search and taxonomy indexes must either both exist or not: index={0} taxo={1}", indexExists, taxonomyExists));
+                throw IllegalStateException.Create($"search and taxonomy indexes must either both exist or not: index={indexExists} taxo={taxonomyExists}");
 
             if (indexExists)
             {
-                IndexCommit indexCommit = IndexReplicationHandler.GetLastCommit(indexDirectory);
-                IndexCommit taxonomyCommit = IndexReplicationHandler.GetLastCommit(taxonomyDirectory);
+                IndexCommit? indexCommit = IndexReplicationHandler.GetLastCommit(indexDirectory);
+                IndexCommit? taxonomyCommit = IndexReplicationHandler.GetLastCommit(taxonomyDirectory);
 
                 currentRevisionFiles = IndexAndTaxonomyRevision.RevisionFiles(indexCommit, taxonomyCommit);
                 currentVersion = IndexAndTaxonomyRevision.RevisionVersion(indexCommit, taxonomyCommit);
 
                 WriteToInfoStream(
-                    string.Format("constructor(): currentVersion={0} currentRevisionFiles={1}", currentVersion, currentRevisionFiles),
-                    string.Format("constructor(): indexCommit={0} taxoCommit={1}", indexCommit, taxonomyCommit));
+                    $"constructor(): currentVersion={currentVersion} currentRevisionFiles={currentRevisionFiles}",
+                    $"constructor(): indexCommit={indexCommit} taxoCommit={taxonomyCommit}");
             }
         }
 
-        public virtual string CurrentVersion => currentVersion;
-        public virtual IDictionary<string, IList<RevisionFile>> CurrentRevisionFiles => currentRevisionFiles;
+        public virtual string? CurrentVersion => currentVersion;
+        public virtual IDictionary<string, IList<RevisionFile>>? CurrentRevisionFiles => currentRevisionFiles;
 
         public virtual void RevisionReady(string version,
             IDictionary<string, IList<RevisionFile>> revisionFiles,
@@ -101,8 +103,8 @@ namespace Lucene.Net.Replicator
             Directory indexClientDirectory = sourceDirectory[IndexAndTaxonomyRevision.INDEX_SOURCE];
             IList<string> taxonomyFiles = copiedFiles[IndexAndTaxonomyRevision.TAXONOMY_SOURCE];
             IList<string> indexFiles = copiedFiles[IndexAndTaxonomyRevision.INDEX_SOURCE];
-            string taxonomySegmentsFile = IndexReplicationHandler.GetSegmentsFile(taxonomyFiles, true);
-            string indexSegmentsFile = IndexReplicationHandler.GetSegmentsFile(indexFiles, false);
+            string? taxonomySegmentsFile = IndexReplicationHandler.GetSegmentsFile(taxonomyFiles, true);
+            string indexSegmentsFile = IndexReplicationHandler.GetSegmentsFile(indexFiles, false)!; // [!]: verified by GetSegmentsFile
 
             bool success = false;
             try
@@ -132,7 +134,11 @@ namespace Lucene.Net.Replicator
             {
                 if (!success)
                 {
-                    taxonomyFiles.Add(taxonomySegmentsFile); // add it back so it gets deleted too
+                    if (taxonomySegmentsFile != null) // LUCENENET specific - null check
+                    {
+                        taxonomyFiles.Add(taxonomySegmentsFile); // add it back so it gets deleted too
+                    }
+
                     IndexReplicationHandler.CleanupFilesOnFailure(taxonomyDirectory, taxonomyFiles);
                     indexFiles.Add(indexSegmentsFile); // add it back so it gets deleted too
                     IndexReplicationHandler.CleanupFilesOnFailure(indexDirectory, indexFiles);
@@ -188,6 +194,7 @@ namespace Lucene.Net.Replicator
         public virtual InfoStream InfoStream
         {
             get => infoStream;
+            // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
             set => infoStream = value ?? InfoStream.NO_OUTPUT;
         }
     }
