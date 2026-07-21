@@ -18,6 +18,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -73,7 +74,13 @@ namespace Lucene.Net.Util
     /// so using them on the <see cref="OneTimeSetUp"/> and
     /// <see cref="OneTimeTearDown"/> method overrides is not strictly required. Any
     /// code in these methods is executed within the test framework's control and
-    /// ensure proper setup has been made. <b>Try not to use static initializers
+    /// ensure proper setup has been made. The test framework's own mandatory
+    /// setup/teardown work runs in framework-owned static methods
+    /// (<see cref="__OneTimeSetUp()"/>, <see cref="__OneTimeTearDown()"/> and
+    /// <see cref="__TearDown()"/>) that NUnit runs before/after the overridable
+    /// methods, so it runs even if an override fails to call the base method;
+    /// calling the base method is still required to preserve the behavior of
+    /// intermediate base classes. <b>Try not to use static initializers
     /// (including complex readonly field initializers).</b> Static initializers are
     /// executed before any setup rules are fired and may cause you (or somebody
     /// else) headaches.
@@ -83,7 +90,9 @@ namespace Lucene.Net.Util
     /// For instance-level setup, use <see cref="Before"/> and <see cref="After"/> annotated
     /// methods. If you override either <see cref="SetUp()"/> or <see cref="TearDown()"/> in
     /// your subclass, make sure you call <c>base.SetUp()</c> and
-    /// <c>base.TearDown()</c>. This is detected and enforced.
+    /// <c>base.TearDown()</c>. The test framework's mandatory per-test cleanup is
+    /// guaranteed to run even if you don't, but the base calls are still required to
+    /// preserve the behavior of intermediate base classes.
     /// </para>
     ///
     /// <h3>Specifying test cases</h3>
@@ -905,6 +914,12 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// For subclasses to override. Overrides must call <c>base.TearDown()</c>.
+        /// <para/>
+        /// LUCENENET specific: The test framework's mandatory per-test cleanup (failure
+        /// reproduction reporting and disposing resources registered with
+        /// <see cref="DisposeAfterTest"/>) runs in <see cref="__TearDown()"/> after all
+        /// <c>[TearDown]</c> methods, so it runs even if an override fails to call
+        /// <c>base.TearDown()</c>. See #1087.
         /// </summary>
         [After]
         public virtual void TearDown()
@@ -912,7 +927,33 @@ namespace Lucene.Net.Util
             /* LUCENENET TODO: Not sure how to convert these
                 ParentChainCallRule.TeardownCalled = true;
                 */
-            TestResult result = TestExecutionContext.CurrentContext.CurrentResult;
+        }
+
+        /// <summary>
+        /// The test framework's per-test teardown method. This method is called by NUnit and is
+        /// not intended for use by user code; it must be public for NUnit to call it. It is
+        /// declared <c>static</c> so subclasses cannot override it, and because it is declared at
+        /// the root of the <see cref="LuceneTestCase"/> inheritance hierarchy, NUnit guarantees it
+        /// runs after all <c>[TearDown]</c> methods of subclasses (teardown methods run in
+        /// most-derived-first order). This ensures the test framework's mandatory per-test cleanup
+        /// runs even if an override of <see cref="TearDown()"/> fails to call
+        /// <c>base.TearDown()</c>. See #1087.
+        /// </summary>
+        // LUCENENET specific
+        [After]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static void __TearDown() => FrameworkTearDown(TestExecutionContext.CurrentContext);
+
+        /// <summary>
+        /// The test framework's mandatory per-test teardown work, formerly in
+        /// <see cref="TearDown()"/>. Called from <see cref="__TearDown()"/> after all
+        /// <c>[TearDown]</c> methods complete, so subclasses cannot disable it by failing to call
+        /// <c>base.TearDown()</c>. See #1087.
+        /// </summary>
+        // LUCENENET specific
+        internal static void FrameworkTearDown(TestExecutionContext context)
+        {
+            TestResult result = context.CurrentResult;
 
             if (result.ResultState == ResultState.Failure || result.ResultState == ResultState.Error)
             {
@@ -996,15 +1037,44 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Sets up dependency injection of codec factories for running the test class,
-        /// and also picks random defaults for culture, time zone, similarity, and default codec.
+        /// For subclasses to override to add class (suite-level) setup behavior. Overrides
+        /// must call <c>base.OneTimeSetUp()</c> BEFORE setting up their test fixture.
         /// <para/>
-        /// If you override this method, be sure to call <c>base.OneTimeSetUp()</c> BEFORE setting
-        /// up your test fixture.
+        /// LUCENENET specific: The test framework's mandatory suite setup (dependency injection of
+        /// codec factories and picking random defaults for culture, time zone, similarity, and
+        /// default codec) runs in <see cref="__OneTimeSetUp()"/> before any <c>[OneTimeSetUp]</c>
+        /// methods, so it runs even if an override fails to call <c>base.OneTimeSetUp()</c>.
+        /// See #1087.
         /// </summary>
         // LUCENENET specific method for setting up dependency injection of test classes.
         [OneTimeSetUp]
         public virtual void OneTimeSetUp()
+        {
+        }
+
+        /// <summary>
+        /// The test framework's suite setup method. This method is called by NUnit and is not
+        /// intended for use by user code; it must be public for NUnit to call it. It is declared
+        /// <c>static</c> so subclasses cannot override it, and because it is declared at the root
+        /// of the <see cref="LuceneTestCase"/> inheritance hierarchy, NUnit guarantees it runs
+        /// before all <c>[OneTimeSetUp]</c> methods of subclasses (setup methods run in
+        /// base-first order). This ensures the test framework's mandatory suite setup runs even
+        /// if an override of <see cref="OneTimeSetUp()"/> fails to call
+        /// <c>base.OneTimeSetUp()</c>. See #1087.
+        /// </summary>
+        // LUCENENET specific
+        [OneTimeSetUp]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static void __OneTimeSetUp() => FrameworkOneTimeSetUp(TestExecutionContext.CurrentContext);
+
+        /// <summary>
+        /// The test framework's mandatory suite setup work, formerly in <see cref="OneTimeSetUp()"/>.
+        /// Called from <see cref="__OneTimeSetUp()"/> before any <c>[OneTimeSetUp]</c> methods
+        /// run, so subclasses cannot disable it by failing to call <c>base.OneTimeSetUp()</c>.
+        /// See #1087.
+        /// </summary>
+        // LUCENENET specific
+        internal static void FrameworkOneTimeSetUp(TestExecutionContext context)
         {
             try
             {
@@ -1016,7 +1086,7 @@ namespace Lucene.Net.Util
                 if (FailOnTestFixtureOneTimeSetUpError)
                 {
                     // LUCENENET: Patch NUnit so it will report all of the tests in the class as a failure if we got an exception.
-                    TestExecutionContext.CurrentContext.CurrentTest.MakeAllInvalid(ex, $"An exception occurred during OneTimeSetUp:\n{ex}");
+                    context.CurrentTest.MakeAllInvalid(ex, $"An exception occurred during OneTimeSetUp:\n{ex}");
                 }
                 else
                 {
@@ -1026,15 +1096,46 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Tears down random defaults and cleans up temporary files.
+        /// For subclasses to override to add class (suite-level) teardown behavior. Overrides
+        /// must call <c>base.OneTimeTearDown()</c> AFTER tearing down their test fixture.
         /// <para/>
-        /// If you override this method, be sure to call <c>base.OneTimeTearDown()</c> AFTER
-        /// tearing down your test fixture.
+        /// LUCENENET specific: The test framework's mandatory suite teardown (tearing down random
+        /// defaults, cleaning up temporary files, and disposing resources registered with
+        /// <see cref="DisposeAfterSuite"/>) runs in <see cref="__OneTimeTearDown()"/> after all
+        /// <c>[OneTimeTearDown]</c> methods, so it runs even if an override fails to call
+        /// <c>base.OneTimeTearDown()</c>. See #1087.
         /// </summary>
         // LUCENENET specific method for setting up dependency injection of test classes.
         [OneTimeTearDown]
         public virtual void OneTimeTearDown()
         {
+        }
+
+        /// <summary>
+        /// The test framework's suite teardown method. This method is called by NUnit and is not
+        /// intended for use by user code; it must be public for NUnit to call it. It is declared
+        /// <c>static</c> so subclasses cannot override it, and because it is declared at the root
+        /// of the <see cref="LuceneTestCase"/> inheritance hierarchy, NUnit guarantees it runs
+        /// after all <c>[OneTimeTearDown]</c> methods of subclasses (teardown methods run in
+        /// most-derived-first order). This ensures the test framework's mandatory suite teardown
+        /// runs even if an override of <see cref="OneTimeTearDown()"/> fails to call
+        /// <c>base.OneTimeTearDown()</c>. See #1087.
+        /// </summary>
+        // LUCENENET specific
+        [OneTimeTearDown]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static void __OneTimeTearDown() => FrameworkOneTimeTearDown(TestExecutionContext.CurrentContext);
+
+        /// <summary>
+        /// The test framework's mandatory suite teardown work, formerly in
+        /// <see cref="OneTimeTearDown()"/>. Called from <see cref="__OneTimeTearDown()"/> after
+        /// all <c>[OneTimeTearDown]</c> methods complete, so subclasses cannot disable it by
+        /// failing to call <c>base.OneTimeTearDown()</c>. See #1087.
+        /// </summary>
+        // LUCENENET specific
+        internal static void FrameworkOneTimeTearDown(TestExecutionContext context)
+        {
+            string fixtureName = context.CurrentTest.TypeInfo?.FullName ?? context.CurrentTest.FullName;
             try
             {
                 ClassEnvRule.After();
@@ -1042,7 +1143,7 @@ namespace Lucene.Net.Util
             catch (Exception ex) when (ex.IsThrowable())
             {
                 // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
-                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during ClassEnvRule.After() in {GetType().FullName}:\n{ex}");
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during ClassEnvRule.After() in {fixtureName}:\n{ex}");
             }
             try
             {
@@ -1051,7 +1152,7 @@ namespace Lucene.Net.Util
             catch (Exception ex) when (ex.IsThrowable())
             {
                 // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
-                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during CleanupTemporaryFiles() in {GetType().FullName}:\n{ex}");
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during CleanupTemporaryFiles() in {fixtureName}:\n{ex}");
             }
 
             // LUCENENET: DisposeAfterSuite runs last
@@ -1062,7 +1163,7 @@ namespace Lucene.Net.Util
             catch (Exception ex) when (ex.IsThrowable())
             {
                 // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
-                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during RandomizedContext.DisposeResources() in {GetType().FullName}:");
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during RandomizedContext.DisposeResources() in {fixtureName}:");
                 RandomizedContext.PrintStackTrace(ex, NUnit.Framework.TestContext.Error);
                 throw; // LUCENENET: Throw to preserve stack details of original throw.
             }
@@ -1134,7 +1235,16 @@ namespace Lucene.Net.Util
         /// Gets the current type being tested.
         /// </summary>
         public static Type TestType
-            => TestExecutionContext.CurrentContext.CurrentTest.Fixture?.GetType(); // LUCENENET specific - renamed from testClass()
+        {
+            // LUCENENET specific - renamed from testClass()
+            get
+            {
+                // LUCENENET: Prefer TypeInfo, which is available whether or not the fixture
+                // instance has been constructed yet. Fall back to the fixture instance's type.
+                var currentTest = TestExecutionContext.CurrentContext.CurrentTest;
+                return currentTest.TypeInfo?.Type ?? currentTest.Fixture?.GetType();
+            }
+        }
 
         /// <summary>
         /// Return the name of the currently executing test case.
