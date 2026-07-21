@@ -314,9 +314,7 @@ namespace Lucene.Net.Index
                     Assert.IsTrue(docsWriter.flushControl.stallControl.WasStalled);
                 }
                 AssertActiveBytesAfter(flushControl);
-#pragma warning disable 612, 618
-                writer.Dispose(true);
-#pragma warning restore 612, 618
+                writer.Dispose();
                 dir.Dispose();
             }
         }

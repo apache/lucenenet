@@ -805,7 +805,7 @@ namespace Lucene.Net.Index
             {
                 didClose = true;
 #pragma warning disable 612, 618
-                writer2.Dispose(doWait);
+                writer2.Close(doWait);
 #pragma warning restore 612, 618
             }
 

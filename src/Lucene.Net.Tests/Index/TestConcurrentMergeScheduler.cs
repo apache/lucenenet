@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     bool isDoFlush = StackTraceHelper.DoesStackTraceContainMethod(nameof(DocumentsWriterPerThread.Flush));
-                    bool isClose = StackTraceHelper.DoesStackTraceContainMethod(nameof(IndexWriter.Close)) || // LUCENENET NOTE: Close is aggressively inlined, so likely won't hit this case, but would hit Dispose
+                    bool isClose = StackTraceHelper.DoesStackTraceContainMethod(nameof(IndexWriter.Close)) || // LUCENENET NOTE: Close is marked NoInlining so it stays on the stack; Dispose is checked as well as a belt-and-suspenders
                         StackTraceHelper.DoesStackTraceContainMethod(nameof(IndexWriter.Dispose));
 
                     if (isDoFlush && !isClose && Random.NextBoolean())
@@ -262,7 +262,7 @@ namespace Lucene.Net.Index
                 writer.Commit();
 
 #pragma warning disable 612, 618
-                writer.Dispose(false);
+                writer.Close(false);
 #pragma warning restore 612, 618
 
                 IndexReader reader = DirectoryReader.Open(directory);
@@ -319,7 +319,7 @@ namespace Lucene.Net.Index
                 }
             }
 #pragma warning disable 612, 618
-            w.Dispose(false);
+            w.Close(false);
 #pragma warning restore 612, 618
             dir.Dispose();
         }

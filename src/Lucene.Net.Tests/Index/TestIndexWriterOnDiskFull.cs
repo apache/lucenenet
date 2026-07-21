@@ -665,7 +665,7 @@ namespace Lucene.Net.Index
             try
             {
 #pragma warning disable 612, 618
-                writer.Dispose(false);
+                writer.Close(false);
 #pragma warning restore 612, 618
                 Assert.Fail("did not hit disk full");
             }
@@ -677,7 +677,7 @@ namespace Lucene.Net.Index
             // cleanly close:
             dir.MaxSizeInBytes = 0;
 #pragma warning disable 612, 618
-            writer.Dispose(false);
+            writer.Close(false);
 #pragma warning restore 612, 618
             dir.Dispose();
         }
