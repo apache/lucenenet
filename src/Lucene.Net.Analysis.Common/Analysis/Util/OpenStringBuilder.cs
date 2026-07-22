@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Util
     /// <para />
     /// This type also implements <see cref="ISpanAppendable"/> to allow for efficient appending of <see cref="ReadOnlySpan{T}"/>.
     /// </remarks>
-    public class OpenStringBuilder : IAppendable, ISpanAppendable, ICharSequence, IBufferWriter<char>
+    public class OpenStringBuilder : IAppendable, ISpanAppendable, IBufferWriter<char>
     {
         protected char[] m_buf;
         protected int m_len;
@@ -49,8 +49,6 @@ namespace Lucene.Net.Analysis.Util
             : this(32)
         {
         }
-
-        bool ICharSequence.HasValue => m_buf != null;
 
         public OpenStringBuilder(int size)
         {
