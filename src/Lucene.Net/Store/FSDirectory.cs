@@ -317,10 +317,6 @@ namespace Lucene.Net.Store
             EnsureOpen();
             string file = Path.Combine(m_directory.FullName, name);
 
-            // LUCENENET Specific: See remarks for m_staleFiles field.
-            UninterruptableMonitor.Enter(m_syncLock);
-            try
-            {
                 // LUCENENET specific: We need to explicitly throw when the file has already been deleted,
                 // since FileInfo doesn't do that for us.
                 // (An enhancement carried over from Lucene 8.2.0)
@@ -329,6 +325,13 @@ namespace Lucene.Net.Store
                     throw new FileNotFoundException("Cannot delete " + file + " because it doesn't exist.");
                 }
 
+            // LUCENENET specific: Do NOT hold m_syncLock while deleting. On a network share (SMB),
+            // File.Delete can block for a long time (e.g. waiting for the server to break an
+            // oplock/lease on a file this client still has open). Holding m_syncLock here would
+            // block every concurrent Sync() and IndexOutput.Dispose() on this directory behind
+            // a single stalled delete, freezing the whole writer. Only the m_staleFiles
+            // bookkeeping below needs the lock (see remarks for the m_staleFiles field);
+            // upstream Java likewise performs the delete without any directory-wide lock.
                 try
                 {
                     File.Delete(file);
@@ -342,6 +345,9 @@ namespace Lucene.Net.Store
                     throw new IOException("Cannot delete " + file, e);
                 }
 
+            UninterruptableMonitor.Enter(m_syncLock);
+            try
+            {
                 m_staleFiles.Remove(name);
             }
             finally
