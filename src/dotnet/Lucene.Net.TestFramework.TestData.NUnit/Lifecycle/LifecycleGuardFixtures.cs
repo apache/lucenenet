@@ -62,6 +62,7 @@ namespace Lucene.Net.TestData.Lifecycle
         public static readonly List<string> Events = new List<string>();
         public static bool CultureAppliedInOneTimeSetUp;
         public static bool TempDirExistedInOneTimeTearDown;
+        public static bool IsTestThreadInTest;
         public static DirectoryInfo TempDir;
         public static TrackingDisposable SuiteDisposable;
         public static TrackingDisposable TestDisposable;
@@ -71,6 +72,7 @@ namespace Lucene.Net.TestData.Lifecycle
             Events.Clear();
             CultureAppliedInOneTimeSetUp = false;
             TempDirExistedInOneTimeTearDown = false;
+            IsTestThreadInTest = false;
             TempDir = null;
             SuiteDisposable = null;
             TestDisposable = null;
@@ -101,6 +103,10 @@ namespace Lucene.Net.TestData.Lifecycle
         public void TestA()
         {
             TestDisposable = DisposeAfterTest(new TrackingDisposable(nameof(TestDisposable), Events));
+
+            // The framework's per-test setup captures the test thread for IsTestThread, even
+            // though this fixture's SetUp override never calls base.SetUp().
+            IsTestThreadInTest = IsTestThread;
             Events.Add("Test");
         }
     }
@@ -122,10 +128,10 @@ namespace Lucene.Net.TestData.Lifecycle
     }
 
     /// <summary>
-    /// Has a failing test and no lifecycle overrides, so the framework teardown runs at the
-    /// traditional <c>base.TearDown()</c> position. Used to verify that the run-once guard
-    /// prevents the framework work from also running a second time from the lifecycle backstop
-    /// (the reproduction information must appear exactly once). See issue #1087.
+    /// Has a failing test and no lifecycle overrides at all, so the inherited (empty) lifecycle
+    /// methods run alongside the test framework's own. Used to verify that the framework teardown
+    /// work runs exactly once for such a fixture, so the failure reproduction information is
+    /// appended to the test result a single time. See issue #1087.
     /// </summary>
     public class LifecycleGuardBaseCallFailingFixture : LuceneTestCase
     {

@@ -103,13 +103,6 @@ namespace Lucene.Net.Util
         }
 
         private static void AssertBefore(List<string> events, string first, string second)
-        {
-            int firstIndex = events.IndexOf(first);
-            int secondIndex = events.IndexOf(second);
-            Assert.IsTrue(firstIndex >= 0, $"Expected event '{first}' to be recorded. Events: {string.Join(", ", events)}");
-            Assert.IsTrue(secondIndex >= 0, $"Expected event '{second}' to be recorded. Events: {string.Join(", ", events)}");
-            Assert.IsTrue(firstIndex < secondIndex,
-                $"Expected '{first}' to run before '{second}'. Events: {string.Join(", ", events)}");
-        }
+            => LifecycleAssert.AssertBefore(events, first, second);
     }
 }

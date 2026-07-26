@@ -70,13 +70,16 @@ namespace Lucene.Net.Util
             Assert.IsTrue(LifecycleGuardNoBaseFixture.SuiteDisposable.Disposed,
                 "A resource registered with DisposeAfterSuite must be disposed.");
 
+            // The test thread was captured for IsTestThread, even though the override never calls
+            // base.SetUp().
+            Assert.IsTrue(LifecycleGuardNoBaseFixture.IsTestThreadInTest,
+                "IsTestThread must be true on the test thread; the framework's per-test setup must run.");
+
             // The framework teardown work runs AFTER the user's teardown methods. (The disposal
             // order of the suite-scoped resource cannot be asserted here because the TestBuilder
             // harness shares a single RandomizedContext between the suite and its tests, so the
             // temp dir check below stands in for the suite-level ordering instead.)
-            List<string> events = LifecycleGuardNoBaseFixture.Events;
-            Assert.IsTrue(events.IndexOf("User.TearDown") < events.IndexOf("Disposed:TestDisposable"),
-                "Test-scoped resources must be disposed after the fixture's TearDown. Events: " + string.Join(", ", events));
+            LifecycleAssert.AssertBefore(LifecycleGuardNoBaseFixture.Events, "User.TearDown", "Disposed:TestDisposable");
             Assert.IsTrue(LifecycleGuardNoBaseFixture.TempDirExistedInOneTimeTearDown,
                 "The temporary directory must still exist during the fixture's OneTimeTearDown; framework cleanup runs after it.");
         }
@@ -100,8 +103,8 @@ namespace Lucene.Net.Util
             ITestResult child = result.Children.Single();
             Assert.AreEqual(ResultState.Failure, child.ResultState);
 
-            // Guards against the framework teardown running twice (e.g. once from an overridable
-            // method's base call and once from the framework-owned lifecycle method).
+            // The framework teardown appends the reproduction info by rewriting the test result,
+            // so running it more than once per test would duplicate the (multi-page) block.
             Assert.AreEqual(1, CountOccurrences(child.Message, ReproduceInfoMarker),
                 "The failure reproduction info must be appended exactly once. Message: " + child.Message);
         }
