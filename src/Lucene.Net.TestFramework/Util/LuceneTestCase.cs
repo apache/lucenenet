@@ -911,8 +911,6 @@ namespace Lucene.Net.Util
         [Before]
         public virtual void SetUp()
         {
-            // LUCENENET TODO: Not sure how to convert these
-            //ParentChainCallRule.SetupCalled = true;
         }
 
         /// <summary>
@@ -938,6 +936,9 @@ namespace Lucene.Net.Util
         // LUCENENET specific
         internal static void FrameworkSetUp()
         {
+            // LUCENENET TODO: Not sure how to convert these
+            //ParentChainCallRule.SetupCalled = true;
+
             // LUCENENET specific: capture the thread running the test method so that
             // IsTestThread can distinguish it from background threads (e.g. ConcurrentMergeScheduler
             // merge threads). This mirrors Java's ThreadAndTestNameRule.testCaseThread.
@@ -958,9 +959,6 @@ namespace Lucene.Net.Util
         [After]
         public virtual void TearDown()
         {
-            /* LUCENENET TODO: Not sure how to convert these
-                ParentChainCallRule.TeardownCalled = true;
-                */
         }
 
         /// <summary>
@@ -987,6 +985,9 @@ namespace Lucene.Net.Util
         // LUCENENET specific
         internal static void FrameworkTearDown(TestExecutionContext context)
         {
+            /* LUCENENET TODO: Not sure how to convert these
+                ParentChainCallRule.TeardownCalled = true;
+                */
             TestResult result = context.CurrentResult;
 
             if (result.ResultState == ResultState.Failure || result.ResultState == ResultState.Error)
