@@ -194,13 +194,7 @@ namespace Lucene.Net.Store
             EnsureOpen();
             EnsureCanRead(name); // LUCENENET-specific: backported call site from Lucene 6.0.0
             var file = Path.Combine(Directory.FullName, name); // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
-            // LUCENENET specific: Add FileShare.Delete (a deliberate divergence from upstream Java's RandomAccessFile,
-            // which omits it) to match SimpleFSDirectory, NIOFSDirectory and our other handles, giving Windows the same
-            // delete-while-open semantics POSIX already provides so index files can be deleted while a read handle is
-            // open (#1283). Without it, a pending delete of a still-mapped file on an SMB share can block inside
-            // File.Delete while the server waits for this client's lease break, which cannot complete while mapped
-            // views are active.
-            var fc = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            var fc = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file + "\")", fc);
         }
 
