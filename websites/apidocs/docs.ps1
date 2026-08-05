@@ -57,6 +57,7 @@ $env:LuceneNetReleaseTag = $VCSLabel
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
 $RepoRoot = (get-item $PSScriptFilePath).Directory.Parent.Parent.FullName;
 $ApiDocsFolder = Join-Path -Path $RepoRoot -ChildPath "websites\apidocs";
+$SolutionFile = Join-Path -Path $RepoRoot -ChildPath "Lucene.Net.sln";
 $CliIndexPath = Join-Path -Path $RepoRoot -ChildPath "src\dotnet\tools\lucene-cli\docs\index.md";
 $TocPath1 = Join-Path -Path $ApiDocsFolder -ChildPath "toc.yml"
 $TocPath2 = Join-Path -Path $ApiDocsFolder -ChildPath "toc\toc.yml"
@@ -151,6 +152,20 @@ $DocFxJsonMeta = @(
 $DocFxJsonSite = Join-Path -Path $ApiDocsFolder "docfx.site.json"
 
 if ($? -and $DisableMetaData -eq $false) {
+    # Restore the whole solution once up front so that each `docfx metadata` invocation below can be
+    # passed --noRestore. Otherwise docfx runs a NuGet restore for every project it inspects, which
+    # repeats the same restore work ~30 times (once per config in $DocFxJsonMeta).
+    # NOTE: The TargetFramework here must match the one in the "properties" section of each docfx.*.json.
+    Write-Host "Restoring $SolutionFile for API metadata..."
+    $PreviousLocation = Get-Location
+    Set-Location $RepoRoot
+    try {
+        & dotnet restore "$SolutionFile" -p:TargetFramework=net10.0
+        if (-not $?) { throw "Failed to restore $SolutionFile" }
+    } finally {
+        Set-Location $PreviousLocation
+    }
+
     foreach ($proj in $DocFxJsonMeta) {
         $projFile = Join-Path -Path $ApiDocsFolder $proj
 
@@ -161,7 +176,7 @@ if ($? -and $DisableMetaData -eq $false) {
         $PreviousLocation = Get-Location
         Set-Location $RepoRoot
         try {
-            & dotnet tool run docfx metadata $projFile --log "$DocFxLog" --logLevel $LogLevel
+            & dotnet tool run docfx metadata $projFile --log "$DocFxLog" --logLevel $LogLevel --noRestore
         } finally {
             Set-Location $PreviousLocation
         }

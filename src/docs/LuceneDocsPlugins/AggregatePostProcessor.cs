@@ -18,6 +18,7 @@
 using Docfx.Plugins;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Threading;
 
 namespace LuceneDocsPlugins;
 
@@ -40,11 +41,11 @@ public class AggregatePostProcessor : IPostProcessor
         return metadata;
     }
 
-    public Manifest Process(Manifest manifest, string outputFolder)
+    public Manifest Process(Manifest manifest, string outputFolder, CancellationToken cancellationToken)
     {
         foreach (var postProcessor in _postProcessors)
         {
-            manifest = postProcessor.Process(manifest, outputFolder);
+            manifest = postProcessor.Process(manifest, outputFolder, cancellationToken);
         }
 
         return manifest;
