@@ -32,11 +32,22 @@ param (
     [Parameter(Mandatory = $false)]
     [string] $BaseUrl = 'https://lucenenet.apache.org/docs/',
     [Parameter(Mandatory = $false)]
-    [int] $StagingPort = 8080
+    [int] $StagingPort = 8080,
+    # Number of docfx projects to build concurrently. Set to 1 to build everything serially.
+    # Named to match the $maximumParallelJobs property used by the psake build in .build/runbuild.ps1.
+    [Parameter(Mandatory = $false)]
+    [int] $maximumParallelJobs = [Math]::Max(1, [Math]::Min(8, [Environment]::ProcessorCount - 1))
 )
 $MinimumSdkVersion = "8.0.100" # Minimum Required .NET SDK (must not be a pre-release)
 
 $ErrorActionPreference = "Stop"
+
+# This script builds the docfx projects concurrently using ForEach-Object -Parallel, which was
+# introduced in PowerShell 7. Windows PowerShell 5.1 fails with a confusing parameter binding
+# error, so check for it up front and explain what is needed.
+if ($PSVersionTable.PSVersion.Major -lt 7) {
+    throw "PowerShell 7 or higher is required to build the API docs (found $($PSVersionTable.PSVersion)). Run this script with 'pwsh' instead of 'powershell'."
+}
 
 # if the base URL is the lucene live site default value we also need to include the version
 if ($BaseUrl -eq 'https://lucenenet.apache.org/docs/') {
@@ -166,20 +177,35 @@ if ($? -and $DisableMetaData -eq $false) {
         Set-Location $PreviousLocation
     }
 
-    foreach ($proj in $DocFxJsonMeta) {
-        $projFile = Join-Path -Path $ApiDocsFolder $proj
+    # Metadata generation has no cross-project dependencies (unlike the build step below, which
+    # consumes other projects' xref maps), and each config writes to its own obj/docfx/api/<name>
+    # folder. That makes it safe to run these concurrently. The duplicates in $DocFxJsonMeta only
+    # exist to work around circular xref maps during the build, so we de-duplicate here.
+    $MetaProjects = $DocFxJsonMeta | Select-Object -Unique
 
-        $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\${proj}.meta.log"
+    Write-Host "Building api metadata for $($MetaProjects.Count) projects (up to $maximumParallelJobs at a time)..."
 
-        # build the output
+    $MetaResults = $MetaProjects | ForEach-Object -ThrottleLimit $maximumParallelJobs -Parallel {
+        $proj = $_
+        $projFile = Join-Path -Path $using:ApiDocsFolder $proj
+        $DocFxLog = Join-Path -Path $using:ApiDocsFolder "obj\${proj}.meta.log"
+
+        # Each runspace has its own current directory, so this does not race with the other jobs.
+        Set-Location $using:RepoRoot
+
         Write-Host "Building api metadata for $projFile..."
-        $PreviousLocation = Get-Location
-        Set-Location $RepoRoot
-        try {
-            & dotnet tool run docfx metadata $projFile --log "$DocFxLog" --logLevel $LogLevel --noRestore
-        } finally {
-            Set-Location $PreviousLocation
-        }
+        # Capture docfx's console output rather than letting it flow into this block's output
+        # stream, which is reserved for the result object below, then echo it via Write-Host.
+        $output = & dotnet tool run docfx metadata $projFile --log "$DocFxLog" --logLevel $using:LogLevel --noRestore 2>&1
+        $exitCode = $LASTEXITCODE
+        Write-Host ($output | Out-String)
+
+        [pscustomobject]@{ Project = $proj; ExitCode = $exitCode }
+    }
+
+    $FailedMeta = @($MetaResults | Where-Object { $_.ExitCode -ne 0 })
+    if ($FailedMeta.Count -gt 0) {
+        throw "Failed to build api metadata for: $(($FailedMeta | ForEach-Object { $_.Project }) -join ', ')"
     }
 }
 
@@ -201,33 +227,86 @@ if ($? -and $DisableBuild -eq $false) {
     # Update the CLI link to the latest LuceneNetVersion
     (Get-Content -Path $BreadcrumbPath -Raw) -Replace '(?<="_navCliHref":\s*?"https?\:\/\/lucenenet\.apache\.org\/docs\/)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $BreadcrumbPath
 
-    foreach ($proj in $DocFxJsonMeta) {
-        $projFile = Join-Path -Path $ApiDocsFolder $proj
+    # Unlike metadata generation, the build step DOES have cross-project dependencies: each config
+    # consumes the xrefmap.yml produced by the projects listed in its "xref" section. So the configs
+    # are grouped into waves that are run one after another, while the members of a single wave -
+    # which do not depend on each other - are built concurrently.
+    #
+    # The waves below preserve the ordering the serial build relied on:
+    #   1. codecs/core/analysis-common have circular xref maps between them, so they are built in the
+    #      original order, one at a time, and core/codecs are rebuilt in the last wave to pick up the
+    #      xref maps that did not exist yet on their first pass (the "intentional duplicates").
+    #   2. icu must precede highlighter, and queryparser/analysis-common must precede demo.
+    $DocFxBuildWaves = @(
+        , @("docfx.codecs.json")
+        , @("docfx.core.json")
+        , @("docfx.analysis-common.json")
+        , @(
+            "docfx.analysis-kuromoji.json",
+            "docfx.analysis-morfologik.json",
+            "docfx.analysis-opennlp.json",
+            "docfx.analysis-phonetic.json",
+            "docfx.analysis-smartcn.json",
+            "docfx.analysis-stempel.json",
+            "docfx.benchmark.json",
+            "docfx.classification.json",
+            "docfx.expressions.json",
+            "docfx.facet.json",
+            "docfx.grouping.json",
+            "docfx.icu.json",
+            "docfx.join.json",
+            "docfx.memory.json",
+            "docfx.misc.json",
+            "docfx.queries.json",
+            "docfx.queryparser.json",
+            "docfx.replicator.json",
+            "docfx.sandbox.json",
+            "docfx.spatial.json",
+            "docfx.suggest.json",
+            "docfx.test-framework.json"
+        )
+        , @("docfx.highlighter.json", "docfx.demo.json")
+        # intentional duplicates - see note above
+        , @("docfx.codecs.json")
+        , @("docfx.core.json")
+    )
 
-        $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\${proj}.build.log"
+    foreach ($wave in $DocFxBuildWaves) {
+        $BuildResults = $wave | ForEach-Object -ThrottleLimit $maximumParallelJobs -Parallel {
+            $proj = $_
+            $projFile = Join-Path -Path $using:ApiDocsFolder $proj
+            $DocFxLog = Join-Path -Path $using:ApiDocsFolder "obj\${proj}.build.log"
 
-        Start-Sleep -Seconds 1
+            # Each runspace has its own current directory, so this does not race with the other jobs.
+            Set-Location $using:RepoRoot
 
-        # build the output
-        Write-Host "Building site output for $projFile..."
-        $PreviousLocation = Get-Location
-        Set-Location $RepoRoot
-        try {
-            & dotnet tool run docfx build $projFile --log "$DocFxLog" --logLevel $LogLevel --debug --maxParallelism 1
-        } finally {
-            Set-Location $PreviousLocation
+            Write-Host "Building site output for $projFile..."
+            # Capture docfx's console output rather than letting it flow into this block's output
+            # stream, which is reserved for the result object below, then echo it via Write-Host.
+            $output = & dotnet tool run docfx build $projFile --log "$DocFxLog" --logLevel $using:LogLevel --debug --maxParallelism 1 2>&1
+            $exitCode = $LASTEXITCODE
+            Write-Host ($output | Out-String)
+
+            if ($exitCode -eq 0) {
+                # Add the baseUrl to the output xrefmap, see https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027
+                $projFileJson = Get-Content $projFile | ConvertFrom-Json
+                $projBuildDest = $projFileJson.build.dest
+                $buildOutputFolder = Join-Path -Path ((Get-Item $projFile).DirectoryName) $projBuildDest
+                $xrefFile = Join-Path $buildOutputFolder "xrefmap.yml"
+                $xrefMap = Get-Content $xrefFile -Raw
+                $xrefMap = $xrefMap.Replace("### YamlMime:XRefMap", "").Trim()
+                $projBaseUrl = $using:BaseUrl + $projBuildDest.Substring(5, $projBuildDest.Length - 5) # trim the _site part of the string
+                $xrefMap = "### YamlMime:XRefMap" + [Environment]::NewLine + "baseUrl: " + $projBaseUrl + "/" + [Environment]::NewLine + $xrefMap
+                Set-Content -Path $xrefFile -Value $xrefMap
+            }
+
+            [pscustomobject]@{ Project = $proj; ExitCode = $exitCode }
         }
 
-        # Add the baseUrl to the output xrefmap, see https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027
-        $projFileJson = Get-Content $projFile | ConvertFrom-Json
-        $projBuildDest = $projFileJson.build.dest
-        $buildOutputFolder = Join-Path -Path ((Get-Item $projFile).DirectoryName) $projBuildDest
-        $xrefFile = Join-Path $buildOutputFolder "xrefmap.yml"
-        $xrefMap = Get-Content $xrefFile -Raw
-        $xrefMap = $xrefMap.Replace("### YamlMime:XRefMap", "").Trim()
-        $projBaseUrl = $BaseUrl + $projBuildDest.Substring(5, $projBuildDest.Length - 5) # trim the _site part of the string
-        $xrefMap = "### YamlMime:XRefMap" + [Environment]::NewLine + "baseUrl: " + $projBaseUrl + "/" + [Environment]::NewLine + $xrefMap
-        Set-Content -Path $xrefFile -Value $xrefMap
+        $FailedBuild = @($BuildResults | Where-Object { $_.ExitCode -ne 0 })
+        if ($FailedBuild.Count -gt 0) {
+            throw "Failed to build site output for: $(($FailedBuild | ForEach-Object { $_.Project }) -join ', ')"
+        }
     }
 }
 
