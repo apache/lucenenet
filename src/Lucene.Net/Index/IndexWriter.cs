@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
     /// also trigger one or more segment merges which by default
     /// run with a background thread so as not to block the
     /// addDocument calls (see <a href="#mergePolicy">below</a>
-    /// for changing the <see cref="mergeScheduler"/>).</para>
+    /// for changing the <see cref="LiveIndexWriterConfig.MergeScheduler"/>).</para>
     ///
     /// <para>Opening an <see cref="IndexWriter"/> creates a lock file for the directory in use. Trying to open
     /// another <see cref="IndexWriter"/> on the same directory will lead to a
@@ -123,8 +123,8 @@ namespace Lucene.Net.Index
     ///
     /// <a name="mergePolicy"></a> <para>Expert:
     /// <see cref="IndexWriter"/> allows you to separately change
-    /// the <see cref="mergePolicy"/> and the <see cref="mergeScheduler"/>.
-    /// The <see cref="mergePolicy"/> is invoked whenever there are
+    /// the <see cref="LiveIndexWriterConfig.MergePolicy"/> and the <see cref="LiveIndexWriterConfig.MergeScheduler"/>.
+    /// The <see cref="LiveIndexWriterConfig.MergePolicy"/> is invoked whenever there are
     /// changes to the segments in the index.  Its role is to
     /// select which merges to do, if any, and return a
     /// <see cref="MergePolicy.MergeSpecification"/> describing the merges.
@@ -2285,7 +2285,7 @@ namespace Lucene.Net.Index
         /// Just like <see cref="ForceMerge(int)"/>, except you can
         /// specify whether the call should block until
         /// all merging completes.  This is only meaningful with a
-        /// <see cref="mergeScheduler"/> that is able to run merges in
+        /// <see cref="LiveIndexWriterConfig.MergeScheduler"/> that is able to run merges in
         /// background threads.
         ///
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
@@ -2566,16 +2566,16 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Expert: asks the <see cref="mergePolicy"/> whether any merges are
+        /// Expert: asks the <see cref="LiveIndexWriterConfig.MergePolicy"/> whether any merges are
         /// necessary now and if so, runs the requested merges and
         /// then iterate (test again if merges are needed) until no
-        /// more merges are returned by the <see cref="mergePolicy"/>.
+        /// more merges are returned by the <see cref="LiveIndexWriterConfig.MergePolicy"/>.
         /// <para/>
         /// Explicit calls to <see cref="MaybeMerge()"/> are usually not
         /// necessary. The most common case is when merge policy
         /// parameters have changed.
         /// <para/>
-        /// this method will call the <see cref="mergePolicy"/> with
+        /// this method will call the <see cref="LiveIndexWriterConfig.MergePolicy"/> with
         /// <see cref="MergeTrigger.EXPLICIT"/>.
         ///
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
@@ -2676,7 +2676,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Expert: the <see cref="mergeScheduler"/> calls this method to retrieve the next
+        /// Expert: the <see cref="LiveIndexWriterConfig.MergeScheduler"/> calls this method to retrieve the next
         /// merge requested by the <see cref="MergePolicy"/>
         /// <para/>
         /// @lucene.experimental
