@@ -80,7 +80,6 @@
     <SystemRuntimeInteropServicesRuntimeInformationPackageVersion>4.3.0</SystemRuntimeInteropServicesRuntimeInformationPackageVersion>
     <SystemTextEncodingCodePagesPackageVersion>4.3.0</SystemTextEncodingCodePagesPackageVersion>
     <SystemTextEncodingCodePagesPackageVersion Condition=" '$(TargetFramework)' == 'net472' ">5.0.0</SystemTextEncodingCodePagesPackageVersion>
-    <SystemTextJsonPackageVersion>6.0.10</SystemTextJsonPackageVersion>
     <SystemTextRegularExpressionsPackageVersion>4.3.1</SystemTextRegularExpressionsPackageVersion>
     <TimeZoneConverterPackageVersion>6.1.0</TimeZoneConverterPackageVersion>
   </PropertyGroup>
