@@ -49,7 +49,7 @@
     <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>$(MicrosoftCodeAnalysisCSharpPackageVersion)</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
     <MicrosoftCodeAnalysisVisualBasicPackageVersion>2.6.1</MicrosoftCodeAnalysisVisualBasicPackageVersion>
     <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>$(MicrosoftCodeAnalysisVisualBasicPackageVersion)</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
-    <MicrosoftExtensionsParentVersion>10.0.7</MicrosoftExtensionsParentVersion>
+    <MicrosoftExtensionsParentVersion>10.0.10</MicrosoftExtensionsParentVersion>
     <MicrosoftExtensionsConfigurationPackageVersion>$(MicrosoftExtensionsParentVersion)</MicrosoftExtensionsConfigurationPackageVersion>
     <MicrosoftExtensionsConfigurationAbstractionsPackageVersion>$(MicrosoftExtensionsParentVersion)</MicrosoftExtensionsConfigurationAbstractionsPackageVersion>
     <MicrosoftExtensionsConfigurationCommandLinePackageVersion>$(MicrosoftExtensionsParentVersion)</MicrosoftExtensionsConfigurationCommandLinePackageVersion>
