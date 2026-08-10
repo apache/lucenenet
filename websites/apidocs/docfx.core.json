@@ -72,6 +72,12 @@
     "xref": [
       "_site/api/codecs/xrefmap.yml",
       "_site/api/analysis-common/xrefmap.yml",
+      "_site/api/demo/xrefmap.yml",
+      "_site/api/misc/xrefmap.yml",
+      "_site/api/queries/xrefmap.yml",
+      "_site/api/queryparser/xrefmap.yml",
+      "_site/api/suggest/xrefmap.yml",
+      "_site/api/test-framework/xrefmap.yml",
       "https://learn.microsoft.com/en-us/dotnet/.xrefmap.json"
     ],
     "dest": "_site/api/core",

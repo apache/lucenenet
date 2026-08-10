@@ -46,9 +46,7 @@ namespace Lucene.Net.Analysis.Compound
         /// </summary>
         /// <param name="matchVersion">
         ///          Lucene version to enable correct Unicode 4.0 behavior in the
-        ///          dictionaries if Version > 3.0. See <a
-        ///          href="CompoundWordTokenFilterBase.html#version"
-        ///          >CompoundWordTokenFilterBase</a> for details. </param>
+        ///          dictionaries if Version > 3.0. See <see cref="CompoundWordTokenFilterBase"/> for details. </param>
         /// <param name="input">
         ///          the <see cref="TokenStream"/> to process </param>
         /// <param name="dictionary">
@@ -67,9 +65,7 @@ namespace Lucene.Net.Analysis.Compound
         /// </summary>
         /// <param name="matchVersion">
         ///          Lucene version to enable correct Unicode 4.0 behavior in the
-        ///          dictionaries if Version > 3.0. See <a
-        ///          href="CompoundWordTokenFilterBase.html#version"
-        ///          >CompoundWordTokenFilterBase</a> for details. </param>
+        ///          dictionaries if Version > 3.0. See <see cref="CompoundWordTokenFilterBase"/> for details. </param>
         /// <param name="input">
         ///          the <see cref="TokenStream"/> to process </param>
         /// <param name="dictionary">

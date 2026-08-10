@@ -103,8 +103,8 @@ namespace Lucene.Net.Analysis.Util
         /// Creates a dictionary from the mappings in another dictionary.
         /// </summary>
         /// <param name="matchVersion">
-        ///          compatibility match version see <a href="#version">Version
-        ///          note</a> above for details. </param>
+        ///          compatibility match version see Version
+        ///          note above for details. </param>
         /// <param name="collection">
         ///          a dictionary (<see cref="T:IDictionary{string, V}"/>) whose mappings to be copied. </param>
         /// <param name="ignoreCase">
@@ -122,8 +122,8 @@ namespace Lucene.Net.Analysis.Util
         /// Creates a dictionary from the mappings in a collection of <see cref="KeyValuePair{TKey, TValue}"/>s.
         /// </summary>
         /// <param name="matchVersion">
-        ///          compatibility match version see <a href="#version">Version
-        ///          note</a> above for details. </param>
+        ///          compatibility match version see Version
+        ///          note above for details. </param>
         /// <param name="collection">
         ///          a collection of mappings to be copied. </param>
         /// <param name="ignoreCase">
@@ -968,8 +968,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="dictionary">
         ///          A <see cref="IDictionary{TKey, TValue}"/> to copy. </param>
         /// <param name="matchVersion">
-        ///          compatibility match version see <a href="#version">Version
-        ///          note</a> above for details. </param>
+        ///          compatibility match version see Version
+        ///          note above for details. </param>
         /// <returns> A copy of the current dictionary as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
         public static CharArrayDictionary<TValue> ToCharArrayDictionary<TValue>(this IDictionary<string, TValue> dictionary, LuceneVersion matchVersion)
@@ -985,8 +985,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="dictionary">
         ///          A <see cref="IDictionary{TKey, TValue}"/> to copy. </param>
         /// <param name="matchVersion">
-        ///          compatibility match version see <a href="#version">Version
-        ///          note</a> above for details. </param>
+        ///          compatibility match version see Version
+        ///          note above for details. </param>
         /// <param name="ignoreCase"><c>false</c> if and only if the set should be case sensitive otherwise <c>true</c>.</param>
         /// <returns> A copy of the current dictionary as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>

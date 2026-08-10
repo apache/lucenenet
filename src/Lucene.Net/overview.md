@@ -67,9 +67,9 @@ an enumeration of token [Attribute](xref:Lucene.Net.Util.Attribute)s. 
 A TokenStream can be composed by applying [TokenFilter](xref:Lucene.Net.Analysis.TokenFilter)s
 to the output of a [Tokenizer](xref:Lucene.Net.Analysis.Tokenizer). 
 Tokenizers and TokenFilters are strung together and applied with an [Analyzer](xref:Lucene.Net.Analysis.Analyzer). 
-[Lucene.Net.Analysis.Common](../analysis-common/overview.html) provides a number of Analyzer implementations, including
-[StopAnalyzer](../analysis-common/Lucene.Net.Analysis.Core.StopAnalyzer.html)
-and the grammar-based [StandardAnalyzer](../analysis-common/Lucene.Net.Analysis.Standard.StandardAnalyzer.html).
+[Lucene.Net.Analysis.Common](xref:Lucene.Net.Analysis.Common) provides a number of Analyzer implementations, including
+[StopAnalyzer](xref:Lucene.Net.Analysis.Core.StopAnalyzer)
+and the grammar-based [StandardAnalyzer](xref:Lucene.Net.Analysis.Standard.StandardAnalyzer).
 
 *   __<xref:Lucene.Net.Codecs>__
 provides an abstraction over the encoding and decoding of the inverted index structure,
@@ -91,7 +91,7 @@ for individual words, [PhraseQuery](xref:Lucene.Net.Search.PhraseQuery)
 for phrases, and [BooleanQuery](xref:Lucene.Net.Search.BooleanQuery)
 for boolean combinations of queries) and the [IndexSearcher](xref:Lucene.Net.Search.IndexSearcher)
 which turns queries into [TopDocs](xref:Lucene.Net.Search.TopDocs).
-A number of [QueryParser](../queryparser/overview.html)s are provided for producing
+A number of [QueryParser](xref:Lucene.Net.QueryParser)s are provided for producing
 query structures from strings or XML.
 
 *   __<xref:Lucene.Net.Store>__
@@ -114,7 +114,7 @@ adding [Field](xref:Lucene.Net.Documents.Field)s;
 2.  Create an [IndexWriter](xref:Lucene.Net.Index.IndexWriter)
 and add documents to it with [AddDocument()](xref:Lucene.Net.Index.IndexWriter#Lucene_Net_Index_IndexWriter_AddDocument_System_Collections_Generic_IEnumerable_Lucene_Net_Index_IIndexableField__Lucene_Net_Analysis_Analyzer_);
 
-3.  Call [QueryParser.Parse()](../queryparser/Lucene.Net.QueryParsers.Classic.QueryParserBase.html#Lucene_Net_QueryParsers_Classic_QueryParserBase_Parse_System_String_)
+3.  Call [QueryParser.Parse()](xref:Lucene.Net.QueryParsers.Classic.QueryParserBase#Lucene_Net_QueryParsers_Classic_QueryParserBase_Parse_System_String_)
 to build a query from a string; and
 
 4.  Create an [IndexSearcher](xref:Lucene.Net.Search.IndexSearcher)
@@ -123,10 +123,10 @@ method.
 
 Some simple examples of code which does this are:
 
-*    [IndexFiles.cs](../demo/Lucene.Net.Demo.IndexFiles.html) creates an
+*    [IndexFiles.cs](xref:Lucene.Net.Demo.IndexFiles) creates an
 index for all the files contained in a directory.
 
-*    [SearchFiles.cs](../demo/Lucene.Net.Demo.SearchFiles.html) prompts for
+*    [SearchFiles.cs](xref:Lucene.Net.Demo.SearchFiles) prompts for
 queries and searches an index.
 
 > [!TIP]

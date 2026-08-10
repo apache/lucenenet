@@ -27,21 +27,21 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Provides a merged sorted view from several sorted iterators.
     /// <para/>
-    /// If built with <see cref="removeDuplicates"/> set to <c>true</c> and an element
+    /// If built with <c>removeDuplicates</c> set to <c>true</c> and an element
     /// appears in multiple iterators then it is deduplicated, that is this iterator
     /// returns the sorted union of elements.
     /// <para/>
-    /// If built with <see cref="removeDuplicates"/> set to <c>false</c> then all elements
+    /// If built with <c>removeDuplicates</c> set to <c>false</c> then all elements
     /// in all iterators are returned.
     /// <para/>
     /// Caveats:
     /// <list type="bullet">
     ///   <item><description>The behavior is undefined if the iterators are not actually sorted.</description></item>
     ///   <item><description>Null elements are unsupported.</description></item>
-    ///   <item><description>If <see cref="removeDuplicates"/> is set to <c>true</c> and if a single iterator contains
+    ///   <item><description>If <c>removeDuplicates</c> is set to <c>true</c> and if a single iterator contains
     ///       duplicates then they will not be deduplicated.</description></item>
     ///   <item><description>When elements are deduplicated it is not defined which one is returned.</description></item>
-    ///   <item><description>If <see cref="removeDuplicates"/> is set to <c>false</c> then the order in which duplicates
+    ///   <item><description>If <c>removeDuplicates</c> is set to <c>false</c> then the order in which duplicates
     ///       are returned isn't defined.</description></item>
     /// </list>
     /// <para/>
@@ -186,21 +186,21 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Provides a merged sorted view from several sorted iterators.
     /// <para/>
-    /// If built with <see cref="removeDuplicates"/> set to <c>true</c> and an element
+    /// If built with <c>removeDuplicates</c> set to <c>true</c> and an element
     /// appears in multiple iterators then it is deduplicated, that is this iterator
     /// returns the sorted union of elements.
     /// <para/>
-    /// If built with <see cref="removeDuplicates"/> set to <c>false</c> then all elements
+    /// If built with <c>removeDuplicates</c> set to <c>false</c> then all elements
     /// in all iterators are returned.
     /// <para/>
     /// Caveats:
     /// <list type="bullet">
     ///   <item><description>The behavior is undefined if the iterators are not actually sorted.</description></item>
     ///   <item><description>Null elements are unsupported.</description></item>
-    ///   <item><description>If <see cref="removeDuplicates"/> is set to <c>true</c> and if a single iterator contains
+    ///   <item><description>If <c>removeDuplicates</c> is set to <c>true</c> and if a single iterator contains
     ///       duplicates then they will not be deduplicated.</description></item>
     ///   <item><description>When elements are deduplicated it is not defined which one is returned.</description></item>
-    ///   <item><description>If <see cref="removeDuplicates"/> is set to <c>false</c> then the order in which duplicates
+    ///   <item><description>If <c>removeDuplicates</c> is set to <c>false</c> then the order in which duplicates
     ///       are returned isn't defined.</description></item>
     /// </list>
     /// <para/>

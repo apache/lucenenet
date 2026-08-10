@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// Implements a fuzzy <see cref="AnalyzingSuggester"/>. The similarity measurement is
     /// based on the Damerau-Levenshtein (optimal string alignment) algorithm, though
     /// you can explicitly choose classic Levenshtein by passing <c>false</c>
-    /// for the <see cref="transpositions"/> parameter.
+    /// for the <c>transpositions</c> parameter.
     /// <para>
     /// At most, this query will match terms up to <see cref="LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE"/>
     /// edits. Higher distances are not supported.  Note that the
@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// byte is not allowed to be
     /// edited.  We allow up to 1 <see cref="DEFAULT_MAX_EDITS"/>
     /// edit.
-    /// If <see cref="unicodeAware"/> parameter in the constructor is set to true, maxEdits,
+    /// If <c>unicodeAware</c> parameter in the constructor is set to true, maxEdits,
     /// minFuzzyLength, transpositions and nonFuzzyPrefix are measured in Unicode code
     /// points (actual letters) instead of bytes.
     ///
@@ -73,8 +73,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private readonly bool unicodeAware;
 
         /// <summary>
-        /// Measure <see cref="maxEdits"/>, <see cref="minFuzzyLength"/>,
-        /// <see cref="transpositions"/>, and <see cref="nonFuzzyPrefix"/>
+        /// Measure <c>maxEdits</c>, <c>minFuzzyLength</c>,
+        /// <c>transpositions</c>, and <c>nonFuzzyPrefix</c>
         /// parameters in Unicode code points (actual letters)
         /// instead of bytes.
         /// </summary>

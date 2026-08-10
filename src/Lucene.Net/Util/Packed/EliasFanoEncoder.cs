@@ -226,13 +226,13 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Call at most <see cref="numValues"/> times to encode a non decreasing sequence of non negative numbers. </summary>
+        /// Call at most <c>numValues</c> times to encode a non decreasing sequence of non negative numbers. </summary>
         /// <param name="x"> The next number to be encoded. </param>
-        /// <exception cref="InvalidOperationException"> when called more than <see cref="numValues"/> times. </exception>
+        /// <exception cref="InvalidOperationException"> when called more than <c>numValues</c> times. </exception>
         /// <exception cref="ArgumentOutOfRangeException"> when:
         ///         <list type="bullet">
         ///         <item><description><paramref name="x"/> is smaller than an earlier encoded value, or</description></item>
-        ///         <item><description><paramref name="x"/> is larger than <see cref="upperBound"/>.</description></item>
+        ///         <item><description><paramref name="x"/> is larger than <c>upperBound</c>.</description></item>
         ///         </list> </exception>
         public virtual void EncodeNext(long x)
         {

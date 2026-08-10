@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
         /// encoded as UTF8.  If a term arrives from the analyzer
         /// longer than this length, an
         /// <see cref="ArgumentException"/> is thrown
-        /// and a message is printed to <see cref="infoStream"/>, if set (see
+        /// and a message is printed to <c>infoStream</c>, if set (see
         /// <see cref="IndexWriterConfig.SetInfoStream(InfoStream)"/>).
         /// </summary>
         public const int MAX_TERM_LENGTH = DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8;

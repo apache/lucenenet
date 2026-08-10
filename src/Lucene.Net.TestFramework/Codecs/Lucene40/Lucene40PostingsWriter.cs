@@ -80,7 +80,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Creates a <see cref="Lucene40PostingsWriter"/>, with the
-        /// <see cref="DEFAULT_SKIP_INTERVAL"/>.
+        /// <c>DEFAULT_SKIP_INTERVAL</c>.
         /// </summary>
         public Lucene40PostingsWriter(SegmentWriteState state)
             : this(state, DEFAULT_SKIP_INTERVAL)

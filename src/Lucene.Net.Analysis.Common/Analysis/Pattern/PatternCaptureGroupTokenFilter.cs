@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Pattern
     /// </code>
     /// </para>
     /// <para>
-    /// plus if <see cref="preserveOriginal"/> is true, it would also return
+    /// plus if <c>preserveOriginal</c> is true, it would also return
     /// <c>camelCaseFilter</c>
     /// </para>
     /// </summary>
