@@ -4,6 +4,8 @@
 [![Azure DevOps builds (master)](https://img.shields.io/azure-devops/build/lucene-net/6ba240c9-9598-47e7-a793-0ed8a4ba2f8b/3/master)](https://dev.azure.com/lucene-net/Lucene.NET/_build?definitionId=3&_a=summary)
 [![GitHub](https://img.shields.io/github/license/apache/lucenenet)](https://github.com/apache/lucenenet/blob/master/LICENSE.txt)
 
+[![Apache Lucene.NET Search Engine Library](branding/logo/lucene-net-color.png)](https://lucenenet.apache.org)
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
