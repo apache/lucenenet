@@ -57,7 +57,7 @@ Benchmarking Lucene By Tasks.
 
 ## Table Of Contents
 
- 1. [Benchmarking By Tasks](#concept) 2. [How to use](#usage) 3. [Benchmark "algorithm"](#algorithm) 4. [Supported tasks/commands](#tasks) 5. [Benchmark properties](#properties) 6. [Example input algorithm and the result benchmark report.](#example) 7. [Results record counting clarified](#recscounting)
+ 1. [Benchmarking By Tasks](#benchmarking-by-tasks) 2. [How to use](#how-to-use) 3. [Benchmark "algorithm"](#benchmark-algorithm) 4. [Supported tasks/commands](#supported-taskscommands) 5. [Benchmark properties](#benchmark-properties) 6. [Example input algorithm and the result benchmark report.](#example-input-algorithm-and-the-result-benchmark-report) 7. [Results record counting clarified](#results-record-counting-clarified)
 
 ## Benchmarking By Tasks
 
@@ -215,7 +215,7 @@ Example -  <font color="#FF0066">{ AddDoc } : 100 : 200/min</font> - would
 10.  __Disable Counting__: Each task executed contributes to the records count.
  This count is reflected in reports under recs/s and under recsPerRun.
  Most tasks count 1, some count 0, and some count more.
- (See [Results record counting clarified](#recscounting) for more details.)
+ (See [Results record counting clarified](#results-record-counting-clarified) for more details.)
  It is possible to disable counting for a task by preceding it with <font color="#FF0066">-</font>.
 
 Example -  <font color="#FF0066"> -CreateIndex </font> - would count 0 while

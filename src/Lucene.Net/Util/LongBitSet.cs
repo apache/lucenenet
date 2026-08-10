@@ -24,7 +24,7 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// BitSet of fixed length (<see cref="numBits"/>), backed by accessible (<see cref="GetBits()"/>)
+    /// BitSet of fixed length (<see cref="Length"/>), backed by accessible (<see cref="GetBits()"/>)
     /// <see cref="T:long[]"/>, accessed with a <see cref="long"/> index. Use it only if you intend to store more
     /// than 2.1B bits, otherwise you should use <see cref="FixedBitSet"/>.
     /// <para/>

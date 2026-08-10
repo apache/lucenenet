@@ -62,4 +62,4 @@ This module exposes the following functionality:
 
   * [Postings Highlighter](xref:Lucene.Net.Search.PostingsHighlight): Highlighter implementation that uses offsets from postings lists.
 
-  * [Vector Highlighter](xref:Lucene.Net.Search.VectorHighlight.BreakIteratorBoundaryScanner): An implementation of IBoundaryScanner for use with the vector highlighter in the [Lucene.Net.Highlighter module](../highlighter/Lucene.Net.Search.Highlight.html).
+  * [Vector Highlighter](xref:Lucene.Net.Search.VectorHighlight.BreakIteratorBoundaryScanner): An implementation of IBoundaryScanner for use with the vector highlighter in the [Lucene.Net.Highlighter module](xref:Lucene.Net.Search.Highlight).

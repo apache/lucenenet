@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// By default accept the token if its type is not a stop type.
-        /// When the <see cref="useWhiteList"/> parameter is set to true then accept the token if its type is contained in the <see cref="stopTypes"/>
+        /// When the <c>useWhiteList</c> parameter is set to true then accept the token if its type is contained in the <c>stopTypes</c>
         /// </summary>
         protected override bool Accept()
         {

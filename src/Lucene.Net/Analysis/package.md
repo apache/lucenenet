@@ -475,7 +475,7 @@ as described below.
   the end of the stream.
 
 *   If your tokenizer overrides [Reset()](xref:Lucene.Net.Analysis.TokenStream#Lucene_Net_Analysis_TokenStream_Reset)
-  or [Dispose()](xref:Lucene.Net.Analysis.TokenStream#Lucene_Net_Analysis_TokenStream_Dispose_System_Boolean_), it
+  or `Dispose()`, it
   __must__ call the corresponding superclass method.
 
 #### Token Filter
@@ -483,7 +483,7 @@ as described below.
   You should create your token filter class by extending <xref:Lucene.Net.Analysis.TokenFilter>.
   If your token filter overrides [Reset()](xref:Lucene.Net.Analysis.TokenStream#Lucene_Net_Analysis_TokenStream_Reset),
   [End()](xref:Lucene.Net.Analysis.TokenStream#Lucene_Net_Analysis_TokenStream_End)
-  or [Dispose()](xref:Lucene.Net.Analysis.TokenStream#Lucene_Net_Analysis_TokenStream_Dispose_System_Boolean_), it
+  or `Dispose()`, it
   __must__ call the corresponding superclass method.
 
 #### Creating delegates
@@ -509,7 +509,7 @@ public class ForwardingTokenizer : Tokenizer
 
 ### Testing Your Analysis Component
 
- The Lucene.Net.TestFramework component defines [BaseTokenStreamTestCase](../test-framework/Lucene.Net.Analysis.BaseTokenStreamTestCase.html). By extending this class, you can create NUnit tests that validate that your Analyzer and/or analysis components correctly implement the protocol. The CheckRandomData()methods of that class are particularly effective in flushing out errors.
+ The Lucene.Net.TestFramework component defines [BaseTokenStreamTestCase](xref:Lucene.Net.Analysis.BaseTokenStreamTestCase). By extending this class, you can create NUnit tests that validate that your Analyzer and/or analysis components correctly implement the protocol. The CheckRandomData()methods of that class are particularly effective in flushing out errors.
 
 ### Using the TokenStream API
 

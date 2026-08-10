@@ -905,7 +905,7 @@ namespace Lucene.Net.Index
         private static int defaultGenLookaheadCount = 10;
 
         /// <summary>
-        /// Gets or Sets the <see cref="defaultGenLookaheadCount"/>.
+        /// Gets or Sets the <c>defaultGenLookaheadCount</c>.
         /// <para/>
         /// Advanced: set how many times to try incrementing the
         /// gen when loading the segments file.  this only runs if
@@ -1420,7 +1420,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Gets <see cref="userData"/> saved with this commit.
+        /// Gets <c>userData</c> saved with this commit.
         /// </summary>
         /// <seealso cref="IndexWriter.Commit()"/>
         public IDictionary<string, string> UserData

@@ -33,10 +33,10 @@ Finite State Transducers](http://en.wikipedia.org/wiki/Finite_state_transducer) 
 <!-- LUCENENET NOTE: This method is marked internal in Lucene and their link doesn't work -->
 *   Optional two-pass compression: [FST.Pack()](xref:Lucene.Net.Util.Fst.FST#methods)
 
-*   [Lookup-by-output](xref:Lucene.Net.Util.Fst.Util#Lucene_Net_Util_Fst_Util_GetByOutput_Lucene_Net_Util_Fst_FST_System_Nullable_System_Int64___System_Int64_) when the
+*   [Lookup-by-output](xref:Lucene.Net.Util.Fst.Util#Lucene_Net_Util_Fst_Util_GetByOutput_Lucene_Net_Util_Fst_FST_J2N_Numerics_Int64__System_Int64_) when the
        outputs are in sorted order (e.g., ordinals or file pointers)
 
-*   Pluggable [Outputs](xref:Lucene.Net.Util.Fst.Outputs) representation
+*   Pluggable [Outputs&lt;T&gt;](xref:Lucene.Net.Util.Fst.Outputs%601) representation
 
 *   [N-shortest-paths](xref:Lucene.Net.Util.Fst.Util#Lucene_Net_Util_Fst_Util_ShortestPaths__1_Lucene_Net_Util_Fst_FST___0__Lucene_Net_Util_Fst_FST_Arc___0____0_System_Collections_Generic_IComparer___0__System_Int32_System_Boolean_) search by
        weight

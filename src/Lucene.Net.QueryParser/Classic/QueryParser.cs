@@ -59,9 +59,7 @@ namespace Lucene.Net.QueryParsers.Classic
     /// </code>
     ///
     /// <para>
-    /// Examples of appropriately formatted queries can be found in the <a
-    /// href="../../../../../../queryparsersyntax.html">query syntax
-    /// documentation</a>.
+    /// Examples of appropriately formatted queries can be found in the <a href="xref:Lucene.Net.QueryParsers.Classic">query syntax documentation</a>.
     /// </para>
     ///
     /// <para>
