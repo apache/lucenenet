@@ -1,4 +1,3 @@
-using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Index;
@@ -66,7 +65,7 @@ namespace Lucene.Net.Analysis
     /// one of the constructors that starts with null text.  To load
     /// the token from a char[] use <see cref="ICharTermAttribute.CopyBuffer(char[], int, int)"/>.
     /// To load from a <see cref="string"/> use <see cref="ICharTermAttribute.Clear()"/> (or <see cref="CharTermAttributeExtensions.SetEmpty{T}(T)"/>) followed by
-    /// <see cref="ICharTermAttribute.Append(string)"/> or <see cref="ICharTermAttribute.Append(string, int, int)"/>.
+    /// <see cref="ICharTermAttribute.Append(ReadOnlySpan{char})"/>.
     /// Alternatively you can get the <see cref="Token"/>'s termBuffer by calling either <see cref="ICharTermAttribute.Buffer"/>,
     /// if you know that your text is shorter than the capacity of the termBuffer
     /// or <see cref="ICharTermAttribute.ResizeBuffer(int)"/>, if there is any possibility
@@ -111,11 +110,6 @@ namespace Lucene.Net.Analysis
     ///     <item><description>The startOffset and endOffset represent the start and offset in the source text, so be careful in adjusting them.</description></item>
     ///     <item><description>When caching a reusable token, clone it. When injecting a cached token into a stream that can be reset, clone it again.</description></item>
     /// </list>
-    /// </para>
-    /// <para>
-    /// <b>Please note:</b> With Lucene 3.1, the <see cref="CharTermAttribute.ToString()"/> method had to be changed to match the
-    /// <see cref="ICharSequence"/> interface introduced by the interface <see cref="ICharTermAttribute"/>.
-    /// this method now only prints the term text, no additional information anymore.
     /// </para>
     /// </summary>
     public class Token : CharTermAttribute, ITypeAttribute, IPositionIncrementAttribute, IFlagsAttribute, IOffsetAttribute, IPayloadAttribute, IPositionLengthAttribute
@@ -448,47 +442,11 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="ICharTermAttribute.CopyBuffer(char[], int, int)"/>,
+        /// <see cref="ICharTermAttribute.Append(ReadOnlySpan{char})"/>,
         /// <see cref="SetOffset"/>,
         /// <see cref="Type"/> (set) </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
-        public virtual Token Reinit(char[] newTermBuffer, int newTermOffset, int newTermLength, int newStartOffset, int newEndOffset, string newType)
-        {
-            CheckOffsets(newStartOffset, newEndOffset);
-            ClearNoTermBuffer();
-            CopyBuffer(newTermBuffer, newTermOffset, newTermLength);
-            payload = null;
-            positionIncrement = 1;
-            startOffset = newStartOffset;
-            endOffset = newEndOffset;
-            type = newType;
-            return this;
-        }
-
-        /// <summary>
-        /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="ICharTermAttribute.CopyBuffer(char[], int, int)"/>,
-        /// <see cref="SetOffset"/>,
-        /// <see cref="Type"/> (set) on <see cref="TypeAttribute.DEFAULT_TYPE"/> </summary>
-        /// <returns> this <see cref="Token"/> instance  </returns>
-        public virtual Token Reinit(char[] newTermBuffer, int newTermOffset, int newTermLength, int newStartOffset, int newEndOffset)
-        {
-            CheckOffsets(newStartOffset, newEndOffset);
-            ClearNoTermBuffer();
-            CopyBuffer(newTermBuffer, newTermOffset, newTermLength);
-            startOffset = newStartOffset;
-            endOffset = newEndOffset;
-            type = TokenAttributes.TypeAttribute.DEFAULT_TYPE;
-            return this;
-        }
-
-        /// <summary>
-        /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="ICharTermAttribute.Append(string)"/>,
-        /// <see cref="SetOffset"/>,
-        /// <see cref="Type"/> (set) </summary>
-        /// <returns> this <see cref="Token"/> instance  </returns>
-        public virtual Token Reinit(string newTerm, int newStartOffset, int newEndOffset, string newType)
+        public virtual Token Reinit(ReadOnlySpan<char> newTerm, int newStartOffset, int newEndOffset, string newType)
         {
             CheckOffsets(newStartOffset, newEndOffset);
             Clear();
@@ -501,49 +459,15 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="ICharTermAttribute.Append(string, int, int)"/>,
-        /// <see cref="SetOffset"/>,
-        /// <see cref="Type"/> (set) </summary>
-        /// <returns> this <see cref="Token"/> instance  </returns>
-        public virtual Token Reinit(string newTerm, int newTermOffset, int newTermLength, int newStartOffset, int newEndOffset, string newType)
-        {
-            CheckOffsets(newStartOffset, newEndOffset);
-            Clear();
-            Append(newTerm, newTermOffset, newTermOffset + newTermLength);
-            startOffset = newStartOffset;
-            endOffset = newEndOffset;
-            type = newType;
-            return this;
-        }
-
-        /// <summary>
-        /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="ICharTermAttribute.Append(string)"/>,
+        /// <see cref="ICharTermAttribute.Append(ReadOnlySpan{char})"/>,
         /// <see cref="SetOffset"/>,
         /// <see cref="Type"/> (set) on <see cref="TypeAttribute.DEFAULT_TYPE"/> </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
-        public virtual Token Reinit(string newTerm, int newStartOffset, int newEndOffset)
+        public virtual Token Reinit(ReadOnlySpan<char> newTerm, int newStartOffset, int newEndOffset)
         {
             CheckOffsets(newStartOffset, newEndOffset);
             Clear();
             Append(newTerm);
-            startOffset = newStartOffset;
-            endOffset = newEndOffset;
-            type = TokenAttributes.TypeAttribute.DEFAULT_TYPE;
-            return this;
-        }
-
-        /// <summary>
-        /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="ICharTermAttribute.Append(string, int, int)"/>,
-        /// <see cref="SetOffset"/>,
-        /// <see cref="Type"/> (set) on <see cref="TypeAttribute.DEFAULT_TYPE"/> </summary>
-        /// <returns> this <see cref="Token"/> instance  </returns>
-        public virtual Token Reinit(string newTerm, int newTermOffset, int newTermLength, int newStartOffset, int newEndOffset)
-        {
-            CheckOffsets(newStartOffset, newEndOffset);
-            Clear();
-            Append(newTerm, newTermOffset, newTermOffset + newTermLength);
             startOffset = newStartOffset;
             endOffset = newEndOffset;
             type = TokenAttributes.TypeAttribute.DEFAULT_TYPE;

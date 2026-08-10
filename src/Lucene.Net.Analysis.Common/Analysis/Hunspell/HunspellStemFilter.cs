@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 buffer.RemoveAt(0);
                 RestoreState(savedState);
                 posIncAtt.PositionIncrement = 0;
-                termAtt.SetEmpty().Append(nextStem);
+                termAtt.SetEmpty().Append(nextStem.AsSpan());
                 return true;
             }
 
@@ -125,7 +125,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
             CharsRef stem = buffer[0];
             buffer.RemoveAt(0);
-            termAtt.SetEmpty().Append(stem);
+            termAtt.SetEmpty().Append(stem.AsSpan());
 
             if (longestOnly)
             {

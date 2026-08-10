@@ -589,8 +589,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         // Nested classes:
         ///////////////////////////////////////////////////////////////////////////////
         /// <summary>
-        /// A <see cref="StringReader"/> that exposes it's contained string for fast direct access.
-        /// Might make sense to generalize this to ICharSequence and make it public?
+        /// A <see cref="StringReader"/> that exposes its contained string for fast direct access.
         /// </summary>
         internal sealed class FastStringReader : StringReader
         {

@@ -308,96 +308,6 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Encode characters from this <see cref="ICharSequence"/>, starting at <paramref name="offset"/>
-        /// for <paramref name="length"/> characters. After encoding, <c>result.Offset</c> will always be 0.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="result"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="offset"/> or <paramref name="length"/> is less than zero.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// <paramref name="offset"/> and <paramref name="length"/> refer to a location outside of <paramref name="source"/>.
-        /// </exception>
-        // TODO: broken if incoming result.offset != 0
-        public static void UTF16toUTF8(ICharSequence source, int offset, int length, BytesRef result)
-        {
-            // LUCENENET: Added guard clauses
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
-            if (result is null)
-                throw new ArgumentNullException(nameof(result));
-            if (offset < 0)
-                throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)} must not be negative.");
-            if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} must not be negative.");
-            if (offset > source.Length - length) // Checks for int overflow
-                throw new ArgumentOutOfRangeException(nameof(length),
-                    $"Index and length must refer to a location within the string. For example {nameof(offset)} + {nameof(length)} <= source.{nameof(source.Length)}.");
-
-            int end = offset + length;
-
-            var @out = result.Bytes;
-            result.Offset = 0;
-            // Pre-allocate for worst case 4-for-1
-            int maxLen = length * 4;
-            if (@out.Length < maxLen)
-            {
-                @out = result.Bytes = new byte[maxLen];
-            }
-
-            int upto = 0;
-            for (int i = offset; i < end; i++)
-            {
-                var code = (int)source[i];
-                if (code < 0x80)
-                {
-                    @out[upto++] = (byte)code;
-                }
-                else if (code < 0x800)
-                {
-                    @out[upto++] = (byte)(0xC0 | (code >> 6));
-                    @out[upto++] = (byte)(0x80 | (code & 0x3F));
-                }
-                else if (code < 0xD800 || code > 0xDFFF)
-                {
-                    @out[upto++] = (byte)(0xE0 | (code >> 12));
-                    @out[upto++] = (byte)(0x80 | ((code >> 6) & 0x3F));
-                    @out[upto++] = (byte)(0x80 | (code & 0x3F));
-                }
-                else
-                {
-                    // surrogate pair
-                    // confirm valid high surrogate
-                    if (code < 0xDC00 && (i < end - 1))
-                    {
-                        int utf32 = (int)source[i + 1];
-                        // confirm valid low surrogate and write pair
-                        if (utf32 >= 0xDC00 && utf32 <= 0xDFFF)
-                        {
-                            utf32 = (code << 10) + utf32 + SURROGATE_OFFSET;
-                            i++;
-                            @out[upto++] = (byte)(0xF0 | (utf32 >> 18));
-                            @out[upto++] = (byte)(0x80 | ((utf32 >> 12) & 0x3F));
-                            @out[upto++] = (byte)(0x80 | ((utf32 >> 6) & 0x3F));
-                            @out[upto++] = (byte)(0x80 | (utf32 & 0x3F));
-                            continue;
-                        }
-                    }
-
-                    // replace unpaired surrogate or out-of-order low surrogate
-                    // with substitution character
-                    @out[upto++] = 0xEF;
-                    @out[upto++] = 0xBF;
-                    @out[upto++] = 0xBD;
-                }
-            }
-
-            //assert matches(s, offset, length, out, upto);
-            result.Length = upto;
-        }
-
-        /// <summary>
         /// Encode characters from this <see cref="string"/>, starting at <paramref name="offset"/>
         /// for <paramref name="length"/> characters. After encoding, <c>result.Offset</c> will always be 0.
         /// <para/>
@@ -545,7 +455,8 @@ namespace Lucene.Net.Util
         }
         */
 
-        public static bool ValidUTF16String(ICharSequence s)
+        // LUCENENET specific overload
+        public static bool ValidUTF16String(ReadOnlySpan<char> s)
         {
             int size = s.Length;
             for (int i = 0; i < size; i++)
@@ -583,46 +494,7 @@ namespace Lucene.Net.Util
             return true;
         }
 
-        // LUCENENET specific overload because string doesn't implement ICharSequence
-        public static bool ValidUTF16String(string s)
-        {
-            int size = s.Length;
-            for (int i = 0; i < size; i++)
-            {
-                char ch = s[i];
-                if (ch >= UNI_SUR_HIGH_START && ch <= UNI_SUR_HIGH_END)
-                {
-                    if (i < size - 1)
-                    {
-                        i++;
-                        char nextCH = s[i];
-                        if (nextCH >= UNI_SUR_LOW_START && nextCH <= UNI_SUR_LOW_END)
-                        {
-                            // Valid surrogate pair
-                        }
-                        else
-                        {
-                            // Unmatched high surrogate
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        // Unmatched high surrogate
-                        return false;
-                    }
-                }
-                else if (ch >= UNI_SUR_LOW_START && ch <= UNI_SUR_LOW_END)
-                {
-                    // Unmatched low surrogate
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        // LUCENENET specific overload because StringBuilder doesn't implement ICharSequence
+        // LUCENENET specific overload
         public static bool ValidUTF16String(StringBuilder s)
         {
             int size = s.Length;

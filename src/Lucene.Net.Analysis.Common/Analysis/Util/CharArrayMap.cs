@@ -215,35 +215,6 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Creates a dictionary from the mappings in another dictionary.
-        /// </summary>
-        /// <param name="matchVersion">
-        ///          compatibility match version see <see cref="CharArrayDictionary{TValue}"/> for details. </param>
-        /// <param name="collection">
-        ///          a dictionary (<see cref="T:IDictionary{ICharSequence,V}"/>) whose mappings to be copied. </param>
-        /// <param name="ignoreCase">
-        ///          <c>false</c> if and only if the set should be case sensitive;
-        ///          otherwise <c>true</c>. </param>
-        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
-        public CharArrayDictionary(LuceneVersion matchVersion, IDictionary<ICharSequence, TValue> collection, bool ignoreCase)
-            : this(matchVersion, collection?.Count ?? 0, ignoreCase)
-        {
-            // LUCENENET: Added guard clause
-            if (collection is null)
-                throw new ArgumentNullException(nameof(collection));
-
-            foreach (var v in collection)
-            {
-                // LUCENENET: S1699: Don't call call protected members in the constructor
-                if (keys[GetSlot(v.Key)] != null) // ContainsKey
-                {
-                    throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, v.Key));
-                }
-                SetImpl(v.Key, new MapValue(v.Value));
-            }
-        }
-
-        /// <summary>
         /// Create set from the supplied dictionary (used internally for readonly maps...)
         /// </summary>
         internal CharArrayDictionary(CharArrayDictionary<TValue> toCopy)
@@ -291,28 +262,6 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">An element with <paramref name="text"/> already exists in the dictionary.</exception>
         public virtual void Add(char[] text, TValue value)
-        {
-            if (ContainsKey(text))
-            {
-                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, text), nameof(text));
-            }
-            Set(text, value);
-        }
-
-        /// <summary>
-        /// Adds the <paramref name="value"/> for the passed in <paramref name="text"/>.
-        /// </summary>
-        /// <param name="text">The string-able type to be added/updated in the dictionary.</param>
-        /// <param name="value">The corresponding value for the given <paramref name="text"/>.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="text"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
-        /// </exception>
-        /// <exception cref="ArgumentException">An element with <paramref name="text"/> already exists in the dictionary.</exception>
-        public virtual void Add(ICharSequence text, TValue value)
         {
             if (ContainsKey(text))
             {
@@ -440,7 +389,7 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">The number of elements in the source is greater
         /// than the available space from <paramref name="index"/> to the end of the destination array.</exception>
-        internal void CopyTo(KeyValuePair<ICharSequence, TValue>[] array, int index) // internal for testing
+        internal void CopyTo(KeyValuePair<ReadOnlyMemory<char>, TValue>[] array, int index) // internal for testing
         {
             if (array is null)
                 throw new ArgumentNullException(nameof(array));
@@ -452,7 +401,7 @@ namespace Lucene.Net.Analysis.Util
             using var iter = GetEnumerator();
             for (int i = index; iter.MoveNext(); i++)
             {
-                array[i] = new KeyValuePair<ICharSequence, TValue>(((char[])iter.CurrentKey.Clone()).AsCharSequence(), iter.CurrentValue!);
+                array[i] = new KeyValuePair<ReadOnlyMemory<char>, TValue>((char[])iter.CurrentKey.Clone(), iter.CurrentValue!);
             }
         }
 
@@ -489,33 +438,20 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool ContainsKey(string text)
         {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
             return keys[GetSlot(text)] != null;
         }
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="text"/> <see cref="ICharSequence"/> is in the <see cref="Keys"/>;
+        /// <c>true</c> if the <paramref name="text"/> <see cref="ReadOnlySpan{T}"/> is in the <see cref="Keys"/>;
         /// otherwise <c>false</c>
         /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="text"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
-        /// </exception>
-        public virtual bool ContainsKey(ICharSequence text)
+        public virtual bool ContainsKey(ReadOnlySpan<char> text)
         {
-            if (text is null || !text.HasValue)
-                throw new ArgumentNullException(nameof(text));
-
-            if (text is CharArrayCharSequence charArrayCs)
-                return ContainsKey(charArrayCs.Value!);
-            if (text is StringBuilderCharSequence stringBuilderCs)
-                return ContainsKey(stringBuilderCs.Value!.ToString()); // LUCENENET: Indexing into a StringBuilder is slow, so materialize
-
             return keys[GetSlot(text)] != null;
         }
-
 
         /// <summary>
         /// <c>true</c> if the <paramref name="text"/> <see cref="object.ToString()"/> (in the invariant culture)
@@ -531,8 +467,6 @@ namespace Lucene.Net.Analysis.Util
                 return ContainsKey(str);
             if (text is char[] charArray)
                 return ContainsKey(charArray, 0, charArray.Length);
-            if (text is ICharSequence cs)
-                return ContainsKey(cs);
 
             var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
             if (returnType == CharArrayDictionary.CharReturnType.String)
@@ -584,45 +518,15 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns the value of the mapping of the chars inside this <see cref="ICharSequence"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="text"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
-        /// </exception>
-        /// <exception cref="KeyNotFoundException"><paramref name="text"/> is not found in the dictionary.</exception>
-        internal virtual TValue Get(ICharSequence text, bool throwIfNotFound = true)
-        {
-            if (text is null || !text.HasValue)
-                throw new ArgumentNullException(nameof(text));
-
-            if (text is StringCharSequence strCs)
-                return Get(strCs.Value!, throwIfNotFound);
-            if (text is CharArrayCharSequence charArrayCs)
-                return Get(charArrayCs.Value!, throwIfNotFound);
-            if (text is StringBuilderCharSequence stringBuilderCs)
-                return Get(stringBuilderCs.Value!.ToString(), throwIfNotFound); // LUCENENET: Indexing into a StringBuilder is slow, so materialize
-
-            var value = values[GetSlot(text)];
-            if (value is not null)
-            {
-                return value.Value;
-            }
-            if (throwIfNotFound)
-                throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, text));
-            return default!;
-        }
-
-        /// <summary>
         /// Returns the value of the mapping of the chars inside this <see cref="string"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         /// <exception cref="KeyNotFoundException"><paramref name="text"/> is not found in the dictionary.</exception>
         internal virtual TValue Get(string text, bool throwIfNotFound = true)
         {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
             var value = values[GetSlot(text)];
             if (value is not null)
             {
@@ -650,8 +554,6 @@ namespace Lucene.Net.Analysis.Util
                 return Get(str, throwIfNotFound);
             if (text is char[] charArray)
                 return Get(charArray, 0, charArray.Length, throwIfNotFound);
-            if (text is ICharSequence cs)
-                return Get(cs, throwIfNotFound);
 
             var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
             if (returnType == CharArrayDictionary.CharReturnType.String)
@@ -683,38 +585,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns <c>true</c> if the <see cref="ICharSequence"/> is in the set.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="text"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
-        /// </exception>
-        private int GetSlot(ICharSequence text)
-        {
-            int code = GetHashCode(text);
-            int pos = code & (keys.Length - 1);
-            char[] text2 = keys[pos];
-            if (text2 != null && !Equals(text, text2))
-            {
-                int inc = ((code >> 8) + code) | 1;
-                do
-                {
-                    code += inc;
-                    pos = code & (keys.Length - 1);
-                    text2 = keys[pos];
-                } while (text2 != null && !Equals(text, text2));
-            }
-            return pos;
-        }
-
-        /// <summary>
         /// Returns <c>true</c> if the <see cref="string"/> is in the set.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        private int GetSlot(string text)
+        private int GetSlot(ReadOnlySpan<char> text)
         {
             int code = GetHashCode(text);
             int pos = code & (keys.Length - 1);
@@ -808,37 +682,9 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Put(string text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
         {
-            MapValue? oldValue = PutImpl(text, new MapValue(value));
-            if (oldValue is not null)
-            {
-                previousValue = oldValue.Value;
-                return false;
-            }
-            previousValue = default;
-            return true;
-        }
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
 
-        /// <summary>
-        /// Add the given mapping.
-        /// <para/>
-        /// <b>Note:</b> The <see cref="this[ICharSequence]"/> setter is more efficient than this method if
-        /// the <paramref name="previousValue"/> is not required.
-        /// </summary>
-        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
-        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
-        /// <param name="previousValue">The previous value associated with the text, or the default for the type of <paramref name="value"/>
-        /// parameter if there was no mapping for <paramref name="text"/>.</param>
-        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the text already existed. The <paramref name="previousValue"/>
-        /// will be populated if the result is <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="text"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
-        /// </exception>
-        public virtual bool Put(ICharSequence text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
-        {
             MapValue? oldValue = PutImpl(text, new MapValue(value));
             if (oldValue is not null)
             {
@@ -882,42 +728,6 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add the given mapping.
         /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="text"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
-        /// </exception>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private MapValue? PutImpl(ICharSequence text, MapValue value)
-        {
-            // LUCENENET: Added guard clause
-            if (text is null || !text.HasValue)
-                throw new ArgumentNullException(nameof(text));
-
-            if (text is CharArrayCharSequence charArrayCs)
-                return PutImpl(charArrayCs.Value ?? Array.Empty<char>(), value);
-            if (text is StringBuilderCharSequence stringBuilderCs) // LUCENENET: Indexing into a StringBuilder is slow, so materialize
-            {
-                var sb = stringBuilderCs.Value!;
-                char[] result = new char[sb.Length];
-                sb.CopyTo(sourceIndex: 0, result, destinationIndex: 0, sb.Length);
-                return PutImpl(result, value);
-            }
-
-            int length = text.Length;
-            char[] buffer = new char[length];
-            for (int i = 0; i < length; i++)
-            {
-                buffer[i] = text[i];
-            }
-            return PutImpl(buffer, value);
-        }
-
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MapValue? PutImpl<T>(T text, MapValue value)
@@ -930,11 +740,9 @@ namespace Lucene.Net.Analysis.Util
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087
             if (text is string str)
-                return PutImpl(str, value);
+                return PutImpl(str.AsSpan(), value);
             if (text is char[] charArray)
-                return PutImpl(charArray, value);
-            if (text is ICharSequence cs)
-                return PutImpl(cs, value);
+                return PutImpl(charArray.AsSpan(), value);
 
             var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
             if (returnType == CharArrayDictionary.CharReturnType.String)
@@ -946,18 +754,13 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add the given mapping.
         /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private MapValue? PutImpl(string text, MapValue value)
+        private MapValue? PutImpl(ReadOnlySpan<char> text, MapValue value)
         {
-            // LUCENENET: Added guard clause
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
-
             // LUCENENET specific - only allocate char array if it is required.
             if (ignoreCase)
             {
-                return PutImpl(text.ToCharArray(), value);
+                return PutImpl(text.ToArray(), value);
             }
             version++;
             int slot = GetSlot(text);
@@ -967,7 +770,7 @@ namespace Lucene.Net.Analysis.Util
                 values[slot] = value;
                 return oldValue;
             }
-            keys[slot] = text.ToCharArray();
+            keys[slot] = text.ToArray();
             values[slot] = value;
             count++;
 
@@ -1087,15 +890,12 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Sets the value of the mapping of the chars inside this <see cref="ICharSequence"/>.
+        /// Sets the value of the mapping of the chars inside this <see cref="ReadOnlySpan{T}"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal virtual void Set(ICharSequence text)
+        internal virtual void Set(ReadOnlySpan<char> text)
         {
-            if (text is null || !text.HasValue)
-                throw new ArgumentNullException(nameof(text));
-
             SetImpl(text, PLACEHOLDER);
         }
 
@@ -1134,11 +934,6 @@ namespace Lucene.Net.Analysis.Util
                 Set(charArray);
                 return;
             }
-            if (text is ICharSequence cs)
-            {
-                Set(cs);
-                return;
-            }
 
             var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
             if (returnType == CharArrayDictionary.CharReturnType.String)
@@ -1152,9 +947,8 @@ namespace Lucene.Net.Analysis.Util
 
         void ICharArrayDictionary.Set(char[] text, int startIndex, int length) => Set(text, startIndex, length);
         void ICharArrayDictionary.Set(char[] text) => Set(text);
-        void ICharArrayDictionary.Set(ICharSequence text) => Set(text);
         void ICharArrayDictionary.Set<T>(T text) => Set(text);
-        void ICharArrayDictionary.Set(string text) => Set(text);
+        void ICharArrayDictionary.Set(ReadOnlySpan<char> text) => Set(text);
 
         #endregion Set
 
@@ -1199,24 +993,6 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Sets the value of the mapping of the chars inside this <see cref="ICharSequence"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="text"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.</exception>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal virtual void Set(ICharSequence text, TValue? value)
-        {
-            if (text is null || !text.HasValue)
-                throw new ArgumentNullException(nameof(text));
-
-            SetImpl(text, new MapValue(value));
-        }
-
-        /// <summary>
         /// Sets the value of the mapping of the chars inside this <see cref="string"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
@@ -1252,11 +1028,6 @@ namespace Lucene.Net.Analysis.Util
                 Set(charArray, 0, charArray.Length, value);
                 return;
             }
-            if (text is ICharSequence cs)
-            {
-                Set(cs, value);
-                return;
-            }
 
             var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
             if (returnType == CharArrayDictionary.CharReturnType.String)
@@ -1275,58 +1046,13 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// LUCENENET specific. Like PutImpl, but doesn't have a return value or lookup to get the old value.
         /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="text"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
-        /// </exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SetImpl(ICharSequence text, MapValue value)
+        private void SetImpl(ReadOnlySpan<char> text, MapValue value)
         {
-            // LUCENENET: Added guard clause
-            if (text is null || !text.HasValue)
-                throw new ArgumentNullException(nameof(text));
-
-            if (text is CharArrayCharSequence charArrayCs)
-            {
-                SetImpl(charArrayCs.Value ?? Array.Empty<char>(), value);
-                return;
-            }
-            if (text is StringBuilderCharSequence stringBuilderCs) // LUCENENET: Indexing into a StringBuilder is slow, so materialize
-            {
-                var sb = stringBuilderCs.Value!;
-                char[] result = new char[sb.Length];
-                sb.CopyTo(sourceIndex: 0, result, destinationIndex: 0, sb.Length);
-                SetImpl(result, value);
-                return;
-            }
-
-            int length = text.Length;
-            char[] buffer = new char[length];
-            for (int i = 0; i < length; i++)
-            {
-                buffer[i] = text[i];
-            }
-
-            SetImpl(buffer, value);
-        }
-
-        /// <summary>
-        /// LUCENENET specific. Like PutImpl, but doesn't have a return value or lookup to get the old value.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SetImpl(string text, MapValue value)
-        {
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
-
             // LUCENENET specific - only allocate char array if it is required.
             if (ignoreCase)
             {
-                SetImpl(text.ToCharArray(), value);
+                SetImpl(text.ToArray(), value);
                 return;
             }
             version++;
@@ -1336,7 +1062,7 @@ namespace Lucene.Net.Analysis.Util
                 values[slot] = value;
                 return;
             }
-            keys[slot] = text.ToCharArray();
+            keys[slot] = text.ToArray();
             values[slot] = value;
             count++;
 
@@ -1470,33 +1196,6 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// This implementation enumerates over the specified <see cref="T:IDictionary{ICharSequence,TValue}"/>'s
-        /// entries, and calls this dictionary's <see cref="Set(ICharSequence, TValue?)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="collection">A dictionary of values to add/update in the current dictionary.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="collection"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// An element in the collection has a <c>null</c> text.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The text's <see cref="ICharSequence.HasValue"/> property for a given element in the collection returns <c>false</c>.
-        /// </exception>
-        public virtual void PutAll(IDictionary<ICharSequence, TValue> collection)
-        {
-            if (collection is null)
-                throw new ArgumentNullException(nameof(collection));
-
-            foreach (var kvp in collection)
-            {
-                Set(kvp.Key, kvp.Value);
-            }
-        }
-
-        /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{T,TValue}"/>'s
         /// entries, and calls this dictionary's <see cref="Set{T}(T, TValue?)"/> operation once for each entry.
         /// </summary>
@@ -1555,33 +1254,6 @@ namespace Lucene.Net.Analysis.Util
         /// An element in the collection is <c>null</c>.
         /// </exception>
         public virtual void PutAll(IEnumerable<KeyValuePair<string, TValue>> collection)
-        {
-            if (collection is null)
-                throw new ArgumentNullException(nameof(collection));
-
-            foreach (var kvp in collection)
-            {
-                Set(kvp.Key, kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{ICharSequence,TValue}}"/>'s
-        /// entries, and calls this dictionary's <see cref="Set(ICharSequence, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="collection">The values to add/update in the current dictionary.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="collection"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// An element in the collection has a <c>null</c> text.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The text's <see cref="ICharSequence.HasValue"/> property for a given element in the collection returns <c>false</c>.
-        /// </exception>
-        public virtual void PutAll(IEnumerable<KeyValuePair<ICharSequence, TValue>> collection)
         {
             if (collection is null)
                 throw new ArgumentNullException(nameof(collection));
@@ -1685,7 +1357,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool Equals(ICharSequence text1, char[] text2)
+        private bool Equals(ReadOnlySpan<char> text1, ReadOnlySpan<char> text2)
         {
             int length = text1.Length;
             if (length != text2.Length)
@@ -1697,40 +1369,7 @@ namespace Lucene.Net.Analysis.Util
                 for (int i = 0; i < length;)
                 {
                     int codePointAt = charUtils.CodePointAt(text1, i);
-                    if (Character.ToLower(codePointAt, CultureInfo.InvariantCulture) != charUtils.CodePointAt(text2, i, text2.Length)) // LUCENENET specific - need to use invariant culture to match Java
-                    {
-                        return false;
-                    }
-                    i += Character.CharCount(codePointAt);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < length; i++)
-                {
-                    if (text1[i] != text2[i])
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool Equals(string text1, char[] text2)
-        {
-            int length = text1.Length;
-            if (length != text2.Length)
-            {
-                return false;
-            }
-            if (ignoreCase)
-            {
-                for (int i = 0; i < length;)
-                {
-                    int codePointAt = charUtils.CodePointAt(text1, i);
-                    if (Character.ToLower(codePointAt, CultureInfo.InvariantCulture) != charUtils.CodePointAt(text2, i, text2.Length)) // LUCENENET specific - need to use invariant culture to match Java
+                    if (Character.ToLower(codePointAt, CultureInfo.InvariantCulture) != charUtils.CodePointAt(text2, i)) // LUCENENET specific - need to use invariant culture to match Java
                     {
                         return false;
                     }
@@ -1859,44 +1498,8 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int GetHashCode(ICharSequence text)
+        private int GetHashCode(ReadOnlySpan<char> text)
         {
-            if (text is null || !text.HasValue)
-                throw new ArgumentNullException(nameof(text)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-
-            int code = 0;
-            int length = text.Length;
-            if (ignoreCase)
-            {
-                for (int i = 0; i < length;)
-                {
-                    unchecked
-                    {
-                        int codePointAt = charUtils.CodePointAt(text, i);
-                        code = code * 31 + Character.ToLower(codePointAt, CultureInfo.InvariantCulture); // LUCENENET specific - need to use invariant culture to match Java
-                        i += Character.CharCount(codePointAt);
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < length; i++)
-                {
-                    unchecked
-                    {
-                        code = code * 31 + text[i];
-                    }
-                }
-            }
-            return code;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int GetHashCode(string text)
-        {
-            if (text is null)
-                throw new ArgumentNullException(nameof(text)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-
             int code = 0;
             int length = text.Length;
             if (ignoreCase)
@@ -1969,24 +1572,7 @@ namespace Lucene.Net.Analysis.Util
         /// Primarily for internal use by <see cref="CharArraySet"/>.
         /// </summary>
         /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="text"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.</exception>
-        internal virtual bool Put(ICharSequence text)
-        {
-            return PutImpl(text, PLACEHOLDER) is null;
-        }
-
-        /// <summary>
-        /// Adds a placeholder with the given <paramref name="text"/> as the text.
-        /// Primarily for internal use by <see cref="CharArraySet"/>.
-        /// </summary>
-        /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        internal virtual bool Put(string text)
+        internal virtual bool Put(ReadOnlySpan<char> text)
         {
             return PutImpl(text, PLACEHOLDER) is null;
         }
@@ -2004,8 +1590,7 @@ namespace Lucene.Net.Analysis.Util
 
         bool ICharArrayDictionary.Put(char[] text, int startIndex, int length) => Put(text, startIndex, length);
         bool ICharArrayDictionary.Put(char[] text) => Put(text);
-        bool ICharArrayDictionary.Put(string text) => Put(text);
-        bool ICharArrayDictionary.Put(ICharSequence text) => Put(text);
+        bool ICharArrayDictionary.Put(ReadOnlySpan<char> text) => Put(text);
         bool ICharArrayDictionary.Put<T>(T text) => Put(text);
 
         /// <summary>
@@ -2105,46 +1690,12 @@ namespace Lucene.Net.Analysis.Util
         /// if the text is found; otherwise, the default value for the type of the value parameter.
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="text"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
-        /// </exception>
-        public virtual bool TryGetValue(ICharSequence text, [MaybeNullWhen(returnValue: false)] out TValue value)
-        {
-            if (text is null || !text.HasValue)
-                throw new ArgumentNullException(nameof(text));
-
-            if (text is StringCharSequence strCs)
-                return TryGetValue(strCs.Value!, out value);
-            if (text is CharArrayCharSequence charArrayCs)
-                return TryGetValue(charArrayCs.Value!, out value);
-            if (text is StringBuilderCharSequence stringBuilderCs) // LUCENENET: Indexing into a StringBuilder is slow, so materialize
-                return TryGetValue(stringBuilderCs.Value!.ToString(), out value);
-
-            var val = values[GetSlot(text)];
-            if (val != null)
-            {
-                value = val.Value;
-                return true;
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// Gets the value associated with the specified text.
-        /// </summary>
-        /// <param name="text">The text of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified text,
-        /// if the text is found; otherwise, the default value for the type of the value parameter.
-        /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool TryGetValue(string text, [NotNullWhen(returnValue: false)] out TValue value)
         {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
             var val = values[GetSlot(text)];
             if (val != null)
             {
@@ -2176,8 +1727,6 @@ namespace Lucene.Net.Analysis.Util
                 return TryGetValue(str, out value);
             if (text is char[] charArray)
                 return TryGetValue(charArray, 0, charArray.Length, out value);
-            if (text is ICharSequence cs)
-                return TryGetValue(cs, out value);
 
             var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
             if (returnType == CharArrayDictionary.CharReturnType.String)
@@ -2212,23 +1761,6 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="text">The text of the value to get or set.</param>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual TValue this[char[] text]
-        {
-            get => Get(text, throwIfNotFound: true);
-            set => Set(text, value);
-        }
-
-        /// <summary>
-        /// Gets or sets the value associated with the specified text.
-        /// </summary>
-        /// <param name="text">The text of the value to get or set.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="text"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
-        /// </exception>
-        public virtual TValue this[ICharSequence text]
         {
             get => Get(text, throwIfNotFound: true);
             set => Set(text, value);
@@ -2611,7 +2143,7 @@ namespace Lucene.Net.Analysis.Util
         /// <remarks>
         /// For purposes of enumeration, each item is a <see cref="KeyValuePair{TKey, TValue}"/> structure
         /// representing a value and its text. There are also properties allowing direct access
-        /// to the <see cref="T:char[]"/> array of each element and quick conversions to <see cref="string"/> or <see cref="ICharSequence"/>.
+        /// to the <see cref="T:char[]"/> array of each element and quick conversions to <see cref="string"/>
         /// <para/>
         /// The <c>foreach</c> statement of the C# language (<c>for each</c> in C++, <c>For Each</c> in Visual Basic)
         /// hides the complexity of enumerators. Therefore, using <c>foreach</c> is recommended instead of directly manipulating the enumerator.
@@ -2702,9 +2234,9 @@ namespace Lucene.Net.Analysis.Util
             {
                 CopyTo(chars, index);
             }
-            else if (array is KeyValuePair<ICharSequence, TValue>[] charSequences)
+            else if (array is KeyValuePair<ReadOnlyMemory<char>, TValue>[] memory)
             {
-                CopyTo(charSequences, index);
+                CopyTo(memory, index);
             }
             else if (array is DictionaryEntry[] dictEntryArray)
             {
@@ -2879,10 +2411,6 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_KeyCollectionSet);
             }
-            public override bool Add(ICharSequence text)
-            {
-                throw UnsupportedOperationException.Create(SR.NotSupported_KeyCollectionSet);
-            }
             public override bool Add(string text)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_KeyCollectionSet);
@@ -2902,7 +2430,7 @@ namespace Lucene.Net.Analysis.Util
         /// <para/>
         /// This enumerator exposes <see cref="CurrentKey"/> efficient access to the
         /// underlying <see cref="T:char[]"/>. It also has <see cref="CurrentKeyString"/>,
-        /// <see cref="CurrentKeyCharSequence"/>, and <see cref="CurrentValue"/> properties for
+        /// <see cref="CurrentKeySpan"/>, and <see cref="CurrentValue"/> properties for
         /// convenience.
         /// </summary>
         /// <remarks>
@@ -2976,10 +2504,10 @@ namespace Lucene.Net.Analysis.Util
             internal bool HasNext => pos < dictionary.keys.Length;
 
             /// <summary>
-            /// Gets the current text as a <see cref="CharArrayCharSequence"/>.
+            /// Gets the current text as a <see cref="ReadOnlySpan{T}"/>.
             /// </summary>
-            // LUCENENET specific - quick access to ICharSequence interface
-            public ICharSequence CurrentKeyCharSequence
+            // LUCENENET specific - quick access to ReadOnlySpan<char>
+            public ReadOnlySpan<char> CurrentKeySpan
             {
                 get
                 {
@@ -2989,7 +2517,7 @@ namespace Lucene.Net.Analysis.Util
                     char[] key = dictionary.keys[lastPos];
                     if (key is null)
                         throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
-                    return key.AsCharSequence();
+                    return key.AsSpan();
                 }
             }
 
@@ -3263,22 +2791,19 @@ namespace Lucene.Net.Analysis.Util
         bool ContainsKey(char[] text, int startIndex, int length);
         bool ContainsKey(char[] text);
         bool ContainsKey<T>(T text);
-        bool ContainsKey(string text);
-        bool ContainsKey(ICharSequence text);
+        bool ContainsKey(ReadOnlySpan<char> text);
         int Count { get; }
         bool IgnoreCase { get; }
         bool IsReadOnly { get; }
         LuceneVersion MatchVersion { get; }
         bool Put(char[] text, int startIndex, int length);
         bool Put(char[] text);
-        bool Put(ICharSequence text);
         bool Put<T>(T text);
-        bool Put(string text);
+        bool Put(ReadOnlySpan<char> text);
         void Set(char[] text, int startIndex, int length);
         void Set(char[] text);
-        void Set(ICharSequence text);
         void Set<T>(T text);
-        void Set(string text);
+        void Set(ReadOnlySpan<char> text);
         ICharArrayDictionaryEnumerator GetEnumerator();
     }
 
@@ -3291,7 +2816,7 @@ namespace Lucene.Net.Analysis.Util
     {
         bool NotStartedOrEnded { get; }
         bool MoveNext();
-        ICharSequence CurrentKeyCharSequence { get; }
+        ReadOnlySpan<char> CurrentKeySpan { get; }
         string CurrentKeyString { get; }
         char[] CurrentKey { get; }
         void Reset();
@@ -3427,11 +2952,6 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put(ICharSequence text, TValue value, [MaybeNullWhen(true)] out TValue previousValue)
-            {
-                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
-            }
-
             public override bool Put(string text, TValue value, [MaybeNullWhen(true)] out TValue previousValue)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
@@ -3452,12 +2972,7 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            internal override bool Put(ICharSequence text)
-            {
-                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
-            }
-
-            internal override bool Put(string text)
+            internal override bool Put(ReadOnlySpan<char> text)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
@@ -3483,11 +2998,6 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override void Add(ICharSequence text, TValue value)
-            {
-                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
-            }
-
             public override void Add<T>(T text, TValue value)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
@@ -3500,12 +3010,6 @@ namespace Lucene.Net.Analysis.Util
             }
 
             public override TValue this[char[] text]
-            {
-                get => base[text];
-                set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
-            }
-
-            public override TValue this[ICharSequence text]
             {
                 get => base[text];
                 set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
@@ -3533,11 +3037,6 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override void PutAll(IDictionary<ICharSequence, TValue> collection)
-            {
-                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
-            }
-
             public override void PutAll<T>(IDictionary<T, TValue> collection)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
@@ -3549,11 +3048,6 @@ namespace Lucene.Net.Analysis.Util
             }
 
             public override void PutAll(IEnumerable<KeyValuePair<char[], TValue>> collection)
-            {
-                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
-            }
-
-            public override void PutAll(IEnumerable<KeyValuePair<ICharSequence, TValue>> collection)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
@@ -3583,12 +3077,7 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            internal override void Set(ICharSequence text)
-            {
-                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
-            }
-
-            internal override void Set(ICharSequence text, TValue? value)
+            internal override void Set(ReadOnlySpan<char> text)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
@@ -3651,14 +3140,6 @@ namespace Lucene.Net.Analysis.Util
                 return false;
             }
 
-            public override bool ContainsKey(ICharSequence text)
-            {
-                if (text is null)
-                    throw new ArgumentNullException(nameof(text));
-
-                return false;
-            }
-
             public override bool ContainsKey<T>(T text)
             {
                 if (text is null)
@@ -3684,16 +3165,6 @@ namespace Lucene.Net.Analysis.Util
 
                 if (throwIfNotFound)
                     throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text)));
-                return default!;
-            }
-
-            internal override V Get(ICharSequence text, bool throwIfNotFound = true)
-            {
-                if (text is null)
-                    throw new ArgumentNullException(nameof(text));
-
-                if (throwIfNotFound)
-                    throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, text));
                 return default!;
             }
 
@@ -3768,37 +3239,6 @@ namespace Lucene.Net.Analysis.Util
             {
                 char[] result = new char[stringBuilder.Length];
                 stringBuilder.CopyTo(sourceIndex: 0, result, destinationIndex: 0, stringBuilder.Length);
-                chars = result;
-                return CharReturnType.CharArray;
-            }
-
-            // ICharSequence types
-            else if (key is StringCharSequence strCs)
-            {
-                str = strCs.Value ?? string.Empty;
-                return CharReturnType.String;
-            }
-            else if (key is CharArrayCharSequence charArrayCs)
-            {
-                chars = charArrayCs.Value ?? Array.Empty<char>();
-                return CharReturnType.CharArray;
-            }
-            else if (key is StringBuilderCharSequence stringBuilderCs && stringBuilderCs.HasValue)
-            {
-                var sb = stringBuilderCs.Value!;
-                char[] result = new char[sb.Length];
-                sb.CopyTo(sourceIndex: 0, result, destinationIndex: 0, sb.Length);
-                chars = result;
-                return CharReturnType.CharArray;
-            }
-            else if (key is ICharSequence cs && cs.HasValue)
-            {
-                int length = cs.Length;
-                char[] result = new char[length];
-                for (int i = 0; i < length; i++)
-                {
-                    result[i] = cs[i];
-                }
                 chars = result;
                 return CharReturnType.CharArray;
             }

@@ -835,7 +835,7 @@ namespace Lucene.Net.Util
                 case 4:
                     CharsRef chars = new CharsRef(@ref.Length);
                     UnicodeUtil.UTF8toUTF16(@ref.Bytes, @ref.Offset, @ref.Length, chars);
-                    return chars;
+                    return new StringCharSequence(chars.ToString());
                 case 3:
                     return CharBuffer.Wrap(@ref.Utf8ToString());
                 default:

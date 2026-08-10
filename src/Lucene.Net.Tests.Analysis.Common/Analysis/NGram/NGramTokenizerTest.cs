@@ -139,9 +139,9 @@ namespace Lucene.Net.Analysis.NGram
             TestNGrams(minGram, maxGram, s, nonTokenChars, false);
         }
 
-        internal static int[] toCodePoints(string s)
+        internal static int[] toCodePoints(ReadOnlySpan<char> s)
         {
-            int[] codePoints = new int[Character.CodePointCount(s, 0, s.Length)];
+            int[] codePoints = new int[Character.CodePointCount(s)];
             for (int i = 0, j = 0; i < s.Length; ++j)
             {
                 codePoints[j] = Character.CodePointAt(s, i);
@@ -150,18 +150,7 @@ namespace Lucene.Net.Analysis.NGram
             return codePoints;
         }
 
-        internal static int[] toCodePoints(ICharSequence s)
-        {
-            int[] codePoints = new int[Character.CodePointCount(s, 0, s.Length)];
-            for (int i = 0, j = 0; i < s.Length; ++j)
-            {
-                codePoints[j] = Character.CodePointAt(s, i);
-                i += Character.CharCount(codePoints[j]);
-            }
-            return codePoints;
-        }
-
-        internal static bool isTokenChar(string nonTokenChars, int codePoint)
+        internal static bool isTokenChar(ReadOnlySpan<char> nonTokenChars, int codePoint)
         {
             for (int i = 0; i < nonTokenChars.Length;)
             {
@@ -207,7 +196,7 @@ namespace Lucene.Net.Analysis.NGram
                         }
                     }
                     assertTrue(grams.IncrementToken());
-                    assertArrayEquals(Arrays.CopyOfRange(codePoints, start, end), toCodePoints(termAtt));
+                    assertArrayEquals(Arrays.CopyOfRange(codePoints, start, end), toCodePoints(termAtt.AsSpan()));
                     assertEquals(1, posIncAtt.PositionIncrement);
                     assertEquals(1, posLenAtt.PositionLength);
                     assertEquals(offsets[start], offsetAtt.StartOffset);

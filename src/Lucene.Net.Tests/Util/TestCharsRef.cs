@@ -1,4 +1,3 @@
-using J2N.Text;
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
@@ -181,75 +180,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        // LUCENE-3590: fix off-by-one in subsequence, and fully obey interface
-        // LUCENE-4671: fix subSequence
-        [Test]
-        public virtual void TestCharSequenceSubSequence()
-        {
-            ICharSequence[] sequences = {
-                new CharsRef("abc"),
-                new CharsRef("0abc".ToCharArray(), 1, 3),
-                new CharsRef("abc0".ToCharArray(), 0, 3),
-                new CharsRef("0abc0".ToCharArray(), 1, 3)
-            };
-
-            foreach (ICharSequence c in sequences)
-            {
-                DoTestSequence(c);
-            }
-        }
-
-        private void DoTestSequence(ICharSequence c)
-        {
-            // slice
-            Assert.AreEqual("a", c.Subsequence(0, 1 - 0).ToString()); // LUCENENET: Corrected 2nd parameter
-            // mid subsequence
-            Assert.AreEqual("b", c.Subsequence(1, 2 - 1).ToString()); // LUCENENET: Corrected 2nd parameter
-            // end subsequence
-            Assert.AreEqual("bc", c.Subsequence(1, 3 - 1).ToString()); // LUCENENET: Corrected 2nd parameter
-            // empty subsequence
-            Assert.AreEqual("", c.Subsequence(0, 0 - 0).ToString()); // LUCENENET: Corrected 2nd parameter
-
-            try
-            {
-                c.Subsequence(-1, 1 - -1); // LUCENENET: Corrected 2nd parameter
-                Assert.Fail();
-            }
-            catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
-            {
-                // expected exception
-            }
-
-            try
-            {
-                c.Subsequence(0, -1 - 0); // LUCENENET: Corrected 2nd parameter
-                Assert.Fail();
-            }
-            catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
-            {
-                // expected exception
-            }
-
-            try
-            {
-                c.Subsequence(0, 4 - 0); // LUCENENET: Corrected 2nd parameter
-                Assert.Fail();
-            }
-            catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
-            {
-                // expected exception
-            }
-
-            try
-            {
-                c.Subsequence(2, 1 - 2); // LUCENENET: Corrected 2nd parameter
-                Assert.Fail();
-            }
-            catch (Exception expected) when (expected.IsIndexOutOfBoundsException())
-            {
-                // expected exception
-            }
-        }
+        // LUCENENET: removed TestCharSequenceSubSequence and DoTestSequence - CharsRef no longer implements ICharSequence
 
 #if FEATURE_SERIALIZABLE
 

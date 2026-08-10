@@ -1,13 +1,14 @@
 // Lucene version compatibility level 4.8.1
-using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+#if !FEATURE_QUEUE_TRYDEQUEUE_TRYPEEK
+using Lucene.Net.Support;
+#endif
 
 namespace Lucene.Net.Analysis.Compound
 {
@@ -115,7 +116,7 @@ namespace Lucene.Net.Analysis.Compound
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(current != null);
                 RestoreState(current); // keep all other attributes untouched
-                m_termAtt.SetEmpty().Append(token.Text);
+                m_termAtt.SetEmpty().Append(token.Text.Span);
                 m_offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                 posIncAtt.PositionIncrement = 0;
                 return true;
@@ -161,10 +162,10 @@ namespace Lucene.Net.Analysis.Compound
         /// </summary>
         protected class CompoundToken
         {
-            private readonly ICharSequence txt;
+            private readonly ReadOnlyMemory<char> txt;
             private readonly int startOffset, endOffset;
 
-            public ICharSequence Text => txt; // LUCENENET specific: changed public field into property backed by private field
+            public ReadOnlyMemory<char> Text => txt; // LUCENENET specific: changed public field into property backed by private field
 
             public int StartOffset => startOffset; // LUCENENET specific: changed public field into property backed by private field
 
@@ -174,7 +175,7 @@ namespace Lucene.Net.Analysis.Compound
             /// Construct the compound token based on a slice of the current <see cref="CompoundWordTokenFilterBase.m_termAtt"/>. </summary>
             public CompoundToken(CompoundWordTokenFilterBase compoundWordTokenFilterBase, int offset, int length)
             {
-                this.txt = compoundWordTokenFilterBase.m_termAtt.Subsequence(offset, length); // LUCENENET: Corrected 2nd Subsequence parameter
+                this.txt = compoundWordTokenFilterBase.m_termAtt.AsMemory(offset, length); // LUCENENET: Corrected 2nd Subsequence parameter
 
                 // offsets of the original word
                 int startOff = compoundWordTokenFilterBase.m_offsetAtt.StartOffset;

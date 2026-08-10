@@ -1,4 +1,3 @@
-using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -6,9 +5,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+using System.Runtime.InteropServices;
+#endif
 
 namespace Lucene.Net.Util
 {
@@ -128,18 +129,6 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Initialize the <see cref="T:byte[]"/> from the UTF8 bytes
-        /// for the provided <see cref="ICharSequence"/>.
-        /// </summary>
-        /// <param name="text"> This must be well-formed
-        /// unicode text, with no unpaired surrogates. </param>
-        public BytesRef(ICharSequence text)
-            : this()
-        {
-            CopyChars(text);
-        }
-
-        /// <summary>
-        /// Initialize the <see cref="T:byte[]"/> from the UTF8 bytes
         /// for the provided <see cref="ReadOnlySpan{Char}"/>.
         /// </summary>
         /// <param name="text"> This must be well-formed
@@ -160,18 +149,6 @@ namespace Lucene.Net.Util
             : this()
         {
             CopyChars(text);
-        }
-
-        /// <summary>
-        /// Copies the UTF8 bytes for this <see cref="ICharSequence"/>.
-        /// </summary>
-        /// <param name="text"> Must be well-formed unicode text, with no
-        /// unpaired surrogates or invalid UTF16 code units. </param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CopyChars(ICharSequence text)
-        {
-            if (Debugging.AssertsEnabled) Debugging.Assert(Offset == 0); // TODO broken if offset != 0
-            UnicodeUtil.UTF16toUTF8(text, 0, text.Length, this);
         }
 
         /// <summary>

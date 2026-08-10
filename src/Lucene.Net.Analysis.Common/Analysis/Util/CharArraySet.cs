@@ -1,5 +1,4 @@
 // Lucene version compatibility level 4.8.1
-using J2N.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -172,41 +171,6 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Creates a set from a collection of <see cref="ICharSequence"/>s.
-        /// </summary>
-        /// <param name="matchVersion">
-        ///          Compatibility match version see <see cref="CharArraySet"/> for details. </param>
-        /// <param name="collection">
-        ///          A collection whose elements to be placed into the set. </param>
-        /// <param name="ignoreCase">
-        ///          <c>false</c> if and only if the set should be case sensitive
-        ///          otherwise <c>true</c>. </param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="collection"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// A given element within the <paramref name="collection"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <see cref="ICharSequence.HasValue"/> property for a given element in the <paramref name="collection"/> returns <c>false</c>.
-        /// </exception>
-        public CharArraySet(LuceneVersion matchVersion, IEnumerable<ICharSequence> collection, bool ignoreCase)
-            : this(matchVersion, collection is ICollection<ICharSequence> c ? c.Count : DefaultSetSize, ignoreCase)
-        {
-            // LUCENENET: Added guard clause
-            if (collection is null)
-                throw new ArgumentNullException(nameof(collection));
-
-            foreach (ICharSequence text in collection)
-            {
-                // LUCENENET: S1699: Don't call call protected members in the constructor
-                map.Set(text);
-            }
-        }
-
-        /// <summary>
         /// Create set from the specified map (internal only), used also by <see cref="CharArrayDictionary{TValue}.Keys"/>
         /// </summary>
         internal CharArraySet(ICharArrayDictionary map)
@@ -248,25 +212,22 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="ICharSequence"/> is in the set.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="text"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
-        /// </exception>
-        public virtual bool Contains(ICharSequence text)
-        {
-            return map.ContainsKey(text);
-        }
-
-        /// <summary>
         /// <c>true</c> if the <see cref="string"/> is in the set.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Contains(string text)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            return map.ContainsKey(text.AsSpan()); // LUCENENET: use ReadOnlySpan<char> overload
+        }
+
+        /// <summary>
+        /// <c>true</c> if the <see cref="ReadOnlySpan{T}"/> is in the set.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool Contains(ReadOnlySpan<char> text)
         {
             return map.ContainsKey(text);
         }
@@ -295,23 +256,26 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Adds a <see cref="ICharSequence"/> into the set
-        /// </summary>
-        /// <param name="text">The text to be added to the set.</param>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        public virtual bool Add(ICharSequence text)
-        {
-            return map.Put(text);
-        }
-
-        /// <summary>
         /// Adds a <see cref="string"/> into the set
         /// </summary>
         /// <param name="text">The text to be added to the set.</param>
         /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Add(string text)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            return map.Put(text.AsSpan()); // LUCENENET: use ReadOnlySpan<char> overload
+        }
+
+        /// <summary>
+        /// Adds a <see cref="ReadOnlySpan{T}"/> into the set
+        /// </summary>
+        /// <param name="text">The text to be added to the set.</param>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool Add(ReadOnlySpan<char> text)
         {
             return map.Put(text);
         }
@@ -492,9 +456,6 @@ namespace Lucene.Net.Analysis.Util
         /// <para/>
         /// A given element within the <paramref name="collection"/> is <c>null</c>.
         /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <see cref="ICharSequence.HasValue"/> property for a given element in the <paramref name="collection"/> returns <c>false</c>.
         /// </exception>
         public static CharArraySet Copy<T>(LuceneVersion matchVersion, IEnumerable<T> collection)
         {
@@ -529,10 +490,6 @@ namespace Lucene.Net.Analysis.Util
             else if (collection is IEnumerable<char[]> charArrayCollection)
             {
                 return new CharArraySet(matchVersion, charArrayCollection, ignoreCase);
-            }
-            else if (collection is IEnumerable<ICharSequence> charSequenceCollection)
-            {
-                return new CharArraySet(matchVersion, charSequenceCollection, ignoreCase);
             }
 
             return new CharArraySet(matchVersion, collection.Select(text =>
@@ -575,7 +532,7 @@ namespace Lucene.Net.Analysis.Util
         /// Enumerates the elements of a <see cref="CharArraySet"/> object.
         /// <para/>
         /// This implementation provides direct access to the <see cref="T:char[]"/> array of the underlying collection
-        /// as well as convenience properties for converting to <see cref="string"/> and <see cref="ICharSequence"/>.
+        /// as well as convenience properties for converting to <see cref="string"/> and <see cref="ReadOnlySpan{T}"/>.
         /// </summary>
         /// <remarks>
         /// The <c>foreach</c> statement of the C# language (<c>for each</c> in C++, <c>For Each</c> in Visual Basic)
@@ -622,11 +579,11 @@ namespace Lucene.Net.Analysis.Util
             }
 
             /// <summary>
-            /// Gets the current value as a <see cref="CharArrayCharSequence"/>.
+            /// Gets the current value as a <see cref="ReadOnlySpan{T}"/>.
             /// </summary>
-            // LUCENENET specific - quick access to ICharSequence interface
-            public ICharSequence CurrentValueCharSequence
-                => enumerator.CurrentKeyCharSequence;
+            // LUCENENET specific - quick access to ReadOnlySpan<char>
+            public ReadOnlySpan<char> CurrentValueSpan
+                => enumerator.CurrentKeySpan;
 
             /// <summary>
             /// Gets the current value... do not modify the returned char[].
@@ -890,71 +847,6 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        /// <summary>
-        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:ICharSequence[]"/> array,
-        /// starting at the specified index of the target array.
-        /// </summary>
-        /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the
-        /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentException">The number of elements in the source is greater
-        /// than the available space in the destination array.</exception>
-        public void CopyTo(ICharSequence[] array)
-        {
-            CopyTo(array, 0, map.Count);
-        }
-
-        /// <summary>
-        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:ICharSequence[]"/> array,
-        /// starting at the specified index of the target array.
-        /// </summary>
-        /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the
-        /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
-        /// <exception cref="ArgumentException">The number of elements in the source is greater
-        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
-        public void CopyTo(ICharSequence[] array, int arrayIndex)
-        {
-            CopyTo(array, arrayIndex, map.Count);
-        }
-
-        /// <summary>
-        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:ICharSequence[]"/> array,
-        /// starting at the specified index of the target array.
-        /// </summary>
-        /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the
-        /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> or <paramref name="count"/> is less than zero.</exception>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="arrayIndex"/> is greater than the length of the destination <paramref name="array"/>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// <paramref name="count"/> is greater than the available space from the <paramref name="arrayIndex"/>
-        /// to the end of the destination <paramref name="array"/>.
-        /// </exception>
-        internal void CopyTo(ICharSequence[] array, int arrayIndex, int count)
-        {
-            if (array is null)
-                throw new ArgumentNullException(nameof(array));
-            if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, SR.ArgumentOutOfRange_NeedNonNegNum);
-            if (count < 0)
-                throw new ArgumentOutOfRangeException(nameof(count), count, SR.ArgumentOutOfRange_NeedNonNegNum);
-            if (arrayIndex > array.Length || count > array.Length - arrayIndex)
-                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
-
-            using var iter = GetEnumerator();
-            for (int i = arrayIndex, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
-            {
-                array[i] = ((char[])iter.CurrentValue.Clone()).AsCharSequence();
-            }
-        }
-
         [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
         void ICollection.CopyTo(Array array, int index)
         {
@@ -985,10 +877,6 @@ namespace Lucene.Net.Analysis.Util
             else if (array is IList<char[]> chars)
             {
                 CopyTo(chars, index);
-            }
-            else if (array is ICharSequence[] charSequences)
-            {
-                CopyTo(charSequences, index);
             }
             else
             {
@@ -1098,43 +986,6 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="other">The collection to compare to the current set.</param>
         /// <returns><c>true</c> if the current set is equal to other; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
-        public virtual bool SetEquals(IEnumerable<ICharSequence> other)
-        {
-            if (other is null)
-                throw new ArgumentNullException(nameof(other));
-
-            if (other is CharArraySet charArraySet)
-                return this.map.Equals(charArraySet.map);
-
-            if (other is ICollection<ICharSequence> otherAsCollection)
-            {
-                if (this.Count != otherAsCollection.Count)
-                    return false;
-
-                // already confirmed that the sets have the same number of distinct elements, so if
-                // one is a superset of the other then they must be equal
-                return ContainsAllElements(otherAsCollection);
-            }
-
-            int otherCount = 0;
-            foreach (var local in other)
-            {
-                if (local is null || !local.HasValue || !this.Contains(local))
-                {
-                    return false;
-                }
-                otherCount++;
-            }
-            return this.Count == otherCount;
-        }
-
-        // LUCENENET - Added to ensure equality checking works in tests
-        /// <summary>
-        /// Determines whether the current set and the specified collection contain the same elements.
-        /// </summary>
-        /// <param name="other">The collection to compare to the current set.</param>
-        /// <returns><c>true</c> if the current set is equal to other; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public virtual bool SetEquals<T>(IEnumerable<T> other)
         {
             if (other is null)
@@ -1156,7 +1007,7 @@ namespace Lucene.Net.Analysis.Util
             int otherCount = 0;
             foreach (var local in other)
             {
-                if (local is null || (local is ICharSequence charSequence && !charSequence.HasValue) || !this.Contains(local))
+                if (local is null || !this.Contains(local))
                 {
                     return false;
                 }
@@ -1177,39 +1028,6 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public virtual bool UnionWith(IEnumerable<char[]> other)
-        {
-            if (other is null)
-                throw new ArgumentNullException(nameof(other));
-            if (IsReadOnly)
-                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
-
-            bool modified = false;
-            foreach (var item in other)
-            {
-                modified |= Add(item);
-            }
-            return modified;
-        }
-
-        /// <summary>
-        /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present
-        /// in itself, the specified collection, or both.
-        /// </summary>
-        /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="other"/> is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// A given element within the collection is <c>null</c>.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// The <see cref="ICharSequence.HasValue"/> property for a given element in the collection returns <c>false</c>.
-        /// </exception>
-        /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
-        public virtual bool UnionWith(IEnumerable<ICharSequence> other)
         {
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
@@ -1383,38 +1201,6 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
-        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
-        public virtual bool IsSubsetOf(IEnumerable<ICharSequence> other)
-        {
-            if (other is null)
-                throw new ArgumentNullException(nameof(other));
-
-            if (this.Count == 0)
-            {
-                return true;
-            }
-            CharArraySet? set = other as CharArraySet;
-            if (set != null)
-            {
-                if (this.Count > set.Count)
-                {
-                    return false;
-                }
-                return this.IsSubsetOfCharArraySet(set);
-            }
-            // we just need to return true if the other set
-            // contains all of the elements of the this set,
-            // but we need to use the comparison rules of the current set.
-            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int _);
-            return foundCount == this.Count;
-        }
-
-        /// <summary>
-        /// Determines whether a <see cref="CharArraySet"/> object is a subset of the specified collection.
-        /// </summary>
-        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public virtual bool IsSubsetOf<T>(IEnumerable<T> other)
         {
             if (other is null)
@@ -1472,34 +1258,6 @@ namespace Lucene.Net.Analysis.Util
                 throw new ArgumentNullException(nameof(other));
 
             ICollection<char[]>? is2 = other as ICollection<char[]>;
-            if (is2 != null)
-            {
-                if (is2.Count == 0)
-                {
-                    return true;
-                }
-                CharArraySet? set = other as CharArraySet;
-                if ((set != null) && (set.Count > this.Count))
-                {
-                    return false;
-                }
-            }
-            return this.ContainsAllElements(other);
-        }
-
-        /// <summary>
-        /// Determines whether a <see cref="CharArraySet"/> object is a superset of the specified collection.
-        /// </summary>
-        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
-        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
-        public virtual bool IsSupersetOf(IEnumerable<ICharSequence> other)
-        {
-            if (other is null)
-                throw new ArgumentNullException(nameof(other));
-
-            ICollection<ICharSequence>? is2 = other as ICollection<ICharSequence>;
             if (is2 != null)
             {
                 if (is2.Count == 0)
@@ -1584,42 +1342,6 @@ namespace Lucene.Net.Analysis.Util
                 throw new ArgumentNullException(nameof(other));
 
             ICollection<char[]>? is2 = other as ICollection<char[]>;
-            if (is2 != null)
-            {
-                if (this.Count == 0)
-                {
-                    return (is2.Count > 0);
-                }
-                CharArraySet? set = other as CharArraySet;
-                if (set != null)
-                {
-                    if (this.Count >= set.Count)
-                    {
-                        return false;
-                    }
-                    return this.IsSubsetOfCharArraySet(set);
-                }
-            }
-            // we just need to return true if the other set
-            // contains all of the elements of the this set plus at least one more,
-            // but we need to use the comparison rules of the current set.
-            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int unfoundCount);
-            return foundCount == this.Count && unfoundCount > 0;
-        }
-
-        /// <summary>
-        /// Determines whether a <see cref="CharArraySet"/> object is a proper subset of the specified collection.
-        /// </summary>
-        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
-        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
-        public virtual bool IsProperSubsetOf(IEnumerable<ICharSequence> other)
-        {
-            if (other is null)
-                throw new ArgumentNullException(nameof(other));
-
-            ICollection<ICharSequence>? is2 = other as ICollection<ICharSequence>;
             if (is2 != null)
             {
                 if (this.Count == 0)
@@ -1748,43 +1470,6 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
-        public virtual bool IsProperSupersetOf(IEnumerable<ICharSequence> other)
-        {
-            if (other is null)
-                throw new ArgumentNullException(nameof(other));
-
-            if (this.Count == 0)
-            {
-                return false;
-            }
-            ICollection<ICharSequence>? is2 = other as ICollection<ICharSequence>;
-            if (is2 != null)
-            {
-                if (is2.Count == 0)
-                {
-                    return true;
-                }
-                CharArraySet? set = other as CharArraySet;
-                if (set != null)
-                {
-                    if (set.Count >= this.Count)
-                    {
-                        return false;
-                    }
-                    return this.ContainsAllElements(set);
-                }
-            }
-            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int unfoundCount);
-            return foundCount < this.Count && unfoundCount == 0;
-        }
-
-        /// <summary>
-        /// Determines whether a <see cref="CharArraySet"/> object is a proper superset of the specified collection.
-        /// </summary>
-        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
-        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
         public virtual bool IsProperSupersetOf<T>(IEnumerable<T> other)
         {
             if (other is null)
@@ -1843,30 +1528,6 @@ namespace Lucene.Net.Analysis.Util
                 foreach (var local in other)
                 {
                     if (local is not null && this.Contains(local))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Determines whether the current <see cref="CharArraySet"/> object and a specified collection share common elements.
-        /// </summary>
-        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
-        /// <returns><c>true</c> if the <see cref="CharArraySet"/> object and <paramref name="other"/> share at least one common element; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
-        public virtual bool Overlaps(IEnumerable<ICharSequence> other)
-        {
-            if (other is null)
-                throw new ArgumentNullException(nameof(other));
-
-            if (this.Count != 0)
-            {
-                foreach (var local in other)
-                {
-                    if (local is not null && local.HasValue && this.Contains(local))
                     {
                         return true;
                     }
@@ -1959,29 +1620,11 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">collection to be checked for containment in this collection</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
-        private bool ContainsAllElements(IEnumerable<ICharSequence> other)
-        {
-            foreach (var local in other)
-            {
-                if (local is null || !local.HasValue || !this.Contains(local))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Returns <c>true</c> if this collection contains all of the elements
-        /// in the specified collection.
-        /// </summary>
-        /// <param name="other">collection to be checked for containment in this collection</param>
-        /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
         private bool ContainsAllElements<T>(IEnumerable<T> other)
         {
             foreach (var local in other)
             {
-                if (local is null || (local is ICharSequence charSequence && !charSequence.HasValue) || !this.Contains(local))
+                if (local is null || !this.Contains(local))
                 {
                     return false;
                 }
@@ -2025,23 +1668,6 @@ namespace Lucene.Net.Analysis.Util
             foreach (var item in other)
             {
                 if (item is not null && this.Contains(item))
-                {
-                    foundCount++;
-                }
-                else
-                {
-                    unfoundCount++;
-                }
-            }
-        }
-
-        private void GetFoundAndUnfoundCounts(IEnumerable<ICharSequence> other, out int foundCount, out int unfoundCount)
-        {
-            foundCount = 0;
-            unfoundCount = 0;
-            foreach (var item in other)
-            {
-                if (item is not null && item.HasValue && this.Contains(item))
                 {
                     foundCount++;
                 }

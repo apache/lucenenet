@@ -246,11 +246,12 @@ namespace Lucene.Net.Util.Automaton
             // Descend in the automaton (find matching prefix).
             int pos = 0, max = current.Length;
             State next, state = root;
-            while (pos < max && (next = state.LastChild(Character.CodePointAt(current, pos))) != null)
+            ReadOnlySpan<char> currentSpan = current.AsSpan();
+            while (pos < max && (next = state.LastChild(currentSpan.CodePointAt(pos))) != null)
             {
                 state = next;
                 // todo, optimize me
-                pos += Character.CharCount(Character.CodePointAt(current, pos));
+                pos += Character.CharCount(currentSpan.CodePointAt(pos));
             }
 
             if (state.HasChildren)
@@ -258,7 +259,7 @@ namespace Lucene.Net.Util.Automaton
                 ReplaceOrRegister(state);
             }
 
-            AddSuffix(state, current, pos);
+            AddSuffix(state, currentSpan, pos);
         }
 
         /// <summary>
@@ -373,12 +374,12 @@ namespace Lucene.Net.Util.Automaton
         /// (inclusive) to state <paramref name="state"/>.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void AddSuffix(State state, ICharSequence current, int fromIndex) // LUCENENET: CA1822: Mark members as static
+        private static void AddSuffix(State state, ReadOnlySpan<char> current, int fromIndex) // LUCENENET: CA1822: Mark members as static
         {
             int len = current.Length;
             while (fromIndex < len)
             {
-                int cp = Character.CodePointAt(current, fromIndex);
+                int cp = current.CodePointAt(fromIndex);
                 state = state.NewState(cp);
                 fromIndex += Character.CharCount(cp);
             }

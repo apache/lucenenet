@@ -375,7 +375,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
                 Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKey; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKeyCharSequence; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKeySpan; });
                 Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKeyString; });
                 Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValue; });
 
@@ -383,14 +383,14 @@ namespace Lucene.Net.Analysis.Util
                 {
                     Assert.DoesNotThrow(() => { var _ = iter.Current; });
                     Assert.DoesNotThrow(() => { var _ = iter.CurrentKey; });
-                    Assert.DoesNotThrow(() => { var _ = iter.CurrentKeyCharSequence; });
+                    Assert.DoesNotThrow(() => { var _ = iter.CurrentKeySpan; });
                     Assert.DoesNotThrow(() => { var _ = iter.CurrentKeyString; });
                     Assert.DoesNotThrow(() => { var _ = iter.CurrentValue; });
                 }
 
                 Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
                 Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKey; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKeyCharSequence; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKeySpan; });
                 Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKeyString; });
                 Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValue; });
             }
@@ -440,7 +440,7 @@ namespace Lucene.Net.Analysis.Util
 
                 Assert.Throws<InvalidOperationException>(() => { var _ = ours.Current; });
                 Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentKey; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentKeyCharSequence; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentKeySpan; });
                 Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentKeyString; });
                 Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentValue; });
             }
@@ -462,18 +462,18 @@ namespace Lucene.Net.Analysis.Util
             {
                 Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
                 Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValue; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValueCharSequence; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValueSpan; });
 
                 while (iter.MoveNext())
                 {
                     Assert.DoesNotThrow(() => { var _ = iter.Current; });
                     Assert.DoesNotThrow(() => { var _ = iter.CurrentValue; });
-                    Assert.DoesNotThrow(() => { var _ = iter.CurrentValueCharSequence; });
+                    Assert.DoesNotThrow(() => { var _ = iter.CurrentValueSpan; });
                 }
 
                 Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
                 Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValue; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValueCharSequence; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValueSpan; });
             }
 
             using (var ours = map.Keys.GetEnumerator())
@@ -503,7 +503,7 @@ namespace Lucene.Net.Analysis.Util
 
                 Assert.Throws<InvalidOperationException>(() => { var _ = ours.Current; });
                 Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentValue; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentValueCharSequence; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentValueSpan; });
             }
         }
 
@@ -609,7 +609,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return ArrayEqualityComparer<char>.OneDimensional.Equals(x.Key, y.Key);
             }
-            public int GetHashCode([DisallowNull] KeyValuePair<char[], int?> obj)
+            public int GetHashCode(KeyValuePair<char[], int?> obj)
             {
                 return ArrayEqualityComparer<char>.OneDimensional.GetHashCode(obj.Key);
             }
@@ -631,7 +631,7 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(stopwords.SetEquals(array1));
 
             // Bounded to lower start index
-            int startIndex = 3;
+            const int startIndex = 3;
             var array2 = new KeyValuePair<char[], int?>[target.Count + startIndex];
             target.CopyTo(array2, startIndex);
 
@@ -642,38 +642,38 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(stopwords.SetEquals(array2.Skip(startIndex).ToArray()));
         }
 
-        private class KvpCharSequenceEqualityComparer : IEqualityComparer<KeyValuePair<ICharSequence, int?>>
+        private class KvpReadOnlyMemoryEqualityComparer : IEqualityComparer<KeyValuePair<ReadOnlyMemory<char>, int?>>
         {
-            public static readonly KvpCharSequenceEqualityComparer Instance = new KvpCharSequenceEqualityComparer();
+            public static readonly KvpReadOnlyMemoryEqualityComparer Instance = new KvpReadOnlyMemoryEqualityComparer();
 
-            public bool Equals(KeyValuePair<ICharSequence, int?> x, KeyValuePair<ICharSequence, int?> y)
+            public bool Equals(KeyValuePair<ReadOnlyMemory<char>, int?> x, KeyValuePair<ReadOnlyMemory<char>, int?> y)
             {
                 return StringComparer.OrdinalIgnoreCase.Equals(x.Key.ToString(), y.Key.ToString());
             }
-            public int GetHashCode([DisallowNull] KeyValuePair<ICharSequence, int?> obj)
+            public int GetHashCode(KeyValuePair<ReadOnlyMemory<char>, int?> obj)
             {
-                return obj.Key is null ? 0 : StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Key.ToString());
+                return obj.Key.IsEmpty ? 0 : StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Key.ToString());
             }
         }
 
         [Test, LuceneNetSpecific]
-        public virtual void TestCopyTo_ICharSequence_Int32()
+        public virtual void TestCopyTo_ReadOnlyMemory_Int32()
         {
-            var stopwords = new JCG.HashSet<KeyValuePair<ICharSequence, int?>>(
-                TestCharArraySet.TEST_STOP_WORDS.Select(x => new KeyValuePair<ICharSequence, int?>(key: new StringCharSequence(x), value: 0)),
-                KvpCharSequenceEqualityComparer.Instance);
+            var stopwords = new JCG.HashSet<KeyValuePair<ReadOnlyMemory<char>, int?>>(
+                TestCharArraySet.TEST_STOP_WORDS.Select(x => new KeyValuePair<ReadOnlyMemory<char>, int?>(key: x.AsMemory(), value: 0)),
+                KvpReadOnlyMemoryEqualityComparer.Instance);
             var target = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, stopwords.Count, ignoreCase: false);
             foreach (var kvp in stopwords)
                 target.Put(kvp.Key, kvp.Value, out _);
 
             // Full array
-            var array1 = new KeyValuePair<ICharSequence, int?>[target.Count];
+            var array1 = new KeyValuePair<ReadOnlyMemory<char>, int?>[target.Count];
             target.CopyTo(array1, 0);
             assertTrue(stopwords.SetEquals(array1));
 
             // Bounded to lower start index
-            int startIndex = 3;
-            var array2 = new KeyValuePair<ICharSequence, int?>[target.Count + startIndex];
+            const int startIndex = 3;
+            var array2 = new KeyValuePair<ReadOnlyMemory<char>, int?>[target.Count + startIndex];
             target.CopyTo(array2, startIndex);
 
             assertEquals(default, array2[0]);
