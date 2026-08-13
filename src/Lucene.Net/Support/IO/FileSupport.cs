@@ -536,6 +536,11 @@ namespace Lucene.Net.Support.IO
         // LUCENENET NOTE: Implementation ported mostly from Apache Harmony
         public static string GetCanonicalPath(this FileSystemInfo path)
         {
+            if (path is null)
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+
             string absPath = path.FullName; // LUCENENET NOTE: This internally calls GetFullPath(), which resolves relative paths
             byte[] result = Encoding.UTF8.GetBytes(absPath);
 
