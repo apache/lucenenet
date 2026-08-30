@@ -7,6 +7,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+// operator overloads purposefully use reference equality
+#pragma warning disable CS0660, CS0661
 
 /*
  * dk.brics.automaton
@@ -359,22 +361,6 @@ namespace Lucene.Net.Util.Automaton
         public virtual int CompareTo(State s)
         {
             return s.id - id;
-        }
-
-        // LUCENENET NOTE: DO NOT IMPLEMENT Equals() with structural equality!!!
-        // Although it doesn't match GetHashCode(), checking for
-        // reference equality is by design.
-        // Implementing Equals() causes difficult to diagnose
-        // IndexOutOfRangeExceptions when using FuzzyTermsEnum.
-        // See GH-296.
-        // Overriding here to prevent CS0660 warning due to defining the == operator.
-        // ReSharper disable once BaseObjectEqualsIsObjectEquals
-        public override bool Equals(object obj) => base.Equals(obj);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override int GetHashCode()
-        {
-            return id;
         }
 
         #region Operator overrides
