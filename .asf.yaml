@@ -73,3 +73,8 @@ github:
       restrict_deletion: true
       restrict_force_push: false
       required_linear_history: false
+
+  # autolink LUCENE- and LUCENENET- issues to Jira for historical reference
+  autolink_jira:
+    - LUCENE
+    - LUCENENET
