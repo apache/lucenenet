@@ -59,7 +59,7 @@ namespace Lucene.Net.Store
             double targetMBPerSec = 10.0 + 20 * Random.NextDouble();
             SimpleRateLimiter limiter = new SimpleRateLimiter(targetMBPerSec);
 
-            CountdownLatch startingGun = new CountdownLatch(1);
+            using CountdownLatch startingGun = new CountdownLatch(1);
 
             ThreadJob[] threads = new ThreadJob[TestUtil.NextInt32(Random, 3, 6)];
             AtomicInt64 totBytes = new AtomicInt64();
