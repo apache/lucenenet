@@ -47,11 +47,11 @@ A Simple Lucene QueryParser implemented with JavaCC. See <xref:Lucene.Net.QueryP
 
 ## Analyzing
 
-QueryParser that passes Fuzzy-, Prefix-, Range-, and WildcardQuerys through the given analyzer. See <xref:Lucene.Net.QueryParsers.Analyzing>.
+QueryParser that passes Fuzzy-, Prefix-, Range-, and WildcardQueries through the given analyzer. See <xref:Lucene.Net.QueryParsers.Analyzing>.
 
 ## Complex Phrase
 
-QueryParser which permits complex phrase query syntax eg "(john jon jonathan~) peters*" See <xref:Lucene.Net.QueryParsers.ComplexPhrase>.
+QueryParser which permits complex phrase query syntax, e.g. "(john jon jonathan~) peters*". See <xref:Lucene.Net.QueryParsers.ComplexPhrase>.
 
 ## Extendable
 

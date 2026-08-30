@@ -509,7 +509,7 @@ public class ForwardingTokenizer : Tokenizer
 
 ### Testing Your Analysis Component
 
- The Lucene.Net.TestFramework component defines [BaseTokenStreamTestCase](xref:Lucene.Net.Analysis.BaseTokenStreamTestCase). By extending this class, you can create NUnit tests that validate that your Analyzer and/or analysis components correctly implement the protocol. The CheckRandomData()methods of that class are particularly effective in flushing out errors.
+ The Lucene.Net.TestFramework component defines [BaseTokenStreamTestCase](xref:Lucene.Net.Analysis.BaseTokenStreamTestCase). By extending this class, you can create NUnit tests that validate that your Analyzer and/or analysis components correctly implement the protocol. The CheckRandomData() methods of that class are particularly effective in flushing out errors.
 
 ### Using the TokenStream API
 

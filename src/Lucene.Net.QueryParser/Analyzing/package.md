@@ -20,4 +20,4 @@ summary: *content
  limitations under the License.
 -->
 
-QueryParser that passes Fuzzy-, Prefix-, Range-, and WildcardQuerys through the given analyzer.
+QueryParser that passes Fuzzy-, Prefix-, Range-, and WildcardQueries through the given analyzer.

@@ -27,8 +27,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language
     /// Encodes a string into a double metaphone value. This Implementation is based on the algorithm by <c>Lawrence
     /// Philips</c>.
     /// <para/>
-    /// This class is conditionally thread-safe. The instance field <see cref="MaxCodeLen"/> is mutable
-    /// <see cref="MaxCodeLen"/> but is not volatile, and accesses are not synchronized. If an instance of the class is
+    /// This class is conditionally thread-safe. The <see cref="MaxCodeLen"/> property is mutable
+    /// but is not volatile, and accesses are not synchronized. If an instance of the class is
     /// shared between threads, the caller needs to ensure that suitable synchronization is used to ensure safe publication
     /// of the value between threads, and must not set <see cref="MaxCodeLen"/> after initial setup.
     /// <para/>
