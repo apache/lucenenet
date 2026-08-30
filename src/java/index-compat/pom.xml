@@ -62,11 +62,19 @@
       <artifactId>lucene-codecs</artifactId>
       <version>${lucene.version}</version>
     </dependency>
+    <!-- Used by the index generator (src/main/java) for LuceneTestCase.TEST_VERSION_CURRENT,
+         so this must stay at compile scope rather than test scope. -->
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-test-framework</artifactId>
+      <version>${lucene.version}</version>
+    </dependency>
+    <!-- Compile scope (not test): LuceneTestCase extends org.junit.Assert, so junit must
+         be on the runtime classpath of the generator too, not just the JUnit tests. -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.13.2</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 

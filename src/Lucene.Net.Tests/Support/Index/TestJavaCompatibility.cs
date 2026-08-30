@@ -54,10 +54,19 @@ namespace Lucene.Net.Index
     /// <item><description><c>lucenenet.compat.write.dir</c> - where to write the .NET
     /// index for Java to read. Defaults to a temp directory.</description></item>
     /// </list>
+    /// <para/>
+    /// NOTE: this fixture deliberately does <b>not</b> derive from
+    /// <see cref="LuceneTestCase"/>. That base class replaces <see cref="Codec.Default"/>
+    /// with a randomized codec, which defeats the purpose of a compatibility harness:
+    /// the draw may be an older codec that cannot write the full DocValues matrix
+    /// (e.g. <c>Lucene40RWCodec</c>), or a test-only impostor (e.g. a postings format
+    /// named <c>NestedPulsing</c>) that a stock Java Lucene cannot load. Without that
+    /// base class, <see cref="Codec.Default"/> is the real default codec of the Lucene
+    /// version being ported, so nothing here names a codec version explicitly.
     /// </summary>
     [LuceneNetSpecific]
     [TestFixture]
-    public class TestJavaCompatibility : LuceneTestCase
+    public class TestJavaCompatibility
     {
         private const string ReadDirEnvVar = "lucenenet.compat.read.dir";
         private const string WriteDirEnvVar = "lucenenet.compat.write.dir";
@@ -72,7 +81,7 @@ namespace Lucene.Net.Index
             CompatDocs.CheckIndex(dir);
 
             using DirectoryReader reader = DirectoryReader.Open(dir);
-            IndexSearcher searcher = NewSearcher(reader);
+            IndexSearcher searcher = new IndexSearcher(reader);
 
             IBits liveDocs = MultiFields.GetLiveDocs(reader);
 
@@ -207,11 +216,22 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestDotNetRoundTrip()
         {
-            foreach (bool useCompoundFile in new[] { true, false })
+            string baseDir = Path.Combine(Path.GetTempPath(), "lucenenet-compat-" + Guid.NewGuid().ToString("N"));
+            System.IO.Directory.CreateDirectory(baseDir);
+            try
             {
-                using Directory dir = NewDirectory();
-                CompatDocs.WriteIndex(dir, useCompoundFile);
-                AssertContents(dir);
+                foreach (bool useCompoundFile in new[] { true, false })
+                {
+                    string indexDir = Path.Combine(baseDir, useCompoundFile ? "cfs" : "nocfs");
+                    System.IO.Directory.CreateDirectory(indexDir);
+                    using Directory dir = new SimpleFSDirectory(indexDir);
+                    CompatDocs.WriteIndex(dir, useCompoundFile);
+                    AssertContents(dir);
+                }
+            }
+            finally
+            {
+                System.IO.Directory.Delete(baseDir, recursive: true);
             }
         }
 
@@ -233,9 +253,7 @@ namespace Lucene.Net.Index
             }
 
             bool readAny = false;
-            // NOTE: Lucene46 here represents the default codec. This filename should be updated when porting
-            // to a newer Lucene version with a different default codec.
-            foreach (string name in new[] { "index.Lucene46.nocfs", "index.Lucene46.cfs" })
+            foreach (string name in new[] { $"index.{Codec.Default.Name}.nocfs", $"index.{Codec.Default.Name}.cfs" })
             {
                 string indexDir = Path.Combine(baseDir, name);
                 if (!System.IO.Directory.Exists(indexDir) || !HasSegments(indexDir))
@@ -270,9 +288,7 @@ namespace Lucene.Net.Index
             }
             System.IO.Directory.CreateDirectory(baseDir);
 
-            // NOTE: Lucene46 here represents the default codec. This filename should be updated when porting
-            // to a newer Lucene version with a different default codec.
-            foreach ((string name, bool useCompoundFile) in new[] { ("index.Lucene46.cfs", true), ("index.Lucene46.nocfs", false) })
+            foreach ((string name, bool useCompoundFile) in new[] { ($"index.{Codec.Default.Name}.cfs", true), ($"index.{Codec.Default.Name}.nocfs", false) })
             {
                 string indexDir = Path.Combine(baseDir, name);
                 if (System.IO.Directory.Exists(indexDir))
@@ -285,7 +301,7 @@ namespace Lucene.Net.Index
                 AssertContents(dir);
             }
 
-            TestContext.Progress.WriteLine($"Wrote .NET Lucene46 indexes under: {baseDir}");
+            TestContext.Progress.WriteLine($"Wrote .NET {Codec.Default.Name} indexes under: {baseDir}");
         }
 
         private static bool HasSegments(string indexDir)

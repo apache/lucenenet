@@ -1,5 +1,6 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Util;
@@ -60,7 +61,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static void WriteIndex(Directory dir, bool useCompoundFile)
         {
-            Analyzer analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            Analyzer analyzer = new StandardAnalyzer(LuceneTestCase.TEST_VERSION_CURRENT);
 
             LogByteSizeMergePolicy mp = new LogByteSizeMergePolicy
             {
@@ -68,11 +69,14 @@ namespace Lucene.Net.Index
                 MaxCFSSegmentSizeMB = double.PositiveInfinity
             };
 
-            IndexWriterConfig conf = new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer)
-                // Force the real default 4.8.x codec. LuceneTestCase otherwise
-                // randomizes Codec.Default to test-only impostors (e.g. a postings
-                // format named "NestedPulsing") that a stock Lucene cannot load.
-                .SetCodec(new Codecs.Lucene46.Lucene46Codec())
+            IndexWriterConfig conf = new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, analyzer)
+                // The stock default codec for the version being ported. NOTE: the
+                // calling test must not derive from LuceneTestCase, which replaces
+                // Codec.Default with a randomized codec - both older ones that cannot
+                // write the full DocValues matrix (e.g. Lucene40RWCodec) and test-only
+                // impostors (e.g. a postings format named "NestedPulsing") that a
+                // stock Java Lucene cannot load.
+                .SetCodec(Codec.Default)
                 .SetUseCompoundFile(useCompoundFile)
                 .SetMaxBufferedDocs(10)
                 .SetMergePolicy(mp);
@@ -86,8 +90,8 @@ namespace Lucene.Net.Index
             }
 
             // Delete id 7 in a fresh writer so the layout matches the Java harness.
-            conf = new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer)
-                .SetCodec(new Codecs.Lucene46.Lucene46Codec())
+            conf = new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, analyzer)
+                .SetCodec(Codec.Default)
                 .SetUseCompoundFile(useCompoundFile)
                 .SetMaxBufferedDocs(10)
                 .SetOpenMode(OpenMode.APPEND);
@@ -171,7 +175,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// The sorted, unique set of terms that <c>StandardAnalyzer(LUCENE_48)</c>
+        /// The sorted, unique set of terms that <see cref="StandardAnalyzer"/>
         /// produces for <see cref="Utf8Value"/>. An index written by either runtime must
         /// contain exactly this term set in the <c>utf8</c> field, which is the
         /// cross-runtime contract for the UTF-8 edge cases. Computed by re-running the
@@ -180,7 +184,7 @@ namespace Lucene.Net.Index
         public static IList<string> ExpectedUtf8Terms()
         {
             var terms = new JCG.SortedSet<string>(StringComparer.Ordinal);
-            using Analyzer analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            using Analyzer analyzer = new StandardAnalyzer(LuceneTestCase.TEST_VERSION_CURRENT);
             TokenStream ts = analyzer.GetTokenStream("utf8", new StringReader(Utf8Value));
             try
             {

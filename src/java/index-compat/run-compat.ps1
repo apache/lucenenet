@@ -82,10 +82,13 @@ try {
     [Environment]::SetEnvironmentVariable('lucenenet.compat.write.dir', $null, 'Process')
 }
 
-foreach ($variant in @('index.Lucene46.nocfs', 'index.Lucene46.cfs')) {
-    $indexDir = Join-Path $DotNetIndex $variant
-    Write-Host "    Java reading $indexDir"
-    Invoke-Maven @('-q', 'test', "-Dlucenenet.index.dir=$indexDir")
+# The .NET side names these after its default codec, so discover them rather than
+# hardcoding a codec version here.
+$variants = Get-ChildItem -Path $DotNetIndex -Directory | Sort-Object Name
+if (-not $variants) { throw "The .NET writer produced no index directories under $DotNetIndex" }
+foreach ($variant in $variants) {
+    Write-Host "    Java reading $($variant.FullName)"
+    Invoke-Maven @('-q', 'test', "-Dlucenenet.index.dir=$($variant.FullName)")
 }
 
 Write-Host ""

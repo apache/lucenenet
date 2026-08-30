@@ -37,7 +37,7 @@ import org.apache.lucene.index.*;
 import org.apache.lucene.index.FieldInfo.IndexOptions;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.Version;
+import org.apache.lucene.util.LuceneTestCase;
 
 import java.io.PrintStream;
 import java.io.StringReader;
@@ -47,7 +47,7 @@ import java.util.TreeSet;
 
 /**
  * The single source of truth for the deterministic document set shared between
- * Java (Apache Lucene 4.8.1) and Lucene.NET. This intentionally mirrors, field
+ * Java (Apache Lucene) and Lucene.NET. This intentionally mirrors, field
  * for field, the document schema produced by
  * {@code TestBackwardsCompatibility.AddDoc} / {@code AddNoProxDoc} and the read
  * back verification in {@code TestBackwardsCompatibility.SearchIndex} on the
@@ -80,13 +80,13 @@ public final class CompatDocs {
      * full DocValues matrix, in either compound-file or non-compound-file form.
      */
     public static void writeIndex(Directory dir, boolean useCompoundFile) throws Exception {
-        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_48);
+        Analyzer analyzer = new StandardAnalyzer(LuceneTestCase.TEST_VERSION_CURRENT);
 
         LogByteSizeMergePolicy mp = new LogByteSizeMergePolicy();
         mp.setNoCFSRatio(useCompoundFile ? 1.0 : 0.0);
         mp.setMaxCFSSegmentSizeMB(Double.POSITIVE_INFINITY);
 
-        IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_48, analyzer)
+        IndexWriterConfig conf = new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, analyzer)
             .setUseCompoundFile(useCompoundFile)
             .setMaxBufferedDocs(10)
             .setMergePolicy(mp);
@@ -97,7 +97,7 @@ public final class CompatDocs {
         writer.close();
 
         // Delete id 7 in a fresh writer so the layout matches the .NET harness.
-        conf = new IndexWriterConfig(Version.LUCENE_48, analyzer)
+        conf = new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, analyzer)
             .setUseCompoundFile(useCompoundFile)
             .setMaxBufferedDocs(10)
             .setOpenMode(IndexWriterConfig.OpenMode.APPEND);
@@ -181,7 +181,7 @@ public final class CompatDocs {
     }
 
     /**
-     * The sorted, unique set of terms that {@code StandardAnalyzer(LUCENE_48)}
+     * The sorted, unique set of terms that {@link StandardAnalyzer}
      * produces for {@link #UTF8_VALUE}. An index written by either runtime must
      * contain exactly this term set in the {@code utf8} field, which is the
      * cross-runtime contract for the UTF-8 edge cases. Computed by re-running the
@@ -189,8 +189,8 @@ public final class CompatDocs {
      */
     public static List<String> expectedUtf8Terms() throws Exception {
         TreeSet<String> terms = new TreeSet<>();
-        try (Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_48);
-            TokenStream ts = analyzer.tokenStream("utf8", new StringReader(UTF8_VALUE))) {
+        try (Analyzer analyzer = new StandardAnalyzer(LuceneTestCase.TEST_VERSION_CURRENT);
+             TokenStream ts = analyzer.tokenStream("utf8", new StringReader(UTF8_VALUE))) {
             CharTermAttribute termAttr = ts.addAttribute(CharTermAttribute.class);
             ts.reset();
             while (ts.incrementToken()) {
