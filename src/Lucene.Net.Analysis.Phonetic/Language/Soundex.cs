@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
     /// general purpose scheme to find word with similar phonemes.
     /// <para/>
     /// This class is thread-safe.
-    /// Although not strictly immutable, the <see cref="MaxLength"/> field is not actually used.
+    /// Although not strictly immutable, the <see cref="MaxLength"/> property is not actually used.
     /// </summary>
     public class Soundex : IStringEncoder
     {

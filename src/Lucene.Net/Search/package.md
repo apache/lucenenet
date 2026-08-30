@@ -128,7 +128,7 @@ Indexing time boosts are pre-processed for storage efficiency and written to sto
 
 ## Changing Scoring — Similarity
 
- Changing [Similarity](xref:Lucene.Net.Search.Similarities.Similarity) is an easy way to influence scoring, this is done at index-time with [IndexWriterConfig.setSimilarity](xref:Lucene.Net.Index.IndexWriterConfig#methods) and at query-time with [IndexSearcher.Similarity](xref:Lucene.Net.Search.IndexSearcher#Lucene_Net_Search_IndexSearcher_Similarity). Be sure to use the same Similarity at query-time as at index-time (so that norms are encoded/decoded correctly); Lucene makes no effort to verify this.
+ Changing [Similarity](xref:Lucene.Net.Search.Similarities.Similarity) is an easy way to influence scoring, this is done at index-time with [IndexWriterConfig.Similarity](xref:Lucene.Net.Index.IndexWriterConfig#Lucene_Net_Index_IndexWriterConfig_Similarity) and at query-time with [IndexSearcher.Similarity](xref:Lucene.Net.Search.IndexSearcher#Lucene_Net_Search_IndexSearcher_Similarity). Be sure to use the same Similarity at query-time as at index-time (so that norms are encoded/decoded correctly); Lucene makes no effort to verify this.
 
  You can influence scoring by configuring a different built-in Similarity implementation, or by tweaking its parameters, subclassing it to override behavior. Some implementations also offer a modular API which you can extend by plugging in a different component (e.g. term frequency normalizer).
 

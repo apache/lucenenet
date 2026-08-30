@@ -104,7 +104,7 @@ namespace Lucene.Net.Replicator
         }
 
         /// <summary>
-        /// Compares this <see cref="IndexAndTaxonomyRevision"/> to the given <see cref="Version"/>.
+        /// Compares this <see cref="IndexAndTaxonomyRevision"/> to the given <paramref name="version"/>.
         /// </summary>
         public virtual int CompareTo(string version)
         {
