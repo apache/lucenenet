@@ -283,6 +283,7 @@ namespace Lucene.Net.Analysis
                 { nameof(IOffsetAttribute) + "#startOffset", 6 },
                 { nameof(IOffsetAttribute) + "#endOffset", 22 },
                 { nameof(IPositionIncrementAttribute) + "#positionIncrement", 1 },
+                { nameof(IPositionLengthAttribute) + "#positionLength", 1 },
                 { nameof(IPayloadAttribute) + "#payload", null },
                 { nameof(ITypeAttribute) + "#type", TypeAttribute.DEFAULT_TYPE },
                 { nameof(IFlagsAttribute) + "#flags", 8 }
