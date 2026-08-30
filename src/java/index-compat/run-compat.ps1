@@ -82,7 +82,7 @@ try {
     [Environment]::SetEnvironmentVariable('lucenenet.compat.write.dir', $null, 'Process')
 }
 
-foreach ($variant in @('index.481.nocfs', 'index.481.cfs')) {
+foreach ($variant in @('index.Lucene46.nocfs', 'index.Lucene46.cfs')) {
     $indexDir = Join-Path $DotNetIndex $variant
     Write-Host "    Java reading $indexDir"
     Invoke-Maven @('-q', 'test', "-Dlucenenet.index.dir=$indexDir")

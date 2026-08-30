@@ -140,12 +140,12 @@ jobs:
           WRITE_DIR: ${{ github.workspace }}/src/java/index-compat/work/dotnet
 
       - name: 'Java reads .NET index (nocfs)'
-        run: ./mvnw -q test "-Dlucenenet.index.dir=work/dotnet/index.481.nocfs"
+        run: ./mvnw -q test "-Dlucenenet.index.dir=work/dotnet/index.Lucene46.nocfs"
         working-directory: ${{ env.compat_dir }}
         shell: bash
 
       - name: 'Java reads .NET index (cfs)'
-        run: ./mvnw -q test "-Dlucenenet.index.dir=work/dotnet/index.481.cfs"
+        run: ./mvnw -q test "-Dlucenenet.index.dir=work/dotnet/index.Lucene46.cfs"
         working-directory: ${{ env.compat_dir }}
         shell: bash
 

@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 
 /**
  * Writes the deterministic compatibility index (both compound-file and
- * non-compound-file variants) with Apache Lucene 4.8.1, for Lucene.NET to read
+ * non-compound-file variants) with Apache Lucene, for Lucene.NET to read
  * back. This is the Java side of the "Java -&gt; .NET" direction of issue #270.
  *
  * <p>Usage (from the {@code src/java/index-compat} directory):
@@ -38,7 +38,10 @@ import java.nio.file.Paths;
  * <p>The output is written under a temporary, gitignored {@code work/java}
  * folder by default (or the directory named by the {@code lucenenet.work.dir}
  * system property, or the first command-line argument). Two subdirectories are
- * created: {@code index.481.cfs} and {@code index.481.nocfs}.
+ * created: {@code index.Lucene46.cfs} and {@code index.Lucene46.nocfs}.
+ *
+ * <p>Note that the Lucene46 in the file name represents the codec. This should
+ * be updated in future ports to match the target Lucene version's default codec.
  */
 public final class GenerateIndex {
 
@@ -57,10 +60,10 @@ public final class GenerateIndex {
         }
         Files.createDirectories(baseDir);
 
-        write(baseDir.resolve("index.481.cfs"), true);
-        write(baseDir.resolve("index.481.nocfs"), false);
+        write(baseDir.resolve("index.Lucene46.cfs"), true);
+        write(baseDir.resolve("index.Lucene46.nocfs"), false);
 
-        System.out.println("Wrote Java 4.8.1 compatibility indexes under: " + baseDir.toAbsolutePath());
+        System.out.println("Wrote Java Lucene46 compatibility indexes under: " + baseDir.toAbsolutePath());
     }
 
     private static void write(Path indexPath, boolean useCompoundFile) throws Exception {

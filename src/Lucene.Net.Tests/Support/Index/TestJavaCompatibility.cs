@@ -1,4 +1,5 @@
 using Lucene.Net.Attributes;
+using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
@@ -31,7 +32,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Verifies two-way index/codec compatibility between Lucene.NET and Apache
-    /// Lucene 4.8.1 (Java).
+    /// Lucene (Java).
     /// <para/>
     /// This is the .NET half of the harness in <c>src/java/index-compat</c>. The
     /// shared, deterministic document set lives in <see cref="CompatDocs"/>, which
@@ -199,7 +200,7 @@ namespace Lucene.Net.Index
         // ------------------------------------------------------------------
 
         /// <summary>
-        /// Pure-.NET round trip: write the shared doc set with the default 4.8.x
+        /// Pure-.NET round trip: write the shared doc set with the default
         /// codec, reopen it, run CheckIndex, and assert the contents. This is the
         /// CI-safe baseline that requires no JDK and guards the shared contract.
         /// </summary>
@@ -215,7 +216,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Java -&gt; .NET direction: open a Java 4.8.1-written index (path from the
+        /// Java -&gt; .NET direction: open a Java-written index (path from the
         /// <c>lucenenet.compat.read.dir</c> environment variable), run CheckIndex,
         /// and assert the contents. If the variable is unset or the index is missing,
         /// the test is inconclusive (skipped): a JDK may not be present here.
@@ -232,7 +233,9 @@ namespace Lucene.Net.Index
             }
 
             bool readAny = false;
-            foreach (string name in new[] { "index.481.nocfs", "index.481.cfs" })
+            // NOTE: Lucene46 here represents the default codec. This filename should be updated when porting
+            // to a newer Lucene version with a different default codec.
+            foreach (string name in new[] { "index.Lucene46.nocfs", "index.Lucene46.cfs" })
             {
                 string indexDir = Path.Combine(baseDir, name);
                 if (!System.IO.Directory.Exists(indexDir) || !HasSegments(indexDir))
@@ -267,7 +270,9 @@ namespace Lucene.Net.Index
             }
             System.IO.Directory.CreateDirectory(baseDir);
 
-            foreach ((string name, bool useCompoundFile) in new[] { ("index.481.cfs", true), ("index.481.nocfs", false) })
+            // NOTE: Lucene46 here represents the default codec. This filename should be updated when porting
+            // to a newer Lucene version with a different default codec.
+            foreach ((string name, bool useCompoundFile) in new[] { ("index.Lucene46.cfs", true), ("index.Lucene46.nocfs", false) })
             {
                 string indexDir = Path.Combine(baseDir, name);
                 if (System.IO.Directory.Exists(indexDir))
@@ -280,7 +285,7 @@ namespace Lucene.Net.Index
                 AssertContents(dir);
             }
 
-            TestContext.Progress.WriteLine("Wrote .NET 4.8.x compatibility indexes under: " + baseDir);
+            TestContext.Progress.WriteLine($"Wrote .NET Lucene46 indexes under: {baseDir}");
         }
 
         private static bool HasSegments(string indexDir)

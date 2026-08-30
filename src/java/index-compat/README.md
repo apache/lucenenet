@@ -71,7 +71,7 @@ wrappers that locate PowerShell Core (`pwsh`) and forward their arguments, so
 ### Direction 1: Java writes, .NET reads
 
 ```sh
-./mvnw -q compile exec:java        # writes work/java/index.481.{cfs,nocfs}
+./mvnw -q compile exec:java        # writes work/java/index.Lucene46.{cfs,nocfs}
 ```
 
 Then run the .NET `TestJavaCompatibility` tests (see the driver script) pointed at
@@ -84,7 +84,7 @@ environment.
 First have .NET write its index into `work/dotnet` (the driver does this), then:
 
 ```sh
-./mvnw -q test -Dlucenenet.index.dir=work/dotnet/index.481.nocfs
+./mvnw -q test -Dlucenenet.index.dir=work/dotnet/index.Lucene46.nocfs
 ```
 
 In Java, a **missing** .NET index makes the test **fail** (not skip): when Java is
