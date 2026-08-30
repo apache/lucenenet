@@ -31,7 +31,7 @@ namespace Lucene.Net.Util.Packed
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public sealed class MonotonicAppendingInt64Buffer : AbstractAppendingInt64Buffer
+    internal sealed class MonotonicAppendingInt64Buffer : AbstractAppendingInt64Buffer // LUCENENET: made internal until LUCENE-5792 lands
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static long ZigZagDecode(long n)
