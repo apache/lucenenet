@@ -192,7 +192,7 @@ namespace Lucene.Net.Index
             Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             Document doc = new Document();
-            Exception priorException = null; // LUCENENET: No need to cast to IOException
+            // LUCENENET NOTE: can't use `using` like try-with-resources upstream because TokenStream is ICloseable, not IDisposable
             TokenStream stream = analyzer.GetTokenStream("field", new StringReader("abcd   "));
             try
             {
@@ -207,13 +207,9 @@ namespace Lucene.Net.Index
                 doc.Add(f);
                 w.AddDocument(doc);
             }
-            catch (Exception e) when (e.IsIOException())
-            {
-                priorException = e;
-            }
             finally
             {
-                IOUtils.CloseWhileHandlingException(priorException, stream);
+                stream.Close();
             }
             w.Dispose();
 

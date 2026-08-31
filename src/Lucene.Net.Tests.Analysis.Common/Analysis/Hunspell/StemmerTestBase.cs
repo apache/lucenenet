@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis.Hunspell
@@ -43,13 +44,13 @@ namespace Lucene.Net.Analysis.Hunspell
                 throw new ArgumentException("there must be at least one dictionary");
             }
 
-            System.IO.Stream affixStream = typeof(StemmerTestBase).getResourceAsStream(affix);
+            Stream affixStream = typeof(StemmerTestBase).getResourceAsStream(affix);
             if (affixStream is null)
             {
                 throw new FileNotFoundException("file not found: " + affix);
             }
 
-            System.IO.Stream[] dictStreams = new System.IO.Stream[dictionaries.Length];
+            Stream[] dictStreams = new Stream[dictionaries.Length];
             for (int i = 0; i < dictionaries.Length; i++)
             {
                 dictStreams[i] = typeof(StemmerTestBase).getResourceAsStream(dictionaries[i]);
@@ -67,7 +68,7 @@ namespace Lucene.Net.Analysis.Hunspell
             finally
             {
                 IOUtils.DisposeWhileHandlingException(affixStream);
-                IOUtils.DisposeWhileHandlingException(null, dictStreams);
+                IOUtils.DisposeWhileHandlingException(dictStreams.Cast<IDisposable>()); // LUCENENET: resolve covariant array warning by casting to IDisposable
             }
         }
 

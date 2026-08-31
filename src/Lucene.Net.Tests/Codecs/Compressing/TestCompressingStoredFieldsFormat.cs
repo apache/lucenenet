@@ -1,4 +1,5 @@
 using Lucene.Net.Documents;
+using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -58,7 +59,9 @@ namespace Lucene.Net.Codecs.Compressing
             // disable CFS because this test checks file names
             iwConf.SetMergePolicy(NewLogMergePolicy(false));
             iwConf.SetUseCompoundFile(false);
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwConf);
+
+            // Cannot use RIW because this test wants CFS to stay off:
+            IndexWriter iw = new IndexWriter(dir, iwConf);
 
             Document validDoc = new Document();
             validDoc.Add(new Int32Field("id", 0, Field.Store.YES));
@@ -103,7 +106,12 @@ namespace Lucene.Net.Codecs.Compressing
             {
             }
 
-            public override string GetStringValue() => null;
+            public override string GetStringValue()
+            {
+                // TODO: really bad & scary that this causes IW to
+                // abort the segment!!  We should fix this.
+                return null;
+            }
         }
 
         #region LUCENENET specific repeating overrides

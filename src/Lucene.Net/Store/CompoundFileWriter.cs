@@ -149,10 +149,12 @@ namespace Lucene.Net.Store
             {
                 return;
             }
-            Exception priorException = null; // LUCENENET: No need to cast to IOException
+
             IndexOutput entryTableOut = null;
             // TODO this code should clean up after itself
             // (remove partial .cfs/.cfe)
+            bool success = false;
+
             try
             {
                 if (pendingEntries.Count > 0 || outputTaken)
@@ -164,27 +166,38 @@ namespace Lucene.Net.Store
                 GetOutput();
                 if (Debugging.AssertsEnabled) Debugging.Assert(dataOut != null);
                 CodecUtil.WriteFooter(dataOut);
-            }
-            catch (Exception e) when (e.IsIOException())
-            {
-                priorException = e;
+                success = true;
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(priorException, dataOut);
+                if (success)
+                {
+                    IOUtils.Dispose(dataOut);
+                }
+                else
+                {
+                    IOUtils.DisposeWhileHandlingException(dataOut);
+                }
             }
+
+            success = false;
+
             try
             {
                 entryTableOut = directory.CreateOutput(entryTableName, IOContext.DEFAULT);
                 WriteEntryTable(entries.Values, entryTableOut);
-            }
-            catch (Exception e) when (e.IsIOException())
-            {
-                priorException = e;
+                success = true;
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(priorException, entryTableOut);
+                if (success)
+                {
+                    IOUtils.Dispose(entryTableOut);
+                }
+                else
+                {
+                    IOUtils.DisposeWhileHandlingException(entryTableOut);
+                }
             }
         }
 

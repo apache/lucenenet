@@ -126,11 +126,13 @@ namespace Lucene.Net.Index
         /// <seealso cref="IndexWriter.AddDocument(IEnumerable{IIndexableField})"/>
         public virtual void AddDocument(IEnumerable<IIndexableField> doc)
         {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
             AddDocument(doc, IndexWriter.Analyzer);
         }
 
         public virtual void AddDocument(IEnumerable<IIndexableField> doc, Analyzer a)
         {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
             if (r.Next(5) == 3)
             {
                 // TODO: maybe, we should simply buffer up added docs
@@ -206,6 +208,7 @@ namespace Lucene.Net.Index
 
         private void MaybeCommit()
         {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
             if (docCount++ == flushAt)
             {
                 if (LuceneTestCase.Verbose)
@@ -224,12 +227,14 @@ namespace Lucene.Net.Index
 
         public virtual void AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs)
         {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
             IndexWriter.AddDocuments(docs);
             MaybeCommit();
         }
 
         public virtual void UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
             IndexWriter.UpdateDocuments(delTerm, docs);
             MaybeCommit();
         }
@@ -239,6 +244,7 @@ namespace Lucene.Net.Index
         /// <see cref="IndexWriter.UpdateDocument(Term, IEnumerable{IIndexableField})"/>
         public virtual void UpdateDocument(Term t, IEnumerable<IIndexableField> doc)
         {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
             if (r.Next(5) == 3)
             {
                 IndexWriter.UpdateDocuments(t, new EnumerableAnonymousClass2(doc));
@@ -306,25 +312,46 @@ namespace Lucene.Net.Index
         }
 
         public virtual void AddIndexes(params Directory[] dirs)
-            => IndexWriter.AddIndexes(dirs);
+        {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
+            IndexWriter.AddIndexes(dirs);
+        }
 
         public virtual void AddIndexes(params IndexReader[] readers)
-            => IndexWriter.AddIndexes(readers);
+        {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
+            IndexWriter.AddIndexes(readers);
+        }
 
         public virtual void UpdateNumericDocValue(Term term, string field, long? value)
-            => IndexWriter.UpdateNumericDocValue(term, field, value);
+        {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
+            IndexWriter.UpdateNumericDocValue(term, field, value);
+        }
 
         public virtual void UpdateBinaryDocValue(Term term, string field, BytesRef value)
-            => IndexWriter.UpdateBinaryDocValue(term, field, value);
+        {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
+            IndexWriter.UpdateBinaryDocValue(term, field, value);
+        }
 
         public virtual void DeleteDocuments(Term term)
-            => IndexWriter.DeleteDocuments(term);
+        {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
+            IndexWriter.DeleteDocuments(term);
+        }
 
         public virtual void DeleteDocuments(Query q)
-            => IndexWriter.DeleteDocuments(q);
+        {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
+            IndexWriter.DeleteDocuments(q);
+        }
 
         public virtual void Commit()
-            => IndexWriter.Commit();
+        {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
+            IndexWriter.Commit();
+        }
 
         public virtual int NumDocs
             => IndexWriter.NumDocs;
@@ -336,16 +363,25 @@ namespace Lucene.Net.Index
             => IndexWriter.DeleteAll();
 
         public virtual DirectoryReader GetReader()
-            => GetReader(true);
+        {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
+            return GetReader(true);
+        }
 
         private bool doRandomForceMerge = true;
         private bool doRandomForceMergeAssert = true;
 
         public virtual void ForceMergeDeletes(bool doWait)
-            => IndexWriter.ForceMergeDeletes(doWait);
+        {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
+            IndexWriter.ForceMergeDeletes(doWait);
+        }
 
         public virtual void ForceMergeDeletes()
-            => IndexWriter.ForceMergeDeletes();
+        {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
+            IndexWriter.ForceMergeDeletes();
+        }
 
         public virtual bool DoRandomForceMerge
         {
@@ -391,6 +427,7 @@ namespace Lucene.Net.Index
 
         public virtual DirectoryReader GetReader(bool applyDeletions)
         {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
             getReaderCalled = true;
             if (r.Next(20) == 2)
             {
@@ -447,6 +484,11 @@ namespace Lucene.Net.Index
         {
             if (disposing)
             {
+                if (!IndexWriter.IsClosed)
+                {
+                    LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
+                }
+
                 // if someone isn't using getReader() API, we want to be sure to
                 // forceMerge since presumably they might open a reader on the dir.
                 if (getReaderCalled == false && r.Next(8) == 2)
@@ -465,6 +507,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="IndexWriter.ForceMerge(int)"/>
         public virtual void ForceMerge(int maxSegmentCount)
         {
+            LuceneTestCase.MaybeChangeLiveIndexWriterConfig(r, IndexWriter.Config);
             IndexWriter.ForceMerge(maxSegmentCount);
         }
 

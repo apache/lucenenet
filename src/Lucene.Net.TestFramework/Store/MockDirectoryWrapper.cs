@@ -107,6 +107,7 @@ namespace Lucene.Net.Store
         internal bool preventDoubleWrite = true;
         internal bool trackDiskUsage = false;
         internal bool wrapLockFactory = true;
+        internal bool useSlowOpenClosers = true;
         internal bool allowRandomFileNotFoundException = true;
         internal bool allowReadingFilesStillOpenForWrite = false;
         private ISet<string> unSyncedFiles;
@@ -219,6 +220,17 @@ namespace Lucene.Net.Store
         {
             get => throttling; // LUCENENET specific - added getter (to follow MSDN property guidelines)
             set => throttling = value;
+        }
+
+        /// <summary>
+        /// By default, opening and closing has a rare small sleep to catch race conditions
+        /// <para />
+        /// You can disable this if you dont need it
+        /// </summary>
+        public bool UseSlowOpenClosers
+        {
+            get => useSlowOpenClosers;
+            set => useSlowOpenClosers = value;
         }
 
         /// <summary>
@@ -724,7 +736,8 @@ namespace Lucene.Net.Store
                 openFilesForWrite.Add(name);
 
                 // throttling REALLY slows down tests, so don't do it very often for SOMETIMES.
-                if (throttling == Throttling.ALWAYS || (throttling == Throttling.SOMETIMES && randomState.Next(50) == 0) && m_input is not RateLimitedDirectoryWrapper)
+                if (throttling == Throttling.ALWAYS ||
+                    (throttling == Throttling.SOMETIMES && randomState.Next(200) == 0) && m_input is not RateLimitedDirectoryWrapper)
                 {
                     if (LuceneTestCase.Verbose)
                     {
@@ -813,7 +826,7 @@ namespace Lucene.Net.Store
 
                 IndexInput ii;
                 int randomInt = randomState.Next(500);
-                if (randomInt == 0)
+                if (useSlowOpenClosers && randomInt == 0)
                 {
                     if (LuceneTestCase.Verbose)
                     {
@@ -821,7 +834,7 @@ namespace Lucene.Net.Store
                     }
                     ii = new SlowClosingMockIndexInputWrapper(this, name, delegateInput);
                 }
-                else if (randomInt == 1)
+                else if (useSlowOpenClosers && randomInt == 1)
                 {
                     if (LuceneTestCase.Verbose)
                     {

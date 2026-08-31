@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
                 {
                     if (m_infoStream.IsEnabled("FP"))
                     {
-                        m_infoStream.Message("FP", "flush: activeBytes=" + control.ActiveBytes + " deleteBytes=" + control.DeleteBytesUsed + " vs limit=" + limit);
+                        m_infoStream.Message("FP", "trigger flush: activeBytes=" + control.ActiveBytes + " deleteBytes=" + control.DeleteBytesUsed + " vs limit=" + limit);
                     }
                     MarkLargestWriterPending(control, state, totalRam);
                 }

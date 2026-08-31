@@ -173,7 +173,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (_output is null) return;
 
-                Exception ioe = null; // LUCENENET: No need to cast to IOException
+                bool success = false;
                 try
                 {
                     // write field summary
@@ -195,14 +195,18 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     WriteTrailer(_output, dirStart);
                     CodecUtil.WriteFooter(_output);
-                }
-                catch (Exception ioe2) when (ioe2.IsIOException())
-                {
-                    ioe = ioe2;
+                    success = true;
                 }
                 finally
                 {
-                    IOUtils.DisposeWhileHandlingException(ioe, _output, _postingsWriter);
+                    if (success)
+                    {
+                        IOUtils.Dispose(_output, _postingsWriter);
+                    }
+                    else
+                    {
+                        IOUtils.DisposeWhileHandlingException(_output, _postingsWriter);
+                    }
                     _output = null;
                 }
             }

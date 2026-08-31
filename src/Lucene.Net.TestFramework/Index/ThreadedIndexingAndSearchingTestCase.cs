@@ -576,7 +576,12 @@ namespace Lucene.Net.Index
             }
             MockAnalyzer analyzer = new MockAnalyzer(LuceneTestCase.Random);
             analyzer.MaxTokenLength = TestUtil.NextInt32(LuceneTestCase.Random, 1, IndexWriter.MAX_TERM_LENGTH);
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetInfoStream(new FailOnNonBulkMergesInfoStream());
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                .SetInfoStream(new FailOnNonBulkMergesInfoStream());
+            if (conf.MergePolicy is MockRandomMergePolicy mockRandomMergePolicy)
+            {
+                mockRandomMergePolicy.DoNonBulkMerges = false;
+            }
 
             if (LuceneTestCase.TestNightly)
             {

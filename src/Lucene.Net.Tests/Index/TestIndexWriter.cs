@@ -15,6 +15,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -2633,6 +2634,168 @@ namespace Lucene.Net.Index
         }
 
         [Test]
+        public void TestNullAnalyzer()
+        {
+            using Directory dir = NewDirectory();
+            IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
+            using RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwConf);
+            // add 3 good docs
+            for (int i = 0; i < 3; i++)
+            {
+                Document doc = new Document();
+                doc.Add(new StringField("id", i.ToString(CultureInfo.InvariantCulture), Field.Store.NO));
+                iw.AddDocument(doc);
+            }
+
+            // add broken doc
+            try
+            {
+                Document broke = new Document();
+                broke.Add(NewTextField("test", "broken", Field.Store.NO));
+                iw.AddDocument(broke);
+                Assert.Fail();
+            }
+            catch (Exception expected) when (expected.IsNullPointerException()) { }
+
+            // ensure good docs are still ok
+            using IndexReader ir = iw.GetReader();
+            Assert.AreEqual(3, ir.NumDocs);
+
+            // LUCENENET: disposed by using statements
+            // ir.Dispose();
+            // iw.Dispose();
+            // dir.Dispose();
+        }
+
+        [Test]
+        public void TestNullDocument()
+        {
+            using Directory dir = NewDirectory();
+            using RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
+            // add 3 good docs
+            for (int i = 0; i < 3; i++)
+            {
+                Document doc = new Document();
+                doc.Add(new StringField("id", i.ToString(CultureInfo.InvariantCulture), Field.Store.NO));
+                iw.AddDocument(doc);
+            }
+
+            // add broken doc
+            try
+            {
+                iw.AddDocument(null);
+                Assert.Fail();
+            }
+            catch (Exception expected) when (expected.IsNullPointerException()) { }
+
+            // ensure good docs are still ok
+            using IndexReader ir = iw.GetReader();
+            Assert.AreEqual(3, ir.NumDocs);
+
+            // LUCENENET: disposed by using statements
+            // ir.Dispose();
+            // iw.Dispose();
+            // dir.Dispose();
+        }
+
+        [Test]
+        public void TestNullDocuments()
+        {
+            using Directory dir = NewDirectory();
+            using RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
+            // add 3 good docs
+            for (int i = 0; i < 3; i++)
+            {
+                Document doc = new Document();
+                doc.Add(new StringField("id", i.ToString(CultureInfo.InvariantCulture), Field.Store.NO));
+                iw.AddDocument(doc);
+            }
+
+            // add broken doc block
+            try
+            {
+                iw.AddDocuments(null);
+                Assert.Fail();
+            }
+            catch (Exception expected) when (expected.IsNullPointerException()) { }
+
+            // ensure good docs are still ok
+            using IndexReader ir = iw.GetReader();
+            Assert.AreEqual(3, ir.NumDocs);
+
+            // LUCENENET: disposed by using statements
+            // ir.Dispose();
+            // iw.Dispose();
+            // dir.Dispose();
+        }
+
+        [Test]
+        public void TestIterableFieldThrowsException()
+        {
+            using Directory dir = NewDirectory();
+            using IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            int iters = AtLeast(100);
+            int docCount = 0;
+            int docId = 0;
+            ISet<string> liveIds = new JCG.HashSet<string>();
+            for (int i = 0; i < iters; i++)
+            {
+                int numDocs = AtLeast(4);
+                for (int j = 0; j < numDocs; j++)
+                {
+                    string id = (docId++).ToString(CultureInfo.InvariantCulture);
+                    IList<IIndexableField> fields = new List<IIndexableField>();
+                    fields.Add(new StringField("id", id, Field.Store.YES));
+                    fields.Add(new StringField("foo", TestUtil.RandomSimpleString(Random), Field.Store.NO));
+                    docId++;
+
+                    bool success = false;
+                    try
+                    {
+                        w.AddDocument(new RandomFailingEnumerable<IIndexableField>(fields, Random));
+                        success = true;
+                    }
+                    catch (Exception e) when (e.IsRuntimeException())
+                    {
+                        Assert.AreEqual("boom", e.Message);
+                    }
+                    finally
+                    {
+                        if (success)
+                        {
+                            docCount++;
+                            liveIds.Add(id);
+                        }
+                    }
+                }
+            }
+
+            using DirectoryReader reader = w.GetReader();
+            Assert.AreEqual(docCount, reader.NumDocs);
+            IList<AtomicReaderContext> leaves = reader.Leaves;
+            foreach (AtomicReaderContext atomicReaderContext in leaves)
+            {
+                AtomicReader ar = (AtomicReader)atomicReaderContext.Reader;
+                IBits liveDocs = ar.LiveDocs;
+                int maxDoc = ar.MaxDoc;
+                for (int i = 0; i < maxDoc; i++)
+                {
+                    if (liveDocs == null || liveDocs.Get(i))
+                    {
+                        Assert.IsTrue(liveIds.Remove(ar.Document(i).Get("id")));
+                    }
+                }
+            }
+
+            Assert.IsTrue(liveIds.Count == 0);
+
+            // LUCENENET: disposed by using statements
+            // w.Dispose();
+            // IOUtils.Dispose(reader, dir);
+        }
+
+        [Test]
         public virtual void TestIterableThrowsException()
         {
             Directory dir = NewDirectory();
@@ -2651,14 +2814,14 @@ namespace Lucene.Net.Index
                 for (int j = 0; j < numDocs; j++)
                 {
                     Document doc = new Document();
-                    doc.Add(NewField("id", "" + (docId++), idFt));
+                    doc.Add(NewField("id", (docId++).ToString(CultureInfo.InvariantCulture), idFt));
                     doc.Add(NewField("foo", TestUtil.RandomSimpleString(Random), ft));
                     docs.Add(doc);
                 }
                 bool success = false;
                 try
                 {
-                    w.AddDocuments(new RandomFailingFieldEnumerable(docs, Random));
+                    w.AddDocuments(new RandomFailingEnumerable<IEnumerable<IIndexableField>>(docs, Random));
                     success = true;
                 }
                 catch (Exception e) when (e.IsRuntimeException())
@@ -2697,37 +2860,37 @@ namespace Lucene.Net.Index
             IOUtils.Dispose(reader, w, dir);
         }
 
-        private class RandomFailingFieldEnumerable : IEnumerable<IEnumerable<IIndexableField>>
+        [Test]
+        public void TestIterableThrowsException2()
         {
-            internal readonly IList<IEnumerable<IIndexableField>> docList;
-            internal readonly Random random;
+            using Directory dir = NewDirectory();
+            using IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
-            public RandomFailingFieldEnumerable(IList<IEnumerable<IIndexableField>> docList, Random random)
+            try
             {
-                this.docList = docList;
-                this.random = random;
+                w.AddDocuments(new TestIterableThrowsException2EnumerableAnonymousClass());
+            }
+            catch (Exception e)
+            {
+                Assert.IsNotNull(e.Message);
+                Assert.AreEqual("boom", e.Message);
             }
 
-            public virtual IEnumerator<IEnumerable<IIndexableField>> GetEnumerator()
+            // LUCENENET: disposed via using statements
+            // w.Dispose();
+            // IOUtils.Dispose(dir);
+        }
+
+        private class TestIterableThrowsException2EnumerableAnonymousClass : IEnumerable<Document>
+        {
+            public IEnumerator<Document> GetEnumerator() => new Enumerator();
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+            private class Enumerator : IEnumerator<Document>
             {
-                return new EnumeratorAnonymousClass(docList.GetEnumerator());
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
-
-            private sealed class EnumeratorAnonymousClass : IEnumerator<IEnumerable<IIndexableField>>
-            {
-                private readonly IEnumerator<IEnumerable<IIndexableField>> docIter;
-
-                public EnumeratorAnonymousClass(IEnumerator<IEnumerable<IIndexableField>> docIter)
-                {
-                    this.docIter = docIter;
-                }
-
-                public IEnumerable<IIndexableField> Current => docIter.Current;
+                public Document Current => throw new NotImplementedException();
 
                 object IEnumerator.Current => Current;
 
@@ -2738,10 +2901,52 @@ namespace Lucene.Net.Index
 
                 public bool MoveNext()
                 {
-                    if (Random.Next(5) == 0)
+                    throw RuntimeException.Create("boom");
+                }
+
+                public void Reset()
+                {
+                    throw new NotImplementedException();
+                }
+            }
+        }
+
+        private class RandomFailingEnumerable<T>(IEnumerable<T> list, Random random) : IEnumerable<T>
+        {
+            private readonly int failOn = random.Next(5);
+
+            public IEnumerator<T> GetEnumerator()
+            {
+                return new EnumeratorAnonymousClass(list.GetEnumerator(), failOn);
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+
+            // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
+            private sealed class EnumeratorAnonymousClass(IEnumerator<T> docIter, int failOn) : IEnumerator<T>
+            {
+                private int count /*= 0*/;
+
+                public T Current => docIter.Current;
+
+                object IEnumerator.Current => Current;
+
+                public void Dispose()
+                {
+                    // nothing to do
+                }
+
+                public bool MoveNext()
+                {
+                    if (count == failOn)
                     {
                         throw RuntimeException.Create("boom");
                     }
+
+                    count++;
                     return docIter.MoveNext();
                 }
 

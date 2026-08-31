@@ -1,6 +1,7 @@
 using Lucene.Net.Codecs;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.IO;
 
@@ -37,25 +38,43 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
         private ConnectionCosts()
         {
+            Stream @is = null;
             short[][] costs = null;
+            bool success = false;
 
-            using (Stream @is = BinaryDictionary.GetTypeResource(GetType(), FILENAME_SUFFIX))
-            using (var @in = new InputStreamDataInput(@is, leaveOpen: true)) // LUCENENET: CA2000: Use using statement
+            try
             {
-                CodecUtil.CheckHeader(@in, HEADER, VERSION, VERSION);
-                int forwardSize = @in.ReadVInt32();
-                int backwardSize = @in.ReadVInt32();
-                costs = RectangularArrays.ReturnRectangularArray<short>(backwardSize, forwardSize);
-                int accum = 0;
-                for (int j = 0; j < costs.Length; j++)
+                @is = BinaryDictionary.GetTypeResource(GetType(), FILENAME_SUFFIX);
+                using (var @in = new InputStreamDataInput(@is, leaveOpen: true)) // LUCENENET: CA2000: Use using statement
                 {
-                    short[] a = costs[j];
-                    for (int i = 0; i < a.Length; i++)
+                    CodecUtil.CheckHeader(@in, HEADER, VERSION, VERSION);
+                    int forwardSize = @in.ReadVInt32();
+                    int backwardSize = @in.ReadVInt32();
+                    costs = RectangularArrays.ReturnRectangularArray<short>(backwardSize, forwardSize);
+                    int accum = 0;
+                    for (int j = 0; j < costs.Length; j++)
                     {
-                        int raw = @in.ReadVInt32();
-                        accum += (raw >>> 1) ^ -(raw & 1);
-                        a[i] = (short)accum;
+                        short[] a = costs[j];
+                        for (int i = 0; i < a.Length; i++)
+                        {
+                            int raw = @in.ReadVInt32();
+                            accum += (raw >>> 1) ^ -(raw & 1);
+                            a[i] = (short)accum;
+                        }
                     }
+                }
+
+                success = true;
+            }
+            finally
+            {
+                if (success)
+                {
+                    IOUtils.Dispose(@is);
+                }
+                else
+                {
+                    IOUtils.DisposeWhileHandlingException(@is);
                 }
             }
 

@@ -3,6 +3,7 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -408,7 +409,7 @@ namespace Lucene.Net.Index
                 // no
                 iwc.SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat()));
             }
-            RandomIndexWriter w = new RandomIndexWriter(Random, d, iwc);
+            IndexWriter w = new IndexWriter(d, iwc);
             for (int i = 0; i < 1000; i++)
             {
                 Document doc = new Document();
@@ -420,9 +421,96 @@ namespace Lucene.Net.Index
                     w.DeleteDocuments(new Term("id", "" + Random.Next(i + 1)));
                 }
             }
-            Assert.IsTrue(((TrackingCMS)w.IndexWriter.Config.MergeScheduler).totMergedBytes != 0);
+            Assert.IsTrue(((TrackingCMS)w.Config.MergeScheduler).totMergedBytes != 0);
             w.Dispose();
             d.Dispose();
+        }
+
+        [Test]
+        public void TestLiveMaxMergeCount()
+        {
+            using Directory d = NewDirectory();
+            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            TieredMergePolicy tmp = new TieredMergePolicy();
+            tmp.SegmentsPerTier = 1000;
+            tmp.MaxMergeAtOnce = 1000;
+            tmp.MaxMergeAtOnceExplicit = 10;
+            iwc.MergePolicy = tmp;
+            iwc.MaxBufferedDocs = 2;
+            iwc.RAMBufferSizeMB = -1;
+
+            AtomicInt32 maxRunningMergeCount = new AtomicInt32();
+
+            ConcurrentMergeScheduler cms = new TestLiveMaxMergeCountConcurrentMergeSchedulerAnonymousClass(maxRunningMergeCount);
+
+            cms.SetMaxMergesAndThreads(5, 3);
+
+            iwc.SetMergeScheduler(cms);
+
+            using IndexWriter w = new IndexWriter(d, iwc);
+            // Makes 100 segments
+            for (int i = 0; i < 200; i++)
+            {
+                w.AddDocument(new Document());
+            }
+
+            // No merges should have run so far, because TMP has high segmentsPerTier:
+            Assert.AreEqual(0, maxRunningMergeCount.Value);
+
+            w.ForceMerge(1);
+
+            // At most 5 merge threads should have launched at once:
+            Assert.IsTrue(maxRunningMergeCount.Value <= 5, $"maxRunningMergeCount={maxRunningMergeCount}");
+            maxRunningMergeCount.Value = 0;
+
+            // Makes another 100 segments
+            for (int i = 0; i < 200; i++)
+            {
+                w.AddDocument(new Document());
+            }
+
+            ((ConcurrentMergeScheduler) w.Config.MergeScheduler).SetMaxMergesAndThreads(1, 1);
+            w.ForceMerge(1);
+
+            // At most 1 merge thread should have launched at once:
+            Assert.AreEqual(1, maxRunningMergeCount.Value);
+
+            // LUCENENET: disposed by using statements
+            // w.Dispose();
+            // d.Dispose();
+        }
+
+        private class TestLiveMaxMergeCountConcurrentMergeSchedulerAnonymousClass(AtomicInt32 maxRunningMergeCount) : ConcurrentMergeScheduler
+        {
+            private readonly AtomicInt32 runningMergeCount = new AtomicInt32();
+
+            protected internal override void DoMerge(MergePolicy.OneMerge merge)
+            {
+                int count = runningMergeCount.IncrementAndGet();
+
+                // evil?
+                UninterruptableMonitor.Enter(this);
+                try
+                {
+                    if (count > maxRunningMergeCount.Value)
+                    {
+                         maxRunningMergeCount.Value = count;
+                    }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
+
+                try
+                {
+                    base.DoMerge(merge);
+                }
+                finally
+                {
+                    runningMergeCount.DecrementAndGet();
+                }
+            }
         }
 
         // LUCENENET specific

@@ -1,10 +1,8 @@
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
-using System;
 using System.IO;
 using System.Text;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
 {
@@ -28,71 +26,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestIOUtils : LuceneTestCase
     {
-        internal sealed class BrokenIDisposable : IDisposable
-        {
-            internal readonly int i;
-
-            public BrokenIDisposable(int i)
-            {
-                this.i = i;
-            }
-
-            public void Dispose()
-            {
-                throw new IOException("TEST-IO-EXCEPTION-" + i);
-            }
-        }
-
-        internal sealed class TestException : Exception
-        {
-            public TestException()
-                : base("BASE-EXCEPTION")
-            {
-            }
-        }
-
-        [Test]
-        public virtual void TestSuppressedExceptions()
-        {
-            // test with prior exception
-            try
-            {
-                TestException t = new TestException();
-                IOUtils.DisposeWhileHandlingException(t, new BrokenIDisposable(1), new BrokenIDisposable(2));
-            }
-            catch (TestException e1)
-            {
-                assertEquals("BASE-EXCEPTION", e1.Message);
-                assertEquals(2, e1.GetSuppressed().Length);
-                assertEquals("TEST-IO-EXCEPTION-1", e1.GetSuppressed()[0].Message);
-                assertEquals("TEST-IO-EXCEPTION-2", e1.GetSuppressed()[1].Message);
-            }
-            catch (Exception e2) when (e2.IsIOException())
-            {
-                Assert.Fail("IOException should not be thrown here");
-            }
-
-            // test without prior exception
-            try
-            {
-                IOUtils.DisposeWhileHandlingException((TestException)null, new BrokenIDisposable(1), new BrokenIDisposable(2));
-            }
-            catch (TestException)
-            {
-                fail("TestException should not be thrown here");
-            }
-            catch (Exception e2) when (e2.IsIOException())
-            {
-                assertEquals("TEST-IO-EXCEPTION-1", e2.Message);
-                assertEquals(1, e2.GetSuppressed().Length);
-                assertEquals("TEST-IO-EXCEPTION-2", e2.GetSuppressed()[0].Message);
-            }
-            catch (Exception)
-            {
-                fail("Exception should not be thrown here");
-            }
-        }
-
         [Test]
         [LuceneNetSpecific] // Issue #832
         public virtual void TestGetDecodingReaderWithStringPath()
