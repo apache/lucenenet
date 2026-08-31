@@ -68,10 +68,31 @@ All the logic lives in `run-compat.ps1`; the `.sh` and `.bat` files are thin
 wrappers that locate PowerShell Core (`pwsh`) and forward their arguments, so
 `pwsh` must be installed to run any of them.
 
+### Choosing the codec
+
+Both runtimes name their index folders `index.<codec>.cfs` / `index.<codec>.nocfs`
+after the codec under test, and both default to their own stock default codec
+(`Codec.Default.Name` in .NET, `Codec.getDefault().getName()` in Java), so neither
+side hard-codes a Lucene version. To pin a specific codec on both sides at once,
+pass it to the driver:
+
+```sh
+./run-compat.sh -CodecName Lucene46
+```
+
+or set `COMPAT_CODEC`. Both runtimes read the same system property,
+`compat.codec.name`, which can also be supplied directly (see the individual
+commands below); only the command-line syntax differs. CI sets it once, in the
+`codec_name` environment variable of
+`.github/workflows/Lucene-Net-Index-Compatibility.yml`.
+
 ### Direction 1: Java writes, .NET reads
 
 ```sh
-./mvnw -q compile exec:java        # writes work/java/index.Lucene46.{cfs,nocfs}
+./mvnw -q compile exec:java        # writes work/java/index.<codec>.{cfs,nocfs}
+
+# or pin the codec explicitly
+./mvnw -q compile exec:java -Dcompat.codec.name=Lucene46
 ```
 
 Then run the .NET `TestJavaCompatibility` tests (see the driver script) pointed at
@@ -86,6 +107,8 @@ First have .NET write its index into `work/dotnet` (the driver does this), then:
 ```sh
 ./mvnw -q test -Dlucenenet.index.dir=work/dotnet/index.Lucene46.nocfs
 ```
+
+(substituting the codec that the .NET side actually wrote, if it was overridden)
 
 In Java, a **missing** .NET index makes the test **fail** (not skip): when Java is
 asked to read a .NET index, the absence of that index means the pipeline that was

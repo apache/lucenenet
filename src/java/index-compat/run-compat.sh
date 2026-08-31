@@ -21,8 +21,12 @@
 # and .ps1 entry points differ only in how they locate and invoke PowerShell.
 #
 # See run-compat.ps1 for what the harness does (both directions of the Lucene
-# 4.8.1 <-> Lucene.NET index compatibility check, issue #270) and the
-# COMPAT_TFM environment variable.
+# 4.8.1 <-> Lucene.NET index compatibility check, issue #270), the COMPAT_TFM
+# environment variable, and the -CodecName parameter.
+#
+# Arguments are forwarded to run-compat.ps1, e.g.:
+#
+#   ./run-compat.sh -CodecName Lucene46
 
 if ! command -v pwsh &> /dev/null
 then
@@ -31,4 +35,6 @@ then
 fi
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-pwsh -ExecutionPolicy bypass -Command "& '$HERE/run-compat.ps1'" "$@"
+# -File (not -Command) so that arguments such as -CodecName reach the script's
+# param block; with -Command, trailing arguments are dropped.
+pwsh -ExecutionPolicy bypass -File "$HERE/run-compat.ps1" "$@"

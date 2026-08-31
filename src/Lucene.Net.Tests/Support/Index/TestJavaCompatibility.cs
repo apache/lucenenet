@@ -55,6 +55,16 @@ namespace Lucene.Net.Index
     /// index for Java to read. Defaults to a temp directory.</description></item>
     /// </list>
     /// <para/>
+    /// The codec whose name appears in the index folder names is parameterized by the
+    /// <c>compat.codec.name</c> system property, which defaults to
+    /// <see cref="Codec.Default"/>'s name so that nothing here has to name a specific
+    /// Lucene version. Like any other Lucene.NET test setting, it can be supplied on
+    /// the command line as an NUnit run parameter
+    /// (<c>-- TestRunParameters.Parameter(name="compat.codec.name", value="Lucene46")</c>),
+    /// as an environment variable (<c>lucene:compat.codec.name</c>), or from
+    /// <c>lucene.testsettings.json</c>. The Java half of the harness reads the same
+    /// property name, as <c>-Dcompat.codec.name</c>, and defaults the same way.
+    /// <para/>
     /// NOTE: this fixture deliberately does <b>not</b> derive from
     /// <see cref="LuceneTestCase"/>. That base class replaces <see cref="Codec.Default"/>
     /// with a randomized codec, which defeats the purpose of a compatibility harness:
@@ -70,6 +80,19 @@ namespace Lucene.Net.Index
     {
         private const string ReadDirEnvVar = "lucenenet.compat.read.dir";
         private const string WriteDirEnvVar = "lucenenet.compat.write.dir";
+
+        /// <summary>
+        /// The system property that names the codec used in the index folder names,
+        /// so the codec can be selected at the command line rather than in code.
+        /// </summary>
+        private const string CodecNameProperty = "compat.codec.name";
+
+        /// <summary>
+        /// The codec name used to build the index folder names on both sides of the
+        /// harness, defaulting to the stock default codec of the version being ported.
+        /// </summary>
+        private static string CodecName =>
+            SystemProperties.GetProperty(CodecNameProperty, Codec.Default.Name);
 
         // ------------------------------------------------------------------
         // Verification (mirror of Java TestDotNetCompatibility.assertContents)
@@ -252,8 +275,9 @@ namespace Lucene.Net.Index
                 return;
             }
 
+            string codecName = CodecName;
             bool readAny = false;
-            foreach (string name in new[] { $"index.{Codec.Default.Name}.nocfs", $"index.{Codec.Default.Name}.cfs" })
+            foreach (string name in new[] { $"index.{codecName}.nocfs", $"index.{codecName}.cfs" })
             {
                 string indexDir = Path.Combine(baseDir, name);
                 if (!System.IO.Directory.Exists(indexDir) || !HasSegments(indexDir))
@@ -267,7 +291,7 @@ namespace Lucene.Net.Index
 
             if (!readAny)
             {
-                NUnit.Framework.Assert.Inconclusive($"No Lucene index found under '{baseDir}'. " +
+                NUnit.Framework.Assert.Inconclusive($"No Lucene '{codecName}' index found under '{baseDir}'. " +
                     "Generate the Java index first (see src/java/index-compat/README.md).");
             }
         }
@@ -288,7 +312,8 @@ namespace Lucene.Net.Index
             }
             System.IO.Directory.CreateDirectory(baseDir);
 
-            foreach ((string name, bool useCompoundFile) in new[] { ($"index.{Codec.Default.Name}.cfs", true), ($"index.{Codec.Default.Name}.nocfs", false) })
+            string codecName = CodecName;
+            foreach ((string name, bool useCompoundFile) in new[] { ($"index.{codecName}.cfs", true), ($"index.{codecName}.nocfs", false) })
             {
                 string indexDir = Path.Combine(baseDir, name);
                 if (System.IO.Directory.Exists(indexDir))
@@ -301,7 +326,7 @@ namespace Lucene.Net.Index
                 AssertContents(dir);
             }
 
-            TestContext.Progress.WriteLine($"Wrote .NET {Codec.Default.Name} indexes under: {baseDir}");
+            TestContext.Progress.WriteLine($"Wrote .NET {codecName} indexes under: {baseDir}");
         }
 
         private static bool HasSegments(string indexDir)

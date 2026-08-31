@@ -16,6 +16,7 @@
  */
 package org.apache.lucenenet.compat;
 
+import org.apache.lucene.codecs.Codec;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
@@ -33,15 +34,20 @@ import java.nio.file.Paths;
  * <pre>
  *   ./mvnw -q compile exec:java
  *   ./mvnw -q compile exec:java -Dexec.args="/path/to/output"
+ *   ./mvnw -q compile exec:java -Dexec.args="/path/to/output" -Dcompat.codec.name=Lucene46
  * </pre>
  *
  * <p>The output is written under a temporary, gitignored {@code work/java}
  * folder by default (or the directory named by the {@code lucenenet.work.dir}
  * system property, or the first command-line argument). Two subdirectories are
- * created: {@code index.Lucene46.cfs} and {@code index.Lucene46.nocfs}.
+ * created, named after the codec: {@code index.&lt;codec&gt;.cfs} and
+ * {@code index.&lt;codec&gt;.nocfs}.
  *
- * <p>Note that the Lucene46 in the file name represents the codec. This should
- * be updated in future ports to match the target Lucene version's default codec.
+ * <p>The codec name in those folder names is parameterized separately from the
+ * work directory, via the {@code compat.codec.name} system property. It defaults
+ * to {@link Codec#getDefault()}'s name, so nothing here has to name a specific
+ * Lucene version. The .NET half of the harness reads a property of the same
+ * name and defaults the same way, from {@code Codec.Default.Name}.
  */
 public final class GenerateIndex {
 
@@ -49,6 +55,11 @@ public final class GenerateIndex {
     }
 
     public static void main(String[] args) throws Exception {
+        String codecName = System.getProperty("compat.codec.name");
+        if (codecName == null || codecName.trim().isEmpty()) {
+            codecName = Codec.getDefault().getName();
+        }
+
         Path baseDir;
         if (args.length > 0 && args[0] != null && !args[0].isEmpty()) {
             baseDir = Paths.get(args[0]);
@@ -60,10 +71,10 @@ public final class GenerateIndex {
         }
         Files.createDirectories(baseDir);
 
-        write(baseDir.resolve("index.Lucene46.cfs"), true);
-        write(baseDir.resolve("index.Lucene46.nocfs"), false);
+        write(baseDir.resolve("index." + codecName + ".cfs"), true);
+        write(baseDir.resolve("index." + codecName + ".nocfs"), false);
 
-        System.out.println("Wrote Java Lucene46 compatibility indexes under: " + baseDir.toAbsolutePath());
+        System.out.println("Wrote Java " + codecName + " compatibility indexes under: " + baseDir.toAbsolutePath());
     }
 
     private static void write(Path indexPath, boolean useCompoundFile) throws Exception {

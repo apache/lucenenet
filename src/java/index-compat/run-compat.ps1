@@ -22,6 +22,16 @@
 #
 # By default the test shard builds with its own default target framework. Set
 # $env:COMPAT_TFM (e.g. net10.0, net8.0) to force a specific one.
+#
+# The codec whose name appears in the generated index folder names is chosen with
+# -CodecName (or $env:COMPAT_CODEC). When omitted, each side falls back to its own
+# stock default codec: Codec.Default.Name in .NET, Codec.getDefault().getName() in
+# Java. Pass it explicitly to pin a specific codec on both sides at once.
+
+[CmdletBinding()]
+param(
+    [string]$CodecName = $env:COMPAT_CODEC
+)
 
 $ErrorActionPreference = 'Stop'
 
@@ -46,10 +56,17 @@ $Mvnw = if ($IsWindows) { Join-Path $Here 'mvnw.cmd' } else { Join-Path $Here 'm
 # Only pass -f when the caller explicitly forces a target framework.
 $TfmArgs = if ($env:COMPAT_TFM) { @('-f', $env:COMPAT_TFM) } else { @() }
 
+# Only override the codec when the caller asked for one; otherwise each side uses
+# its own default. Both runtimes read the same property name, 'compat.codec.name';
+# the syntax differs only because the `--` separator is how a Lucene.NET system
+# property is supplied on the .NET command line.
+$CodecArgs = if ($CodecName) { @('--', "TestRunParameters.Parameter(name=`"compat.codec.name`", value=`"$CodecName`")") } else { @() }
+$MvnCodecArgs = if ($CodecName) { @("-Dcompat.codec.name=$CodecName") } else { @() }
+
 function Invoke-DotNetTest([string]$Filter) {
     # dotnet test exits 0 when a --filter matches nothing, which would hide a
     # misconfiguration. Capture output, surface it, and fail on "matched 0".
-    $output = & dotnet test $Shard @TfmArgs -c Release --no-build --filter $Filter 2>&1
+    $output = & dotnet test $Shard @TfmArgs -c Release --no-build --filter $Filter @CodecArgs 2>&1
     $exit = $LASTEXITCODE
     $output | ForEach-Object { Write-Host $_ }
     if ($exit -ne 0) { throw "dotnet test failed for filter '$Filter'" }
@@ -68,6 +85,10 @@ function Invoke-Maven([string[]]$MvnArgs) {
     }
 }
 
+if ($CodecName) {
+    Write-Host "==> Codec pinned to '$CodecName' on both sides"
+}
+
 Write-Host "==> Building the .NET test shard$(if ($env:COMPAT_TFM) { " ($env:COMPAT_TFM)" })"
 & dotnet build $Shard @TfmArgs -c Release
 if ($LASTEXITCODE -ne 0) { throw "dotnet build failed" }
@@ -82,8 +103,8 @@ try {
     [Environment]::SetEnvironmentVariable('lucenenet.compat.write.dir', $null, 'Process')
 }
 
-# The .NET side names these after its default codec, so discover them rather than
-# hardcoding a codec version here.
+# The .NET side names these after its codec, so discover them rather than naming a
+# codec version here. This stays correct whether or not -CodecName was supplied.
 $variants = Get-ChildItem -Path $DotNetIndex -Directory | Sort-Object Name
 if (-not $variants) { throw "The .NET writer produced no index directories under $DotNetIndex" }
 foreach ($variant in $variants) {
@@ -94,7 +115,7 @@ foreach ($variant in $variants) {
 Write-Host ""
 Write-Host "==> Direction 2: Java writes, .NET reads"
 Write-Host "    Java writing index into $JavaIndex"
-Invoke-Maven @('-q', 'compile', 'exec:java', "-Dexec.args=$JavaIndex")
+Invoke-Maven (@('-q', 'compile', 'exec:java', "-Dexec.args=$JavaIndex") + $MvnCodecArgs)
 
 Write-Host "    .NET reading from $JavaIndex"
 [Environment]::SetEnvironmentVariable('lucenenet.compat.read.dir', $JavaIndex, 'Process')

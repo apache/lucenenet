@@ -20,6 +20,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.codecs.Codec;
 import org.apache.lucene.document.BinaryDocValuesField;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.DoubleDocValuesField;
@@ -87,6 +88,7 @@ public final class CompatDocs {
         mp.setMaxCFSSegmentSizeMB(Double.POSITIVE_INFINITY);
 
         IndexWriterConfig conf = new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, analyzer)
+            .setCodec(Codec.getDefault())
             .setUseCompoundFile(useCompoundFile)
             .setMaxBufferedDocs(10)
             .setMergePolicy(mp);
@@ -98,6 +100,7 @@ public final class CompatDocs {
 
         // Delete id 7 in a fresh writer so the layout matches the .NET harness.
         conf = new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, analyzer)
+            .setCodec(Codec.getDefault())
             .setUseCompoundFile(useCompoundFile)
             .setMaxBufferedDocs(10)
             .setOpenMode(IndexWriterConfig.OpenMode.APPEND);

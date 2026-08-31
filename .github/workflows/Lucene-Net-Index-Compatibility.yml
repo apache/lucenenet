@@ -54,6 +54,10 @@ env:
   # The _J-S shard owns Support/Index/*.cs, so it contains TestJavaCompatibility.
   project_path: './src/Lucene.Net.Tests._J-S/Lucene.Net.Tests._J-S.csproj'
   compat_dir: './src/java/index-compat'
+  # The codec under test. Both sides name their index folders after it, and both
+  # default to their own stock default codec when it is not supplied, so this is
+  # the single place to change when the default codec of the port moves.
+  codec_name: 'Lucene46'
 
 jobs:
 
@@ -132,7 +136,7 @@ jobs:
         # on Windows (Git Bash) and Linux.
         run: |
           set -o pipefail
-          out=$(env "lucenenet.compat.write.dir=$WRITE_DIR" dotnet test "${{ env.project_path }}" --configuration "${{ matrix.configuration }}" --framework "${{ matrix.framework }}" --no-build --no-restore --logger:"console;verbosity=normal" --filter "FullyQualifiedName~TestJavaCompatibility.TestWriteIndexForJava" 2>&1)
+          out=$(env "lucenenet.compat.write.dir=$WRITE_DIR" dotnet test "${{ env.project_path }}" --configuration "${{ matrix.configuration }}" --framework "${{ matrix.framework }}" --no-build --no-restore --logger:"console;verbosity=normal" --filter "FullyQualifiedName~TestJavaCompatibility.TestWriteIndexForJava" -- "TestRunParameters.Parameter(name=\"compat.codec.name\", value=\"${{ env.codec_name }}\")" 2>&1)
           echo "$out"
           echo "$out" | grep -Eq 'Passed:[[:space:]]*1\b' || { echo "::error::TestWriteIndexForJava did not run/pass"; exit 1; }
         shell: bash
@@ -140,12 +144,12 @@ jobs:
           WRITE_DIR: ${{ github.workspace }}/src/java/index-compat/work/dotnet
 
       - name: 'Java reads .NET index (nocfs)'
-        run: ./mvnw -q test "-Dlucenenet.index.dir=work/dotnet/index.Lucene46.nocfs"
+        run: ./mvnw -q test "-Dlucenenet.index.dir=work/dotnet/index.${{ env.codec_name }}.nocfs"
         working-directory: ${{ env.compat_dir }}
         shell: bash
 
       - name: 'Java reads .NET index (cfs)'
-        run: ./mvnw -q test "-Dlucenenet.index.dir=work/dotnet/index.Lucene46.cfs"
+        run: ./mvnw -q test "-Dlucenenet.index.dir=work/dotnet/index.${{ env.codec_name }}.cfs"
         working-directory: ${{ env.compat_dir }}
         shell: bash
 
@@ -153,7 +157,7 @@ jobs:
       # Direction 2: Java writes, .NET reads
       # ---------------------------------------------------------------------
       - name: 'Java writes index'
-        run: ./mvnw -q compile exec:java "-Dexec.args=work/java"
+        run: ./mvnw -q compile exec:java "-Dexec.args=work/java" "-Dcompat.codec.name=${{ env.codec_name }}"
         working-directory: ${{ env.compat_dir }}
         shell: bash
 
@@ -162,7 +166,7 @@ jobs:
       - name: '.NET reads Java index'
         run: |
           set -o pipefail
-          out=$(env "lucenenet.compat.read.dir=$READ_DIR" dotnet test "${{ env.project_path }}" --configuration "${{ matrix.configuration }}" --framework "${{ matrix.framework }}" --no-build --no-restore --logger:"console;verbosity=normal" --filter "FullyQualifiedName~TestJavaCompatibility.TestReadJavaIndex" 2>&1)
+          out=$(env "lucenenet.compat.read.dir=$READ_DIR" dotnet test "${{ env.project_path }}" --configuration "${{ matrix.configuration }}" --framework "${{ matrix.framework }}" --no-build --no-restore --logger:"console;verbosity=normal" --filter "FullyQualifiedName~TestJavaCompatibility.TestReadJavaIndex" -- "TestRunParameters.Parameter(name=\"compat.codec.name\", value=\"${{ env.codec_name }}\")" 2>&1)
           echo "$out"
           echo "$out" | grep -Eq 'Passed:[[:space:]]*1\b' || { echo "::error::TestReadJavaIndex did not run/pass (skipped or filtered out)"; exit 1; }
         shell: bash
