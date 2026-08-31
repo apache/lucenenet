@@ -245,7 +245,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// If you use this: IW.Dispose(false) cannot abort your merge!
+        /// If you use this: IW.Close(false) cannot abort your merge!
         /// <para/>
         /// @lucene.internal
         /// </summary>

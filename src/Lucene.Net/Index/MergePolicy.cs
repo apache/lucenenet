@@ -546,7 +546,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Thrown when a merge was explicitly aborted because
-        /// <see cref="IndexWriter.Dispose(bool)"/> was called with
+        /// <see cref="IndexWriter.Close(bool)"/> was called with
         /// <c>false</c>.  Normally this exception is
         /// privately caught and suppressed by <see cref="IndexWriter"/>.
         /// </summary>

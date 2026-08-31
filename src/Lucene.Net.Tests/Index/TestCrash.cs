@@ -210,7 +210,9 @@ namespace Lucene.Net.Index
             IndexWriter writer = InitIndex(Random, false);
             MockDirectoryWrapper dir = (MockDirectoryWrapper)writer.Directory;
 
-            writer.Dispose(false);
+#pragma warning disable 612, 618
+            writer.Close(false);
+#pragma warning restore 612, 618
 
             dir.Crash();
 

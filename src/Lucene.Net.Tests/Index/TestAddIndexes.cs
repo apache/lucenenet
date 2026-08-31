@@ -804,7 +804,9 @@ namespace Lucene.Net.Index
             internal virtual void Close(bool doWait)
             {
                 didClose = true;
-                writer2.Dispose(doWait);
+#pragma warning disable 612, 618
+                writer2.Close(doWait);
+#pragma warning restore 612, 618
             }
 
             internal virtual void CloseDir()

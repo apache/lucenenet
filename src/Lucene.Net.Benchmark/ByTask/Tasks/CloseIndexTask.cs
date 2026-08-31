@@ -47,7 +47,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     infoStream.Dispose();
                 }
-                iw.Dispose(doWait);
+#pragma warning disable 612, 618
+                iw.Close(doWait);
+#pragma warning restore 612, 618
                 RunData.IndexWriter = null;
             }
             return 1;

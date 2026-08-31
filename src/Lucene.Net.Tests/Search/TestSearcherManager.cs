@@ -272,8 +272,9 @@ namespace Lucene.Net.Search
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(new ConcurrentMergeScheduler()));
             writer.AddDocument(new Document());
             writer.Commit();
-            CountdownEvent awaitEnterWarm = new CountdownEvent(1);
-            CountdownEvent awaitClose = new CountdownEvent(1);
+            // LUCENENET: CountdownLatch is disposable in .NET
+            using CountdownLatch awaitEnterWarm = new CountdownLatch(1);
+            using CountdownLatch awaitClose = new CountdownLatch(1);
             AtomicBoolean triedReopen = new AtomicBoolean(false);
             //TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory("testIntermediateClose"));
             TaskScheduler es = Random.NextBoolean() ? null : TaskScheduler.Default;
@@ -333,12 +334,12 @@ namespace Lucene.Net.Search
 
         private sealed class SearcherFactoryAnonymousClass2 : SearcherFactory
         {
-            private readonly CountdownEvent awaitEnterWarm;
-            private readonly CountdownEvent awaitClose;
+            private readonly CountdownLatch awaitEnterWarm;
+            private readonly CountdownLatch awaitClose;
             private readonly AtomicBoolean triedReopen;
             private readonly TaskScheduler es;
 
-            public SearcherFactoryAnonymousClass2(CountdownEvent awaitEnterWarm, CountdownEvent awaitClose, AtomicBoolean triedReopen, TaskScheduler es)
+            public SearcherFactoryAnonymousClass2(CountdownLatch awaitEnterWarm, CountdownLatch awaitClose, AtomicBoolean triedReopen, TaskScheduler es)
             {
                 this.awaitEnterWarm = awaitEnterWarm;
                 this.awaitClose = awaitClose;

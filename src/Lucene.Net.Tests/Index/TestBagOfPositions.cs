@@ -1,7 +1,6 @@
 using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Documents;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -9,9 +8,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Threading;
-using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -117,7 +115,7 @@ namespace Lucene.Net.Index
             // else just positions
 
             ThreadJob[] threads = new ThreadJob[threadCount];
-            CountdownEvent startingGun = new CountdownEvent(1);
+            using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
 
             for (int threadID = 0; threadID < threadCount; threadID++)
             {
@@ -160,12 +158,12 @@ namespace Lucene.Net.Index
             private readonly int maxTermsPerDoc;
             private readonly ConcurrentQueue<string> postings;
             private readonly RandomIndexWriter iw;
-            private readonly CountdownEvent startingGun;
+            private readonly CountdownLatch startingGun;
             private readonly Random threadRandom;
             private readonly Document document;
             private readonly Field field;
 
-            public ThreadAnonymousClass(int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountdownEvent startingGun, Random threadRandom, Document document, Field field)
+            public ThreadAnonymousClass(int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountdownLatch startingGun, Random threadRandom, Document document, Field field)
             {
                 this.maxTermsPerDoc = maxTermsPerDoc;
                 this.postings = postings;

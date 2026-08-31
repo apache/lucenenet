@@ -314,7 +314,7 @@ namespace Lucene.Net.Index
                     Assert.IsTrue(docsWriter.flushControl.stallControl.WasStalled);
                 }
                 AssertActiveBytesAfter(flushControl);
-                writer.Dispose(true);
+                writer.Dispose();
                 dir.Dispose();
             }
         }

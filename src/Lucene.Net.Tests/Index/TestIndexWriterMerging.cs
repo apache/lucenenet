@@ -433,7 +433,9 @@ namespace Lucene.Net.Index
 
                     t1.Start();
 
-                    writer.Dispose(false);
+#pragma warning disable 612, 618
+                    writer.Close(false);
+#pragma warning restore 612, 618
                     t1.Join();
 
                     // Make sure reader can read

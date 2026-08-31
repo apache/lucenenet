@@ -1,3 +1,4 @@
+using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
@@ -67,7 +68,7 @@ namespace Lucene.Net.Index
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     bool isDoFlush = StackTraceHelper.DoesStackTraceContainMethod(nameof(DocumentsWriterPerThread.Flush));
-                    bool isClose = StackTraceHelper.DoesStackTraceContainMethod(nameof(IndexWriter.Close)) || // LUCENENET NOTE: Close is aggressively inlined, so likely won't hit this case, but would hit Dispose
+                    bool isClose = StackTraceHelper.DoesStackTraceContainMethod(nameof(IndexWriter.Close)) || // LUCENENET NOTE: Close is marked NoInlining so it stays on the stack; Dispose is checked as well as a belt-and-suspenders
                         StackTraceHelper.DoesStackTraceContainMethod(nameof(IndexWriter.Dispose));
 
                     if (isDoFlush && !isClose && Random.NextBoolean())
@@ -260,7 +261,9 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 writer.Commit();
 
-                writer.Dispose(false);
+#pragma warning disable 612, 618
+                writer.Close(false);
+#pragma warning restore 612, 618
 
                 IndexReader reader = DirectoryReader.Open(directory);
                 Assert.AreEqual((1 + iter) * 182, reader.NumDocs);
@@ -286,7 +289,7 @@ namespace Lucene.Net.Index
 
             int maxMergeCount = TestUtil.NextInt32(Random, 1, 5);
             int maxMergeThreads = TestUtil.NextInt32(Random, 1, maxMergeCount);
-            CountdownEvent enoughMergesWaiting = new CountdownEvent(maxMergeCount);
+            using CountdownLatch enoughMergesWaiting = new CountdownLatch(maxMergeCount); // LUCENENET: CountdownLatch is disposable in .NET
             AtomicInt32 runningMergeCount = new AtomicInt32(0);
             AtomicBoolean failed = new AtomicBoolean();
 
@@ -315,18 +318,20 @@ namespace Lucene.Net.Index
                     w.AddDocument(doc);
                 }
             }
-            w.Dispose(false);
+#pragma warning disable 612, 618
+            w.Close(false);
+#pragma warning restore 612, 618
             dir.Dispose();
         }
 
         private sealed class ConcurrentMergeSchedulerAnonymousClass : ConcurrentMergeScheduler
         {
             private readonly int maxMergeCount;
-            private readonly CountdownEvent enoughMergesWaiting;
+            private readonly CountdownLatch enoughMergesWaiting;
             private readonly AtomicInt32 runningMergeCount;
             private readonly AtomicBoolean failed;
 
-            public ConcurrentMergeSchedulerAnonymousClass(int maxMergeCount, CountdownEvent enoughMergesWaiting, AtomicInt32 runningMergeCount, AtomicBoolean failed)
+            public ConcurrentMergeSchedulerAnonymousClass(int maxMergeCount, CountdownLatch enoughMergesWaiting, AtomicInt32 runningMergeCount, AtomicBoolean failed)
             {
                 this.maxMergeCount = maxMergeCount;
                 this.enoughMergesWaiting = enoughMergesWaiting;

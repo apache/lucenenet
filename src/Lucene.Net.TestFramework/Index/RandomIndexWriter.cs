@@ -449,7 +449,13 @@ namespace Lucene.Net.Index
             {
                 // if someone isn't using getReader() API, we want to be sure to
                 // forceMerge since presumably they might open a reader on the dir.
-                if (getReaderCalled == false && r.Next(8) == 2)
+                // LUCENENET: the `IndexWriter.IsClosed == false` guard is ported from upstream
+                // LUCENE-5871 (commit 2cfcdcc, first released in 4.10.0), pulled in alongside
+                // the LUCENE-5871 IndexWriter close fix (#1284). Without it the new Shutdown
+                // contract can leave the writer closed even when the test's user-visible call
+                // threw, and the random force-merge here would then throw
+                // AlreadyClosedException during teardown.
+                if (getReaderCalled == false && r.Next(8) == 2 && IndexWriter.IsClosed == false)
                 {
                     _DoRandomForceMerge();
                 }

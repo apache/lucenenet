@@ -776,5 +776,33 @@ namespace Lucene.Net.Index
             doc.Add(NewField("id", "" + index, storedTextType));
             writer.AddDocument(doc);
         }
+
+        // LUCENENET: ported from upstream LUCENE-5871 (commit 2cfcdcc, first released in
+        // 4.10.0), pulled in alongside the LUCENE-5871 IndexWriter close fix (#1284). The
+        // new Shutdown contract throws IllegalStateException when prepareCommit was called
+        // without a matching commit; this test pins that behavior.
+        [Test]
+        public virtual void TestPrepareCommitThenClose()
+        {
+            Directory dir = NewDirectory();
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            w.AddDocument(new Document());
+            w.PrepareCommit();
+            try
+            {
+                w.Dispose();
+                Assert.Fail("didn't hit exception");
+            }
+            catch (Exception ise) when (ise.IsIllegalStateException())
+            {
+                // expected
+            }
+            w.Commit();
+            w.Dispose();
+            DirectoryReader r = DirectoryReader.Open(dir);
+            Assert.AreEqual(1, r.MaxDoc);
+            r.Dispose();
+            dir.Dispose();
+        }
     }
 }

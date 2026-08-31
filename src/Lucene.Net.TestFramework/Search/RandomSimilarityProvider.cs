@@ -1,4 +1,5 @@
 using J2N.Collections.Generic.Extensions;
+using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Search.Similarities;
 using Lucene.Net.Support.Threading;
@@ -78,7 +79,12 @@ namespace Lucene.Net.Search
                 if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
                 if (!previousMappings.TryGetValue(field, out Similarity sim) || sim is null)
                 {
-                    sim = knownSims[Math.Max(0, Math.Abs(perFieldSeed ^ field.GetHashCode())) % knownSims.Count];
+                    // LUCENENET specific: use J2N's CharSequenceComparer.Ordinal.GetHashCode(), which produces
+                    // the same value as Java's String.hashCode(). The .NET string.GetHashCode() is randomized
+                    // per-process, so the per-field similarity chosen in one process would differ from another,
+                    // breaking reproducibility across processes (e.g. the forked TestIndexWriterOnJRECrash) and
+                    // diverging from Java. A deterministic hash keeps the choice stable.
+                    sim = knownSims[Math.Max(0, Math.Abs(perFieldSeed ^ CharSequenceComparer.Ordinal.GetHashCode(field))) % knownSims.Count];
                     previousMappings[field] = sim;
                 }
                 return sim;

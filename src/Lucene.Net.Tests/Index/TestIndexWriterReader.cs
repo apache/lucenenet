@@ -515,7 +515,9 @@ namespace Lucene.Net.Index
                 {
                     mainWriter.WaitForMerges();
                 }
-                mainWriter.Dispose(doWait);
+#pragma warning disable 612, 618
+                mainWriter.Close(doWait);
+#pragma warning restore 612, 618
             }
 
             internal virtual void CloseDir()
