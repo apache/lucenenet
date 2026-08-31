@@ -103,7 +103,7 @@ namespace Lucene.Net.Store
             EnsureUnix();
             if ((mergeBufferSize & ALIGN) != 0)
             {
-                throw new ArgumentException("mergeBufferSize must be 0 mod " + ALIGN + " (got: " + mergeBufferSize + ")");
+                throw new ArgumentException($"mergeBufferSize must be 0 mod {ALIGN} (got: {mergeBufferSize})");
             }
             this.mergeBufferSize = mergeBufferSize;
             this.minBytesDirect = minBytesDirect;
@@ -448,7 +448,7 @@ namespace Lucene.Net.Store
             private int bufferPos;
 
             public NativeUnixIndexInput(string path, int bufferSize)
-                : base("NativeUnixIndexInput(path=\"" + path + "\")")
+                : base($"NativeUnixIndexInput(path=\"{path}\")")
             {
                 fd = NativePosixUtil.OpenDirect(path, read: true);
                 sharedFd = fd;
@@ -509,16 +509,7 @@ namespace Lucene.Net.Store
                     }
                     catch (Exception ioe) when (ioe.IsIOException())
                     {
-                        // LUCENENET: upstream wraps in a RuntimeException here (IndexInput.Length cannot
-                        // throw a checked IOException in Java). Preserve the original HResult so callers
-                        // that inspect it (e.g. NativeFSLock) still see the underlying error. The HResult
-                        // setter is only public on modern TFMs; on net462/netstandard2.0 it is protected,
-                        // so the detail is retained in the message there instead.
-                        Exception wrapped = RuntimeException.Create("IOException during Length: " + this, ioe);
-#if !(NETSTANDARD2_0 || NET462)
-                        wrapped.HResult = ioe.HResult;
-#endif
-                        throw wrapped;
+                        throw RuntimeException.Create($"IOException during Length: {this}", ioe);
                     }
                 }
             }
@@ -551,14 +542,14 @@ namespace Lucene.Net.Store
                     // LUCENENET: surface the original HResult (via the ctor that accepts it, which is
                     // public on all target frameworks) so callers such as NativeFSLock still see the
                     // underlying error. The inner detail is retained in the message.
-                    throw new IOException(ioe.Message + ": " + this, ioe.HResult);
+                    throw new IOException($"{ioe.Message}: {this}", ioe.HResult);
                 }
                 // Upstream used FileChannel.read(), which returns -1 at EOF. Here Pread() wraps libc
                 // pread(), which returns 0 at EOF (a genuine error already threw above), so a refill that
                 // reads nothing means we have stepped entirely past the end of the file.
                 if (n <= 0)
                 {
-                    throw EOFException.Create("read past EOF: " + this);
+                    throw EOFException.Create($"read past EOF: {this}");
                 }
                 buffer.Rewind();
             }
@@ -594,14 +585,7 @@ namespace Lucene.Net.Store
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    // LUCENENET: as in Length above, upstream wraps in a RuntimeException (Clone cannot
-                    // throw a checked IOException in Java). Preserve the original HResult where the setter
-                    // is public (modern TFMs); on net462/netstandard2.0 the detail stays in the message.
-                    Exception wrapped = RuntimeException.Create("IOException during clone: " + this, ioe);
-#if !(NETSTANDARD2_0 || NET462)
-                    wrapped.HResult = ioe.HResult;
-#endif
-                    throw wrapped;
+                    throw RuntimeException.Create($"IOException during clone: {this}", ioe);
                 }
             }
 
