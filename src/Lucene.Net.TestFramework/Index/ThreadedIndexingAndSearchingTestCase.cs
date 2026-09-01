@@ -772,7 +772,9 @@ namespace Lucene.Net.Index
             assertEquals("index=" + m_writer.SegString() + " addCount=" + m_addCount + " delCount=" + m_delCount, m_addCount - m_delCount, m_writer.NumDocs);
 
             DoClose();
+#pragma warning disable 612, 618
             m_writer.Dispose(false);
+#pragma warning restore 612, 618
 
             // Cannot shutdown until after writer is closed because
             // writer has merged segment warmer that uses IS to run
