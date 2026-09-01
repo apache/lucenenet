@@ -1422,7 +1422,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{char[],TValue}"/>'s
-        /// entries, and calls this dictionary's <see cref="Set(char[], TValue?)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <c>Set(char[], TValue)</c> operation once for each entry.
         /// <para/>
         /// If ignoreCase is <c>true</c> for this dictionary, the text arrays will be directly modified.
         /// The user should never modify the text arrays after calling this method.
@@ -1448,7 +1448,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{string,TValue}"/>'s
-        /// entries, and calls this dictionary's <see cref="Set(string, TValue?)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <c>Set(string, TValue)</c> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
@@ -1471,7 +1471,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{ICharSequence,TValue}"/>'s
-        /// entries, and calls this dictionary's <see cref="Set(ICharSequence, TValue?)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <c>Set(ICharSequence, TValue)</c> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
@@ -1498,7 +1498,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{T,TValue}"/>'s
-        /// entries, and calls this dictionary's <see cref="Set{T}(T, TValue?)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <c>Set(T, TValue)</c> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
@@ -1521,7 +1521,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{char[],TValue}}"/>'s
-        /// entries, and calls this dictionary's <see cref="Set(char[], TValue?)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <c>Set(char[], TValue)</c> operation once for each entry.
         /// </summary>
         /// <param name="collection">The values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
@@ -1544,7 +1544,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{string,TValue}}"/>'s
-        /// entries, and calls this dictionary's <see cref="Set(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <c>Set(string, TValue)</c> operation once for each entry.
         /// </summary>
         /// <param name="collection">The values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
@@ -1567,7 +1567,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{ICharSequence,TValue}}"/>'s
-        /// entries, and calls this dictionary's <see cref="Set(ICharSequence, TValue)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <c>Set(ICharSequence, TValue)</c> operation once for each entry.
         /// </summary>
         /// <param name="collection">The values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
@@ -1594,7 +1594,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{TKey,TValue}}"/>'s
-        /// entries, and calls this dictionary's <see cref="Set{T}(T, TValue?)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <c>Set(T, TValue)</c> operation once for each entry.
         /// </summary>
         /// <param name="collection">The values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
@@ -2024,8 +2024,8 @@ namespace Lucene.Net.Analysis.Util
         /// using the specified <paramref name="matchVersion"/> value. Preserves the value of <c>ignoreCase</c> from the current instance.
         /// </summary>
         /// <param name="matchVersion">
-        ///          compatibility match version see <a href="#version">Version
-        ///          note</a> above for details. </param>
+        ///          compatibility match version see Version
+        ///          note above for details. </param>
         /// <returns> A copy of the current <see cref="CharArrayDictionary{TValue}"/> as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
         // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
         public virtual CharArrayDictionary<TValue> ToCharArrayDictionary(LuceneVersion matchVersion)
@@ -2038,8 +2038,8 @@ namespace Lucene.Net.Analysis.Util
         /// using the specified <paramref name="matchVersion"/> and <paramref name="ignoreCase"/> values.
         /// </summary>
         /// <param name="matchVersion">
-        ///          compatibility match version see <a href="#version">Version
-        ///          note</a> above for details. </param>
+        ///          compatibility match version see Version
+        ///          note above for details. </param>
         /// <param name="ignoreCase"><c>false</c> if and only if the set should be case sensitive otherwise <c>true</c>.</param>
         /// <returns> A copy of the current <see cref="CharArrayDictionary{TValue}"/> as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
         // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
@@ -3311,8 +3311,8 @@ namespace Lucene.Net.Analysis.Util
         /// </para>
         /// </summary>
         /// <param name="matchVersion">
-        ///          compatibility match version see <a href="#version">Version
-        ///          note</a> above for details. This argument will be ignored if the
+        ///          compatibility match version see Version
+        ///          note above for details. This argument will be ignored if the
         ///          given dictionary is a <see cref="CharArrayDictionary{TValue}"/>. </param>
         /// <param name="dictionary">
         ///          a dictionary to copy </param>
@@ -3859,8 +3859,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="dictionary">
         ///          A <see cref="IDictionary{TKey, TValue}"/> to copy. </param>
         /// <param name="matchVersion">
-        ///          compatibility match version see <a href="#version">Version
-        ///          note</a> above for details. </param>
+        ///          compatibility match version see Version
+        ///          note above for details. </param>
         /// <returns> A copy of the current dictionary as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
         public static CharArrayDictionary<TValue> ToCharArrayDictionary<TValue>(this IDictionary<string, TValue> dictionary, LuceneVersion matchVersion)
@@ -3879,8 +3879,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="dictionary">
         ///          A <see cref="IDictionary{TKey, TValue}"/> to copy. </param>
         /// <param name="matchVersion">
-        ///          compatibility match version see <a href="#version">Version
-        ///          note</a> above for details. </param>
+        ///          compatibility match version see Version
+        ///          note above for details. </param>
         /// <param name="ignoreCase"><c>false</c> if and only if the set should be case sensitive otherwise <c>true</c>.</param>
         /// <returns> A copy of the current dictionary as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>

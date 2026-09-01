@@ -33,7 +33,7 @@ Codecs API: API for customization of the encoding and structure of the index.
 * Norms - see <xref:Lucene.Net.Codecs.NormsFormat>
 * Live documents - see <xref:Lucene.Net.Codecs.LiveDocsFormat>
 
-For some concrete implementations beyond Lucene's official index format, see the [Codecs module](../codecs/overview.html).
+For some concrete implementations beyond Lucene's official index format, see the [Codecs module](xref:Lucene.Net.Codecs).
 
 Codecs are identified by name through the <xref:Lucene.Net.Codecs.ICodecFactory> implementation, which by default is the <xref:Lucene.Net.Codecs.DefaultCodecFactory>. To create your own codec, extend <xref:Lucene.Net.Codecs.Codec>. By default, the name of the class (minus the suffix "Codec") will be used as the codec's name.
 
@@ -158,7 +158,7 @@ public class MyCodec : Lucene46Codec
 }
 ```
 
-Registration of a custom postings format is similar to registering custom codecs, implement <xref:Lucene.Net.Codecs.IPostingsFormatFactory> and then call <xref:Lucene.Net.Codecs.PostingsFormat.SetPostingsFormatFactory> at application start up.
+Registration of a custom postings format is similar to registering custom codecs, implement <xref:Lucene.Net.Codecs.IPostingsFormatFactory> and then call <xref:Lucene.Net.Codecs.PostingsFormat.SetPostingsFormatFactory*> at application start up.
 
 ```cs
 PostingsFormat.SetPostingsFormatFactory(new DefaultPostingsFormatFactory {
@@ -168,7 +168,7 @@ PostingsFormat.SetPostingsFormatFactory(new DefaultPostingsFormatFactory {
 
 ## Custom DocValues Formats
 
-Similarly, if you just want to customize the <xref:Lucene.Net.Codecs.DocValuesFormat> per-field, have a look at [GetDocValuesFormatForField(string)](xref:Lucene.Net.Codecs.Lucene46.Lucene46Codec). Custom implementations can be provided by implementing <xref:Lucene.Net.Codecs.IDocValuesFormatFactory> and registering  the factory using <xref:Lucene.Net.Codecs.DocValuesFormat.SetDocValuesFormatFactory>.
+Similarly, if you just want to customize the <xref:Lucene.Net.Codecs.DocValuesFormat> per-field, have a look at [GetDocValuesFormatForField(string)](xref:Lucene.Net.Codecs.Lucene46.Lucene46Codec). Custom implementations can be provided by implementing <xref:Lucene.Net.Codecs.IDocValuesFormatFactory> and registering  the factory using <xref:Lucene.Net.Codecs.DocValuesFormat.SetDocValuesFormatFactory*>.
 
 ## Testing Custom Codecs
 
@@ -288,7 +288,7 @@ public class Startup : LuceneTestFrameworkInitializer
 The above block will register a new codec named `MyCodec` with the test framework. However, the test framework will not select the codec for use in tests on its own. To override the default behavior of selecting a random codec, the configuration parameter `tests:codec` must be set explicitly.
 
 > [!NOTE]
-> A codec name is derived from either the name of the class (minus the "Codec" suffix) or the <xref:Lucene.Net.Codecs.CodecName.Name> property.
+> A codec name is derived from either the name of the class (minus the "Codec" suffix) or the <xref:Lucene.Net.Util.ServiceNameAttribute.Name> property.
 
 #### Setting the Default Codec using an Environment Variable
 

@@ -1186,7 +1186,7 @@ namespace Lucene.Net.Search
         ///          Therefore if document scores are not required by the application,
         ///          it is recommended to set it to <c>false</c>. </param>
         /// <param name="trackMaxScore">
-        ///          Specifies whether the query's <see cref="maxScore"/> should be tracked and set
+        ///          Specifies whether the query's <c>maxScore</c> should be tracked and set
         ///          on the resulting <see cref="TopDocs"/>. Note that if set to <c>false</c>,
         ///          <see cref="TopDocs.MaxScore"/> returns <see cref="float.NaN"/>. Setting this to
         ///          <c>true</c> affects performance as it incurs the score computation on

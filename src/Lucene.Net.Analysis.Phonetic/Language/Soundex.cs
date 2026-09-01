@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
     /// general purpose scheme to find word with similar phonemes.
     /// <para/>
     /// This class is thread-safe.
-    /// Although not strictly immutable, the <see cref="maxLength"/> field is not actually used.
+    /// Although not strictly immutable, the <see cref="MaxLength"/> property is not actually used.
     /// </summary>
     public class Soundex : IStringEncoder
     {
@@ -55,7 +55,6 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// They are ignored (after the first letter) and don't act as separators
         /// between consonants with the same code.
         /// </summary>
-        /// <seealso cref="US_ENGLISH_MAPPING"/>
         //                                                      ABCDEFGHIJKLMNOPQRSTUVWXYZ
         public const string US_ENGLISH_MAPPING_STRING = "01230120022455012623010202";
 
@@ -72,7 +71,6 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// Apart from when they appear as the first letter, they are ignored.
         /// They don't act as separators between duplicate codes.
         /// </summary>
-        /// <seealso cref="US_ENGLISH_MAPPING"/>
         /// <seealso cref="US_ENGLISH_MAPPING_STRING"/>
         public static readonly Soundex US_ENGLISH = new Soundex();
 
@@ -127,10 +125,10 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         private readonly bool specialCaseHW;
 
         /// <summary>
-        /// Creates an instance using <see cref="US_ENGLISH_MAPPING"/>.
+        /// Creates an instance using <c>US_ENGLISH_MAPPING</c>.
         /// </summary>
         /// <seealso cref="Soundex(char[])"/>
-        /// <seealso cref="US_ENGLISH_MAPPING"/>
+        /// <seealso cref="US_ENGLISH_MAPPING_STRING"/>
         public Soundex()
         {
             this.soundexMapping = US_ENGLISH_MAPPING;

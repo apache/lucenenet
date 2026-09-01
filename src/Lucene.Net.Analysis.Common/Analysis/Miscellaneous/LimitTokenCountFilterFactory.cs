@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
     /// <para>
-    /// The <see cref="consumeAllTokens"/> property is optional and defaults to <c>false</c>.
+    /// The <c>consumeAllTokens</c> (<see cref="CONSUME_ALL_TOKENS_KEY"/>) option is optional and defaults to <c>false</c>.
     /// See <see cref="LimitTokenCountFilter"/> for an explanation of it's use.
     /// </para>
     /// </summary>

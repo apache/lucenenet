@@ -56,7 +56,7 @@ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis>
 *   [Search Term Folding](#search-term-folding): Removes distinctions
   (such as accent marks) between similar characters for a loose or fuzzy search.
 
-*   [Text Transformation](#text-transform): Transforms Unicode text in
+*   [Text Transformation](#text-transformation): Transforms Unicode text in
   a context-sensitive fashion: e.g. mapping Traditional to Simplified Chinese
 
 * * *

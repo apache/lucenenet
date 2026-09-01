@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
     ///    <item><description> <seealso cref="MatchAllDocsQuery"/> </description></item>
     ///    </list>
     ///    <para/>See also the family of Span Queries (<see cref="Lucene.Net.Search.Spans"/>)
-    ///       and additional queries available in the <a href="{@docRoot}/../queries/overview-summary.html">Queries module</a>
+    ///       and additional queries available in the <a href="xref:Lucene.Net.Queries">Queries module</a>
     /// </summary>
     public abstract class Query // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {

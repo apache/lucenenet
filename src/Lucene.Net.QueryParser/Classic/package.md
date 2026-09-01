@@ -58,11 +58,11 @@ enabling substantial customization to how a query is created.
 
     *   [AND](#and)
 
-    *   [+](#nbsp)
+    *   [+](#-required-operator)
 
     *   [NOT](#not)
 
-    *   [-](#-)
+    *   [-](#--prohibit-operator)
 
 *   [Grouping](#grouping)
 
@@ -262,7 +262,7 @@ To search for documents that contain "jakarta apache" and "Apache Lucene" use th
 "jakarta apache" AND "Apache Lucene"
 ```
 
-### +&nbsp;
+### + (required operator)
 
 The "+" or required operator requires that the term after the "+" symbol exist somewhere in a the field of a single document.
 
@@ -288,7 +288,7 @@ Note: The NOT operator cannot be used with just one term. For example, the follo
 NOT "jakarta apache"
 ```
 
-### -
+### - (prohibit operator)
 
 The "-" or prohibit operator excludes documents that contain the term after the "-" symbol.
 

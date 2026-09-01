@@ -53,7 +53,7 @@ on some of the conceptual or inner details of Lucene:
 - <xref:Lucene.Net.Analysis.Stempel> - Analyzer for indexing Polish
 - [Lucene.Net.Benchmark](xref:Lucene.Net.Benchmarks) - System for benchmarking Lucene
 - <xref:Lucene.Net.Classification> - Classification module for Lucene
-- [Lucene.Net.Codecs](api/codecs/overview.html) - Lucene codecs and postings formats
+- [Lucene.Net.Codecs](xref:Lucene.Net.Codecs) - Lucene codecs and postings formats
 - [Lucene.Net.Expressions](xref:Lucene.Net.Expressions) - Dynamically computed values to sort/facet/search on based on a pluggable grammar
 - [Lucene.Net.Facet](xref:Lucene.Net.Facet) - Faceted indexing and search capabilities
 - <xref:Lucene.Net.Grouping> - Collectors for grouping search results
@@ -68,7 +68,7 @@ on some of the conceptual or inner details of Lucene:
 - <xref:Lucene.Net.Sandbox> - Various third party contributions and new ideas
 - [Lucene.Net.Spatial](xref:Lucene.Net.Spatial) - Geospatial search
 - <xref:Lucene.Net.Suggest> - Auto-suggest and Spell-checking support
-- [Lucene.Net.TestFramework](api/test-framework/overview.html) - Framework for testing Lucene-based applications
+- [Lucene.Net.TestFramework](xref:Lucene.Net.TestFramework) - Framework for testing Lucene-based applications
 
 ### Tools
 

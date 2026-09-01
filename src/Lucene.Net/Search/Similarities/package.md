@@ -65,7 +65,7 @@ Another option is to extend one of the [frameworks](#framework) based on <xref:L
 
 If you are interested in use cases for changing your similarity, see the Lucene users's mailing list at [Overriding Similarity](http://www.gossamer-threads.com/lists/lucene/java-user/39125). In summary, here are a few use cases:
 
-1. The [SweetSpotSimilarity](../../misc/Lucene.Net.Misc.SweetSpotSimilarity.html) gives small increases as the frequency increases a small amount and then greater increases when you hit the "sweet spot", i.e. where you think the frequency of terms is more significant.
+1. The [SweetSpotSimilarity](xref:Lucene.Net.Misc.SweetSpotSimilarity) gives small increases as the frequency increases a small amount and then greater increases when you hit the "sweet spot", i.e. where you think the frequency of terms is more significant.
 2. Overriding Tf — In some applications, it doesn't matter what the score of a document is as long as a matching term occurs. In these cases people have overridden Similarity to return 1 from the Tf() method.
 3. Changing Length Normalization — By overriding [State)](xref:Lucene.Net.Search.Similarities.Similarity#methods), it is possible to discount how the length of a field contributes to a score. In <xref:Lucene.Net.Search.Similarities.DefaultSimilarity>, lengthNorm = 1 / (numTerms in field)^0.5, but if one changes this to be 1 / (numTerms in field), all fields will be treated ["fairly"](http://www.gossamer-threads.com/lists/lucene/java-user/38967#38967).
 

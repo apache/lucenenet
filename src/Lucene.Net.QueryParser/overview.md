@@ -25,41 +25,41 @@ Apache Lucene QueryParsers.
 
 This module provides a number of queryparsers:
 
-*   [Classic](#classicxreflucenenetqueryparsersclassic)
+*   [Classic](#classic)
 
-*   [Analyzing](#analyzingxreflucenenetqueryparsersanalyzing)
+*   [Analyzing](#analyzing)
 
-*   [Complex Phrase](#complex-phrasexreflucenenetqueryparserscomplexphrase)
+*   [Complex Phrase](#complex-phrase)
 
-*   [Extendable](#extendablexreflucenenetqueryparsersext)
+*   [Extendable](#extendable)
 
 *   [Flexible](#flexible)
 
 *   [Surround](#surround)
 
-*   [XML](#xmlxreflucenenetqueryparsersxml)
+*   [XML](#xml)
 
 * * *
 
-## [Classic](xref:Lucene.Net.QueryParsers.Classic)
+## Classic
 
-A Simple Lucene QueryParser implemented with JavaCC.
+A Simple Lucene QueryParser implemented with JavaCC. See <xref:Lucene.Net.QueryParsers.Classic>.
 
-## [Analyzing](xref:Lucene.Net.QueryParsers.Analyzing)
+## Analyzing
 
-QueryParser that passes Fuzzy-, Prefix-, Range-, and WildcardQuerys through the given analyzer.
+QueryParser that passes Fuzzy-, Prefix-, Range-, and WildcardQueries through the given analyzer. See <xref:Lucene.Net.QueryParsers.Analyzing>.
 
-## [Complex Phrase](xref:Lucene.Net.QueryParsers.ComplexPhrase)
+## Complex Phrase
 
-QueryParser which permits complex phrase query syntax eg "(john jon jonathan~) peters*"
+QueryParser which permits complex phrase query syntax, e.g. "(john jon jonathan~) peters*". See <xref:Lucene.Net.QueryParsers.ComplexPhrase>.
 
-## [Extendable](xref:Lucene.Net.QueryParsers.Ext)
+## Extendable
 
-Extendable QueryParser provides a simple and flexible extension mechanism by overloading query field names.
+Extendable QueryParser provides a simple and flexible extension mechanism by overloading query field names. See <xref:Lucene.Net.QueryParsers.Ext>.
 
 ## Flexible
 
-This project contains the new Lucene query parser implementation, which matches the syntax of the core QueryParser but offers a more modular architecture to enable customization.
+This project contains the new Lucene query parser implementation, which matches the syntax of the core QueryParser but offers a more modular architecture to enable customization. See <xref:Lucene.Net.QueryParsers.Flexible.Standard>.
 
 It's currently divided in 2 main namespaces:
 
@@ -155,13 +155,13 @@ Query query = qpHelper.Parse("apache AND lucene", "defaultField");
 
 ## Surround
 
-A QueryParser that supports the Span family of queries as well as pre and infix notation.
+A QueryParser that supports the Span family of queries as well as pre and infix notation. See <xref:Lucene.Net.QueryParsers.Surround.Query>.
 
 It's divided in 2 main namespaces:
 
 * <xref:Lucene.Net.QueryParsers.Surround.Parser>
 * <xref:Lucene.Net.QueryParsers.Surround.Query>
 
-## [XML](xref:Lucene.Net.QueryParsers.Xml)
+## XML
 
-A QueryParser that produces Lucene Query objects from XML documents.
+A QueryParser that produces Lucene Query objects from XML documents. See <xref:Lucene.Net.QueryParsers.Xml>.

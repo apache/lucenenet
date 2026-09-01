@@ -29,7 +29,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// index is specified by the parameter <see cref="ADDINDEXES_INPUT_DIR"/> and is
     /// assumed to be a directory on the file system.
     /// <para/>
-    /// Takes optional parameter <see cref="useAddIndexesDir"/> which specifies which
+    /// Takes optional parameter <c>useAddIndexesDir</c> which specifies which
     /// AddIndexes variant to use (defaults to <c>true</c>, to use <c>AddIndexes(Directory)</c>).
     /// </summary>
     public class AddIndexesTask : PerfTask

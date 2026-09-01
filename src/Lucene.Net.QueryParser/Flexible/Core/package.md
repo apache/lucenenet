@@ -39,4 +39,4 @@ The query processing phase is performed by a query processor, which implements <
 
 ### Third Phase: Query Building
 
-The query building phase is performed by a query builder, which implements <xref:Lucene.Net.QueryParsers.Flexible.Core.Builders.IQueryBuilder{Lucene.Net.QueryParsers.Flexible.Core.Nodes.IQueryNode}>. A query builder is responsible to convert a <xref:Lucene.Net.QueryParsers.Flexible.Core.Nodes.IQueryNode> tree into an arbitrary object, which is usually used to be executed against a search index.
+The query building phase is performed by a query builder, which implements [IQueryBuilder&lt;IQueryNode&gt;](xref:Lucene.Net.QueryParsers.Flexible.Core.Builders.IQueryBuilder%601). A query builder is responsible to convert a <xref:Lucene.Net.QueryParsers.Flexible.Core.Nodes.IQueryNode> tree into an arbitrary object, which is usually used to be executed against a search index.
