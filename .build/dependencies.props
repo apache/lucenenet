@@ -43,7 +43,7 @@
     <LuceneNetCodeAnalysisDevPackageVersion>1.0.0-alpha.36</LuceneNetCodeAnalysisDevPackageVersion>
     <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>2.3.0</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>8.0.19</MicrosoftAspNetCoreTestHostPackageVersion>
-    <MicrosoftBclMemoryPackageVersion>10.0.0-rc.1.25451.107</MicrosoftBclMemoryPackageVersion>
+    <MicrosoftBclMemoryPackageVersion>10.0.11</MicrosoftBclMemoryPackageVersion>
     <MicrosoftCodeAnalysisAnalyzersPackageVersion>2.9.8</MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisCSharpPackageVersion>2.6.1</MicrosoftCodeAnalysisCSharpPackageVersion>
     <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>$(MicrosoftCodeAnalysisCSharpPackageVersion)</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
