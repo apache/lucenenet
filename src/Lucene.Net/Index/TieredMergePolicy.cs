@@ -412,7 +412,7 @@ namespace Lucene.Net.Index
                     return spec;
                 }
 
-                if (eligible.Count >= allowedSegCountInt)
+                if (eligible.Count > allowedSegCountInt)
                 {
                     // OK we are over budget -- find best merge!
                     MergeScore bestScore = null;
