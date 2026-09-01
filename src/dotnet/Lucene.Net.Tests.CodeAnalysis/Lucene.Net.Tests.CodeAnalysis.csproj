@@ -44,6 +44,7 @@
     <ProjectReference Include="..\..\Lucene.Net\Lucene.Net.csproj">
       <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
     </ProjectReference>
+    <ProjectReference Include="..\..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
     <ProjectReference Include="..\Lucene.Net.CodeAnalysis.CSharp\Lucene.Net.CodeAnalysis.CSharp.csproj">
       <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
     </ProjectReference>

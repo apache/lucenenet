@@ -28,12 +28,6 @@ using System.Reflection;
 [assembly: AssemblyDefaultAlias("Lucene.Net.Tests")]
 [assembly: AssemblyCulture("")]
 
-
-
 // LUCENENET specific - only allow tests in this assembly to run one at a time
 // to prevent polluting shared state.
 [assembly: LevelOfParallelism(1)]
-
-// LUCENENET specific - time out test projects at 55 minutes to allow the results
-// to be uploaded before the 60 minute Azure DevOps job cutoff for easier troubleshooting
-[assembly: Timeout(3300000)]
