@@ -19,6 +19,15 @@
 # runs the tests for each project on a background job in parallel,
 # then uploads the results to Azure DevOps pipelines
 
+# Test results are parsed and published from within the "dotnet test" step rather than by one
+# PublishTestResults@2 task per project. The step emits the agent's own "results.publish" logging
+# command once per project, which is the same mechanism PublishTestResults@2 uses under the hood
+# (see Tasks/PublishTestResultsV2/publishtestresults.ts in microsoft/azure-pipelines-tasks and
+# src/Agent.Worker/TestResults/ResultsCommandExtension.cs in microsoft/azure-pipelines-agent).
+# Each project still gets its own test run with the same title and TRX attachment, but the 123
+# per-project parse/publish tasks (about 5 minutes per Windows job) are gone, and the uploads run
+# asynchronously while the remaining test projects are still executing.
+
 # NOTE: Depends on environment variables $(IsNightly), $(IsWeekly), and $(DisplayFullName)
 
 parameters:
@@ -34,6 +43,7 @@ parameters:
   maximumAllowedFailures: 0
   where: '' # A test filter expression, as defined by dotnet test
   dotNetSdkVersion: '' # The .NET SDK version to install
+  publishTestResultsInline: 'true' # Parse and publish each project's results as soon as its test run finishes, overlapping with the other projects. Set to 'false' to do it once after all projects have finished.
 
 steps:
 - checkout: none # self represents the repo where the initial Pipelines YAML file was found
@@ -173,6 +183,135 @@ steps:
     $isNightly = if ($env:ISNIGHTLY -eq 'true') { 'true' } else { 'false' }
     $isWeekly = if ($env:ISWEEKLY -eq 'true') { 'true' } else { 'false' }
     $displayFullName = if ($env:DISPLAYFULLNAME -eq 'false') { 'false' } else { 'true' }
+    $publishInline = '${{ parameters.publishTestResultsInline }}' -ne 'false'
+
+    # ---------------------------------------------------------------------------------------------
+    # Test result parsing and publishing
+    #
+    # Complete-TestProject parses one project's TestResults.trx and dotnet-test-error.log exactly as the
+    # previous per-project publish steps did, accumulates the same failure/crash information, and
+    # publishes the TRX as its own test run via the agent's "results.publish" logging command (the same
+    # command PublishTestResults@2 emits). The agent performs the upload asynchronously and waits for all
+    # of them at the end of this step. The variables the final "fail the job" step reads are set once,
+    # after every project has been handled.
+    # ---------------------------------------------------------------------------------------------
+    $script:processedTestProjects = [System.Collections.Generic.HashSet[string]]::new()
+    $script:publishedTestProjects = 0
+    $script:totalFailures = 0
+    $script:crashedRuns = [System.Collections.Generic.List[string]]::new()
+    $script:stdOutFailureRuns = [System.Collections.Generic.List[string]]::new()
+    $script:stdErrFailureRuns = [System.Collections.Generic.List[string]]::new()
+
+    # Escapes a logging command property value the same way azure-pipelines-task-lib does.
+    function ConvertTo-LoggingCommandValue([string]$value) {
+        return $value.Replace('%', '%AZP25').Replace("`r", '%0D').Replace("`n", '%0A').Replace(']', '%5D').Replace(';', '%3B')
+    }
+
+    function Complete-TestProject([string]$testName, [string]$testResultDirectory) {
+        if (!$script:processedTestProjects.Add($testName)) { return } # Already handled
+
+        $trxPath = Join-Path $testResultDirectory $testResultsFileName
+        if (!(Test-Path $trxPath)) {
+            Write-Host "WARNING: File not found: $trxPath (no test run will be published for $testName)"
+            return
+        }
+
+        # Parse the TRX: counters for the run title, and the RunInfos text for host crashes and [ERROR] output.
+        $failed = 0; $passed = 0; $ignored = 0
+        $countersFound = $false; $crashed = $false; $stdOutFailed = $false; $inRunInfos = $false
+        $reader = [System.Xml.XmlReader]::Create($trxPath)
+        try {
+            while ($reader.Read()) {
+                if ($reader.NodeType -eq [System.Xml.XmlNodeType]::Element) {
+                    if (!$countersFound -and $reader.Name -eq 'Counters') {
+                        $failed = [int]$reader.GetAttribute('failed')
+                        $passed = [int]$reader.GetAttribute('passed')
+                        $ignored = ([int]$reader.GetAttribute('total')) - ([int]$reader.GetAttribute('executed'))
+                        $countersFound = $true
+                    }
+                    if ($reader.Name -eq 'RunInfos') {
+                        $inRunInfos = $true
+                    }
+                    if ($inRunInfos -and $reader.Name -eq 'Text') {
+                        $innerXml = $reader.ReadInnerXml()
+                        if ($innerXml) {
+                            if (!$crashed -and ($innerXml.Contains('Test host process crashed') `
+                                -or $innerXml.Contains('Could not load file or assembly') `
+                                -or $innerXml.Contains("Could not find `'dotnet.exe`' host") `
+                                -or $innerXml.Contains('No test is available') `
+                                -or $innerXml.Contains('exited with error'))) {
+                                $crashed = $true
+                            }
+                            if (!$stdOutFailed -and $innerXml.Contains('[ERROR]')) {
+                                $stdOutFailed = $true
+                            }
+                        }
+                    }
+                }
+                if ($reader.NodeType -eq [System.Xml.XmlNodeType]::EndElement -and $reader.Name -eq 'RunInfos') {
+                    $inRunInfos = $false
+                }
+            }
+        } finally {
+            $reader.Dispose()
+        }
+
+        # Parse the captured stderr for failures that do not make it into the TRX.
+        $stdErrFailed = $false
+        $stdErrPath = Join-Path $testResultDirectory 'dotnet-test-error.log'
+        if (Test-Path $stdErrPath) {
+            if ((Get-Item $stdErrPath).Length -gt 0) {
+                $stream = [System.IO.StreamReader]::new($stdErrPath)
+                try {
+                    while (-not $stream.EndOfStream) {
+                        $line = $stream.ReadLine()
+                        if ($line -match "Test Run Failed" -or $line -match "\[ERROR\]") {
+                            $stdErrFailed = $true
+                            break
+                        }
+                    }
+                } finally {
+                    $stream.Dispose()
+                }
+            }
+        } else {
+            Write-Host "WARNING: File not found: $stdErrPath"
+        }
+
+        $script:totalFailures += $failed
+        if ($crashed) { $script:crashedRuns.Add($testName) }
+        if ($stdOutFailed) { $script:stdOutFailureRuns.Add($testName) }
+        if ($stdErrFailed) { $script:stdErrFailureRuns.Add($testName) }
+
+        $testResults = "Tests failed: $failed, passed: $passed, ignored: $ignored"
+        $flags = @()
+        if ($crashed) { $flags += 'HOST CRASHED' }
+        if ($stdOutFailed) { $flags += 'STDOUT [ERROR]' }
+        if ($stdErrFailed) { $flags += 'STDERR FAILURE' }
+        $flagText = if ($flags.Count -gt 0) { " [$($flags -join ', ')]" } else { '' }
+        Write-Host "$testName ($framework, $testPlatform, $testOSName): $testResults$flagText"
+
+        # Publish this project's TRX as its own test run. The title matches the one the
+        # PublishTestResults@2 tasks produced; platform/config additionally make runs filterable in the Tests tab.
+        $runTitle = "$testName - $framework - $testPlatform - $testOSName | $testResults"
+        $properties = "type=VSTest;mergeResults=false;publishRunAttachments=true;testRunSystem=VSTS - PTR" + `
+            ";platform=$(ConvertTo-LoggingCommandValue $testPlatform)" + `
+            ";config=$(ConvertTo-LoggingCommandValue $framework)" + `
+            ";runTitle=$(ConvertTo-LoggingCommandValue $runTitle)" + `
+            ";resultFiles=$(ConvertTo-LoggingCommandValue $trxPath)"
+        Write-Host "##vso[results.publish $properties]"
+        $script:publishedTestProjects++
+    }
+
+    # Handles every background test job that has finished since the last call.
+    function Complete-FinishedTestJobs() {
+        if (!$publishInline) { return }
+        foreach ($job in @(Get-Job | Where-Object { $_.State -in @('Completed', 'Failed', 'Stopped') })) {
+            $jobTestName = ($job.Name -split ',')[0]
+            if ($script:processedTestProjects.Contains($jobTestName)) { continue }
+            Complete-TestProject -TestName $jobTestName -TestResultDirectory "$testResultsArtifactDirectory/$testOSName/$framework/$testPlatform/$jobTestName"
+        }
+    }
 
     function IsSupportedFramework([string]$framework) {
         if ($IsWindows -eq $null) {
@@ -200,6 +339,7 @@ steps:
                     Write-Host "  Running tests in parallel on $($running.Count) projects." -ForegroundColor Cyan
                     Write-Host "  Next in queue is $testName on $framework. This will take a bit, please wait..." -ForegroundColor Cyan
                     $running | Wait-Job -Any | Out-Null
+                    Complete-FinishedTestJobs
                 }
             }
 
@@ -235,6 +375,9 @@ steps:
             Write-Host $testExpression -ForegroundColor Magenta
             if ($maximumParalellJobs -le 1) {
                 Invoke-Expression $testExpression # For running in the foreground
+                if ($publishInline) {
+                    Complete-TestProject -TestName $testName -TestResultDirectory $testResultDirectory
+                }
             } else {
 
                 $testExpression += " > ""$testResultDirectory/dotnet-test.log"" 2> ""$testResultDirectory/dotnet-test-error.log"""
@@ -268,9 +411,40 @@ steps:
                     Write-Host "$number. $jobName"
                 }
                 $running | Wait-Job -Any
+                Complete-FinishedTestJobs
             }
         } until ($running.Count -eq 0)
     }
+
+    Write-Host "##[section]Parsing and publishing test results"
+    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+
+    # Handle everything not yet processed: every project when inline publishing is off,
+    # otherwise only stragglers (for example a project whose job ended in a state we did not observe).
+    $resultsRoot = "$testResultsArtifactDirectory/$testOSName/$framework/$testPlatform"
+    if (Test-Path $resultsRoot) {
+        foreach ($resultDirectory in @(Get-ChildItem -Path $resultsRoot -Directory | Sort-Object -Property Name)) {
+            Complete-TestProject -TestName $resultDirectory.Name -TestResultDirectory $resultDirectory.FullName
+        }
+    } else {
+        Write-Host "WARNING: Test results directory not found: $resultsRoot"
+    }
+
+    $stopwatch.Stop()
+    Write-Host "Parsed $($script:processedTestProjects.Count) test result directories and queued $($script:publishedTestProjects) test runs for upload in $($stopwatch.Elapsed.TotalSeconds.ToString('0.0')) seconds. The agent finishes the uploads before this step completes."
+
+    # These variables drive the final step of the job, which fails the job and lists the offending projects.
+    $hostCrashed = if ($script:crashedRuns.Count -gt 0) { 'true' } else { 'false' }
+    $stdOutFailure = if ($script:stdOutFailureRuns.Count -gt 0) { 'true' } else { 'false' }
+    $stdErrFailure = if ($script:stdErrFailureRuns.Count -gt 0) { 'true' } else { 'false' }
+    Write-Host "##vso[task.setvariable variable=TotalFailures;]$($script:totalFailures)"
+    Write-Host "##vso[task.setvariable variable=HostCrashed;]$hostCrashed"
+    Write-Host "##vso[task.setvariable variable=CrashedRuns;]$($script:crashedRuns -join ',')"
+    Write-Host "##vso[task.setvariable variable=StdOutFailure;]$stdOutFailure"
+    Write-Host "##vso[task.setvariable variable=StdOutFailureRuns;]$($script:stdOutFailureRuns -join ',')"
+    Write-Host "##vso[task.setvariable variable=StdErrFailure;]$stdErrFailure"
+    Write-Host "##vso[task.setvariable variable=StdErrFailureRuns;]$($script:stdErrFailureRuns -join ',')"
+    Write-Host "Total failures: $($script:totalFailures); crashed: $hostCrashed; stdout failures: $stdOutFailure; stderr failures: $stdErrFailure"
 
     $global:LASTEXITCODE = 0 # Force the script to continue on error
   displayName: 'dotnet test ${{ parameters.framework }},${{ parameters.vsTestPlatform }}'
@@ -284,19 +458,6 @@ steps:
     targetPath: '$(Build.ArtifactStagingDirectory)/${{ parameters.testResultsArtifactName }}'
     ArtifactName: '${{ parameters.testResultsArtifactName }}_${{ parameters.osName }}_${{ parameters.framework }}_${{ parameters.vsTestPlatform }}__JobID_$(System.JobId)'
   condition: succeededOrFailed()
-
-# Due to the fact that it is not possible to loop a task and
-# it would be a ton of work to make a replacement for the
-# Publish Test Results task or the (deprecated) TfsPublisher
-# our only other option is to make a task for every supported
-# platform and project and update it whenever a new platform
-# is targeted or test project is created in Lucene.Net.
-
-- template: 'publish-test-results-for-test-projects.yml'
-  parameters:
-    osName: '${{ parameters.osName }}'
-    framework: '${{ parameters.framework }}'
-    vsTestPlatform: '${{ parameters.vsTestPlatform }}'
 
 - pwsh: |
     $failed = $false
