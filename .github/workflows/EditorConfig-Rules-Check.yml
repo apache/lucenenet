@@ -11,15 +11,15 @@ jobs:
 
       - name: Install EditorConfig Checker
         run: |
-          curl -sSfL https://github.com/editorconfig-checker/editorconfig-checker/releases/latest/download/ec-linux-amd64.tar.gz -o ec.tar.gz
+          curl -sSfL https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v4.0.1/editorconfig-checker-linux-amd64.tar.gz -o ec.tar.gz
           mkdir -p ec-temp
           tar -xzf ec.tar.gz -C ec-temp
 
           # Dynamically find the binary
-          EC_PATH=$(find ec-temp -type f -name "ec-linux-amd64" -perm -111 | head -n 1)
+          EC_PATH=$(find ec-temp -type f -name "editorconfig-checker" -perm -111 | head -n 1)
 
           if [ -z "$EC_PATH" ]; then
-            echo "❌ Could not locate ec-linux-amd64 binary in archive"
+            echo "❌ Could not locate editorconfig-checker binary in archive"
             exit 1
           fi
 
@@ -34,9 +34,16 @@ jobs:
         run: |
           echo "🔍 Running EditorConfig Checker..."
 
-          if ec; then
+          # First pass emits GitHub workflow commands, which surface as inline
+          # annotations on changed lines. Annotations are not rendered for files
+          # outside the diff, so on failure we re-run in the default format to
+          # list every offending file (and line) in the log itself.
+          if ec -f github-actions; then
             echo "✅ EditorConfig Checker Success"
           else
+            echo ""
+            echo "❌ EditorConfig violations:"
+            ec -f default || true
             echo ""
             echo "📘 Common IDE Setup Help"
             echo ""
