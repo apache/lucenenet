@@ -11,7 +11,7 @@ jobs:
 
       - name: Install EditorConfig Checker
         run: |
-          curl -sSfL https://github.com/editorconfig-checker/editorconfig-checker/releases/latest/download/ec-linux-amd64.tar.gz -o ec.tar.gz
+          curl -sSfL https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v4.0.1/editorconfig-checker-linux-amd64.tar.gz -o ec.tar.gz
           mkdir -p ec-temp
           tar -xzf ec.tar.gz -C ec-temp
 
