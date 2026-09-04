@@ -34,9 +34,16 @@ jobs:
         run: |
           echo "🔍 Running EditorConfig Checker..."
 
-          if ec; then
+          # First pass emits GitHub workflow commands, which surface as inline
+          # annotations on changed lines. Annotations are not rendered for files
+          # outside the diff, so on failure we re-run in the default format to
+          # list every offending file (and line) in the log itself.
+          if ec -f github-actions; then
             echo "✅ EditorConfig Checker Success"
           else
+            echo ""
+            echo "❌ EditorConfig violations:"
+            ec -f default || true
             echo ""
             echo "📘 Common IDE Setup Help"
             echo ""
