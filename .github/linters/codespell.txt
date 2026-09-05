@@ -16,10 +16,7 @@ alot
 alpha-numeric
 alredy
 als
-ambiguos
 ameba
-analyed
-analyer
 andd
 ane
 anothers
@@ -202,14 +199,12 @@ sate
 sav
 scrip
 selv
-sentances
 seperate
 seperated
 seperator
 ser
 sie
 sightly
-similiarty
 simle
 singe
 singl
