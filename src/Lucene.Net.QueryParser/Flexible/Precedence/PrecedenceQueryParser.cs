@@ -44,8 +44,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         /// <summary>
         /// <see cref="StandardQueryParser.StandardQueryParser(Analyzer)"/>
         /// </summary>
-        public PrecedenceQueryParser(Analyzer analyer)
-            : base(analyer)
+        public PrecedenceQueryParser(Analyzer analyzer)
+            : base(analyzer)
         {
             SetQueryNodeProcessor(new PrecedenceQueryNodeProcessorPipeline(QueryConfigHandler));
         }

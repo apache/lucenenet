@@ -419,7 +419,7 @@ Bug
 •[LUCENENET-473] - Fix linefeeds in more than 600 files
 •[LUCENENET-474] - Missing License Headers in trunk after 3.0.3 merge
 •[LUCENENET-475] - DanishStemmer doesn't work.
-•[LUCENENET-476] - ScoreDocs in TopDocs is ambiguos when using Visual Basic .Net
+•[LUCENENET-476] - ScoreDocs in TopDocs is ambiguous when using Visual Basic .Net
 •[LUCENENET-477] - NullReferenceException in ThreadLocal when Lucene.Net compiled for .Net 2.0
 •[LUCENENET-478] - Parts of QueryParser are outdated or weren't previously ported correctly
 •[LUCENENET-479] - QueryParser.SetEnablePositionIncrements(false) doesn't work
@@ -441,7 +441,7 @@ Improvement
 •[LUCENENET-506] - FastVectorHighlighter should use Query.ExtractTerms as fallback
 
 New Feature
-•[LUCENENET-463] - Would like to be able to use a SimpleSpanFragmenter for extrcting whole sentances
+•[LUCENENET-463] - Would like to be able to use a SimpleSpanFragmenter for extracting whole sentences
 •[LUCENENET-481] - Port Contrib.MemoryIndex
 
 Task
@@ -3615,7 +3615,7 @@ Bug fixes
  5. Small bug in skipTo of ConjunctionScorer that caused NullPointerException
     if skipTo() was called without prior call to next() fixed. (Christoph)
 
- 6. Disable Similiarty.coord() in the scoring of most automatically
+ 6. Disable Similarity.coord() in the scoring of most automatically
     generated boolean queries.  The coord() score factor is
     appropriate when clauses are independently specified by a user,
     but is usually not appropriate when clauses are generated
