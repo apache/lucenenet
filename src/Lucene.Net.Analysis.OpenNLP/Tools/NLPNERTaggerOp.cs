@@ -1,7 +1,7 @@
 // Lucene version compatibility level 8.2.0
 using Lucene.Net.Support.Threading;
-using opennlp.tools.namefind;
-using opennlp.tools.util;
+using NOpenNLP.Tools.Namefind;
+using NOpenNLP.Tools.Util;
 
 namespace Lucene.Net.Analysis.OpenNlp.Tools
 {
@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
     /// </summary>
     public class NLPNERTaggerOp
     {
-        private readonly TokenNameFinder nameFinder;
+        private readonly ITokenNameFinder nameFinder;
 
         public NLPNERTaggerOp(TokenNameFinderModel model)
         {
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public virtual Span[] GetNames(string[] words)
         {
-            Span[] names = nameFinder.find(words);
+            Span[] names = nameFinder.Find(words);
             return names;
         }
 
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
             UninterruptableMonitor.Enter(this);
             try
             {
-                nameFinder.clearAdaptiveData();
+                nameFinder.ClearAdaptiveData();
             }
             finally
             {

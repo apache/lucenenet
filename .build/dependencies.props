@@ -35,8 +35,6 @@
         Just make sure they are adjusted to the right version of ICU/Lucene.
     <ICU4NPackageVersion>[60.1,60.2)</ICU4NPackageVersion> -->
     <ICU4NPackageVersion>[60.1.0-alpha.440,60.1.0-alpha.446)</ICU4NPackageVersion>
-    <IKVMPackageVersion>8.7.5</IKVMPackageVersion>
-    <IKVMMavenSdkPackageVersion>1.6.7</IKVMMavenSdkPackageVersion>
     <!-- J2N will break binary compatibility in 3.0.0 to fix the APIs of collection types -->
     <J2NPackageVersion>[2.2.0-alpha-0053, 3.0.0)</J2NPackageVersion>
     <LiquidTestReportsMarkdownPackageVersion>1.0.9</LiquidTestReportsMarkdownPackageVersion>
@@ -66,6 +64,7 @@
     <MorfologikPolishPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikPolishPackageVersion>
     <MorfologikStemmingPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikStemmingPackageVersion>
     <NETStandardLibrary20PackageVersion>2.0.3</NETStandardLibrary20PackageVersion>
+    <NOpenNLPPackageVersion>1.9.5-beta.1</NOpenNLPPackageVersion>
     <NUnit3TestAdapterPackageVersion>4.6.0</NUnit3TestAdapterPackageVersion>
     <NUnitPackageVersion>3.14.0</NUnitPackageVersion>
     <RandomizedTestingGeneratorsPackageVersion>2.7.8</RandomizedTestingGeneratorsPackageVersion>
@@ -82,9 +81,5 @@
     <SystemTextEncodingCodePagesPackageVersion Condition=" '$(TargetFramework)' == 'net472' ">5.0.0</SystemTextEncodingCodePagesPackageVersion>
     <SystemTextRegularExpressionsPackageVersion>4.3.1</SystemTextRegularExpressionsPackageVersion>
     <TimeZoneConverterPackageVersion>6.1.0</TimeZoneConverterPackageVersion>
-  </PropertyGroup>
-  <PropertyGroup Label="Maven Package Reference Versions">
-    <OpenNLPToolsMavenReferenceVersion>1.9.1</OpenNLPToolsMavenReferenceVersion>
-    <OSGICoreMavenReferenceVersion>4.2.0</OSGICoreMavenReferenceVersion>
   </PropertyGroup>
 </Project>

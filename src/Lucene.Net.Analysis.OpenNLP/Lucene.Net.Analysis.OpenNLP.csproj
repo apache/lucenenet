@@ -38,8 +38,9 @@
     <TargetFrameworks Condition=" '$(IsLegacyVisualStudioVersion)' == 'true' ">net8.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(IncludeNetFrameworkTargets)' == 'true' And '$(IsLegacyVisualStudioVersion)' != 'true' ">$(TargetFrameworks);net472</TargetFrameworks>
 
+    <TargetFrameworks>$(LibraryTargetFrameworks)</TargetFrameworks>
     <AssemblyTitle>Lucene.Net.Analysis.OpenNLP</AssemblyTitle>
-    <PackageTags>$(PackageTags);analysis;natural;language;processing;opennlp</PackageTags>
+    <PackageTags>$(PackageTags);analysis;natural;language;processing;opennlp;nopennlp</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
     <RootNamespace>Lucene.Net.Analysis.OpenNlp</RootNamespace>
@@ -53,13 +54,7 @@
 
   <ItemGroup>
     <PackageReference Include="ICU4N" Version="$(ICU4NPackageVersion)" />
-    <PackageReference Include="IKVM" Version="$(IKVMPackageVersion)" />
-    <PackageReference Include="IKVM.Maven.Sdk" Version="$(IKVMMavenSdkPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <MavenReference Include="org.apache.opennlp:opennlp-tools" Version="$(OpenNLPToolsMavenReferenceVersion)" />
-    <MavenReference Include="org.osgi:org.osgi.core" Version="$(OSGICoreMavenReferenceVersion)" />
+    <PackageReference Include="NOpenNLP.Tools" Version="$(NOpenNLPPackageVersion)" />
   </ItemGroup>
 
 </Project>
