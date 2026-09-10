@@ -22,10 +22,8 @@ summary: *content
 
 ## Misc Tools
 
-
 The misc package has various tools for splitting/merging indices,
 changing norms, finding high freq terms, and others.
-
 
 <!--
 

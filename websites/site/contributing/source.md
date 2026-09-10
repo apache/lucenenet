@@ -13,14 +13,12 @@ If you would like to contribute to the project, typically the first thing you wi
 
 You use this fork to make changes without affecting the upstream repository. For more information, see GitHub Docs "[Working with forks](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks)."
 
-
 ## Cloning that Fork
 Next, you will typically clone that forked repo from your GitHub account so that you have a clone of it on your local machine to work with.  If you are unfamiliar with cloning a GitHub repo see GitHub Docs ["Cloning a repository"](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).  The git command for cloning the repo is:
 
 ```
 $ git clone https://github.com/YOUR-GITHUB-USERNAME/lucenenet.git
 ```
-
 
 At this point you have a local copy of the Lucene.NET repo on your development machine.  
 Most work currently happens on the branch named **master**. But typically you will create a new branch on your local repo for the changes you'd like to make and you will ultimately do a pull request to get that branch merged back into master.  More about that later.
@@ -34,7 +32,6 @@ However, it's common for developers to build and test the project using Visual S
 Once the solution has been opened in Visual Studio you can build it as you would any solution by selecting "Build Solution" from the "Build" menu. Likewise you can run the unit tests for the solution just like you would for any other solution by selecting "Run All Tests" from the "Tests" menu.
 
 This is a large solution with more than [644K+ lines](https://lucenenet.apache.org/images/contributing/source/lucenenet-repo-lines-of-code--jan-2022.png) of code so it may take a bit longer for Visual Studio to perform these operations then you are used to but it should display progress information while it does it work.
-
 
 ## Making Changes
 

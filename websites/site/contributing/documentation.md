@@ -159,7 +159,6 @@ When executed this will build the site and host it at [http://localhost:8080](ht
 > [!IMPORTANT]
 > The following steps are automated in the `Lucene-Net-Documentation.yml` workflow. This workflow runs automatically when changes are pushed to the corresponding `docs/[Version]` branch. The workflow submits a new PR with the compiled API documentation content to the `lucenenet-site` repository. The below information is provided in case the automation fails and the release needs to be done manually.
 
-
 To build the api docs for release, run the script:
 
 ```console

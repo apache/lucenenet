@@ -28,7 +28,6 @@ Analyzer for Chinese, which indexes unigrams (individual chinese characters).
 * CJKAnalyzer (in the Lucene.Net.Analysis.Cjk namespace): Index bigrams (overlapping groups of two adjacent Chinese characters) as tokens.
 * SmartChineseAnalyzer (in the Lucene.Net.Analysis.SmartCn package): Index words (attempt to segment Chinese text into words) as tokens.
 
-
 Example phrase： "我是中国人"
 
 1. StandardAnalyzer: 我－是－中－国－人

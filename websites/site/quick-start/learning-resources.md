@@ -6,13 +6,11 @@ uid: quick-start/learning-resources
 
 ---
 
-
 ## Lucene.NET Documentation
 
 Lucene.NET has fairly extensive documentation that can be found in the [Lucene.NET Documentation](xref:docs) section of the website.  On that page you will find links to the documentation for various release versions.  Click on the documentation link for the version of interest and you will see that it leads to a wealth of documentation.  The project is organized as a collection of sub-projects, each one corresponding ultimately to a [nuget package](https://www.nuget.org/packages/Lucene.Net/absoluteLatest).  Those projects each have documentation that typically starts with some higher level docs that then link into API or Object/Method level documentations.
 
 Much of this documentation is compiled from the inline documentation comments from the source code and it originated from the Java Lucene code base.  In addition to porting the Lucene code from Java to C# we are also working to convert the docs from Java to C# examples as well.  Some of this work is completed and some of it remains.  
-
 
 ## Java Lucene Documentation
 
@@ -22,16 +20,13 @@ So for example, in Java it's common for method names start with a lower case let
 
 But other than that, you will find that the documentation for Java Lucene 4.X can be very useful to your learning of Lucene.NET 4.8.  Just keep in mind the ".NETifing" that we do to the code and it's pretty simple to translate in your head Java examples into the C# equivalent.  
 
-
 ## From the Community
-
 
 ### Searching Lucene.NET Issues
 
 Another source of information about Lucene.NET is current and past GitHub issues for our repo.  By default when you go to the GitHub issues page it defaults the search box criteria to open issues only but you can easily remove the `is:open` from the search box to search all issues for the repo.  Or you can use this link to [search all issues](https://github.com/apache/lucenenet/issues?q=is%3Aissue+is%3Aopen+) in our repo.
 
 ![Search Lucene.NET Issues](https://lucenenet.apache.org/images/quick-start/learning-resources/search-lucenenet-issues.gif)
-
 
 ### Searching Java Lucene Issues
 In general, the Java Lucene Issues database can be a good place to learn about how features were developed, the historical issues related to features, and how issues were resolved.  One thing that can be helpful to know is that each major Lucene feature is assigned a Lucene issue number and it's often referenced using this format: LUCENE-<issue number> for example LUCENE-6001.
@@ -41,7 +36,6 @@ Java Lucene has a GitHub mirror of their repo, but they don't track issues there
 By default that page shows only open issues but you can click the "View all issues and filters" link in the upper right corner of the screen (see arrow below) to see and search all issues.
 
 ![Search Lucene.NET Issues](https://lucenenet.apache.org/images/quick-start/learning-resources/search-lucene-issues.gif)
-
 
 ### Apache Lucene.NET Email Archives
 You can search the Lucene.NET dev email archives for past emails that may contain information of a topic you'd like to dig into.  This can be especially useful, for example, to research why we may have chosen a specific porting approach for some code that wasn't so easy to port.  https://lists.apache.org/list.html?dev@lucenenet.apache.org

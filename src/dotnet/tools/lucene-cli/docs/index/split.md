@@ -53,7 +53,6 @@ Split the index located at `X:\old-index\` sequentially, placing the resulting 2
 lucene index split X:\new-index X:\old-index --sequential
 ```
 
-
 Split the index located at `T:\in\` into 4 parts and place them into the `T:\out\` directory:
 
 ```console

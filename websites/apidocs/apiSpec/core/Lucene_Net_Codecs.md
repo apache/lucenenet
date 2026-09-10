@@ -264,7 +264,6 @@ In your test project, add a new file to the root of the project named `Startup.c
 > [!NOTE]
 > There may only be one `LuceneTestFrameworkInitializer` subclass per assembly.
 
-
 ```cs
 public class Startup : LuceneTestFrameworkInitializer
 {

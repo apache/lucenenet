@@ -197,7 +197,6 @@ indexWriter.AddDocument(document);
 
  Then, a phrase search for "ends starts" would find that document. Where desired, this behavior can be modified by introducing a "position gap" between consecutive field "sections", by overriding [Analyzer.GetPositionIncrementGap(string)](xref:Lucene.Net.Analysis.Analyzer#Lucene_Net_Analysis_Analyzer_GetPositionIncrementGap_System_String_):
 
-
 ```cs
 /// <summary>
 /// Similar to <see cref="StandardAnalyzer"/>, but has a different position increment gap.

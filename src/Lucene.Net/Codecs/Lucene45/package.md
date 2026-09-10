@@ -24,7 +24,6 @@ Lucene 4.5 file format.
 
 # Apache Lucene - Index File Formats
 
-
 * [Introduction](#introduction)
 
 * [Definitions](#definitions)
@@ -48,7 +47,6 @@ Lucene 4.5 file format.
    * [History](#history)
 
    * [Limitations](#limitations)
-
 
 ## Introduction
 

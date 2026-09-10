@@ -28,8 +28,6 @@ The demo module offers simple example code to show the features of Lucene.
 
 *   [About the Demo](#about-the-demo)
 
-
-
 *   [Indexing Files](#indexing-files)
 
 *   [About the code](#about-the-code)

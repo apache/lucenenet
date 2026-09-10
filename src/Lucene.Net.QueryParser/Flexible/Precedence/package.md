@@ -20,7 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-
 Precedence Query Parser Implementation
 
 ## Lucene Precedence Query Parser

@@ -51,7 +51,6 @@ Check what a fix operation would do if run on the index located at `X:\product-i
 
 <code>lucene index fix X:\product-index --verbose --dry-run</code>
 
-
 Fix the index located at `X:\product-index` and cross check term vectors:
 
 ```console

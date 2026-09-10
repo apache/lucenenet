@@ -65,7 +65,6 @@ We need to add references from our project to the Lucene.NET Nuget packages we n
 
 `dotnet add package Lucene.Net --prerelease`
 
-
 <img src='https://lucenenet.apache.org/images/quick-start/tutorial/power-shell04.png'>
 
 And now add the 2nd Nuget package by executing this command in PowerShell:
@@ -108,11 +107,9 @@ Here is that file's contents:
 </Project>
 ```
 
-
 Now let's look at the `Program.cs` file that got generated.  It looks like:
 
 <img src='https://lucenenet.apache.org/images/quick-start/tutorial/program01.png'>
-
 
 ### Running the Application
 Before going further lets just run this console application and see that it generates the "Hello World!" output we expect.
@@ -260,7 +257,6 @@ In the block of code below we search the index for all the documents that have a
 
 We happen to specify that we want just the top 2 matching results from the search but based on the data in our example only one result matches and so only that one result will be returned.  The code then writes out to the console the number of matching documents and the title of the first (and in this case only) matching result.
 
-
 ```c#
 using DirectoryReader reader = writer.GetReader(applyAllDeletes: true);
 IndexSearcher searcher = new IndexSearcher(reader);
@@ -276,8 +272,6 @@ string title = resultDoc.Get("title");
 Console.WriteLine($"Matching results: {topDocs.TotalHits}");
 Console.WriteLine($"Title of first result: {title}");
 ```
-
-
 
 ### View of the Project.cs file with Our Code
 The `Program.cs` file should now look something like this in your editor:
@@ -295,7 +289,6 @@ And in the above screenshot we can see that the 2nd time we executed `dotnet run
 Title of first result: Powerful open source search library for .NET
 
 This is exactly what we would expect.
-
 
 ### Conclusion - Example 1
 While this example is not particularly complicated, it will get you started. It provides fully working code that uses Lucne.NET that you now understand.
@@ -331,7 +324,6 @@ You can use whatever tool you choose for Example 1 to accomplish these steps. In
 `dotnet add package Lucene.Net.Analysis.Common --prerelease`
 
 `dotnet add package Lucene.Net.QueryParser --prerelease`
-
 
 Technically the line above to `dotnet add package Lucene.Net --prerelease` is not needed because the `Lucene.Net.Analysis.Common` Nuget package has a dependency on the `Lucene.Net` Nuget package which means that when you execute this line `dotnet add package Lucene.Net.Analysis.Common --prerelease` it will automatically pull that dependency into the project too.  But since this is another introductory example I chose to add each Nuget package explicitly so that I'm not counting on one package being a dependency of the other.  Either way is fine.
 

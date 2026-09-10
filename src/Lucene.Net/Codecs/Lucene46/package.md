@@ -24,7 +24,6 @@ Lucene 4.6 file format.
 
 # Apache Lucene - Index File Formats
 
-
 * [Introduction](#introduction)
 
 * [Definitions](#definitions)
@@ -48,7 +47,6 @@ Lucene 4.6 file format.
    * [History](#history)
 
    * [Limitations](#limitations)
-
 
 ## Introduction
 
@@ -103,7 +101,6 @@ Note that a document's number may change, so caution should be taken when storin
 * The numbers stored in each segment are unique only within the segment, and must be converted before they can be used in a larger context. The standard technique is to allocate each segment a range of values, based on the range of numbers used in that segment. To convert a document number from a segment to an external value, the segment's _base_ document number is added. To convert an external value back to a segment-specific value, the segment is identified by the range that the external value is in, and the segment's base value is subtracted. For example two five document segments might be combined, so that the first segment has a base value of zero, and the second of five. Document three from the second segment would have an external value of eight.
 
 * When documents are deleted, gaps are created in the numbering. These are eventually removed as the index evolves through merging. Deleted documents are dropped when segments are merged. A freshly-merged segment thus has no gaps in its numbering.
-
 
 ## Index Structure Overview
 

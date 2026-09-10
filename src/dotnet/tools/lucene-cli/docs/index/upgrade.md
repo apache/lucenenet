@@ -51,7 +51,6 @@ Upgrade the index format of the index located at `X:\lucene-index\` to the same 
 lucene index upgrade X:\lucene-index -dir SimpleFSDirectory
 ```
 
-
 Upgrade the index located at `C:\indexes\category-index\` verbosely, deleting all but the last commit:
 
 ```console
