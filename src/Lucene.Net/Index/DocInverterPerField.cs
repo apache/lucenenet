@@ -103,11 +103,12 @@ namespace Lucene.Net.Index
                     bool succeededInProcessingField = false;
 
                     TokenStream stream = field.GetTokenStream(docState.analyzer);
-                    // reset the TokenStream to the first token
-                    stream.Reset();
 
                     try
                     {
+                        // reset the TokenStream to the first token
+                        stream.Reset();
+
                         bool hasMoreTokens = stream.IncrementToken();
 
                         fieldState.AttributeSource = stream;
