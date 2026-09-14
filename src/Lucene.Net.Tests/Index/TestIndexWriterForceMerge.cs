@@ -3,6 +3,7 @@ using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -38,8 +39,8 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow] // Occasionally
-        [Timeout(1_200_000)] // 20 minutes
-        public virtual void TestPartialMerge()
+        [CancelAfter(1_200_000)] // 20 minutes
+        public virtual void TestPartialMerge(CancellationToken cancellationToken)
         {
             Directory dir = NewDirectory();
 
@@ -48,6 +49,8 @@ namespace Lucene.Net.Index
             int incrMin = TestNightly ? 15 : 40;
             for (int numDocs = 10; numDocs < 500; numDocs += TestUtil.NextInt32(Random, incrMin, 5 * incrMin))
             {
+                cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
+
                 LogDocMergePolicy ldmp = new LogDocMergePolicy();
                 ldmp.MinMergeDocs = 1;
                 ldmp.MergeFactor = 5;

@@ -112,9 +112,7 @@
     <ProjectReference Include="..\Lucene.Net.Suggest\Lucene.Net.Suggest.csproj">
       <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
     </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
-      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
-    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
 
   </ItemGroup>
 

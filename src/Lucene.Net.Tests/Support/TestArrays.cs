@@ -5,6 +5,7 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 #nullable enable
 
 namespace Lucene.Net.Support

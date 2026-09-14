@@ -30,7 +30,7 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>$(LibraryTargetFrameworks)</TargetFrameworks>
+    <TargetFrameworks>$(TestFrameworkTargetFrameworks)</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.TestFramework</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
@@ -41,8 +41,6 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
     <NoWarn Label="Collection initialization can be simplified">$(NoWarn);IDE0028</NoWarn>
   </PropertyGroup>
-
-
 
   <ItemGroup>
     <None Remove="Util\europarl.lines.txt.gz" />
@@ -115,7 +113,10 @@
     <InternalsVisibleTo Include="Lucene.Net.Tests.TestFramework" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.TestFramework.DependencyInjection" />
 
+    <InternalsVisibleTo Include="Lucene.Net.TestFramework.NUnitExtensions" />
     <InternalsVisibleTo Include="Lucene.Net.TestFramework.TestData.NUnit" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.CodeAnalysis" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.TestFramework.NUnitExtensions" />
   </ItemGroup>
 
 </Project>

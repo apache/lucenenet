@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Support.IO
 {

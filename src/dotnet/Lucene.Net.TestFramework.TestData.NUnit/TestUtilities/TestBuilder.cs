@@ -1,19 +1,14 @@
 // Source: https://github.com/nunit/nunit/blob/v3.14.0/src/NUnitFramework/TestBuilder.cs
 
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
-using NUnit.Framework;
-using NUnit.Compatibility;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal.Builders;
 using NUnit.Framework.Internal;
-using NUnit.Framework.Internal.Commands;
 using NUnit.Framework.Internal.Execution;
-using System.Linq;
-using Lucene.Net.Search;
 using Lucene.Net.Util;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.NUnit.TestUtilities
 {

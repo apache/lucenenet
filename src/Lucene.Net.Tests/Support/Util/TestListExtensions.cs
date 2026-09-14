@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
 {
@@ -224,7 +225,7 @@ namespace Lucene.Net.Util
             list.TimSort(new ReverseComparer<int>());
             for (int i = 0; i < list.Count - 1; i++)
             {
-                Assert.GreaterOrEqual(list[i], list[i + 1]);
+                NUnitAssert.GreaterOrEqual(list[i], list[i + 1]);
             }
         }
 
@@ -237,7 +238,7 @@ namespace Lucene.Net.Util
             list.IntroSort();
             for (int i = 0; i < list.Count - 1; i++)
             {
-                Assert.LessOrEqual(list[i], list[i + 1]);
+                NUnitAssert.LessOrEqual(list[i], list[i + 1]);
             }
         }
 
@@ -250,7 +251,7 @@ namespace Lucene.Net.Util
             list.IntroSort(new ReverseComparer<int>());
             for (int i = 0; i < list.Count - 1; i++)
             {
-                Assert.GreaterOrEqual(list[i], list[i + 1]);
+                NUnitAssert.GreaterOrEqual(list[i], list[i + 1]);
             }
         }
     }
