@@ -72,6 +72,10 @@ jobs:
 
   Test:
     runs-on: ${{ matrix.os }}
+    # Without this, a job inherits the GitHub default of 360 minutes. The slowest job
+    # observed takes well under 30 minutes, grouped ones included, so this is a cap on a
+    # stuck job rather than a budget to run within.
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
