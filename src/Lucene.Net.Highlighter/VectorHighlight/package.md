@@ -46,7 +46,6 @@ This is an another highlighter implementation.
 
 To explain the algorithm, let's use the following sample text (to be highlighted) and user query:
 
-
 <table border="1">
 <tr>
 <td>__Sample Text__</td>

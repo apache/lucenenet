@@ -18,7 +18,6 @@ The Java Lucene 4.8 repository indicates that the following development environm
 
 In this document however, we will be using Eclipse because it's open source and widely used. Because Java Lucene 4.8 uses an old version of the Java JDK that has known security issues, the approach we take here is to setup a virtual machine via VirtualBox to quarantine our use of the insecure JDK.
 
-
 ## Setting up VirtualBox
 
 ### Introduction and Background
@@ -39,7 +38,6 @@ Then you will get the dialog below where you can specify the location where you 
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box-install03.png'>
 
-
 Then as you click next you will eventually come to this dialog:
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box-install04.png'>
@@ -52,10 +50,8 @@ Then when the install is done you will see a dialog similar to the one below.
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box-install06.png'>
 
-
 ### Configuring VirtualBox
 Clicking the Finished button in the prior dialog will launch VirtualBox, or you can launch it manually via the programs menu in Windows 10 as you would with any other "application."
-
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box02.png'>
 
@@ -119,7 +115,6 @@ Now click the little disk drop down next to the Optical Drive label.  From that 
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box16.png'>
 
-
 Now it's like that Windows Install DVD is installed on our virtual computer. (See below)
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/virtual-box17.png'>
@@ -171,8 +166,6 @@ We want the 2nd package below, "Eclipse IDE for Java Developers"  so download th
 
 Once that zip file downloads, then extract the contents into a folder.
 
-
-
 ## Installing Java 8
 
 Lucene 4.8.0 uses Java 8 to run according to the build.xml file but Eclipse needs Java 8.  And Eclipse can use Java 8 to emulate Java 7 when running Lucene.
@@ -197,11 +190,7 @@ I just took all the default options and had it do the install.
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-java8-04.png'>
 
-
-
 Eclipse will now run but we have more to install before can load Lucene 4.8.
-
-
 
 ## Installing Apache Ant
 
@@ -225,7 +214,6 @@ I typed "Environment Variables" into windows search and used that to open the Sy
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-apache-ant04.png'>
 
-
 In here we can set the Environment Variables we need.
 See this page for more details of what we need to do:
 https://ant.apache.org/manual/install.html#setup
@@ -247,13 +235,9 @@ Then adding the ANT_HOME environment variable
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-apache-ant07.png'>
 
-
-
 Then adding the JAVA_HOME environment variable
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-apache-ant08.png'>
-
-
 
 ## Installing Apache Maven
 
@@ -274,12 +258,10 @@ Add the `bin` directory of  `apache-maven-3.8.1 to` the `PATH` environment varia
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-apache-maven03.png'>
 
-
 Then open a command prompt via cmd.exe and type  mvn –v to confirm that the path is setup correct.  Output should look something like:
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/install-apache-maven04.png'>
 
- 
 ## Installing Git
 
 https://git-scm.com/download/win
@@ -361,7 +343,6 @@ In windows, this is what the directory looks like:
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/where-can-we-get-the-code08.png'>
 
-
 ## Downloading the Project's Dependencies
 
 ### Bootstrap ant
@@ -376,7 +357,6 @@ From inside of the lucene-4.8.0 directory, run this Bash command
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/download-dependencies01.png'>
 
 What it just did is downloaded the ~/.ant/lib/ivy-2.3.0 file
-
 
 ### Use Ant to Download Project Dependencies
 
@@ -410,7 +390,6 @@ Browse to find the location we created earlier to house our lucene workspace fol
 And after a few more seconds Eclipse will open in a window:
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/using-eclipse03.png'>
-
 
 We can zoom to take up the whole VM screen space.
 
@@ -509,7 +488,6 @@ So it works much like Visual Studio but the F key configuration is different.  Y
 
  You're welcome, and a big shout out to NightOwl888 who blazed this trail for us all.
 
-
 ## Two More Helpful Tips
 
 ### Cloning the Local Repo
@@ -519,16 +497,13 @@ Basically, it is cloning the whole repo again in the subdirectory lucene-4.8.1. 
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/clone-local-repo01.png'>
 
-
 Zoomed in a bit more:
 
  <img src='https://lucenenet.apache.org/images/contributing/java-lucene-4_8-setup/clone-local-repo02.png'>
 
-
 When you clone the repository locally, it only shows the default branch that you have pulled (unless you use the switch to pull all of them). But Git keeps track of the remote branches as well as the local ones on your local copy (that is, all of the remote branches that you have called git fetch or git pull on).
 
 "git branch -r" shows a list of all of the remote branches that you have pulled.  "git checkout releases/lucene-solr/4.8.1/updated" command is a shortcut for creating a branch based off of the remote. It won't work if you have 2 remotes that have a branch with the same name - in that case you would need to specify the remote name, too. https://stackoverflow.com/questions/24301914/how-to-create-a-local-branch-from-an-existing-remote-branch   Of course, all of the posts on that SO question assume a single folder that is set up to checkout multiple remote branches. We are creating separate clones so it is clearer what version we have in Eclipse and so we don't accidentally break something by switching between git branches.
-
 
 ### Disable Java Update Checker
 One more thing you might want to do is to disable the Java update check so it doesn't accidentally get rid of Java 8.  See: https://thegeekpage.com/turn-off-java-update-notification-in-windows-10/

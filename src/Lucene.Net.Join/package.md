@@ -57,7 +57,6 @@ Query time joining has the following input:
 
 Basically the query-time joining is accessible from one static method. The user of this method supplies the method with the described input and a `IndexSearcher` where the from terms need to be collected from. The returned query can be executed with the same `IndexSearcher`, but also with another `IndexSearcher`. Example usage of the [JoinUtil.CreateJoinQuery()](xref:Lucene.Net.Search.Join.JoinUtil#Lucene_Net_Search_Join_JoinUtil_CreateJoinQuery_System_String_System_Boolean_System_String_Lucene_Net_Search_Query_Lucene_Net_Search_IndexSearcher_Lucene_Net_Search_Join_ScoreMode_):
 
-
 ```cs
 string fromField = "from"; // Name of the from field
 bool multipleValuesPerDocument = false; // Set only yo true in the case when your fromField has multiple values per document in your index
