@@ -1,5 +1,6 @@
 // Lucene version compatibility level 8.2.0
-using opennlp.tools.lemmatizer;
+
+using NOpenNLP.Tools.Lemmatizer;
 using System.Diagnostics;
 using System.IO;
 
@@ -39,7 +40,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
         public NLPLemmatizerOp(Stream dictionary, LemmatizerModel lemmatizerModel)
         {
             Debug.Assert(dictionary != null || lemmatizerModel != null, "At least one parameter must be non-null");
-            dictionaryLemmatizer = dictionary is null ? null : new DictionaryLemmatizer(new ikvm.io.InputStreamWrapper(dictionary));
+            dictionaryLemmatizer = dictionary is null ? null : new DictionaryLemmatizer(dictionary);
             lemmatizerME = lemmatizerModel is null ? null : new LemmatizerME(lemmatizerModel);
         }
 
@@ -49,7 +50,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
             string[] maxEntLemmas = null;
             if (dictionaryLemmatizer != null)
             {
-                lemmas = dictionaryLemmatizer.lemmatize(words, postags);
+                lemmas = dictionaryLemmatizer.Lemmatize(words, postags);
                 for (int i = 0; i < lemmas.Length; ++i)
                 {
                     if (lemmas[i].Equals("O"))
@@ -58,7 +59,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
                         {  // fall back to the MaxEnt lemmatizer if it's enabled
                             if (maxEntLemmas is null)
                             {
-                                maxEntLemmas = lemmatizerME.lemmatize(words, postags);
+                                maxEntLemmas = lemmatizerME.Lemmatize(words, postags);
                             }
                             if ("_".Equals(maxEntLemmas[i]))
                             {
@@ -78,7 +79,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
             }
             else
             {                           // there is only a MaxEnt lemmatizer
-                maxEntLemmas = lemmatizerME.lemmatize(words, postags);
+                maxEntLemmas = lemmatizerME.Lemmatize(words, postags);
                 for (int i = 0; i < maxEntLemmas.Length; ++i)
                 {
                     if ("_".Equals(maxEntLemmas[i]))

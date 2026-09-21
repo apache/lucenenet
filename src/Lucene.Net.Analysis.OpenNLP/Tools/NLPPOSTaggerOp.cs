@@ -1,6 +1,6 @@
 // Lucene version compatibility level 8.2.0
 using Lucene.Net.Support.Threading;
-using opennlp.tools.postag;
+using NOpenNLP.Tools.Postag;
 
 namespace Lucene.Net.Analysis.OpenNlp.Tools
 {
@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
     /// </summary>
     public class NLPPOSTaggerOp
     {
-        private readonly POSTagger tagger = null;
+        private readonly IPOSTagger tagger = null;
 
         public NLPPOSTaggerOp(POSModel model)
         {
@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
             UninterruptableMonitor.Enter(this);
             try
             {
-                return tagger.tag(words);
+                return tagger.Tag(words);
             }
             finally
             {

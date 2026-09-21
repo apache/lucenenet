@@ -3,7 +3,7 @@ using ICU4N.Support.Text;
 using ICU4N.Text;
 using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.Util;
-using opennlp.tools.util;
+using NOpenNLP.Tools.Util;
 using System;
 using System.Diagnostics;
 using System.Text;
@@ -249,7 +249,7 @@ namespace Lucene.Net.Analysis.OpenNlp
             for (int i = 0; i < spans.Length; ++i)
             {
                 // Adjust start positions to match those of the passed-in CharacterIterator
-                sentenceStarts[i] = spans[i].getStart() + text.BeginIndex;
+                sentenceStarts[i] = spans[i].Start + text.BeginIndex;
             }
         }
 

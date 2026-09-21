@@ -3,7 +3,7 @@ using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
-using opennlp.tools.util;
+using NOpenNLP.Tools.Util;
 using System;
 using System.IO;
 
@@ -92,9 +92,9 @@ namespace Lucene.Net.Analysis.OpenNlp
             }
             ClearAttributes();
             Span term = termSpans[termNum];
-            termAtt.CopyBuffer(m_buffer, sentenceStart + term.getStart(), term.length());
-            offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart + term.getStart()),
-                                CorrectOffset(m_offset + sentenceStart + term.getEnd()));
+            termAtt.CopyBuffer(m_buffer, sentenceStart + term.Start, term.Length);
+            offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart + term.Start),
+                                CorrectOffset(m_offset + sentenceStart + term.End));
             if (termNum == termSpans.Length - 1)
             {
                 flagsAtt.Flags = flagsAtt.Flags | EOS_FLAG_BIT; // mark the last token in the sentence with EOS_FLAG_BIT
