@@ -47,8 +47,8 @@ under the License.
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Docfx.Plugins" Version="2.77.0" />
-    <PackageReference Include="Docfx.Common" Version="2.77.0" />
+    <PackageReference Include="Docfx.Plugins" Version="2.78.5" />
+    <PackageReference Include="Docfx.Common" Version="2.78.5" />
     <PackageReference Include="System.Composition" Version="8.0.0" />
   </ItemGroup>
 
