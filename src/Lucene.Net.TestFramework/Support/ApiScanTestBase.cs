@@ -1109,6 +1109,63 @@ namespace Lucene.Net.Util
         private static IEnumerable<Type> GetTypesToTest(Assembly assembly) =>
             assembly.GetTypes()
                 .Where(t => !t.HasAttribute<GeneratedCodeAttribute>(inherit: false)
-                            && !t.HasAttribute<CompilerGeneratedAttribute>(inherit: false));
+                            && !t.HasAttribute<CompilerGeneratedAttribute>(inherit: false)
+                            && IsPartOfEffectiveApi(t));
+
+        /// <summary>
+        /// Returns whether the type is part of the effective API surface.
+        /// <para />
+        /// Types that are part of the effective API surface include <c>public</c> types, as well as
+        /// nested types that are either <c>public</c>, <c>protected</c>, or <c>protected internal</c> and where the
+        /// declaring type hierarchy is public.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private static bool IsPartOfEffectiveApi(Type type)
+        {
+            while (type != null)
+            {
+                if (!type.IsNested)
+                {
+                    return type.IsPublic;
+                }
+
+                if (type.IsNestedPublic)
+                {
+                    type = type.DeclaringType!;
+                    continue;
+                }
+
+                if (type.IsNestedFamily || type.IsNestedFamORAssem) // protected or protected internal
+                {
+                    type = type.DeclaringType!;
+
+                    // Every containing type must itself be externally inheritable to see protected members
+                    while (type != null)
+                    {
+                        if (!IsExternallyInheritable(type))
+                            return false;
+
+                        type = type.DeclaringType;
+                    }
+
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+        private static bool IsExternallyInheritable(Type type)
+        {
+            if (!type.IsNested)
+                return type.IsPublic;
+
+            return type.IsNestedPublic ||
+                   type.IsNestedFamily ||
+                   type.IsNestedFamORAssem;
+        }
     }
 }

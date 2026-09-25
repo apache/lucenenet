@@ -1499,24 +1499,24 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return asList;
         }
 
-        // LUCENENET TODO: This is a test from Lucene 4.8.1 that currently produces a stack overflow
-        //// TODO: we need BaseSuggesterTestCase?
-        //[Test]
-        //public void TestTooLongSuggestion()
-        //{
-        //    Analyzer a = new MockAnalyzer(Random);
-        //    AnalyzingSuggester suggester = new AnalyzingSuggester(a);
-        //    String bigString = TestUtil.RandomSimpleString(Random, 60000, 60000);
-        //    try
-        //    {
-        //        suggester.Build(new InputArrayEnumerator(new Input[] {
-        //            new Input(bigString, 7)}));
-        //        fail("did not hit expected exception");
-        //    }
-        //    catch (Exception iae) when (iae.IsIllegalArgumentException())
-        //    {
-        //        // expected
-        //    }
-        //}
+        // TODO: we need BaseSuggesterTestCase?
+        [Test]
+        public void TestTooLongSuggestion()
+        {
+            Analyzer a = new MockAnalyzer(Random);
+            AnalyzingSuggester suggester = new AnalyzingSuggester(a);
+            string bigString = TestUtil.RandomSimpleString(Random, 60000, 60000);
+            try
+            {
+                suggester.Build(new InputArrayEnumerator([
+                    new Input(bigString, 7)
+                ]));
+                Assert.Fail("did not hit expected exception");
+            }
+            catch (ArgumentOutOfRangeException /*iae*/) // LUCENENET-specific AOORE for .NET semantics
+            {
+                // expected
+            }
+        }
     }
 }

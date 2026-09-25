@@ -979,7 +979,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             ReplaceSep(automaton);
             automaton = ConvertAutomaton(automaton);
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(SpecialOperations.IsFinite(automaton));
+            // TODO: LUCENE-5660 re-enable this once we disallow massive suggestion strings
+            // if (Debugging.AssertsEnabled) Debugging.Assert(SpecialOperations.IsFinite(automaton));
 
             // Get all paths from the automaton (there can be
             // more than one path, eg if the analyzer created a

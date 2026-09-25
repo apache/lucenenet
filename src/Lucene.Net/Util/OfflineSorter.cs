@@ -670,7 +670,7 @@ namespace Lucene.Net.Util
             /// by the bytes.
             /// </summary>
             /// <exception cref="ArgumentNullException"><paramref name="bytes"/> is <c>null</c>.</exception>
-            /// <exception cref="ArgumentOutOfRangeException"><paramref name="off"/> or <paramref name="len"/> is less than 0.</exception>
+            /// <exception cref="ArgumentOutOfRangeException"><paramref name="off"/> or <paramref name="len"/> is less than 0, or <paramref name="len"/> is greater than <see cref="short.MaxValue"/>.</exception>
             /// <exception cref="ArgumentException"><paramref name="off"/> and <paramref name="len"/> refer to a position outside of the array.</exception>
             public virtual void Write(byte[] bytes, int off, int len)
             {
@@ -682,6 +682,9 @@ namespace Lucene.Net.Util
                     throw new ArgumentOutOfRangeException(nameof(len), "Non-negative number required.");
                 if (off > bytes.Length - len) // Checks for int overflow
                     throw new ArgumentException("Index and length must refer to a location within the array.");
+
+                if (len > short.MaxValue)
+                    throw new ArgumentOutOfRangeException(nameof(len), $"len must be <= {short.MaxValue}; got {len}");
 
                 os.Write((short)len);
                 os.Write(bytes, off, len);
