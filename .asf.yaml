@@ -61,7 +61,7 @@ github:
         require_last_push_approval: false
         require_code_owner_reviews: false
         required_approving_review_count: 0
-    - name: "Maintenace Branch Protection"
+    - name: "Maintenance Branch Protection"
       type: branch
       branches:
         includes:
