@@ -15,7 +15,7 @@
       ],
       "dest": "obj/docfx/api/misc",
       "properties": {
-        "TargetFramework": "net8.0"
+        "TargetFramework": "net10.0"
       }
     }
   ],

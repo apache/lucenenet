@@ -32,6 +32,14 @@ name: 'Lucene.Net.Documentation'
 
 on:
   workflow_dispatch:
+  # 2026-08-09 - build (but do not publish) the API docs for any pull request that touches the docs sources, the docs
+  # plugins, or this workflow file. This lets changes to the docs build be validated in CI before they are merged.
+  # The steps that push to the site repo are skipped for pull requests - see the `if:` conditions below.
+  pull_request:
+    paths:
+    - 'websites/apidocs/**/*'
+    - 'src/docs/LuceneDocsPlugins/**/*'
+    - '.github/workflows/Lucene-Net-Documentation.yml'
   push:
     # 2026-06-23 - when both tags and branches are used, they are ORed. However, note that when paths is used, it is ANDed to each of them.
     tags:
@@ -178,7 +186,7 @@ jobs:
 
       - name: Build docs
         run: ./main-repo/websites/apidocs/docs.ps1 -Clean -LuceneNetVersion ${{ env.RELEASE_VERSION }}
-        shell: powershell
+        shell: pwsh
 
       - name: Upload apidocs as build artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -188,6 +196,7 @@ jobs:
           path: '${{github.workspace}}/main-repo/websites/apidocs/_site'
 
       - name: Checkout Lucene.Net website
+        if: ${{ github.event_name != 'pull_request' }}
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           repository: ${{ env.SITE_REPO }}
@@ -195,6 +204,7 @@ jobs:
           path: website-repo
 
       - name: Copy documentation site files
+        if: ${{ github.event_name != 'pull_request' }}
         run: |
           $source = "$Env:GITHUB_WORKSPACE\main-repo\websites\apidocs\_site"
           $dest = "$Env:GITHUB_WORKSPACE\website-repo\docs\$Env:RELEASE_VERSION"
@@ -212,6 +222,7 @@ jobs:
       # Because we are always building the docs against a consistent version
       - name: Create Pull Request
         id: cpr
+        if: ${{ github.event_name != 'pull_request' }}
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
           token: ${{ secrets.LUCENE_NET_WEBSITE_BUILD }}
@@ -227,6 +238,7 @@ jobs:
             - For version ${{ env.RELEASE_VERSION }}
 
       - name: Check outputs
+        if: ${{ github.event_name != 'pull_request' }}
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
