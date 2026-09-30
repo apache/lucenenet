@@ -1300,8 +1300,8 @@ namespace Lucene.Net.Index
         // much RAM that it forces long tail of tiny segments:
         [Test]
         [Nightly]
-        [Timeout(900_000)] // 15 minutes
-        public virtual void TestApplyDeletesOnFlush()
+        [CancelAfter(900_000)] // 15 minutes
+        public virtual void TestApplyDeletesOnFlush(CancellationToken cancellationToken)
         {
             Directory dir = NewDirectory();
             // Cannot use RandomIndexWriter because we don't want to
@@ -1317,6 +1317,8 @@ namespace Lucene.Net.Index
             int id = 0;
             while (true)
             {
+                cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
+
                 StringBuilder sb = new StringBuilder();
                 for (int termIDX = 0; termIDX < 100; termIDX++)
                 {

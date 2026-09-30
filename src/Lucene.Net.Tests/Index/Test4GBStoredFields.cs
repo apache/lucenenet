@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
+using System.Threading;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
 namespace Lucene.Net.Index
@@ -45,7 +46,12 @@ namespace Lucene.Net.Index
     {
         [Test]
         [Nightly]
-        [Timeout(2_400_000)] // 40 minutes
+        // LUCENENET NOTE: Timeout is deprecated in NUnit 4 because it does not work on modern .NET (and even
+        // errors now). CancelAfter is its replacement, but it requires a good seam to check if the cancellation
+        // has been requested. This method does not have a good seam for that, since ForceMerge (which seems to be the
+        // long-running operation here) does not support cancellation (yet). Disabling the timeout for now until
+        // either there is a suitable replacement or ForceMerge is updated to support cancellation.
+        // [Timeout(2_400_000)] // 40 minutes
         public virtual void Test()
         {
             // LUCENENET specific - disable the test if not 64 bit

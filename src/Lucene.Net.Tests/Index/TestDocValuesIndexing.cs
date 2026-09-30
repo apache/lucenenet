@@ -5,6 +5,7 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using NUnit.Framework;
 using System;
+using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
