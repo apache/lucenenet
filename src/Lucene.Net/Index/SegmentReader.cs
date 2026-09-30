@@ -199,14 +199,13 @@ namespace Lucene.Net.Index
                 long gen = e.Key;
                 IList<FieldInfo> infos = e.Value;
                 DocValuesProducer dvp = segDocValues.GetDocValuesProducer(gen, si, IOContext.READ, dir, dvFormat, infos, TermInfosIndexDivisor);
+                dvGens.Add(gen);
                 foreach (FieldInfo fi in infos)
                 {
                     dvProducersByField[fi.Name] = dvp;
                     dvProducers.Add(dvp);
                 }
             }
-
-            dvGens.AddRange(genInfos.Keys);
         }
 
         /// <summary>
