@@ -172,7 +172,7 @@ namespace Lucene.Net.Codecs
         ///    <item><description>AlgorithmID --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>). this
         ///        indicates the checksum algorithm used. Currently this is always 0,
         ///        for zlib-crc32.</description></item>
-        ///    <item><description>Checksum --&gt; Uint32 (<see cref="DataOutput.WriteInt64(long)"/>). The
+        ///    <item><description>Checksum --&gt; Uint64 (<see cref="DataOutput.WriteInt64(long)"/>). The
         ///        actual checksum value for all previous bytes in the stream, including
         ///        the bytes from Magic and AlgorithmID.</description></item>
         /// </list>
