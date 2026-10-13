@@ -1,4 +1,3 @@
-using J2N.IO;
 using J2N.Text;
 using Lucene.Net.Support;
 using System;
@@ -166,11 +165,92 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         // *** Appendable interface ***
 
+#nullable enable
+        public CharTermAttribute Append(string? value, int startIndex, int charCount)
+        {
+            // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} must not be negative.");
+            if (charCount < 0)
+                throw new ArgumentOutOfRangeException(nameof(charCount), $"{nameof(charCount)} must not be negative.");
+
+            if (value is null)
+            {
+                if (startIndex == 0 && charCount == 0)
+                    return this;
+                throw new ArgumentNullException(nameof(value));
+            }
+            if (charCount == 0)
+                return this;
+            if (startIndex > value.Length - charCount)
+                throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
+
+            value.CopyTo(startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
+            Length += charCount;
+
+            return this;
+        }
+#nullable restore
+
         public CharTermAttribute Append(char value)
         {
             ResizeBuffer(termLength + 1)[termLength++] = value;
             return this;
         }
+
+        public CharTermAttribute Append(char[] value)
+        {
+            if (value is null)
+                //return AppendNull();
+                return this; // No-op
+
+            int len = value.Length;
+            value.CopyTo(InternalResizeBuffer(termLength + len), termLength);
+            Length += len;
+
+            return this;
+        }
+
+        public CharTermAttribute Append(char[] value, int startIndex, int charCount)
+        {
+            // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} must not be negative.");
+            if (charCount < 0)
+                throw new ArgumentOutOfRangeException(nameof(charCount), $"{nameof(charCount)} must not be negative.");
+
+            if (value is null)
+            {
+                if (startIndex == 0 && charCount == 0)
+                    return this;
+                throw new ArgumentNullException(nameof(value));
+            }
+            if (charCount == 0)
+                return this;
+            if (startIndex > value.Length - charCount)
+                throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
+
+            Arrays.Copy(value, startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
+            Length += charCount;
+
+            return this;
+        }
+
+#nullable enable
+        public CharTermAttribute Append(string? value)
+        {
+            if (value is null) // needed for Appendable compliance
+            {
+                //return AppendNull();
+                return this; // No-op
+            }
+
+            int len = value.Length;
+            value.CopyTo(0, InternalResizeBuffer(termLength + len), termLength, len);
+            Length += len;
+            return this;
+        }
+#nullable restore
 
         public CharTermAttribute Append(StringBuilder value)
         {
@@ -355,6 +435,14 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         ICharTermAttribute ICharTermAttribute.Append(char value) => Append(value);
 
+        ICharTermAttribute ICharTermAttribute.Append(char[] value) => Append(value);
+
+        ICharTermAttribute ICharTermAttribute.Append(char[] value, int startIndex, int count) => Append(value, startIndex, count);
+
+        ICharTermAttribute ICharTermAttribute.Append(string value) => Append(value);
+
+        ICharTermAttribute ICharTermAttribute.Append(string value, int startIndex, int count) => Append(value, startIndex, count);
+
         ICharTermAttribute ICharTermAttribute.Append(StringBuilder value) => Append(value);
 
         ICharTermAttribute ICharTermAttribute.Append(StringBuilder value, int startIndex, int count) => Append(value, startIndex, count);
@@ -371,7 +459,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         IAppendable IAppendable.Append(string value) => Append(value);
 
-        IAppendable IAppendable.Append(string value, int startIndex, int count) => Append(value.AsSpan(startIndex, count));
+        IAppendable IAppendable.Append(string value, int startIndex, int count) => Append(value, startIndex, count);
 
         IAppendable IAppendable.Append(StringBuilder value) => Append(value);
 
@@ -379,7 +467,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         IAppendable IAppendable.Append(char[] value) => Append(value);
 
-        IAppendable IAppendable.Append(char[] value, int startIndex, int count) => Append(value.AsSpan(startIndex, count));
+        IAppendable IAppendable.Append(char[] value, int startIndex, int count) => Append(value, startIndex, count);
 
         IAppendable IAppendable.Append(ICharSequence value) => Append(value?.ToString());
 

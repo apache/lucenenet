@@ -86,7 +86,20 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             /// Creates a new phoneme builder containing all phonemes in this one extended by <paramref name="str"/>.
             /// </summary>
             /// <param name="str">The characters to append to the phonemes.</param>
-            public void Append(ReadOnlySpan<char> str)
+            public void Append(ICharSequence str)
+            {
+                foreach (Phoneme ph in this.phonemes)
+                {
+                    ph.Append(str.ToString());
+                }
+            }
+
+            /// <summary>
+            /// Creates a new phoneme builder containing all phonemes in this one extended by <paramref name="str"/>.
+            /// </summary>
+            /// <param name="str">The characters to append to the phonemes.</param>
+            // LUCENENET specific
+            public void Append(string str)
             {
                 foreach (Phoneme ph in this.phonemes)
                 {

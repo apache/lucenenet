@@ -253,11 +253,10 @@ namespace Lucene.Net.Analysis.Hunspell
             IList<CharsRef> deduped = new JCG.List<CharsRef>();
             foreach (CharsRef s in stems)
             {
-                ReadOnlySpan<char> sSpan = s.AsSpan();
-                if (!terms.Contains(sSpan)) // LUCENENET: use ReadOnlySpan<char> overload
+                if (!terms.Contains(s.Chars, s.Offset, s.Length)) // LUCENENET: CharsRef no longer implements ICharSequence, so use the char[] overload
                 {
                     deduped.Add(s);
-                    terms.Add(sSpan); // LUCENENET: use ReadOnlySpan<char> overload
+                    terms.Add(s.ToString()); // LUCENENET: CharsRef no longer implements ICharSequence. Upstream converted the CharSequence to a string, too.
                 }
             }
             return deduped;

@@ -455,7 +455,6 @@ namespace Lucene.Net.Util
         }
         */
 
-        // LUCENENET specific overload
         public static bool ValidUTF16String(ReadOnlySpan<char> s)
         {
             int size = s.Length;
@@ -494,7 +493,46 @@ namespace Lucene.Net.Util
             return true;
         }
 
-        // LUCENENET specific overload
+        // LUCENENET specific overload because string doesn't implement ICharSequence
+        public static bool ValidUTF16String(string s)
+        {
+            int size = s.Length;
+            for (int i = 0; i < size; i++)
+            {
+                char ch = s[i];
+                if (ch >= UNI_SUR_HIGH_START && ch <= UNI_SUR_HIGH_END)
+                {
+                    if (i < size - 1)
+                    {
+                        i++;
+                        char nextCH = s[i];
+                        if (nextCH >= UNI_SUR_LOW_START && nextCH <= UNI_SUR_LOW_END)
+                        {
+                            // Valid surrogate pair
+                        }
+                        else
+                        {
+                            // Unmatched high surrogate
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        // Unmatched high surrogate
+                        return false;
+                    }
+                }
+                else if (ch >= UNI_SUR_LOW_START && ch <= UNI_SUR_LOW_END)
+                {
+                    // Unmatched low surrogate
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // LUCENENET specific overload because StringBuilder doesn't implement ICharSequence
         public static bool ValidUTF16String(StringBuilder s)
         {
             int size = s.Length;
