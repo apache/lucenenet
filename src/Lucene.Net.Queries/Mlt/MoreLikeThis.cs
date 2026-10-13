@@ -76,15 +76,15 @@ namespace Lucene.Net.Queries.Mlt
     /// <para/>
     /// <code>
     /// IndexReader ir = ...
-    /// IndexSearcher is = ...
+    /// IndexSearcher searcher = ...
     ///
     /// MoreLikeThis mlt = new MoreLikeThis(ir);
     /// TextReader target = ... // orig source of doc you want to find similarities to
     /// Query query = mlt.Like(target);
     ///
-    /// Hits hits = is.Search(query);
-    /// // now the usual iteration thru 'hits' - the only thing to watch for is to make sure
-    /// //you ignore the doc if it matches your 'target' document, as it should be similar to itself
+    /// TopDocs topDocs = searcher.Search(query, 10);
+    /// // now the usual iteration thru 'topDocs' - the only thing to watch for is to make sure
+    /// // you ignore the doc if it matches your 'target' document, as it should be similar to itself
     /// </code>
     /// <para/>
     /// Thus you:
