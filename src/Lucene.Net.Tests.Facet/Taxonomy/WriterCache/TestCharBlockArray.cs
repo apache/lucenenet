@@ -127,16 +127,16 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             Assert.AreEqual("123456789", t.ToString());
             t.Append("0");
             Assert.AreEqual("1234567890", t.ToString());
-            t.Append("0123456789", 1, 3 - 1); // LUCENENET: Corrected 3rd parameter
+            t.Append("0123456789".AsSpan(1, 3 - 1)); // LUCENENET: Corrected 3rd parameter
             Assert.AreEqual("123456789012", t.ToString());
             //t.Append((ICharSequence) CharBuffer.wrap("0123456789".ToCharArray()), 3, 5);
-            t.Append("0123456789".ToCharArray(), 3, 5 - 3); // LUCENENET: no CharBuffer in .NET, so we test char[], start, end overload // LUCENENET: Corrected 3rd parameter
+            t.Append("0123456789".ToCharArray().AsSpan(3, 5 - 3)); // LUCENENET: no CharBuffer in .NET, so we test char[], start, end overload // LUCENENET: Corrected 3rd parameter
             Assert.AreEqual("12345678901234", t.ToString());
             t.Append(t);
             Assert.AreEqual("1234567890123412345678901234", t.ToString());
-            t.Append(/*(ICharSequence)*/ new StringBuilder("0123456789"), 5, 7 - 5); // LUCENENET: StringBuilder doesn't implement ICharSequence, corrected 3rd argument
+            t.Append(/*(ICharSequence)*/ new StringBuilder("0123456789").ToString().AsSpan(5, 7 - 5)); // LUCENENET: StringBuilder doesn't implement ICharSequence, corrected 3rd argument
             Assert.AreEqual("123456789012341234567890123456", t.ToString());
-            t.Append(/*(ICharSequence)*/ new StringBuilder(t.ToString())); // LUCENENET: StringBuilder doesn't implement ICharSequence
+            t.Append(/*(ICharSequence)*/ new StringBuilder(t.ToString()).ToString().AsSpan()); // LUCENENET: StringBuilder doesn't implement ICharSequence
             Assert.AreEqual("123456789012341234567890123456123456789012341234567890123456", t.ToString());
             // very wierd, to test if a subSlice is wrapped correct :)
             ReadOnlySpan<char> buf = "0123456789".AsSpan(3, 5); // LUCENENET: No CharBuffer in .NET, so we test a ReadOnlySpan<char> slice
@@ -181,7 +181,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             // LUCENENET specific - test string overloads
             try
             {
-                t.Append((string)t2.ToString(), 1, 5 - 1); // LUCENENET: Corrected 3rd parameter
+                t.Append(t2.ToString().AsSpan(1, 5 - 1)); // LUCENENET: Corrected 3rd parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
 #pragma warning disable 168
@@ -192,7 +192,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             try
             {
-                t.Append((string)t2.ToString(), 1, 0 - 1); // LUCENENET: Corrected 3rd parameter
+                t.Append(t2.ToString().AsSpan(1, 0 - 1)); // LUCENENET: Corrected 3rd parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
 #pragma warning disable 168
@@ -208,7 +208,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             // LUCENENET specific - test char[] overloads
             try
             {
-                t.Append((char[])t2.ToString().ToCharArray(), 1, 5 - 1); // LUCENENET: Corrected 3rd parameter
+                t.Append(t2.ToString().ToCharArray().AsSpan(1, 5 - 1)); // LUCENENET: Corrected 3rd parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
 #pragma warning disable 168
@@ -219,7 +219,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             try
             {
-                t.Append((char[])t2.ToString().ToCharArray(), 1, 0 - 1); // LUCENENET: Corrected 3rd parameter
+                t.Append(t2.ToString().ToCharArray().AsSpan(1, 0 - 1)); // LUCENENET: Corrected 3rd parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
 #pragma warning disable 168
@@ -240,23 +240,23 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             CharBlockArray t = new CharBlockArray();
             t.Append("01234567890123456789012345678901234567890123456789"); // LUCENENET specific overload that accepts string
             assertEquals("01234567890123456789012345678901234567890123456789", t.ToString());
-            t.Append("01234567890123456789012345678901234567890123456789", 3, 50 - 3); // LUCENENET specific overload that accepts string, startIndex, charCount
+            t.Append("01234567890123456789012345678901234567890123456789".AsSpan(3, 50 - 3)); // LUCENENET specific overload that accepts string, startIndex, charCount
             Assert.AreEqual("0123456789012345678901234567890123456789012345678934567890123456789012345678901234567890123456789", t.ToString());
             t = new CharBlockArray();
             t.Append("01234567890123456789012345678901234567890123456789".ToCharArray()); // LUCENENET specific overload that accepts char[]
             assertEquals("01234567890123456789012345678901234567890123456789", t.ToString());
-            t.Append("01234567890123456789012345678901234567890123456789".ToCharArray(), 3, 50 - 3); // LUCENENET specific overload that accepts char[], startIndex, charCount
+            t.Append("01234567890123456789012345678901234567890123456789".ToCharArray().AsSpan(3, 50 - 3)); // LUCENENET specific overload that accepts char[], startIndex, charCount
             Assert.AreEqual("0123456789012345678901234567890123456789012345678934567890123456789012345678901234567890123456789", t.ToString());
             t = new CharBlockArray();
             t.Append("01234567890123456789012345678901234567890123456789");
             //t.Append((ICharSequence) CharBuffer.wrap("01234567890123456789012345678901234567890123456789".ToCharArray()), 3, 50); // LUCENENET: No CharBuffer in .NET
-            t.Append("01234567890123456789012345678901234567890123456789".ToCharArray(), 3, 50 - 3); // LUCENENET specific overload that accepts char[], startIndex, charCount
+            t.Append("01234567890123456789012345678901234567890123456789".ToCharArray().AsSpan(3, 50 - 3)); // LUCENENET specific overload that accepts char[], startIndex, charCount
             //              "01234567890123456789012345678901234567890123456789"
             Assert.AreEqual("0123456789012345678901234567890123456789012345678934567890123456789012345678901234567890123456789", t.ToString());
             t = new CharBlockArray();
-            t.Append(/*(ICharSequence)*/ new StringBuilder("01234567890123456789"), 5, 17 - 5); // LUCENENET: StringBuilder doesn't implement ICharSequence
+            t.Append(/*(ICharSequence)*/ new StringBuilder("01234567890123456789").ToString().AsSpan(5, 17 - 5)); // LUCENENET: StringBuilder doesn't implement ICharSequence
             Assert.AreEqual("567890123456", t.ToString());
-            t.Append(new StringBuilder(t.ToString()));
+            t.Append(new StringBuilder(t.ToString()).ToString().AsSpan());
             Assert.AreEqual("567890123456567890123456", t.ToString());
             // very wierd, to test if a subSlice is wrapped correct :)
             ReadOnlySpan<char> buf = "012345678901234567890123456789".AsSpan(3, 15); // LUCENENET: No CharBuffer in .NET, so we test a ReadOnlySpan<char> slice
