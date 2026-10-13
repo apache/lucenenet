@@ -54,7 +54,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             int Maxp = MaxLevelsPossible;
             if (maxLevels <= 0 || maxLevels > Maxp)
             {
-                throw new ArgumentOutOfRangeException(nameof(maxLevels), "maxLen must be [1-" + Maxp + "] but got " + maxLevels); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                throw new ArgumentOutOfRangeException(nameof(maxLevels), "maxLevels must be [1-" + Maxp + "] but got " + maxLevels); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
         }
 
