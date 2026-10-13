@@ -787,7 +787,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the field name for this filter </summary>
-        public virtual string Field => field;
+        public virtual string Field => this.field;
 
         /// <summary>
         /// Returns <c>true</c> if the lower endpoint is inclusive </summary>

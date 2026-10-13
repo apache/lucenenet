@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -39,7 +40,7 @@ namespace Lucene.Net.Analysis.Ja
     {
         private readonly string stopTagFiles;
         private readonly bool enablePositionIncrements;
-        private ISet<string> stopTags;
+        private ISet<string>? stopTags;
 
         /// <summary>Creates a new JapanesePartOfSpeechStopFilterFactory</summary>
         public JapanesePartOfSpeechStopFilterFactory(IDictionary<string, string> args)

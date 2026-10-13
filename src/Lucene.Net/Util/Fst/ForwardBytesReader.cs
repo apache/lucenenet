@@ -51,6 +51,44 @@ namespace Lucene.Net.Util.Fst
             pos += len;
         }
 
+        // LUCENENET: override ReadVInt32 for performance optimization
+        public override int ReadVInt32()
+        {
+            if (pos + VIntUtils.MaxVInt32Length > bytes.Length)
+            {
+                // slow path near end of array
+                return base.ReadVInt32();
+            }
+
+            // fast path: avoid repeated virtual calls
+            bool ok = VIntUtils.TryReadVInt32(bytes.AsSpan(pos), out int result, out int count);
+            pos += count;
+            if (!ok)
+            {
+                VIntUtils.ThrowIOException_InvalidVInt32();
+            }
+            return result;
+        }
+
+        // LUCENENET: override ReadVInt32 for performance optimization
+        public override long ReadVInt64()
+        {
+            if (pos + VIntUtils.MaxVInt64Length > bytes.Length)
+            {
+                // slow path near end of array
+                return base.ReadVInt64();
+            }
+
+            // fast path: avoid repeated virtual calls
+            bool ok = VIntUtils.TryReadVInt64(bytes.AsSpan(pos), out long result, out int count);
+            pos += count;
+            if (!ok)
+            {
+                VIntUtils.ThrowIOException_InvalidVInt64();
+            }
+            return result;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void SkipBytes(int count)
         {

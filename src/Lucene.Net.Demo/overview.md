@@ -28,8 +28,6 @@ The demo module offers simple example code to show the features of Lucene.
 
 *   [About the Demo](#about-the-demo)
 
-
-
 *   [Indexing Files](#indexing-files)
 
 *   [About the code](#about-the-code)
@@ -63,7 +61,7 @@ To __search the index__ type:
 
 You'll be prompted for a query. Type in a gibberish or made up word (for example:
 "supercalifragilisticexpialidocious").
-You'll see that there are no maching results in the lucene source code.
+You'll see that there are no matching results in the lucene source code.
 Now try entering the word "string". That should return a whole bunch
 of documents. The results will page at every tenth result and ask you whether
 you want more results.
@@ -98,6 +96,6 @@ Looking further down in the file, after <span class="codefrag">IndexWriter</span
 
 ## Searching Files
 
-The [SearchFiles](xref:Lucene.Net.Demo.SearchFiles) class is quite simple. It primarily collaborates with an [IndexSearcher](xref:Lucene.Net.Search.IndexSearcher), [StandardAnalyzer](xref:Lucene.Net.Analysis.Standard.StandardAnalyzer), (which is used in the [IndexFiles](xref:Lucene.Net.Demo.IndexFiles) class as well) and a [QueryParser](xref:Lucene.Net.QueryParsers.Classic.QueryParser). The query parser is constructed with an analyzer used to interpret your query text in the same way the documents are interpreted: finding word boundaries, downcasing, and removing useless words like 'a', 'an' and 'the'. The <xref:Lucene.Net.Search.Query> object contains the results from the [QueryParser](xref:Lucene.Net.QueryParsers.Classic.QueryParser) which is passed to the searcher. Note that it's also possible to programmatically construct a rich <xref:Lucene.Net.Search.Query> object without using the query parser. The query parser just enables decoding the [ Lucene query syntax](../queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description) into the corresponding [Query](xref:Lucene.Net.Search.Query) object.
+The [SearchFiles](xref:Lucene.Net.Demo.SearchFiles) class is quite simple. It primarily collaborates with an [IndexSearcher](xref:Lucene.Net.Search.IndexSearcher), [StandardAnalyzer](xref:Lucene.Net.Analysis.Standard.StandardAnalyzer), (which is used in the [IndexFiles](xref:Lucene.Net.Demo.IndexFiles) class as well) and a [QueryParser](xref:Lucene.Net.QueryParsers.Classic.QueryParser). The query parser is constructed with an analyzer used to interpret your query text in the same way the documents are interpreted: finding word boundaries, downcasing, and removing useless words like 'a', 'an' and 'the'. The <xref:Lucene.Net.Search.Query> object contains the results from the [QueryParser](xref:Lucene.Net.QueryParsers.Classic.QueryParser) which is passed to the searcher. Note that it's also possible to programmatically construct a rich <xref:Lucene.Net.Search.Query> object without using the query parser. The query parser just enables decoding the [Lucene query syntax](../queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description) into the corresponding [Query](xref:Lucene.Net.Search.Query) object.
 
 <span class="codefrag">SearchFiles</span> uses the [IndexSearcher.search](xref:Lucene.Net.Search.IndexSearcher#methods) method that returns [TopDocs](xref:Lucene.Net.Search.TopDocs) with max <span class="codefrag">n</span> hits. The results are printed in pages, sorted by score (i.e. relevance).

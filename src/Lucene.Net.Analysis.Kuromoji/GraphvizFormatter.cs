@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -46,7 +47,7 @@ namespace Lucene.Net.Analysis.Ja
 
         public GraphvizFormatter(ConnectionCosts costs)
         {
-            this.costs = costs;
+            this.costs = costs ?? throw new ArgumentNullException(nameof(costs)); // LUCENENET: Added guard clause
             this.bestPathMap = new JCG.Dictionary<string, string>();
             sb.Append(FormatHeader());
             sb.Append("  init [style=invis]\n");
@@ -136,7 +137,7 @@ namespace Lucene.Net.Analysis.Ja
                     sb.Append(toNodeID);
 
                     string attrs;
-                    bestPathMap.TryGetValue(fromNodeID, out string path);
+                    bestPathMap.TryGetValue(fromNodeID, out string? path);
                     if (toNodeID.Equals(path, StringComparison.Ordinal))
                     {
                         // This arc is on best path

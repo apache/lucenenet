@@ -24,7 +24,6 @@ Prints the source code to the console. Use `SPACE` or `n` to move to the next pa
 
 Outputs the source code to the specified directory.
 
-
 ### Example
 
 ```console

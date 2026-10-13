@@ -27,8 +27,8 @@ namespace Lucene.Net.Store
     /// Abstract base class to rate limit IO.  Typically implementations are
     /// shared across multiple <see cref="IndexInput"/>s or <see cref="IndexOutput"/>s (for example
     /// those involved all merging).  Those <see cref="IndexInput"/>s and
-    /// <see cref="IndexOutput"/>s would call <see cref="Pause"/> whenever they
-    /// want to read bytes or write bytes.
+    /// <see cref="IndexOutput"/>s would call <see cref="Pause"/> whenever they have read
+    /// or written more than <see cref="MinPauseCheckBytes"/> bytes.
     /// </summary>
     public abstract class RateLimiter
     {
@@ -53,15 +53,23 @@ namespace Lucene.Net.Store
         public abstract long Pause(long bytes);
 
         /// <summary>
+        /// How many bytes the caller should add up itself before invoking <see cref="Pause"/>.
+        /// </summary>
+        public abstract long MinPauseCheckBytes { get; }
+
+        /// <summary>
         /// Simple class to rate limit IO.
         /// </summary>
         public class SimpleRateLimiter : RateLimiter
         {
-            // LUCENENET: these fields are volatile in Lucene, but that is not
-            // valid in .NET. Instead, we use AtomicInt64/AtomicDouble to ensure atomicity.
+            private const int MIN_PAUSE_CHECK_MSEC = 5;
+
+            // LUCENENET: mbPerSec/minPauseCheckBytes are volatile in Lucene; we use
+            // AtomicDouble/AtomicInt64 for atomicity. lastNS is a plain long guarded by
+            // UninterruptableMonitor in Pause() (matches upstream, which is non-volatile).
             private readonly AtomicDouble mbPerSec = new AtomicDouble();
-            private readonly AtomicDouble nsPerByte = new AtomicDouble();
-            private readonly AtomicInt64 lastNS = new AtomicInt64();
+            private readonly AtomicInt64 minPauseCheckBytes = new AtomicInt64();
+            private long lastNS;
 
             // TODO: we could also allow eg a sub class to dynamically
             // determine the allowed rate, eg if an app wants to
@@ -80,11 +88,10 @@ namespace Lucene.Net.Store
             public override void SetMbPerSec(double mbPerSec)
             {
                 this.mbPerSec.Value = mbPerSec;
-                if (mbPerSec == 0)
-                    nsPerByte.Value = 0;
-                else
-                    nsPerByte.Value = 1000000000.0 / (1024 * 1024 * mbPerSec);
+                minPauseCheckBytes.Value = (long) ((MIN_PAUSE_CHECK_MSEC / 1000.0) * mbPerSec * 1024 * 1024);
             }
+
+            public override long MinPauseCheckBytes => minPauseCheckBytes;
 
             /// <summary>
             /// The current mb per second rate limit.
@@ -93,29 +100,47 @@ namespace Lucene.Net.Store
 
             /// <summary>
             /// Pauses, if necessary, to keep the instantaneous IO
-            /// rate at or below the target. NOTE: multiple threads
-            /// may safely use this, however the implementation is
-            /// not perfectly thread safe but likely in practice this
-            /// is harmless (just means in some rare cases the rate
-            /// might exceed the target).  It's best to call this
-            /// with a biggish count, not one byte at a time. </summary>
-            /// <returns> the pause time in nano seconds </returns>
+            /// rate at or below the target. Be sure to only call
+            /// this method when <paramref name="bytes"/> &gt; <see cref="MinPauseCheckBytes"/>,
+            /// otherwise it will pause way too long!
+            /// </summary>
+            /// <returns> the pause time in nanoseconds </returns>
             public override long Pause(long bytes)
             {
-                if (bytes == 1)
+                long startNS = Time.NanoTime();
+
+                double secondsToPause = (bytes/1024.0/1024.0) / mbPerSec;
+
+                long targetNS;
+
+                // Sync'd to read + write lastNS:
+                UninterruptableMonitor.Enter(this);
+                try
                 {
-                    return 0;
+                    // Time we should sleep until; this is purely instantaneous
+                    // rate (just adds seconds onto the last time we had paused to);
+                    // maybe we should also offer decayed recent history one?
+                    targetNS = lastNS + (long) (1000000000 * secondsToPause);
+
+                    if (startNS >= targetNS)
+                    {
+                        // OK, current time is already beyond the target sleep time,
+                        // no pausing to do.
+
+                        // Set to startNS, not targetNS, to enforce the instant rate, not
+                        // the "averaged over all history" rate:
+                        lastNS = startNS;
+                        return 0;
+                    }
+
+                    lastNS = targetNS;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
 
-                // TODO: this is purely instantaneous rate; maybe we
-                // should also offer decayed recent history one?
-                var targetNS = /*lastNS =*/ lastNS.AddAndGet((long)(bytes * nsPerByte));
-                long startNS;
-                var curNS = startNS = Time.NanoTime() /* ns */;
-                if (lastNS < curNS)
-                {
-                    lastNS.Value = curNS;
-                }
+                long curNS = startNS;
 
                 // While loop because Thread.sleep doesn't always sleep
                 // enough:
@@ -126,6 +151,10 @@ namespace Lucene.Net.Store
                     {
                         try
                         {
+                            // LUCENENET NOTE: retaining original comment re: JVMs below
+                            // NOTE: except maybe on real-time JVMs, minimum realistic sleep time
+                            // is 1 msec; if you pass just 1 nsec the default impl rounds
+                            // this up to 1 msec:
                             Thread.Sleep(TimeSpan.FromMilliseconds(pauseNS / 1000000));
                         }
                         catch (Exception ie) when (ie.IsInterruptedException())
@@ -138,6 +167,7 @@ namespace Lucene.Net.Store
                     }
                     break;
                 }
+
                 return curNS - startNS;
             }
         }

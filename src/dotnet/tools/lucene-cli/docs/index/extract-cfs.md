@@ -30,7 +30,7 @@ Prints out a short help for the command.
 
 `-dir|--directory-type <DIRECTORY_TYPE>`
 
-The FSDirectory implementation to use. If ommitted, it defaults to the optimal FSDirectory for your OS platform.
+The FSDirectory implementation to use. If omitted, it defaults to the optimal FSDirectory for your OS platform.
 
 ### Examples
 
@@ -39,7 +39,6 @@ Extract the files from the compound file at `X:\lucene-index\_81.cfs` to the cur
 ```console
 lucene index extract-cfs X:\lucene-index\_81.cfs
 ```
-
 
 Extract the files from the compound file at `X:\lucene-index\_64.cfs` to the current working directory using the `SimpleFSDirectory` implementation:
 

@@ -25,7 +25,7 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 # GenerateDocs: (Optional. Only builds documentation website if set to 'true'.)
 # GenerateWebsite: (Optional. Only builds lucene.net website if set to 'true'.)
 # IsRelease: (Optional. By default the Release job is disabled, setting this to 'true' will enable it)
-# GeneratePackages: (Optional. Defaults to 'true'. Setting to 'false' will cut about 1 minute from the build time by skipping packing the NuGet files and subsequent artiact upload. If ArtifactFeedID is provided or IsRelease is 'true', this setting has no effect.)
+# GeneratePackages: (Optional. Defaults to 'true'. Setting to 'false' will cut about 1 minute from the build time by skipping packing the NuGet files and subsequent artifact upload. If ArtifactFeedID is provided or IsRelease is 'true', this setting has no effect.)
 
 # Versioning Variables
 
@@ -346,7 +346,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
@@ -381,7 +381,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
     displayName: 'Test net10.0,x86 on'
     pool:
@@ -406,7 +406,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
@@ -441,7 +441,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
     displayName: 'Test net9.0,x86 on'
     pool:
@@ -466,7 +466,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
@@ -501,7 +501,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
     displayName: 'Test net8.0,x86 on'
     pool:
@@ -526,7 +526,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
     displayName: 'Test net472,x64 on'
     pool:
@@ -551,7 +551,7 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-latest'
-          maximumParallelJobs: 8
+          maximumParallelJobs: 2
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
     displayName: 'Test net472,x86 on'
     pool:
@@ -583,7 +583,7 @@ stages:
         testBinariesArtifactName: '$(TestBinariesArtifactName)'
         nugetArtifactName: '$(NuGetArtifactName)'
         testResultsArtifactName: '$(TestResultsArtifactName)'
-        maximumParallelJobs: 8
+        maximumParallelJobs: 2
         maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
         dotNetSdkVersion: '$(DotNetSDKVersion)'
 
@@ -601,7 +601,7 @@ stages:
         testBinariesArtifactName: '$(TestBinariesArtifactName)'
         nugetArtifactName: '$(NuGetArtifactName)'
         testResultsArtifactName: '$(TestResultsArtifactName)'
-        maximumParallelJobs: 8
+        maximumParallelJobs: 2
         maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
         dotNetSdkVersion: '$(DotNetSDKVersion)'
 
@@ -618,7 +618,7 @@ stages:
       vmImage: 'windows-latest'
 
     steps:
-      # We checkout here because we need to publish the source code along with the symbols for debugging
+    # We checkout here because we need to publish the source code along with the symbols for debugging
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       fetchDepth: '1'  # the depth of commits to ask Git to fetch
 
@@ -630,13 +630,13 @@ stages:
         artifactName: '$(VersionArtifactName)'
         targetPath: '$(System.DefaultWorkingDirectory)/$(VersionArtifactName)'
 
-      # For debugging this pipeline
+    # For debugging this pipeline
     #- pwsh: |
     #    Get-ChildItem -Path $(System.DefaultWorkingDirectory)
     #    Get-ChildItem -Path '$(VersionArtifactName)'
 
-      # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
-      # the version cannot be passed to the Index Sources & Publish Symbols task.
+    # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
+    # the version cannot be passed to the Index Sources & Publish Symbols task.
     - pwsh: |
         $version = Get-Content '$(VersionArtifactName)/$(PackageVersionFileName)' -Raw
         Write-Host "##vso[task.setvariable variable=PackageVersion;]$version"
@@ -660,7 +660,7 @@ stages:
       vmImage: 'windows-latest'
 
     steps:
-    # We checkout here because we need to publish the source code along with the binaries per Apache's releae policy
+    # We checkout here because we need to publish the source code along with the binaries per Apache's release policy
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       fetchDepth: '1'  # the depth of commits to ask Git to fetch
 
@@ -682,8 +682,8 @@ stages:
 
     - template: '.build/azure-templates/show-all-files.yml' # Uncomment for debugging
 
-      # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
-      # the version cannot be passed to the Index Sources & Publish Symbols task.
+    # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
+    # the version cannot be passed to the Index Sources & Publish Symbols task.
     - pwsh: |
         $version = Get-Content '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$(PackageVersionFileName)' -Raw
         $vcsLabel = 'Lucene.Net_' + $version.Replace('.', '_').Replace('-', '_')

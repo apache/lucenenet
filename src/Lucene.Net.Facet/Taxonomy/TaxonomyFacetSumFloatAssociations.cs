@@ -1,4 +1,7 @@
 // Lucene version compatibility level 4.8.1
+
+using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -81,12 +84,22 @@ namespace Lucene.Net.Facet.Taxonomy
                     int offset = scratch.Offset;
                     while (offset < end)
                     {
-                        int ord = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) |
-                            ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
-                        offset += 4;
-                        int value = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) |
-                            ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
-                        offset += 4;
+                        // int ord = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) |
+                        //     ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
+                        // offset += 4;
+
+                        // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+                        int ord = BinaryPrimitives.ReadInt32BigEndian(bytes.AsSpan(offset, sizeof(int)));
+                        offset += sizeof(int);
+
+                        // int value = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) |
+                        //     ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
+                        // offset += 4;
+
+                        // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+                        int value = BinaryPrimitives.ReadInt32BigEndian(bytes.AsSpan(offset, sizeof(int)));
+                        offset += sizeof(int);
+
                         m_values[ord] += J2N.BitConversion.Int32BitsToSingle(value);
                     }
                 }

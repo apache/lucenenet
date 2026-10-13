@@ -128,9 +128,10 @@ namespace Lucene.Net.Analysis.Util
             }
             else
             {
+                // LUCENENET Specific: Sort the keys for better error message readability
                 throw new ArgumentException("A SPI class of type " + clazz.Name + " with name '" + name + "' does not exist. " +
                     "You need to add the corresponding reference supporting this SPI to your project or AppDomain. " +
-                    "The current classpath supports the following names: " + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", AvailableServices));
+                    "The current classpath supports the following names: " + new JCG.SortedSet<string>(AvailableServices));
             }
         }
 

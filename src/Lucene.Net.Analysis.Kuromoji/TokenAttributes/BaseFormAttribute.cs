@@ -1,4 +1,5 @@
 using Lucene.Net.Util;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja.TokenAttributes
 {
@@ -27,7 +28,7 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
     /// </summary>
     public interface IBaseFormAttribute : IAttribute
     {
-        string GetBaseForm();
-        void SetToken(Token token);
+        string? GetBaseForm();
+        void SetToken(Token? token);
     }
 }

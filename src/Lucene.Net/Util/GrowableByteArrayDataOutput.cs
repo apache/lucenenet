@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System;
+using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
@@ -72,6 +73,37 @@ namespace Lucene.Net.Util
             int newLength = Length + len;
             bytes = ArrayUtil.Grow(bytes, newLength);
             Arrays.Copy(source, /*off*/ 0, bytes, Length, len);
+            Length = newLength;
+        }
+
+        // LUCENENET specific: grow once, then write directly into the backing array via
+        // BinaryPrimitives, avoiding the base class's per-byte WriteByte (each with its own
+        // grow check) or stackalloc + virtual WriteBytes hop. Mirrors ByteArrayDataOutput.
+        // See #1279.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override void WriteInt16(short i)
+        {
+            int newLength = Length + sizeof(short);
+            bytes = ArrayUtil.Grow(bytes, newLength);
+            BinaryPrimitives.WriteInt16BigEndian(bytes.AsSpan(Length, sizeof(short)), i);
+            Length = newLength;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override void WriteInt32(int i)
+        {
+            int newLength = Length + sizeof(int);
+            bytes = ArrayUtil.Grow(bytes, newLength);
+            BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(Length, sizeof(int)), i);
+            Length = newLength;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override void WriteInt64(long i)
+        {
+            int newLength = Length + sizeof(long);
+            bytes = ArrayUtil.Grow(bytes, newLength);
+            BinaryPrimitives.WriteInt64BigEndian(bytes.AsSpan(Length, sizeof(long)), i);
             Length = newLength;
         }
     }

@@ -32,8 +32,6 @@ APIs.
 > [!WARNING]
 > While ICU4N's BreakIterator has customizable rules, its default behavior is not the same as the one in the JDK. When using any features of this package outside of the <xref:Lucene.Net.Analysis.Icu> namespace, they will behave differently than they do in Java Lucene and the rules may need some tweaking to fit your needs. See the [Break Rules](http://userguide.icu-project.org/boundaryanalysis/break-rules) ICU documentation for details on how to customize `ICU4N.Text.RuleBaseBreakIterator`.
 
-
-
 This module exposes the following functionality:
 
 * [Text Analysis](xref:Lucene.Net.Analysis.Icu): For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis> package documentation.
@@ -63,4 +61,3 @@ This module exposes the following functionality:
   * [Postings Highlighter](xref:Lucene.Net.Search.PostingsHighlight): Highlighter implementation that uses offsets from postings lists.
 
   * [Vector Highlighter](xref:Lucene.Net.Search.VectorHighlight.BreakIteratorBoundaryScanner): An implementation of IBoundaryScanner for use with the vector highlighter in the [Lucene.Net.Highlighter module](../highlighter/Lucene.Net.Search.Highlight.html).
-

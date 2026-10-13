@@ -61,7 +61,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// <summary>
         /// Adds a new label if its not yet in the table.
         /// Throws an <see cref="ArgumentException"/> if the same label with
-        /// a different ordinal was previoulsy added to this table.
+        /// a different ordinal was previously added to this table.
         /// </summary>
         public abstract void AddLabel(FacetLabel label, int ordinal);
 

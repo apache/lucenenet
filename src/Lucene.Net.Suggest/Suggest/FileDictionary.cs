@@ -90,7 +90,7 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Creates a dictionary based on a reader.
-        /// Using <paramref name="fieldDelimiter"/> to seperate out the
+        /// Using <paramref name="fieldDelimiter"/> to separate out the
         /// fields in a line.
         /// </summary>
         public FileDictionary(TextReader reader, string fieldDelimiter)
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Creates a dictionary based on an inputstream.
-        /// Using <paramref name="fieldDelimiter"/> to seperate out the
+        /// Using <paramref name="fieldDelimiter"/> to separate out the
         /// fields in a line.
         /// <para>
         /// NOTE: content is treated as UTF-8

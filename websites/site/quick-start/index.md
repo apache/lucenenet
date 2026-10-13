@@ -14,16 +14,13 @@ Our goal here is to get you enough information and experience with Lucene.NET so
 
 Lucene.NET is a sophisticated search library that has a lot of advanced features.  But for now we are not concerned about that. We want to get you up and running quickly with the basic info you need to take Lucene.NET for a spin.  
 
-
 ## Introduction
 The Introduction page provides a bit of context about Lucene.NET. You'll learn where it came from and what it can do for you.  See the [Introduction](xref:quick-start/introduction) page.
-
 
 ## Tutorial
 As developers, one of the fastest ways to learn a new technology is to build a toy application with it.  So that's the approach we are going to take to get you up and running with Lucene.NET.
 
 To get started building your first application go to the [Tutorial](xref:quick-start/tutorial) page.
-
 
 ## Learning Resources
 In addition to the Introduction and Tutorial, we have compiled a list of learning resources to help you on your Lucene.NET journey.  Some of these are part of the official Apache Lucene.NET project and others are from the community.  You will likely find both types of resources helpful.  So be sure to also checkout the [Learning Resources](xref:quick-start/learning-resources) page.

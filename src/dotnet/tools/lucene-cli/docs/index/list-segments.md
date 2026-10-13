@@ -33,4 +33,3 @@ List the segments in the index located at `X:\lucene-index\`:
 ```console
 lucene index list-segments X:\lucene-index
 ```
-

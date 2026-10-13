@@ -37,4 +37,3 @@ Merge the indexes `C:\product-index1` and `C:\product-index2` into an index loca
 ```console
 lucene index merge X:\merged-index C:\product-index1 C:\product-index2
 ```
-

@@ -4,6 +4,7 @@ using Lucene.Net.Analysis.Compound.Hyphenation;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.IO;
@@ -264,6 +265,41 @@ namespace Lucene.Net.Analysis.Compound
                 return new TokenStreamComponents(tokenizer, filter);
             });
             CheckRandomData(Random, b, 1000 * RandomMultiplier);
+        }
+
+        /// <summary>
+        /// LUCENENET-specific regression test for <a href="https://github.com/apache/lucenenet/issues/1072">#1072</a>.
+        /// <para/>
+        /// When a term has leading non-letter characters (which the hyphenator counts via
+        /// <c>iIgnoreAtBeginning</c>) the resulting hyphenation points can contain two equal values,
+        /// so <see cref="HyphenationCompoundWordTokenFilter"/>'s <c>Decompose()</c> computes a
+        /// <c>partLength</c> of <c>0</c>. With <c>minSubwordSize == 0</c> that zero-length part is not
+        /// filtered out, and the genitive-'s fallback then probes the dictionary with a length of
+        /// <c>partLength - 1 == -1</c>. Upstream Java tolerates the negative length (its CharArrayMap
+        /// silently treats it as "not found"), but Lucene.NET's CharArrayMap validates its arguments
+        /// and throws <see cref="System.ArgumentOutOfRangeException"/>. The filter must not pass a
+        /// negative length downstream. The input <c>"...rindfleisch"</c> yields hyphenation points
+        /// <c>[0, 7, 11, 11]</c>, deterministically reproducing the crash that
+        /// <c>TestRandomChains</c> hit under seed <c>0xc0ab8518c470366f:0x6ed44cef961049a2</c>.
+        /// </summary>
+        [Test]
+        [LuceneNetSpecific] // Issue #1072
+        public virtual void TestZeroLengthSubwordDoesNotThrow()
+        {
+            CharArraySet dict = makeDictionary("rind", "fleisch");
+
+            using var @is = this.GetType().getResourceAsStream("da_UTF8.xml");
+            HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
+
+            // minSubwordSize == 0 is the configuration that lets a zero-length part through.
+            HyphenationCompoundWordTokenFilter tf = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT,
+                new MockTokenizer(new StringReader("...rindfleisch"), MockTokenizer.WHITESPACE, false),
+                hyphenator, dict, CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE, 0, 100, false);
+
+            // Before the fix this threw ArgumentOutOfRangeException while decomposing. The leading
+            // "..." shifts the matched subword offsets, so no subword survives the dictionary check;
+            // the only required behavior is that decomposition completes without throwing.
+            AssertTokenStreamContents(tf, new string[] { "...rindfleisch" });
         }
 
         [Test]

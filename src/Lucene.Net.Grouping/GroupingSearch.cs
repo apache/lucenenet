@@ -450,7 +450,10 @@ namespace Lucene.Net.Search.Grouping
             if (topSearchGroups is null)
             {
                 // LUCENENET specific - optimized empty array creation
-                return new TopGroups<T>(Array.Empty<SortField>(), Array.Empty<SortField>(), 0, 0, Array.Empty<GroupDocs<T>>(), float.NaN);
+                var emptyResult = new TopGroups<T>(Array.Empty<SortField>(), Array.Empty<SortField>(), 0, 0, Array.Empty<GroupDocs<T>>(), float.NaN);
+                return AllGroups
+                    ? new TopGroups<T>(emptyResult, MatchingGroups.Count)
+                    : emptyResult;
             }
 
             int topNInsideGroup = GroupDocsOffset + GroupDocsLimit;

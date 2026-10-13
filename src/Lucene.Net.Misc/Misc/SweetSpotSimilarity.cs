@@ -37,7 +37,7 @@ namespace Lucene.Net.Misc
     /// subclasses can choose between.
     /// </para>
     /// </summary>
-    /// <a href="doc-files/ss.gnuplot">A Gnuplot file used to generate some of the visualizations refrenced from each function.</a>
+    /// <a href="doc-files/ss.gnuplot">A Gnuplot file used to generate some of the visualizations referenced from each function.</a>
     public class SweetSpotSimilarity : DefaultSimilarity
     {
         private int ln_min = 1;

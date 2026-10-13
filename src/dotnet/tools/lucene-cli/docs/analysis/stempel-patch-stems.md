@@ -35,4 +35,3 @@ The file encoding used by the stemmer files. If not supplied, the default value 
 ```console
 lucene analysis stempel-patch-stems X:\stemmer-data\table1.txt X:\stemmer-data\table2.txt --encoding UTF-16
 ```
-

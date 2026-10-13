@@ -9,6 +9,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -1148,9 +1149,14 @@ namespace Lucene.Net.Analysis.Hunspell
             int upto = b.Offset;
             for (int i = 0; i < flags.Length; i++)
             {
-                int flag = flags[i];
-                b.Bytes[upto++] = (byte)((flag >> 8) & 0xff);
-                b.Bytes[upto++] = (byte)(flag & 0xff);
+                ushort flag = flags[i];
+
+                // b.Bytes[upto++] = (byte)((flag >> 8) & 0xff);
+                // b.Bytes[upto++] = (byte)(flag & 0xff);
+
+                // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+                BinaryPrimitives.WriteUInt16BigEndian(b.Bytes.AsSpan(upto, sizeof(ushort)), flag);
+                upto += sizeof(ushort);
             }
         }
 

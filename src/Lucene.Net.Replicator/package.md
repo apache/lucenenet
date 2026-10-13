@@ -143,9 +143,9 @@ public class AspNetCoreReplicationResponse : IReplicationResponse
 
 #### ASP.NET Core Utility Extension Method
 
-This part is not nessesary, however by providing a extension method as a overload to the ReplicatorService Perform method
+This part is not necessary, however by providing a extension method as a overload to the ReplicatorService Perform method
 that instead takes the ASP.NET Core HttpRequest and HttpResponse response objects, it's easier to call the ReplicatorService
-from either ASP.NET Core MVC controllers, inside of middleare or for the absolute minimal solution directly in the delegate parameter of a IApplicationBuilder.Run() method.
+from either ASP.NET Core MVC controllers, inside of middleware or for the absolute minimal solution directly in the delegate parameter of a IApplicationBuilder.Run() method.
 
 ```cs
 public static class AspNetCoreReplicationServiceExtentions

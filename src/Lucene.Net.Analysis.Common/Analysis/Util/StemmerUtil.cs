@@ -38,26 +38,10 @@ namespace Lucene.Net.Analysis.Util
         /// <remarks>
         /// LUCENENET NOTE: This method has been converted to use <see cref="ReadOnlySpan{T}"/>.
         /// </remarks>
+        // LUCENENET: string overload retained here for public API for non-C#-14 callers
         public static bool StartsWith(ReadOnlySpan<char> s, string prefix)
         {
             return StartsWith(s, prefix.AsSpan());
-        }
-
-        /// <summary>
-        /// Returns true if the character array starts with the prefix.
-        /// </summary>
-        /// <param name="s"> Input Buffer </param>
-        /// <param name="len"> length of input buffer </param>
-        /// <param name="prefix"> Prefix string to test </param>
-        /// <returns> <c>true</c> if <paramref name="s"/> starts with <paramref name="prefix"/> </returns>
-        /// <remarks>
-        /// LUCENENET NOTE: This method has been converted to use <see cref="ReadOnlySpan{T}"/>.
-        /// Callers should prefer the overload without the <paramref name="len"/> parameter and use a slice instead,
-        /// but this overload is provided for compatibility with existing code.
-        /// </remarks>
-        internal static bool StartsWith(ReadOnlySpan<char> s, int len, string prefix)
-        {
-            return StartsWith(s.Slice(0, len), prefix.AsSpan());
         }
 
         /// <summary>
@@ -107,26 +91,10 @@ namespace Lucene.Net.Analysis.Util
         /// <remarks>
         /// LUCENENET NOTE: This method has been converted to use <see cref="ReadOnlySpan{T}"/>.
         /// </remarks>
+        // LUCENENET: string overload retained here for public API for non-C#-14 callers
         public static bool EndsWith(ReadOnlySpan<char> s, string suffix)
         {
             return EndsWith(s, suffix.AsSpan());
-        }
-
-        /// <summary>
-        /// Returns true if the character array ends with the suffix.
-        /// </summary>
-        /// <param name="s"> Input Buffer </param>
-        /// <param name="len"> length of input buffer </param>
-        /// <param name="suffix"> Suffix string to test </param>
-        /// <returns> <c>true</c> if <paramref name="s"/> ends with <paramref name="suffix"/> </returns>
-        /// <remarks>
-        /// LUCENENET NOTE: This method has been converted to use <see cref="ReadOnlySpan{T}"/>.
-        /// Callers should prefer the overload without the <paramref name="len"/> parameter and use a slice instead,
-        /// but this overload is provided for compatibility with existing code.
-        /// </remarks>
-        internal static bool EndsWith(ReadOnlySpan<char> s, int len, string suffix)
-        {
-            return EndsWith(s.Slice(0, len), suffix.AsSpan());
         }
 
         /// <summary>

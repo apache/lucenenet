@@ -1,0 +1,2 @@
+[tool.bandit]
+skips = ["B101"] # https://bandit.readthedocs.io/en/latest/plugins/b101_assert_used.html#b101-assert-used

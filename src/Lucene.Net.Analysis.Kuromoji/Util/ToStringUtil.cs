@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -252,7 +251,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         /// <summary>
         /// Romanize katakana with modified hepburn
         /// </summary>
-        public static string GetRomanization(string s)
+        public static string GetRomanization(ReadOnlySpan<char> s)
         {
             StringBuilder result = new StringBuilder();
             try
@@ -271,7 +270,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         /// </summary>
         // TODO: now that this is used by readingsfilter and not just for
         // debugging, fix this to really be a scheme that works best with IMEs
-        public static void GetRomanization(StringBuilder builder, string s)
+        public static void GetRomanization(StringBuilder builder, ReadOnlySpan<char> s)
         {
             int len = s.Length;
             for (int i = 0; i < len; i++)

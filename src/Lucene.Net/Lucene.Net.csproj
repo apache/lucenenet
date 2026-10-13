@@ -36,7 +36,14 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-
+  <PropertyGroup Label="SpanTools.ValueStringBuilder.Generator Settings">
+    <ValueStringBuilder_Namespace>Lucene.Net.Text</ValueStringBuilder_Namespace>
+    <ValueStringBuilder_IncludeMaxLengthTracking>true</ValueStringBuilder_IncludeMaxLengthTracking>
+    <ValueStringBuilder_IncludeAsMemoryMethods>true</ValueStringBuilder_IncludeAsMemoryMethods>
+    <ValueStringBuilder_IncludeCodepointSupport>true</ValueStringBuilder_IncludeCodepointSupport>
+    <ValueStringBuilder_UseJavaStyleFormatting>true</ValueStringBuilder_UseJavaStyleFormatting>
+    <ValueStringBuilder_UseJavaStyleIndexOf>true</ValueStringBuilder_UseJavaStyleIndexOf>
+  </PropertyGroup>
 
   <PropertyGroup Label="NuGet Package File Paths">
     <LuceneNetDotNetDir>$(SolutionDir)src\dotnet\</LuceneNetDotNetDir>
@@ -56,6 +63,7 @@
   <ItemGroup>
     <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
+    <PackageReference Include="SpanTools.ValueStringBuilder.Generator" Version="$(SpanToolsValueStringBuilderGeneratorPackageVersion)" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">

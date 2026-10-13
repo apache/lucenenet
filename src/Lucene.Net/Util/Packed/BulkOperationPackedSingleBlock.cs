@@ -1,3 +1,6 @@
+using System;
+using System.Buffers.Binary;
+
 namespace Lucene.Net.Util.Packed
 {
     /*
@@ -54,10 +57,13 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         private static long ReadInt64(byte[] blocks, int blocksOffset)
         {
-            return (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 56 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 48 |
-                (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 40 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 32 |
-                (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 24 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 16 |
-                (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 8 | ((sbyte)blocks[blocksOffset++]) & 0xFFL;
+            // return (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 56 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 48 |
+            //     (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 40 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 32 |
+            //     (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 24 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 16 |
+            //     (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 8 | ((sbyte)blocks[blocksOffset++]) & 0xFFL;
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            return BinaryPrimitives.ReadInt64BigEndian(blocks.AsSpan(blocksOffset, sizeof(long)));
         }
 
         private int Decode(long block, long[] values, int valuesOffset)

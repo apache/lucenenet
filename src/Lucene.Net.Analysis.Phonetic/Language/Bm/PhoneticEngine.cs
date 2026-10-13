@@ -1,7 +1,5 @@
 // commons-codec version compatibility level: 1.9
-using J2N.Collections.Generic.Extensions;
 using J2N.Text;
-using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -455,7 +453,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                     foreach (string aWord in words)
                     {
                         string[] parts = aWord.Split('\'').TrimEnd();
-                        string lastPart = parts[parts.Length - 1];
+                        // LUCENENET: Fixed exception when the match results in 0 parts, although not sure this is the right way to handle it
+                        string lastPart = parts.Length > 0 ? parts[parts.Length - 1] : string.Empty;
                         words2.Add(lastPart);
                     }
                     words2.ExceptWith(NAME_PREFIXES[this.nameType]);
@@ -486,12 +485,18 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             {
                 // encode each word in a multi-word name separately (normally used for approx matches)
                 StringBuilder result = new StringBuilder();
+                // LUCENENET: Fixed issue with building the string when words2 is empty
+                bool first = true;
                 foreach (string word in words2)
                 {
-                    result.Append('-').Append(Encode(word));
+                    if (!first)
+                        result.Append('-');
+
+                    result.Append(Encode(word));
+                    first = false;
                 }
-                // return the result without the leading "-"
-                return result.ToString(1, result.Length - 1);
+                // return the result
+                return result.ToString();
             }
 
             PhonemeBuilder phonemeBuilder = PhonemeBuilder.Empty(languageSet);

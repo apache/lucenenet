@@ -1,4 +1,5 @@
 using Lucene.Net.Util;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja.TokenAttributes
 {
@@ -27,8 +28,8 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
     /// </summary>
     public interface IReadingAttribute : IAttribute
     {
-        string GetReading();
-        string GetPronunciation();
-        void SetToken(Token token);
+        string? GetReading();
+        string? GetPronunciation();
+        void SetToken(Token? token);
     }
 }

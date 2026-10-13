@@ -1,5 +1,7 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
+using System;
+using System.Buffers.Binary;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -52,11 +54,15 @@ namespace Lucene.Net.Facet.Taxonomy
         public static BytesRef Int32ToBytesRef(int v)
         {
             byte[] bytes = new byte[4];
-            // big-endian:
-            bytes[0] = (byte)(v >> 24);
-            bytes[1] = (byte)(v >> 16);
-            bytes[2] = (byte)(v >> 8);
-            bytes[3] = (byte)v;
+            // // big-endian:
+            // bytes[0] = (byte)(v >> 24);
+            // bytes[1] = (byte)(v >> 16);
+            // bytes[2] = (byte)(v >> 8);
+            // bytes[3] = (byte)v;
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            BinaryPrimitives.WriteInt32BigEndian(bytes, v);
+
             return new BytesRef(bytes);
         }
 
@@ -67,8 +73,11 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public static int BytesRefToInt32(BytesRef b)
         {
-            return ((b.Bytes[b.Offset] & 0xFF) << 24) | ((b.Bytes[b.Offset + 1] & 0xFF) << 16) |
-                ((b.Bytes[b.Offset + 2] & 0xFF) << 8) | (b.Bytes[b.Offset + 3] & 0xFF);
+            // return ((b.Bytes[b.Offset] & 0xFF) << 24) | ((b.Bytes[b.Offset + 1] & 0xFF) << 16) |
+            //     ((b.Bytes[b.Offset + 2] & 0xFF) << 8) | (b.Bytes[b.Offset + 3] & 0xFF);
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            return BinaryPrimitives.ReadInt32BigEndian(b.AsSpan(0, sizeof(int))); // AsSpan implicitly handles b.Offset
         }
 
         public override string ToString()

@@ -37,4 +37,3 @@ Lists the files within the `X:\categories\_53.cfs` compound file using the `NIOF
 ```console
 lucene index list-cfs X:\categories\_53.cfs -dir NIOFSDirectory
 ```
-

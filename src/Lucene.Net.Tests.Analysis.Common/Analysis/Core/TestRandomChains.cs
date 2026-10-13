@@ -1,30 +1,42 @@
 // Lucene version compatibility level 4.8.1
 
+using Egothor.Stemmer;
+using ICU4N.Text;
 using J2N;
 using J2N.Runtime.CompilerServices;
 using J2N.Text;
+using Lucene.Net.Analysis.Ar;
 using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Analysis.Cjk;
+using Lucene.Net.Analysis.Cn.Smart;
 using Lucene.Net.Analysis.CommonGrams;
 using Lucene.Net.Analysis.Compound;
 using Lucene.Net.Analysis.Compound.Hyphenation;
 using Lucene.Net.Analysis.Hunspell;
+using Lucene.Net.Analysis.Icu;
+using Lucene.Net.Analysis.Icu.Segmentation;
+using Lucene.Net.Analysis.Ja;
 using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Morfologik;
 using Lucene.Net.Analysis.NGram;
 using Lucene.Net.Analysis.No;
 using Lucene.Net.Analysis.Path;
 using Lucene.Net.Analysis.Payloads;
+using Lucene.Net.Analysis.Phonetic;
+using Lucene.Net.Analysis.Phonetic.Language;
+using Lucene.Net.Analysis.Phonetic.Language.Bm;
 using Lucene.Net.Analysis.Snowball;
 using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Analysis.Stempel;
 using Lucene.Net.Analysis.Synonym;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Analysis.Wikipedia;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Tartarus.Snowball;
-using Lucene.Net.Analysis;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
+using Morfologik.Stemming.Polish;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -139,6 +151,16 @@ namespace Lucene.Net.Analysis.Core
                     foreach (ConstructorInfo ctor in c.GetConstructors())
                     {
                         brokenOffsetsConstructors[ctor] = ALWAYS;
+
+                        // LUCENENET specific (#1072): Also fully exclude these broken-offsets producers
+                        // from the random chains, not just relax offset validation. brokenOffsetsConstructors
+                        // only flips offsetsAreCorrect=false (which suppresses ValidatingTokenFilter's checks),
+                        // but the offending filter still runs and can feed backwards offsets into a downstream
+                        // word-combiner (e.g. ShingleFilter), which then throws from OffsetAttribute.SetOffset.
+                        // Upstream Lucene resolved this in 9.1 (LUCENE-10352) by excluding these classes via the
+                        // @IgnoreRandomChains annotation. Until that annotation is backported, exclude them here.
+                        // TODO: Remove this when LUCENE-10352 (IgnoreRandomChains) is backported.
+                        brokenConstructors[ctor] = ALWAYS;
                     }
                 }
             }
@@ -156,7 +178,7 @@ namespace Lucene.Net.Analysis.Core
             allowedTokenFilterArgs = new JCG.HashSet<Type>(IdentityEqualityComparer<Type>.Default);
             allowedTokenFilterArgs.addAll(argProducers.Keys);
             allowedTokenFilterArgs.Add(typeof(TokenStream));
-            // TODO: fix this one, thats broken:
+            // TODO: fix this one, that's broken:
             allowedTokenFilterArgs.Add(typeof(CommonGramsFilter));
 
             allowedCharFilterArgs = new JCG.HashSet<Type>(IdentityEqualityComparer<Type>.Default);
@@ -187,7 +209,11 @@ namespace Lucene.Net.Analysis.Core
         {
             base.OneTimeSetUp();
 
-            IEnumerable<Type> analysisClasses = typeof(StandardAnalyzer).Assembly.GetTypes()
+            // LUCENENET specific: In Java, getClassesForPackage() scans the whole test classpath,
+            // which includes the test-framework (Mock*/Cranky/Validating types live there). In .NET
+            // we scan each assembly that has analysis types. See GitHub #1126.
+            IEnumerable<Type> analysisClasses =
+                GetClassesForPackage()
                 .Where(c =>
                 {
                     var typeInfo = c;
@@ -195,8 +221,8 @@ namespace Lucene.Net.Analysis.Core
                     return !typeInfo.IsAbstract && typeInfo.IsPublic && !typeInfo.IsInterface
                         && typeInfo.IsClass && (typeInfo.GetCustomAttribute<ObsoleteAttribute>() is null)
                         && (typeInfo.IsSubclassOf(typeof(Tokenizer)) || typeInfo.IsSubclassOf(typeof(TokenFilter)) || typeInfo.IsSubclassOf(typeof(CharFilter)));
-                })
-                .ToArray();
+                });
+
             tokenizers = new JCG.List<ConstructorInfo>();
             tokenfilters = new JCG.List<ConstructorInfo>();
             charfilters = new JCG.List<ConstructorInfo>();
@@ -213,19 +239,19 @@ namespace Lucene.Net.Analysis.Core
 
                     if (typeInfo.IsSubclassOf(typeof(Tokenizer)))
                     {
-                        assertTrue(ctor.ToString() + " has unsupported parameter types",
+                        assertTrue($"[{typeInfo}] {ctor.ToString()} has unsupported parameter types",
                             allowedTokenizerArgs.containsAll(ctor.GetParameters().Select(p => p.ParameterType).ToArray()));
                         tokenizers.Add(ctor);
                     }
                     else if (typeInfo.IsSubclassOf(typeof(TokenFilter)))
                     {
-                        assertTrue(ctor.ToString() + " has unsupported parameter types",
+                        assertTrue($"[{typeInfo}] {ctor.ToString()} has unsupported parameter types",
                             allowedTokenFilterArgs.containsAll(ctor.GetParameters().Select(p => p.ParameterType).ToArray()));
                         tokenfilters.Add(ctor);
                     }
                     else if (typeInfo.IsSubclassOf(typeof(CharFilter)))
                     {
-                        assertTrue(ctor.ToString() + " has unsupported parameter types",
+                        assertTrue($"[{typeInfo}] {ctor.ToString()} has unsupported parameter types",
                             allowedCharFilterArgs.containsAll(ctor.GetParameters().Select(p => p.ParameterType).ToArray()));
                         charfilters.Add(ctor);
                     }
@@ -258,6 +284,26 @@ namespace Lucene.Net.Analysis.Core
             base.OneTimeTearDown();
         }
 
+        private static IEnumerable<Assembly> GetAnalyzerAssemblies()
+        {
+            // LUCENENET NOTE: We don't include Lucene.Net.Analysis.OpenNLP here because its
+            // components require specific setup order and are generally not suitable for random chaining.
+
+            yield return typeof(Analyzer).Assembly; // Lucene.Net (No analyzers in 4.8.1, but this will include StandardAnalyzer in the future)
+            yield return typeof(ICUFoldingFilter).Assembly; // Lucene.Net.ICU
+            yield return typeof(ArabicAnalyzer).Assembly; // Lucene.Net.Analysis.Common
+            yield return typeof(JapaneseAnalyzer).Assembly; // Lucene.Net.Analysis.Kuromoji
+            yield return typeof(MorfologikAnalyzer).Assembly; // Lucene.Net.Analysis.Morfologik
+            yield return typeof(BeiderMorseFilter).Assembly; // Lucene.Net.Analysis.Phonetic
+            yield return typeof(SmartChineseAnalyzer).Assembly; // Lucene.Net.Analysis.SmartCn
+            yield return typeof(StempelFilter).Assembly; // Lucene.Net.Analysis.Stempel
+            yield return typeof(MockTokenizer).Assembly; // Lucene.Net.TestFramework
+        }
+
+        public static IEnumerable<Type> GetClassesForPackage()
+        {
+            return GetAnalyzerAssemblies().SelectMany(a => a.GetTypes());
+        }
 
         private interface IArgProducer
         {
@@ -309,6 +355,97 @@ namespace Lucene.Net.Analysis.Core
             }) },
             { typeof(CultureInfo), new AnonymousProducer((random) => {
                 return LuceneTestCase.RandomCulture(random);
+            }) },
+            { typeof(Normalizer2), new AnonymousProducer(static random => {
+                return random.Next(5) switch
+                {
+                    0 => Normalizer2.NFCInstance,
+                    1 => Normalizer2.NFDInstance,
+                    2 => Normalizer2.NFKCInstance,
+                    3 => Normalizer2.NFKDInstance,
+                    _ => Normalizer2.NFKCCaseFoldInstance,
+                };
+            }) },
+            { typeof(Transliterator), new AnonymousProducer(static random => {
+                string id = random.Next(8) switch
+                {
+                    0 => "Latin-Greek",
+                    1 => "Greek-Latin",
+                    2 => "Latin-Cyrillic",
+                    3 => "Cyrillic-Latin",
+                    4 => "Latin-Katakana",
+                    5 => "Katakana-Latin",
+                    6 => "Any-Latin",
+                    _ => "Latin-ASCII"
+                };
+
+                return Transliterator.GetInstance(id);
+            }) },
+            { typeof(ICUTokenizerConfig), new AnonymousProducer(static random => {
+                return new DefaultICUTokenizerConfig(
+                    cjkAsWords: random.NextBoolean(),
+                    myanmarAsWords: random.NextBoolean());
+            }) },
+            { typeof(ISet<string>), new AnonymousProducer(static random => { // For JapanesePartOfSpeechStopFilter
+                ISet<string> set = new JCG.HashSet<string>();
+                int num = random.nextInt(10);
+
+                for (int i = 0; i < num; i++)
+                {
+                    set.Add(TestUtil.RandomSimpleString(random));
+                }
+
+                return set;
+            }) },
+            { typeof(Ja.Dict.UserDictionary), new AnonymousProducer(static random => {
+                // LUCENENET specific - added the userdict.txt file from Lucene.Net.Test.Analysis.Kuromoji to the test resources and load it here
+                using Stream stream = typeof(TestRandomChains).getResourceAsStream("userdict.txt");
+                if (stream is null)
+                {
+                    throw RuntimeException.Create("Cannot find userdict.txt in test classpath!");
+                }
+                using var reader = new StreamReader(stream);
+                return new Ja.Dict.UserDictionary(reader);
+            }) },
+            { typeof(JapaneseTokenizerMode), new AnonymousProducer(static random => {
+                return RandomEnum<JapaneseTokenizerMode>(random);
+            }) },
+            { typeof(global::Morfologik.Stemming.Dictionary), new AnonymousProducer(static random => {
+                return new PolishStemmer().Dictionary;
+            }) },
+            { typeof(PhoneticEngine), new AnonymousProducer(static random => {
+                RuleType[] ruleTypes = { RuleType.APPROX, RuleType.EXACT };
+
+                return new PhoneticEngine(
+                    nameType: RandomEnum<NameType>(random),
+                    ruleType: ruleTypes[random.Next(ruleTypes.Length)],
+                    concat: random.NextBoolean());
+            }) },
+            { typeof(LanguageSet), new AnonymousProducer(static random => {
+                return Languages.ANY_LANGUAGE;
+            }) },
+            { typeof(IStringEncoder), new AnonymousProducer(static random => {
+                return random.Next(5) switch
+                {
+                    0 => new Metaphone(),
+                    1 => new DoubleMetaphone(),
+                    2 => new Soundex(),
+                    3 => new RefinedSoundex(),
+                    _ => new Caverphone2(),
+                };
+            }) },
+            { typeof(StempelStemmer), new AnonymousProducer(static random => {
+                MultiTrie2 t = new MultiTrie2(forward: random.NextBoolean());
+
+                string[] keys = { "a", "ba", "bb", "c" };
+                string[] vals = { "1111", "2222", "2223", "4444" };
+
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    t.Add(keys[i], vals[i]);
+                }
+
+                return new StempelStemmer(t);
             }) },
         };
 
@@ -833,7 +970,7 @@ namespace Lucene.Net.Analysis.Core
                 }
                 else if (paramType == typeof(CommonGramsFilter))
                 {
-                    // TODO: fix this one, thats broken: CommonGramsQueryFilter takes this one explicitly
+                    // TODO: fix this one, that's broken: CommonGramsQueryFilter takes this one explicitly
                     args[i] = new CommonGramsFilter(TEST_VERSION_CURRENT, stream, NewRandomArg<CharArraySet>(random, typeof(CharArraySet)));
                 }
                 else
@@ -929,7 +1066,7 @@ namespace Lucene.Net.Analysis.Core
                         || ite.InnerException.GetType().Equals(typeof(NotSupportedException))))
                     {
 
-                        // thats ok, ignore
+                        // that's ok, ignore
                         if (Verbose)
                         {
                             Console.WriteLine("Ignoring IAE/UOE from ctor:");
@@ -1042,8 +1179,8 @@ namespace Lucene.Net.Analysis.Core
                         // hack: MockGraph/MockLookahead has assertions that will trip if they follow
                         // an offsets violator. so we can't use them after e.g. wikipediatokenizer
                         if (!spec.offsetsAreCorrect &&
-                            (ctor.DeclaringType.Equals(typeof(MockGraphTokenFilter)))
-                                || ctor.DeclaringType.Equals(typeof(MockRandomLookaheadTokenFilter)))
+                            (ctor.DeclaringType.Equals(typeof(MockGraphTokenFilter))
+                                || ctor.DeclaringType.Equals(typeof(MockRandomLookaheadTokenFilter))))
                         {
                             continue;
                         }
@@ -1149,8 +1286,14 @@ namespace Lucene.Net.Analysis.Core
             internal string toString;
         }
 
+        private static TEnum RandomEnum<TEnum>(Random random)
+            where TEnum : struct, Enum
+        {
+            TEnum[] values = (TEnum[])Enum.GetValues(typeof(TEnum));
+            return values[random.Next(values.Length)];
+        }
+
         [Test]
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/271#issuecomment-973005744")] // LUCENENET TODO: this test occasionally fails
         public void TestRandomChains_()
         {
             int numIterations = AtLeast(20);
@@ -1177,7 +1320,6 @@ namespace Lucene.Net.Analysis.Core
 
         // we might regret this decision...
         [Test]
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/271#issuecomment-973005744")] // LUCENENET TODO: this test occasionally fails
         public void TestRandomChainsWithLargeStrings()
         {
             int numIterations = AtLeast(20);

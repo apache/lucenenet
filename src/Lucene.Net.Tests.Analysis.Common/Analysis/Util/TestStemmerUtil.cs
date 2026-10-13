@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Util
         public void TestStartsWith(string input, int len, string prefix, bool expected)
         {
             // test len overload
-            Assert.AreEqual(expected, StemmerUtil.StartsWith(input.AsSpan(), len, prefix));
+            Assert.AreEqual(expected, StemmerUtil.StartsWith(input, len, prefix));
 
             // test no len overload
             Assert.AreEqual(expected, StemmerUtil.StartsWith(input.AsSpan(0, len), prefix));
@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Util
         public void TestEndsWith(string input, int len, string prefix, bool expected)
         {
             // test len overload
-            Assert.AreEqual(expected, StemmerUtil.EndsWith(input.AsSpan(), len, prefix));
+            Assert.AreEqual(expected, StemmerUtil.EndsWith(input, len, prefix));
 
             // test no len overload
             Assert.AreEqual(expected, StemmerUtil.EndsWith(input.AsSpan(0, len), prefix));

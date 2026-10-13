@@ -20,7 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-
 Standard Lucene Query Nodes.
 
 ## Standard Lucene Query Nodes

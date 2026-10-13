@@ -20,7 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-
 Necessary classes to implement query builders.
 
 ## Query Parser Builders

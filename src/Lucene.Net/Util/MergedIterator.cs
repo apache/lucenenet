@@ -63,9 +63,9 @@ namespace Lucene.Net.Util
 
         public MergedEnumerator(bool removeDuplicates, params IEnumerator<T>[] enumerators) : this(removeDuplicates, (IList<IEnumerator<T>>)enumerators) { }
 
-        public MergedEnumerator(IList<IEnumerator<T>> enumerators) : this(true, enumerators) { } // LUCENENET specific - added overload for better compatibity
+        public MergedEnumerator(IList<IEnumerator<T>> enumerators) : this(true, enumerators) { } // LUCENENET specific - added overload for better compatibility
 
-        public MergedEnumerator(bool removeDuplicates, IList<IEnumerator<T>> enumerators) // LUCENENET specific - added overload for better compatibity
+        public MergedEnumerator(bool removeDuplicates, IList<IEnumerator<T>> enumerators) // LUCENENET specific - added overload for better compatibility
         {
             if (enumerators is null)
                 throw new ArgumentNullException(nameof(enumerators)); // LUCENENET specific - added guard clause

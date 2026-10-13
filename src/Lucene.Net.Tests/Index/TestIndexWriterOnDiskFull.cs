@@ -664,7 +664,9 @@ namespace Lucene.Net.Index
             }
             try
             {
+#pragma warning disable 612, 618
                 writer.Dispose(false);
+#pragma warning restore 612, 618
                 Assert.Fail("did not hit disk full");
             }
             catch (Exception ioe) when (ioe.IsIOException())
@@ -674,7 +676,9 @@ namespace Lucene.Net.Index
             // Make sure once disk space is avail again, we can
             // cleanly close:
             dir.MaxSizeInBytes = 0;
+#pragma warning disable 612, 618
             writer.Dispose(false);
+#pragma warning restore 612, 618
             dir.Dispose();
         }
 

@@ -931,13 +931,13 @@ namespace Lucene.Net.Codecs.Memory
             public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
             // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
-            public override bool HasFreqs => IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0;
+            public override bool HasFreqs => IndexOptionsComparer.Default.Compare(this.field.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0;
 
-            public override bool HasOffsets => IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            public override bool HasOffsets => IndexOptionsComparer.Default.Compare(this.field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
-            public override bool HasPositions => IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            public override bool HasPositions => IndexOptionsComparer.Default.Compare(this.field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
-            public override bool HasPayloads => field.HasPayloads;
+            public override bool HasPayloads => this.field.HasPayloads;
 
             public long RamBytesUsed()
             {

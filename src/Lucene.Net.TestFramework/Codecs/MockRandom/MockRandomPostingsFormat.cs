@@ -1,3 +1,4 @@
+using J2N.Text;
 using Lucene.Net.Codecs.BlockTerms;
 using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Codecs.Memory;
@@ -97,7 +98,12 @@ namespace Lucene.Net.Codecs.MockRandom
             {
                 // Must only use extension, because IW.addIndexes can
                 // rename segment!
-                Int32StreamFactory f = delegates[(Math.Abs(salt ^ GetExtension(fileName).GetHashCode())) % delegates.Count];
+                // LUCENENET specific: use J2N's CharSequenceComparer.Ordinal.GetHashCode(), which produces
+                // the same value as Java's String.hashCode(). The .NET string.GetHashCode() is randomized
+                // per-process, so the factory chosen when writing (e.g. in a forked child process, as in
+                // TestIndexWriterOnJRECrash) would differ from the one chosen when reading in another process,
+                // causing "codec header mismatch" failures. A deterministic hash keeps writer and reader in sync.
+                Int32StreamFactory f = delegates[(Math.Abs(salt ^ CharSequenceComparer.Ordinal.GetHashCode(GetExtension(fileName)))) % delegates.Count];
                 if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: read using int factory " + f + " from fileName=" + fileName);
@@ -107,7 +113,8 @@ namespace Lucene.Net.Codecs.MockRandom
 
             public override Int32IndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
             {
-                Int32StreamFactory f = delegates[(Math.Abs(salt ^ GetExtension(fileName).GetHashCode())) % delegates.Count];
+                // LUCENENET specific: deterministic (Java-parity) hash; see the note in OpenInput().
+                Int32StreamFactory f = delegates[(Math.Abs(salt ^ CharSequenceComparer.Ordinal.GetHashCode(GetExtension(fileName)))) % delegates.Count];
                 if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: write using int factory " + f + " to fileName=" + fileName);

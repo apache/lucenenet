@@ -89,4 +89,3 @@ namespace Lucene
         public static Exception Create(Exception cause) => new ObjectDisposedException(cause.Message, cause);
     }
 }
-

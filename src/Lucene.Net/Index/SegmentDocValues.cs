@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
                 dvDir = si.Info.Dir; // gen'd files are written outside CFS, so use SegInfo directory
                 // LUCENENET specific: We created the segments names wrong in 4.8.0-beta00001 - 4.8.0-beta00015,
                 // so we added a switch to be able to read these indexes in later versions. This logic as well as an
-                // optimization on the first 100 segment values is implmeneted in SegmentInfos.SegmentNumberToString().
+                // optimization on the first 100 segment values is implemented in SegmentInfos.SegmentNumberToString().
                 segmentSuffix = SegmentInfos.SegmentNumberToString(gen);
             }
 

@@ -123,7 +123,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="query"> the query to test </param>
         /// <param name="searcher"> the searcher to test the query against </param>
-        /// <param name="defaultFieldName"> used for displaing the query in assertion messages </param>
+        /// <param name="defaultFieldName"> used for displaying the query in assertion messages </param>
         /// <param name="results"> a list of documentIds that must match the query </param>
         /// <seealso cref="CheckHitCollector(Random, Query, string, IndexSearcher, int[])"/>
         public static void DoCheckHits(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results)
@@ -260,7 +260,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="CheckExplanations(Query, String, IndexSearcher, bool)"/>
         /// <param name="query"> The query to test. </param>
         /// <param name="searcher"> The searcher to test the query against. </param>
-        /// <param name="defaultFieldName"> Used for displaing the query in assertion messages. </param>
+        /// <param name="defaultFieldName"> Used for displaying the query in assertion messages. </param>
         public static void CheckExplanations(Query query, string defaultFieldName, IndexSearcher searcher)
         {
             CheckExplanations(query, defaultFieldName, searcher, false);
@@ -274,7 +274,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="ExplanationAsserter"/>
         /// <param name="query"> The query to test. </param>
         /// <param name="searcher"> The searcher to test the query against. </param>
-        /// <param name="defaultFieldName"> Used for displaing the query in assertion messages. </param>
+        /// <param name="defaultFieldName"> Used for displaying the query in assertion messages. </param>
         /// <param name="deep"> Indicates whether a deep comparison of sub-Explanation details should be executed. </param>
         public static void CheckExplanations(Query query, string defaultFieldName, IndexSearcher searcher, bool deep)
         {
@@ -435,7 +435,7 @@ namespace Lucene.Net.Search
     }
 
     /// <summary>
-    /// An <see cref="IndexSearcher"/> that implicitly checks hte explanation of every match
+    /// An <see cref="IndexSearcher"/> that implicitly checks the explanation of every match
     /// whenever it executes a search.
     /// </summary>
     /// <seealso cref="ExplanationAsserter"/>

@@ -101,6 +101,60 @@ namespace Lucene.Net.Replicator
             Assert.IsFalse(result.Contains("System.Collections.Generic.Dictionary"), "Should not contain generic Dictionary type");
         }
 
+        // LUCENENET-specific: covers RevisionFile.FileName validation in the
+        // SessionToken(IDataInput) deserialization constructor.
+        [Test, LuceneNetSpecific]
+        [TestCase("../../../a.txt")]
+        [TestCase("..\\..\\a.txt")]
+        [TestCase("/a/b")]
+        [TestCase("C:\\folder\\file")]
+        [TestCase("subdir/file.txt")]
+        [TestCase("..")]
+        [TestCase(".")]
+        [TestCase("name\0extra")]
+        [TestCase("")]
+        public void TestDeserializeRejectsInvalidFileName(string invalidFileName)
+        {
+            using MemoryStream ms = new MemoryStream();
+            DataOutputStream dos = new DataOutputStream(ms);
+            dos.WriteUTF("session1");
+            dos.WriteUTF("ver1");
+            dos.WriteInt32(1);
+            dos.WriteUTF("source1");
+            dos.WriteInt32(1);
+            dos.WriteUTF(invalidFileName);
+            dos.WriteInt64(123L);
+            dos.Flush();
+            ms.Position = 0;
+
+            Assert.Throws<ArgumentException>(() =>
+            {
+                _ = new SessionToken(new DataInputStream(ms));
+            }, $"SessionToken should reject RevisionFile.FileName '{invalidFileName}'");
+        }
+
+        [Test, LuceneNetSpecific]
+        [TestCase("segments.gen")]
+        [TestCase("_0.cfs")]
+        [TestCase(".hidden")]
+        public void TestDeserializeAcceptsValidFileName(string fileName)
+        {
+            using MemoryStream ms = new MemoryStream();
+            DataOutputStream dos = new DataOutputStream(ms);
+            dos.WriteUTF("session1");
+            dos.WriteUTF("ver1");
+            dos.WriteInt32(1);
+            dos.WriteUTF("source1");
+            dos.WriteInt32(1);
+            dos.WriteUTF(fileName);
+            dos.WriteInt64(123L);
+            dos.Flush();
+            ms.Position = 0;
+
+            SessionToken token = new SessionToken(new DataInputStream(ms));
+            assertEquals(fileName, token.SourceFiles["source1"][0].FileName);
+        }
+
         // Mock implementation for testing
         private class MockRevision : IRevision
         {

@@ -1,3 +1,4 @@
+using J2N.Text;
 using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.Asserting;
 using Lucene.Net.Codecs.Bloom;
@@ -84,11 +85,16 @@ namespace Lucene.Net.Index
         {
             if (!previousMappings.TryGetValue(name, out PostingsFormat codec) || codec is null)
             {
-                codec = formats[Math.Abs(perFieldSeed ^ name.GetHashCode()) % formats.Count];
+                // LUCENENET specific: use J2N's CharSequenceComparer.Ordinal.GetHashCode(), which produces
+                // the same value as Java's String.hashCode(). The .NET string.GetHashCode() is randomized
+                // per-process, so a field's format chosen when writing (e.g. in a forked child process, as
+                // in TestIndexWriterOnJRECrash) would differ from the one chosen when reading in another
+                // process, causing "codec header mismatch" failures. A deterministic hash keeps them in sync.
+                codec = formats[Math.Abs(perFieldSeed ^ CharSequenceComparer.Ordinal.GetHashCode(name)) % formats.Count];
                 if (codec is SimpleTextPostingsFormat && perFieldSeed % 5 != 0)
                 {
                     // make simpletext rarer, choose again
-                    codec = formats[Math.Abs(perFieldSeed ^ name.ToUpperInvariant().GetHashCode()) % formats.Count];
+                    codec = formats[Math.Abs(perFieldSeed ^ CharSequenceComparer.Ordinal.GetHashCode(name.ToUpperInvariant())) % formats.Count];
                 }
                 previousMappings[name] = codec;
                 // Safety:
@@ -107,11 +113,12 @@ namespace Lucene.Net.Index
         {
             if (!previousDVMappings.TryGetValue(name, out DocValuesFormat codec) || codec is null)
             {
-                codec = dvFormats[Math.Abs(perFieldSeed ^ name.GetHashCode()) % dvFormats.Count];
+                // LUCENENET specific: deterministic (Java-parity) hash; see the note in GetPostingsFormatForField().
+                codec = dvFormats[Math.Abs(perFieldSeed ^ CharSequenceComparer.Ordinal.GetHashCode(name)) % dvFormats.Count];
                 if (codec is SimpleTextDocValuesFormat && perFieldSeed % 5 != 0)
                 {
                     // make simpletext rarer, choose again
-                    codec = dvFormats[Math.Abs(perFieldSeed ^ name.ToUpperInvariant().GetHashCode()) % dvFormats.Count];
+                    codec = dvFormats[Math.Abs(perFieldSeed ^ CharSequenceComparer.Ordinal.GetHashCode(name.ToUpperInvariant())) % dvFormats.Count];
                 }
                 previousDVMappings[name] = codec;
                 // Safety:

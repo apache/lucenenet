@@ -43,7 +43,7 @@ GOTO endcommentblock
 ::   -t - Run the tests.
 ::
 ::   --maximum-parallel-jobs
-::   -mp - Set the maxumum number of parallel jobs to run during testing. If not supplied, the default is 8.
+::   -mp - Set the maximum number of parallel jobs to run during testing. If not supplied, the default is 8.
 ::
 ::   All options are case insensitive.
 ::

@@ -163,21 +163,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public static string? ToString(object? obj)
         {
-            if (obj is null)
-            {
-                return "null";
-            }
-
-            Type t = obj.GetType();
-            if (t.IsGenericType
-                && (t.ImplementsGenericInterface(typeof(ICollection<>)))
-                || t.ImplementsGenericInterface(typeof(IDictionary<,>)))
-            {
-                dynamic genericType = Convert.ChangeType(obj, t);
-                return ToString(genericType);
-            }
-
-            return Convert.ToString(obj, CultureInfo.InvariantCulture);
+            return string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", obj);
         }
 
         public static ReadOnlyList<T> AsReadOnly<T>(IList<T> list)

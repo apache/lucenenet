@@ -59,7 +59,3 @@ As Source Link downloads files from the internet, Visual Studio has it disabled 
    ![Step into BytesRef](https://lucenenet.apache.org/images/contributing/source-link-setup/debugging-with-source-link05.png)
 
 Congratulations! You can now step into Lucene.NET code to figure stuff out and to help put together a thorough bug report or PR.
-
-
-
-

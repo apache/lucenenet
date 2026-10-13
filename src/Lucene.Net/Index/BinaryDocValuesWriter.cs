@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 
@@ -136,7 +137,7 @@ namespace Lucene.Net.Index
         {
             // Use yield return instead of ucsom IEnumerable
             var value = new BytesRef();
-            AppendingDeltaPackedInt64Buffer.Iterator lengthsIterator = lengths.GetIterator();
+            using var lengthsEnumerator = lengths.GetEnumerator();
             int size = (int)lengths.Count;
             DataInput bytesIterator = bytes.GetDataInput();
             int maxDoc = maxDocParam;
@@ -147,7 +148,9 @@ namespace Lucene.Net.Index
                 BytesRef v = null;
                 if (upto < size)
                 {
-                    int length = (int)lengthsIterator.Next();
+                    bool moved = lengthsEnumerator.MoveNext();
+                    if (Debugging.AssertsEnabled) Debugging.Assert(moved);
+                    int length = (int)lengthsEnumerator.Current;
                     value.Grow(length);
                     value.Length = length;
                     try

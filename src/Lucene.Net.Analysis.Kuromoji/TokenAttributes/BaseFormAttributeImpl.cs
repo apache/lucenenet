@@ -1,6 +1,7 @@
 using Lucene.Net.Util;
 using System;
 using Attribute = Lucene.Net.Util.Attribute;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja.TokenAttributes
 {
@@ -26,14 +27,14 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
     /// </summary>
     public class BaseFormAttribute : Attribute, IBaseFormAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
-        private Token token;
+        private Token? token;
 
-        public virtual string GetBaseForm()
+        public virtual string? GetBaseForm()
         {
             return token?.GetBaseForm();
         }
 
-        public virtual void SetToken(Token token)
+        public virtual void SetToken(Token? token)
         {
             this.token = token;
         }

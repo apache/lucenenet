@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Phonetic
         public DoubleMetaphoneFilter(TokenStream input, int maxCodeLength, bool inject)
             : base(input)
         {
-            this.encoder.MaxCodeLen = maxCodeLength;
+            this.encoder.MaxCodeLen = maxCodeLength; // LUCENENET: MaxCodeLen ensures the value is non-negative
             this.inject = inject;
             this.termAtt = AddAttribute<ICharTermAttribute>();
             this.posAtt = AddAttribute<IPositionIncrementAttribute>();

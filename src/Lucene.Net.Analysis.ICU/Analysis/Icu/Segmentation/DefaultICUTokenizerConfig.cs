@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         /// the default breakiterators in use. these can be expensive to
         /// instantiate, cheap to clone.
         /// </summary>
-        // we keep the cjk breaking separate, thats because it cannot be customized (because dictionary
+        // we keep the cjk breaking separate, that's because it cannot be customized (because dictionary
         // is only triggered when kind = WORD, but kind = LINE by default and we have no non-evil way to change it)
         private static readonly BreakIterator cjkBreakIterator = BreakIterator.GetWordInstance(UCultureInfo.InvariantCulture);
 

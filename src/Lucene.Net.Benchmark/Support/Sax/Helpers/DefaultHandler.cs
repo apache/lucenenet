@@ -57,7 +57,7 @@ namespace Sax.Helpers
         /// in a subclass to do special translations such as catalog lookups
         /// or URI redirection.
         /// </summary>
-        /// <param name="publicId">The public identifer, or null if none is available.</param>
+        /// <param name="publicId">The public identifier, or null if none is available.</param>
         /// <param name="systemId">The system identifier provided in the XML document.</param>
         /// <remarks>The new input source, or null to require the default behaviour.</remarks>
         /// <exception cref="IOException">If there is an error setting

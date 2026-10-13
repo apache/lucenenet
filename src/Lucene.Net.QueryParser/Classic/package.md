@@ -20,7 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-
 A simple query parser implemented with JavaCC.
 
 Note that JavaCC defines lots of public classes, methods and fields

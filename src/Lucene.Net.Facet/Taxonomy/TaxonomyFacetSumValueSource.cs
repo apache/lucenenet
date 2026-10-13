@@ -47,7 +47,7 @@ namespace Lucene.Net.Facet.Taxonomy
         private readonly OrdinalsReader ordinalsReader;
 
         /// <summary>
-        /// Aggreggates float facet values from the provided
+        /// Aggregates float facet values from the provided
         /// <see cref="ValueSource"/>, pulling ordinals using <see cref="DocValuesOrdinalsReader"/>
         /// against the default indexed
         /// facet field <see cref="FacetsConfig.DEFAULT_INDEX_FIELD_NAME"/>.
@@ -60,7 +60,7 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Aggreggates float facet values from the provided
+        /// Aggregates float facet values from the provided
         /// <see cref="ValueSource"/>, and pulls ordinals from the
         /// provided <see cref="OrdinalsReader"/>.
         /// </summary>

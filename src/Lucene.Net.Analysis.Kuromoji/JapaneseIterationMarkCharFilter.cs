@@ -1,6 +1,7 @@
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
 using System.IO;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja
 {

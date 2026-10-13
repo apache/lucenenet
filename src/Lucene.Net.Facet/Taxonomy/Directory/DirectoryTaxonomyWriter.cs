@@ -977,7 +977,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         {
             EnsureOpen();
             // Note: the following if() just enforces that a user can never ask
-            // for the parent of a nonexistant category - even if the parent array
+            // for the parent of a nonexistent category - even if the parent array
             // was allocated bigger than it really needs to be.
             if (ordinal >= nextID)
                 // LUCENENET specific: Changed exception type thrown to be consistent with guard clauses in .NET

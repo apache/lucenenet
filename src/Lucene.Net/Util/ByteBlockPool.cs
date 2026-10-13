@@ -1,6 +1,8 @@
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -333,10 +335,13 @@ namespace Lucene.Net.Util
             buffer[newUpto + 2] = slice[upto - 1];
 
             // Write forwarding address at end of last slice:
-            slice[upto - 3] = (byte)(offset >>> 24);
-            slice[upto - 2] = (byte)(offset >>> 16);
-            slice[upto - 1] = (byte)(offset >>> 8);
-            slice[upto] = (byte)offset;
+            // slice[upto - 3] = (byte)(offset >>> 24);
+            // slice[upto - 2] = (byte)(offset >>> 16);
+            // slice[upto - 1] = (byte)(offset >>> 8);
+            // slice[upto] = (byte)offset;
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            BinaryPrimitives.WriteInt32BigEndian(slice.AsSpan(upto - 3, sizeof(int)), offset);
 
             // Write new level:
             buffer[ByteUpto - 1] = (byte)(16 | newLevel);

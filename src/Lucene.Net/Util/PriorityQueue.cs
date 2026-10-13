@@ -213,7 +213,7 @@ namespace Lucene.Net.Util
         /// Determines the ordering of objects in this priority queue.
         /// </summary>
         /// <returns><c>true</c> if parameter <paramref name="a"/> is less than parameter
-        /// <paramref name="b"/>; othewise, <c>false</c>.</returns>
+        /// <paramref name="b"/>; otherwise, <c>false</c>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool LessThan(T a, T b)
             => comparer.Compare(a, b) < 0;
@@ -529,7 +529,7 @@ namespace Lucene.Net.Util
         /// Determines the ordering of objects in this priority queue.  Subclasses
         /// must define this one method. </summary>
         /// <returns><c>true</c> if parameter <paramref name="a"/> is less than parameter
-        /// <paramref name="b"/>; othewise, <c>false</c>.</returns>
+        /// <paramref name="b"/>; otherwise, <c>false</c>.</returns>
         protected internal abstract bool LessThan(T a, T b); // LUCENENET: Internal for testing
 
         // LUCENENET specific - refactored getSentinelObject() method into ISentinelFactory<T> and

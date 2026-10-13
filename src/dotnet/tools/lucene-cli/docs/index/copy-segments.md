@@ -41,4 +41,3 @@ Copy the `_71_Lucene41_0` segment from the index located at `X:\lucene-index` to
 ```console
 lucene index copy-segments X:\lucene-index X:\output _71_Lucene41_0
 ```
-

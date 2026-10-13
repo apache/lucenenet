@@ -582,7 +582,7 @@ namespace Lucene.Net.Index
                         long nextFieldInfosGen = Info.NextFieldInfosGen;
                         // LUCENENET specific: We created the segments names wrong in 4.8.0-beta00001 - 4.8.0-beta00015,
                         // so we added a switch to be able to read these indexes in later versions. This logic as well as an
-                        // optimization on the first 100 segment values is implmeneted in SegmentInfos.SegmentNumberToString().
+                        // optimization on the first 100 segment values is implemented in SegmentInfos.SegmentNumberToString().
                         string segmentSuffix = SegmentInfos.SegmentNumberToString(nextFieldInfosGen);
                         SegmentWriteState state = new SegmentWriteState(null, trackingDir, Info.Info, fieldInfos, writer.Config.TermIndexInterval, null, IOContext.DEFAULT, segmentSuffix);
                         DocValuesFormat docValuesFormat = codec.DocValuesFormat;

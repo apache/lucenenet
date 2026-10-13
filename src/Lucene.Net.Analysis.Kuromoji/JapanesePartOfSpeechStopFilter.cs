@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -33,9 +34,9 @@ namespace Lucene.Net.Analysis.Ja
 
         [Obsolete("EnablePositionIncrements=false is not supported anymore as of Lucene 4.4.")]
         public JapanesePartOfSpeechStopFilter(LuceneVersion version, bool enablePositionIncrements, TokenStream input, ISet<string> stopTags)
-                  : base(version, enablePositionIncrements, input)
+            : base(version, enablePositionIncrements, input)
         {
-            this.stopTags = stopTags;
+            this.stopTags = stopTags ?? throw new ArgumentNullException(nameof(stopTags));
             this.posAtt = AddAttribute<IPartOfSpeechAttribute>();
         }
 
@@ -48,13 +49,13 @@ namespace Lucene.Net.Analysis.Ja
         public JapanesePartOfSpeechStopFilter(LuceneVersion version, TokenStream input, ISet<string> stopTags)
             : base(version, input)
         {
-            this.stopTags = stopTags;
+            this.stopTags = stopTags ?? throw new ArgumentNullException(nameof(stopTags));
             this.posAtt = AddAttribute<IPartOfSpeechAttribute>();
         }
 
         protected override bool Accept()
         {
-            string pos = posAtt.GetPartOfSpeech();
+            string? pos = posAtt.GetPartOfSpeech();
             return pos is null || !stopTags.Contains(pos);
         }
     }

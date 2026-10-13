@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.Ja.Util;
 using Lucene.Net.Util;
 using System;
 using Attribute = Lucene.Net.Util.Attribute;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja.TokenAttributes
 {
@@ -27,19 +28,19 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
     /// </summary>
     public class InflectionAttribute : Attribute, IInflectionAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
-        private Token token;
+        private Token? token;
 
-        public virtual string GetInflectionType()
+        public virtual string? GetInflectionType()
         {
             return token?.GetInflectionType();
         }
 
-        public virtual string GetInflectionForm()
+        public virtual string? GetInflectionForm()
         {
             return token?.GetInflectionForm();
         }
 
-        public virtual void SetToken(Token token)
+        public virtual void SetToken(Token? token)
         {
             this.token = token;
         }
@@ -65,12 +66,12 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
             if (reflector is null)
                 throw new ArgumentNullException(nameof(reflector));
 
-            string type = GetInflectionType();
-            string typeEN = type is null ? null : ToStringUtil.GetInflectionTypeTranslation(type);
+            string? type = GetInflectionType();
+            string? typeEN = type is null ? null : ToStringUtil.GetInflectionTypeTranslation(type);
             reflector.Reflect<IInflectionAttribute>("inflectionType", type);
             reflector.Reflect<IInflectionAttribute>("inflectionType (en)", typeEN);
-            string form = GetInflectionForm();
-            string formEN = form is null ? null : ToStringUtil.GetInflectedFormTranslation(form);
+            string? form = GetInflectionForm();
+            string? formEN = form is null ? null : ToStringUtil.GetInflectedFormTranslation(form);
             reflector.Reflect<IInflectionAttribute>("inflectionForm", form);
             reflector.Reflect<IInflectionAttribute>("inflectionForm (en)", formEN);
         }

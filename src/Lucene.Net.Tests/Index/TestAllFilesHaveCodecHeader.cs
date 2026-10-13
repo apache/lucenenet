@@ -82,11 +82,11 @@ namespace Lucene.Net.Index
             {
                 if (file.Equals(IndexWriter.WRITE_LOCK_NAME, StringComparison.Ordinal))
                 {
-                    continue; // write.lock has no header, thats ok
+                    continue; // write.lock has no header, that's ok
                 }
                 if (file.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal))
                 {
-                    continue; // segments.gen has no header, thats ok
+                    continue; // segments.gen has no header, that's ok
                 }
                 if (file.EndsWith(IndexFileNames.COMPOUND_FILE_EXTENSION, StringComparison.Ordinal))
                 {

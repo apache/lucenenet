@@ -163,9 +163,9 @@ namespace Lucene.Net.Codecs.Memory
                 get
                 {
                     long numTerms = 0;
-                    foreach (DirectField field in fields.Values)
+                    foreach (DirectField @field in fields.Values)
                     {
-                        numTerms += field.terms.Length;
+                        numTerms += @field.terms.Length;
                     }
                     return numTerms;
                 }
@@ -1928,7 +1928,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        // Docs + freqs + positions/offets:
+        // Docs + freqs + positions/offsets:
         private sealed class LowFreqDocsEnum : DocsEnum
         {
             private int[] postings;

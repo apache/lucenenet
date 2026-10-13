@@ -96,7 +96,7 @@ While this document won't answer your specific scoring issues, it will, hopefull
 Lucene scoring supports a number of pluggable information retrieval [models](http://en.wikipedia.org/wiki/Information_retrieval#Model_types), including:
 
 * [Vector Space Model (VSM)](http://en.wikipedia.org/wiki/Vector_Space_Model)
-* [Probablistic Models](http://en.wikipedia.org/wiki/Probabilistic_relevance_model) such as [Okapi BM25](http://en.wikipedia.org/wiki/Probabilistic_relevance_model_(BM25)) and [DFR](http://en.wikipedia.org/wiki/Divergence-from-randomness_model)
+* [Probabilistic Models](http://en.wikipedia.org/wiki/Probabilistic_relevance_model) such as [Okapi BM25](http://en.wikipedia.org/wiki/Probabilistic_relevance_model_(BM25)) and [DFR](http://en.wikipedia.org/wiki/Divergence-from-randomness_model)
 * [Language models](http://en.wikipedia.org/wiki/Language_model)
 
 These models can be plugged in via the [Similarity API](xref:Lucene.Net.Search.Similarities), and offer extension hooks and parameters for tuning. In general, Lucene first finds the documents that need to be scored based on boolean logic in the Query specification, and then ranks this subset of matching documents via the retrieval model. For some valuable references on VSM and IR in general refer to [Lucene Wiki IR references](http://wiki.apache.org/lucene-java/InformationRetrieval).

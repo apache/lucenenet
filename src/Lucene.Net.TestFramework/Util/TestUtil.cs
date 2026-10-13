@@ -369,7 +369,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns a <see cref="string"/> thats "regexish" (contains lots of operators typically found in regular expressions)
+        /// Returns a <see cref="string"/> that's "regexish" (contains lots of operators typically found in regular expressions)
         /// If you call this enough times, you might get a valid regex!
         /// </summary>
         /// <param name="random">This <see cref="Random"/>.</param>
@@ -381,7 +381,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns a <see cref="string"/> thats "regexish" (contains lots of operators typically found in regular expressions)
+        /// Returns a <see cref="string"/> that's "regexish" (contains lots of operators typically found in regular expressions)
         /// If you call this enough times, you might get a valid regex!
         ///
         /// <para/>Note: to avoid practically endless backtracking patterns we replace asterisk and plus
@@ -1040,7 +1040,7 @@ namespace Lucene.Net.Util
             '\u001E',
             '\u001F',
             '\u0020',
-            // '\u0085', faild sanity check?
+            // '\u0085', failed sanity check?
             '\u1680',
             '\u180E',
             '\u2000',

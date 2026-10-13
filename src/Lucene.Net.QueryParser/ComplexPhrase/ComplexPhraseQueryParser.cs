@@ -227,7 +227,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                 this.inOrder = inOrder;
             }
 
-            public string Field => field;
+            public string Field => this.field;
 
             // Called by ComplexPhraseQueryParser for each phrase after the main
             // parse

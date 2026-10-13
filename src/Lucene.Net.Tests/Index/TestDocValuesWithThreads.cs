@@ -3,12 +3,11 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using NUnit.Framework;
+using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using RandomizedTesting.Generators;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -77,7 +76,7 @@ namespace Lucene.Net.Index
 
             int numThreads = TestUtil.NextInt32(Random, 2, 5);
             IList<ThreadJob> threads = new JCG.List<ThreadJob>();
-            CountdownEvent startingGun = new CountdownEvent(1);
+            using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
             for (int t = 0; t < numThreads; t++)
             {
                 Random threadRandom = new J2N.Randomizer(Random.NextInt64());
@@ -104,10 +103,10 @@ namespace Lucene.Net.Index
             private readonly IList<BytesRef> sorted;
             private readonly int numDocs;
             private readonly AtomicReader ar;
-            private readonly CountdownEvent startingGun;
+            private readonly CountdownLatch startingGun;
             private readonly Random threadRandom;
 
-            public ThreadAnonymousClass(IList<long> numbers, IList<BytesRef> binary, IList<BytesRef> sorted, int numDocs, AtomicReader ar, CountdownEvent startingGun, Random threadRandom)
+            public ThreadAnonymousClass(IList<long> numbers, IList<BytesRef> binary, IList<BytesRef> sorted, int numDocs, AtomicReader ar, CountdownLatch startingGun, Random threadRandom)
             {
                 this.numbers = numbers;
                 this.binary = binary;

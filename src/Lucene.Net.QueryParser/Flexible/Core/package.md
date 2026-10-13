@@ -20,7 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-
 Core classes of the flexible query parser framework.
 
 ## Flexible Query Parser

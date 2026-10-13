@@ -2,7 +2,9 @@ using Lucene.Net.Analysis.Ja.TokenAttributes;
 using Lucene.Net.Analysis.Ja.Util;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
+using System;
 using System.Text;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -53,7 +55,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             if (m_input.IncrementToken())
             {
-                string reading = readingAttr.GetReading();
+                string? reading = readingAttr.GetReading();
 
                 if (useRomaji)
                 {
@@ -61,7 +63,7 @@ namespace Lucene.Net.Analysis.Ja
                     {
                         // if its an OOV term, just try the term text
                         buffer.Length = 0;
-                        ToStringUtil.GetRomanization(buffer, termAttr.ToString());
+                        ToStringUtil.GetRomanization(buffer, termAttr.AsSpan());
                         termAttr.SetEmpty().Append(buffer);
                     }
                     else

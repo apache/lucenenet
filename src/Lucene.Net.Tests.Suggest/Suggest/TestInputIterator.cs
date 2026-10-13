@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -161,14 +162,20 @@ namespace Lucene.Net.Search.Suggest
 
         public static long AsLong(BytesRef b)
         {
-            return (((long)AsIntInternal(b, b.Offset) << 32) | AsIntInternal(b,
-                b.Offset + 4) & 0xFFFFFFFFL);
+            // return (((long)AsIntInternal(b, b.Offset) << 32) | AsIntInternal(b,
+            //     b.Offset + 4) & 0xFFFFFFFFL);
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            return BinaryPrimitives.ReadInt64BigEndian(b.AsSpan(0, sizeof(long))); // AsSpan implicitly handles b.Offset
         }
 
         private static int AsIntInternal(BytesRef b, int pos)
         {
-            return ((b.Bytes[pos++] & 0xFF) << 24) | ((b.Bytes[pos++] & 0xFF) << 16)
-                | ((b.Bytes[pos++] & 0xFF) << 8) | (b.Bytes[pos] & 0xFF);
+            // return ((b.Bytes[pos++] & 0xFF) << 24) | ((b.Bytes[pos++] & 0xFF) << 16)
+            //     | ((b.Bytes[pos++] & 0xFF) << 8) | (b.Bytes[pos] & 0xFF);
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            return BinaryPrimitives.ReadInt32BigEndian(b.Bytes.AsSpan(pos, sizeof(int)));
         }
     }
 }

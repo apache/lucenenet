@@ -143,7 +143,6 @@ you don't need to worry about dealing with those.
 
 <xref:Lucene.Net.QueryParsers.Flexible.Standard.StandardQueryParser> usage:
 
-
 ```cs
 const LuceneVersion matchVersion = LuceneVersion.LUCENE_48;
 StandardQueryParser qpHelper = new StandardQueryParser();

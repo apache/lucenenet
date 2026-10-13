@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Buffers.Binary;
 using System.Diagnostics;
 
 namespace Lucene.Net.Index
@@ -124,7 +125,10 @@ namespace Lucene.Net.Index
         public void NextSlice()
         {
             // Skip to our next slice
-            int nextIndex = ((buffer[limit] & 0xff) << 24) + ((buffer[1 + limit] & 0xff) << 16) + ((buffer[2 + limit] & 0xff) << 8) + (buffer[3 + limit] & 0xff);
+            //int nextIndex = ((buffer[limit] & 0xff) << 24) + ((buffer[1 + limit] & 0xff) << 16) + ((buffer[2 + limit] & 0xff) << 8) + (buffer[3 + limit] & 0xff);
+
+            // LUCENENET: Use BinaryPrimitives for JIT-intrinsics opportunity
+            int nextIndex = BinaryPrimitives.ReadInt32BigEndian(buffer.AsSpan(limit, sizeof(int)));
 
             level = ByteBlockPool.NEXT_LEVEL_ARRAY[level];
             int newSize = ByteBlockPool.LEVEL_SIZE_ARRAY[level];
@@ -174,6 +178,46 @@ namespace Lucene.Net.Index
                     break;
                 }
             }
+        }
+
+        // LUCENENET: override ReadVInt32 for performance optimization
+        public override int ReadVInt32()
+        {
+            int numLeft = limit - upto;
+            if (numLeft < VIntUtils.MaxVInt32Length)
+            {
+                // slow path near end of slice
+                return base.ReadVInt32();
+            }
+
+            // fast path: avoid repeated virtual calls
+            bool ok = VIntUtils.TryReadVInt32(buffer.AsSpan(upto), out int result, out int count);
+            upto += count;
+            if (!ok)
+            {
+                VIntUtils.ThrowIOException_InvalidVInt32();
+            }
+            return result;
+        }
+
+        // LUCENENET: override ReadVInt32 for performance optimization
+        public override long ReadVInt64()
+        {
+            int numLeft = limit - upto;
+            if (numLeft < VIntUtils.MaxVInt64Length)
+            {
+                // slow path near end of slice
+                return base.ReadVInt64();
+            }
+
+            // fast path: avoid repeated virtual calls
+            bool ok = VIntUtils.TryReadVInt64(buffer.AsSpan(upto), out long result, out int count);
+            upto += count;
+            if (!ok)
+            {
+                VIntUtils.ThrowIOException_InvalidVInt64();
+            }
+            return result;
         }
     }
 }

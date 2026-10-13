@@ -21,3 +21,14 @@ summary: *content
 -->
 
 Additional queries (some may have caveats or limitations)
+
+## Query types not included from Lucene 4.8.1
+
+The Java Sandbox `RegexQuery` family is not included in this package because it
+was superseded by `RegexpQuery` in the main Lucene search package. Use
+`Lucene.Net.Search.RegexpQuery` for regular-expression queries instead.
+
+The deprecated `SlowCollated` query types are also not included. For indexed
+collation keys, use `CollationKeyAnalyzer` or `ICUCollationKeyAnalyzer` from
+the analysis packages. These replacements are supported alternatives to the
+old Sandbox types and avoid carrying forward APIs that were removed upstream.

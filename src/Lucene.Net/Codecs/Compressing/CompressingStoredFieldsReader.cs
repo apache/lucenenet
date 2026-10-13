@@ -431,6 +431,50 @@ namespace Lucene.Net.Codecs.Compressing
                 outerInstance.bytes.Offset += len;
                 outerInstance.bytes.Length -= len;
             }
+
+            // LUCENENET: override ReadVInt32 for performance optimization
+            public override int ReadVInt32()
+            {
+                var bytesRef = outerInstance.bytes;
+                // Length here is remaining bytes in the decompressed buffer (see ReadByte/ReadBytes above).
+                if (bytesRef.Length < VIntUtils.MaxVInt32Length)
+                {
+                    // slow path near end of buffer (may need to FillBuffer mid-VInt)
+                    return base.ReadVInt32();
+                }
+
+                // fast path: avoid repeated virtual calls
+                bool ok = VIntUtils.TryReadVInt32(bytesRef.AsSpan(), out int result, out int count);
+                bytesRef.Offset += count;
+                bytesRef.Length -= count;
+                if (!ok)
+                {
+                    VIntUtils.ThrowIOException_InvalidVInt32();
+                }
+                return result;
+            }
+
+            // LUCENENET: override ReadVInt64 for performance optimization
+            public override long ReadVInt64()
+            {
+                var bytesRef = outerInstance.bytes;
+                // Length here is remaining bytes in the decompressed buffer.
+                if (bytesRef.Length < VIntUtils.MaxVInt64Length)
+                {
+                    // slow path near end of buffer (may need to FillBuffer mid-VInt)
+                    return base.ReadVInt64();
+                }
+
+                // fast path: avoid repeated virtual calls
+                bool ok = VIntUtils.TryReadVInt64(bytesRef.AsSpan(), out long result, out int count);
+                bytesRef.Offset += count;
+                bytesRef.Length -= count;
+                if (!ok)
+                {
+                    VIntUtils.ThrowIOException_InvalidVInt64();
+                }
+                return result;
+            }
         }
 
         public override object Clone()

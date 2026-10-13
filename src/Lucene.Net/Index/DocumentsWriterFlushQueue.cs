@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
                         /*
                          * if we block on publish -> lock IW -> lock BufferedDeletes we don't block
                          * concurrent segment flushes just because they want to append to the queue.
-                         * the downside is that we need to force a purge on fullFlush since ther could
+                         * the downside is that we need to force a purge on fullFlush since there could
                          * be a ticket still in the queue.
                          */
                         head.Publish(writer);
@@ -332,7 +332,7 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!m_published, "ticket was already publised - can not publish twice");
+                if (Debugging.AssertsEnabled) Debugging.Assert(!m_published, "ticket was already published - can not publish twice");
                 m_published = true;
                 // its a global ticket - no segment to publish
                 FinishFlush(writer, null, m_frozenUpdates);
@@ -353,7 +353,7 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!m_published, "ticket was already publised - can not publish twice");
+                if (Debugging.AssertsEnabled) Debugging.Assert(!m_published, "ticket was already published - can not publish twice");
                 m_published = true;
                 FinishFlush(writer, segment, m_frozenUpdates);
             }

@@ -43,4 +43,3 @@ namespace Lucene.Net.Codecs.Appending
         public override PostingsFormat PostingsFormat => _postings;
     }
 }
-

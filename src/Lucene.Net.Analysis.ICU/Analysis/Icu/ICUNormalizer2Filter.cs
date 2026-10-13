@@ -4,8 +4,6 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
-using System;
-using System.Text;
 
 namespace Lucene.Net.Analysis.Icu
 {
@@ -91,11 +89,12 @@ namespace Lucene.Net.Analysis.Icu
         {
             if (m_input.IncrementToken())
             {
-                if (normalizer.QuickCheck(termAtt.Buffer.AsSpan(0, termAtt.Length)) != QuickCheckResult.Yes)
+                if (normalizer.QuickCheck(termAtt.AsSpan()) != QuickCheckResult.Yes)
                 {
-                    buffer.Length = 0;
-                    normalizer.Normalize(termAtt.Buffer.AsSpan(0, termAtt.Length), buffer);
-                    termAtt.SetEmpty().Append(buffer);
+                    buffer.Reset(); // LUCENENET specific - using Reset() instead of Length = 0
+                    // LUCENENET TODO: ensure the IBufferWriter<char> version of Normalize is called when ICU4N is updated to support it
+                    normalizer.Normalize(termAtt.AsSpan(), buffer);
+                    termAtt.SetEmpty().Append(buffer.AsSpan()); // LUCENENET specific - Using ReadOnlySpan<char> version of Append
                 }
                 return true;
             }

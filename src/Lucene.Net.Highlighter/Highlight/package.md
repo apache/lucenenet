@@ -20,7 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-
 The highlight package contains classes to provide "keyword in context" features
 typically used to highlight search terms in the text of results pages.
 The Highlighter class is the central component and can be used to extract the
@@ -102,7 +101,6 @@ for (int i = 0; i < totalScoreDocs; i++)
 
 ## New features 2005-02-06
 
-
 This release adds options for encoding (thanks to Nicko Cadell).
 An "Encoder" implementation such as the new SimpleHTMLEncoder class can be passed to the highlighter to encode
 all those non-xhtml standard characters such as & into legal values. This simple class may not suffice for
@@ -110,7 +108,6 @@ some languages -  Commons Lang has an implementation that could be used: escapeH
 http://svn.apache.org/viewcvs.cgi/jakarta/commons/proper/lang/trunk/src/java/org/apache/commons/lang/StringEscapeUtils.java?rev=137958&view=markup
 
 ## New features 2004-12-22
-
 
 This release adds some new capabilities:
 

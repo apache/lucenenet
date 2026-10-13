@@ -289,7 +289,7 @@ namespace Lucene.Net.Codecs.Bloom
 
                 private TermsEnum @delegate =>
                     // pull the iterator only if we really need it -
-                    // this can be a relativly heavy operation depending on the
+                    // this can be a relatively heavy operation depending on the
                     // delegate postings format and they underlying directory
                     // (clone IndexInput)
                     delegateTermsEnum ?? (delegateTermsEnum = _delegateTerms.GetEnumerator(_reuseDelegate));

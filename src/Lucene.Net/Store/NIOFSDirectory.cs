@@ -102,7 +102,10 @@ namespace Lucene.Net.Store
         public override IndexInput OpenInput(string name, IOContext context)
         {
             EnsureOpen();
+            EnsureCanRead(name); // LUCENENET-specific: backported call site from Lucene 6.0.0
             var path = Path.Combine(Directory.FullName, name); // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
+            // LUCENENET NOTE: FileShare Read+Write+Delete is correct and matches Java Lucene.
+            // In Java, FileChannel defaults to this behavior, and Lucene does not override it.
             var fc = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
             return new NIOFSIndexInput("NIOFSIndexInput(path=\"" + path + "\")", fc, context);
         }
@@ -110,7 +113,10 @@ namespace Lucene.Net.Store
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
+            EnsureCanRead(name); // LUCENENET-specific: this method is not in Lucene 6.0.0 but added to match OpenInput above
             var path = Path.Combine(Directory.FullName, name); // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
+            // LUCENENET NOTE: FileShare Read+Write+Delete is correct and matches Java Lucene.
+            // In Java, FileChannel defaults to this behavior, and Lucene does not override it.
             var fc = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
             return new IndexInputSlicerAnonymousClass(context, path, fc);
         }

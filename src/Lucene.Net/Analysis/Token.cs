@@ -344,14 +344,14 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Resets the term text, payload, flags, and positionIncrement,
+        /// Resets the term text, payload, flags, positionIncrement, positionLength,
         /// startOffset, endOffset and token type to default.
         /// </summary>
         public override void Clear()
         {
             base.Clear();
             payload = null;
-            positionIncrement = 1;
+            positionIncrement = positionLength = 1;
             flags = 0;
             startOffset = endOffset = 0;
             type = TokenAttributes.TypeAttribute.DEFAULT_TYPE;
@@ -380,6 +380,7 @@ namespace Lucene.Net.Analysis
             var t = new Token(newTermBuffer, newTermOffset, newTermLength, newStartOffset, newEndOffset)
             {
                 positionIncrement = positionIncrement,
+                positionLength = positionLength,
                 flags = flags,
                 type = type
             };
@@ -404,6 +405,7 @@ namespace Lucene.Net.Analysis
                     endOffset == other.endOffset &&
                     flags == other.flags &&
                     positionIncrement == other.positionIncrement &&
+                    positionLength == other.positionLength &&
                     (type is null ? other.type is null : type.Equals(other.type, StringComparison.Ordinal)) &&
                     (payload is null ? other.payload is null : payload.Equals(other.payload)) &&
                     base.Equals(obj)
@@ -424,6 +426,7 @@ namespace Lucene.Net.Analysis
                 code = code * 31 + endOffset;
                 code = code * 31 + flags;
                 code = code * 31 + positionIncrement;
+                code = code * 31 + positionLength;
                 if (type != null)
                 {
                     code = code * 31 + type.GetHashCode();
@@ -440,7 +443,7 @@ namespace Lucene.Net.Analysis
         private void ClearNoTermBuffer()
         {
             payload = null;
-            positionIncrement = 1;
+            positionIncrement = positionLength = 1;
             flags = 0;
             startOffset = endOffset = 0;
             type = TokenAttributes.TypeAttribute.DEFAULT_TYPE;
@@ -458,7 +461,7 @@ namespace Lucene.Net.Analysis
             ClearNoTermBuffer();
             CopyBuffer(newTermBuffer, newTermOffset, newTermLength);
             payload = null;
-            positionIncrement = 1;
+            positionIncrement = positionLength = 1;
             startOffset = newStartOffset;
             endOffset = newEndOffset;
             type = newType;
@@ -557,6 +560,7 @@ namespace Lucene.Net.Analysis
         {
             CopyBuffer(prototype.Buffer, 0, prototype.Length);
             positionIncrement = prototype.positionIncrement;
+            positionLength = prototype.positionLength;
             flags = prototype.flags;
             startOffset = prototype.startOffset;
             endOffset = prototype.endOffset;
@@ -572,6 +576,7 @@ namespace Lucene.Net.Analysis
         {
             this.SetEmpty().Append(newTerm);
             positionIncrement = prototype.positionIncrement;
+            positionLength = prototype.positionLength;
             flags = prototype.flags;
             startOffset = prototype.startOffset;
             endOffset = prototype.endOffset;
@@ -589,6 +594,7 @@ namespace Lucene.Net.Analysis
         {
             CopyBuffer(newTermBuffer, offset, length);
             positionIncrement = prototype.positionIncrement;
+            positionLength = prototype.positionLength;
             flags = prototype.flags;
             startOffset = prototype.startOffset;
             endOffset = prototype.endOffset;
@@ -612,6 +618,7 @@ namespace Lucene.Net.Analysis
                 base.CopyTo(target);
                 ((IOffsetAttribute)target).SetOffset(startOffset, endOffset);
                 ((IPositionIncrementAttribute)target).PositionIncrement = positionIncrement;
+                ((IPositionLengthAttribute) target).PositionLength = positionLength;
                 ((IPayloadAttribute)target).Payload = (payload is null) ? null : (BytesRef)payload.Clone();
                 ((IFlagsAttribute)target).Flags = flags;
                 ((ITypeAttribute)target).Type = type;
@@ -624,6 +631,7 @@ namespace Lucene.Net.Analysis
             reflector.Reflect(typeof(IOffsetAttribute), "startOffset", startOffset);
             reflector.Reflect(typeof(IOffsetAttribute), "endOffset", endOffset);
             reflector.Reflect(typeof(IPositionIncrementAttribute), "positionIncrement", positionIncrement);
+            reflector.Reflect(typeof(IPositionLengthAttribute), "positionLength", positionLength);
             reflector.Reflect(typeof(IPayloadAttribute), "payload", payload);
             reflector.Reflect(typeof(IFlagsAttribute), "flags", flags);
             reflector.Reflect(typeof(ITypeAttribute), "type", type);

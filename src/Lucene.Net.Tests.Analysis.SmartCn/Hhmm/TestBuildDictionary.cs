@@ -271,9 +271,9 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
         private static void CheckBigramDictionary(BigramDictionary bigramDict)
         {
-            Assert.AreEqual(10000, bigramDict.GetFrequency("锲而不舍@、".AsSpan()), "Frequency for '锲而不舍@、' should be 10000.");
-            Assert.AreEqual(15000, bigramDict.GetFrequency("聆听@了".AsSpan()), "Frequency for '聆听@了' should be 15000.");
-            Assert.AreEqual(20000, bigramDict.GetFrequency("魅力@，".AsSpan()), "Frequency for '魅力@，' should be 20000.");
+            Assert.AreEqual(10000, bigramDict.GetFrequency("锲而不舍@、"), "Frequency for '锲而不舍@、' should be 10000.");
+            Assert.AreEqual(15000, bigramDict.GetFrequency("聆听@了"), "Frequency for '聆听@了' should be 15000.");
+            Assert.AreEqual(20000, bigramDict.GetFrequency("魅力@，"), "Frequency for '魅力@，' should be 20000.");
         }
 
         [Test]

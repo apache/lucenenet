@@ -15,7 +15,7 @@ version: 4.8.0-beta00013
 <details>
   <summary>Click to expand</summary>
 
-``` ini
+```ini
 
 BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.630 (2004/?/20H1)
 Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores
@@ -53,7 +53,7 @@ UnrollFactor=1  WarmupCount=10
 <details>
   <summary>Click to expand</summary>
 
-``` ini
+```ini
 
 BenchmarkDotNet=v0.12.1, OS=Windows 10.0.19041.630 (2004/?/20H1)
 Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical cores

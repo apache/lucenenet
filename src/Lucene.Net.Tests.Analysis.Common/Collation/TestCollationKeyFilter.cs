@@ -1,15 +1,11 @@
 // Lucene version compatibility level 4.8.1
-#if FEATURE_COLLATION
-using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using Icu;
-using Icu.Collation;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
+using System.Globalization;
+using System.IO;
 
 namespace Lucene.Net.Collation
 {
@@ -34,44 +30,38 @@ namespace Lucene.Net.Collation
     [Obsolete("remove when CollationKeyFilter is removed.")]
     public class TestCollationKeyFilter : CollationTestBase
     {
+        private readonly CompareInfo collator = CompareInfo.GetCompareInfo("fa");
+        private readonly Analyzer analyzer;
+
+        private readonly BytesRef firstRangeBeginning;
+        private readonly BytesRef firstRangeEnd;
+        private readonly BytesRef secondRangeBeginning;
+        private readonly BytesRef secondRangeEnd;
+
         public TestCollationKeyFilter()
         {
-            this.analyzer = new TestAnalyzer(this, this.collator);
-            this.firstRangeBeginning = new BytesRef(this.EncodeCollationKey(this.collator.GetSortKey(this.FirstRangeBeginningOriginal).KeyData.ToSByteArray()));
-            this.firstRangeEnd = new BytesRef(this.EncodeCollationKey(this.collator.GetSortKey(this.FirstRangeEndOriginal).KeyData.ToSByteArray()));
-            this.secondRangeBeginning = new BytesRef(this.EncodeCollationKey(this.collator.GetSortKey(this.SecondRangeBeginningOriginal).KeyData.ToSByteArray()));
-            this.secondRangeEnd = new BytesRef(this.EncodeCollationKey(this.collator.GetSortKey(this.SecondRangeEndOriginal).KeyData.ToSByteArray()));
+            this.analyzer = new TestAnalyzer(this.collator);
+            this.firstRangeBeginning = new BytesRef(this.EncodeCollationKey(this.collator.GetSortKey(m_firstRangeBeginningOriginal).KeyData));
+            this.firstRangeEnd = new BytesRef(this.EncodeCollationKey(this.collator.GetSortKey(m_firstRangeEndOriginal).KeyData));
+            this.secondRangeBeginning = new BytesRef(this.EncodeCollationKey(this.collator.GetSortKey(m_secondRangeBeginningOriginal).KeyData));
+            this.secondRangeEnd = new BytesRef(this.EncodeCollationKey(this.collator.GetSortKey(m_secondRangeEndOriginal).KeyData));
         }
 
         // the sort order of Ø versus U depends on the version of the rules being used
         // for the inherited root locale: Ø's order isn't specified in Locale.US since
         // its not used in english.
-        internal bool oStrokeFirst = Collator.Create(new CultureInfo("")).Compare("Ø", "U") < 0;
-
-        // Neither Java 1.4.2 nor 1.5.0 has Farsi Locale collation available in
-        // RuleBasedCollator.  However, the Arabic Locale seems to order the Farsi
-        // characters properly.
-        private readonly Collator collator = Collator.Create(new CultureInfo("ar"));
-        private Analyzer analyzer;
-
-        private BytesRef firstRangeBeginning;
-        private BytesRef firstRangeEnd;
-        private BytesRef secondRangeBeginning;
-        private BytesRef secondRangeEnd;
+        internal bool oStrokeFirst = CompareInfo.GetCompareInfo("").Compare("Ø", "U") < 0;
 
         public sealed class TestAnalyzer : Analyzer
         {
-            private readonly TestCollationKeyFilter outerInstance;
+            internal CompareInfo _collator;
 
-            internal Collator _collator;
-
-            internal TestAnalyzer(TestCollationKeyFilter outerInstance, Collator collator)
+            internal TestAnalyzer(CompareInfo collator)
             {
-                this.outerInstance = outerInstance;
                 this._collator = collator;
             }
 
-            protected internal override TokenStreamComponents CreateComponents(String fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer result = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(result, new CollationKeyFilter(result, this._collator));
@@ -99,54 +89,13 @@ namespace Lucene.Net.Collation
         [Test]
         public virtual void TestCollationKeySort()
         {
-            Analyzer usAnalyzer = new TestAnalyzer(this, GetCollator("en-US"));
-            Collator franceCollator = GetCollator("fr");
-            franceCollator.FrenchCollation = FrenchCollation.On;
-            Analyzer franceAnalyzer = new TestAnalyzer(this, franceCollator);
+            Analyzer usAnalyzer = new TestAnalyzer(CompareInfo.GetCompareInfo("en-US"));
+            Analyzer franceAnalyzer = new TestAnalyzer(CompareInfo.GetCompareInfo("fr"));
+            Analyzer swedenAnalyzer = new TestAnalyzer(CompareInfo.GetCompareInfo("sv-SE"));
+            Analyzer denmarkAnalyzer = new TestAnalyzer(CompareInfo.GetCompareInfo("da-DK"));
 
-            // `useFallback: true` on both Swedish and Danish collators in
-            // case the region specific collator is not found.
-            Analyzer swedenAnalyzer = new TestAnalyzer(this, GetCollator("sv-SE", "sv"));
-            Analyzer denmarkAnalyzer = new TestAnalyzer(this, GetCollator("da-DK", "da"));
-
-            // The ICU Collator and Sun java.text.Collator implementations differ in their
-            // orderings - "BFJDH" is the ordering for java.text.Collator for Locale.US.
             this.TestCollationKeySort(usAnalyzer, franceAnalyzer, swedenAnalyzer, denmarkAnalyzer,
-                this.oStrokeFirst ? "BFJHD" : "BFJDH", "EACGI", "BJDFH", "BJDHF");
+                this.oStrokeFirst ? "BFJHD" : "BFJDH", FrenchResult, "BJDFH", "BJDHF");
         }
-
-        private Collator GetCollator(params string[] localeNames)
-        {
-            var firstMatchingLocale = localeNames
-                .Select(x => new Locale(x))
-                .FirstOrDefault(x => availableCollationLocales.Contains(x.Id));
-
-            if (firstMatchingLocale == default)
-            {
-                throw new ArgumentException($"Could not find a collator locale matching any of the following: {string.Join(", ", localeNames)}");
-            }
-
-            Collator collator = RuleBasedCollator.Create(firstMatchingLocale.Id);
-
-            return collator;
-        }
-
-        // Original Java Code:
-        //public void testCollationKeySort() throws Exception {
-        //  Analyzer usAnalyzer = new TestAnalyzer(Collator.getInstance(Locale.US));
-        //  Analyzer franceAnalyzer
-        //    = new TestAnalyzer(Collator.getInstance(Locale.FRANCE));
-        //  Analyzer swedenAnalyzer
-        //    = new TestAnalyzer(Collator.getInstance(new Locale("sv", "se")));
-        //  Analyzer denmarkAnalyzer
-        //    = new TestAnalyzer(Collator.getInstance(new Locale("da", "dk")));
-
-        //  // The ICU Collator and Sun java.text.Collator implementations differ in their
-        //  // orderings - "BFJDH" is the ordering for java.text.Collator for Locale.US.
-        //  testCollationKeySort
-        //  (usAnalyzer, franceAnalyzer, swedenAnalyzer, denmarkAnalyzer,
-        //   oStrokeFirst ? "BFJHD" : "BFJDH", "EACGI", "BJDFH", "BJDHF");
-        //}
     }
 }
-#endif

@@ -79,9 +79,8 @@ filter available:
 
 #### HyphenationCompoundWordTokenFilter
 
-The [
-HyphenationCompoundWordTokenFilter](xref:Lucene.Net.Analysis.Compound.HyphenationCompoundWordTokenFilter) uses hyphenation grammars to find
-potential subwords that a worth to check against the dictionary. It can be used
+The [HyphenationCompoundWordTokenFilter](xref:Lucene.Net.Analysis.Compound.HyphenationCompoundWordTokenFilter) uses
+hyphenation grammars to find potential subwords that a worth to check against the dictionary. It can be used
 without a dictionary as well but then produces a lot of "nonword" tokens.
 The quality of the output tokens is directly connected to the quality of the
 grammar file you use. For languages like German they are quite good.
@@ -106,9 +105,8 @@ Credits for the hyphenation code go to the
 
 #### DictionaryCompoundWordTokenFilter
 
-The [
-DictionaryCompoundWordTokenFilter](xref:Lucene.Net.Analysis.Compound.DictionaryCompoundWordTokenFilter) uses a dictionary-only approach to
-find subwords in a compound word. It is much slower than the one that
+The [DictionaryCompoundWordTokenFilter](xref:Lucene.Net.Analysis.Compound.DictionaryCompoundWordTokenFilter) uses a
+dictionary-only approach to find subwords in a compound word. It is much slower than the one that
 uses the hyphenation grammars. You can use it as a first start to
 see if your dictionary is good or not because it is much simpler in design.
 

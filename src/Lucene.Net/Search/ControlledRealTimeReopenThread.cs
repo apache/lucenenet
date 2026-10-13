@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
         ///        caller is waiting for a specific generation to
         ///        become visible.
         /// </param>
-        /// <param name="targetMinStaleSec"> Mininum time until a new
+        /// <param name="targetMinStaleSec"> Minimum time until a new
         ///        reader can be opened; this sets the lower bound
         ///        on how quickly reopens may occur, when a caller
         ///        is waiting for a specific generation to
@@ -233,7 +233,7 @@ namespace Lucene.Net.Search
                 // Need to find waitingGen inside lock as its used to determine
                 // stale time
                 waitingGen = Math.Max(waitingGen, targetGen);
-                reopenCond.Set();                                   // LUCENENET NOTE: gives Run() an oppertunity to notice one is now waiting if one wasn't before.
+                reopenCond.Set();                                   // LUCENENET NOTE: gives Run() an opportunity to notice one is now waiting if one wasn't before.
                 m_notify.Reset();                                   // LUCENENET specific: required to "close the door". Java's notifyAll keyword didn't need this.
             }
             finally

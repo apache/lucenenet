@@ -48,7 +48,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     {
         // LUCENENET NOTE: Made private and added public property for reading
         private readonly string field;
-        public string Field => field;
+        public string Field => this.field;
 
         public ReverseOrdFieldSource(string field)
         {

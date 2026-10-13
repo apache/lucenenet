@@ -381,6 +381,29 @@ namespace Lucene.Net.Support.ExceptionHandling
             }
         }
 
+#if DEBUG
+        /// <summary>
+        /// Tests to ensure that the DebugAssertException type string is correct for the current test environment.
+        /// If this test fails, it means that the DebugAssertException has changed location and the
+        /// <see cref="LuceneTestFrameworkInitializer.InitializeStaticState()"/> method needs to be updated with
+        /// the new type string.
+        /// <para/>
+        /// Microsoft controls this location, it is internal, and changes from time to time. Currently, it is in
+        /// Microsoft.NET.Test.Sdk as of version 16.6.0.
+        /// <para/>
+        /// Note that this exception only applies when the test SDK is attached. If the test SDK is not attached,
+        /// then this exception falls back to a different exception type in the current .NET SDK. This can happen
+        /// in DEBUG mode when running as a console application, for example.
+        /// </summary>
+        [Test]
+        public void TestDebugAssertExceptionTypeString()
+        {
+            Assert.IsNotNull(
+                Type.GetType("Microsoft.VisualStudio.TestPlatform.TestHost.DebugAssertException, testhost"),
+                "DebugAssertException type not found for the current test enviornment. This means that the DebugAssertException has changed location and the LuceneTestFrameworkInitializer.InitializeStaticState() method needs to be updated with the new type string.");
+        }
+#endif
+
         private class MyException : Exception
         {
             public MyException(string message) : base(message)

@@ -59,10 +59,23 @@ namespace Lucene.Net.Support
         };
 
 
-        public static readonly Assembly[] DotNetAssemblies = new Assembly[]
+        public static readonly Assembly[] DotNetAssemblies = LoadDotNetAssemblies();
+
+        private static Assembly[] LoadDotNetAssemblies()
         {
-            typeof(Exception).Assembly
-        };
+            var list = new List<Assembly>()
+            {
+                typeof(Exception).Assembly
+            };
+
+            Assembly testHostAssembly = Type.GetType("Microsoft.VisualStudio.TestPlatform.TestHost.DebugAssertException, testhost")?.Assembly;
+            if (testHostAssembly is not null)
+            {
+                list.Add(testHostAssembly);
+            }
+
+            return list.ToArray();
+        }
 
         public static readonly Assembly[] NUnitAssemblies = new Assembly[]
         {

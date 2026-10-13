@@ -44,5 +44,42 @@ namespace Lucene.Net.Support.Text
             Assert.IsFalse("hello".Contains("WORLD", StringComparison.OrdinalIgnoreCase));
         }
 #endif
+
+        [TestCase("segments.gen")]
+        [TestCase("_0.cfs")]
+        [TestCase("_0_Lucene41_0.tip")]
+        [TestCase(".hidden")]
+        [TestCase("a..b..c")]
+        [TestCase("name-with-dashes_and_underscores.ext")]
+        [LuceneNetSpecific]
+        public void TestIsValidSinglePathComponent_AcceptsValidNames(string path)
+        {
+            Assert.IsTrue(path.IsValidSinglePathComponent(),
+                $"expected '{path}' to be a valid single path component");
+        }
+
+        [TestCase("")]                          // empty
+        [TestCase(".")]                         // current-directory literal
+        [TestCase("..")]                        // parent-directory literal
+        [TestCase("foo/bar")]                   // forward-slash separator
+        [TestCase("foo\\bar")]                  // backslash separator (rejected even on POSIX)
+        [TestCase("../../a/b")]                 // multi-level forward-slash sequence
+        [TestCase("..\\..\\a\\b")]              // multi-level backslash sequence
+        [TestCase("..\\a")]                     // single-level backslash sequence
+        [TestCase("/a/b")]                      // absolute POSIX path
+        [TestCase("/tmp/file.txt")]             // absolute POSIX path
+        [TestCase("C:\\folder\\file")]          // path containing a Windows volume separator
+        [TestCase("C:\\file.txt")]              // path containing a Windows volume separator
+        [TestCase("name\0extra")]               // embedded NUL
+        [TestCase("name/")]                     // trailing forward slash
+        [TestCase("name\\")]                    // trailing backslash
+        [TestCase("\\")]                        // bare backslash
+        [TestCase("/")]                         // bare forward slash
+        [LuceneNetSpecific]
+        public void TestIsValidSinglePathComponent_RejectsInvalidNames(string path)
+        {
+            Assert.IsFalse(path.IsValidSinglePathComponent(),
+                $"expected '{path}' to be rejected as a single path component");
+        }
     }
 }

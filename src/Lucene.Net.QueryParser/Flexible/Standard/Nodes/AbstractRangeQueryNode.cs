@@ -52,21 +52,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         {
             get
             {
-                string field = null;
+                string @field = null;
                 T lower = (T)LowerBound;
                 T upper = (T)UpperBound;
 
                 if (lower != null)
                 {
-                    field = lower.Field;
-
+                    @field = lower.Field;
                 }
                 else if (upper != null)
                 {
-                    field = upper.Field;
+                    @field = upper.Field;
                 }
 
-                return field;
+                return @field;
             }
             set
             {

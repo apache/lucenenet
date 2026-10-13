@@ -34,6 +34,10 @@
     <EmbeddedResource Include="**/*.txt" Exclude="bin/**/*.txt;obj/**/*.txt" Label="Text Test Data" />
     <EmbeddedResource Include="**/*.htm;**/*.html" Exclude="bin/**/*.htm;obj/**/*.htm;bin/**/*.html;obj/**/*.html" Label="HTML Test Data" />
     <EmbeddedResource Include="**/*.xml" Exclude="bin/**/*.xml;obj/**/*.xml" Label="XML Test Data" />
+
+    <!-- LUCENENET: Added this file because it is a dependency of TestRandomChains.
+      It is simpler to embed this one small file than to reference the Kuromoji test project. -->
+    <EmbeddedResource Include="..\Lucene.Net.Tests.Analysis.Kuromoji\userdict.txt" Link="Analysis\Core\userdict.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,6 +55,27 @@
       <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
     </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup Label="Required for TestRandomChains and TestAllAnalyzersHaveFactories">
+    <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Kuromoji\Lucene.Net.Analysis.Kuromoji.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Morfologik\Lucene.Net.Analysis.Morfologik.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Phonetic\Lucene.Net.Analysis.Phonetic.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.SmartCn\Lucene.Net.Analysis.SmartCn.csproj">
+      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Stempel\Lucene.Net.Analysis.Stempel.csproj">
       <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
     </ProjectReference>
   </ItemGroup>

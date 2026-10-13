@@ -113,7 +113,7 @@ function Invoke-psake {
         ---- Exceptions ----
 
         If there is an exception thrown during the running of a build script psake will set the '$psake.build_success' variable to $false.
-        To detect failue outside PowerShell (for example by build server), finish PowerShell process with non-zero exit code when '$psake.build_success' is $false.
+        To detect failure outside PowerShell (for example by build server), finish PowerShell process with non-zero exit code when '$psake.build_success' is $false.
         Calling psake from 'cmd.exe' with 'psake.cmd' will give you that behaviour.
 
         ---- $psake variable ----
@@ -125,7 +125,7 @@ function Invoke-psake {
         $psake.context                      # holds onto the current state of all variables
         $psake.run_by_psake_build_tester    # indicates that build is being run by psake-BuildTester
         $psake.config_default               # contains default configuration
-                                            # can be overriden in psake-config.ps1 in directory with psake.psm1 or in directory with current build script
+                                            # can be overridden in psake-config.ps1 in directory with psake.psm1 or in directory with current build script
         $psake.build_success                # indicates that the current build was successful
         $psake.build_script_file            # contains a System.IO.FileInfo for the current build script
         $psake.build_script_dir             # contains the fully qualified path to the current build script

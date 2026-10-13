@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -11,6 +12,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -47,12 +50,15 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow]
-        [AwaitsFix]
         public override void TestNRTThreads_Mem()
         {
             //if we are not the fork
             if (!SystemProperties.GetPropertyAsBoolean("tests:crashmode", false))
             {
+                // LUCENENET: Bail out early (Inconclusive) if the current platform can't launch the fork,
+                // rather than hanging in WaitForProcessId waiting for a process that will never start.
+                EnsureForkPlatformSupported();
+
                 // try up to 10 times to create an index
                 for (int i = 0; i < 10; i++)
                 {
@@ -74,12 +80,17 @@ namespace Lucene.Net.Index
                         // Note this is the vstest.console process we are tracking here.
                         p = ForkTest(tempDir.FullName, port);
 
-                        TextWriter childOut = BeginOutput(p, out ThreadJob stdOutPumper, out ThreadJob stdErrPumper);
+                        // LUCENENET: Capture STDERR so we can report it if the fork fails to start or
+                        // exits with a non-zero exit code.
+                        StringBuilder stdErrCapture = new StringBuilder();
+                        TextWriter childOut = BeginOutput(p, stdErrCapture, out ThreadJob stdOutPumper, out ThreadJob stdErrPumper);
 
                         // LUCENENET: Note that ForkTest() creates the vstest.console.exe process.
                         // This spawns testhost.exe, which runs our test. We wait until
                         // the process starts and transmits its own PID so we know who to kill later.
-                        int processIdToKill = WaitForProcessId(listener);
+                        // If the fork exits before connecting (e.g. a build/launch error), this throws
+                        // with the fork's exit code and STDERR rather than hanging indefinitely.
+                        int processIdToKill = WaitForProcessId(listener, p, stdErrCapture);
 
                         // Setup a time to crash the forked thread
                         int crashTime = TestUtil.NextInt32(Random, 4000, 5000); // LUCENENET: Adjusted these up by 1 second to give our tests some more time to spin up
@@ -162,31 +173,46 @@ namespace Lucene.Net.Index
 
             //get the folder that's in
             string theDirectory = Path.GetDirectoryName(testAssemblyPath);
+            // LUCENENET: Only constrain the target platform when running as x86. Since .NET 8, an x86
+            // `dotnet test` fork will not run unless the 32-bit SDK is installed separately (the 64-bit
+            // SDK is no longer sufficient), so we verify it up front and skip the test if it is missing
+            // rather than hanging forever in WaitForProcessId. For x64/ARM64 we leave the platform off and
+            // let vstest auto-detect a compatible host, which avoids a similar "Could not find 'dotnet'
+            // host for the 'X64' architecture" hang on ARM64 hosts.
+            var arguments = new List<string>
+            {
+                // LUCENENET NOTE: dotnet test doesn't need the --no-build flag since we are passing the DLL path in
+                "test", testAssemblyPath,
+                "--framework", GetTargetFramework(),
+                "--filter", nameof(TestIndexWriterOnJRECrash),
+                "--logger:\"console;verbosity=normal\"",
+                "--",
+            };
+
+            string targetPlatform = GetTargetPlatform();
+            if (targetPlatform != null)
+            {
+                arguments.Add($"RunConfiguration.TargetPlatform={targetPlatform}");
+            }
+
+            // LUCENENET NOTE: Since in our CI environment we create a lucene.testsettings.json file
+            // for all tests, we need to pass some of these settings as test run parameters to override
+            // for this process. These are read as system properties on the inside of the application.
+            arguments.Add(TestRunParameter("assert", "true"));
+            arguments.Add(TestRunParameter("tests:seed", SeedUtils.FormatSeed(Random.NextInt64())));
+            arguments.Add(TestRunParameter("tests:culture", Thread.CurrentThread.CurrentCulture.Name));
+            arguments.Add(TestRunParameter("tests:crashmode", "true"));
+            // passing NIGHTLY to this test makes it run for much longer, easier to catch it in the act...
+            arguments.Add(TestRunParameter("tests:nightly", "true"));
+            arguments.Add(TestRunParameter("tempDir", tempDir));
+            // This port is for passing the process ID of the fork back to the original test so it can kill it.
+            arguments.Add(TestRunParameter("tests:crashtestport", port.ToString(CultureInfo.InvariantCulture)));
+
             // Set up the process to run the console app
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 FileName = "dotnet",
-                Arguments = string.Join(" ", new[] {
-                    // LUCENENET NOTE: dotnet test doesn't need the --no-build flag since we are passing the DLL path in
-                    "test", testAssemblyPath,
-                    "--framework", GetTargetFramework(),
-                    "--filter", nameof(TestIndexWriterOnJRECrash),
-                    "--logger:\"console;verbosity=normal\"",
-                    "--",
-                    $"RunConfiguration.TargetPlatform={GetTargetPlatform()}",
-                    // LUCENENET NOTE: Since in our CI environment we create a lucene.testsettings.json file
-                    // for all tests, we need to pass some of these settings as test run parameters to override
-                    // for this process. These are read as system properties on the inside of the application.
-                    TestRunParameter("assert", "true"),
-                    TestRunParameter("tests:seed", SeedUtils.FormatSeed(Random.NextInt64())),
-                    TestRunParameter("tests:culture", Thread.CurrentThread.CurrentCulture.Name),
-                    TestRunParameter("tests:crashmode", "true"),
-                    // passing NIGHTLY to this test makes it run for much longer, easier to catch it in the act...
-                    TestRunParameter("tests:nightly", "true"),
-                    TestRunParameter("tempDir", tempDir),
-                    // This port is for passing the process ID of the fork back to the original test so it can kill it.
-                    TestRunParameter("tests:crashtestport", port.ToString(CultureInfo.InvariantCulture)),
-                }),
+                Arguments = string.Join(" ", arguments),
                 WorkingDirectory = theDirectory,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -215,12 +241,13 @@ namespace Lucene.Net.Index
         private const string BackSlash = "\\";
         private const string Space = " ";
 
-        private static TextWriter BeginOutput(Process p, out ThreadJob stdOutPumper, out ThreadJob stdErrPumper)
+        private static TextWriter BeginOutput(Process p, StringBuilder stdErrCapture, out ThreadJob stdOutPumper, out ThreadJob stdErrPumper)
         {
             // We pump everything to stderr.
             TextWriter childOut = Console.Error;
-            stdOutPumper = ThreadPumper.Start(p.StandardOutput, childOut);
-            stdErrPumper = ThreadPumper.Start(p.StandardError, childOut);
+            stdOutPumper = ThreadPumper.Start(p.StandardOutput, childOut, capture: null);
+            // LUCENENET: Capture the fork's STDERR so it can be surfaced if the fork fails.
+            stdErrPumper = ThreadPumper.Start(p.StandardError, childOut, capture: stdErrCapture);
             if (Verbose) childOut.WriteLine(">>> Begin subprocess output");
             return childOut;
         }
@@ -243,7 +270,48 @@ namespace Lucene.Net.Index
 
         private static string GetTargetPlatform()
         {
-            return Environment.Is64BitProcess ? "x64" : "x86";
+            // LUCENENET: Only x86 needs an explicit target platform. The forked vstest can otherwise
+            // auto-detect a compatible dotnet host for the current architecture; forcing a platform on
+            // x64/ARM64 risks the fork failing with "Could not find 'dotnet' host for the '<arch>'
+            // architecture" (which left the parent blocked forever in WaitForProcessId, e.g. on ARM64
+            // hosts), so we return null to leave RunConfiguration.TargetPlatform unset for those.
+            //
+            // For x86 we must verify the 32-bit SDK is actually installed: since .NET 8, an x86
+            // `dotnet test` fork will not run unless the 32-bit SDK is installed separately. If it is
+            // missing, EnsureForkPlatformSupported() makes the test inconclusive rather than letting it
+            // hang waiting for a fork that can never start.
+            if (RuntimeInformation.ProcessArchitecture == Architecture.X86)
+            {
+                return "x86";
+            }
+
+            return null;
+        }
+
+        // LUCENENET: Verify the runtime/SDK needed to launch the fork on the current platform is present,
+        // marking the test Inconclusive (rather than hanging) when it is not. Currently this only applies
+        // to x86, where the 32-bit .NET SDK must be installed separately since .NET 8.
+        private static void EnsureForkPlatformSupported()
+        {
+            if (RuntimeInformation.ProcessArchitecture != Architecture.X86)
+            {
+                return;
+            }
+
+            // The x86 SDK installs under "Program Files (x86)\dotnet". On 64-bit Windows this path exists
+            // only when the 32-bit SDK has been installed in addition to the 64-bit one.
+            string programFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+            string x86DotnetExe = string.IsNullOrEmpty(programFilesX86)
+                ? null
+                : Path.Combine(programFilesX86, "dotnet", "dotnet.exe");
+
+            if (x86DotnetExe is null || !File.Exists(x86DotnetExe))
+            {
+                NUnit.Framework.Assert.Inconclusive(
+                    "The 32-bit .NET SDK is required to run this test on x86 but was not found at '" +
+                    (x86DotnetExe ?? "<unknown>") + "'. Since .NET 8, the 32-bit SDK must be installed " +
+                    "separately from the 64-bit SDK to fork an x86 `dotnet test` process.");
+            }
         }
         #endregion
 
@@ -251,9 +319,11 @@ namespace Lucene.Net.Index
         /// A pipe thread. It'd be nice to reuse guava's implementation for this... </summary>
         internal static class ThreadPumper
         {
-            public static ThreadJob Start(TextReader from, TextWriter to)
+            // LUCENENET: capture is an optional buffer that accumulates the piped text (e.g. STDERR) so it
+            // can be reported when the fork fails, independent of Verbose.
+            public static ThreadJob Start(TextReader from, TextWriter to, StringBuilder capture)
             {
-                ThreadJob t = new ThreadPumperAnonymousClass(from, to);
+                ThreadJob t = new ThreadPumperAnonymousClass(from, to, capture);
                 t.Start();
                 return t;
             }
@@ -262,11 +332,13 @@ namespace Lucene.Net.Index
             {
                 private readonly TextReader from;
                 private readonly TextWriter to;
+                private readonly StringBuilder capture;
 
-                public ThreadPumperAnonymousClass(TextReader from, TextWriter to)
+                public ThreadPumperAnonymousClass(TextReader from, TextWriter to, StringBuilder capture)
                 {
                     this.from = from;
                     this.to = to;
+                    this.capture = capture;
                 }
 
                 public override void Run()
@@ -277,6 +349,13 @@ namespace Lucene.Net.Index
                         int len;
                         while ((len = from.Read(buffer, 0, buffer.Length)) > 0)
                         {
+                            if (capture != null)
+                            {
+                                lock (capture)
+                                {
+                                    capture.Append(buffer, 0, len);
+                                }
+                            }
                             if (Verbose)
                             {
                                 to.Write(buffer, 0, len);
@@ -315,25 +394,39 @@ namespace Lucene.Net.Index
         {
             if (file is DirectoryInfo directoryInfo)
             {
-                BaseDirectoryWrapper dir = NewFSDirectory(directoryInfo);
-                dir.CheckIndexOnDispose = false; // don't double-checkindex
-                if (DirectoryReader.IndexExists(dir))
+                BaseDirectoryWrapper dir = null;
+                Exception priorE = null;
+                try
                 {
-                    if (Verbose)
+                    dir = NewFSDirectory(directoryInfo);
+                    dir.CheckIndexOnDispose = false; // don't double-checkindex
+                    if (DirectoryReader.IndexExists(dir))
                     {
-                        Console.Error.WriteLine("Checking index: " + file);
+                        if (Verbose)
+                        {
+                            Console.Error.WriteLine("Checking index: " + file);
+                        }
+                        // LUCENE-4738: if we crashed while writing first
+                        // commit it's possible index will be corrupt (by
+                        // design we don't try to be smart about this case
+                        // since that too risky):
+                        if (SegmentInfos.GetLastCommitGeneration(dir) > 1)
+                        {
+                            TestUtil.CheckIndex(dir);
+                        }
+                        return true;
                     }
-                    // LUCENE-4738: if we crashed while writing first
-                    // commit it's possible index will be corrupt (by
-                    // design we don't try to be smart about this case
-                    // since that too risky):
-                    if (SegmentInfos.GetLastCommitGeneration(dir) > 1)
-                    {
-                        TestUtil.CheckIndex(dir);
-                    }
-                    return true;
                 }
-                dir.Dispose();
+                catch (Exception e)
+                {
+                    priorE = e;
+                    throw;
+                }
+                finally
+                {
+                    IOUtils.DisposeWhileHandlingException(priorE, dir);
+                }
+
                 foreach (DirectoryInfo f in directoryInfo.EnumerateDirectories())
                 {
                     if (CheckIndexes(f))
@@ -354,13 +447,56 @@ namespace Lucene.Net.Index
         }
 
         // LUCENENET: Wait for our test to spin up and send its process ID so we can kill it.
-        private int WaitForProcessId(TcpListener listener)
+        // Rather than blocking forever in AcceptTcpClient(), poll for either an incoming connection or the
+        // fork exiting. If the fork exits before connecting (e.g. it failed to build or launch), hard-fail
+        // with its exit code and captured STDERR so the test reports the cause instead of hanging.
+        private int WaitForProcessId(TcpListener listener, Process fork, StringBuilder stdErrCapture)
         {
-            using var client = listener.AcceptTcpClient();
+            IAsyncResult acceptResult = listener.BeginAcceptTcpClient(null, null);
+
+            // The fork has to build the test project before it can run, so allow a generous window.
+            const int TimeoutMs = 120_000;
+            int waited = 0;
+            const int PollMs = 100;
+            while (!acceptResult.AsyncWaitHandle.WaitOne(PollMs))
+            {
+                waited += PollMs;
+                if (fork.HasExited)
+                {
+                    FailForkStartup(fork, stdErrCapture, "The forked process exited before connecting back.");
+                }
+                if (waited >= TimeoutMs)
+                {
+                    FailForkStartup(fork, stdErrCapture,
+                        $"Timed out after {TimeoutMs / 1000} seconds waiting for the forked process to connect back.");
+                }
+            }
+
+            using var client = listener.EndAcceptTcpClient(acceptResult);
             using var stream = client.GetStream();
             // Directly read the process ID as a 32-bit integer
             using var reader = new BinaryReader(stream);
             return reader.ReadInt32();
+        }
+
+        // LUCENENET: Hard-fail with the fork's exit code and captured STDERR so failures are diagnosable
+        // instead of presenting as a hang.
+        private static void FailForkStartup(Process fork, StringBuilder stdErrCapture, string message)
+        {
+            string exitCode = fork.HasExited
+                ? fork.ExitCode.ToString(CultureInfo.InvariantCulture)
+                : "(still running)";
+            string stdErr;
+            lock (stdErrCapture)
+            {
+                stdErr = stdErrCapture.ToString();
+            }
+            if (stdErr.Length == 0)
+            {
+                stdErr = "(no STDERR captured)";
+            }
+
+            Assert.Fail($"{message} Fork exit code: {exitCode}.{Environment.NewLine}Fork STDERR:{Environment.NewLine}{stdErr}");
         }
 
         private void SendProcessId(int processId, int port)

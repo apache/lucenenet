@@ -439,6 +439,41 @@ namespace Lucene.Net.Store
         }
 
         [Test]
+        [LuceneNetSpecific]
+        public virtual void TestFSIndexOutputFlushesBeforeMarkedStale()
+        {
+            DirectoryInfo path = CreateTempDir("flushBeforeMarkedStale");
+            using var dir = new FlushObservingSimpleFSDirectory(path);
+
+            byte[] bytes = new byte[1];
+            Random.NextBytes(bytes);
+
+            using (IndexOutput output = dir.CreateOutput("afile", NewIOContext(Random)))
+            {
+                output.WriteBytes(bytes, bytes.Length);
+            }
+
+            Assert.AreEqual(bytes.Length, dir.LengthObservedOnIndexOutputClosed,
+                "FSDirectory must flush FileStream's managed buffer before marking a file stale for fsync.");
+        }
+
+        private sealed class FlushObservingSimpleFSDirectory : SimpleFSDirectory
+        {
+            public FlushObservingSimpleFSDirectory(DirectoryInfo path)
+                : base(path)
+            {
+            }
+
+            public long LengthObservedOnIndexOutputClosed { get; private set; } = -1;
+
+            protected override void OnIndexOutputClosed(FSIndexOutput io)
+            {
+                LengthObservedOnIndexOutputClosed = new FileInfo(Path.Combine(m_directory.FullName, io.name)).Length;
+                base.OnIndexOutputClosed(io);
+            }
+        }
+
+        [Test]
         [Slow]
         [LuceneNetSpecific]
         public virtual void ConcurrentIndexAccessThrowsWithoutSynchronizedStaleFiles()
@@ -490,6 +525,120 @@ namespace Lucene.Net.Store
             }
         }
 
+        // LUCENENET specific: Regression test for #1283. A read handle held open by SimpleFSDirectory or
+        // NIOFSDirectory must not block deletion of the underlying file. On Windows this only works because the
+        // read FileStream is opened with FileShare.Delete (the delete becomes a deferred/pending delete); on
+        // POSIX, delete-while-open always works. After the delete, the still-open handle must keep returning the
+        // original bytes without corruption. The assertion only has teeth on Windows (POSIX ignores share modes
+        // and would pass regardless), but the behavior asserted is cross-platform, so the test is not gated.
+        // MMapDirectory is intentionally excluded: its read handle still lacks FileShare.Delete in master and is
+        // addressed separately in #1267.
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestDeleteWhileReadHandleOpen()
+        {
+            DirectoryInfo tempDir = CreateTempDir(GetType().Name);
+            var factories = new Func<Directory>[]
+            {
+                () => new SimpleFSDirectory(tempDir),
+                () => new NIOFSDirectory(tempDir),
+            };
+
+            byte[] expected = new byte[128];
+            for (int i = 0; i < expected.Length; i++)
+            {
+                expected[i] = (byte)i;
+            }
+
+            int n = 0;
+            foreach (var factory in factories)
+            {
+                using Directory dir = factory();
+                string name = "delete-while-read-" + n++;
+
+                using (IndexOutput output = dir.CreateOutput(name, NewIOContext(Random)))
+                {
+                    output.WriteBytes(expected, expected.Length);
+                }
+
+                IndexInput input = dir.OpenInput(name, NewIOContext(Random));
+                try
+                {
+                    // Read the first byte so the handle is genuinely active.
+                    Assert.AreEqual(expected[0], input.ReadByte());
+
+                    // The crux: deleting while a read handle is open must not throw.
+                    try
+                    {
+                        dir.DeleteFile(name);
+                    }
+                    catch (Exception e)
+                    {
+                        Assert.Fail("DeleteFile threw while a read handle was open (missing FileShare.Delete?) for "
+                            + dir.GetType().Name + ": " + e);
+                    }
+
+                    // The still-open handle must keep returning the original bytes (no corruption, handle still valid).
+                    byte[] actual = new byte[expected.Length - 1];
+                    input.ReadBytes(actual, 0, actual.Length);
+                    for (int i = 0; i < actual.Length; i++)
+                    {
+                        Assert.AreEqual(expected[i + 1], actual[i]);
+                    }
+                }
+                finally
+                {
+                    input.Dispose();
+                }
+            }
+        }
+
+        // LUCENENET specific: Regression test for #1283. The shared FSIndexOutput write handle (used by every
+        // FSDirectory subclass) is opened with FileShare.Delete, so deleting a file must succeed even while its
+        // write handle is still open. This makes the "if Lucene decides a file is deletable, the delete succeeds"
+        // guarantee hold unconditionally on Windows regardless of which of our own handles are open.
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestDeleteWhileWriteHandleOpen()
+        {
+            DirectoryInfo tempDir = CreateTempDir(GetType().Name);
+            var factories = new Func<Directory>[]
+            {
+                () => new SimpleFSDirectory(tempDir),
+                () => new NIOFSDirectory(tempDir),
+                () => new MMapDirectory(tempDir),
+            };
+
+            int n = 0;
+            foreach (var factory in factories)
+            {
+                using Directory dir = factory();
+                string name = "delete-while-write-" + n++;
+
+                IndexOutput output = dir.CreateOutput(name, NewIOContext(Random));
+                try
+                {
+                    output.WriteByte((byte)0x2A);
+                    output.Flush();
+
+                    // Deleting while the write handle is open must not throw.
+                    try
+                    {
+                        dir.DeleteFile(name);
+                    }
+                    catch (Exception e)
+                    {
+                        Assert.Fail("DeleteFile threw while a write handle was open (missing FileShare.Delete?) for "
+                            + dir.GetType().Name + ": " + e);
+                    }
+                }
+                finally
+                {
+                    output.Dispose();
+                }
+            }
+        }
+
 
 #pragma warning disable 612, 618
         [Test]
@@ -532,6 +681,103 @@ namespace Lucene.Net.Store
                 foreach (var scoreDoc in searcher.Search(q, 100).ScoreDocs)
                 {
                     docs.Add(searcher.Doc(scoreDoc.Doc));
+                }
+            }
+        }
+
+        // LUCENENET-specific: covers EnsureCanWrite name validation across FSDirectory subclasses.
+        [Test, LuceneNetSpecific]
+        [TestCase("../../foo.txt")]
+        [TestCase("..\\foo.txt")]
+        [TestCase("/tmp/foo.txt")]
+        [TestCase("subdir/file.txt")]
+        [TestCase("subdir\\file.txt")]
+        [TestCase("..")]
+        [TestCase(".")]
+        [TestCase("")]
+        public void TestCreateOutputRejectsInvalidName(string invalidName)
+        {
+            DirectoryInfo path = CreateTempDir("ensureCanWrite");
+            foreach (FSDirectory dir in new FSDirectory[]
+            {
+                new SimpleFSDirectory(path),
+                new NIOFSDirectory(path),
+                new MMapDirectory(path),
+            })
+            {
+                try
+                {
+                    Assert.Throws<ArgumentException>(() =>
+                    {
+                        using IndexOutput _ = dir.CreateOutput(invalidName, IOContext.DEFAULT);
+                    }, $"{dir.GetType().Name}.CreateOutput should reject '{invalidName}'");
+                }
+                finally
+                {
+                    dir.Dispose();
+                }
+            }
+        }
+
+        // LUCENENET-specific: covers EnsureCanRead name validation across FSDirectory subclasses.
+        [Test, LuceneNetSpecific]
+        [TestCase("../../foo.txt")]
+        [TestCase("..\\foo.txt")]
+        [TestCase("/tmp/foo.txt")]
+        [TestCase("subdir/file.txt")]
+        [TestCase("subdir\\file.txt")]
+        [TestCase("..")]
+        [TestCase(".")]
+        [TestCase("")]
+        public void TestOpenInputRejectsInvalidName(string invalidName)
+        {
+            DirectoryInfo path = CreateTempDir("ensureCanRead");
+            foreach (FSDirectory dir in new FSDirectory[]
+            {
+                new SimpleFSDirectory(path),
+                new NIOFSDirectory(path),
+                new MMapDirectory(path),
+            })
+            {
+                try
+                {
+                    Assert.Throws<ArgumentException>(() =>
+                    {
+                        using IndexInput _ = dir.OpenInput(invalidName, IOContext.DEFAULT);
+                    }, $"{dir.GetType().Name}.OpenInput should reject '{invalidName}'");
+                }
+                finally
+                {
+                    dir.Dispose();
+                }
+            }
+        }
+
+        // NIOFSDirectory and SimpleFSDirectory have their own CreateSlicer overload that opens its
+        // own FileStream rather than delegating to OpenInput, so validation must fire there too.
+        [Test, LuceneNetSpecific]
+        [TestCase("../../foo.txt")]
+        [TestCase("..\\foo.txt")]
+        [TestCase("/tmp/foo.txt")]
+        public void TestCreateSlicerRejectsInvalidName(string invalidName)
+        {
+            DirectoryInfo path = CreateTempDir("ensureCanReadSlicer");
+            foreach (FSDirectory dir in new FSDirectory[]
+            {
+                new SimpleFSDirectory(path),
+                new NIOFSDirectory(path),
+            })
+            {
+                try
+                {
+                    Assert.Throws<ArgumentException>(() =>
+                    {
+                        using Directory.IndexInputSlicer _ = dir.CreateSlicer(invalidName, IOContext.DEFAULT);
+                    }, $"{dir.GetType().Name}.CreateSlicer should reject '{invalidName}'");
+                }
+                finally
+                {
+                    dir.Dispose();
                 }
             }
         }

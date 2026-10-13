@@ -146,6 +146,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// same prefix is inserted. This saves a lot of space, specially for long
         /// keys.
         /// </summary>
+        // LUCENENET: string overload retained here for public API for non-C#-14 callers
         public void Insert(string key, char val)
             => Insert(key.AsSpan(), val);
 

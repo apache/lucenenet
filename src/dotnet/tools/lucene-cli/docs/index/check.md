@@ -38,7 +38,7 @@ Cross-check term vectors.
 
 `-dir|--directory-type <DIRECTORY_TYPE>`
 
-The FSDirectory implementation to use. If ommitted, it defaults to the optimal FSDirectory for your OS platform.
+The FSDirectory implementation to use. If omitted, it defaults to the optimal FSDirectory for your OS platform.
 
 `-s|--segment <SEGMENT>`
 
@@ -52,10 +52,8 @@ Check the index located at `X:\lucenenet-index\` verbosely, scanning only the se
 lucene index check X:\lucenenet-index -v -s _1j_Lucene41_0 -s _2u_Lucene41_0
 ```
 
-
 Check the index located at `C:\taxonomy\` using the `MMapDirectory` memory-mapped directory implementation:
 
 ```console
 lucene index check C:\taxonomy --directory-type MMapDirectory
 ```
-

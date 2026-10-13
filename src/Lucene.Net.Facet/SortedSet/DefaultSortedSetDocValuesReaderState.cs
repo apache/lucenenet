@@ -125,7 +125,7 @@ namespace Lucene.Net.Facet.SortedSet
         /// <summary>
         /// Indexed field we are reading.
         /// </summary>
-        public override string Field => field;
+        public override string Field => this.field;
 
         public override IndexReader OrigReader => origReader;
 

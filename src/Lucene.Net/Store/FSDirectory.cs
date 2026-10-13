@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Support.Text;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -316,31 +317,37 @@ namespace Lucene.Net.Store
             EnsureOpen();
             string file = Path.Combine(m_directory.FullName, name);
 
-            // LUCENENET Specific: See remarks for m_staleFiles field.
+            // LUCENENET specific: We need to explicitly throw when the file has already been deleted,
+            // since FileInfo doesn't do that for us.
+            // (An enhancement carried over from Lucene 8.2.0)
+            if (!File.Exists(file))
+            {
+                throw new FileNotFoundException("Cannot delete " + file + " because it doesn't exist.");
+            }
+
+            // LUCENENET NOTE: Do NOT hold m_syncLock while deleting. On a network share (SMB),
+            // File.Delete can block for a long time (e.g. waiting for the server to break an
+            // oplock/lease on a file this client still has open). Holding m_syncLock here would
+            // block every concurrent Sync() and IndexOutput.Dispose() on this directory behind
+            // a single stalled delete, freezing the whole writer. Only the m_staleFiles
+            // bookkeeping below needs the lock (see remarks for the m_staleFiles field);
+            // upstream Java likewise performs the delete without any directory-wide lock.
+            try
+            {
+                File.Delete(file);
+                if (File.Exists(file))
+                {
+                    throw new IOException("Cannot delete " + file);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new IOException("Cannot delete " + file, e);
+            }
+
             UninterruptableMonitor.Enter(m_syncLock);
             try
             {
-                // LUCENENET specific: We need to explicitly throw when the file has already been deleted,
-                // since FileInfo doesn't do that for us.
-                // (An enhancement carried over from Lucene 8.2.0)
-                if (!File.Exists(file))
-                {
-                    throw new FileNotFoundException("Cannot delete " + file + " because it doesn't exist.");
-                }
-
-                try
-                {
-                    File.Delete(file);
-                    if (File.Exists(file))
-                    {
-                        throw new IOException("Cannot delete " + file);
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new IOException("Cannot delete " + file, e);
-                }
-
                 m_staleFiles.Remove(name);
             }
             finally
@@ -361,6 +368,12 @@ namespace Lucene.Net.Store
 
         protected virtual void EnsureCanWrite(string name)
         {
+            // LUCENENET-specific: validate the name is valid for a FSDirectory
+            if (!name.IsValidSinglePathComponent())
+            {
+                throw new ArgumentException("File name is not valid for a FSDirectory", nameof(name));
+            }
+
             if (!m_directory.Exists)
             {
                 try
@@ -398,6 +411,17 @@ namespace Lucene.Net.Store
             finally
             {
                 UninterruptableMonitor.Exit(m_syncLock);
+            }
+        }
+
+        // LUCENENET-specific: backported method signature (but not implementation, yet)
+        // from Lucene 6.0.0 as extensibility point to override name validation if needed
+        protected virtual void EnsureCanRead(string name)
+        {
+            // LUCENENET-specific: validate the name is valid for a FSDirectory
+            if (!name.IsValidSinglePathComponent())
+            {
+                throw new ArgumentException("File name is not valid for a FSDirectory", nameof(name));
             }
         }
 
@@ -510,6 +534,7 @@ namespace Lucene.Net.Store
             private readonly FileStream file;
 #pragma warning restore CA2213 // Disposable fields should be disposed
             private volatile bool isOpen; // remember if the file is open, so that we don't try to close it more than once
+            private int disposed; // LUCENENET specific: 0 = open, 1 = disposed. Used with Interlocked to make Dispose run-once.
             private readonly CRC32 crc = new CRC32();
 
             public FSIndexOutput(FSDirectory parent, string name)
@@ -521,7 +546,12 @@ namespace Lucene.Net.Store
                     path: Path.Combine(parent.m_directory.FullName, name),
                     mode: FileMode.OpenOrCreate,
                     access: FileAccess.Write,
-                    share: FileShare.ReadWrite,
+                    // LUCENENET specific: Add FileShare.Delete (a deliberate divergence from upstream Java's
+                    // RandomAccessFile, which omits it) so that every handle Lucene.NET opens on a file permits
+                    // deletion. Windows blocks a delete unless all open handles allow Delete share; including it
+                    // here makes "if Lucene decides a file is deletable, the delete succeeds" hold unconditionally,
+                    // regardless of which handles are open, matching POSIX semantics (#1283).
+                    share: FileShare.ReadWrite | FileShare.Delete,
                     bufferSize: CHUNK_SIZE);
                 isOpen = true;
             }
@@ -574,13 +604,29 @@ namespace Lucene.Net.Store
             /// <inheritdoc/>
             protected override void Dispose(bool disposing)
             {
-                if (disposing)
+                // LUCENENET specific: Ensure dispose only runs once, even if two threads race here.
+                // A plain isOpen check is not enough: the read is atomic, but two threads could both
+                // observe true and both run the dispose logic. Atomically transition disposed 0 -> 1
+                // so only the first thread proceeds.
+                if (disposing && 0 == Interlocked.CompareExchange(ref disposed, 1, 0))
                 {
-                    parent.OnIndexOutputClosed(this);
-                    // only close the file if it has not been closed yet
-                    if (isOpen)
+                    Exception priorE = null; // LUCENENET: No need to cast to IOException
+
+                    UninterruptableMonitor.Enter(parent.m_syncLock);
+                    try
                     {
-                        Exception priorE = null; // LUCENENET: No need to cast to IOException
+                        // LUCENENET: FileStream has a managed buffer, so a write is not guaranteed to
+                        // have reached the OS until the buffer is flushed. (Java's RandomAccessFile.write()
+                        // is unbuffered, so upstream has no such buffer and no flush race here.) If we add
+                        // this file to m_staleFiles (via OnIndexOutputClosed) before flushing that buffer,
+                        // another thread can fsync the file through a separate handle, remove the stale
+                        // marker, and only then does this FileStream flush its buffer to the OS. That leaves
+                        // bytes written after the fsync, which can make a committed index non-durable after
+                        // a process or machine crash.
+                        //
+                        // Keep the FileStream flush and stale-file bookkeeping atomic with FSDirectory.Sync()
+                        // (which also takes m_syncLock) so a file is never considered synced until all managed
+                        // FileStream buffers have at least reached the OS.
                         try
                         {
                             file.Flush(flushToDisk: false);
@@ -589,11 +635,14 @@ namespace Lucene.Net.Store
                         {
                             priorE = ioe;
                         }
-                        finally
-                        {
-                            isOpen = false;
-                            IOUtils.DisposeWhileHandlingException(priorE, file);
-                        }
+
+                        parent.OnIndexOutputClosed(this);
+                    }
+                    finally
+                    {
+                        UninterruptableMonitor.Exit(parent.m_syncLock);
+                        isOpen = false;
+                        IOUtils.DisposeWhileHandlingException(priorE, file);
                     }
                 }
                 //base.Dispose(disposing); // LUCENENET: No need to call base class, we are not using the functionality of BufferedIndexOutput

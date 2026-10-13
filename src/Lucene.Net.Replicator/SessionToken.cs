@@ -7,6 +7,7 @@ using JCG = J2N.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Support.Text;
 
 namespace Lucene.Net.Replicator
 {
@@ -76,7 +77,16 @@ namespace Lucene.Net.Replicator
                 IList<RevisionFile> files = new JCG.List<RevisionFile>(numFiles);
                 for (int i = 0; i < numFiles; i++)
                 {
-                    files.Add(new RevisionFile(reader.ReadUTF(), reader.ReadInt64()));
+                    string fileName = reader.ReadUTF();
+                    long length = reader.ReadInt64();
+
+                    // LUCENENET-specific: validate that fileName is valid for replication
+                    if (!fileName.IsValidSinglePathComponent())
+                    {
+                        throw new ArgumentException("File name is not valid for replication", nameof(fileName));
+                    }
+
+                    files.Add(new RevisionFile(fileName, length));
                 }
                 sourceFiles.Add(source, files);
                 --numSources;

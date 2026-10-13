@@ -171,7 +171,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         /// 4-9 - pos
         /// 10  - base form
         /// 11  - reading
-        /// 12  - pronounciation
+        /// 12  - pronunciation
         ///
         /// UniDic features
         ///

@@ -1993,7 +1993,7 @@ namespace Lucene.Net.Util.Fst
                                 // somehow (rarely, possibly never) we use
                                 // more bytesPerArc in this rewrite than the
                                 // incoming FST did... but in this case we
-                                // will retry (below) so it's OK to ovewrite
+                                // will retry (below) so it's OK to overwrite
                                 // bytes:
                                 //wasted += bytesPerArc - arcBytes;
                                 writer.SkipBytes((int)(arcStartPos + bytesPerArc - writer.Position));
@@ -2116,7 +2116,7 @@ namespace Lucene.Net.Util.Fst
         // that we can find an arc using binary search.  We do
         // this when number of arcs is > NUM_ARCS_ARRAY:
 
-        // If set, thie target node is delta coded vs current position:
+        // If set, the target node is delta coded vs current position:
         internal const int BIT_TARGET_DELTA = 1 << 6;
 
         // We use this as a marker (because this one flag is

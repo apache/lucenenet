@@ -616,6 +616,15 @@ namespace Lucene.Net.Store
                     }
                 }
                 m_input.DeleteFile(name);
+                // LUCENENET: backport from upstream commit 6369012d ("fix a few nocommits",
+                // Mike McCandless), which landed on the LUCENE-5438 (NRT replication) branch and
+                // first shipped in Lucene 6.0.0. Removing a deleted file's name from createdFiles
+                // lets the same segment name be re-created later without preventDoubleWrite falsely
+                // reporting "already written to". Without this, a benign upstream segment-name reuse
+                // on reopen after Dispose(false) (the committed counter can trail a name issued by a
+                // background merge that was then aborted and its files deleted) surfaced as a flaky
+                // TestNoWaitClose failure. See #1284.
+                createdFiles.Remove(name);
             }
             finally
             {
@@ -998,7 +1007,7 @@ namespace Lucene.Net.Store
                                 }
 
                                 // its possible we cannot delete the segments_N on windows if someone has it open and
-                                // maybe other files too, depending on timing. normally someone on windows wouldnt have
+                                // maybe other files too, depending on timing. normally someone on Windows wouldn't have
                                 // an issue (IFD would nuke this stuff eventually), but we pass NoDeletionPolicy...
                                 foreach (string file in pendingDeletions)
                                 {

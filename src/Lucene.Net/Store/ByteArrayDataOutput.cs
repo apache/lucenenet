@@ -1,6 +1,8 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Buffers.Binary;
+using System.Diagnostics;
 
 namespace Lucene.Net.Store
 {
@@ -110,6 +112,35 @@ namespace Lucene.Net.Store
             if (Debugging.AssertsEnabled) Debugging.Assert(pos + length <= limit);
             Arrays.Copy(source, /*offset*/ 0, bytes, pos, length);
             pos += length;
+        }
+
+        // LUCENENET specific: write fixed-width values directly into the backing array via
+        // BinaryPrimitives, avoiding the base class's per-byte WriteByte (Int16/Int32) or
+        // stackalloc + virtual WriteBytes(Span) hop (Int64). Mirrors the ReadInt16/32/64
+        // overrides in ByteArrayDataInput. The base implementations stay byte-by-byte /
+        // span-based for subclasses without a cheap contiguous buffer. See #1279.
+        public override void WriteInt16(short i)
+        {
+            // LUCENENET: Debug.Assert (compiled out of Release) rather than Debugging.Assert,
+            // since this is a LUCENENET-specific hot-path override with no upstream assert to
+            // preserve - the bounds check is a dev-only invariant. See #1279.
+            Debug.Assert(pos + sizeof(short) <= limit);
+            BinaryPrimitives.WriteInt16BigEndian(bytes.AsSpan(pos, sizeof(short)), i);
+            pos += sizeof(short);
+        }
+
+        public override void WriteInt32(int i)
+        {
+            Debug.Assert(pos + sizeof(int) <= limit);
+            BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(pos, sizeof(int)), i);
+            pos += sizeof(int);
+        }
+
+        public override void WriteInt64(long i)
+        {
+            Debug.Assert(pos + sizeof(long) <= limit);
+            BinaryPrimitives.WriteInt64BigEndian(bytes.AsSpan(pos, sizeof(long)), i);
+            pos += sizeof(long);
         }
     }
 }

@@ -6,13 +6,11 @@ uid: quick-start/learning-resources
 
 ---
 
-
 ## Lucene.NET Documentation
 
 Lucene.NET has fairly extensive documentation that can be found in the [Lucene.NET Documentation](xref:docs) section of the website.  On that page you will find links to the documentation for various release versions.  Click on the documentation link for the version of interest and you will see that it leads to a wealth of documentation.  The project is organized as a collection of sub-projects, each one corresponding ultimately to a [nuget package](https://www.nuget.org/packages/Lucene.Net/absoluteLatest).  Those projects each have documentation that typically starts with some higher level docs that then link into API or Object/Method level documentations.
 
 Much of this documentation is compiled from the inline documentation comments from the source code and it originated from the Java Lucene code base.  In addition to porting the Lucene code from Java to C# we are also working to convert the docs from Java to C# examples as well.  Some of this work is completed and some of it remains.  
-
 
 ## Java Lucene Documentation
 
@@ -22,16 +20,13 @@ So for example, in Java it's common for method names start with a lower case let
 
 But other than that, you will find that the documentation for Java Lucene 4.X can be very useful to your learning of Lucene.NET 4.8.  Just keep in mind the ".NETifing" that we do to the code and it's pretty simple to translate in your head Java examples into the C# equivalent.  
 
-
 ## From the Community
-
 
 ### Searching Lucene.NET Issues
 
 Another source of information about Lucene.NET is current and past GitHub issues for our repo.  By default when you go to the GitHub issues page it defaults the search box criteria to open issues only but you can easily remove the `is:open` from the search box to search all issues for the repo.  Or you can use this link to [search all issues](https://github.com/apache/lucenenet/issues?q=is%3Aissue+is%3Aopen+) in our repo.
 
 ![Search Lucene.NET Issues](https://lucenenet.apache.org/images/quick-start/learning-resources/search-lucenenet-issues.gif)
-
 
 ### Searching Java Lucene Issues
 In general, the Java Lucene Issues database can be a good place to learn about how features were developed, the historical issues related to features, and how issues were resolved.  One thing that can be helpful to know is that each major Lucene feature is assigned a Lucene issue number and it's often referenced using this format: LUCENE-<issue number> for example LUCENE-6001.
@@ -41,7 +36,6 @@ Java Lucene has a GitHub mirror of their repo, but they don't track issues there
 By default that page shows only open issues but you can click the "View all issues and filters" link in the upper right corner of the screen (see arrow below) to see and search all issues.
 
 ![Search Lucene.NET Issues](https://lucenenet.apache.org/images/quick-start/learning-resources/search-lucene-issues.gif)
-
 
 ### Apache Lucene.NET Email Archives
 You can search the Lucene.NET dev email archives for past emails that may contain information of a topic you'd like to dig into.  This can be especially useful, for example, to research why we may have chosen a specific porting approach for some code that wasn't so easy to port.  https://lists.apache.org/list.html?dev@lucenenet.apache.org
@@ -73,6 +67,3 @@ In the contributing section of this website we have a list of several community 
 **[Lucene In Action 2nd Edition](https://www.amazon.com/Lucene-Action-Second-Covers-Apache/dp/1933988177)** - This is a great book written by a core Lucene committer that dives deep into the inner workings of Lucene.  It's packed full of great information about Lucene. It is written for Java Lucene rather than Lucene.NET but as I have already mentioned, it's generally not a big deal to translate Lucene code samples from Java to c#.  That said, the one downside to this book is that it was written during the Lucene 3.0 era.  The largest changes in the history of Lucene came in version 4.0.  So some of the information in this book, and some of the code samples, are outdated.  But much of the information, especially at the conceptual level, hold true and is very valuable for understanding Lucene.
 
 **[Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/information-retrieval-book.html)** - This book isn't written about Lucene per se but is a great resource on the subject of information retrieval which is the knowledgebase that underpins search software like Lucene.  This book was written by two professors at Stanford University and one from the University of Stuttgart.  The introduction in the book states "Introduction to Information Retrieval is the first textbook with a coherent treatment of classical and web information retrieval, including web search and the related areas of text classification and text clustering.  Written from a computer science perspective, it gives and up-to-date treatment of all aspects of the design and implementation of systems for gathering, indexing and searching documents..."  The content is [available online for free](https://nlp.stanford.edu/IR-book/information-retrieval-book.html) or a [hard cover version](https://www.amazon.com/Introduction-Information-Retrieval-Christopher-Manning/dp/0521865719) is available for purchase.
-
-
-

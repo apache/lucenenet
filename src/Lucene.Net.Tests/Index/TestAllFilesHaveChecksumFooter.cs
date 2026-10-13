@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
             {
                 if (file.Equals(IndexWriter.WRITE_LOCK_NAME, StringComparison.Ordinal))
                 {
-                    continue; // write.lock has no footer, thats ok
+                    continue; // write.lock has no footer, that's ok
                 }
                 if (file.EndsWith(IndexFileNames.COMPOUND_FILE_EXTENSION, StringComparison.Ordinal))
                 {

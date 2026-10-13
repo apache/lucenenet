@@ -30,7 +30,7 @@ namespace Lucene.Net.Util.Packed
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public sealed class AppendingDeltaPackedInt64Buffer : AbstractAppendingInt64Buffer
+    internal sealed class AppendingDeltaPackedInt64Buffer : AbstractAppendingInt64Buffer // LUCENENET: made internal until LUCENE-5792 lands
     {
         internal long[] minValues;
 

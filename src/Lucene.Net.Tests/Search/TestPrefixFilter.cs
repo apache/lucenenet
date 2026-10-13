@@ -75,19 +75,19 @@ namespace Lucene.Net.Search
             hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
 
-            // test non-existant
+            // test non-existent
             filter = new PrefixFilter(new Term("category", "/Computers/ObsoleteOS"));
             query = new ConstantScoreQuery(filter);
             hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
 
-            // test non-existant, before values
+            // test non-existent, before values
             filter = new PrefixFilter(new Term("category", "/Computers/AAA"));
             query = new ConstantScoreQuery(filter);
             hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
 
-            // test non-existant, after values
+            // test non-existent, after values
             filter = new PrefixFilter(new Term("category", "/Computers/ZZZ"));
             query = new ConstantScoreQuery(filter);
             hits = searcher.Search(query, null, 1000).ScoreDocs;

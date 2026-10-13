@@ -188,7 +188,7 @@ namespace Lucene.Net.Analysis
                 {
                     // note: this isn't necessarily true. its just that we aren't surely det.
                     // we could optimize this further (e.g. buffer and sort synonyms at a position)
-                    // but thats probably overkill. this is cheap and dirty
+                    // but that's probably overkill. this is cheap and dirty
                     deterministic = false;
                 }
 

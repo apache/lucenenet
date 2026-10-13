@@ -82,7 +82,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
 
-        public override string IndexFieldName => field;
+        public override string IndexFieldName => this.field;
 
         /// <summary>
         /// Subclass &amp; override if you change the encoding.

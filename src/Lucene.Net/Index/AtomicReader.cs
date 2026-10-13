@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// LUCENENET specific propety that allows access to
+        /// LUCENENET specific property that allows access to
         /// the context as <see cref="AtomicReaderContext"/>,
         /// which prevents the need to cast.
         /// </summary>

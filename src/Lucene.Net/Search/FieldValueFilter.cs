@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns the field this filter is applied on. </summary>
         /// <returns> The field this filter is applied on. </returns>
-        public virtual string Field => field;
+        public virtual string Field => this.field;
 
         /// <summary>
         /// Returns <c>true</c> if this filter is negated, otherwise <c>false</c> </summary>
