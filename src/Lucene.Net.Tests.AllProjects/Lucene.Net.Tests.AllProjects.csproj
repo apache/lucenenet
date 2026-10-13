@@ -27,6 +27,7 @@
     <!-- Technically, this is all Java-ported non-test projects and dotnet add-ons
          but that is a really long project name! -->
     <AssemblyTitle>Lucene.Net.Tests.AllProjects</AssemblyTitle>
+    <TestShard>Misc</TestShard>
     <RootNamespace>Lucene.Net</RootNamespace>
   </PropertyGroup>
 

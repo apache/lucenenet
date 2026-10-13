@@ -25,6 +25,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.Sandbox</AssemblyTitle>
+    <TestShard>Queries</TestShard>
   </PropertyGroup>
 
   <ItemGroup>

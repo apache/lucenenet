@@ -25,6 +25,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.Analysis.SmartCn</AssemblyTitle>
+    <TestShard>Analysis</TestShard>
   </PropertyGroup>
 
   <ItemGroup>

@@ -25,6 +25,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.Queries</AssemblyTitle>
+    <TestShard>Queries</TestShard>
   </PropertyGroup>
 
   <ItemGroup>

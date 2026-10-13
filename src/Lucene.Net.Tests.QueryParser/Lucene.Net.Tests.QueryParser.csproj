@@ -25,6 +25,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.QueryParser</AssemblyTitle>
+    <TestShard>Queries</TestShard>
 
     <RootNamespace>Lucene.Net.QueryParsers</RootNamespace>
   </PropertyGroup>

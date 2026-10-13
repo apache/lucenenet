@@ -32,15 +32,23 @@
     A GitHub Actions job spends roughly 110 seconds on checkout, SDK setup, and restore before
     a single test runs, so a project with only a handful of tests spends ~96% of its job doing
     setup. Grouping several such projects into one job pays that cost once instead of per
-    project. See $TestProjectGroups below for the groups and Get-TestProjectGroup for how a
-    project is assigned to one.
+    project.
 
-    Projects with a large number of tests (the Lucene.Net.Tests._* letter shards and
-    Lucene.Net.Tests.Analysis.Common), and those needing a non-default build matrix or extra
-    build steps (Lucene.Net.Tests.Cli, Lucene.Net.Tests.CodeAnalysis and
-    Lucene.Net.Tests.Analysis.OpenNLP), remain in their own workflow file. Any project not
-    listed in a group also gets its own file, so adding a new test project needs no change
-    here.
+    A project joins a group by setting the TestShard MSBuild property in its .csproj file:
+
+        <TestShard>Search</TestShard>
+
+    All projects with the same TestShard value run in one workflow named
+    Lucene.Net.Tests.<TestShard>. Every project in a group must support the same set of
+    target frameworks, because the members share a single build matrix; the frameworks are
+    narrowed to the intersection with a warning if they differ.
+
+    A project that does not set TestShard gets a workflow file of its own, so adding a new test
+    project needs no change here. Projects with a large number of tests (the
+    Lucene.Net.Tests._* letter shards and Lucene.Net.Tests.Analysis.Common), and those needing
+    a non-default build matrix or extra build steps (Lucene.Net.Tests.Cli,
+    Lucene.Net.Tests.CodeAnalysis and Lucene.Net.Tests.Analysis.OpenNLP), deliberately leave
+    TestShard unset.
 
  .PARAMETER OutputDirectory
     The directory to output the files. This should be in a directory named /.github/workflows
@@ -92,61 +100,6 @@ param(
     [string]$DotNet8SDKVersion = '8.0.x'
 )
 
-
-# Test projects that are bundled together into a single workflow file, so that the fixed
-# per-job overhead (checkout, SDK setup, restore) is paid once for the whole group instead of
-# once per project. The key is the workflow name; the value is the list of project names that
-# run within each matrix job of that workflow.
-#
-# Every project in a group must support the same set of target frameworks, because the members
-# share a single build matrix. Get-TestProjectGroup intersects the frameworks of all members
-# and warns if they are not identical.
-#
-# Projects deliberately left out of the groups (each keeps its own workflow file):
-#   Lucene.Net.Tests._A-D, _E-I, _I-J, _J-S, _T-Z  - large letter shards, test time dominates
-#   Lucene.Net.Tests.Analysis.Common               - ~1,650 tests, test time dominates
-#   Lucene.Net.Tests.Cli                           - reduced matrix, plus an extra dotnet pack step
-#   Lucene.Net.Tests.CodeAnalysis                  - net8.0 only
-#   Lucene.Net.Tests.Analysis.OpenNLP              - excludes net472
-$TestProjectGroups = [ordered]@{
-    'Lucene.Net.Tests.Analysis' = @(
-        'Lucene.Net.Tests.Analysis.Kuromoji',
-        'Lucene.Net.Tests.Analysis.Morfologik',
-        'Lucene.Net.Tests.Analysis.Phonetic',
-        'Lucene.Net.Tests.Analysis.SmartCn',
-        'Lucene.Net.Tests.Analysis.Stempel',
-        'Lucene.Net.Tests.ICU'
-    )
-    'Lucene.Net.Tests.Queries' = @(
-        'Lucene.Net.Tests.Expressions',
-        'Lucene.Net.Tests.Queries',
-        'Lucene.Net.Tests.QueryParser',
-        'Lucene.Net.Tests.Sandbox'
-    )
-    'Lucene.Net.Tests.Search' = @(
-        'Lucene.Net.Tests.Facet',
-        'Lucene.Net.Tests.Grouping',
-        'Lucene.Net.Tests.Highlighter',
-        'Lucene.Net.Tests.Join',
-        'Lucene.Net.Tests.Spatial',
-        'Lucene.Net.Tests.Suggest'
-    )
-    'Lucene.Net.Tests.TestFrameworks' = @(
-        'Lucene.Net.Tests.TestFramework',
-        'Lucene.Net.Tests.TestFramework.DependencyInjection',
-        'Lucene.Net.Tests.TestFramework.NUnitExtensions'
-    )
-    'Lucene.Net.Tests.Misc' = @(
-        'Lucene.Net.Tests.AllProjects',
-        'Lucene.Net.Tests.Benchmark',
-        'Lucene.Net.Tests.Classification',
-        'Lucene.Net.Tests.Codecs',
-        'Lucene.Net.Tests.Demo',
-        'Lucene.Net.Tests.Memory',
-        'Lucene.Net.Tests.Misc',
-        'Lucene.Net.Tests.Replicator'
-    )
-}
 
 
 function Resolve-RelativePath([string]$RelativeRoot, [string]$Path) {
@@ -218,6 +171,17 @@ function Get-SupportedTargetFrameworksString([Parameter(Mandatory)][string] $Pro
         return $matches[1]
     }
     throw "Failed to determine supported target frameworks for project: $ProjectPath"
+}
+
+# Returns the value of the TestShard MSBuild property for the project, or an empty string if
+# the project does not set it. Projects that share a TestShard value run in the same workflow.
+function Get-TestShard([Parameter(Mandatory)][string] $ProjectPath) {
+    # With a single -getProperty, MSBuild prints the evaluated value alone rather than JSON.
+    $output = dotnet msbuild "$ProjectPath" -nologo -getProperty:TestShard 2>&1 | Out-String
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to determine the TestShard for project: $ProjectPath$([System.Environment]::NewLine)$output"
+    }
+    return $output.Trim()
 }
 
 function Ensure-Directory-Exists([string] $path) {
@@ -565,17 +529,6 @@ try {
 
 #Write-Host $TestProjects
 
-# Returns the name of the workflow that the given project belongs to, or $null if the project
-# is not grouped and should get a workflow file of its own.
-function Get-TestProjectGroup([string]$ProjectName, [System.Collections.Specialized.OrderedDictionary]$Groups) {
-    foreach ($groupName in $Groups.Keys) {
-        if ($Groups[$groupName] -contains $ProjectName) {
-            return $groupName
-        }
-    }
-    return $null
-}
-
 # First pass: resolve the target frameworks for each project and assign it to a workflow.
 # Grouped projects are collected so the whole group can be emitted as one file afterwards.
 $workflowProjects = [ordered]@{}     # workflow name -> ordered list of project paths
@@ -605,8 +558,8 @@ foreach ($testProject in $TestProjects) {
     Write-Host ""
     Write-Host "Frameworks To Test for ${projectName}: $($frameworks -join ';')" -ForegroundColor Cyan
 
-    $groupName = Get-TestProjectGroup $projectName $TestProjectGroups
-    $workflowName = if ($groupName -ne $null) { $groupName } else { $projectName }
+    $testShard = Get-TestShard $testProject
+    $workflowName = if ([string]::IsNullOrEmpty($testShard)) { $projectName } else { "Lucene.Net.Tests.$testShard" }
 
     if (-not $workflowProjects.Contains($workflowName)) {
         $workflowProjects[$workflowName] = New-Object System.Collections.Generic.List[string]
@@ -624,20 +577,6 @@ foreach ($testProject in $TestProjects) {
     $workflowProjects[$workflowName].Add($testProject)
 }
 
-# Warn about any group member that was configured but never found, so a typo or a renamed
-# project in $TestProjectGroups does not silently drop that project from CI.
-foreach ($groupName in $TestProjectGroups.Keys) {
-    $emitted = if ($workflowProjects.Contains($groupName)) {
-        @($workflowProjects[$groupName] | ForEach-Object { [System.IO.Path]::GetFileNameWithoutExtension($_) })
-    } else { @() }
-
-    foreach ($member in $TestProjectGroups[$groupName]) {
-        if ($emitted -notcontains $member) {
-            Write-Host "WARNING: Project '$member' is listed in group '$groupName' but was not found. Check the name in `$TestProjectGroups." -ForegroundColor Yellow
-        }
-    }
-}
-
 # Second pass: emit one workflow file per group and per ungrouped project.
 foreach ($workflowName in $workflowProjects.Keys) {
     $projectPaths = @($workflowProjects[$workflowName])
@@ -646,6 +585,10 @@ foreach ($workflowName in $workflowProjects.Keys) {
     if ($projectPaths.Count -gt 1) {
         Write-Host ""
         Write-Host "Grouping $($projectPaths.Count) projects into workflow '${workflowName}': $(($projectPaths | ForEach-Object { [System.IO.Path]::GetFileNameWithoutExtension($_) }) -join ', ')" -ForegroundColor Green
+    } elseif ($workflowName -ne [System.IO.Path]::GetFileNameWithoutExtension($projectPaths[0])) {
+        # A TestShard value that no other project shares is most likely a typo, which would
+        # quietly split the project out of the group it was meant to join.
+        Write-Host "WARNING: Workflow '${workflowName}' contains only $([System.IO.Path]::GetFileNameWithoutExtension($projectPaths[0])). Check that its TestShard value matches the other projects in the group." -ForegroundColor Yellow
     }
 
     Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPaths $projectPaths -WorkflowName $workflowName -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet8SDKVersion $DotNet8SDKVersion

@@ -25,6 +25,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.Codecs</AssemblyTitle>
+    <TestShard>Misc</TestShard>
   </PropertyGroup>
 
   <ItemGroup>

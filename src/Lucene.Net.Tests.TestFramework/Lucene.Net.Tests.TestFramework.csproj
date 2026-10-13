@@ -25,6 +25,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.TestFramework</AssemblyTitle>
+    <TestShard>TestFrameworks</TestShard>
     <RootNamespace>Lucene.Net</RootNamespace>
 
     <DefineConstants>$(DefineConstants);TESTFRAMEWORK_NUNIT</DefineConstants>
