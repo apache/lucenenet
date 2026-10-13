@@ -193,46 +193,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 // LUCENENET: Added guard clauses
                 if (input is null)
                     throw new ArgumentNullException(nameof(input));
-                if (output is null)
-                    throw new ArgumentNullException(nameof(output));
 
-                int length = input.Length;
-                if (ignoreCase)
-                {
-                    // convert on the fly to lowercase
-
-                    // LUCENENET: Reduce allocations/improve throughput by using stack and spans
-                    var source = input.AsSpan();
-                    if (length * sizeof(char) <= Constants.MaxStackByteLimit)
-                    {
-                        // Fast path - use the stack
-                        Span<char> buffer = stackalloc char[length];
-                        source.ToLowerInvariant(buffer);
-
-                        UnicodeUtil.UTF16toUTF8(buffer, spare);
-                    }
-                    else
-                    {
-                        // Slow path - use the heap
-                        charsSpare.Grow(length);
-                        char[] buffer = charsSpare.Chars;
-
-                        var destination = buffer.AsSpan(0, length);
-                        source.ToLowerInvariant(destination);
-
-                        UnicodeUtil.UTF16toUTF8(buffer, 0, length, spare);
-                    }
-                }
-                else
-                {
-                    UnicodeUtil.UTF16toUTF8(input, 0, length, spare);
-                }
-                if (hash.Add(spare) >= 0)
-                {
-                    outputValues.Add(output);
-                    return true;
-                }
-                return false;
+                return Add(input.AsSpan(), output);
             }
 
             /// <summary>
