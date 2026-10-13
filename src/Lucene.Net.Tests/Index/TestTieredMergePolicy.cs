@@ -1,9 +1,11 @@
 using Lucene.Net.Attributes;
+using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using NUnit.Framework;
 using System;
+using System.Globalization;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 #if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
@@ -287,14 +289,17 @@ namespace Lucene.Net.Index
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             TieredMergePolicy tmp = (TieredMergePolicy)iwc.MergePolicy;
             tmp.FloorSegmentMB = 0.00001;
-            iwc.MergeScheduler = new SerialMergeScheduler();
-            iwc.MaxBufferedDocs = 100;
-            iwc.RAMBufferSizeMB = -1;
+            // We need stable sizes for each segment:
+            iwc.SetCodec(Codec.ForName("Lucene46"));
+            iwc.SetMergeScheduler(new SerialMergeScheduler());
+            iwc.SetMaxBufferedDocs(100);
+            iwc.SetRAMBufferSizeMB(-1);
             using IndexWriter w = new IndexWriter(dir, iwc);
             for (int i = 0; i < 100000; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("id", Random.NextInt64() + "" + Random.NextInt64(), Field.Store.YES));
+                // LUCENENET: Use the invariant culture so the negative sign matches Java's Long.toString()
+                doc.Add(NewTextField("id", Random.NextInt64().ToString(CultureInfo.InvariantCulture) + "" + Random.NextInt64().ToString(CultureInfo.InvariantCulture), Field.Store.YES));
                 w.AddDocument(doc);
             }
 
