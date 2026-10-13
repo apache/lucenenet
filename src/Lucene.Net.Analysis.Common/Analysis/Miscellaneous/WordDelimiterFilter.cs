@@ -117,11 +117,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///     </description></item>
     /// </list>
     /// <para/>
-    /// The <b>combinations</b> parameter affects how subwords are combined:
+    /// The <b>GENERATE...</b> options affect how incoming tokens are broken into parts, and the
+    /// various <b>CATENATE_...</b> parameters affect how those parts are combined.
     /// <list type="bullet">
-    ///     <item><description>combinations="0" causes no subword combinations: <code>"PowerShot"</code>
+    ///     <item><description>If no CATENATE option is set, then no subword combinations are generated: <c>"PowerShot"</c>
     ///         &#8594; <c>0:"Power", 1:"Shot"</c> (0 and 1 are the token positions)</description></item>
-    ///     <item><description>combinations="1" means that in addition to the subwords, maximum runs of
+    ///     <item><description>CATENATE_WORDS means that in addition to the subwords, maximum runs of
     ///         non-numeric subwords are catenated and produced at the same position of the
     ///         last subword in the run:
     ///         <ul>
@@ -134,13 +135,15 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///             </description></item>
     ///         </ul>
     ///     </description></item>
+    ///     <item><description>CATENATE_NUMBERS works like CATENATE_WORDS, but for adjacent digit sequences.</description></item>
+    ///     <item><description>CATENATE_ALL smushes together all the token parts without distinguishing numbers and words.</description></item>
     /// </list>
     /// <para/>
     /// One use for <see cref="WordDelimiterFilter"/> is to help match words with different
     /// subword delimiters. For example, if the source text contained "wi-fi" one may
     /// want "wifi" "WiFi" "wi-fi" "wi+fi" queries to all match. One way of doing so
-    /// is to specify combinations="1" in the analyzer used for indexing, and
-    /// combinations="0" (the default) in the analyzer used for querying. Given that
+    /// is to specify CATENATE options in the analyzer used for indexing, and
+    /// not in the analyzer used for querying. Given that
     /// the current <see cref="Standard.StandardTokenizer"/> immediately removes many intra-word
     /// delimiters, it is recommended that this filter be used after a tokenizer that
     /// does not do this (such as <see cref="Core.WhitespaceTokenizer"/>).
