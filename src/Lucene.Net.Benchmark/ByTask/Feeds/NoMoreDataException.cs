@@ -26,7 +26,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
     /// <summary>
     /// Exception indicating there is no more data.
-    /// Thrown by Docs Makers if <c>doc.maker.forever</c> is <c>false</c> and docs sources of that maker where exhausted.
+    /// Thrown by Docs Makers if <c>content.source.forever</c> is <c>false</c> and docs sources of that maker where exhausted.
     /// This is useful for iterating all document of a source, in case we don't know in advance how many docs there are.
     /// </summary>
     // LUCENENET: It is no longer good practice to use binary serialization.
