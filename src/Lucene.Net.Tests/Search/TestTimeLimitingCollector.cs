@@ -196,14 +196,14 @@ namespace Lucene.Net.Search
             ICollector tlCollector = CreateTimedCollector(myHc, TIME_ALLOWED, greedy);
 
             // search
-            TimeLimitingCollector.TimeExceededException timoutException = null;
+            TimeLimitingCollector.TimeExceededException timeoutException = null;
             try
             {
                 Search(tlCollector);
             }
             catch (TimeLimitingCollector.TimeExceededException x)
             {
-                timoutException = x;
+                timeoutException = x;
             }
             catch (Exception e) when (e.IsException())
             {
@@ -211,10 +211,10 @@ namespace Lucene.Net.Search
             }
 
             // must get exception
-            assertNotNull("Timeout expected!", timoutException);
+            assertNotNull("Timeout expected!", timeoutException);
 
             // greediness affect last doc collected
-            int exceptionDoc = timoutException.LastDocCollected;
+            int exceptionDoc = timeoutException.LastDocCollected;
             int lastCollected = myHc.LastDocCollected;
             assertTrue("doc collected at timeout must be > 0!", exceptionDoc > 0);
             if (greedy)
@@ -228,20 +228,20 @@ namespace Lucene.Net.Search
             }
 
             // verify that elapsed time at exception is within valid limits
-            assertEquals(timoutException.TimeAllowed, TIME_ALLOWED);
+            assertEquals(timeoutException.TimeAllowed, TIME_ALLOWED);
             // a) Not too early
-            assertTrue("elapsed=" + timoutException.TimeElapsed + " <= (allowed-resolution)=" + (TIME_ALLOWED - counterThread.Resolution),
-                timoutException.TimeElapsed > TIME_ALLOWED - counterThread.Resolution);
+            assertTrue("elapsed=" + timeoutException.TimeElapsed + " <= (allowed-resolution)=" + (TIME_ALLOWED - counterThread.Resolution),
+                timeoutException.TimeElapsed > TIME_ALLOWED - counterThread.Resolution);
             // b) Not too late.
             //    This part is problematic in a busy test system, so we just print a warning.
             //    We already verified that a timeout occurred, we just can't be picky about how long it took.
-            if (timoutException.TimeElapsed > MaxTime(multiThreaded))
+            if (timeoutException.TimeElapsed > MaxTime(multiThreaded))
             {
                 Console.WriteLine("Informative: timeout exceeded (no action required: most probably just " +
                   " because the test machine is slower than usual):  " +
                   "lastDoc=" + exceptionDoc +
-                  " ,&& allowed=" + timoutException.TimeAllowed +
-                  " ,&& elapsed=" + timoutException.TimeElapsed +
+                  " ,&& allowed=" + timeoutException.TimeAllowed +
+                  " ,&& elapsed=" + timeoutException.TimeElapsed +
                   " >= " + MaxTimeStr(multiThreaded));
             }
         }
