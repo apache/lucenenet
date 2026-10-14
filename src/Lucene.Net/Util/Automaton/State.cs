@@ -363,6 +363,15 @@ namespace Lucene.Net.Util.Automaton
             return s.id - id;
         }
 
+        // LUCENENET NOTE: DO NOT IMPLEMENT Equals() with structural equality!!!
+        // Checking for reference equality is by design.
+        // Implementing Equals() causes difficult to diagnose
+        // IndexOutOfRangeExceptions when using FuzzyTermsEnum.
+        // See GH-296.
+        // LUCENENET: Equals() and GetHashCode() are intentionally not overridden
+        // (upstream removed hashCode() in LUCENE-5628), so CS0660 and CS0661
+        // are suppressed at the top of this file.
+
         #region Operator overrides
 #nullable enable
         // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators

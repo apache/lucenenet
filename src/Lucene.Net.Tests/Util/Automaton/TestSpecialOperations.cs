@@ -88,9 +88,9 @@ namespace Lucene.Net.Util.Automaton
             ISet<Int32sRef> strings = GetFiniteStrings(a, -1, false);
             Assert.AreEqual(2, strings.Count);
             Int32sRef scratch = new Int32sRef();
-            Util.ToUTF32(bigString1.ToCharArray(), 0, bigString1.Length, scratch);
+            Util.ToUTF32(bigString1.AsSpan(), scratch);
             Assert.IsTrue(strings.Contains(scratch));
-            Util.ToUTF32(bigString2.ToCharArray(), 0, bigString2.Length, scratch);
+            Util.ToUTF32(bigString2.AsSpan(), scratch);
             Assert.IsTrue(strings.Contains(scratch));
         }
 
@@ -104,13 +104,13 @@ namespace Lucene.Net.Util.Automaton
             }
 
             ISet<Int32sRef> strings = new JCG.HashSet<Int32sRef>();
-            IList<Automaton> automata = new List<Automaton>();
+            IList<Automaton> automata = new JCG.List<Automaton>();
             for (int i = 0; i < numStrings; i++)
             {
                 string s = TestUtil.RandomSimpleString(Random, 1, 200);
                 automata.Add(BasicAutomata.MakeString(s));
                 Int32sRef scratch = new Int32sRef();
-                Util.ToUTF32(s.ToCharArray(), 0, s.Length, scratch);
+                Util.ToUTF32(s.AsSpan(), scratch);
                 strings.Add(scratch);
                 if (Verbose)
                 {
@@ -160,9 +160,9 @@ namespace Lucene.Net.Util.Automaton
             if (!strings.Equals(actual))
             {
                 Console.WriteLine($"strings.size()={strings.Count} actual.size={actual.Count}");
-                IList<Int32sRef> x = new List<Int32sRef>(strings);
+                IList<Int32sRef> x = new JCG.List<Int32sRef>(strings);
                 x.Sort();
-                IList<Int32sRef> y = new List<Int32sRef>(actual);
+                IList<Int32sRef> y = new JCG.List<Int32sRef>(actual);
                 y.Sort();
                 int end = Math.Min(x.Count, y.Count);
                 for (int i = 0; i < end; i++)
@@ -260,7 +260,7 @@ namespace Lucene.Net.Util.Automaton
             ISet<Int32sRef> result = SpecialOperations.GetFiniteStrings(BasicAutomata.MakeString("foobar"), -1);
             Assert.AreEqual(1, result.Count);
             Int32sRef scratch = new Int32sRef();
-            Util.ToUTF32("foobar".ToCharArray(), 0, 6, scratch);
+            Util.ToUTF32("foobar".AsSpan(), scratch);
             Assert.IsTrue(result.Contains(scratch));
         }
 
@@ -270,7 +270,7 @@ namespace Lucene.Net.Util.Automaton
             ISet<Int32sRef> result = SpecialOperations.GetFiniteStrings(BasicAutomata.MakeString("foobar"), 1);
             Assert.AreEqual(1, result.Count);
             Int32sRef scratch = new Int32sRef();
-            Util.ToUTF32("foobar".ToCharArray(), 0, 6, scratch);
+            Util.ToUTF32("foobar".AsSpan(), scratch);
             Assert.IsTrue(result.Contains(scratch));
         }
     }

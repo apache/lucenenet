@@ -1,4 +1,5 @@
 using J2N.Collections.Generic.Extensions;
+using J2N.Runtime.CompilerServices;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
@@ -392,7 +393,7 @@ namespace Lucene.Net.Util.Automaton
 
                     // Tracks which states are in the current path, for
                     // cycle detection:
-                    JCG.HashSet<State> pathStates = new JCG.HashSet<State>();
+                    JCG.HashSet<State> pathStates = new JCG.HashSet<State>(IdentityEqualityComparer<State>.Default);
 
                     // Stack to hold our current state in the
                     // recursion/iteration:
