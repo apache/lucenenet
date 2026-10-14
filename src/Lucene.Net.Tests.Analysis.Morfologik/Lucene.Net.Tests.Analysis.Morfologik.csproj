@@ -25,6 +25,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.Analysis.Morfologik</AssemblyTitle>
+    <TestShard>Analysis</TestShard>
     <RootNamespace>Lucene.Net.Analysis</RootNamespace>
   </PropertyGroup>
 

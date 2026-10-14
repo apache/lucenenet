@@ -32,6 +32,7 @@
     <TargetFrameworks Condition=" '$(TargetFramework)' == '' And $([MSBuild]::IsOsPlatform('Windows')) And '$(IsLegacyVisualStudioVersion)' != 'true' ">$(TargetFrameworks);net48</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Tests.Analysis.OpenNLP</AssemblyTitle>
+    <TestShardIsolated>true</TestShardIsolated>
     <RootNamespace>Lucene.Net.Analysis.OpenNlp</RootNamespace>
   </PropertyGroup>
 

@@ -25,6 +25,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.Benchmark</AssemblyTitle>
+    <TestShard>Misc</TestShard>
   </PropertyGroup>
 
   <ItemGroup>

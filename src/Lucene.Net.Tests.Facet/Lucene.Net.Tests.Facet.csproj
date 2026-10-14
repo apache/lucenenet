@@ -25,6 +25,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.Facet</AssemblyTitle>
+    <TestShard>Search</TestShard>
   </PropertyGroup>
 
   <ItemGroup>

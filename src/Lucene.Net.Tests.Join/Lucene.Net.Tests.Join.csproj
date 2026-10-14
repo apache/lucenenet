@@ -25,6 +25,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.Join</AssemblyTitle>
+    <TestShard>Search</TestShard>
   </PropertyGroup>
 
   <ItemGroup>

@@ -25,6 +25,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.Suggest</AssemblyTitle>
+    <TestShard>Search</TestShard>
   </PropertyGroup>
 
   <ItemGroup>

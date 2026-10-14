@@ -25,6 +25,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.Analysis.Phonetic</AssemblyTitle>
+    <TestShard>Analysis</TestShard>
   </PropertyGroup>
 
   <ItemGroup>

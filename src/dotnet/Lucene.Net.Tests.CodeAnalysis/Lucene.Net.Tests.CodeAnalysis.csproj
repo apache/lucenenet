@@ -30,6 +30,7 @@
     <IsPublishable>false</IsPublishable>
     <IsPublishable Condition=" '$(TargetFramework)' == 'net8.0' ">true</IsPublishable>
     <IsTestProject>true</IsTestProject>
+    <TestShardIsolated>true</TestShardIsolated>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />

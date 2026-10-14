@@ -40,12 +40,22 @@ on:
     - 'src/Lucene.Net.Tests.Analysis.Common/**/*.htm'
     - 'src/Lucene.Net.Tests.Analysis.Common/**/*.html'
     - 'src/Lucene.Net.Tests.Analysis.Common/**/*.xml'
+    - 'src/Lucene.Net.Tests.Analysis.Kuromoji/userdict.txt'
 
     # Dependencies
     - 'src/Lucene.Net/**/*'
     - 'src/Lucene.Net.Analysis.Common/**/*'
     - 'src/Lucene.Net.Codecs/**/*'
     - 'src/Lucene.Net.TestFramework/**/*'
+    - 'src/Lucene.Net.Memory/**/*'
+    - 'src/Lucene.Net.Queries/**/*'
+    - 'src/Lucene.Net.Highlighter/**/*'
+    - 'src/dotnet/Lucene.Net.ICU/**/*'
+    - 'src/Lucene.Net.Analysis.Kuromoji/**/*'
+    - 'src/Lucene.Net.Analysis.Morfologik/**/*'
+    - 'src/Lucene.Net.Analysis.Phonetic/**/*'
+    - 'src/Lucene.Net.Analysis.SmartCn/**/*'
+    - 'src/Lucene.Net.Analysis.Stempel/**/*'
 
     - '!**/*.md'
 
@@ -53,6 +63,10 @@ jobs:
 
   Test:
     runs-on: ${{ matrix.os }}
+    # Without this, a job inherits the GitHub default of 360 minutes. The slowest job
+    # observed takes well under 30 minutes, grouped ones included, so this is a cap on a
+    # stuck job rather than a budget to run within.
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
