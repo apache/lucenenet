@@ -32,7 +32,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
     /// <summary>
     /// Some tests that override <see cref="PostingsHighlighter.GetIndexAnalyzer(string)"/> to
-    /// highlight wilcard, fuzzy, etc queries.
+    /// highlight wildcard, fuzzy, etc queries.
     /// </summary>
     /// <remarks>
     /// LUCENENET specific - These are the original tests from Lucene. They are only here as proof that we

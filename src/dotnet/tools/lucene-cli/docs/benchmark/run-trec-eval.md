@@ -18,7 +18,7 @@ Input file containing queries.
 
 `INPUT_QUERY_RELEVANCE_FILE`
 
-Input file conataining relevance judgements.
+Input file containing relevance judgements.
 
 `OUTPUT_SUBMISSION_FILE`
 

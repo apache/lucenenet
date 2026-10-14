@@ -245,7 +245,7 @@ See this blog post (http://mentaldetritus.blogspot.com/2013/03/compiling-custom-
     <value>Use title field in query. This flag will automatically be on if no other field is specified.</value>
   </data>
   <data name="BenchmarkRunTrecEvalCommandQueryRelevanceFileDescription" xml:space="preserve">
-    <value>Input file conataining relevance judgements.</value>
+    <value>Input file containing relevance judgements.</value>
   </data>
   <data name="BenchmarkRunTrecEvalCommandTopicsFileDescription" xml:space="preserve">
     <value>Input file containing queries.</value>
@@ -523,7 +523,7 @@ WARNING: This tool may reorder document IDs! Be sure to make a backup of your in
   <data name="LockStressTestCommandTriesDescription" xml:space="preserve">
     <value>Number of locking tries.</value>
   </data>
-  <data name="LockStressTestCommandVerfierPortDescription" xml:space="preserve">
+  <data name="LockStressTestCommandVerifierPortDescription" xml:space="preserve">
     <value>Port that verify-server is listening on.</value>
   </data>
   <data name="LockStressTestCommandVerifierHostDescription" xml:space="preserve">

@@ -33,7 +33,7 @@ namespace Lucene.Net.Cli
 
                 this.Argument("<ID>", FromResource("IDDescription"));
                 this.Argument("<VERIFIER_HOST>", FromResource("VerifierHostDescription"));
-                this.Argument("<VERIFIER_PORT>", FromResource("VerfierPortDescription"));
+                this.Argument("<VERIFIER_PORT>", FromResource("VerifierPortDescription"));
                 this.Argument("<LOCK_FACTORY_TYPE>", FromResource("LockFactoryTypeDescription"));
                 this.Argument("<LOCK_DIRECTORY>", FromResource("LockDirectoryDescription"));
                 this.Argument("<SLEEP_TIME_MS>", FromResource("SleepTimeMSDescription"));
