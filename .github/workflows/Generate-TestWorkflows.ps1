@@ -40,15 +40,23 @@
 
     All projects with the same TestShard value run in one workflow named
     Lucene.Net.Tests.<TestShard>. Every project in a group must support the same set of
-    target frameworks, because the members share a single build matrix; the frameworks are
-    narrowed to the intersection with a warning if they differ.
+    target frameworks, because the members share a single build matrix, and a group must
+    have more than one member.
 
-    A project that does not set TestShard gets a workflow file of its own, so adding a new test
-    project needs no change here. Projects with a large number of tests (the
-    Lucene.Net.Tests._* letter shards and Lucene.Net.Tests.Analysis.Common), and those needing
-    a non-default build matrix or extra build steps (Lucene.Net.Tests.Cli,
-    Lucene.Net.Tests.CodeAnalysis and Lucene.Net.Tests.Analysis.OpenNLP), deliberately leave
-    TestShard unset.
+    A project that should get a workflow file of its own sets the TestShardIsolated MSBuild
+    property instead:
+
+        <TestShardIsolated>true</TestShardIsolated>
+
+    Projects with a large number of tests (the Lucene.Net.Tests._* letter shards and
+    Lucene.Net.Tests.Analysis.Common), and those needing a non-default build matrix or extra
+    build steps (Lucene.Net.Tests.Cli, Lucene.Net.Tests.CodeAnalysis and
+    Lucene.Net.Tests.Analysis.OpenNLP), are isolated.
+
+    Every test project must set exactly one of these two properties, so that a new project is
+    placed deliberately rather than by default. The script fails, listing every offending
+    project, if any project sets neither or both, or if any of the group rules above are
+    broken.
 
  .PARAMETER OutputDirectory
     The directory to output the files. This should be in a directory named /.github/workflows
@@ -173,15 +181,20 @@ function Get-SupportedTargetFrameworksString([Parameter(Mandatory)][string] $Pro
     throw "Failed to determine supported target frameworks for project: $ProjectPath"
 }
 
-# Returns the value of the TestShard MSBuild property for the project, or an empty string if
-# the project does not set it. Projects that share a TestShard value run in the same workflow.
-function Get-TestShard([Parameter(Mandatory)][string] $ProjectPath) {
-    # With a single -getProperty, MSBuild prints the evaluated value alone rather than JSON.
-    $output = dotnet msbuild "$ProjectPath" -nologo -getProperty:TestShard 2>&1 | Out-String
+# Returns the TestShard and TestShardIsolated MSBuild properties for the project, as an object
+# with TestShard and TestShardIsolated members (empty strings when unset). Projects that share
+# a TestShard value run in the same workflow; isolated projects get a workflow of their own.
+function Get-TestShardProperties([Parameter(Mandatory)][string] $ProjectPath) {
+    # With more than one -getProperty, MSBuild prints the evaluated values as JSON.
+    $output = dotnet msbuild "$ProjectPath" -nologo -getProperty:TestShard -getProperty:TestShardIsolated 2>&1 | Out-String
     if ($LASTEXITCODE -ne 0) {
-        throw "Failed to determine the TestShard for project: $ProjectPath$([System.Environment]::NewLine)$output"
+        throw "Failed to determine the TestShard properties for project: $ProjectPath$([System.Environment]::NewLine)$output"
     }
-    return $output.Trim()
+    $properties = ($output | ConvertFrom-Json).Properties
+    return [pscustomobject]@{
+        TestShard = "$($properties.TestShard)".Trim()
+        TestShardIsolated = "$($properties.TestShardIsolated)".Trim()
+    }
 }
 
 function Ensure-Directory-Exists([string] $path) {
@@ -533,6 +546,9 @@ try {
 # Grouped projects are collected so the whole group can be emitted as one file afterwards.
 $workflowProjects = [ordered]@{}     # workflow name -> ordered list of project paths
 $workflowFrameworks = @{}            # workflow name -> frameworks shared by the whole group
+$groupedWorkflows = New-Object System.Collections.Generic.HashSet[string] # workflow names set by TestShard
+$unassignedProjects = New-Object System.Collections.Generic.List[string]  # projects setting neither property
+$errors = New-Object System.Collections.Generic.List[string]
 
 foreach ($testProject in $TestProjects) {
     $projectName = [System.IO.Path]::GetFileNameWithoutExtension($testProject)
@@ -558,26 +574,66 @@ foreach ($testProject in $TestProjects) {
     Write-Host ""
     Write-Host "Frameworks To Test for ${projectName}: $($frameworks -join ';')" -ForegroundColor Cyan
 
-    $testShard = Get-TestShard $testProject
-    $workflowName = if ([string]::IsNullOrEmpty($testShard)) { $projectName } else { "Lucene.Net.Tests.$testShard" }
+    # Every project must choose a group or isolation explicitly. Errors are collected rather
+    # than thrown here so that a single run reports every project that needs fixing.
+    $shardProperties = Get-TestShardProperties $testProject
+    $testShard = $shardProperties.TestShard
+    $isolated = $shardProperties.TestShardIsolated
+
+    if (-not [string]::IsNullOrEmpty($isolated) -and $isolated -ne 'true') {
+        $errors.Add("${projectName} sets TestShardIsolated to '${isolated}'. The only supported value is 'true'; remove the property to join a group with TestShard instead.")
+        continue
+    }
+    if ([string]::IsNullOrEmpty($testShard) -and [string]::IsNullOrEmpty($isolated)) {
+        $unassignedProjects.Add($projectName)
+        continue
+    }
+    if (-not [string]::IsNullOrEmpty($testShard) -and -not [string]::IsNullOrEmpty($isolated)) {
+        $errors.Add("${projectName} sets both TestShard ('${testShard}') and TestShardIsolated. Remove one of them.")
+        continue
+    }
+
+    $workflowName = if ($isolated -eq 'true') { $projectName } else { "Lucene.Net.Tests.$testShard" }
+    if ($isolated -ne 'true') {
+        [void]$groupedWorkflows.Add($workflowName)
+    }
 
     if (-not $workflowProjects.Contains($workflowName)) {
         $workflowProjects[$workflowName] = New-Object System.Collections.Generic.List[string]
         $workflowFrameworks[$workflowName] = $frameworks
     } elseif (@(Compare-Object $workflowFrameworks[$workflowName] $frameworks).Count -ne 0) {
         # All projects sharing a workflow share a single build matrix, so differing frameworks
-        # would silently drop coverage. Narrow to the intersection and warn, naming the
-        # frameworks that are lost: the generated matrix alone does not say why it shrank.
-        $narrowed = @($workflowFrameworks[$workflowName] | ? { $frameworks -contains $_ })
-        $dropped = @(@($workflowFrameworks[$workflowName] + $frameworks | Select-Object -Unique) | ? { $narrowed -notcontains $_ })
-        Write-Host "WARNING: ${projectName} targets '$($frameworks -join ';')', which differs from the other projects in workflow '${workflowName}' ('$($workflowFrameworks[$workflowName] -join ';')'). Narrowing to '$($narrowed -join ';')', which DROPS COVERAGE for '$($dropped -join ';')'. Give this project its own workflow to keep testing those frameworks." -ForegroundColor Yellow
-        $workflowFrameworks[$workflowName] = $narrowed
+        # would silently drop coverage for the frameworks that are not shared by every member.
+        $errors.Add("${projectName} targets '$($frameworks -join ';')', which differs from the other projects in workflow '${workflowName}' ('$($workflowFrameworks[$workflowName] -join ';')'). Projects in a group share a single build matrix, so this would drop coverage. Move it to a group with matching frameworks or set <TestShardIsolated>true</TestShardIsolated>.")
+        continue
     }
 
     $workflowProjects[$workflowName].Add($testProject)
 }
 
-# Second pass: emit one workflow file per group and per ungrouped project.
+# A TestShard value that no other project shares is most likely a typo, which would quietly
+# split the project out of the group it was meant to join. Projects meant to run alone should
+# say so with TestShardIsolated.
+foreach ($workflowName in $groupedWorkflows) {
+    $projectPaths = @($workflowProjects[$workflowName])
+    if ($projectPaths.Count -eq 1) {
+        $errors.Add("Workflow '${workflowName}' contains only $([System.IO.Path]::GetFileNameWithoutExtension($projectPaths[0])). Check that its TestShard value matches the other projects in the group, or set <TestShardIsolated>true</TestShardIsolated> instead.")
+    }
+}
+
+if ($unassignedProjects.Count -gt 0) {
+    $existingGroups = ($groupedWorkflows | ForEach-Object { $_ -replace '^Lucene\.Net\.Tests\.', '' } | Sort-Object) -join ', '
+    foreach ($projectName in $unassignedProjects) {
+        $errors.Add("${projectName} sets neither <TestShard> nor <TestShardIsolated>true</TestShardIsolated>. Add one of them to its .csproj file. Existing groups: ${existingGroups}.")
+    }
+}
+
+if ($errors.Count -gt 0) {
+    $nl = [System.Environment]::NewLine
+    throw "Cannot generate test workflows. Fix the following $($errors.Count) problem(s) and run this script again:$nl$(($errors | ForEach-Object { " - $_" }) -join $nl)"
+}
+
+# Second pass: emit one workflow file per group and per isolated project.
 foreach ($workflowName in $workflowProjects.Keys) {
     $projectPaths = @($workflowProjects[$workflowName])
     $frameworks = $workflowFrameworks[$workflowName]
@@ -585,10 +641,6 @@ foreach ($workflowName in $workflowProjects.Keys) {
     if ($projectPaths.Count -gt 1) {
         Write-Host ""
         Write-Host "Grouping $($projectPaths.Count) projects into workflow '${workflowName}': $(($projectPaths | ForEach-Object { [System.IO.Path]::GetFileNameWithoutExtension($_) }) -join ', ')" -ForegroundColor Green
-    } elseif ($workflowName -ne [System.IO.Path]::GetFileNameWithoutExtension($projectPaths[0])) {
-        # A TestShard value that no other project shares is most likely a typo, which would
-        # quietly split the project out of the group it was meant to join.
-        Write-Host "WARNING: Workflow '${workflowName}' contains only $([System.IO.Path]::GetFileNameWithoutExtension($projectPaths[0])). Check that its TestShard value matches the other projects in the group." -ForegroundColor Yellow
     }
 
     Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPaths $projectPaths -WorkflowName $workflowName -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet8SDKVersion $DotNet8SDKVersion

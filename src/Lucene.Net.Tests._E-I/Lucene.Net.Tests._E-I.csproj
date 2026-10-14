@@ -25,6 +25,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests._E-I</AssemblyTitle>
+    <TestShardIsolated>true</TestShardIsolated>
     <RootNamespace>Lucene.Net</RootNamespace>
   </PropertyGroup>
 

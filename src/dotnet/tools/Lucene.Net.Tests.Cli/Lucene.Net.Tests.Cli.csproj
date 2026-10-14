@@ -27,6 +27,7 @@
     <!-- Allow specific target framework to flow in from TestTargetFrameworks.props -->
     <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net10.0;net9.0;net8.0</TargetFrameworks>
     <AssemblyTitle>Lucene.Net.Tests.Cli</AssemblyTitle>
+    <TestShardIsolated>true</TestShardIsolated>
   </PropertyGroup>
 
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) ">

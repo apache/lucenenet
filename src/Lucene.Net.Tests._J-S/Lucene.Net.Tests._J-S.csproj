@@ -25,6 +25,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests._J-S</AssemblyTitle>
+    <TestShardIsolated>true</TestShardIsolated>
     <RootNamespace>Lucene.Net</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
