@@ -25,7 +25,7 @@
  .DESCRIPTION
     Generates 1 GitHub Actions workflow file for each project containing the string ".Tests"
     in the name. The current project, ProjectReference dependencies, and common files
-    Directory.Build.*, TestTargetFraemworks.*, TestReferences.Common.* and Dependencies.props
+    Directory.Build.*, TestTargetFrameworks.*, TestReferences.Common.* and Dependencies.props
     are all used to build filter paths to determine when the workflow will run.
 
  .PARAMETER OutputDirectory

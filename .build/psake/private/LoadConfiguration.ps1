@@ -22,7 +22,7 @@ function LoadConfiguration {
     }
 
     try {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssignments', '')]
         $config = GetCurrentConfigurationOrDefault
         . $configFileToLoad
     } catch {

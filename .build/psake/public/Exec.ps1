@@ -6,7 +6,7 @@ function Exec {
         .DESCRIPTION
         This is a helper function that runs a scriptblock and checks the PS variable $lastexitcode to see if an error occurred.
         If an error is detected then an exception is thrown.
-        This function allows you to run command-line programs without having to explicitly check fthe $lastexitcode variable.
+        This function allows you to run command-line programs without having to explicitly check the $lastexitcode variable.
 
         .PARAMETER cmd
         The scriptblock to execute. This scriptblock will typically contain the command-line invocation.
