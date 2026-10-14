@@ -63,6 +63,7 @@ InvocationCount=1  IterationCount=15  LaunchCount=2
 UnrollFactor=1  WarmupCount=10  
 
 ```
+
 |     Method |             Job |     Mean |     Error |    StdDev |      Gen 0 |     Gen 1 |     Gen 2 | Allocated |
 |----------- |---------------- |---------:|----------:|----------:|-----------:|----------:|----------:|----------:|
 | IndexFiles | 4.8.0-beta00005 | 905.6 ms | 131.82 ms | 197.30 ms | 43000.0000 | 8000.0000 | 7000.0000 | 220.99 MB |
@@ -103,6 +104,7 @@ Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical 
 IterationCount=15  LaunchCount=2  WarmupCount=10  
 
 ```
+
 |      Method |             Job |     Mean |     Error |    StdDev |   Median |      Gen 0 |     Gen 1 | Gen 2 | Allocated |
 |------------ |---------------- |---------:|----------:|----------:|---------:|-----------:|----------:|------:|----------:|
 | SearchFiles | 4.8.0-beta00005 | 421.1 ms | 111.47 ms | 163.38 ms | 326.3 ms | 18000.0000 | 1000.0000 |     - |  82.11 MB |

@@ -69,9 +69,6 @@ MD029: false
 # MD030/list-marker-space Spaces after list markers
 MD030: false
 
-# MD031/blanks-around-fences Fenced code blocks should be surrounded by blank lines
-MD031: false
-
 # MD032/blanks-around-lists Lists should be surrounded by blank lines
 MD032: false
 
