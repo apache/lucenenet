@@ -1,7 +1,7 @@
 function CleanupEnvironment {
     if ($psake.context.Count -gt 0) {
         $currentContext = $psake.context.Peek()
-        [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssignments', '')]
         $env:PATH = $currentContext.originalEnvPath
         Set-Location $currentContext.originalDirectory
         $global:ErrorActionPreference = $currentContext.originalErrorActionPreference

@@ -250,7 +250,7 @@ csharp_preferred_modifier_order = public,private,protected,internal,virtual,read
 
 # Assignments
 
-#prefer compound asignment x += 1 rather than x = x + 1.
+#prefer compound assignment x += 1 rather than x = x + 1.
 dotnet_style_prefer_compound_assignment = true:silent
 
 # Code quality (warnings)

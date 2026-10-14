@@ -17,7 +17,7 @@
 
 # Copies the provided test framework configuration file
 # to the binary publish subdirectory for the provided target
-# framework, and then publishes to an pipeline artifact.
+# framework, and then publishes to a pipeline artifact.
 
 # NOTE: Depends on environment variable $(RunTests)
 
