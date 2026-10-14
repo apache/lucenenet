@@ -42,8 +42,6 @@ You can control this behavior by setting the `DOTNET_ROLL_FORWARD` environment v
 command-line argument to `Disable` to prevent rolling forward, or `LatestMajor` to always use the latest
 available major version, before running the CLI tool.
 
-
-
 ## CLI Commands
 
 The following commands are installed:

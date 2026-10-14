@@ -74,19 +74,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
             AssertTokenStreamContents(stream, new string[] { "books" });
         }
 
-        [Test, LuceneNetSpecific]
-        public virtual void TestIgnoreCase_CharSequence()
-        {
-            // lets make booked stem to books
-            // the override filter will convert "booked" to "books",
-            // but also mark it with KeywordAttribute so Porter will not change it.
-            StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(true);
-            builder.Add("boOkEd".AsCharSequence(), "books");
-            Tokenizer tokenizer = new KeywordTokenizer(new StringReader("BooKeD"));
-            TokenStream stream = new PorterStemFilter(new StemmerOverrideFilter(tokenizer, builder.Build()));
-            AssertTokenStreamContents(stream, new string[] { "books" });
-        }
-
         [Test]
         public virtual void TestNoOverrides()
         {

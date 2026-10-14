@@ -209,7 +209,7 @@ Here is an example project file for .NET 8 for testing a project named `MyCodecs
 
 To extend an existing codec with a new <xref:Lucene.Net.Codecs.PostingsFormat>, the <xref:Lucene.Net.Codecs.FilterCodec> class can be subclassed and the codec to be extended supplied to the <xref:Lucene.Net.Codecs.FilterCodec> constructor. A <xref:Lucene.Net.Codecs.PostingsFormat> should be supplied to an existing codec to run the tests against it.
 
-This example is for testing a custom postings format named `MyPostingsFormat`. Creating a postings format is a bit involved, but an overview of the process is in [Building a new Lucene postings format ](http://blog.mikemccandless.com/2012/07/building-new-lucene-postings-format.html).
+This example is for testing a custom postings format named `MyPostingsFormat`. Creating a postings format is a bit involved, but an overview of the process is in [Building a new Lucene postings format](http://blog.mikemccandless.com/2012/07/building-new-lucene-postings-format.html).
 
 ```cs
 public class MyCodec : FilterCodec
@@ -263,7 +263,6 @@ In your test project, add a new file to the root of the project named `Startup.c
 
 > [!NOTE]
 > There may only be one `LuceneTestFrameworkInitializer` subclass per assembly.
-
 
 ```cs
 public class Startup : LuceneTestFrameworkInitializer

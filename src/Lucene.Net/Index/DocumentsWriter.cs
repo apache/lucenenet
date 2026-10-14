@@ -538,11 +538,16 @@ namespace Lucene.Net.Index
                 int dwptNumDocs = dwpt.NumDocsInRAM;
                 try
                 {
-                    int docCount = dwpt.UpdateDocuments(docs, analyzer, delTerm);
-                    numDocsInRAM.AddAndGet(docCount);
+                    // LUCENENET: backport fix from Lucene 4.10.0 in LUCENE-5871
+                    dwpt.UpdateDocuments(docs, analyzer, delTerm);
                 }
                 finally
                 {
+                    // LUCENENET: backport fix from Lucene 4.10.0 in LUCENE-5871
+                    // We don't know how many documents were actually
+                    // counted as indexed, so we must subtract here to
+                    // accumulate our separate counter:
+                    numDocsInRAM.AddAndGet(dwpt.NumDocsInRAM - dwptNumDocs);
                     if (dwpt.CheckAndResetHasAborted())
                     {
                         if (dwpt.PendingFilesToDelete.Count > 0)
@@ -585,10 +590,15 @@ namespace Lucene.Net.Index
                 try
                 {
                     dwpt.UpdateDocument(doc, analyzer, delTerm);
-                    numDocsInRAM.IncrementAndGet();
+                    // LUCENENET: removed incrementAndGet call in backport of fix from Lucene 4.10.0 in LUCENE-5871
                 }
                 finally
                 {
+                    // LUCENENET: backport fix from Lucene 4.10.0 in LUCENE-5871
+                    // We don't know whether the document actually
+                    // counted as being indexed, so we must subtract here to
+                    // accumulate our separate counter:
+                    numDocsInRAM.AddAndGet(dwpt.NumDocsInRAM - dwptNumDocs);
                     if (dwpt.CheckAndResetHasAborted())
                     {
                         if (dwpt.PendingFilesToDelete.Count > 0)
@@ -732,6 +742,8 @@ namespace Lucene.Net.Index
             {
                 oldValue = numDocsInRAM;
             }
+            // LUCENENET: backport fix from Lucene 4.10.0 in LUCENE-5871
+            if (Debugging.AssertsEnabled) Debugging.Assert(numDocsInRAM >= 0);
         }
 
         // for asserts

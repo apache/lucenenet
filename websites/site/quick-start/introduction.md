@@ -18,14 +18,11 @@ Apache Lucene.NET 4.8 is an open source project whose aim is to be a line by lin
 
 Currently Lucene.NET 4.8 is in Beta but it is extremely stable and many developers already use it in production. It has far more features than Lucene.NET 3.03 and has much better unit test coverage than the older version.  Lucene.NET has more than 7800+ passing unit tests.  This test coverage is what makes Lucene.NET so stable.
 
-
-
 ## Evolution of Lucene
 
 Porting Lucene from java to C# is a huge undertaking.  There are over [644K lines of code](https://lucenenet.apache.org/images/contributing/source/lucenenet-repo-lines-of-code--jan-2022.png) not counting outside dependencies.  This is why only a few specific versions have been ported.  The prior Lucene.NET release was version 3.0.3 and the current release (which receives all the focus) is Lucene.NET 4.8. Version 4.8 is now in late Beta and, as I already mentioned, is used in production by many developers.
 
 You might be aware that Java Lucene is at version 9.x.  But don't be misled by the number.  The step up in features between 3.x and 4.x was the biggest in Lucene's history and after that it was followed by many smaller releases. **So the reality is that Lucene.NET 4.8 contains the vast majority of features found in Java Lucene 9.x and in fact Lucene 4.x is more similar to Lucene 9.x than to Lucene 3.x.**  If you'd like to dive deeper into this topic, [Lucene.NET 4.8 vs Java Lucene 9.x](https://www.giftoasis.com/blog/lucene-net/lucene-net--4-8--vs--java-lucene--9-x) is a community written article that covers it in more detail.
-
 
  ## Lucene.NET is Multi-Platform
 Lucene.NET 4.8 runs everywhere .NET runs: Windows, Unix or Mac.  And as a library it can be used to power search in desktop applications, websites, mobile apps (iOS or Android) or even on IoT devices like the Raspberry Pi.  And because it's licensed under the permissive Apache 2.0 license it's typically considered suitable for both commercial and non-commercial use.
@@ -37,16 +34,13 @@ Lucene and hence Lucene.NET stores data in immutable "segments."  Segments are m
 
 LSM has become the defacto standard for NoSql databases and is used not only by Lucene but also by Google BigTable, Apache HBase, Apache Cassandra and many others. The details of each implementation vary as does the number and types of files used. So let's take a look at what those files might look like for a Lucene.NET index.
 
-
 Here is an example of Lucene.NET's files for a brand new index with one segment:
 
 ![Example files for single segment](https://lucenenet.apache.org/images/quick-start/introduction/one-segment-example.gif)
 
-
 Here is a two segment example that has gone through merges many times:
 
 ![Example files for two segments](https://lucenenet.apache.org/images/quick-start/introduction/two-segment-example.gif)
-
 
  ## Important Lucene Concepts
 
@@ -58,15 +52,12 @@ Here is a two segment example that has gone through merges many times:
   ### Writing and Reading Documents
  Documents are written via an `IndexWriter` and read via an `IndexReader`.  Although in practice we often use an `IndexSearcher` (which wraps an `IndexReader`) for searching and reading documents.
 
-
    ### Lucene Directories
    We already mentioned that the data is stored in segments.  Those segments can be stored via different classes that inherit from `Lucene.Net.Store.Directory`.  Some of those classes, like `FSDirectory` store to your local file system, other can store elsewhere.  For example a `RAMDirectory` can be useful for unit tests as it stores the segments in RAM.  So one of the things that we must provide an `IndexWriter` is an instance of a `Lucene.Net.Store.Directory` that is the type of directory we want to work with.
-
 
   ### How the Pieces Fit Together
 
   The diagram below provides a birds eye view of how the various parts of the system work together.  It makes it easier to conceptualize the parts of Lucene that we have been talking about.  It might be good idea to keep this diagram in mind when you work through the [tutorial examples](xref:quick-start/tutorial) and review the code provided there.
-
 
   <div class="diagram">
 
@@ -74,7 +65,6 @@ Here is a two segment example that has gone through merges many times:
   </div>
 
   \* In the diagram above "Files" is in quotes because if you are using a `RAMDirectory`, say for testing, then there will be no physical file, but rather their representation will be in memory only.
-
 
 ### Wrapping Up
 I hope this introduction has helped you to understand a bit about Lucene.NET.  The information we have covered so far should give you a bit of a foundation to work from as you work through the [tutorial examples](xref:quick-start/tutorial) and then dig deeper into the [Lucene.NET Documentation](xref:docs) and [Learning Resources](xref:quick-start/learning-resources).

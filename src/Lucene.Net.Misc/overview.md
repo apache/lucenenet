@@ -22,20 +22,15 @@ summary: *content
 
 ## Misc Tools
 
-
 The misc package has various tools for splitting/merging indices,
 changing norms, finding high freq terms, and others.
 
-
-<!--
-
-LUCENENET specific - we didn't port the NativeUnixDirectory, and it is not clear whether there is any advantage to doing so in .NET.
-See: https://github.com/apache/lucenenet/issues/276
-
 ## NativeUnixDirectory
 
+<!-- LUCENENET: not relevant to our port
 __NOTE__: This uses C++ sources (accessible via JNI), which you'll
 have to compile on your platform.
+-->
 
 <xref:Lucene.Net.Store.NativeUnixDirectory> is a Directory implementation that bypasses the
 OS's buffer cache (using direct IO) for any IndexInput and IndexOutput
@@ -46,6 +41,10 @@ searching, keeping search more responsive while large merges run.
 See [this blog post](http://blog.mikemccandless.com/2010/06/lucene-and-fadvisemadvise.html)
 for details.
 
+__NOTE__: In Lucene.NET, this implementation uses P/Invoke instead of native code, so
+compiling C++ code is not required like it is in the Java version of Lucene.
+
+<!-- LUCENENET: not relevant to our port
 Steps to build:
 
 *   <tt>cd lucene/misc/</tt>

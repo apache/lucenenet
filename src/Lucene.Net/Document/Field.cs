@@ -1410,9 +1410,9 @@ namespace Lucene.Net.Documents
         }
 
         [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
-        public static Field.Index ToIndex(bool indexed, bool analyed)
+        public static Field.Index ToIndex(bool indexed, bool analyzed)
         {
-            return ToIndex(indexed, analyed, false);
+            return ToIndex(indexed, analyzed, false);
         }
 
         [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]

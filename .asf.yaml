@@ -61,7 +61,7 @@ github:
         require_last_push_approval: false
         require_code_owner_reviews: false
         required_approving_review_count: 0
-    - name: "Maintenace Branch Protection"
+    - name: "Maintenance Branch Protection"
       type: branch
       branches:
         includes:
@@ -73,3 +73,8 @@ github:
       restrict_deletion: true
       restrict_force_push: false
       required_linear_history: false
+
+  # autolink LUCENE- and LUCENENET- issues to Jira for historical reference
+  autolink_jira:
+    - LUCENE
+    - LUCENENET

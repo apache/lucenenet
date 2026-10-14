@@ -32,6 +32,11 @@ namespace Lucene.Net.Store
         private readonly RateLimiter rateLimiter;
         private int disposed = 0; // LUCENENET specific - allow double-dispose
 
+        /// <summary>
+        /// How many bytes we've written since we last called <see cref="RateLimiter.Pause(long)"/>.
+        /// </summary>
+        private long bytesSinceLastPause;
+
         internal RateLimitedIndexOutput(RateLimiter rateLimiter, IndexOutput @delegate)
         {
             // TODO should we make buffer size configurable
@@ -53,7 +58,14 @@ namespace Lucene.Net.Store
         protected internal override void FlushBuffer(ReadOnlySpan<byte> source)
         {
             int len = source.Length;
-            rateLimiter.Pause(len);
+            bytesSinceLastPause += len;
+
+            if (bytesSinceLastPause > rateLimiter.MinPauseCheckBytes)
+            {
+                rateLimiter.Pause(bytesSinceLastPause);
+                bytesSinceLastPause = 0;
+            }
+
             if (bufferedDelegate != null)
             {
                 bufferedDelegate.FlushBuffer(source);

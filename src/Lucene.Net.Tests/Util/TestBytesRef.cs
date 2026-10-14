@@ -1,4 +1,3 @@
-using J2N.Text;
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
@@ -8,6 +7,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Assert = Lucene.Net.TestFramework.Assert;
+#if !FEATURE_ENCODING_GETSTRING_READONLYSPAN
+using J2N.Text;
+#endif
 
 namespace Lucene.Net.Util
 {
@@ -69,19 +71,7 @@ namespace Lucene.Net.Util
             Assert.AreEqual("\uFFFF", new BytesRef("\uFFFF").Utf8ToString());
         }
 
-        [Test, LuceneNetSpecific]
-        public virtual void TestFromCharSequence()
-        {
-            for (int i = 0; i < 100; i++)
-            {
-                ICharSequence s = new StringCharSequence(TestUtil.RandomUnicodeString(Random));
-                ICharSequence s2 = new BytesRef(s).Utf8ToString().AsCharSequence();
-                Assert.AreEqual(s, s2);
-            }
-
-            // only for 4.x
-            Assert.AreEqual("\uFFFF", new BytesRef("\uFFFF").Utf8ToString());
-        }
+        // LUCENENET: removed TestFromCharSequence
 
         // LUCENE-3590, AIOOBE if you append to a bytesref with offset != 0
         [Test]

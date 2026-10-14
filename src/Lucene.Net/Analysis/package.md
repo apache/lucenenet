@@ -197,7 +197,6 @@ indexWriter.AddDocument(document);
 
  Then, a phrase search for "ends starts" would find that document. Where desired, this behavior can be modified by introducing a "position gap" between consecutive field "sections", by overriding [Analyzer.GetPositionIncrementGap(string)](xref:Lucene.Net.Analysis.Analyzer#Lucene_Net_Analysis_Analyzer_GetPositionIncrementGap_System_String_):
 
-
 ```cs
 /// <summary>
 /// Similar to <see cref="StandardAnalyzer"/>, but has a different position increment gap.
@@ -398,10 +397,7 @@ public override TokenStream GetTokenStream(string fieldName, Reader reader)
   <tr>
     <td><xref:Lucene.Net.Analysis.TokenAttributes.ICharTermAttribute></td>
     <td>
-      The term text of a token.  Implements J2N.Text.ICharSequence
-      (providing properties Length and this[int], and allowing e.g. for direct
-      use with J2N.Text.IAppendable (allowing the term text to be appended to.)
-      In .NET, we can only use this indirectly with the [Regex](https://docs.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex) class by first calling ToString() and then passing the string to the Regex.
+      The term text of a token.
     </td>
   </tr>
   <tr>

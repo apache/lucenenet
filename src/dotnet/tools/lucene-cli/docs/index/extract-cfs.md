@@ -40,7 +40,6 @@ Extract the files from the compound file at `X:\lucene-index\_81.cfs` to the cur
 lucene index extract-cfs X:\lucene-index\_81.cfs
 ```
 
-
 Extract the files from the compound file at `X:\lucene-index\_64.cfs` to the current working directory using the `SimpleFSDirectory` implementation:
 
 ```console

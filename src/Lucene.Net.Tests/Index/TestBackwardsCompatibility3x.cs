@@ -244,7 +244,9 @@ namespace Lucene.Net.Index
                     // above, so close without waiting for merges.
                     if (writer != null)
                     {
+#pragma warning disable 612, 618
                         writer.Dispose(false);
+#pragma warning restore 612, 618
                     }
                     writer = null;
                 }
@@ -955,7 +957,9 @@ namespace Lucene.Net.Index
                     {
                         AddDoc(w, id++);
                     }
+#pragma warning disable 612, 618
                     w.Dispose(false);
+#pragma warning restore 612, 618
                 }
 
                 // add dummy segments (which are all in current
@@ -965,7 +969,9 @@ namespace Lucene.Net.Index
                     .SetMergePolicy(mp_);
                 IndexWriter w_ = new IndexWriter(dir, iwc_);
                 w_.AddIndexes(ramDir);
+#pragma warning disable 612, 618
                 w_.Dispose(false);
+#pragma warning restore 612, 618
 
                 // determine count of segments in modified index
                 int origSegCount = GetNumberOfSegments(dir);

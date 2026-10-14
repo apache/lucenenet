@@ -39,9 +39,6 @@ MD009: false
 # MD010/no-hard-tabs Hard tabs
 MD010: false
 
-# MD012/no-multiple-blanks Multiple consecutive blank lines
-MD012: false
-
 # MD013/line-length Line length
 MD013: false
 
@@ -62,9 +59,6 @@ MD025: false
 
 # MD026/no-trailing-punctuation Trailing punctuation in heading
 MD026: false
-
-# MD027/no-multiple-space-blockquote Multiple spaces after blockquote symbol
-MD027: false
 
 # MD028/no-blanks-blockquote Blank line inside blockquote
 MD028: false
@@ -92,9 +86,6 @@ MD036: false
 
 # MD037/no-space-in-emphasis Spaces inside emphasis markers
 MD037: false
-
-# MD039/no-space-in-links Spaces inside link text
-MD039: false
 
 # MD040/fenced-code-language Fenced code blocks should have a language specified
 MD040: false

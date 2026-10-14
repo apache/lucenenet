@@ -20,7 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-
 For Native Language Support (NLS), system of software internationalization.
 
 ## NLS message API
@@ -35,7 +34,6 @@ Features:
 4. Allows for reference count on messages, just like code
 5. Lazy loading of Message Strings
 6. Normal loading Message Strings
-
 
 Prerequisite for these examples: Add a resource file named `MessagesTestBundle.resx` and add messages for each of the public static string fields except for `Q0005E_Message_Not_In_Bundle`.
 

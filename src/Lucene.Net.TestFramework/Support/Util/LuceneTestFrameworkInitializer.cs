@@ -98,7 +98,7 @@ namespace Lucene.Net.Util
     ///     }
     ///
     ///     // Run before all tests in the assembly and before any class-level setup
-    ///     protected overide void TestFrameworkSetUp()
+    ///     protected override void TestFrameworkSetUp()
     ///     {
     ///         // Get the random instance for the current context
     ///         var random = Random;

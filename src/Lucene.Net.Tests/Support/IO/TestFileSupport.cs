@@ -184,6 +184,14 @@ namespace Lucene.Net.Support.IO
             }
         }
 
+        [Test, LuceneNetSpecific]
+        public void TestGetCanonicalPathNullPath()
+        {
+            FileSystemInfo path = null;
+
+            Assert.Throws<ArgumentNullException>(() => path.GetCanonicalPath());
+        }
+
         private static string addTrailingSlash(string path)
         {
             if (Path.DirectorySeparatorChar == path[path.Length - 1])

@@ -20,7 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-
 Standard Lucene Query Configuration.
 
 ## Standard Lucene Query Configuration

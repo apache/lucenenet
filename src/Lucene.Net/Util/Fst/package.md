@@ -22,8 +22,8 @@ summary: *content
 
 Finite state transducers
 
-This package implements [
-Finite State Transducers](http://en.wikipedia.org/wiki/Finite_state_transducer) with the following characteristics:
+This package implements [Finite State Transducers](http://en.wikipedia.org/wiki/Finite_state_transducer) with the
+following characteristics:
 
 *   Fast and low memory overhead construction of the minimal FST
        (but inputs must be provided in sorted order)

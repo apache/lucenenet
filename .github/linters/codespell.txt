@@ -7,7 +7,6 @@ advices
 afile
 afte
 afterwords
-aggreggates
 aliase
 aline
 alle
@@ -16,10 +15,7 @@ alot
 alpha-numeric
 alredy
 als
-ambiguos
 ameba
-analyed
-analyer
 andd
 ane
 anothers
@@ -82,7 +78,6 @@ ened
 equest
 euclidian
 everytime
-failue
 fallow
 finis
 floatation
@@ -168,7 +163,6 @@ ons
 ony
 ore
 ot
-overide
 padd
 pard
 parms
@@ -202,14 +196,12 @@ sate
 sav
 scrip
 selv
-sentances
 seperate
 seperated
 seperator
 ser
 sie
 sightly
-similiarty
 simle
 singe
 singl

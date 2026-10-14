@@ -16,6 +16,11 @@ _site/*
 svn-dev/*
 svn-release/*
 
+# Maven wrapper scripts (src/java/index-compat) - generated, no ASF header
+mvnw
+mvnw\.cmd
+maven-wrapper\.properties
+
 # Exclude auto-generated designers
 .*\.Designer\.cs
 

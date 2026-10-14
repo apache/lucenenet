@@ -38,18 +38,18 @@
     <IKVMPackageVersion>8.7.5</IKVMPackageVersion>
     <IKVMMavenSdkPackageVersion>1.6.7</IKVMMavenSdkPackageVersion>
     <!-- J2N will break binary compatibility in 3.0.0 to fix the APIs of collection types -->
-    <J2NPackageVersion>[2.2.0-alpha-0048, 3.0.0)</J2NPackageVersion>
+    <J2NPackageVersion>[2.2.0-alpha-0053, 3.0.0)</J2NPackageVersion>
     <LiquidTestReportsMarkdownPackageVersion>1.0.9</LiquidTestReportsMarkdownPackageVersion>
     <LuceneNetCodeAnalysisDevPackageVersion>1.0.0-alpha.36</LuceneNetCodeAnalysisDevPackageVersion>
     <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>2.3.0</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>8.0.19</MicrosoftAspNetCoreTestHostPackageVersion>
-    <MicrosoftBclMemoryPackageVersion>10.0.0-rc.1.25451.107</MicrosoftBclMemoryPackageVersion>
+    <MicrosoftBclMemoryPackageVersion>10.0.11</MicrosoftBclMemoryPackageVersion>
     <MicrosoftCodeAnalysisAnalyzersPackageVersion>2.9.8</MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisCSharpPackageVersion>2.6.1</MicrosoftCodeAnalysisCSharpPackageVersion>
     <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>$(MicrosoftCodeAnalysisCSharpPackageVersion)</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
     <MicrosoftCodeAnalysisVisualBasicPackageVersion>2.6.1</MicrosoftCodeAnalysisVisualBasicPackageVersion>
     <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>$(MicrosoftCodeAnalysisVisualBasicPackageVersion)</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
-    <MicrosoftExtensionsParentVersion>10.0.7</MicrosoftExtensionsParentVersion>
+    <MicrosoftExtensionsParentVersion>10.0.10</MicrosoftExtensionsParentVersion>
     <MicrosoftExtensionsConfigurationPackageVersion>$(MicrosoftExtensionsParentVersion)</MicrosoftExtensionsConfigurationPackageVersion>
     <MicrosoftExtensionsConfigurationAbstractionsPackageVersion>$(MicrosoftExtensionsParentVersion)</MicrosoftExtensionsConfigurationAbstractionsPackageVersion>
     <MicrosoftExtensionsConfigurationCommandLinePackageVersion>$(MicrosoftExtensionsParentVersion)</MicrosoftExtensionsConfigurationCommandLinePackageVersion>
@@ -80,7 +80,6 @@
     <SystemRuntimeInteropServicesRuntimeInformationPackageVersion>4.3.0</SystemRuntimeInteropServicesRuntimeInformationPackageVersion>
     <SystemTextEncodingCodePagesPackageVersion>4.3.0</SystemTextEncodingCodePagesPackageVersion>
     <SystemTextEncodingCodePagesPackageVersion Condition=" '$(TargetFramework)' == 'net472' ">5.0.0</SystemTextEncodingCodePagesPackageVersion>
-    <SystemTextJsonPackageVersion>6.0.10</SystemTextJsonPackageVersion>
     <SystemTextRegularExpressionsPackageVersion>4.3.1</SystemTextRegularExpressionsPackageVersion>
     <TimeZoneConverterPackageVersion>6.1.0</TimeZoneConverterPackageVersion>
   </PropertyGroup>

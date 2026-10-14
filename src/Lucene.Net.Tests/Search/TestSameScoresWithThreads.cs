@@ -3,9 +3,8 @@ using J2N.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -91,7 +90,7 @@ namespace Lucene.Net.Search
 
             if (answers.Count > 0)
             {
-                CountdownEvent startingGun = new CountdownEvent(1);
+                using CountdownLatch startingGun = new CountdownLatch(1); // LUCENENET: CountdownLatch is disposable in .NET
                 int numThreads = TestUtil.NextInt32(Random, 2, 5);
                 ThreadJob[] threads = new ThreadJob[numThreads];
                 for (int threadID = 0; threadID < numThreads; threadID++)
@@ -114,9 +113,9 @@ namespace Lucene.Net.Search
         {
             private readonly IndexSearcher s;
             private readonly IDictionary<BytesRef, TopDocs> answers;
-            private readonly CountdownEvent startingGun;
+            private readonly CountdownLatch startingGun;
 
-            public ThreadAnonymousClass(IndexSearcher s, IDictionary<BytesRef, TopDocs> answers, CountdownEvent startingGun)
+            public ThreadAnonymousClass(IndexSearcher s, IDictionary<BytesRef, TopDocs> answers, CountdownLatch startingGun)
             {
                 this.s = s;
                 this.answers = answers;

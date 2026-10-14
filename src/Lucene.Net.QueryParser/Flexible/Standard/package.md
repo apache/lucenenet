@@ -20,7 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-
 Implementation of the [Lucene classic query parser](xref:Lucene.Net.QueryParsers.Classic) using the flexible query parser frameworks
 
 ## Lucene Flexible Query Parser Implementation
