@@ -41,7 +41,7 @@
     @('net10.0','net8.0','net472','net48').
 
  .PARAMETER OperatingSystems
-    A string array of Github Actions operating system monikers to run the tests on.
+    A string array of GitHub Actions operating system monikers to run the tests on.
     The default is @('windows-latest', 'ubuntu-latest').
 
  .PARAMETER TestPlatforms

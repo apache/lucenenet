@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
     /// <summary>
     /// Some tests that override <see cref="ICUPostingsHighlighter.GetIndexAnalyzer(string)"/> to
-    /// highlight wilcard, fuzzy, etc queries.
+    /// highlight wildcard, fuzzy, etc queries.
     /// </summary>
     /// <remarks>
     /// LUCENENET specific - Modified the behavior of the PostingsHighlighter in Java to return the

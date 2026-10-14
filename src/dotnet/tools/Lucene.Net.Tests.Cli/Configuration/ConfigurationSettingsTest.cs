@@ -58,7 +58,7 @@ namespace Lucene.Net.Cli.Configuration
                 input.CopyTo(output);
             }
 
-            // set an Enviroment variable used in the test
+            // set an Environment variable used in the test
             string testKey = EnvironmentVariablePrefix + "tests:setup";
             string testValue = "setup";
             Environment.SetEnvironmentVariable(testKey, testValue);

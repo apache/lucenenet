@@ -1152,9 +1152,9 @@ namespace Lucene.Net.Cli.Resources {
         /// <summary>
         ///    Looks up a localized string similar to Port that verify-server is listening on..
         /// </summary>
-        public static string LockStressTestCommandVerfierPortDescription {
+        public static string LockStressTestCommandVerifierPortDescription {
             get {
-                return ResourceManager.GetString("LockStressTestCommandVerfierPortDescription", resourceCulture);
+                return ResourceManager.GetString("LockStressTestCommandVerifierPortDescription", resourceCulture);
             }
         }
 

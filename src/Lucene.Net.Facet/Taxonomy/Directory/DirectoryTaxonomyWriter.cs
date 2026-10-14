@@ -918,7 +918,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 cacheIsComplete = !aborted;
                 if (cacheIsComplete)
                 {
-                    UninterruptableMonitor.Enter(syncLock); // LUCENENET TODO: Do we need to synchroize again since the whole method is synchronized?
+                    UninterruptableMonitor.Enter(syncLock); // LUCENENET TODO: Do we need to synchronize again since the whole method is synchronized?
                     try
                     {
                         // everything is in the cache, so no need to keep readerManager open.
@@ -1213,7 +1213,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 // LUCENENET: Ensure subclasses are also disposed.
                 // The call above to DoClose() ensures that the below call is
                 // a no-op in this class, but will still make the call to
-                // subclasses to provide their own dipsosable implementation.
+                // subclasses to provide their own disposable implementation.
                 Dispose();
             }
             finally

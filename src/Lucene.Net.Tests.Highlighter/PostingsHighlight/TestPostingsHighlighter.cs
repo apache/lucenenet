@@ -796,7 +796,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        /** Make sure highlighter we can customize how emtpy
+        /** Make sure highlighter we can customize how empty
          *  highlight is returned. */
         [Test]
         public void TestCustomEmptyHighlights()
