@@ -1833,9 +1833,9 @@ namespace Lucene.Net.Analysis.En
             return word.ToString();
         }
 
-        internal virtual ICharSequence AsCharSequence()
+        internal virtual ReadOnlySpan<char> AsSpan()
         {
-            return result != null ? (ICharSequence)new CharsRef(result) : word;
+            return result != null ? result.AsSpan() : word.AsSpan();
         }
 
         internal virtual string String => result;

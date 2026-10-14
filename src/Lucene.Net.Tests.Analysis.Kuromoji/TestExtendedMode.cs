@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Ja
                     ts.Reset();
                     while (ts.IncrementToken())
                     {
-                        assertTrue(UnicodeUtil.ValidUTF16String(termAtt));
+                        assertTrue(UnicodeUtil.ValidUTF16String(termAtt.AsSpan()));
                     }
                     ts.End();
                 }
