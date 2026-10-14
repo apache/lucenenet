@@ -187,9 +187,9 @@ namespace Lucene.Net.Analysis.Icu
 
             while (checkedInputBoundary <= bufLen - 1)
             {
-                int charLen = Character.CharCount(inputBuffer.CodePointAt(checkedInputBoundary));
+                int charLen = Character.CharCount(inputBuffer.Array.CodePointAt(checkedInputBoundary));
                 checkedInputBoundary += charLen;
-                if (checkedInputBoundary < bufLen && normalizer.HasBoundaryBefore(inputBuffer
+                if (checkedInputBoundary < bufLen && normalizer.HasBoundaryBefore(inputBuffer.Array
                   .CodePointAt(checkedInputBoundary)))
                 {
                     foundBoundary = true;

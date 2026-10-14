@@ -1,5 +1,4 @@
 // Lucene version compatibility level 4.10.4
-using J2N.Text;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
@@ -254,10 +253,10 @@ namespace Lucene.Net.Analysis.Hunspell
             IList<CharsRef> deduped = new JCG.List<CharsRef>();
             foreach (CharsRef s in stems)
             {
-                if (!terms.Contains((ICharSequence)s)) // LUCENENET: Cast to get to ICharSequence overload
+                if (!terms.Contains(s.Chars, s.Offset, s.Length)) // LUCENENET: CharsRef no longer implements ICharSequence, so use the char[] overload
                 {
                     deduped.Add(s);
-                    terms.Add((ICharSequence)s); // LUCENENET: Cast to get to ICharSequence overload
+                    terms.Add(s.ToString()); // LUCENENET: CharsRef no longer implements ICharSequence. Upstream converted the CharSequence to a string, too.
                 }
             }
             return deduped;

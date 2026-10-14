@@ -7,7 +7,6 @@ advices
 afile
 afte
 afterwords
-aggreggates
 aliase
 aline
 alle
@@ -79,7 +78,6 @@ ened
 equest
 euclidian
 everytime
-failue
 fallow
 finis
 floatation
@@ -165,7 +163,6 @@ ons
 ony
 ore
 ot
-overide
 padd
 pard
 parms
