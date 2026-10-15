@@ -148,7 +148,7 @@ that instead takes the ASP.NET Core HttpRequest and HttpResponse response object
 from either ASP.NET Core MVC controllers, inside of middleware or for the absolute minimal solution directly in the delegate parameter of a IApplicationBuilder.Run() method.
 
 ```cs
-public static class AspNetCoreReplicationServiceExtentions
+public static class AspNetCoreReplicationServiceExtensions
 {
     // Optionally, provide a extension method for calling the perform method directly using the specific request
     // and response objects from AspNetCore

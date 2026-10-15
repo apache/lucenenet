@@ -125,7 +125,7 @@ namespace Lucene.Net.Configuration
         }
 
         [Test]
-        public virtual void TestRuntimeEnviromentSetting()
+        public virtual void TestRuntimeEnvironmentSetting()
         {
             string testKey = "tests:setting";
             string testValue = "test.success";
@@ -135,7 +135,7 @@ namespace Lucene.Net.Configuration
         }
 
         [Test]
-        public virtual void TestRuntimeEnviromentOverrideSetting()
+        public virtual void TestRuntimeEnvironmentOverrideSetting()
         {
             Assert.AreEqual("fr", ConfigurationSettings.CurrentConfiguration["tests:locale"]);
             Assert.AreEqual("fr", SystemProperties.GetProperty("tests:locale"));
