@@ -39,7 +39,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override byte ByteVal(int doc)
         {
-            return (byte)SingleVal(doc);
+            return (byte)(int)SingleVal(doc); // LUCENENET: Cast to int first to match Java's wrapping narrowing conversion; .NET 11+ saturates direct float-to-byte casts
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Lucene.Net.Queries.Function.DocValues
         /// </summary>
         public override short Int16Val(int doc)
         {
-            return (short)SingleVal(doc);
+            return (short)(int)SingleVal(doc); // LUCENENET: Cast to int first to match Java's wrapping narrowing conversion; .NET 11+ saturates direct float-to-short casts
         }
 
         /// <summary>

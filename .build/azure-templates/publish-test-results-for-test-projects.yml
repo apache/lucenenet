@@ -81,7 +81,17 @@ steps:
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
     testResultsFileName: '${{ parameters.testResultsFileName }}'
 
-# Special case: Only supports net10.0, net9.0 and net8.0
+# Special case: Only supports net11.0, net10.0, net9.0 and net8.0
+
+- template: publish-test-results.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Cli'
+    framework: 'net11.0' # Since conditions are not supported for templates, we check for the file existence within publish-test-results.yml
+    vsTestPlatform: '${{ parameters.vsTestPlatform }}'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
 
 - template: publish-test-results.yml
   parameters:
@@ -113,7 +123,17 @@ steps:
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
     testResultsFileName: '${{ parameters.testResultsFileName }}'
 
-# Special case: Only supports net10.0, net9.0, net8.0 and net48
+# Special case: Only supports net11.0, net10.0, net9.0, net8.0 and net48
+
+- template: publish-test-results.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Analysis.OpenNLP'
+    framework: 'net11.0' # Since conditions are not supported for templates, we check for the file existence within publish-test-results.yml
+    vsTestPlatform: '${{ parameters.vsTestPlatform }}'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
 
 - template: publish-test-results.yml
   parameters:
