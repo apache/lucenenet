@@ -76,7 +76,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
-        framework: [net10.0, net8.0, net48, net472]
+        framework: [net11.0, net10.0, net8.0, net48, net472]
         platform: [x64]
         configuration: [Release]
         exclude:
@@ -111,6 +111,12 @@ jobs:
         uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
         with:
           dotnet-version: '10.0.x'
+
+      - name: Setup .NET 11 SDK
+        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
+        with:
+          dotnet-version: '11.0.x'
+          dotnet-quality: 'preview'
 
       - name: Cache NuGet Packages
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
