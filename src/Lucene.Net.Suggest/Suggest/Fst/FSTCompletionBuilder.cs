@@ -28,7 +28,7 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// <h2>Implementation details</h2>
     ///
     /// <para>
-    /// The construction step in the object finalizer works as follows:
+    /// The construction step in <see cref="Build()"/> works as follows:
     /// <list type="bullet">
     /// <item><description>A set of input terms and their buckets is given.</description></item>
     /// <item><description>All terms in the input are prefixed with a synthetic pseudo-character
