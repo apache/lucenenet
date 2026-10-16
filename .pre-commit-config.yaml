@@ -32,10 +32,14 @@
 # | **Priority 20** | `fix-byte-order-marker` | **File Cleanups (Broad)**: Fix BOM first so subsequent steps work with clean UTF-8 text. |
 # | **Priority 30** | `trailing-whitespace` | **Formatting (Broad)**: Cleans up whitespace on files before other hooks validate them. |
 # | **Priority 35** | `end-of-file-fixer` | **File Cleanups (Broad)**: Makes sure files end in a newline and only a newline. |
-# | **Priority 40** | `doctoc`, `oxipng`, `file-contents-sorter` | **Disjoint Modifiers**: These modify different sets of files (`README.md`, `.png` files, and `codespell.txt` respectively). Running them concurrently is safe. |
-# | **Priority 50** | `codespell`, `check-ast`, `check-builtin-literals`, `check-case-conflict`, `check-executables-have-shebangs`, `check-illegal-windows-names`, `check-json`, `check-merge-conflict`, `check-vcs-permalinks` |
-# |                 | `check-xml`, `check-yaml`, `debug-statements`, `detect-aws-credentials`, `detect-private-key`, `forbid-submodules`, `gitleaks`, `bandit`, `yamllint` |
-# |                 | **Read-Only / Syntax / Security**: The bulk of the suite. These hooks only read and validate files without modifying them, allowing full parallel execution. |
+# | **Priority 40** | `doctoc`, `oxipng`, `file-contents-sorter` | **Disjoint Modifiers**: These modify different sets of files |
+# |                 | (`README.md`, `.png` files, and `codespell.txt` respectively). Running them concurrently is safe. |
+# | **Priority 50** | `codespell`, `check-ast`, `check-builtin-literals`, `check-case-conflict`, `check-executables-have-shebangs` |
+# |                 | `check-illegal-windows-names`, `check-json`, `check-merge-conflict`, `check-vcs-permalinks` |
+# |                 | `check-toml`, `check-xml`, `check-yaml`, `debug-statements`, `detect-aws-credentials`, `detect-private-key` |
+# |                 | `forbid-submodules`, `gitleaks`, `bandit`, `yamllint`, `check-citation-file-format`, `check-dependabot` |
+# |                 | **Read-Only / Syntax / Security**: The bulk of the suite. These hooks only read and validate files |
+# |                 | without modifying them, allowing full parallel execution. |
 
 # https://prek.j178.dev/installation/
 default_stages: [pre-commit, pre-push]
@@ -121,6 +125,10 @@ repos:
         name: run check-merge-conflict
         description: check for merge conflict markers
         priority: 50
+      - id: check-toml
+        name: run check-toml
+        description: check TOML files for syntax errors
+        priority: 50
       - id: check-vcs-permalinks
         name: run check-vcs-permalinks
         description: ensures that links to vcs websites are permalinks
@@ -197,3 +205,16 @@ repos:
         types: [yaml]
         files: \.ya?ml$
         priority: 50
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0494aa7fa1314e98913a41227d8f0a515b2c1049 # frozen: 0.38.2
+    hooks:
+      - id: check-citation-file-format
+        priority: 50
+        name: run check-citation-file-format
+        description: validate citation file format
+        files: ^CITATION\.cff$
+      - id: check-dependabot
+        priority: 50
+        name: validate dependabot.yml
+        description: ensures the dependabot config file is valid
+        files: ^\.github/dependabot\.yml$
