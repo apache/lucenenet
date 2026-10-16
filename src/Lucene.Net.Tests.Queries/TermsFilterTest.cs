@@ -14,6 +14,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Tests.Queries
 {

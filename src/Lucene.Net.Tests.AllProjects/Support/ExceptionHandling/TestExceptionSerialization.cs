@@ -3,6 +3,7 @@ using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Runtime.Serialization;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Support.ExceptionHandling
 {
@@ -30,7 +31,7 @@ namespace Lucene.Net.Support.ExceptionHandling
         public void TestCanSerialize([ValueSource("LuceneExceptionTypes")] Type luceneException)
         {
             var instance = TryInstantiate(luceneException);
-            Assert.That(TypeCanSerialize(instance, out SerializationException se), $"Unable to serialize {luceneException.FullName}:\n\n{se}");
+            Assert.IsTrue(TypeCanSerialize(instance, out SerializationException se), $"Unable to serialize {luceneException.FullName}:\n\n{se}");
         }
     }
 }
