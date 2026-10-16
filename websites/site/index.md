@@ -4,8 +4,7 @@ description: Lucene.NET is a port of the Lucene search library, written in C# an
 documentType: index
 ---
 
-Lucene.NET
-===============
+# Lucene.NET
 
 <h2 id="about" class="text-center">About the project</h2>
 
