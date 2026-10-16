@@ -21,6 +21,7 @@
 
 /**
  * This method will be called at the start of exports.transform in toc.html.js
+ * @param {Object} model
  */
 exports.preTransform = function (model) {
   return model;
