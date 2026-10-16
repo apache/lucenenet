@@ -42,6 +42,10 @@ trim_trailing_whitespace = false
 indent_size = 2
 trim_trailing_whitespace = false
 
+# Citation files are in YAML format
+[*.cff]
+indent_size = 2
+
 # ========================================
 # XML, MSBuild files
 # ========================================

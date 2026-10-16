@@ -85,12 +85,12 @@ repos:
       - id: end-of-file-fixer
         name: run end-of-file-fixer
         description: makes sure files end in a newline and only a newline
-        files: \.(cs|md)$
+        files: \.(cff|cs|md)$
         priority: 35
       - id: trailing-whitespace
         name: run trailing-whitespace
         description: trims trailing whitespace
-        files: \.(bat|config|json|md|props|ps1|rdf|targets|tmpl|xml|ya?ml)$
+        files: \.(bat|cff|config|json|md|props|ps1|rdf|targets|tmpl|xml|ya?ml)$
         args: [--markdown-linebreak-ext=md]
         priority: 30
       - id: check-ast
