@@ -34,6 +34,7 @@ namespace Lucene.Net.Index
     /// no index corruption is ever created.
     /// </summary>
     [TestFixture]
+    [SuppressCodecs("Lucene3x")]
     public class TestIndexWriterOutOfMemory : LuceneTestCase
     {
         // just one thread, serial merge policy, hopefully debuggable
