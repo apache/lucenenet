@@ -516,14 +516,14 @@ insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
-# Exclude .svg files (XML copied dirctly from Lucene to Misc)
+# Exclude .svg files (XML copied directly from Lucene to Misc)
 [**/*.svg]
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
-# Exclude .svg files (text copied dirctly from Lucene to Misc)
+# Exclude .svg files (text copied directly from Lucene to Misc)
 [**/*.gnuplot]
 trim_trailing_whitespace = unset
 insert_final_newline = unset

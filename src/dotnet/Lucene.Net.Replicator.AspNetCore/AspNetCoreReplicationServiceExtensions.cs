@@ -24,7 +24,7 @@ namespace Lucene.Net.Replicator.AspNetCore
      */
 
     //Note: LUCENENET specific
-    public static class AspNetCoreReplicationServiceExtentions
+    public static class AspNetCoreReplicationServiceExtensions
     {
         /// <summary>
         /// Extension method that mirrors the signature of <see cref="IReplicationService.Perform"/> using AspNetCore as implementation.
