@@ -378,21 +378,25 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                     string contents = "英 เบียร์ ビール ເບຍ abc";
                     for (int i = 0; i < 1000; i++)
                     {
-                        //try
-                        //{
-
+                        // LUCENENET NOTE: can't use `using` like try-with-resources upstream because TokenStream is ICloseable, not IDisposable
                         Tokenizer tokenizer = new ICUTokenizer(new StringReader(contents));
-                        tokenizer.Reset();
-                        while (tokenizer.IncrementToken())
+                        try
                         {
-                            tokenCount++;
+                            tokenizer.Reset();
+                            while (tokenizer.IncrementToken())
+                            {
+                                tokenCount++;
+                            }
+                            tokenizer.End();
                         }
-                        tokenizer.End();
-
-                        if (Verbose)
+                        finally
                         {
-                            Console.Out.WriteLine(tokenCount);
+                            tokenizer.Close();
                         }
+                    }
+                    if (Verbose)
+                    {
+                        Console.Out.WriteLine(tokenCount);
                     }
                 }
                 catch (Exception e) when (e.IsException())
