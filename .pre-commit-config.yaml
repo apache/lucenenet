@@ -68,8 +68,7 @@ repos:
       - id: codespell
         name: run codespell
         description: check spelling with codespell
-        exclude: ^src/Lucene\.Net\.Analysis\.Common/Analysis/../.*\.rslp$|^.*Lucene\.Net\.Tests.*$
-        args: [--ignore-words=.github/linters/codespell.txt]
+        args: [-c, pyproject.toml]
         priority: 50
   - repo: https://github.com/oxipng/oxipng
     rev: 36f3ef8aac65ecf1761739ea2f2e530281f1312b # frozen: v10.2.1
@@ -85,12 +84,12 @@ repos:
       - id: end-of-file-fixer
         name: run end-of-file-fixer
         description: makes sure files end in a newline and only a newline
-        files: \.(cs|md)$
+        files: \.(cs|md|toml)$
         priority: 35
       - id: trailing-whitespace
         name: run trailing-whitespace
         description: trims trailing whitespace
-        files: \.(bat|config|json|md|props|ps1|rdf|targets|tmpl|xml|ya?ml)$
+        files: \.(bat|config|json|md|props|ps1|rdf|targets|tmpl|toml|xml|ya?ml)$
         args: [--markdown-linebreak-ext=md]
         priority: 30
       - id: check-ast

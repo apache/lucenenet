@@ -1,2 +1,9 @@
 [tool.bandit]
 skips = ["B101"] # https://bandit.readthedocs.io/en/latest/plugins/b101_assert_used.html#b101-assert-used
+
+[tool.codespell]
+skip = [
+  "*.rslp",
+  "*Lucene.Net.Tests*"
+]
+ignore-words = ".github/linters/codespell.txt"
