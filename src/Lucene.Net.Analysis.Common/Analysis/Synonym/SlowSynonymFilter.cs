@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.Synonym
                     return false;
                 }
                 var termAtt = firstTok.AddAttribute<ICharTermAttribute>();
-                if (map.Submap is null || !map.Submap.TryGetValue(termAtt.Buffer, 0, termAtt.Length, out SlowSynonymMap result) || result is null)
+                if (map.Submap is null || !map.Submap.TryGetValue(termAtt.Buffer.AsSpan(0, termAtt.Length), out SlowSynonymMap result) || result is null)
                 {
                     Copy(this, firstTok);
                     return true;
@@ -275,7 +275,7 @@ namespace Lucene.Net.Analysis.Synonym
                     // check for positionIncrement!=1?  if>1, should not match, if==0, check multiple at this level?
                     var termAtt = tok.GetAttribute<ICharTermAttribute>();
 
-                    if (map.Submap.TryGetValue(termAtt.Buffer, 0, termAtt.Length, out SlowSynonymMap subMap) && subMap != null)
+                    if (map.Submap.TryGetValue(termAtt.Buffer.AsSpan(0, termAtt.Length), out SlowSynonymMap subMap) && subMap != null)
                     {
                         // recurse
                         result = Match(subMap);

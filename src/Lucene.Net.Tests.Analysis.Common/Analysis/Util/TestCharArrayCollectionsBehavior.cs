@@ -71,17 +71,19 @@ namespace Lucene.Net.Analysis.Util
         };
 
         private static CharArraySet CopySet(LuceneVersion matchVersion, IEnumerable<string> source)
-            => CharArraySet.Copy(matchVersion, source);
+            => new CharArraySet(matchVersion, source);
 
         private static CharArrayDictionary<TValue> CopyDictionary<TValue>(LuceneVersion matchVersion, IDictionary<string, TValue> source)
-            => CharArrayDictionary.Copy(matchVersion, source);
+            => new CharArrayDictionary<TValue>(matchVersion, source);
 
         /// <summary>
         /// Reference fold that matches the expected semantics for the given version.
         /// </summary>
         private static string Fold(string s, LuceneVersion matchVersion)
         {
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
             {
                 return s.ToLowerInvariant();
             }
@@ -373,7 +375,6 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [Test]
-        [Ignore("Order-dependent GetHashCode in the original implementation; fixed by the J2N-backed rewrite (#1478)")]
         public void TestDictionaryHashCodeMatchesStructuralDictionary()
         {
             var small = new CharArrayDictionary<int>(TEST_VERSION_CURRENT, 1, false);
@@ -522,7 +523,6 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [Test]
-        [Ignore("The original read-only view snapshots Count; fixed by the J2N-backed rewrite (#1478)")]
         public void TestReadOnlySetIsLiveView()
         {
             var source = new CharArraySet(TEST_VERSION_CURRENT, 4, true);
@@ -670,7 +670,6 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [Test]
-        [Ignore("ValueCollection.Contains always returns false in the original implementation; fixed by the J2N-backed rewrite (#1478)")]
         public void TestDictionaryValuesContainsFindsValues()
         {
             var dict = new CharArrayDictionary<int>(TEST_VERSION_CURRENT, 4, false);
@@ -680,7 +679,6 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [Test]
-        [Ignore("ToCharArrayDictionary(matchVersion, ignoreCase) returns an empty dictionary in the original implementation; fixed by the J2N-backed rewrite (#1478)")]
         public void TestToCharArrayDictionaryWithIgnoreCaseCopiesEntries()
         {
             IDictionary<string, int> source = new JCG.Dictionary<string, int> { { "Hello", 1 } };
@@ -690,7 +688,6 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [Test]
-        [Ignore("The ToCharArraySet(matchVersion) extension drops ignoreCase for a CharArraySet source in the original implementation; fixed by the J2N-backed rewrite (#1478)")]
         public void TestToCharArraySetExtensionKeepsIgnoreCaseOfCharArraySetSource()
         {
             var source = new CharArraySet(TEST_VERSION_CURRENT, 4, true);
