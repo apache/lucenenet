@@ -54,10 +54,13 @@ namespace Lucene.Net.Analysis.Util
             new object[] { "ÀÉÎ", "àéî", true }, // ÀÉÎ / àéî
             new object[] { "ЖИВ", "жив", true }, // Cyrillic ЖИВ / жив
             new object[] { "ΣΟΦ", "σοφ", true }, // Greek ΣΟΦ / σοφ
-            new object[] { "K", "k", true }, // KELVIN SIGN lowercases to 'k'
-            new object[] { "K", "K", true },
-            new object[] { "Ω", "ω", true }, // OHM SIGN lowercases to omega
-            new object[] { "Å", "å", true }, // ANGSTROM SIGN lowercases to å
+            // KELVIN, OHM and ANGSTROM SIGN lowercase to k, omega and å under ICU (.NET Core on all
+            // platforms), but NLS (.NET Framework) leaves them unchanged, so the expectation comes
+            // from the platform's invariant lowercasing, which is what the collections use.
+            new object[] { "K", "k", InvariantLowercaseEquals("K", "k") }, // KELVIN SIGN
+            new object[] { "K", "K", InvariantLowercaseEquals("K", "K") },
+            new object[] { "Ω", "ω", InvariantLowercaseEquals("Ω", "ω") }, // OHM SIGN
+            new object[] { "Å", "å", InvariantLowercaseEquals("Å", "å") }, // ANGSTROM SIGN
             new object[] { "𐐀", "𐐨", true }, // DESERET CAPITAL/SMALL LONG I (supplementary)
             new object[] { "x𐐀y", "X𐐨Y", true },
             new object[] { "a\uD800b", "A\uD800B", true }, // lone high surrogate
@@ -69,6 +72,9 @@ namespace Lucene.Net.Analysis.Util
             new object[] { "abc", "abcd", false },
             new object[] { "abc", "ab", false },
         };
+
+        private static bool InvariantLowercaseEquals(string a, string b)
+            => a.ToLowerInvariant() == b.ToLowerInvariant();
 
         private static CharArraySet CopySet(LuceneVersion matchVersion, IEnumerable<string> source)
             => new CharArraySet(matchVersion, source);
@@ -307,7 +313,8 @@ namespace Lucene.Net.Analysis.Util
             set.Add("WORLD".ToCharArray());
             set.Add("K"); // KELVIN SIGN
 
-            var expected = new JCG.HashSet<string> { "hello", "world", "k" };
+            // KELVIN SIGN lowercases to 'k' under ICU, but NLS (.NET Framework) leaves it unchanged
+            var expected = new JCG.HashSet<string> { "hello", "world", "K".ToLowerInvariant() };
             Assert.IsTrue(expected.SetEquals(set.ToArray()));
 
             var array = new string[3];
