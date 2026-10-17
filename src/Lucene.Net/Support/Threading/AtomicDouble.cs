@@ -233,13 +233,13 @@ namespace Lucene.Net.Support.Threading
         /// <inheritdoc/>
         public override byte ToByte()
         {
-            return (byte)Value;
+            return (byte)(int)Value; // Cast to int first to match Java's wrapping narrowing conversion; .NET 11+ saturates direct double-to-byte casts
         }
 
         /// <inheritdoc/>
         public override sbyte ToSByte()
         {
-            return (sbyte)Value;
+            return (sbyte)(int)Value; // Cast to int first to match Java's wrapping narrowing conversion; .NET 11+ saturates direct double-to-sbyte casts
         }
 
         /// <inheritdoc/>
@@ -269,7 +269,7 @@ namespace Lucene.Net.Support.Threading
         /// <inheritdoc/>
         public override short ToInt16()
         {
-            return (short)Value;
+            return (short)(int)Value; // Cast to int first to match Java's wrapping narrowing conversion; .NET 11+ saturates direct double-to-short casts
         }
 
         /// <summary>
