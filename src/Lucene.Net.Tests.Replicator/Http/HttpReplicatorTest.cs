@@ -144,6 +144,8 @@ namespace Lucene.Net.Replicator.Http
             client.UpdateNow();
             ReopenReader();
             assertEquals(2, int.Parse(reader.IndexCommit.UserData["ID"], NumberStyles.HexNumber));
+
+            client.Dispose();
         }
 
         [Test]

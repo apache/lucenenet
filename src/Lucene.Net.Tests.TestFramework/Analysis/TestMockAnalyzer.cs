@@ -217,7 +217,7 @@ namespace Lucene.Net.Analysis
             String testString = "t";
 
             Analyzer analyzer = new MockAnalyzer(Random);
-            Exception priorException = null;
+            // LUCENENET NOTE: can't use `using` like try-with-resources upstream because TokenStream is ICloseable, not IDisposable
             TokenStream stream = analyzer.GetTokenStream("dummy", testString);
 
             try
@@ -230,13 +230,9 @@ namespace Lucene.Net.Analysis
 
                 stream.End();
             }
-            catch (Exception e)
-            {
-                priorException = e;
-            }
             finally
             {
-                IOUtils.CloseWhileHandlingException(priorException, stream);
+                stream.Close();
             }
 
             AssertAnalyzesTo(analyzer, testString, new String[] { "t" });
@@ -282,7 +278,7 @@ namespace Lucene.Net.Analysis
                 StringReader reader = new StringReader(s);
                 MockCharFilter charfilter = new MockCharFilter(reader, 2);
                 MockAnalyzer analyzer = new MockAnalyzer(Random);
-                Exception priorException = null;
+                // LUCENENET NOTE: can't use `using` like try-with-resources upstream because TokenStream is ICloseable, not IDisposable
                 TokenStream ts = analyzer.GetTokenStream("bogus", charfilter);
                 try
                 {
@@ -294,13 +290,9 @@ namespace Lucene.Net.Analysis
 
                     ts.End();
                 }
-                catch (Exception e)
-                {
-                    priorException = e;
-                }
                 finally
                 {
-                    IOUtils.CloseWhileHandlingException(priorException, ts);
+                    ts.Close();
                 }
             }
         }

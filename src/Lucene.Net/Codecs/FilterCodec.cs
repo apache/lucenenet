@@ -54,12 +54,23 @@ namespace Lucene.Net.Codecs
         protected readonly Codec m_delegate;
 
         /// <summary>
-        /// Sole constructor. When subclassing this codec,
-        /// create a no-arg ctor and pass the delegate codec
-        /// and a unique name to this ctor.
+        /// When subclassing this codec,
+        /// create a no-arg ctor and pass the delegate codec to this ctor.
         /// </summary>
         protected FilterCodec(Codec @delegate)
-            : base()
+        {
+            this.m_delegate = @delegate;
+        }
+
+        /// <summary>
+        /// Alternate ctor for when the name of the codec is not known at construction time.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific overload to allow for specifying the name of the codec when it is not possible
+        /// to register the codec with the factory, such as when decorating a codec and needing to use the delegate's name.
+        /// </remarks>
+        protected FilterCodec(Codec @delegate, string name)
+            : base(name)
         {
             this.m_delegate = @delegate;
         }

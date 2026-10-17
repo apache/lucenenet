@@ -40,6 +40,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using IOContext = Lucene.Net.Store.IOContext;
     using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
@@ -47,7 +48,6 @@ namespace Lucene.Net.Codecs.Lucene3x
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using MultiFields = Lucene.Net.Index.MultiFields;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SegmentReader = Lucene.Net.Index.SegmentReader;
     using Term = Lucene.Net.Index.Term;
     using TermQuery = Lucene.Net.Search.TermQuery;
@@ -217,7 +217,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private static void Populate(Directory directory, IndexWriterConfig config)
         {
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, config);
+            IndexWriter writer = new IndexWriter(directory, config);
             for (int i = 0; i < NUMBER_OF_DOCUMENTS; i++)
             {
                 Document document = new Document();

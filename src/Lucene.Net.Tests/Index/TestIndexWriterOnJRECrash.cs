@@ -395,7 +395,6 @@ namespace Lucene.Net.Index
             if (file is DirectoryInfo directoryInfo)
             {
                 BaseDirectoryWrapper dir = null;
-                Exception priorE = null;
                 try
                 {
                     dir = NewFSDirectory(directoryInfo);
@@ -417,14 +416,12 @@ namespace Lucene.Net.Index
                         return true;
                     }
                 }
-                catch (Exception e)
-                {
-                    priorE = e;
-                    throw;
-                }
                 finally
                 {
-                    IOUtils.DisposeWhileHandlingException(priorE, dir);
+                    // LUCENENET: Upstream simply calls dir.close() here (see Lucene's checkIndexes).
+                    // We dispose while handling exceptions so an already-in-flight exception is not
+                    // masked by a dispose failure, matching IOUtils semantics after LUCENE-5654.
+                    IOUtils.DisposeWhileHandlingException(dir);
                 }
 
                 foreach (DirectoryInfo f in directoryInfo.EnumerateDirectories())

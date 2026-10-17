@@ -96,76 +96,97 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
         protected BinaryDictionary()
         {
+            Stream mapIS = null, dictIS = null, posIS = null;
             int[] targetMapOffsets = null, targetMap = null;
             string[] posDict = null;
             string[] inflFormDict = null;
             string[] inflTypeDict = null;
             ByteBuffer buffer; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            bool success = false;
 
-            using (Stream mapIS = GetResource(TARGETMAP_FILENAME_SUFFIX))
-            using (var @in = new InputStreamDataInput(mapIS, leaveOpen: true)) // LUCENENET: CA2000: Use using statement
+            try
             {
-                CodecUtil.CheckHeader(@in, TARGETMAP_HEADER, VERSION, VERSION);
-                targetMap = new int[@in.ReadVInt32()];
-                targetMapOffsets = new int[@in.ReadVInt32()];
-                int accum = 0, sourceId = 0;
-                for (int ofs = 0; ofs < targetMap.Length; ofs++)
+                mapIS = GetResource(TARGETMAP_FILENAME_SUFFIX);
+                using (var @in = new InputStreamDataInput(mapIS, leaveOpen: true)) // LUCENENET: CA2000: Use using statement
                 {
-                    int val = @in.ReadVInt32();
-                    if ((val & 0x01) != 0)
+                    CodecUtil.CheckHeader(@in, TARGETMAP_HEADER, VERSION, VERSION);
+                    targetMap = new int[@in.ReadVInt32()];
+                    targetMapOffsets = new int[@in.ReadVInt32()];
+                    int accum = 0, sourceId = 0;
+                    for (int ofs = 0; ofs < targetMap.Length; ofs++)
                     {
-                        targetMapOffsets[sourceId] = ofs;
-                        sourceId++;
-                    }
-                    accum += val >>> 1;
-                    targetMap[ofs] = accum;
-                }
-                if (sourceId + 1 != targetMapOffsets.Length)
-                    throw new IOException("targetMap file format broken");
-                targetMapOffsets[sourceId] = targetMap.Length;
-            }
+                        int val = @in.ReadVInt32();
+                        if ((val & 0x01) != 0)
+                        {
+                            targetMapOffsets[sourceId] = ofs;
+                            sourceId++;
+                        }
 
-            using (Stream posIS = GetResource(POSDICT_FILENAME_SUFFIX))
-            using (var @in = new InputStreamDataInput(posIS, leaveOpen: true)) // LUCENENET: CA2000: Use using statement
+                        accum += val >>> 1;
+                        targetMap[ofs] = accum;
+                    }
+
+                    if (sourceId + 1 != targetMapOffsets.Length)
+                        throw new IOException("targetMap file format broken");
+                    targetMapOffsets[sourceId] = targetMap.Length;
+                }
+
+                posIS = GetResource(POSDICT_FILENAME_SUFFIX);
+                using (var @in = new InputStreamDataInput(posIS, leaveOpen: true)) // LUCENENET: CA2000: Use using statement
+                {
+                    CodecUtil.CheckHeader(@in, POSDICT_HEADER, VERSION, VERSION);
+                    int posSize = @in.ReadVInt32();
+                    posDict = new string[posSize];
+                    inflTypeDict = new string[posSize];
+                    inflFormDict = new string[posSize];
+                    for (int j = 0; j < posSize; j++)
+                    {
+                        posDict[j] = @in.ReadString();
+                        inflTypeDict[j] = @in.ReadString();
+                        inflFormDict[j] = @in.ReadString();
+                        // this is how we encode null inflections
+                        if (inflTypeDict[j].Length == 0)
+                        {
+                            inflTypeDict[j] = null;
+                        }
+
+                        if (inflFormDict[j].Length == 0)
+                        {
+                            inflFormDict[j] = null;
+                        }
+                    }
+                }
+
+                ByteBuffer tmpBuffer;
+
+                dictIS = GetResource(DICT_FILENAME_SUFFIX);
+                // no buffering here, as we load in one large buffer
+                using (var @in = new InputStreamDataInput(dictIS, leaveOpen: true)) // LUCENENET: CA2000: Use using statement
+                {
+                    CodecUtil.CheckHeader(@in, DICT_HEADER, VERSION, VERSION);
+                    int size = @in.ReadVInt32();
+                    tmpBuffer = ByteBuffer.Allocate(size); // AllocateDirect..?
+                    int read = dictIS.Read(tmpBuffer.Array, 0, size);
+                    if (read != size)
+                    {
+                        throw EOFException.Create("Cannot read whole dictionary");
+                    }
+                }
+
+                buffer = tmpBuffer.AsReadOnlyBuffer();
+                success = true;
+            }
+            finally
             {
-                CodecUtil.CheckHeader(@in, POSDICT_HEADER, VERSION, VERSION);
-                int posSize = @in.ReadVInt32();
-                posDict = new string[posSize];
-                inflTypeDict = new string[posSize];
-                inflFormDict = new string[posSize];
-                for (int j = 0; j < posSize; j++)
+                if (success)
                 {
-                    posDict[j] = @in.ReadString();
-                    inflTypeDict[j] = @in.ReadString();
-                    inflFormDict[j] = @in.ReadString();
-                    // this is how we encode null inflections
-                    if (inflTypeDict[j].Length == 0)
-                    {
-                        inflTypeDict[j] = null;
-                    }
-                    if (inflFormDict[j].Length == 0)
-                    {
-                        inflFormDict[j] = null;
-                    }
+                    IOUtils.Dispose(mapIS, posIS, dictIS);
+                }
+                else
+                {
+                    IOUtils.DisposeWhileHandlingException(mapIS, posIS, dictIS);
                 }
             }
-
-            ByteBuffer tmpBuffer;
-
-            using (Stream dictIS = GetResource(DICT_FILENAME_SUFFIX))
-            // no buffering here, as we load in one large buffer
-            using (var @in = new InputStreamDataInput(dictIS, leaveOpen: true)) // LUCENENET: CA2000: Use using statement
-            {
-                CodecUtil.CheckHeader(@in, DICT_HEADER, VERSION, VERSION);
-                int size = @in.ReadVInt32();
-                tmpBuffer = ByteBuffer.Allocate(size); // AllocateDirect..?
-                int read = dictIS.Read(tmpBuffer.Array, 0, size);
-                if (read != size)
-                {
-                    throw EOFException.Create("Cannot read whole dictionary");
-                }
-            }
-            buffer = tmpBuffer.AsReadOnlyBuffer();
 
             this.targetMap = targetMap;
             this.targetMapOffsets = targetMapOffsets;
