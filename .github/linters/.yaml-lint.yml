@@ -25,6 +25,10 @@ rules:
   colons: disable
   comments: disable
   document-start: disable
-  indentation: disable
+  indentation:
+    ignore:
+      - /.build/
+      - /.github/workflows/
+      - azure-pipelines.yml
   line-length: disable
   truthy: disable

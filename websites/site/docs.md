@@ -27,8 +27,8 @@ The API docs are slightly different between versions, each one is listed below:
 
 ## Lucene.NET 3.0.3
 
-The documentation website for Lucene.NET 3.0.3 is here [http://lucenenet.apache.org/docs/3.0.3/Index.html](https://lucenenet.apache.org/docs/3.0.3/Index.html)
+The documentation website for Lucene.NET 3.0.3 is here [https://lucenenet.apache.org/docs/3.0.3/Index.html](https://lucenenet.apache.org/docs/3.0.3/Index.html)
 
 ## Lucene.NET 2.9.4.1
 
-The documentation website for Lucene.NET 2.9.4 is here [http://lucenenet.apache.org/docs/2.9.4/Index.html](https://lucenenet.apache.org/docs/2.9.4/Index.html)
+The documentation website for Lucene.NET 2.9.4 is here [https://lucenenet.apache.org/docs/2.9.4/Index.html](https://lucenenet.apache.org/docs/2.9.4/Index.html)

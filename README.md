@@ -57,7 +57,7 @@ Apache Lucene.NET is a .NET library providing powerful indexing and search featu
 Lucene.NET version 4.8 (still in Beta) runs everywhere .NET runs, including Windows, Unix, macOS, Android and iOS.
 
 The Apache Lucene.NET website is at:
-  http://lucenenet.apache.org
+  https://lucenenet.apache.org
 
 ## Supported Frameworks
 
