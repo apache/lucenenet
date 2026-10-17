@@ -784,13 +784,13 @@ namespace Lucene.Net.Analysis.Util
             var mixedExistingNonExistingValues = new JCG.List<string> { "true", "set", "of", "unique", "values", "except", "sells" };
 
             // Add existing values
-            assertFalse(target.UnionWith(existingValues));
-            assertEquals(7, target.Count);
+            Assert.IsFalse(target.UnionWith(existingValues));
+            Assert.AreEqual(7, target.Count);
             CollectionAssert.AreEquivalent(originalValues, target);
 
             // Add mixed existing/non-existing values
-            assertTrue(target.UnionWith(mixedExistingNonExistingValues));
-            assertEquals(13, target.Count);
+            Assert.IsTrue(target.UnionWith(mixedExistingNonExistingValues));
+            Assert.AreEqual(13, target.Count);
             CollectionAssert.AreEquivalent(new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore",
                 "true", "set", "of", "unique", "values", "except"}, target);
         }
@@ -1131,8 +1131,8 @@ namespace Lucene.Net.Analysis.Util
         public virtual void TestToCharArraySetEmptySet()
         {
             CharArraySet copy = CharArraySet.Empty.ToCharArraySet(TEST_VERSION_CURRENT);
-            assertEquals(0, copy.Count);
-            assertFalse(copy.IsReadOnly);
+            Assert.AreEqual(0, copy.Count);
+            Assert.IsFalse(copy.IsReadOnly);
         }
 
         [Test, LuceneNetSpecific]
@@ -1180,19 +1180,19 @@ namespace Lucene.Net.Analysis.Util
             var set = new CharArraySet(TEST_VERSION_CURRENT, 4, ignoreCase: true);
             char[] buffer = "xxHelloxx".ToCharArray();
 
-            assertTrue(set.Add(buffer.AsSpan(2, 5)));
-            assertFalse(set.Add(buffer.AsSpan(2, 5)));
-            assertFalse(set.Add("HELLO"));
-            assertTrue(set.Contains("hello"));
-            assertTrue(set.Contains(buffer.AsSpan(2, 5)));
-            assertFalse(set.Contains(buffer.AsSpan(2, 4)));
-            assertFalse(set.Contains(buffer.AsSpan(1, 5)));
-            assertEquals(1, set.Count);
+            Assert.IsTrue(set.Add(buffer.AsSpan(2, 5)));
+            Assert.IsFalse(set.Add(buffer.AsSpan(2, 5)));
+            Assert.IsFalse(set.Add("HELLO"));
+            Assert.IsTrue(set.Contains("hello"));
+            Assert.IsTrue(set.Contains(buffer.AsSpan(2, 5)));
+            Assert.IsFalse(set.Contains(buffer.AsSpan(2, 4)));
+            Assert.IsFalse(set.Contains(buffer.AsSpan(1, 5)));
+            Assert.AreEqual(1, set.Count);
 
             // The stored element is the lowercased copy, not a view over the buffer
             buffer[2] = 'J';
-            assertTrue(set.Contains("hello"));
-            assertEquals("hello", set.Single());
+            Assert.IsTrue(set.Contains("hello"));
+            Assert.AreEqual("hello", set.Single());
         }
 
         #endregion

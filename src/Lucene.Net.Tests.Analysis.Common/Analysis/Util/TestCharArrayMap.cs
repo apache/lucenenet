@@ -355,10 +355,10 @@ namespace Lucene.Net.Analysis.Util
             CharArrayDictionary<int?> target = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, Collections.SingletonMap<string, int?>("test", 1), false);
             CharArrayDictionary<int?> readOnlyTarget = target.AsReadOnly();
 
-            assertFalse(target.IsReadOnly);
-            assertTrue(((ICollection<string>)target.Keys).IsReadOnly); // KeyCollection is always read-only
-            assertTrue(readOnlyTarget.IsReadOnly);
-            assertTrue(((ICollection<string>)readOnlyTarget.Keys).IsReadOnly);
+            Assert.IsFalse(target.IsReadOnly);
+            Assert.IsTrue(((ICollection<string>)target.Keys).IsReadOnly); // KeyCollection is always read-only
+            Assert.IsTrue(readOnlyTarget.IsReadOnly);
+            Assert.IsTrue(((ICollection<string>)readOnlyTarget.Keys).IsReadOnly);
         }
 
         [Test, LuceneNetSpecific]
@@ -389,7 +389,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 using IEnumerator<KeyValuePair<string, int?>> theirs = map.GetEnumerator();
 
-                assertTrue(ours.MoveNext());
+                Assert.IsTrue(ours.MoveNext());
                 Assert.DoesNotThrow(() => theirs.MoveNext());
 
                 map[ours.Current.Key] = 1;
@@ -402,7 +402,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 using IEnumerator<KeyValuePair<string, int?>> theirs = map.GetEnumerator();
 
-                assertTrue(ours.MoveNext());
+                Assert.IsTrue(ours.MoveNext());
                 Assert.DoesNotThrow(() => theirs.MoveNext());
 
                 Assert.DoesNotThrow(() => { map["qux"] = 2; });
@@ -416,12 +416,12 @@ namespace Lucene.Net.Analysis.Util
             {
                 using IEnumerator<KeyValuePair<string, int?>> theirs = map.GetEnumerator();
 
-                assertTrue(ours.MoveNext());
+                Assert.IsTrue(ours.MoveNext());
                 Assert.DoesNotThrow(() => theirs.MoveNext());
 
                 Assert.DoesNotThrow(() => { map.Clear(); });
-                assertFalse(theirs.MoveNext());
-                assertFalse(ours.MoveNext());
+                Assert.IsFalse(theirs.MoveNext());
+                Assert.IsFalse(ours.MoveNext());
             }
         }
 
@@ -452,7 +452,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 using IEnumerator<string> theirs = map.Keys.GetEnumerator();
 
-                assertTrue(ours.MoveNext());
+                Assert.IsTrue(ours.MoveNext());
                 Assert.DoesNotThrow(() => theirs.MoveNext());
 
                 Assert.DoesNotThrow(() => ours.MoveNext());
@@ -467,13 +467,13 @@ namespace Lucene.Net.Analysis.Util
             {
                 using IEnumerator<string> theirs = map.Keys.GetEnumerator();
 
-                assertTrue(ours.MoveNext());
+                Assert.IsTrue(ours.MoveNext());
                 Assert.DoesNotThrow(() => theirs.MoveNext());
 
                 Assert.DoesNotThrow(() => ours.MoveNext());
                 Assert.DoesNotThrow(() => { map.Clear(); });
-                assertFalse(theirs.MoveNext());
-                assertFalse(ours.MoveNext());
+                Assert.IsFalse(theirs.MoveNext());
+                Assert.IsFalse(ours.MoveNext());
             }
         }
 
@@ -504,7 +504,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 using IEnumerator<int?> theirs = map.Values.GetEnumerator();
 
-                assertTrue(ours.MoveNext());
+                Assert.IsTrue(ours.MoveNext());
                 Assert.DoesNotThrow(() => theirs.MoveNext());
 
                 Assert.DoesNotThrow(() => ours.MoveNext());
@@ -519,13 +519,13 @@ namespace Lucene.Net.Analysis.Util
             {
                 using IEnumerator<int?> theirs = map.Values.GetEnumerator();
 
-                assertTrue(ours.MoveNext());
+                Assert.IsTrue(ours.MoveNext());
                 Assert.DoesNotThrow(() => theirs.MoveNext());
 
                 Assert.DoesNotThrow(() => ours.MoveNext());
                 Assert.DoesNotThrow(() => { map.Clear(); });
-                assertFalse(theirs.MoveNext());
-                assertFalse(ours.MoveNext());
+                Assert.IsFalse(theirs.MoveNext());
+                Assert.IsFalse(ours.MoveNext());
             }
         }
 
@@ -581,22 +581,22 @@ namespace Lucene.Net.Analysis.Util
             ReadOnlySpan<char> hello = buffer.AsSpan(2, 5);
 
             map.Add(hello, 1);
-            assertTrue(map.ContainsKey("hello"));
-            assertTrue(map.ContainsKey(hello));
-            assertEquals(1, map[hello]);
-            assertTrue(map.TryGetValue(hello, out int value));
-            assertEquals(1, value);
+            Assert.IsTrue(map.ContainsKey("hello"));
+            Assert.IsTrue(map.ContainsKey(hello));
+            Assert.AreEqual(1, map[hello]);
+            Assert.IsTrue(map.TryGetValue(hello, out int value));
+            Assert.AreEqual(1, value);
 
-            assertFalse(map.Put(hello, 2, out int previous));
-            assertEquals(1, previous);
+            Assert.IsFalse(map.Put(hello, 2, out int previous));
+            Assert.AreEqual(1, previous);
             map[hello] = 3;
-            assertEquals(3, map["HELLO"]);
-            assertEquals(1, map.Count);
+            Assert.AreEqual(3, map["HELLO"]);
+            Assert.AreEqual(1, map.Count);
 
             // The stored key is the lowercased copy, not a view over the buffer
             buffer[2] = 'J';
-            assertTrue(map.ContainsKey("hello"));
-            assertEquals("hello", map.Keys.Single());
+            Assert.IsTrue(map.ContainsKey("hello"));
+            Assert.AreEqual("hello", map.Keys.Single());
 
             Assert.Throws<ArgumentException>(() => map.Add("HELLO".AsSpan(), 4));
         }
