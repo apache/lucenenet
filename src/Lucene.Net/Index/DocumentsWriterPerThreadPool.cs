@@ -2,7 +2,6 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -392,7 +391,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                Debug.Assert(freeCount < freeList.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(freeCount < freeList.Length);
                 freeList[freeCount++] = state;
                 // In case any thread is waiting, wake one of them up since we just released a thread state; notify() should be sufficient but we do
                 // notifyAll defensively:
