@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.De
         public GermanAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
             : base(matchVersion, stopwords)
         {
-            exclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
+            exclusionSet = new CharArraySet(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

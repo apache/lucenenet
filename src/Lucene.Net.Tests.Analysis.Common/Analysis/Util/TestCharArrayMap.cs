@@ -1,16 +1,13 @@
 // Lucene version compatibility level 4.8.1
-using J2N.Collections;
-using J2N.Text;
-using Lucene.Net.Analysis.Util;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Util
@@ -61,7 +58,7 @@ namespace Lucene.Net.Analysis.Util
                 // add it again with the string method
                 assertEquals(val, map.Put(keyStr, val, out int? previousValue) ? null : previousValue);
 
-                assertEquals(val, map[key, 0, key.Length]); // LUCENENET: Changed Get() to this[]
+                assertEquals(val, map[key.AsSpan(0, key.Length)]); // LUCENENET: Changed Get() to this[]
                 assertEquals(val, map[key]); // LUCENENET: Changed Get() to this[]
                 assertEquals(val, map[keyStr]); // LUCENENET: Changed Get() to this[]
 
@@ -93,25 +90,38 @@ namespace Lucene.Net.Analysis.Util
             cm.PutAll(hm);
             assertEquals(hm.Count, cm.Count);
 
-            CharArraySet cs = cm.Keys;
+            // LUCENENET: Keys is a read-only ICollection<string> rather than a CharArraySet
+            ICollection<string> cs = cm.Keys;
             int n = 0;
             foreach (string o in cs)
             {
                 assertTrue(cm.ContainsKey(o));
                 char[] co = o.ToCharArray();
-                assertTrue(cm.ContainsKey(co, 0, co.Length));
+                assertTrue(cm.ContainsKey(co.AsSpan(0, co.Length)));
                 n++;
             }
             assertEquals(hm.Count, n);
             assertEquals(hm.Count, cs.Count);
             assertEquals(cm.Count, cs.Count);
-            cs.Clear();
+            // LUCENENET: In Lucene, keySet().clear() cleared the map. KeyCollection is read-only,
+            // so clear the dictionary instead and verify the keys reflect the change.
+            //cs.Clear();
+            cm.Clear();
             assertEquals(0, cs.Count);
             assertEquals(0, cm.Count);
             try
             {
                 cs.Add("test");
                 fail("keySet() allows adding new keys");
+            }
+            catch (Exception ue) when (ue.IsUnsupportedOperationException())
+            {
+                // pass
+            }
+            try
+            {
+                cs.Clear();
+                fail("Keys allows clearing");
             }
             catch (Exception ue) when (ue.IsUnsupportedOperationException())
             {
@@ -125,10 +135,10 @@ namespace Lucene.Net.Analysis.Util
             while (iter1.MoveNext())
             {
                 KeyValuePair<string, int?> entry = iter1.Current;
-                object key = entry.Key;
+                string key = entry.Key;
                 int? val = entry.Value;
                 assertEquals(cm[key], val); // LUCENENET: Changed Get() to this[]
-                iter1.SetValue(val * 100);
+                cm[key] = val * 100; // LUCENENET: Changed entry.setValue() to this[], which does not invalidate the enumerator for an existing key
                 assertEquals(val * 100, (int)cm[key]); // LUCENENET: Changed Get() to this[]
                 n++;
             }
@@ -141,10 +151,10 @@ namespace Lucene.Net.Analysis.Util
             n = 0;
             while (iter2.MoveNext())
             {
-                var keyc = iter2.Current.Key;
+                var keyc = iter2.Current.Key.ToCharArray();
                 int? val = iter2.Current.Value;
-                assertEquals(hm[keyc], val);
-                iter2.SetValue(val * 100);
+                assertEquals(hm[new string(keyc)], val);
+                cm[keyc] = val * 100; // LUCENENET: Changed iter2.setValue() to this[]
                 assertEquals(val * 100, (int)cm[keyc]); // LUCENENET: Changed Get() to this[]
                 n++;
             }
@@ -202,9 +212,11 @@ namespace Lucene.Net.Analysis.Util
                 assertEquals("Size of unmodifiable map has changed", size, map.Count);
             }
 
+            // LUCENENET: StringBuilder (CharSequence) overloads have been removed. A span over a
+            // char[] is used to cover the ReadOnlySpan<char> overload instead.
             try
             {
-                map.Put(new StringBuilder(NOT_IN_MAP), 3, out _);
+                map.Put(NOT_IN_MAP.ToCharArray().AsSpan(), 3, out _);
                 fail("Modified unmodifiable map");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -244,7 +256,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                map[new StringBuilder(NOT_IN_MAP)] = 3;
+                map[NOT_IN_MAP.ToCharArray().AsSpan()] = 3;
                 fail("Modified unmodifiable map");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -292,7 +304,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                map.Keys.Clear();
+                ((ICollection<string>)map.Keys).Clear();
                 fail("Modified unmodifiable map");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -301,18 +313,7 @@ namespace Lucene.Net.Analysis.Util
                 assertEquals("Size of unmodifiable map has changed", size, map.size());
             }
 
-            try
-            {
-                map.Put((object)NOT_IN_MAP, 3, out _);
-                fail("Modified unmodifiable map");
-            }
-            catch (Exception e) when (e.IsUnsupportedOperationException())
-            {
-                // expected
-                assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
-                assertFalse("Test String has been added to unmodifiable map", map.TryGetValue(NOT_IN_MAP, out int? _)); // LUCENENET: Changed Get() to TryGetValue()
-                assertEquals("Size of unmodifiable map has changed", size, map.size());
-            }
+            // LUCENENET: The Put((object)NOT_IN_MAP, ...) case was removed along with the object overloads
 
             try
             {
@@ -354,10 +355,10 @@ namespace Lucene.Net.Analysis.Util
             CharArrayDictionary<int?> target = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, Collections.SingletonMap<string, int?>("test", 1), false);
             CharArrayDictionary<int?> readOnlyTarget = target.AsReadOnly();
 
-            assertFalse(target.IsReadOnly);
-            assertTrue(target.Keys.IsReadOnly); // KeyCollection is always read-only
-            assertTrue(readOnlyTarget.IsReadOnly);
-            assertTrue(readOnlyTarget.Keys.IsReadOnly);
+            Assert.IsFalse(target.IsReadOnly);
+            Assert.IsTrue(((ICollection<string>)target.Keys).IsReadOnly); // KeyCollection is always read-only
+            Assert.IsTrue(readOnlyTarget.IsReadOnly);
+            Assert.IsTrue(((ICollection<string>)readOnlyTarget.Keys).IsReadOnly);
         }
 
         [Test, LuceneNetSpecific]
@@ -370,79 +371,57 @@ namespace Lucene.Net.Analysis.Util
                 ["baz"] = 0,
             };
 
-            // Checks to ensure our Current property throws when outside of the enumeration
-            using (var iter = map.GetEnumerator())
+            // Checks to ensure the non-generic Current property throws when outside of the enumeration
+            using (IEnumerator<KeyValuePair<string, int?>> iter = map.GetEnumerator())
             {
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKey; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKeyCharSequence; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKeyString; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValue; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = ((IEnumerator)iter).Current; });
 
                 while (iter.MoveNext())
                 {
-                    Assert.DoesNotThrow(() => { var _ = iter.Current; });
-                    Assert.DoesNotThrow(() => { var _ = iter.CurrentKey; });
-                    Assert.DoesNotThrow(() => { var _ = iter.CurrentKeyCharSequence; });
-                    Assert.DoesNotThrow(() => { var _ = iter.CurrentKeyString; });
-                    Assert.DoesNotThrow(() => { var _ = iter.CurrentValue; });
+                    Assert.DoesNotThrow(() => { var _ = ((IEnumerator)iter).Current; });
                 }
 
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKey; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKeyCharSequence; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKeyString; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValue; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = ((IEnumerator)iter).Current; });
             }
 
-            using (var ours = map.GetEnumerator())
+            // Replacing the value of an existing key does not invalidate enumerators
+            using (IEnumerator<KeyValuePair<string, int?>> ours = map.GetEnumerator())
             {
-                using var theirs = map.GetEnumerator();
+                using IEnumerator<KeyValuePair<string, int?>> theirs = map.GetEnumerator();
 
-                assertTrue(ours.MoveNext());
+                Assert.IsTrue(ours.MoveNext());
                 Assert.DoesNotThrow(() => theirs.MoveNext());
 
-                assertTrue(ours.MoveNext());
-                ours.SetValue(1);
-                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
-
+                map[ours.Current.Key] = 1;
+                Assert.DoesNotThrow(() => theirs.MoveNext());
                 Assert.DoesNotThrow(() => ours.MoveNext());
-                Assert.DoesNotThrow(() => ours.SetValue(1));
-                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
             }
 
-            using (var ours = map.GetEnumerator())
+            // Adding a key invalidates all enumerators
+            using (IEnumerator<KeyValuePair<string, int?>> ours = map.GetEnumerator())
             {
-                using var theirs = map.GetEnumerator();
+                using IEnumerator<KeyValuePair<string, int?>> theirs = map.GetEnumerator();
 
-                assertTrue(ours.MoveNext());
-                ours.SetValue(1);
-                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
+                Assert.IsTrue(ours.MoveNext());
+                Assert.DoesNotThrow(() => theirs.MoveNext());
 
-                Assert.DoesNotThrow(() => ours.MoveNext());
-                Assert.DoesNotThrow(() => { map["baz"] = 2; });
+                Assert.DoesNotThrow(() => { map["qux"] = 2; });
                 Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
                 Assert.Throws<InvalidOperationException>(() => ours.MoveNext());
             }
 
-            using (var ours = map.GetEnumerator())
+            // Clearing does not invalidate enumerators (consistent with Dictionary<TKey, TValue> in .NET Core 3.0+),
+            // they simply have no more elements
+            using (IEnumerator<KeyValuePair<string, int?>> ours = map.GetEnumerator())
             {
-                using var theirs = map.GetEnumerator();
+                using IEnumerator<KeyValuePair<string, int?>> theirs = map.GetEnumerator();
 
-                assertTrue(ours.MoveNext());
-                ours.SetValue(1);
-                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
+                Assert.IsTrue(ours.MoveNext());
+                Assert.DoesNotThrow(() => theirs.MoveNext());
 
-                Assert.DoesNotThrow(() => ours.MoveNext());
                 Assert.DoesNotThrow(() => { map.Clear(); });
-                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
-                Assert.Throws<InvalidOperationException>(() => ours.MoveNext());
-
-                Assert.Throws<InvalidOperationException>(() => { var _ = ours.Current; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentKey; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentKeyCharSequence; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentKeyString; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentValue; });
+                Assert.IsFalse(theirs.MoveNext());
+                Assert.IsFalse(ours.MoveNext());
             }
         }
 
@@ -456,54 +435,45 @@ namespace Lucene.Net.Analysis.Util
                 ["baz"] = 0,
             };
 
-
-            // Checks to ensure our Current property throws when outside of the enumeration
-            using (var iter = map.Keys.GetEnumerator())
+            // Checks to ensure the non-generic Current property throws when outside of the enumeration
+            using (IEnumerator<string> iter = map.Keys.GetEnumerator())
             {
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValue; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValueCharSequence; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = ((IEnumerator)iter).Current; });
 
                 while (iter.MoveNext())
                 {
-                    Assert.DoesNotThrow(() => { var _ = iter.Current; });
-                    Assert.DoesNotThrow(() => { var _ = iter.CurrentValue; });
-                    Assert.DoesNotThrow(() => { var _ = iter.CurrentValueCharSequence; });
+                    Assert.DoesNotThrow(() => { var _ = ((IEnumerator)iter).Current; });
                 }
 
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValue; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValueCharSequence; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = ((IEnumerator)iter).Current; });
             }
 
-            using (var ours = map.Keys.GetEnumerator())
+            using (IEnumerator<string> ours = map.Keys.GetEnumerator())
             {
-                using var theirs = map.Keys.GetEnumerator();
+                using IEnumerator<string> theirs = map.Keys.GetEnumerator();
 
-                assertTrue(ours.MoveNext());
+                Assert.IsTrue(ours.MoveNext());
                 Assert.DoesNotThrow(() => theirs.MoveNext());
 
                 Assert.DoesNotThrow(() => ours.MoveNext());
-                Assert.DoesNotThrow(() => { map["baz"] = 2; });
+                Assert.DoesNotThrow(() => { map["qux"] = 2; });
                 Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
                 Assert.Throws<InvalidOperationException>(() => ours.MoveNext());
             }
 
-            using (var ours = map.Keys.GetEnumerator())
+            // Clearing does not invalidate enumerators (consistent with Dictionary<TKey, TValue> in .NET Core 3.0+),
+            // they simply have no more elements
+            using (IEnumerator<string> ours = map.Keys.GetEnumerator())
             {
-                using var theirs = map.Keys.GetEnumerator();
+                using IEnumerator<string> theirs = map.Keys.GetEnumerator();
 
-                assertTrue(ours.MoveNext());
+                Assert.IsTrue(ours.MoveNext());
                 Assert.DoesNotThrow(() => theirs.MoveNext());
 
                 Assert.DoesNotThrow(() => ours.MoveNext());
                 Assert.DoesNotThrow(() => { map.Clear(); });
-                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
-                Assert.Throws<InvalidOperationException>(() => ours.MoveNext());
-
-                Assert.Throws<InvalidOperationException>(() => { var _ = ours.Current; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentValue; });
-                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentValueCharSequence; });
+                Assert.IsFalse(theirs.MoveNext());
+                Assert.IsFalse(ours.MoveNext());
             }
         }
 
@@ -517,46 +487,45 @@ namespace Lucene.Net.Analysis.Util
                 ["baz"] = 0,
             };
 
-
-            // Checks to ensure our Current property throws when outside of the enumeration
-            using (var iter = map.Values.GetEnumerator())
+            // Checks to ensure the non-generic Current property throws when outside of the enumeration
+            using (IEnumerator<int?> iter = map.Values.GetEnumerator())
             {
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = ((IEnumerator)iter).Current; });
 
                 while (iter.MoveNext())
                 {
-                    Assert.DoesNotThrow(() => { var _ = iter.Current; });
+                    Assert.DoesNotThrow(() => { var _ = ((IEnumerator)iter).Current; });
                 }
 
-                Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = ((IEnumerator)iter).Current; });
             }
 
-            using (var ours = map.Values.GetEnumerator())
+            using (IEnumerator<int?> ours = map.Values.GetEnumerator())
             {
-                using var theirs = map.Values.GetEnumerator();
+                using IEnumerator<int?> theirs = map.Values.GetEnumerator();
 
-                assertTrue(ours.MoveNext());
+                Assert.IsTrue(ours.MoveNext());
                 Assert.DoesNotThrow(() => theirs.MoveNext());
 
                 Assert.DoesNotThrow(() => ours.MoveNext());
-                Assert.DoesNotThrow(() => { map["baz"] = 2; });
+                Assert.DoesNotThrow(() => { map["qux"] = 2; });
                 Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
                 Assert.Throws<InvalidOperationException>(() => ours.MoveNext());
             }
 
-            using (var ours = map.Values.GetEnumerator())
+            // Clearing does not invalidate enumerators (consistent with Dictionary<TKey, TValue> in .NET Core 3.0+),
+            // they simply have no more elements
+            using (IEnumerator<int?> ours = map.Values.GetEnumerator())
             {
-                using var theirs = map.Values.GetEnumerator();
+                using IEnumerator<int?> theirs = map.Values.GetEnumerator();
 
-                assertTrue(ours.MoveNext());
+                Assert.IsTrue(ours.MoveNext());
                 Assert.DoesNotThrow(() => theirs.MoveNext());
 
                 Assert.DoesNotThrow(() => ours.MoveNext());
                 Assert.DoesNotThrow(() => { map.Clear(); });
-                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
-                Assert.Throws<InvalidOperationException>(() => ours.MoveNext());
-
-                Assert.Throws<InvalidOperationException>(() => { var _ = ours.Current; });
+                Assert.IsFalse(theirs.MoveNext());
+                Assert.IsFalse(ours.MoveNext());
             }
         }
 
@@ -601,86 +570,35 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(stopwords.SetEquals(array2.Skip(startIndex).ToArray()));
         }
 
-        private class KvpCharArrayEqualityComparer : IEqualityComparer<KeyValuePair<char[], int?>>
-        {
-            public static readonly KvpCharArrayEqualityComparer Instance = new KvpCharArrayEqualityComparer();
-
-            public bool Equals(KeyValuePair<char[], int?> x, KeyValuePair<char[], int?> y)
-            {
-                return ArrayEqualityComparer<char>.OneDimensional.Equals(x.Key, y.Key);
-            }
-            public int GetHashCode([DisallowNull] KeyValuePair<char[], int?> obj)
-            {
-                return ArrayEqualityComparer<char>.OneDimensional.GetHashCode(obj.Key);
-            }
-        }
+        // LUCENENET: TestCopyTo_CharArray_Int32 and TestCopyTo_ICharSequence_Int32 were removed along with
+        // the internal CopyTo(KeyValuePair<char[], TValue>[]) and CopyTo(KeyValuePair<ICharSequence, TValue>[]) overloads.
 
         [Test, LuceneNetSpecific]
-        public virtual void TestCopyTo_CharArray_Int32()
+        public virtual void TestSpanOverloadsMatchStringOverloads()
         {
-            var stopwords = new JCG.HashSet<KeyValuePair<char[], int?>>(
-                TestCharArraySet.TEST_STOP_WORDS.Select(x => new KeyValuePair<char[], int?>(key: x.ToCharArray(), value: 0)),
-                KvpCharArrayEqualityComparer.Instance);
-            var target = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, stopwords.Count, ignoreCase: false);
-            foreach (var kvp in stopwords)
-                target.Put(kvp.Key, kvp.Value, out _);
+            var map = new CharArrayDictionary<int>(TEST_VERSION_CURRENT, 4, ignoreCase: true);
+            char[] buffer = "xxHelloxx".ToCharArray();
+            ReadOnlySpan<char> hello = buffer.AsSpan(2, 5);
 
-            // Full array
-            var array1 = new KeyValuePair<char[], int?>[target.Count];
-            target.CopyTo(array1, 0);
-            assertTrue(stopwords.SetEquals(array1));
+            map.Add(hello, 1);
+            Assert.IsTrue(map.ContainsKey("hello"));
+            Assert.IsTrue(map.ContainsKey(hello));
+            Assert.AreEqual(1, map[hello]);
+            Assert.IsTrue(map.TryGetValue(hello, out int value));
+            Assert.AreEqual(1, value);
 
-            // Bounded to lower start index
-            int startIndex = 3;
-            var array2 = new KeyValuePair<char[], int?>[target.Count + startIndex];
-            target.CopyTo(array2, startIndex);
+            Assert.IsFalse(map.Put(hello, 2, out int previous));
+            Assert.AreEqual(1, previous);
+            map[hello] = 3;
+            Assert.AreEqual(3, map["HELLO"]);
+            Assert.AreEqual(1, map.Count);
 
-            assertEquals(default, array2[0]);
-            assertEquals(default, array2[1]);
-            assertEquals(default, array2[2]);
-            assertTrue(stopwords.IsProperSubsetOf(array2));
-            assertTrue(stopwords.SetEquals(array2.Skip(startIndex).ToArray()));
-        }
+            // The stored key is the lowercased copy, not a view over the buffer
+            buffer[2] = 'J';
+            Assert.IsTrue(map.ContainsKey("hello"));
+            Assert.AreEqual("hello", map.Keys.Single());
 
-        private class KvpCharSequenceEqualityComparer : IEqualityComparer<KeyValuePair<ICharSequence, int?>>
-        {
-            public static readonly KvpCharSequenceEqualityComparer Instance = new KvpCharSequenceEqualityComparer();
-
-            public bool Equals(KeyValuePair<ICharSequence, int?> x, KeyValuePair<ICharSequence, int?> y)
-            {
-                return StringComparer.OrdinalIgnoreCase.Equals(x.Key.ToString(), y.Key.ToString());
-            }
-            public int GetHashCode([DisallowNull] KeyValuePair<ICharSequence, int?> obj)
-            {
-                return obj.Key is null ? 0 : StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Key.ToString());
-            }
-        }
-
-        [Test, LuceneNetSpecific]
-        public virtual void TestCopyTo_ICharSequence_Int32()
-        {
-            var stopwords = new JCG.HashSet<KeyValuePair<ICharSequence, int?>>(
-                TestCharArraySet.TEST_STOP_WORDS.Select(x => new KeyValuePair<ICharSequence, int?>(key: new StringCharSequence(x), value: 0)),
-                KvpCharSequenceEqualityComparer.Instance);
-            var target = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, stopwords.Count, ignoreCase: false);
-            foreach (var kvp in stopwords)
-                target.Put(kvp.Key, kvp.Value, out _);
-
-            // Full array
-            var array1 = new KeyValuePair<ICharSequence, int?>[target.Count];
-            target.CopyTo(array1, 0);
-            assertTrue(stopwords.SetEquals(array1));
-
-            // Bounded to lower start index
-            int startIndex = 3;
-            var array2 = new KeyValuePair<ICharSequence, int?>[target.Count + startIndex];
-            target.CopyTo(array2, startIndex);
-
-            assertEquals(default, array2[0]);
-            assertEquals(default, array2[1]);
-            assertEquals(default, array2[2]);
-            assertTrue(stopwords.IsProperSubsetOf(array2));
-            assertTrue(stopwords.SetEquals(array2.Skip(startIndex).ToArray()));
+            Assert.Throws<ArgumentException>(() => map.Add("HELLO".AsSpan(), 4));
         }
     }
 }

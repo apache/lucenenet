@@ -103,7 +103,7 @@ namespace Lucene.Net.Analysis.Compound
                     {
                         break;
                     }
-                    if (m_dictionary.Contains(m_termAtt.Buffer, i, j))
+                    if (m_dictionary.Contains(m_termAtt.Buffer.AsSpan(i, j)))
                     {
                         if (this.m_onlyLongestMatch)
                         {

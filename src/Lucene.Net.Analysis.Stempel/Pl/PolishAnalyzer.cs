@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Pl
             : base(matchVersion, stopwords)
         {
             this.stemTable = DefaultsHolder.DEFAULT_TABLE;
-            this.stemExclusionSet = CharArraySet.Copy(
+            this.stemExclusionSet = new CharArraySet(
                 matchVersion, stemExclusionSet).AsReadOnly();
         }
 
