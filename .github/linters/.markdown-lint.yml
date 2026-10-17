@@ -22,7 +22,8 @@
 MD001: false
 
 # MD003/heading-style Heading style
-MD003: false
+MD003:
+  style: consistent
 
 # MD004/ul-style Unordered list style
 MD004: false
