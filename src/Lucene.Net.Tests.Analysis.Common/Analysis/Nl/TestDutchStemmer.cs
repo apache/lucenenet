@@ -2,7 +2,9 @@
 using System;
 using NUnit.Framework;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Attributes;
 using Lucene.Net.Util;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis.Nl
 {
@@ -123,6 +125,23 @@ namespace Lucene.Net.Analysis.Nl
             CheckOneTerm(a, "opheffen", "ophef"); // versus snowball 'opheff'
             CheckOneTerm(a, "opheffende", "ophef"); // versus snowball 'opheff'
             CheckOneTerm(a, "opheffing", "ophef"); // versus snowball 'opheff'
+        }
+
+        /// <summary>
+        /// The "heden" branch of the old stemmer's step 1 must read the R1 substring before
+        /// modifying the buffer, as Java's <c>StringBuilder.replace()</c> does. Expected values
+        /// are the output of the Lucene 4.8.1 Java <c>DutchStemmer</c>.
+        /// </summary>
+        [Test, LuceneNetSpecific] // Issue #664
+        public virtual void TestOldStemmerHedenSuffixMatchesJava()
+        {
+#pragma warning disable 612, 618
+            DutchStemmer stemmer = new DutchStemmer();
+#pragma warning restore 612, 618
+            Assert.AreEqual("licham", stemmer.Stem("lichamelijkheden"));
+            Assert.AreEqual("mogelijk", stemmer.Stem("mogelijkheden"));
+            Assert.AreEqual("geleg", stemmer.Stem("gelegenheden"));
+            Assert.AreEqual("heden", stemmer.Stem("heden"));
         }
 
         [Test]

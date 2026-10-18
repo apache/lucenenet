@@ -116,9 +116,10 @@ namespace Lucene.Net.Analysis.Nl
 
             if (s.EndsWith("heden", StringComparison.Ordinal))
             {
-                //sb.Remove(_R1, lengthR1 + _R1 - _R1).Insert(_R1, sb.Substring(_R1, lengthR1).replaceAll("heden", "heid"));
-                // LUCENENET NOTE: Per #664, can't use Replace instead of Delete/Insert because argument references sb after Remove/Delete call
-                sb.Delete(_R1, lengthR1 + _R1 - _R1).Insert(_R1, sb.ToString(_R1, lengthR1).Replace("heden", "heid"));
+                //sb.replace(_R1, lengthR1 + _R1, sb.substring(_R1, lengthR1 + _R1).replaceAll("heden", "heid"));
+                // LUCENENET: Use a single Replace() so the substring is read before the buffer is modified, as in Java.
+                // Previously this was a Remove() followed by an Insert() whose argument read past the end of the shortened buffer.
+                sb.Replace(_R1, lengthR1 + _R1 - _R1, sb.ToString(_R1, lengthR1 + _R1 - _R1).Replace("heden", "heid"));
                 return;
             }
 
