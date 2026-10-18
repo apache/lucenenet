@@ -2,6 +2,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
@@ -98,7 +99,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             int skippedPositions = 0;
             while (true)
             {
-                if (stopWords.Contains(termAtt.Buffer, 0, termAtt.Length))
+                if (stopWords.Contains(termAtt.Buffer.AsSpan(0, termAtt.Length)))
                 {
                     int posInc = posIncAtt.PositionIncrement;
                     int endOffset = offsetAtt.EndOffset;

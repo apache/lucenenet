@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Br
         public BrazilianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
             : this(matchVersion, stopwords)
         {
-            excltable = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
+            excltable = new CharArraySet(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

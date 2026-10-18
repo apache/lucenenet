@@ -652,7 +652,7 @@ namespace Lucene.Net.Analysis.En
             {
                 return matchedEntry;
             }
-            if (dict_ht.TryGetValue(word.Array, 0, word.Length, out DictEntry e) && e != null && !e.exception)
+            if (dict_ht.TryGetValue(word.Array.AsSpan(0, word.Length), out DictEntry e) && e != null && !e.exception)
             {
                 matchedEntry = e; // only cache if it's not an exception.
             }
@@ -770,7 +770,7 @@ namespace Lucene.Net.Analysis.En
             // thisLookup); } else { // System.out.println("new lookup:" + thisLookup);
             // }
 
-            return dict_ht.TryGetValue(word.Array, 0, word.Length, out matchedEntry) && matchedEntry != null;
+            return dict_ht.TryGetValue(word.Array.AsSpan(0, word.Length), out matchedEntry) && matchedEntry != null;
         }
 
         // Set<String> lookups = new HashSet<>();
@@ -1871,7 +1871,7 @@ namespace Lucene.Net.Analysis.En
 
             // first check the stemmer dictionaries, and avoid using the
             // cache if it's in there.
-            if (dict_ht.TryGetValue(term, 0, len, out DictEntry entry) && entry != null)
+            if (dict_ht.TryGetValue(term.AsSpan(0, len), out DictEntry entry) && entry != null)
             {
                 if (entry.root != null)
                 {

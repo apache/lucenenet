@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Ckb
         public SoraniAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
             : base(matchVersion, stopwords)
         {
-            this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
+            this.stemExclusionSet = new CharArraySet(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>
