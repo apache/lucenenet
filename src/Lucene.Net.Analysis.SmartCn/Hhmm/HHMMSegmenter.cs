@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     case CharType.HANZI:
                         j = i + 1;
                         //wordBuf.delete(0, wordBuf.length());
-                        wordBuf.Remove(0, wordBuf.Length);
+                        wordBuf.Clear();
                         // It doesn't matter if a single Chinese character (Hanzi) can form a phrase or not,
                         // it will store that single Chinese character (Hanzi) in the SegGraph.  Otherwise, it will
                         // cause word division.

@@ -1,4 +1,5 @@
 // Lucene version compatibility level 4.8.1
+using J2N.Text;
 using System;
 using System.Globalization;
 using System.Text;
@@ -102,8 +103,7 @@ namespace Lucene.Net.Analysis.Fr
             term = locale.TextInfo.ToLower(term);
 
             // Reset the StringBuilder.
-            sb.Remove(0, sb.Length);
-            sb.Insert(0, term);
+            sb.Replace(0, sb.Length, term);
 
             // reset the booleans
             modified = false;
@@ -155,8 +155,7 @@ namespace Lucene.Net.Analysis.Fr
             R1 = RetrieveR(sb);
             if (R1 != null)
             {
-                tb.Remove(0, tb.Length);
-                tb.Insert(0, R1);
+                tb.Replace(0, tb.Length, R1);
                 R2 = RetrieveR(tb);
             }
             else
@@ -291,7 +290,7 @@ namespace Lucene.Net.Analysis.Fr
                     char b = sb[sb.Length - 2];
                     if (b != 'a' && b != 'i' && b != 'o' && b != 'u' && b != 'è' && b != 's')
                     {
-                        sb.Remove(sb.Length - 1, sb.Length - (sb.Length - 1));
+                        sb.Delete(sb.Length - 1, sb.Length - (sb.Length - 1));
                         SetStrings();
                     }
                 }
@@ -317,7 +316,7 @@ namespace Lucene.Net.Analysis.Fr
             {
                 if (R0.EndsWith("enn", StringComparison.Ordinal) || R0.EndsWith("onn", StringComparison.Ordinal) || R0.EndsWith("ett", StringComparison.Ordinal) || R0.EndsWith("ell", StringComparison.Ordinal) || R0.EndsWith("eill", StringComparison.Ordinal))
                 {
-                    sb.Remove(sb.Length - 1, sb.Length - (sb.Length - 1));
+                    sb.Delete(sb.Length - 1, sb.Length - (sb.Length - 1));
                     SetStrings();
                 }
             }
@@ -387,7 +386,7 @@ namespace Lucene.Net.Analysis.Fr
                     {
                         if (from != null && from.EndsWith(prefix + search[i], StringComparison.Ordinal))
                         {
-                            sb.Remove(sb.Length - search[i].Length, sb.Length - (sb.Length - search[i].Length));
+                            sb.Delete(sb.Length - search[i].Length, sb.Length - (sb.Length - search[i].Length));
                             found = true;
                             SetStrings();
                             break;
@@ -420,7 +419,7 @@ namespace Lucene.Net.Analysis.Fr
                             bool test = IsVowel(sb[sb.Length - (search[i].Length + 1)]);
                             if (test == vowel)
                             {
-                                sb.Remove(sb.Length - search[i].Length, sb.Length - (sb.Length - search[i].Length));
+                                sb.Delete(sb.Length - search[i].Length, sb.Length - (sb.Length - search[i].Length));
                                 modified = true;
                                 found = true;
                                 SetStrings();
@@ -448,14 +447,14 @@ namespace Lucene.Net.Analysis.Fr
                 {
                     if (source.EndsWith(prefix + search[i], StringComparison.Ordinal))
                     {
-                        sb.Remove(sb.Length - (prefix.Length + search[i].Length), sb.Length - (sb.Length - (prefix.Length + search[i].Length)));
+                        sb.Delete(sb.Length - (prefix.Length + search[i].Length), sb.Length - (sb.Length - (prefix.Length + search[i].Length)));
                         modified = true;
                         SetStrings();
                         break;
                     }
                     else if (without && source.EndsWith(search[i], StringComparison.Ordinal))
                     {
-                        sb.Remove(sb.Length - search[i].Length, sb.Length - (sb.Length - search[i].Length));
+                        sb.Delete(sb.Length - search[i].Length, sb.Length - (sb.Length - search[i].Length));
                         modified = true;
                         SetStrings();
                         break;
@@ -483,21 +482,21 @@ namespace Lucene.Net.Analysis.Fr
                 {
                     if (source.EndsWith(prefix + search[i], StringComparison.Ordinal))
                     {
-                        sb.Remove(sb.Length - (prefix.Length + search[i].Length), sb.Length - (sb.Length - (prefix.Length + search[i].Length)));
+                        sb.Delete(sb.Length - (prefix.Length + search[i].Length), sb.Length - (sb.Length - (prefix.Length + search[i].Length)));
                         modified = true;
                         SetStrings();
                         break;
                     }
                     else if (from != null && from.EndsWith(prefix + search[i], StringComparison.Ordinal))
                     {
-                        sb.Remove(sb.Length - (prefix.Length + search[i].Length), sb.Length - (sb.Length - (prefix.Length + search[i].Length))).Insert(sb.Length - (prefix.Length + search[i].Length), replace);
+                        sb.Replace(sb.Length - (prefix.Length + search[i].Length), sb.Length - (sb.Length - (prefix.Length + search[i].Length)), replace);
                         modified = true;
                         SetStrings();
                         break;
                     }
                     else if (without && source.EndsWith(search[i], StringComparison.Ordinal))
                     {
-                        sb.Remove(sb.Length - search[i].Length, sb.Length - (sb.Length - search[i].Length));
+                        sb.Delete(sb.Length - search[i].Length, sb.Length - (sb.Length - search[i].Length));
                         modified = true;
                         SetStrings();
                         break;
@@ -521,7 +520,7 @@ namespace Lucene.Net.Analysis.Fr
                 {
                     if (source.EndsWith(search[i], StringComparison.Ordinal))
                     {
-                        sb.Remove(sb.Length - search[i].Length, sb.Length - (sb.Length - search[i].Length)).Insert(sb.Length - search[i].Length, replace);
+                        sb.Replace(sb.Length - search[i].Length, sb.Length - (sb.Length - search[i].Length), replace);
                         modified = true;
                         found = true;
                         SetStrings();
@@ -545,7 +544,7 @@ namespace Lucene.Net.Analysis.Fr
                 {
                     if (source.EndsWith(suffix[i], StringComparison.Ordinal))
                     {
-                        sb.Remove(sb.Length - suffix[i].Length, sb.Length - (sb.Length - suffix[i].Length));
+                        sb.Delete(sb.Length - suffix[i].Length, sb.Length - (sb.Length - suffix[i].Length));
                         modified = true;
                         SetStrings();
                         break;
