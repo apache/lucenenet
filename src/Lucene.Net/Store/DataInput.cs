@@ -222,8 +222,8 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Reads a <see cref="long"/> stored in variable-length format.  Reads between one and
-        /// nine bytes.  Smaller values take fewer bytes.  Negative numbers are
-        /// supported, but should be avoided.
+        /// nine bytes.  Smaller values take fewer bytes.  Negative numbers are not
+        /// supported.
         /// <para/>
         /// The format is described further in <seealso cref="DataOutput.WriteVInt32(int)"/>.
         /// <para/>
