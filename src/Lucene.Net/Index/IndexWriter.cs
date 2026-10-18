@@ -1117,20 +1117,22 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler and TestIndexWriterWithThreads
         public void Dispose()
         {
-            // LUCENENET: waitForMerges is threaded into the shutdown path directly here (via
-            // the private Shutdown(bool)) rather than through the Dispose(bool) hook, so subclasses
-            // see the conventional Dispose(bool disposing) signature. See #1399.
-            Shutdown(waitForMerges: true);
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
 
         /// <summary>
-        /// Disposes the index with or without waiting for currently
+        /// Closes the index with or without waiting for currently
         /// running merges to finish.  This is only meaningful when
         /// using a <see cref="MergeScheduler"/> that runs merges in background
         /// threads.  See <see cref="Dispose()"/> for details on behavior
         /// when exceptions are thrown.
+        ///
+        /// <para><b>NOTE</b>: This closes the index (commits, then releases the write lock),
+        /// but does not dispose this <see cref="IndexWriter"/> instance. You should still call
+        /// <see cref="Dispose()"/> (or use a <c>using</c> block) afterward so that subclasses
+        /// can release their own resources. Calling <see cref="Dispose()"/> after this method
+        /// does not close the index again.</para>
         ///
         /// <para><b>NOTE</b>: It is dangerous to always call
         /// <c>Close(false)</c>, especially when <see cref="IndexWriter"/> is not open
@@ -1152,7 +1154,7 @@ namespace Lucene.Net.Index
         // to misuse, and trunk LUCENE-4246 (commit 8559eaf, Lucene 5.0) deleted it entirely. We
         // keep it public but [Obsolete] to mirror the 4.10 state and preserve the 4.8.1 capability.
         // It also serves the test/benchmark call sites that need the "abort merges on close" path.
-        [Obsolete("To abort merges and then close, call Rollback() instead, or Dispose() to close waiting for merges.")]
+        [Obsolete("To abort merges and then close, call Commit() and then Rollback() instead.")]
         [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler and TestIndexWriterWithThreads
         public void Close(bool waitForMerges)
         {
@@ -1163,21 +1165,30 @@ namespace Lucene.Net.Index
         /// Releases resources used by the <see cref="IndexWriter"/> and optionally
         /// releases the managed resources.
         /// <para/>
-        /// The disposing of the index itself (committing, waiting for merges, and releasing
-        /// the write lock) is performed by the public <see cref="Dispose()"/> overload before
-        /// this method is invoked, so that the <c>waitForMerges</c> flag does not need to appear
-        /// on this inheritance hook.
-        /// Subclasses that override this method to release their own resources should call
-        /// <c>base.Dispose(disposing)</c>.
+        /// When <paramref name="disposing"/> is <c>true</c>, this closes the index (commits,
+        /// waits for merges, and releases the write lock) as described in <see cref="Dispose()"/>.
+        /// If the index was already closed (for example, by <see cref="Rollback()"/> or
+        /// <see cref="Close(bool)"/>), it is not closed again.
+        /// <para/>
+        /// <b>NOTE</b>: Always be sure to call <c>base.Dispose(disposing)</c> when overriding
+        /// this method. Work done before calling the base method happens while the
+        /// <see cref="IndexWriter"/> is still open.
+        /// <para/>
+        /// <b>NOTE</b>: When implementing a finalizer in a subclass, this method should be called
+        /// with <paramref name="disposing"/> set to <c>false</c>, which does not touch the index.
         /// </summary>
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
         /// <c>false</c> to release only unmanaged resources. </param>
         // LUCENENET specific - restored the conventional Dispose(bool disposing) signature. See #1399.
-        // The index shutdown (which needs the waitForMerges flag) is driven directly from the public
-        // Dispose() entry point via Shutdown(bool), so the waitForMerges state stays off the protected
-        // inheritance surface and this matches the standard .NET dispose pattern.
+        // The waitForMerges flag stays off this inheritance hook: the standard Dispose() path always
+        // waits for merges, and the [Obsolete] Close(bool) passes its flag to Shutdown(bool) directly.
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler and TestIndexWriterWithThreads
         protected virtual void Dispose(bool disposing)
         {
+            if (disposing)
+            {
+                Shutdown(waitForMerges: true);
+            }
         }
 
         // LUCENENET: upstream 2cfcdcc had private assertEventQueueAfterClose() between
