@@ -266,7 +266,7 @@ namespace Lucene.Net.Codecs.PerField
             {
                 this.outerInstance = outerInstance;
 
-                // Read _X.per and init each format:
+                // Init each unique format:
                 bool success = false;
                 try
                 {

@@ -374,9 +374,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Rewrites the query. If the wrapped is an instance of
-        /// <see cref="MatchAllDocsQuery"/> it returns a <see cref="ConstantScoreQuery"/>. Otherwise
-        /// it returns a new <see cref="FilteredQuery"/> wrapping the rewritten query.
+        /// Rewrites the query. Returns a new <see cref="FilteredQuery"/> wrapping the rewritten query,
+        /// or this instance if nothing needed to be rewritten.
         /// </summary>
         public override Query Rewrite(IndexReader reader)
         {

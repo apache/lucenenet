@@ -137,7 +137,7 @@ __Exhaustive repeating__: use <font color="#FF0066">*</font> instead of
  without iterating over the same file again, especially when the exact
  number of documents is not known in advance. For instance, TREC files extracted
  from a zip file. Note: when using this, you must also set
- <font color="#FF0066">doc.maker.forever</font> to false.
+ <font color="#FF0066">content.source.forever</font> to false.
 
 Example -  <font color="#FF0066">{ AddDoc } : *</font>  - would add docs
  until the doc maker is "exhausted".
@@ -413,7 +413,7 @@ Example: max.buffered=buf:10:10:100:100 -
 
     *   doc.maker
 
-    *   doc.maker.forever
+    *   content.source.forever
 
     *   html.parser
 

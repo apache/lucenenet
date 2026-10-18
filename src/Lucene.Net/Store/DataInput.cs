@@ -158,8 +158,8 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Reads an <see cref="int"/> stored in variable-length format.  Reads between one and
-        /// five bytes.  Smaller values take fewer bytes.  Negative numbers are not
-        /// supported.
+        /// five bytes.  Smaller values take fewer bytes.  Negative numbers are
+        /// supported, but should be avoided.
         /// <para/>
         /// The format is described further in <see cref="DataOutput.WriteVInt32(int)"/>.
         /// <para/>
