@@ -346,15 +346,25 @@ namespace Lucene.Net.Index
             get => ramBufferSizeMB;
             set
             {
-                if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value <= 0.0)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
-                    throw new ArgumentOutOfRangeException(nameof(RAMBufferSizeMB), "ramBufferSizeMB should be > 0.0 MB when enabled"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                    if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value <= 0.0)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(RAMBufferSizeMB), "ramBufferSizeMB should be > 0.0 MB when enabled"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                    }
+
+                    if (value == IndexWriterConfig.DISABLE_AUTO_FLUSH && maxBufferedDocs == IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                    {
+                        throw new ArgumentException("at least one of ramBufferSizeMB and maxBufferedDocs must be enabled");
+                    }
+
+                    this.ramBufferSizeMB.Value = value;
                 }
-                if (value == IndexWriterConfig.DISABLE_AUTO_FLUSH && maxBufferedDocs == IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                finally
                 {
-                    throw new ArgumentException("at least one of ramBufferSizeMB and maxBufferedDocs must be enabled");
+                    UninterruptableMonitor.Exit(this);
                 }
-                this.ramBufferSizeMB.Value = value;
             }
         }
 
@@ -386,15 +396,25 @@ namespace Lucene.Net.Index
             get => maxBufferedDocs;
             set
             {
-                if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value < 2)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
-                    throw new ArgumentOutOfRangeException(nameof(MaxBufferedDocs), "maxBufferedDocs must at least be 2 when enabled"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                    if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value < 2)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(MaxBufferedDocs), "maxBufferedDocs must at least be 2 when enabled"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                    }
+
+                    if (value == IndexWriterConfig.DISABLE_AUTO_FLUSH && ramBufferSizeMB == IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                    {
+                        throw new ArgumentException("at least one of ramBufferSizeMB and maxBufferedDocs must be enabled");
+                    }
+
+                    this.maxBufferedDocs = value;
                 }
-                if (value == IndexWriterConfig.DISABLE_AUTO_FLUSH && ramBufferSizeMB == IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                finally
                 {
-                    throw new ArgumentException("at least one of ramBufferSizeMB and maxBufferedDocs must be enabled");
+                    UninterruptableMonitor.Exit(this);
                 }
-                this.maxBufferedDocs = value;
             }
         }
 

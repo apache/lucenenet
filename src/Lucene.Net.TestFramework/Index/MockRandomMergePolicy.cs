@@ -31,12 +31,23 @@ namespace Lucene.Net.Index
     public class MockRandomMergePolicy : MergePolicy
     {
         private readonly Random random;
+        private bool doNonBulkMerges = true;
 
         public MockRandomMergePolicy(Random random)
         {
             // fork a private random, since we are called
             // unpredictably from threads:
             this.random = new J2N.Randomizer(random.NextInt64());
+        }
+
+        /// <summary>
+        /// Set to <c>true</c> if sometimes readers to be merged should be wrapped in a FilterReader
+        /// to mixup bulk merging.
+        /// </summary>
+        public bool DoNonBulkMerges
+        {
+            get => doNonBulkMerges;
+            set => doNonBulkMerges = value;
         }
 
         public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
@@ -67,7 +78,14 @@ namespace Lucene.Net.Index
                 // TODO: sometimes make more than 1 merge?
                 mergeSpec = new MergeSpecification();
                 int segsToMerge = TestUtil.NextInt32(random, 1, numSegments);
-                mergeSpec.Add(new OneMerge(segments.GetView(0, segsToMerge))); // LUCENENET: Checked length for correctness
+                if (doNonBulkMerges)
+                {
+                    mergeSpec.Add(new MockRandomOneMerge(segments.GetView(0, segsToMerge), random.NextInt64())); // LUCENENET: Checked length for correctness
+                }
+                else
+                {
+                    mergeSpec.Add(new OneMerge(segments.GetView(0, segsToMerge))); // LUCENENET: Checked length for correctness
+                }
             }
 
             return mergeSpec;
@@ -97,7 +115,14 @@ namespace Lucene.Net.Index
                 {
                     int max = Math.Min(10, eligibleSegments.Count - upto);
                     int inc = max <= 2 ? max : TestUtil.NextInt32(random, 2, max);
-                    mergeSpec.Add(new OneMerge(eligibleSegments.GetView(upto, inc))); // LUCENENET: Converted end index to length
+                    if (doNonBulkMerges)
+                    {
+                        mergeSpec.Add(new MockRandomOneMerge(eligibleSegments.GetView(upto, inc), random.NextInt64())); // LUCENENET: Converted end index to length
+                    }
+                    else
+                    {
+                        mergeSpec.Add(new OneMerge(eligibleSegments.GetView(upto, inc))); // LUCENENET: Converted end index to length
+                    }
                     upto += inc;
                 }
             }
@@ -129,6 +154,36 @@ namespace Lucene.Net.Index
         {
             // 80% of the time we create CFS:
             return random.Next(5) != 1;
+        }
+
+        private class MockRandomOneMerge : OneMerge
+        {
+            private readonly J2N.Randomizer r;
+            private JCG.List<AtomicReader> readers;
+
+            public MockRandomOneMerge(JCG.List<SegmentCommitInfo> segments, long seed)
+                : base(segments)
+            {
+                r = new J2N.Randomizer(seed); // LUCENENET: using J2N.Randomizer for long seed support
+            }
+
+            public override IList<AtomicReader> GetMergeReaders()
+            {
+                if (readers == null)
+                {
+                    readers = new JCG.List<AtomicReader>(base.GetMergeReaders());
+                    for (int i = 0; i < readers.Count; i++)
+                    {
+                        // wrap it (e.g. prevent bulk merge etc)
+                        if (r.Next(4) == 0)
+                        {
+                            readers[i] = new FilterAtomicReader(readers[i]);
+                        }
+                    }
+                }
+
+                return readers;
+            }
         }
     }
 }

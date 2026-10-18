@@ -1598,6 +1598,170 @@ namespace Lucene.Net.Util
             return logmp;
         }
 
+        // if you want it in LiveIndexWriterConfig: it must and will be tested here.
+        public static void MaybeChangeLiveIndexWriterConfig(Random r, LiveIndexWriterConfig c)
+        {
+            bool didChange = false;
+
+            if (Rarely(r))
+            {
+                // change flush parameters:
+                // this is complicated because the api requires you "invoke setters in a magical order!"
+                // LUCENE-5661: workaround for race conditions in the API
+                UninterruptableMonitor.Enter(c);
+                try
+                {
+                    bool flushByRam = r.NextBoolean();
+                    if (flushByRam)
+                    {
+                        c.SetRAMBufferSizeMB(TestUtil.NextInt32(r, 1, 10));
+                        c.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
+                    }
+                    else
+                    {
+                        if (Rarely(r))
+                        {
+                            // crazy value
+                            c.SetMaxBufferedDocs(TestUtil.NextInt32(r, 2, 15));
+                        }
+                        else
+                        {
+                            // reasonable value
+                            c.SetMaxBufferedDocs(TestUtil.NextInt32(r, 16, 1000));
+                        }
+
+                        c.SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH);
+                    }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(c);
+                }
+
+                didChange = true;
+            }
+
+            if (Rarely(r))
+            {
+                // change buffered deletes parameters
+                bool limitBufferedDeletes = r.NextBoolean();
+                if (limitBufferedDeletes)
+                {
+                    c.SetMaxBufferedDeleteTerms(TestUtil.NextInt32(r, 1, 1000));
+                }
+                else
+                {
+                    c.SetMaxBufferedDeleteTerms(IndexWriterConfig.DISABLE_AUTO_FLUSH);
+                }
+
+                didChange = true;
+            }
+
+            if (Rarely(r))
+            {
+                // change warmer parameters
+                if (r.NextBoolean())
+                {
+                    c.SetMergedSegmentWarmer(new SimpleMergedSegmentWarmer(c.InfoStream));
+                }
+                else
+                {
+                    c.SetMergedSegmentWarmer(null);
+                }
+
+                didChange = true;
+            }
+
+            if (Rarely(r))
+            {
+                // change CFS flush parameters
+                c.SetUseCompoundFile(r.NextBoolean());
+                didChange = true;
+            }
+
+            if (Rarely(r))
+            {
+                // change merge integrity check parameters
+                c.SetCheckIntegrityAtMerge(r.NextBoolean());
+                didChange = true;
+            }
+
+            if (Rarely(r))
+            {
+                // change CMS merge parameters
+                IMergeScheduler ms = c.MergeScheduler;
+                if (ms is ConcurrentMergeScheduler cms)
+                {
+                    int maxThreadCount = TestUtil.NextInt32(r, 1, 4);
+                    int maxMergeCount = TestUtil.NextInt32(r, maxThreadCount, maxThreadCount + 4);
+                    cms.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
+                }
+
+                didChange = true;
+            }
+
+            if (Rarely(r))
+            {
+                MergePolicy mp = c.MergePolicy;
+                ConfigureRandom(r, mp);
+                if (mp is LogMergePolicy logmp)
+                {
+                    logmp.CalibrateSizeByDeletes = r.NextBoolean();
+                    if (Rarely(r))
+                    {
+                        logmp.MergeFactor = TestUtil.NextInt32(r, 2, 9);
+                    }
+                    else
+                    {
+                        logmp.MergeFactor = TestUtil.NextInt32(r, 10, 50);
+                    }
+                }
+                else if (mp is TieredMergePolicy tmp)
+                {
+                    if (Rarely(r))
+                    {
+                        tmp.MaxMergeAtOnce = TestUtil.NextInt32(r, 2, 9);
+                        tmp.MaxMergeAtOnceExplicit = TestUtil.NextInt32(r, 2, 9);
+                    }
+                    else
+                    {
+                        tmp.MaxMergeAtOnce = TestUtil.NextInt32(r, 10, 50);
+                        tmp.MaxMergeAtOnceExplicit = TestUtil.NextInt32(r, 10, 50);
+                    }
+
+                    if (Rarely(r))
+                    {
+                        tmp.MaxMergedSegmentMB = 0.2 + r.NextDouble() * 2.0;
+                    }
+                    else
+                    {
+                        tmp.MaxMergedSegmentMB = r.NextDouble() * 100;
+                    }
+
+                    tmp.FloorSegmentMB = 0.2 + r.NextDouble() * 2.0;
+                    tmp.ForceMergeDeletesPctAllowed = 0.0 + r.NextDouble() * 30.0;
+                    if (Rarely(r))
+                    {
+                        tmp.SegmentsPerTier = TestUtil.NextInt32(r, 2, 20);
+                    }
+                    else
+                    {
+                        tmp.SegmentsPerTier = TestUtil.NextInt32(r, 10, 50);
+                    }
+
+                    ConfigureRandom(r, tmp);
+                    tmp.ReclaimDeletesWeight = r.NextDouble() * 4;
+                }
+
+                didChange = true;
+            }
+
+            if (Verbose && didChange)
+            {
+                Console.WriteLine($"NOTE: LuceneTestCase: randomly changed IWC's live settings to:\n{c}");
+            }
+        }
+
         /// <summary>
         /// Returns a new <see cref="Directory"/> instance. Use this when the test does not
         /// care about the specific <see cref="Directory"/> implementation (most tests).

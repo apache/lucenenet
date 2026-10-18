@@ -111,6 +111,26 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
+        /// Creates a new docvalues format.
+        /// <para/>
+        /// The provided name will be written into the index segment in some configurations
+        /// (such as when using <see cref="Codecs.PerField.PerFieldDocValuesFormat"/>): in such configurations,
+        /// for the segment to be read this class should be registered by subclassing <see cref="DefaultDocValuesFormatFactory"/> and
+        /// calling <see cref="DefaultDocValuesFormatFactory.ScanForDocValuesFormats(System.Reflection.Assembly)"/> in the class constructor.
+        /// The new <see cref="IDocValuesFormatFactory"/> can be registered by calling <see cref="SetDocValuesFormatFactory(IDocValuesFormatFactory)"/>
+        /// at application startup.
+        /// </summary>
+        /// <param name="name">The name of the format.</param>
+        /// <remarks>
+        /// LUCENENET specific overload to allow for specifying the name of the format when it is not possible
+        /// to register the format with the factory, such as when decorating a format and needing to use the delegate's name.
+        /// </remarks>
+        protected DocValuesFormat(string name)
+        {
+            this.name = name;
+        }
+
+        /// <summary>
         /// Returns a <see cref="DocValuesConsumer"/> to write docvalues to the
         /// index.
         /// </summary>

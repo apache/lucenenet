@@ -196,7 +196,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (blockOut is null) return;
 
-                Exception ioe = null; // LUCENENET: No need to cast to IOException
+                bool success = false;
                 try
                 {
                     var blockDirStart = blockOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
@@ -227,14 +227,18 @@ namespace Lucene.Net.Codecs.Memory
                     WriteTrailer(blockOut, blockDirStart);
                     CodecUtil.WriteFooter(indexOut);
                     CodecUtil.WriteFooter(blockOut);
-                }
-                catch (Exception ioe2) when (ioe2.IsIOException())
-                {
-                    ioe = ioe2;
+                    success = true;
                 }
                 finally
                 {
-                    IOUtils.DisposeWhileHandlingException(ioe, blockOut, indexOut, postingsWriter);
+                    if (success)
+                    {
+                        IOUtils.Dispose(blockOut, indexOut, postingsWriter);
+                    }
+                    else
+                    {
+                        IOUtils.DisposeWhileHandlingException(blockOut, indexOut, postingsWriter);
+                    }
                     blockOut = null;
                 }
             }

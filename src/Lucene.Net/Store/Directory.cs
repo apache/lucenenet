@@ -196,37 +196,32 @@ namespace Lucene.Net.Store
         {
             IndexOutput os = null;
             IndexInput @is = null;
-            Exception priorException = null; // LUCENENET: No need to cast to IOException
+            bool success = false;
+
             try
             {
                 os = to.CreateOutput(dest, context);
                 @is = OpenInput(src, context);
                 os.CopyBytes(@is, @is.Length);
-            }
-            catch (Exception ioe) when (ioe.IsIOException())
-            {
-                priorException = ioe;
+                success = true;
             }
             finally
             {
-                bool success = false;
-                try
+                if (success)
                 {
-                    IOUtils.DisposeWhileHandlingException(priorException, os, @is);
-                    success = true;
+                    IOUtils.Dispose(os, @is);
                 }
-                finally
+                else
                 {
-                    if (!success)
+                    IOUtils.DisposeWhileHandlingException(os, @is);
+
+                    try
                     {
-                        try
-                        {
-                            to.DeleteFile(dest);
-                        }
-                        catch (Exception t) when (t.IsThrowable())
-                        {
-                            // ignored
-                        }
+                        to.DeleteFile(dest);
+                    }
+                    catch (Exception t) when (t.IsThrowable())
+                    {
+                        // ignored
                     }
                 }
             }
