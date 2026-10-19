@@ -145,7 +145,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             // tasks having non primitive data structures should override this.
             // otherwise parallel running of a task sequence might not run correctly.
-            return (PerfTask)base.MemberwiseClone();
+            return base.MemberwiseClone();
         }
 
         public void Dispose()

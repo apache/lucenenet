@@ -141,7 +141,7 @@ namespace Lucene.Net.Util.Automaton
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual object Clone()
         {
-            return (Transition)base.MemberwiseClone();
+            return base.MemberwiseClone();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
 
         public virtual object Clone()
         {
-            return (MergeScheduler)base.MemberwiseClone();
+            return base.MemberwiseClone();
         }
     }
 }

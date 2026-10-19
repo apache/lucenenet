@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
 
         public virtual object Clone()
         {
-            return (IndexDeletionPolicy)base.MemberwiseClone();
+            return base.MemberwiseClone();
         }
     }
 }
