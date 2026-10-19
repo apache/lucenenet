@@ -236,10 +236,7 @@ namespace Lucene.Net.Util
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(other.numWords <= numWords, "numWords={0}, other.numWords={1}", numWords, other.numWords);
             int pos = Math.Min(numWords, other.numWords);
-            while (--pos >= 0)
-            {
-                bits[pos] |= other.bits[pos];
-            }
+            BitArrayOperations.Or(bits, other.bits, pos); // LUCENENET specific: vectorized word loop
         }
 
         /// <summary>
@@ -248,10 +245,7 @@ namespace Lucene.Net.Util
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(other.numWords <= numWords, "numWords={0}, other.numWords={1}", numWords, other.numWords);
             int pos = Math.Min(numWords, other.numWords);
-            while (--pos >= 0)
-            {
-                bits[pos] ^= other.bits[pos];
-            }
+            BitArrayOperations.Xor(bits, other.bits, pos); // LUCENENET specific: vectorized word loop
         }
 
         /// <summary>
@@ -274,10 +268,7 @@ namespace Lucene.Net.Util
         public void And(Int64BitSet other)
         {
             int pos = Math.Min(numWords, other.numWords);
-            while (--pos >= 0)
-            {
-                bits[pos] &= other.bits[pos];
-            }
+            BitArrayOperations.And(bits, other.bits, pos); // LUCENENET specific: vectorized word loop
             if (numWords > other.numWords)
             {
                 Arrays.Fill(bits, other.numWords, numWords, 0L);
@@ -289,10 +280,7 @@ namespace Lucene.Net.Util
         public void AndNot(Int64BitSet other)
         {
             int pos = Math.Min(numWords, other.bits.Length);
-            while (--pos >= 0)
-            {
-                bits[pos] &= ~other.bits[pos];
-            }
+            BitArrayOperations.AndNot(bits, other.bits, pos); // LUCENENET specific: vectorized word loop
         }
 
         // NOTE: no .isEmpty() here because that's trappy (ie,
