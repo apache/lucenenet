@@ -2,6 +2,7 @@ using J2N.Text;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Diagnostics
@@ -46,7 +47,7 @@ namespace Lucene.Net.Diagnostics
         /// <param name="condition">The conditional expression to evaluate. If the condition is <c>true</c>, no exception is thrown.</param>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Assert(bool condition)
+        public static void Assert([DoesNotReturnIf(false)] bool condition)
         {
             if (AssertsEnabled && !condition)
                 throw new AssertionException();
@@ -70,7 +71,7 @@ namespace Lucene.Net.Diagnostics
         /// <param name="p0">The parameter corresponding to the format item at index 0 (<c>{0}</c>).</param>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Assert<T0>(bool condition, string messageFormat, T0 p0)
+        public static void Assert<T0>([DoesNotReturnIf(false)] bool condition, string messageFormat, T0 p0)
         {
             if (AssertsEnabled && !condition)
                 throw new AssertionException(string.Format(StringFormatter.InvariantCulture, messageFormat, p0));
@@ -95,7 +96,7 @@ namespace Lucene.Net.Diagnostics
         /// <param name="p1">The parameter corresponding to the format item at index 1 (<c>{1}</c>).</param>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Assert<T0, T1>(bool condition, string messageFormat, T0 p0, T1 p1)
+        public static void Assert<T0, T1>([DoesNotReturnIf(false)] bool condition, string messageFormat, T0 p0, T1 p1)
         {
             if (AssertsEnabled && !condition)
                 throw new AssertionException(string.Format(StringFormatter.InvariantCulture, messageFormat, p0, p1));
@@ -121,7 +122,7 @@ namespace Lucene.Net.Diagnostics
         /// <param name="p2">The parameter corresponding to the format item at index 2 (<c>{2}</c>).</param>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Assert<T0, T1, T2>(bool condition, string messageFormat, T0 p0, T1 p1, T2 p2)
+        public static void Assert<T0, T1, T2>([DoesNotReturnIf(false)] bool condition, string messageFormat, T0 p0, T1 p1, T2 p2)
         {
             if (AssertsEnabled && !condition)
                 throw new AssertionException(string.Format(StringFormatter.InvariantCulture, messageFormat, p0, p1, p2));
@@ -148,7 +149,7 @@ namespace Lucene.Net.Diagnostics
         /// <param name="p3">The parameter corresponding to the format item at index 3 (<c>{3}</c>).</param>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Assert<T0, T1, T2, T3>(bool condition, string messageFormat, T0 p0, T1 p1, T2 p2, T3 p3)
+        public static void Assert<T0, T1, T2, T3>([DoesNotReturnIf(false)] bool condition, string messageFormat, T0 p0, T1 p1, T2 p2, T3 p3)
         {
             if (AssertsEnabled && !condition)
                 throw new AssertionException(string.Format(StringFormatter.InvariantCulture, messageFormat, p0, p1, p2, p3));
@@ -177,7 +178,7 @@ namespace Lucene.Net.Diagnostics
         /// <param name="p4">The parameter corresponding to the format item at index 4 (<c>{4}</c>).</param>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Assert<T0, T1, T2, T3, T4>(bool condition, string messageFormat, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4)
+        public static void Assert<T0, T1, T2, T3, T4>([DoesNotReturnIf(false)] bool condition, string messageFormat, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4)
         {
             if (AssertsEnabled && !condition)
                 throw new AssertionException(string.Format(StringFormatter.InvariantCulture, messageFormat, p0, p1, p2, p3, p4));
@@ -207,7 +208,7 @@ namespace Lucene.Net.Diagnostics
         /// <param name="p5">The parameter corresponding to the format item at index 5 (<c>{5}</c>).</param>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Assert<T0, T1, T2, T3, T4, T5>(bool condition, string messageFormat, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
+        public static void Assert<T0, T1, T2, T3, T4, T5>([DoesNotReturnIf(false)] bool condition, string messageFormat, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
         {
             if (AssertsEnabled && !condition)
                 throw new AssertionException(string.Format(StringFormatter.InvariantCulture, messageFormat, p0, p1, p2, p3, p4, p5));
@@ -238,7 +239,7 @@ namespace Lucene.Net.Diagnostics
         /// <param name="p6">The parameter corresponding to the format item at index 6 (<c>{6}</c>).</param>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Assert<T0, T1, T2, T3, T4, T5, T6>(bool condition, string messageFormat, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6)
+        public static void Assert<T0, T1, T2, T3, T4, T5, T6>([DoesNotReturnIf(false)] bool condition, string messageFormat, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6)
         {
             if (AssertsEnabled && !condition)
                 throw new AssertionException(string.Format(StringFormatter.InvariantCulture, messageFormat, p0, p1, p2, p3, p4, p5, p6));
@@ -270,7 +271,7 @@ namespace Lucene.Net.Diagnostics
         /// <param name="p7">The parameter corresponding to the format item at index 7 (<c>{7}</c>).</param>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Assert<T0, T1, T2, T3, T4, T5, T6, T7>(bool condition, string messageFormat, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7)
+        public static void Assert<T0, T1, T2, T3, T4, T5, T6, T7>([DoesNotReturnIf(false)] bool condition, string messageFormat, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7)
         {
             if (AssertsEnabled && !condition)
                 throw new AssertionException(string.Format(StringFormatter.InvariantCulture, messageFormat, p0, p1, p2, p3, p4, p5, p6, p7));
@@ -288,7 +289,7 @@ namespace Lucene.Net.Diagnostics
         /// <param name="message">The message to use to indicate a failure of <paramref name="condition"/>.</param>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Assert(bool condition, string message)
+        public static void Assert([DoesNotReturnIf(false)] bool condition, string message)
         {
             if (AssertsEnabled && !condition)
                 throw new AssertionException(message);
