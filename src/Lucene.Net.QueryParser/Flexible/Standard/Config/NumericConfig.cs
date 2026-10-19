@@ -106,7 +106,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             unchecked
             {
                 const int prime = 31;
-                int result = base.GetHashCode();
+                int result = 1; // LUCENENET: Don't mix in the reference-based object.GetHashCode(), which breaks the contract with Equals()
                 result = prime * result + this.precisionStep.GetHashCode();
                 result = prime * result + this.type.GetHashCode();
                 result = prime * result + this.format.GetHashCode();
