@@ -100,7 +100,21 @@ jobs:
           $projectVersion = ($releaseTag -replace '^Lucene\.Net_(\d+)_(\d+)_(\d+)_?', '$1.$2.$3-').TrimEnd('-')
           Write-Host "SonarCloud project version: $projectVersion"
 
+          # Ignored rules:
+          # e1 - S2328: GetHashCode() referencing mutable fields is inherent to Lucene's design (queries, attributes, *Ref types are mutable)
+          # e2 - S1206: MutableValue subclasses inherit Equals() from MutableValue, which delegates to EqualsSameType(), as in Lucene
+          # e3 - S3887: Public readonly arrays are part of the public API ported from Lucene
+          # e4 - S7630: Azure Pipelines template parameters are supplied by our own pipeline definitions, not by untrusted users
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"apache_lucenenet" /o:"apache" /v:"$projectVersion" `
-            /d:sonar.token="${{ secrets.SONARCLOUD_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+            /d:sonar.token="${{ secrets.SONARCLOUD_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" `
+            /d:sonar.issue.ignore.multicriteria="e1,e2,e3,e4" `
+            /d:sonar.issue.ignore.multicriteria.e1.ruleKey="csharpsquid:S2328" `
+            /d:sonar.issue.ignore.multicriteria.e1.resourceKey="src/**/*.cs" `
+            /d:sonar.issue.ignore.multicriteria.e2.ruleKey="csharpsquid:S1206" `
+            /d:sonar.issue.ignore.multicriteria.e2.resourceKey="src/Lucene.Net/Util/Mutable/*.cs" `
+            /d:sonar.issue.ignore.multicriteria.e3.ruleKey="csharpsquid:S3887" `
+            /d:sonar.issue.ignore.multicriteria.e3.resourceKey="src/**/*.cs" `
+            /d:sonar.issue.ignore.multicriteria.e4.ruleKey="azurepipelines:S7630" `
+            /d:sonar.issue.ignore.multicriteria.e4.resourceKey=".build/azure-templates/**"
           dotnet build --no-restore /p:TestFrameworks=${{ env.BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS }}
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONARCLOUD_TOKEN }}"
