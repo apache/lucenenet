@@ -663,5 +663,113 @@ namespace Lucene.Net.Util
         }
 
         #endregion
+
+        #region Span-based comparison (#1423)
+
+        /// <summary>
+        /// The original Lucene byte loop, kept as the reference for the span-based implementation.
+        /// </summary>
+        private static int ReferenceCompare(BytesRef a, BytesRef b)
+        {
+            int aUpto = a.Offset, bUpto = b.Offset;
+            int aStop = aUpto + Math.Min(a.Length, b.Length);
+            while (aUpto < aStop)
+            {
+                int diff = (a.Bytes[aUpto++] & 0xff) - (b.Bytes[bUpto++] & 0xff);
+                if (diff != 0)
+                {
+                    return diff;
+                }
+            }
+            return a.Length - b.Length;
+        }
+
+        /// <summary>
+        /// Builds a pair of refs at distinct non-zero offsets whose contents are equal except where
+        /// <paramref name="mutate"/> changes <c>b</c>. Both arrays carry random bytes beyond the ref
+        /// bounds to catch any read past Offset+Length.
+        /// </summary>
+        private (BytesRef a, BytesRef b) MakePair(int aLength, int bLength, Action<byte[], int> mutate)
+        {
+            const int aOffset = 3, bOffset = 7;
+            byte[] aBytes = new byte[aOffset + aLength + 5];
+            byte[] bBytes = new byte[bOffset + bLength + 5];
+            Random.NextBytes(aBytes);
+            Random.NextBytes(bBytes);
+            Array.Copy(aBytes, aOffset, bBytes, bOffset, Math.Min(aLength, bLength));
+            mutate?.Invoke(bBytes, bOffset);
+            return (new BytesRef(aBytes, aOffset, aLength), new BytesRef(bBytes, bOffset, bLength));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void CompareTo_MatchesLuceneByteOrder_AcrossLengthsAndOffsets()
+        {
+            // Pins the Lucene contract (unsigned byte order, length difference for prefixes) so a
+            // future change to the comparison cannot drift from it.
+            for (int length = 0; length <= 70; length++)
+            {
+                var (equalA, equalB) = MakePair(length, length, mutate: null);
+                Assert.AreEqual(0, equalA.CompareTo(equalB), "equal, length={0}", length);
+                Assert.AreEqual(0, equalB.CompareTo(equalA), "equal (reversed), length={0}", length);
+
+                for (int mismatchAt = 0; mismatchAt < length; mismatchAt++)
+                {
+                    int at = mismatchAt;
+                    var (a, b) = MakePair(length, length, (bytes, off) => bytes[off + at] = unchecked((byte)(bytes[off + at] + 1 + (at % 200))));
+                    int expected = ReferenceCompare(a, b);
+                    Assert.AreNotEqual(0, expected);
+                    Assert.AreEqual(Math.Sign(expected), Math.Sign(a.CompareTo(b)), "mismatch at {0}, length={1}", at, length);
+                    Assert.AreEqual(-Math.Sign(expected), Math.Sign(b.CompareTo(a)), "mismatch at {0} (reversed), length={1}", at, length);
+                }
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void CompareTo_ReturnsLengthDifference_WhenOneIsPrefixOfOther()
+        {
+            for (int shorter = 0; shorter <= 70; shorter++)
+            {
+                for (int extra = 1; extra <= 3; extra++)
+                {
+                    var (a, b) = MakePair(shorter, shorter + extra, mutate: null);
+                    Assert.AreEqual(-extra, a.CompareTo(b), "prefix, shorter={0}, extra={1}", shorter, extra);
+                    Assert.AreEqual(extra, b.CompareTo(a), "prefix (reversed), shorter={0}, extra={1}", shorter, extra);
+                }
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void CompareTo_UsesUnsignedByteOrder()
+        {
+            // 0x80..0xFF must sort after 0x00..0x7F (Java's "& 0xff"), which a signed compare would invert.
+            var low = new BytesRef(new byte[] { 0x7F });
+            var high = new BytesRef(new byte[] { 0x80 });
+            Assert.IsTrue(low.CompareTo(high) < 0);
+            Assert.IsTrue(high.CompareTo(low) > 0);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void BytesEquals_MatchesContentComparison_AcrossVectorWidths()
+        {
+            for (int length = 0; length <= 70; length++)
+            {
+                var (equalA, equalB) = MakePair(length, length, mutate: null);
+                Assert.IsTrue(equalA.BytesEquals(equalB), "equal, length={0}", length);
+                Assert.IsTrue(equalB.BytesEquals(equalA), "equal (reversed), length={0}", length);
+
+                for (int mismatchAt = 0; mismatchAt < length; mismatchAt++)
+                {
+                    int at = mismatchAt;
+                    var (a, b) = MakePair(length, length, (bytes, off) => bytes[off + at] ^= 0x01);
+                    Assert.IsFalse(a.BytesEquals(b), "mismatch at {0}, length={1}", at, length);
+                }
+
+                var (shortRef, longRef) = MakePair(length, length + 1, mutate: null);
+                Assert.IsFalse(shortRef.BytesEquals(longRef), "different lengths, length={0}", length);
+                Assert.IsFalse(longRef.BytesEquals(shortRef), "different lengths (reversed), length={0}", length);
+            }
+        }
+
+        #endregion
     }
 }

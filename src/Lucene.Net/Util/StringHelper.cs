@@ -61,6 +61,10 @@ namespace Lucene.Net.Util
         /// <returns> The number of common elements. </returns>
         public static int BytesDifference(this BytesRef left, BytesRef right) // LUCENENET specific - converted to extension method
         {
+#if FEATURE_MEMORYEXTENSIONS_COMMONPREFIXLENGTH
+            // LUCENENET specific: delegate to the vectorized BCL implementation where available
+            return left.AsSpan().CommonPrefixLength(right.AsSpan());
+#else
             int len = left.Length < right.Length ? left.Length : right.Length;
             var bytesLeft = left.Bytes;
             int offLeft = left.Offset;
@@ -74,6 +78,7 @@ namespace Lucene.Net.Util
                 }
             }
             return len;
+#endif
         }
 
         /// <summary> Returns a <see cref="T:IComparer{string}"/> over versioned strings such as X.YY.Z
@@ -170,19 +175,8 @@ namespace Lucene.Net.Util
             {
                 return false;
             }
-            int i = sliceToTest.Offset + pos;
-            int j = other.Offset;
-            int k = other.Offset + other.Length;
-
-            while (j < k)
-            {
-                if (sliceToTest.Bytes[i++] != other.Bytes[j++])
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            // LUCENENET specific: delegate to the vectorized BCL comparison instead of a byte loop
+            return sliceToTest.AsSpan().Slice(pos, other.Length).SequenceEqual(other.AsSpan());
         }
 
         /// <summary>
