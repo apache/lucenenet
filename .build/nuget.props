@@ -48,4 +48,8 @@ This package is part of the Lucene.NET project: https://www.nuget.org/packages/L
     <None Include="$(SolutionDir)NOTICE.txt" Pack="true" PackagePath="$(PackageNoticeFile)"/>
     <None Include="$(SolutionDir)branding\logo\lucene-net-icon-128x128.png" Pack="true" PackagePath="$(PackageIcon)"/>
   </ItemGroup>
+
+  <PropertyGroup Label="AOT Compatibility Settings">
+    <IsProductionLibrary>true</IsProductionLibrary>
+  </PropertyGroup>
 </Project>

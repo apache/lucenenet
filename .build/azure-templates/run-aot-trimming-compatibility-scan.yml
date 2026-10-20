@@ -1,0 +1,62 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+# Runs AOT compatibility scan on the library projects by building them with the EnableAotStrict property set to true.
+# This will log warnings for potential AOT/trimming issues in the library projects, but will not cause the build to fail.
+# No artifacts will be produced from this job, as the output of the build is not used and the build is not expected to succeed.
+# The main purpose of this job is to log potential AOT/trimming issues in the library projects for investigation.
+# We purposely skip building or scanning the test projects in this job, as they are not deployed and do not need to
+# be AOT/trimming compatible.
+
+parameters:
+  buildConfiguration: 'Release' # Defines the build configuration. Default 'Release'.
+  buildPlatform: 'Any CPU' # Defines the build platform. Default 'Any CPU'.
+  solution: '$(Build.SourcesDirectory)/Lucene.Net.sln' # The solution to build.
+
+steps:
+- pwsh: |
+    function EnsureNotNullOrEmpty([string]$param, [string]$nameOfParam) {
+        if ([string]::IsNullOrEmpty($param)) {
+            Write-Host "##vso[task.logissue type=error;]Missing template parameter \"$nameOfParam\""
+            Write-Host "##vso[task.complete result=Failed;]"
+        }
+    }
+    EnsureNotNullOrEmpty('${{ parameters.buildConfiguration }}', 'buildConfiguration')
+    EnsureNotNullOrEmpty('${{ parameters.buildPlatform }}', 'buildPlatform')
+    EnsureNotNullOrEmpty('${{ parameters.solution }}', 'solution')
+  displayName: 'Validate Template Parameters'
+  condition: eq(variables['System.Debug'], 'true')
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    projects: '${{ parameters.solution }}'
+    command: 'restore'
+    arguments: '--no-dependencies'
+  env:
+    NuGetAudit: false
+    NuGetAuditMode: 'direct'
+
+  # Runs dotnet build with AOT compatibility scan properties enabled to check for potential AOT/trimming issues in deployable libraries.
+  # This will not cause the build to fail if issues are found, but will log warnings in the build output for investigation.
+- task: DotNetCoreCLI@2
+  displayName: 'AOT Compatibility Scan'
+  inputs:
+    command: custom
+    projects: '${{ parameters.solution }}'
+    custom: build
+    arguments: '--configuration ${{ parameters.buildConfiguration }} --disable-build-servers --verbosity minimal --no-restore /m:1 /p:Platform="${{ parameters.buildPlatform }}" /p:BuildGroup=LibrariesOnly /p:EnableAotStrict=true /p:TreatWarningsAsErrors=false /p:PortableDebugTypeOnly=true'

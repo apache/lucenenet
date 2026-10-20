@@ -1,0 +1,3 @@
+<Project>
+  <!-- This is intentionally left emtpy. Its purpose is to give MSBuild an empty restore target file to disable restore. -->
+</Project>

@@ -1,0 +1,28 @@
+<Project Label="Skip Building All Projects That Import SkipBuild.props and SkipBuild.targets">
+
+  <PropertyGroup>
+    <!-- Stops this project from building its own dependencies -->
+    <BuildProjectReferences>false</BuildProjectReferences>
+
+    <!-- Helps skip some early evaluation steps -->
+    <SkipCompilerExecution>true</SkipCompilerExecution>
+
+    <!-- Custom property to indicate that this is a test project and its build is disabled -->
+    <IsTestProjectBuildDisabled>true</IsTestProjectBuildDisabled>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Clear the hooks that trigger compilation -->
+    <CoreCompileDependsOn></CoreCompileDependsOn>
+  </PropertyGroup>
+
+  <!--
+    We override these specific 'Core' targets.
+    MSBuild uses these as the 'guts' of the build process.
+  -->
+  <Target Name="Build" />
+  <Target Name="Restore" />
+  <Target Name="Publish" />
+  <Target Name="Pack" />
+
+</Project>
