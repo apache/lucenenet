@@ -55,6 +55,7 @@ namespace Lucene.Net.Util
             yield return count - 1;
             yield return count;
             yield return count + 1;
+            yield return 2 * count;
             yield return 2 * count + 1;
             yield return 1000;
         }
@@ -87,6 +88,65 @@ namespace Lucene.Net.Util
                     op(dst, src, numWords);
 
                     Assert.AreEqual(expected, dst, "{0} with numWords={1}", name, numWords);
+                }
+            }
+        }
+
+        /// <summary>
+        /// All zeros, all ones and both alternating-bit patterns.
+        /// </summary>
+        private static readonly long[] Patterns =
+        {
+            0L,
+            -1L,
+            0x5555555555555555L,
+            unchecked((long)0xAAAAAAAAAAAAAAAAUL),
+        };
+
+        [Test, LuceneNetSpecific]
+        public void BulkOps_MatchScalarReference_ForDeterministicPatterns()
+        {
+            foreach (int numWords in BoundaryWordCounts())
+            {
+                foreach (var (name, op, scalar) in Ops)
+                {
+                    foreach (long dstPattern in Patterns)
+                    {
+                        foreach (long srcPattern in Patterns)
+                        {
+                            long[] dst = new long[numWords];
+                            long[] src = new long[numWords];
+                            dst.AsSpan().Fill(dstPattern);
+                            src.AsSpan().Fill(srcPattern);
+                            long[] expected = new long[numWords];
+                            expected.AsSpan().Fill(scalar(dstPattern, srcPattern));
+
+                            op(dst, src, numWords);
+
+                            Assert.AreEqual(expected, dst, "{0} with numWords={1}, dst=0x{2:X16}, src=0x{3:X16}", name, numWords, dstPattern, srcPattern);
+                        }
+                    }
+                }
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public void BulkOps_MatchScalarReference_WhenDstIsSrc()
+        {
+            foreach (int numWords in BoundaryWordCounts())
+            {
+                foreach (var (name, op, scalar) in Ops)
+                {
+                    long[] words = RandomWords(numWords);
+                    long[] expected = new long[numWords];
+                    for (int i = 0; i < numWords; i++)
+                    {
+                        expected[i] = scalar(words[i], words[i]);
+                    }
+
+                    op(words, words, numWords);
+
+                    Assert.AreEqual(expected, words, "{0} with numWords={1}", name, numWords);
                 }
             }
         }
