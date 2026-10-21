@@ -31,24 +31,12 @@
     <GitHubProject>lucenenet</GitHubProject>
   </PropertyGroup>
 
-  <PropertyGroup Label="Legacy Visual Studio Support">
-    <VisualStudioMajorVersion>0</VisualStudioMajorVersion>
-    <!-- Extract major version (works for preview builds too) -->
-    <VisualStudioMajorVersion Condition="'$(VisualStudioVersion)' != ''">$([System.Version]::Parse($([System.Text.RegularExpressions.Regex]::Match('$(VisualStudioVersion)', '^\d+(\.\d+)*').Value)).Major)</VisualStudioMajorVersion>
-    <IsLegacyVisualStudioVersion>false</IsLegacyVisualStudioVersion>
-    <!-- Visual Studio 2026 == Version 18.x - anything below that major version is legacy -->
-    <IsLegacyVisualStudioVersion Condition="'$(BuildingInsideVisualStudio)' == 'true' And '$(VisualStudioMajorVersion)' &lt; '18'">true</IsLegacyVisualStudioVersion>
-  </PropertyGroup>
-
   <PropertyGroup Label="Centralized Target Frameworks">
-    <!-- net10.0 is conditional on VS version (VS2024+ = 18.0) -->
-    <!-- .NET Framework and netstandard2.0 are conditional on VS version (VS2024+ = 18.0) due to invalid build warnings with C# 14.0 build features -->
+    <!-- NOTE: net10.0 requires Visual Studio 2026 (18.x) or higher -->
 
-    <LibraryTargetFrameworks>net10.0;net8.0;netstandard2.0;net462</LibraryTargetFrameworks>
-    <LibraryTargetFrameworks Condition=" '$(IsLegacyVisualStudioVersion)' == 'true' ">net8.0</LibraryTargetFrameworks>
+    <LibraryTargetFrameworks>net10.0;netstandard2.0;net462</LibraryTargetFrameworks>
 
-    <NetCoreOnlyTargetFrameworks>net10.0;net8.0</NetCoreOnlyTargetFrameworks>
-    <NetCoreOnlyTargetFrameworks Condition=" '$(IsLegacyVisualStudioVersion)' == 'true' ">net8.0</NetCoreOnlyTargetFrameworks>
+    <NetCoreOnlyTargetFrameworks>net10.0</NetCoreOnlyTargetFrameworks>
   </PropertyGroup>
 
   <!-- IMPORTANT: When these values are changed, the CI counter number should also be reset. -->

@@ -68,7 +68,7 @@
 
  .PARAMETER TestFrameworks
     A string array of Dotnet target framework monikers to run the tests on. The default is
-    @('net10.0','net8.0','net472','net48').
+    @('net10.0','net472','net48').
 
  .PARAMETER OperatingSystems
     A string array of GitHub Actions operating system monikers to run the tests on.
@@ -85,17 +85,13 @@
     The SDK version of .NET 10.x to install on the build agent to be used for building and
     testing. This SDK is always installed on the build agent. The default is 10.0.x.
 
- .PARAMETER DotNet8SDKVersion
-    The SDK version of .NET 8.x to install on the build agent to be used for building and
-    testing. This SDK is always installed on the build agent. The default is 8.0.x.
-
 #>
 param(
     [string]$OutputDirectory =  $PSScriptRoot,
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net10.0', 'net8.0', 'net472', 'net48'), # targets under test: net10.0, net8.0, netstandard2.0, net462
+    [string[]]$TestFrameworks = @('net10.0', 'net472', 'net48'), # targets under test: net10.0, netstandard2.0, net462
 
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
@@ -103,9 +99,7 @@ param(
 
     [string[]]$Configurations = @('Release'),
 
-    [string]$DotNet10SDKVersion = '10.0.x',
-
-    [string]$DotNet8SDKVersion = '8.0.x'
+    [string]$DotNet10SDKVersion = '10.0.x'
 )
 
 
@@ -212,8 +206,7 @@ function Write-TestWorkflow(
     [string[]]$TestFrameworks = @('net6.0', 'net48'),
     [string[]]$TestPlatforms = @('x64'),
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
-    [string]$DotNet10SDKVersion = $DotNet10SDKVersion,
-    [string]$DotNet8SDKVersion = $DotNet8SDKVersion) {
+    [string]$DotNet10SDKVersion = $DotNet10SDKVersion) {
 
     # A workflow may run more than one test project in the same job. The path filters below are
     # the union over every project in the workflow, so the workflow runs whenever any member
@@ -366,12 +359,6 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Setup .NET 8 SDK
-        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
-        with:
-          dotnet-version: '$DotNet8SDKVersion'
-        if: `${{ startswith(matrix.framework, 'net8.') }}
 
       - name: Setup .NET 10 SDK
         uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
@@ -643,5 +630,5 @@ foreach ($workflowName in $workflowProjects.Keys) {
         Write-Host "Grouping $($projectPaths.Count) projects into workflow '${workflowName}': $(($projectPaths | ForEach-Object { [System.IO.Path]::GetFileNameWithoutExtension($_) }) -join ', ')" -ForegroundColor Green
     }
 
-    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPaths $projectPaths -WorkflowName $workflowName -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet8SDKVersion $DotNet8SDKVersion
+    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPaths $projectPaths -WorkflowName $workflowName -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet10SDKVersion $DotNet10SDKVersion
 }

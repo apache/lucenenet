@@ -21,7 +21,7 @@
 # folder; nothing is committed.
 #
 # By default the test shard builds with its own default target framework. Set
-# $env:COMPAT_TFM (e.g. net10.0, net8.0) to force a specific one.
+# $env:COMPAT_TFM (e.g. net10.0) to force a specific one.
 #
 # The codec whose name appears in the generated index folder names is chosen with
 # -CodecName (or $env:COMPAT_CODEC). When omitted, each side falls back to its own

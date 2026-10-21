@@ -27,7 +27,7 @@
     <TargetFrameworks>$(NetCoreOnlyTargetFrameworks)</TargetFrameworks>
     <RollForward>Major</RollForward>
 
-    <IsPublishable Condition=" $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net10.')) ">true</IsPublishable>
+    <IsPublishable Condition=" $(TargetFramework.StartsWith('net10.')) ">true</IsPublishable>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>lucene</ToolCommandName>
 

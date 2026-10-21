@@ -32,11 +32,9 @@
   <PropertyGroup>
     <!-- Currently, IKVM doesn't officially support building NetFX on anything but Windows, so we skip it for contributors who may be on various platforms.
         We can remove the condition once that has been addressed. See: https://github.com/ikvmnet/ikvm-maven/issues/49 -->
-    <!-- net10.0 is conditional on VS version (VS2024+ = 18.0) -->
-    <!-- .NET Framework is conditional on VS version (VS2024+ = 18.0) due to invalid build warnings with C# 14.0 build features -->
-    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(IsLegacyVisualStudioVersion)' == 'true' ">net8.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOsPlatform('Windows')) And '$(IsLegacyVisualStudioVersion)' != 'true' ">$(TargetFrameworks);net472</TargetFrameworks>
+    <!-- net10.0 requires Visual Studio 2026 (18.x) or higher -->
+    <TargetFrameworks>net10.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net472</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Analysis.OpenNLP</AssemblyTitle>
     <PackageTags>$(PackageTags);analysis;natural;language;processing;opennlp</PackageTags>

@@ -4,7 +4,7 @@ The Lucene.NET command line interface (CLI) is a new cross-platform toolchain wi
 
 ## Prerequisites
 
-- [.NET 6.0 Runtime or Higher](https://dotnet.microsoft.com/en-us/download/dotnet) (.NET 8.0 recommended)
+- [.NET 10.0 Runtime or Higher](https://dotnet.microsoft.com/en-us/download/dotnet)
 
 ## Installation
 
@@ -37,7 +37,7 @@ you are using.
 You may then use the lucene-cli tool to analyze and update Lucene.NET indexes and use its demos.
 
 The CLI is configured to [roll-forward](https://learn.microsoft.com/en-us/dotnet/core/versions/selection#control-roll-forward-behavior)
-to the next available major version of .NET installed on your machine, if only a newer one than .NET 8 is found.
+to the next available major version of .NET installed on your machine, if only a newer one than .NET 10 is found.
 You can control this behavior by setting the `DOTNET_ROLL_FORWARD` environment variable or `--roll-forward`
 command-line argument to `Disable` to prevent rolling forward, or `LatestMajor` to always use the latest
 available major version, before running the CLI tool.
