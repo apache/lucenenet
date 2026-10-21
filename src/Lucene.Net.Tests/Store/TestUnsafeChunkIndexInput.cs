@@ -268,6 +268,29 @@ namespace Lucene.Net.Store
             region.FreeAllPins();
         }
 
+        [Test]
+        public void TestSeekBoundsCheckUsesFullLengthBeyond4GB()
+        {
+            // A window longer than 4GB over a small region: Seek only validates
+            // against the window length and never touches chunk memory, so this
+            // exercises the bounds check without allocating 4GB. Positions past
+            // uint.MaxValue, and small positions that exceed the length truncated
+            // to 32 bits, must all be accepted (Test4GBStoredFields hit the latter).
+            const long length = (1L << 32) + 100;
+            var region = new ManagedChunkRegion(MakeData(16), chunkSizePower: 4);
+            using var input = new ManagedChunkIndexInput("root", ownsRegion: true, region, 0, length, chunkSizePower: 4);
+
+            foreach (long pos in new[] { 0L, 200L, 95086663L, (long)uint.MaxValue, 1L << 32, length - 1, length })
+            {
+                input.Seek(pos);
+                Assert.AreEqual(pos, input.Position, "position after Seek(" + pos + ")");
+            }
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => input.Seek(length + 1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => input.Seek(-1));
+            region.FreeAllPins();
+        }
+
         // ------------------------------------------------------------------
         // Dispose / region lifecycle
         // ------------------------------------------------------------------
