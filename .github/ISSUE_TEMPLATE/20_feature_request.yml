@@ -1,6 +1,7 @@
 name: 💡 Feature Request
 description: Suggest an idea for this project
 labels: ["is:feature"]
+type: Feature
 body:
   - type: markdown
     attributes:
