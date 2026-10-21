@@ -185,24 +185,8 @@ namespace Lucene.Net.Util
         public bool BytesEquals(BytesRef other)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(other != null);
-            if (Length == other.Length)
-            {
-                int otherUpto = other.Offset;
-                byte[] otherBytes = other.bytes;
-                int end = Offset + Length;
-                for (int upto = Offset; upto < end; upto++, otherUpto++)
-                {
-                    if (bytes[upto] != otherBytes[otherUpto])
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            // LUCENENET specific: delegate to the vectorized BCL comparison instead of a byte loop
+            return Length == other.Length && AsSpan().SequenceEqual(other.AsSpan());
         }
 
         /// <summary>
