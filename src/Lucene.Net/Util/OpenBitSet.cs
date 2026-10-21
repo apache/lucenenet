@@ -893,11 +893,7 @@ namespace Lucene.Net.Util
             long[] thisArr = this.m_bits;
             long[] otherArr = other.m_bits;
             // testing against zero can be more efficient
-            int pos = newLen;
-            while (--pos >= 0)
-            {
-                thisArr[pos] &= otherArr[pos];
-            }
+            BitArrayOperations.And(thisArr, otherArr, newLen); // LUCENENET specific: vectorized word loop
             if (this.m_wlen > newLen)
             {
                 // fill zeros from the new shorter length to the old length
@@ -923,10 +919,7 @@ namespace Lucene.Net.Util
             long[] thisArr = this.m_bits;
             long[] otherArr = other.m_bits;
             int pos = Math.Min(oldLen, other.m_wlen);
-            while (--pos >= 0)
-            {
-                thisArr[pos] |= otherArr[pos];
-            }
+            BitArrayOperations.Or(thisArr, otherArr, pos); // LUCENENET specific: vectorized word loop
             if (oldLen < newLen)
             {
                 Arrays.Copy(otherArr, oldLen, thisArr, oldLen, newLen - oldLen);
@@ -940,10 +933,7 @@ namespace Lucene.Net.Util
             int idx = Math.Min(m_wlen, other.m_wlen);
             long[] thisArr = this.m_bits;
             long[] otherArr = other.m_bits;
-            while (--idx >= 0)
-            {
-                thisArr[idx] &= ~otherArr[idx];
-            }
+            BitArrayOperations.AndNot(thisArr, otherArr, idx); // LUCENENET specific: vectorized word loop
         }
 
         /// <summary>
@@ -963,10 +953,7 @@ namespace Lucene.Net.Util
             long[] thisArr = this.m_bits;
             long[] otherArr = other.m_bits;
             int pos = Math.Min(oldLen, other.m_wlen);
-            while (--pos >= 0)
-            {
-                thisArr[pos] ^= otherArr[pos];
-            }
+            BitArrayOperations.Xor(thisArr, otherArr, pos); // LUCENENET specific: vectorized word loop
             if (oldLen < newLen)
             {
                 Arrays.Copy(otherArr, oldLen, thisArr, oldLen, newLen - oldLen);
