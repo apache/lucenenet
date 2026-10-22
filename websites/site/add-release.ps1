@@ -32,7 +32,7 @@
 #   ./websites/site/add-release.ps1 -Version 4.8.0-beta00019 -ReleaseDate 2026-11-01
 
 param (
-    # The release version, for example 4.8.0-beta00019 or 4.8.0
+    # The release version, for example 4.8.0-beta00019, 4.8.0 or 4.8.0.1
     [Parameter(Mandatory=$true)]
     [string]
     $Version,
@@ -44,8 +44,9 @@ param (
 
 $ErrorActionPreference = 'Stop'
 
-if ($Version -notmatch '^\d+\.\d+\.\d+(-[a-z]+\d+)?$') {
-    throw "Version '$Version' is not in the expected format, for example 4.8.0-beta00019 or 4.8.0"
+# See /websites/site/contributing/versioning.md. Pre-release versions do not support revision numbers.
+if ($Version -notmatch '^\d+\.\d+\.\d+(\.\d+|-[a-z]+\d+)?$') {
+    throw "Version '$Version' is not in the expected format, for example 4.8.0-beta00019, 4.8.0 or 4.8.0.1"
 }
 if ($ReleaseDate -notmatch '^\d{4}-\d{2}-\d{2}$') {
     throw "ReleaseDate '$ReleaseDate' is not in the expected format yyyy-MM-dd"
@@ -131,7 +132,7 @@ if (Test-Path $NewPagePath) {
     $page = [regex]::Replace($page, '(?m)^_Status:_ \*\*`[^`]*`\*\*', "_Status:_ **``$Status``**")
     Write-TextFile $NewPagePath $page
     Write-Host "  [done] download/$NewPageName (copied from version-$PreviousVersion.md)"
-    Write-Warning "Review the 'Supported Frameworks' and 'All Packages' sections of download/$NewPageName, they were copied from $PreviousVersion"
+    Write-Warning "Review the 'Supported Frameworks' and 'All Packages' sections and the Java Lucene release link of download/$NewPageName, they were copied from $PreviousVersion"
 }
 
 if ((Read-TextFile $TocPath).Contains("href: $NewPageName")) {
@@ -157,12 +158,33 @@ if ((Read-TextFile $DownloadMdPath).Contains("(xref:download/$Version)")) {
 
 # --- API docs links ---
 
+# docs.md has a section per Lucene version (for example, "## Lucene.NET 4.8.0") listing the API docs of
+# each of its releases, newest first
 $DocsMdPath = Join-Path -Path $SiteFolder -ChildPath 'docs.md'
 $DocsUrl = "https://lucenenet.apache.org/docs/$Version/"
-if ((Read-TextFile $DocsMdPath).Contains("($DocsUrl)")) {
+$LuceneVersion = [regex]::Match($Version, '^\d+\.\d+\.\d+').Value
+$DocsMd = Read-TextFile $DocsMdPath
+if ($DocsMd.Contains("($DocsUrl)")) {
     Write-Host "  [skip] docs.md (already contains $Version)"
 } else {
-    Add-BeforeFirstMatch $DocsMdPath '^- \[[^\]]+\]\(https://lucenenet\.apache\.org/docs/' @("- [$Version]($DocsUrl)")
+    $sectionHeading = "## Lucene.NET $LuceneVersion"
+    $section = [regex]::Match($DocsMd, '(?m)^' + [regex]::Escape($sectionHeading) + '\s*$')
+    if ($section.Success) {
+        $nl = Get-NewLine $DocsMd
+        $link = [regex]::Match($DocsMd.Substring($section.Index), '(?m)^- \[')
+        if (-not $link.Success) {
+            throw "Could not find the list of API docs links under '$sectionHeading' in $DocsMdPath"
+        }
+        Write-TextFile $DocsMdPath ($DocsMd.Insert($section.Index + $link.Index, "- [$Version]($DocsUrl)$nl"))
+    } else {
+        Add-BeforeFirstMatch $DocsMdPath '^## Lucene\.NET ' @(
+            $sectionHeading,
+            '',
+            'The API docs are slightly different between versions, each one is listed below:',
+            '',
+            "- [$Version]($DocsUrl)",
+            '')
+    }
     Write-Host "  [done] docs.md"
 }
 

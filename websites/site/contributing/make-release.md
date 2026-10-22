@@ -372,7 +372,7 @@ Remove the old releases from SVN under https://dist.apache.org/repos/dist/releas
 - Update Website with new release
 
   - The workflow runs `/websites/site/add-release.ps1` and submits the changes as a PR to `master`. Review the PR, in particular:
-    - Ensure the "Supported Frameworks" and "All Packages" sections of the new download page are accurate for the new release (they are copied from the previous release)
+    - Ensure the "Supported Frameworks" and "All Packages" sections and the Java Lucene release link of the new download page are accurate for the new release (they are copied from the previous release)
     - Ensure the release notes page in `/websites/site/release-notes` exists
 <br/>
 <br/>

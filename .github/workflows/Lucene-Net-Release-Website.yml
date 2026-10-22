@@ -32,6 +32,10 @@ name: 'Lucene.Net.Release.Website'
 #   run Lucene-Net-Documentation.yml on the docs/VERSION branch (which creates a PR to the lucenenet-site repo)
 #
 # It can also be run manually (for example, to re-run it for a release) by specifying the version.
+#
+# NOTE: For release events, GitHub runs the copy of this workflow that exists at the commit of the
+# release tag, so this file must exist in the branch the release is tagged on. The website job always
+# uses the add-release.ps1 script on master, since master is the source of truth for the website.
 
 on:
   release:
@@ -44,7 +48,7 @@ on:
         required: true
         type: string
       release_date:
-        description: 'The release date in yyyy-MM-dd format (defaults to today)'
+        description: 'The release date in yyyy-MM-dd format (defaults to the date the GitHub Release was published)'
         required: false
         type: string
 
@@ -63,6 +67,7 @@ jobs:
     steps:
       # NOTE: All event values are passed through environment variables rather than being expanded
       # inline in the script to prevent script injection.
+      # See /websites/site/contributing/versioning.md for the version and tag formats.
       - name: Determine release version
         id: version
         env:
@@ -71,14 +76,18 @@ jobs:
           RELEASE_PUBLISHED_AT: ${{ github.event.release.published_at }}
           INPUT_VERSION: ${{ inputs.version }}
           INPUT_RELEASE_DATE: ${{ inputs.release_date }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
         run: |
           if [ "$EVENT_NAME" = "release" ]; then
             tag="$RELEASE_TAG"
-            # Convert a tag such as Lucene.Net_4_8_0_beta00019 to 4.8.0-beta00019
-            if [[ "$tag" =~ ^Lucene\.Net_([0-9]+)_([0-9]+)_([0-9]+)(_([a-z]+[0-9]+))?$ ]]; then
+            # Convert a tag such as Lucene.Net_4_8_0_beta00019 to 4.8.0-beta00019 or Lucene.Net_4_8_0_1 to 4.8.0.1
+            if [[ "$tag" =~ ^Lucene\.Net_([0-9]+)_([0-9]+)_([0-9]+)(_([0-9]+)|_([a-z]+[0-9]+))?$ ]]; then
               version="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
               if [ -n "${BASH_REMATCH[5]}" ]; then
-                version="$version-${BASH_REMATCH[5]}"
+                version="$version.${BASH_REMATCH[5]}"
+              elif [ -n "${BASH_REMATCH[6]}" ]; then
+                version="$version-${BASH_REMATCH[6]}"
               fi
             else
               echo "::error::Release tag '$tag' is not a Lucene.Net_* release tag"
@@ -87,12 +96,20 @@ jobs:
             release_date="${RELEASE_PUBLISHED_AT:0:10}"
           else
             version="$INPUT_VERSION"
-            if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-z]+[0-9]+)?$ ]]; then
-              echo "::error::Version '$version' is not in the expected format, for example 4.8.0-beta00019 or 4.8.0"
+            if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+|-[a-z]+[0-9]+)?$ ]]; then
+              echo "::error::Version '$version' is not in the expected format, for example 4.8.0-beta00019, 4.8.0 or 4.8.0.1"
               exit 1
             fi
             tag="Lucene.Net_${version//[.-]/_}"
-            release_date="${INPUT_RELEASE_DATE:-$(date -u +%Y-%m-%d)}"
+            release_date="$INPUT_RELEASE_DATE"
+            if [ -z "$release_date" ]; then
+              published_at="$(gh release view "$tag" --json publishedAt --jq .publishedAt || true)"
+              if [ -z "$published_at" ]; then
+                echo "::error::Could not determine the release date from the GitHub Release for $tag. Specify the release date."
+                exit 1
+              fi
+              release_date="${published_at:0:10}"
+            fi
           fi
 
           echo "version=$version" >> "$GITHUB_OUTPUT"
@@ -138,7 +155,7 @@ jobs:
 
             Before merging, review:
 
-            - The "Supported Frameworks" and "All Packages" sections of `websites/site/download/version-${{ env.RELEASE_VERSION }}.md`, which were copied from the previous release
+            - The "Supported Frameworks" and "All Packages" sections and the Java Lucene release link of `websites/site/download/version-${{ env.RELEASE_VERSION }}.md`, which were copied from the previous release
             - That `websites/site/release-notes/version-${{ env.RELEASE_VERSION }}.md` exists (it is added before the release vote)
 
             Merging this PR triggers the `Lucene.Net.Website` workflow, which creates a PR to the `lucenenet-site` repository.
@@ -172,7 +189,8 @@ jobs:
         run: |
           docs_branch="docs/$RELEASE_VERSION"
 
-          if git ls-remote --exit-code --heads origin "$docs_branch" > /dev/null; then
+          # NOTE: The full ref name is used because ls-remote patterns also match the end of longer ref names
+          if git ls-remote --exit-code origin "refs/heads/$docs_branch" > /dev/null; then
             echo "Branch $docs_branch already exists, skipping."
             exit 0
           fi

@@ -250,11 +250,7 @@ Once pushed, you can merge those changes to the `master` branch. Doing this may 
 - Create a new folder in this repo: `/docs/[Version]`, for example: `/docs/4.8.0-beta00008`.
 - Copy the build output of the documentation site to this new folder. The build output will be all of the files in the `./websites/apidocs/_site` in your main Lucene.NET checked out Git repository. Commit and push these changes.
 - The new version documentation will be live. Due to the amount of new files committed, the new files may take up to 60 minutes to become live.
-- Next the website needs updating which is a manual process currently:
-  - In the `./websites/site/download` folder there should be a document per release. It's normally fine to copy the document of the latest release for the same major version. For a new major version some modifications may be needed.
-  - Ensure the correct version number is listed in the header and the NuGet download snippet.
-  - Update the `Status` and `Released` heading information.
-  - Ensure the download links are correct.
-  - Update the `./websites/site/download/toc.yml` and `./websites/site/download/download.md` files to include a reference to the new page which should maintain descending version order.
-  - Update the `./websites/site/docs.md` file and add a link to the new documentation for the current version which should maintain descending version order.
+- Next the website needs updating. This is automated by the `Lucene-Net-Release-Website.yml` workflow when the GitHub Release is published (see [Post-Release Steps](xref:contributing/make-release#post-release-steps)). To do it manually:
+  - Run the `./websites/site/add-release.ps1` script, for example: `./websites/site/add-release.ps1 -Version 4.8.0-beta00008 -ReleaseDate 2020-05-05`. It creates the download page for the release in the `./websites/site/download` folder (copied from the previous release's page) and adds the release to the `./websites/site/download/toc.yml`, `./websites/site/download/download.md` and `./websites/site/docs.md` files in descending version order.
+  - Ensure the "Supported Frameworks" and "All Packages" sections and the Java Lucene release link of the new download page are correct. For a new major version some modifications may be needed.
   - [Build the website](#website) and test locally, then deploy the changes
