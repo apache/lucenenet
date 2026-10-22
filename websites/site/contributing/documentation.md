@@ -100,6 +100,8 @@ The source of truth of an API docs build is the corresponding `docs/[PackageVers
 
 #### Release Lifecycle
 
+When a GitHub Release is published, the `Lucene-Net-Release-Website.yml` workflow creates the `docs/x.y.z` branch from the release tag (if it doesn't already exist) and runs the docs workflow on it. The branch can also be created manually before then if documentation fixes need to be applied before the docs are published.
+
 ```
 master
     ↓

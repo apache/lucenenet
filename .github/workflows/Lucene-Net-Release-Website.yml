@@ -1,0 +1,189 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+name: 'Lucene.Net.Release.Website'
+
+# Runs the post-release website and API docs updates when a GitHub Release is published.
+# Publishing the GitHub Release is a post-release step that happens after the vote passes
+# and the release has been committed to the Apache dist/release SVN, so the download links
+# that this generates are valid by the time the generated PR is merged.
+#
+# This will:
+# website job:
+#   checkout master
+#   run websites/site/add-release.ps1 to add the download page and update the version links
+#   create a PR to master (merging it triggers Lucene-Net-Website.yml, which creates a PR to the lucenenet-site repo)
+# docs job:
+#   create the docs/VERSION branch from the release tag (if it doesn't already exist)
+#   run Lucene-Net-Documentation.yml on the docs/VERSION branch (which creates a PR to the lucenenet-site repo)
+#
+# It can also be run manually (for example, to re-run it for a release) by specifying the version.
+
+on:
+  release:
+    types:
+    - published
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The release version, for example 4.8.0-beta00019 (the Lucene.Net_* release tag must exist)'
+        required: true
+        type: string
+      release_date:
+        description: 'The release date in yyyy-MM-dd format (defaults to today)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  version:
+    # Only run on the main upstream repository
+    if: github.repository == 'apache/lucenenet'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release_date: ${{ steps.version.outputs.release_date }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      # NOTE: All event values are passed through environment variables rather than being expanded
+      # inline in the script to prevent script injection.
+      - name: Determine release version
+        id: version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_PUBLISHED_AT: ${{ github.event.release.published_at }}
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_RELEASE_DATE: ${{ inputs.release_date }}
+        run: |
+          if [ "$EVENT_NAME" = "release" ]; then
+            tag="$RELEASE_TAG"
+            # Convert a tag such as Lucene.Net_4_8_0_beta00019 to 4.8.0-beta00019
+            if [[ "$tag" =~ ^Lucene\.Net_([0-9]+)_([0-9]+)_([0-9]+)(_([a-z]+[0-9]+))?$ ]]; then
+              version="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
+              if [ -n "${BASH_REMATCH[5]}" ]; then
+                version="$version-${BASH_REMATCH[5]}"
+              fi
+            else
+              echo "::error::Release tag '$tag' is not a Lucene.Net_* release tag"
+              exit 1
+            fi
+            release_date="${RELEASE_PUBLISHED_AT:0:10}"
+          else
+            version="$INPUT_VERSION"
+            if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-z]+[0-9]+)?$ ]]; then
+              echo "::error::Version '$version' is not in the expected format, for example 4.8.0-beta00019 or 4.8.0"
+              exit 1
+            fi
+            tag="Lucene.Net_${version//[.-]/_}"
+            release_date="${INPUT_RELEASE_DATE:-$(date -u +%Y-%m-%d)}"
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "release_date=$release_date" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "Version: $version, Release Date: $release_date, Tag: $tag"
+
+  website:
+    needs: version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      RELEASE_VERSION: ${{ needs.version.outputs.version }}
+      RELEASE_DATE: ${{ needs.version.outputs.release_date }}
+      RELEASE_TAG: ${{ needs.version.outputs.tag }}
+    steps:
+      - name: Checkout Lucene.Net source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: master
+          persist-credentials: false
+
+      - name: Update website for release
+        run: ./websites/site/add-release.ps1 -Version "$Env:RELEASE_VERSION" -ReleaseDate "$Env:RELEASE_DATE"
+        shell: pwsh
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: master
+          commit-message: 'Website: ${{ env.RELEASE_VERSION }} release updates'
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          branch: task/release-website-${{ env.RELEASE_VERSION }}
+          delete-branch: true
+          title: 'Website: ${{ env.RELEASE_VERSION }} release updates'
+          body: |
+            Website updates for the ${{ env.RELEASE_VERSION }} release (released ${{ env.RELEASE_DATE }}, tag `${{ env.RELEASE_TAG }}`), generated by `websites/site/add-release.ps1`.
+
+            Before merging, review:
+
+            - The "Supported Frameworks" and "All Packages" sections of `websites/site/download/version-${{ env.RELEASE_VERSION }}.md`, which were copied from the previous release
+            - That `websites/site/release-notes/version-${{ env.RELEASE_VERSION }}.md` exists (it is added before the release vote)
+
+            Merging this PR triggers the `Lucene.Net.Website` workflow, which creates a PR to the `lucenenet-site` repository.
+
+      - name: Check outputs
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+
+  docs:
+    needs: version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    env:
+      RELEASE_VERSION: ${{ needs.version.outputs.version }}
+      RELEASE_TAG: ${{ needs.version.outputs.tag }}
+    steps:
+      - name: Checkout Lucene.Net source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      # NOTE: Pushes made with the GITHUB_TOKEN do not trigger workflows, so the docs workflow
+      # is started explicitly below. If the docs branch already exists, it was pushed by a person,
+      # which already triggered the docs workflow.
+      - name: Create docs branch and build docs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docs_branch="docs/$RELEASE_VERSION"
+
+          if git ls-remote --exit-code --heads origin "$docs_branch" > /dev/null; then
+            echo "Branch $docs_branch already exists, skipping."
+            exit 0
+          fi
+
+          if ! git rev-parse --verify --quiet "refs/tags/$RELEASE_TAG" > /dev/null; then
+            echo "::error::Tag $RELEASE_TAG does not exist"
+            exit 1
+          fi
+
+          git push origin "refs/tags/$RELEASE_TAG^{commit}:refs/heads/$docs_branch"
+          echo "Created branch $docs_branch from $RELEASE_TAG"
+
+          gh workflow run Lucene-Net-Documentation.yml --ref "$docs_branch"
+          echo "Started the Lucene.Net.Documentation workflow on $docs_branch"
