@@ -72,6 +72,15 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// <summary>
         /// Creates this with the specified method.
         /// </summary>
+        /// <param name="cacheSize">The maximum number of entries to keep in the cache.</param>
+        /// <param name="lruType">The cache type to use. <see cref="LRUType.LRU_STRING"/> is
+        /// recommended and is the default for <see cref="LruTaxonomyWriterCache(int)"/>.
+        /// <para/>
+        /// <b>LUCENE.NET WARNING:</b> <see cref="LRUType.LRU_HASHED"/> uses only the label's 64-bit
+        /// <see cref="FacetLabel.Int64HashCode()"/> as the key and does not check equality. If two
+        /// different labels produce the same hash, they map to the same ordinal, and documents
+        /// silently get the wrong facet. Use it only if you accept that risk for the lower memory use.
+        /// </param>
         public LruTaxonomyWriterCache(int cacheSize, LRUType lruType)
         {
             // TODO (Facet): choose between NameHashIntCacheLRU and NameIntCacheLRU.
