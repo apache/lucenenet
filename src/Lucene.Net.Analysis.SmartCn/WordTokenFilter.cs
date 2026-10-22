@@ -63,29 +63,36 @@ namespace Lucene.Net.Analysis.Cn.Smart
             if (tokenIter is null || !tokenIter.MoveNext())
             {
                 // there are no remaining tokens from the current sentence... are there more sentences?
-                if (m_input.IncrementToken())
+                // LUCENENET specific - loop until a sentence produces at least one word. A sentence made
+                // only of space-like characters (such as U+3000) segments to 0 words; upstream returned
+                // EOS in that case, which silently dropped the rest of the input and ended the stream
+                // before its tokenizer was exhausted (#1504).
+                do
                 {
-                    tokStart = offsetAtt.StartOffset;
-                    tokEnd = offsetAtt.EndOffset;
-                    // if length by start + end offsets doesn't match the term text then assume
-                    // this is a synonym and don't adjust the offsets.
-                    hasIllegalOffsets = (tokStart + termAtt.Length) != tokEnd;
-                    // a new sentence is available: process it.
-                    tokenBuffer = wordSegmenter.SegmentSentence(termAtt.ToString(), offsetAtt.StartOffset);
-                    tokenIter = tokenBuffer.GetEnumerator();
-                    /*
-                     * it should not be possible to have a sentence with 0 words, check just in case.
-                     * returning EOS isn't the best either, but its the behavior of the original code.
-                     */
-                    if (!tokenIter.MoveNext())
+                    if (m_input.IncrementToken())
                     {
-                        return false;
+                        tokStart = offsetAtt.StartOffset;
+                        tokEnd = offsetAtt.EndOffset;
+                        // if length by start + end offsets doesn't match the term text then assume
+                        // this is a synonym and don't adjust the offsets.
+                        hasIllegalOffsets = (tokStart + termAtt.Length) != tokEnd;
+                        // a new sentence is available: process it.
+                        tokenBuffer = wordSegmenter.SegmentSentence(termAtt.ToString(), offsetAtt.StartOffset);
+                        tokenIter = tokenBuffer.GetEnumerator();
+                        /*
+                         * it should not be possible to have a sentence with 0 words, check just in case.
+                         * returning EOS isn't the best either, but its the behavior of the original code.
+                         */
+                        //if (!tokenIter.MoveNext())
+                        //{
+                        //    return false;
+                        //}
                     }
-                }
-                else
-                {
-                    return false; // no more sentences, end of stream!
-                }
+                    else
+                    {
+                        return false; // no more sentences, end of stream!
+                    }
+                } while (!tokenIter.MoveNext());
             }
 
             // WordTokenFilter must clear attributes, as it is creating new tokens.

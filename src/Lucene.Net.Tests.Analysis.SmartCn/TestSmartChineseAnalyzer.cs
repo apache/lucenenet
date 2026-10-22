@@ -1,5 +1,6 @@
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -350,6 +351,27 @@ namespace Lucene.Net.Analysis.Cn.Smart
 #pragma warning restore 612, 618
             });
             CheckAnalysisConsistency(random, a, random.nextBoolean(), "");
+        }
+
+        // LUCENENET specific - a sentence made only of space-like characters (here U+3000) segments to
+        // zero words. WordTokenFilter must skip it and keep consuming its input rather than end the stream
+        // early, which dropped the tokens after it and violated the TokenStream contract (#1504).
+        [Test]
+        [LuceneNetSpecific]
+        public void TestSentenceWithNoWordsDoesNotEndStream()
+        {
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+#pragma warning disable 612, 618
+                return new TokenStreamComponents(tokenizer, new WordTokenFilter(tokenizer));
+#pragma warning restore 612, 618
+            });
+
+            AssertAnalyzesTo(analyzer, "a 　 b",
+                new string[] { "a", "b" },
+                new int[] { 0, 4 },
+                new int[] { 1, 5 });
         }
     }
 }
