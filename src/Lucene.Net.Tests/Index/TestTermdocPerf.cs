@@ -166,6 +166,12 @@ namespace Lucene.Net.Index
                 Console.WriteLine("milliseconds for " + iter + " TermDocs iteration: " + (end - start));
             }
 
+            // LUCENENET specific - upstream leaks the reader and directory, which goes unnoticed there
+            // because the DoTest() call in TestTermDocPerf() is commented out. We run it, so dispose them
+            // to keep the leaked-directory check in RandomizedContext.DisposeResources() from failing.
+            reader.Dispose();
+            dir.Dispose();
+
             return ret;
         }
 
