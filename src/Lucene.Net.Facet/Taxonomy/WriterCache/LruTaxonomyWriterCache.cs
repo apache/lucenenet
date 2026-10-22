@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1 + LUCENE-7891
 using Lucene.Net.Support.Threading;
 using System;
 
@@ -36,8 +36,11 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         public enum LRUType
         {
             /// <summary>
-            /// Use the label's hash as the key; this can lead to
-            ///  silent conflicts!
+            /// Use only the label's 64 bit <see cref="FacetLabel.Int64HashCode()"/> as the hash key. Do not
+            /// check equals, unlike most hash maps.
+            /// Note that while these hashes are very likely to be unique, the chance
+            /// of a collision is still greater than zero. If such an unlikely event
+            /// occurs, your document will get an incorrect facet.
             /// </summary>
             LRU_HASHED,
 
@@ -53,30 +56,39 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         private bool isDisposed = false;
 
         /// <summary>
-        /// Creates this with <see cref="LRUType.LRU_HASHED"/> method.
+        /// Creates this with <see cref="LRUType.LRU_STRING"/> method.
         /// </summary>
         public LruTaxonomyWriterCache(int cacheSize)
-            : this(cacheSize, LRUType.LRU_HASHED)
+            : this(cacheSize, LRUType.LRU_STRING)
         {
             // TODO (Facet): choose between NameHashIntCacheLRU and NameIntCacheLRU.
             // For guaranteed correctness - not relying on no-collisions in the hash
             // function, NameIntCacheLRU should be used:
             // On the other hand, NameHashIntCacheLRU takes less RAM but if there
-            // are collisions (which we never found) two different paths would be
-            // mapped to the same ordinal...
+            // are collisions two different paths would be mapped to the same
+            // ordinal...
         }
 
         /// <summary>
         /// Creates this with the specified method.
         /// </summary>
+        /// <param name="cacheSize">The maximum number of entries to keep in the cache.</param>
+        /// <param name="lruType">The cache type to use. <see cref="LRUType.LRU_STRING"/> is
+        /// recommended and is the default for <see cref="LruTaxonomyWriterCache(int)"/>.
+        /// <para/>
+        /// <b>LUCENE.NET WARNING:</b> <see cref="LRUType.LRU_HASHED"/> uses only the label's 64-bit
+        /// <see cref="FacetLabel.Int64HashCode()"/> as the key and does not check equality. If two
+        /// different labels produce the same hash, they map to the same ordinal, and documents
+        /// silently get the wrong facet. Use it only if you accept that risk for the lower memory use.
+        /// </param>
         public LruTaxonomyWriterCache(int cacheSize, LRUType lruType)
         {
             // TODO (Facet): choose between NameHashIntCacheLRU and NameIntCacheLRU.
             // For guaranteed correctness - not relying on no-collisions in the hash
             // function, NameIntCacheLRU should be used:
             // On the other hand, NameHashIntCacheLRU takes less RAM but if there
-            // are collisions (which we never found) two different paths would be
-            // mapped to the same ordinal...
+            // are collisions two different paths would be mapped to the same
+            // ordinal...
             if (lruType == LRUType.LRU_HASHED)
             {
                 this.cache = new NameHashInt32CacheLru(cacheSize);
