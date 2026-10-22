@@ -33,7 +33,7 @@ Codecs API: API for customization of the encoding and structure of the index.
 * Norms - see <xref:Lucene.Net.Codecs.NormsFormat>
 * Live documents - see <xref:Lucene.Net.Codecs.LiveDocsFormat>
 
-For some concrete implementations beyond Lucene's official index format, see the [Codecs module](xref:Lucene.Net.Codecs).
+For some concrete implementations beyond Lucene's official index format, see the [Codecs module](../codecs/overview.html).
 
 Codecs are identified by name through the <xref:Lucene.Net.Codecs.ICodecFactory> implementation, which by default is the <xref:Lucene.Net.Codecs.DefaultCodecFactory>. To create your own codec, extend <xref:Lucene.Net.Codecs.Codec>. By default, the name of the class (minus the suffix "Codec") will be used as the codec's name.
 
