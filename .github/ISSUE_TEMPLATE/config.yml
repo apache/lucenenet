@@ -5,10 +5,13 @@ contact_links:
     about: Please discuss platform-agnostic design proposals of the API or features on the Lucene developer mailing list. These types of changes need to go through Lucene's design review before they can be ported from Java to Lucene.NET in a later version.
   - name: Ask a How-To Question
     url:  https://github.com/apache/lucenenet/discussions
-    about: Please ask usability and project questions in GitHub Discussions. Alternatively, join the Lucene.NET user mailing list by sending an email to user-subscribe@lucenenet.apache.org. Once signed up, you can submit your question to user@lucenenet.apache.org.
+    about: Please ask usability and project questions in GitHub Discussions.
   - name: Join a Mailing List
     url:  https://lucenenet.apache.org/contributing/mailing-lists.html
     about: Join a Lucene.NET mailing list to ask user questions, discuss the development or other aspects of Lucene.NET with our team, or to track commits and builds.
+  - name: Ask on Stack Overflow
+    url:  https://stackoverflow.com/questions/tagged/lucene.net
+    about: Ask usability questions on Stack Overflow with both the lucene.net and lucene tags.
   - name: Issue with J2N
     url:  https://github.com/NightOwl888/J2N/issues/new/choose
     about: Please open issues relating to J2N in NightOwl888/J2N.

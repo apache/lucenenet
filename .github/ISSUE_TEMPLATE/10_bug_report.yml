@@ -10,7 +10,7 @@ body:
 
         If you believe you have an issue that affects the SECURITY of the platform, please do NOT create an issue and instead follow the [ASF vulnerability reporting process](https://apache.org/security/#reporting-a-vulnerability). This is a project of the [Apache Software Foundation](https://apache.org) and follows the ASF [vulnerability handling process](https://apache.org/security/#vulnerability-handling).
 
-        For other types of questions, use [GitHub Discussions](https://github.com/apache/lucenenet/discussions) or join the [Lucene.NET user mailing list](https://lucenenet.apache.org/contributing/index.html#ask-a-question).
+        For other types of questions, use [GitHub Discussions](https://github.com/apache/lucenenet/discussions), join the [Lucene.NET user mailing list](https://lucenenet.apache.org/contributing/index.html#ask-a-question), or ask on [Stack Overflow](https://stackoverflow.com/questions/tagged/lucene.net) with the `lucene.net` and `lucene` tags.
   - type: checkboxes
     attributes:
       label: Is there an existing issue for this?
