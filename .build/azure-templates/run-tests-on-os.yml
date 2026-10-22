@@ -68,6 +68,19 @@ steps:
     EnsureNotNullOrEmpty('${{ parameters.dotNetSdkVersion }}', 'dotNetSdkVersion')
   displayName: 'Validate Template Parameters'
 
+  # Nightly tests such as Test4GBStoredFields write well over 10GB to the temp directory, which, alongside
+  # the other test projects running in parallel, fills the hosted Linux agent's disk. Remove large toolchains
+  # that the build doesn't use to make room. The .NET SDKs are left alone.
+- bash: |
+    echo "Disk space before cleanup:"
+    df -h /
+    sudo rm -rf /usr/local/lib/android /opt/ghc /usr/local/.ghcup /usr/local/share/boost /usr/share/swift /opt/hostedtoolcache/CodeQL
+    sudo docker image prune --all --force > /dev/null 2>&1 || true
+    echo "Disk space after cleanup:"
+    df -h /
+  displayName: 'Free Disk Space'
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'), or(eq(variables['IsNightly'], 'true'), eq(variables['IsWeekly'], 'true')))
+
 
 - task:  DownloadPipelineArtifact@2
   displayName: 'Download Build Artifacts: ${{ parameters.binaryArtifactName }} to $(System.DefaultWorkingDirectory)/$(parameters.framework)'
