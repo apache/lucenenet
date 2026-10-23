@@ -51,8 +51,8 @@ steps:
     NuGetAudit: false
     NuGetAuditMode: 'direct'
 
-  # Runs dotnet build with AOT compatibility scan properties enabled to check for potential AOT/trimming issues in deployable libraries.
-  # This will not cause the build to fail if issues are found, but will log warnings in the build output for investigation.
+# Runs dotnet build with AOT compatibility scan properties enabled to check for potential AOT/trimming issues in deployable libraries.
+# This will not cause the build to fail if issues are found, but will log warnings in the build output for investigation.
 - task: DotNetCoreCLI@2
   displayName: 'AOT Compatibility Scan'
   inputs:
