@@ -1117,112 +1117,78 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler and TestIndexWriterWithThreads
         public void Dispose()
         {
-            Dispose(disposing: true, waitForMerges: true);
+            Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
 
         /// <summary>
-        /// Disposes the index with or without waiting for currently
+        /// Closes the index with or without waiting for currently
         /// running merges to finish.  This is only meaningful when
         /// using a <see cref="MergeScheduler"/> that runs merges in background
         /// threads.  See <see cref="Dispose()"/> for details on behavior
         /// when exceptions are thrown.
         ///
+        /// <para><b>NOTE</b>: This closes the index (commits, then releases the write lock),
+        /// but does not dispose this <see cref="IndexWriter"/> instance. You should still call
+        /// <see cref="Dispose()"/> (or use a <c>using</c> block) afterward so that subclasses
+        /// can release their own resources. Calling <see cref="Dispose()"/> after this method
+        /// does not close the index again.</para>
+        ///
         /// <para><b>NOTE</b>: It is dangerous to always call
-        /// <c>Dispose(false)</c>, especially when <see cref="IndexWriter"/> is not open
+        /// <c>Close(false)</c>, especially when <see cref="IndexWriter"/> is not open
         /// for very long, because this can result in "merge
         /// starvation" whereby long merges will never have a
         /// chance to finish.  This will cause too many segments in
         /// your index over time, which leads to all sorts of
         /// problems like slow searches, too much RAM and too
         /// many file descriptors used by readers, etc.</para>
-        ///
-        /// <para><b>NOTE</b>: This overload should not be called when implementing a finalizer.
-        /// Instead, call <see cref="Dispose(bool, bool)"/> with <c>disposing</c> set to
-        /// <c>false</c> and <c>waitForMerges</c> set to <c>true</c>.</para>
         /// </summary>
         /// <param name="waitForMerges"> If <c>true</c>, this call will block
         /// until all merges complete; else, it will ask all
         /// running merges to abort, wait until those merges have
         /// finished (which should be at most a few seconds), and
         /// then return. </param>
-        // LUCENENET: doc-comment updated and [Obsolete] applied to match upstream LUCENE-5871
-        // (commit 2cfcdcc, first released in 4.10.0). Upstream marked this overload @Deprecated
-        // because the new Shutdown contract makes "close without waiting for merges" easy to
-        // misuse; prefer Commit() followed by Rollback() to abort merges and then close.
-        //
-        // The deprecation generates CS0618 warnings on existing in-tree callers. This mirrors
-        // upstream's posture exactly: branch_4x kept javac [deprecation] warnings at the
-        // method's call sites and did not migrate them when 2cfcdcc landed. The intent was
-        // always to remove the overload entirely on the next major release: trunk did exactly
-        // that in LUCENE-4246 (commit 8559eaf, Lucene 5.0), deleting close(boolean) and
-        // migrating all the trunk call sites in the same commit.
+        // LUCENENET: this maps to upstream close(boolean). Upstream (branch_4x) exposed it as a
+        // public method; LUCENE-5871 (commit 2cfcdcc, first released in 4.10.0) marked it
+        // @Deprecated because the shutdown contract makes "close without waiting for merges" easy
+        // to misuse, and trunk LUCENE-4246 (commit 8559eaf, Lucene 5.0) deleted it entirely. We
+        // keep it public but [Obsolete] to mirror the 4.10 state and preserve the 4.8.1 capability.
+        // It also serves the test/benchmark call sites that need the "abort merges on close" path.
         [Obsolete("To abort merges and then close, call Commit() and then Rollback() instead.")]
         [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler and TestIndexWriterWithThreads
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
-        [SuppressMessage("Usage", "CA1816:Dispose methods should call SuppressFinalize", Justification = "This is Lucene's alternate path to Dispose() and we must suppress the finalizer here.")]
-        [SuppressMessage("Usage", "S2953:Methods named \"Dispose\" should implement \"IDisposable.Dispose\"", Justification = "This is Lucene's alternate path to Dispose() and we must suppress the finalizer here.")]
-        [SuppressMessage("Usage", "S3971:\"GC.SuppressFinalize\" should not be called", Justification = "This is Lucene's alternate path to Dispose() and we must suppress the finalizer here.")]
-        public void Dispose(bool waitForMerges)
+        public void Close(bool waitForMerges)
         {
-            Dispose(disposing: true, waitForMerges);
-            GC.SuppressFinalize(this);
+            Shutdown(waitForMerges);
         }
 
         /// <summary>
-        /// Disposes the index with or without waiting for currently
-        /// running merges to finish.  This is only meaningful when
-        /// using a <see cref="MergeScheduler"/> that runs merges in background
-        /// threads.
-        ///
-        /// <para>This call will block
-        /// until all merges complete; else, it will ask all
-        /// running merges to abort, wait until those merges have
-        /// finished (which should be at most a few seconds), and
-        /// then return.
-        /// </para>
-        ///
-        /// <para><b>NOTE</b>: Always be sure to call <c>base.Dispose(disposing, waitForMerges)</c>
-        /// when overriding this method.</para>
-        ///
-        /// <para><b>NOTE</b>: When implementing a finalizer in a subclass, this overload should be called
-        /// with <paramref name="disposing"/> set to <c>false</c> and <paramref name="waitForMerges"/>
-        /// set to <c>true</c>.</para>
-        ///
-        /// <para><b>NOTE</b>: If this method hits an <see cref="OutOfMemoryException"/>
-        /// you should immediately dispose the writer, again.  See
-        /// <see cref="IndexWriter"/> for details.</para>
-        ///
-        /// <para><b>NOTE</b>: It is dangerous to always call
-        /// with <paramref name="waitForMerges"/> set to <c>false</c>,
-        /// especially when <see cref="IndexWriter"/> is not open
-        /// for very long, because this can result in "merge
-        /// starvation" whereby long merges will never have a
-        /// chance to finish.  This will cause too many segments in
-        /// your index over time.</para>
+        /// Releases resources used by the <see cref="IndexWriter"/> and optionally
+        /// releases the managed resources.
+        /// <para/>
+        /// When <paramref name="disposing"/> is <c>true</c>, this closes the index (commits,
+        /// waits for merges, and releases the write lock) as described in <see cref="Dispose()"/>.
+        /// If the index was already closed (for example, by <see cref="Rollback()"/> or
+        /// <see cref="Close(bool)"/>), it is not closed again.
+        /// <para/>
+        /// <b>NOTE</b>: Always be sure to call <c>base.Dispose(disposing)</c> when overriding
+        /// this method. Work done before calling the base method happens while the
+        /// <see cref="IndexWriter"/> is still open.
+        /// <para/>
+        /// <b>NOTE</b>: When implementing a finalizer in a subclass, this method should be called
+        /// with <paramref name="disposing"/> set to <c>false</c>, which does not touch the index.
         /// </summary>
-        /// <param name="waitForMerges"> If <c>true</c>, this call will block
-        /// until all merges complete; else, it will ask all
-        /// running merges to abort, wait until those merges have
-        /// finished (which should be at most a few seconds), and
-        /// then return. </param>
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
         /// <c>false</c> to release only unmanaged resources. </param>
-        // LUCENENET specific - Added this overload to allow subclasses to dispose resources
-        // in one place without also having to override Dispose(bool).
+        // LUCENENET specific - restored the conventional Dispose(bool disposing) signature. See #1399.
+        // The waitForMerges flag stays off this inheritance hook: the standard Dispose() path always
+        // waits for merges, and the [Obsolete] Close(bool) passes its flag to Shutdown(bool) directly.
         [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler and TestIndexWriterWithThreads
-        protected virtual void Dispose(bool disposing, bool waitForMerges)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                Close(waitForMerges);
+                Shutdown(waitForMerges: true);
             }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] // LUCENENET NOTE: this will interfere with stack trace inspection in tests, but that case should be covered by Dispose above which is NoInlining
-        internal void Close(bool waitForMerges) // LUCENENET: made internal for test purposes
-        {
-            Shutdown(waitForMerges);
         }
 
         // LUCENENET: upstream 2cfcdcc had private assertEventQueueAfterClose() between
@@ -2094,7 +2060,7 @@ namespace Lucene.Net.Index
         /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
         ///
-        /// <para><b>NOTE</b>: if you call <see cref="Dispose(bool)"/>
+        /// <para><b>NOTE</b>: if you call <see cref="Close(bool)"/>
         /// with <c>false</c>, which aborts all running merges,
         /// then any thread still running this method might hit a
         /// <see cref="MergePolicy.MergeAbortedException"/>.</para>
@@ -2276,7 +2242,7 @@ namespace Lucene.Net.Index
         /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
         ///
-        /// <para><b>NOTE</b>: if you call <see cref="Dispose(bool)"/>
+        /// <para><b>NOTE</b>: if you call <see cref="Close(bool)"/>
         /// with <c>false</c>, which aborts all running merges,
         /// then any thread still running this method might hit a
         /// <see cref="MergePolicy.MergeAbortedException"/>.</para>
@@ -3335,7 +3301,7 @@ namespace Lucene.Net.Index
         /// <see cref="DirectoryReader.Open(Directory, int)"/>.
         ///
         /// <para/>
-        /// <b>NOTE</b>: if you call <see cref="Dispose(bool)"/> with <c>false</c>, which
+        /// <b>NOTE</b>: if you call <see cref="Close(bool)"/> with <c>false</c>, which
         /// aborts all running merges, then any thread still running this method might
         /// hit a <see cref="MergePolicy.MergeAbortedException"/>.
         /// </summary>

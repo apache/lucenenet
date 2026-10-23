@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
             MockDirectoryWrapper dir = (MockDirectoryWrapper)writer.Directory;
 
 #pragma warning disable 612, 618
-            writer.Dispose(false);
+            writer.Close(false);
 #pragma warning restore 612, 618
 
             dir.Crash();
