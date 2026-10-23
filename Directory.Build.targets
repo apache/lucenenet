@@ -234,6 +234,18 @@
     </ItemGroup>
   </Target>
 
+  <!-- Diagnostic target to list production libraries.
+       Run using:
+       dotnet msbuild Lucene.Net.sln -t:PrintProductionLibraryStatus -m:1 -v:detailed
+  -->
+  <Target Name="PrintProductionLibraryStatus">
+    <Message Condition="'$(IsProductionLibrary)' == 'true'"
+             Text="[PRODUCTION LIBRARY] $(MSBuildProjectName)"
+             Importance="high" />
+    <Message Condition="'$(IsProductionLibrary)' != 'true'"
+             Text="[SKIPPED / EXCLUDED]  $(MSBuildProjectName) (IsPackable=$(IsPackable), OutputType=$(OutputType))"
+             Importance="high" />
+  </Target>
 
   <!-- Global PackageReferences -->
   <ItemGroup>
@@ -255,5 +267,6 @@
   </ItemGroup>
 
   <Import Project=".build/release.targets" Condition="Exists('.build/release.targets')" />
+  <Import Project=".build/SkipBuild.targets" Condition="'$(IsProductionLibrary)' != 'true' And '$(BuildGroup)' == 'LibrariesOnly'" />
 
 </Project>

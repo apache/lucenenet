@@ -26,6 +26,7 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 # GenerateWebsite: (Optional. Only builds lucene.net website if set to 'true'.)
 # IsRelease: (Optional. By default the Release job is disabled, setting this to 'true' will enable it)
 # GeneratePackages: (Optional. Defaults to 'true'. Setting to 'false' will cut about 1 minute from the build time by skipping packing the NuGet files and subsequent artifact upload. If ArtifactFeedID is provided or IsRelease is 'true', this setting has no effect.)
+# RunAOTTrimmingScan: (Optional. Defaults to 'true'.)
 
 # Versioning Variables
 
@@ -277,6 +278,32 @@ stages:
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
         configuration: '$(BuildConfiguration)'
         platform: '$(BuildPlatform)'
+
+  - job: Trimming_Analysis
+    displayName: 'Analyze AOT Trimming Compatibility'
+    condition: and(succeeded(), ne(variables['RunAOTTrimmingScan'], 'false'))
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    # Nerdbank.GitVersioning requires a deep clone. See: https://github.com/dotnet/Nerdbank.GitVersioning/blob/main/doc/cloudbuild.md#azure-pipelines
+    - checkout: self
+      fetchDepth: 0
+
+    - pwsh: |
+        $configuration = if ($env:BUILDCONFIGURATION) { $env:BUILDCONFIGURATION } else { "Release" }
+        Write-Host "##vso[task.setvariable variable=BuildConfiguration;]$configuration"
+        $platform = if ($env:BUILDPLATFORM) { $env:BUILDPLATFORM } else { "Any CPU" }
+        Write-Host "##vso[task.setvariable variable=BuildPlatform;]$platform"
+      displayName: 'Setup Default Variable Values'
+
+    - template: '.build/azure-templates/install-dotnet-sdk.yml'
+      parameters:
+        sdkVersion: '$(DotNetSDKVersion)'
+
+    - template: '.build/azure-templates/run-aot-trimming-compatibility-scan.yml'
+      parameters:
+        buildConfiguration: '$(BuildConfiguration)'
+        buildPlatform: '$(BuildPlatform)'
 
   - job: Docs
     condition: and(succeeded(), eq(variables['GenerateDocs'], 'true'))

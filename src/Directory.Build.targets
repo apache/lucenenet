@@ -20,4 +20,21 @@
 -->
 <Project>
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup Label="AOT Properties">
+    <!-- Run only on modern .NET where the surface area is representative -->
+    <_IsModernDotNet>$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))</_IsModernDotNet>
+    <_RunAotAudit Condition="'$(_IsModernDotNet)' == 'true' And '$(IsProductionLibrary)' == 'true'">true</_RunAotAudit>
+    <IsTrimmable Condition="'$(IsTrimmable)' == '' And '$(_RunAotAudit)' == 'true'">true</IsTrimmable>
+  </PropertyGroup>
+
+  <PropertyGroup Label="AOT Compatibility Features" Condition="'$(EnableAotStrict)' == 'true'">
+    <!-- Enable the analyzers -->
+    <EnableTrimAnalyzer Condition="'$(_RunAotAudit)' == 'true'">true</EnableTrimAnalyzer>
+    <EnableAotAnalyzer Condition="'$(_RunAotAudit)' == 'true'">true</EnableAotAnalyzer>
+
+    <!-- Force deep analysis -->
+    <PublishTrimmed Condition="'$(_RunAotAudit)' == 'true'">true</PublishTrimmed>
+  </PropertyGroup>
+
 </Project>

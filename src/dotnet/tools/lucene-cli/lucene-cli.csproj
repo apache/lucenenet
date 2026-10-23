@@ -44,6 +44,9 @@
     <NoWarn Label="Remove unused parameter">$(NoWarn);IDE0060</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup Label="AOT Compatibility Settings">
+    <IsProductionLibrary>false</IsProductionLibrary>
+  </PropertyGroup>
 
   <ItemGroup>
     <None Include="docs\index.md" Pack="true" PackagePath="\readme.md" />

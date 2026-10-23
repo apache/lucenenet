@@ -111,4 +111,5 @@
       in Version.props, if it exists and the PrepareForBuild argument
       passed into build.ps1 is 'false'. -->
   <Import Project="version.props" Condition="Exists('version.props')" />
+
 </Project>
