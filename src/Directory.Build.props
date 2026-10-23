@@ -26,4 +26,5 @@
       SolutionDir is only available when running in the IDE, so we patch to ensure it also works when using dotnet.exe -->
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)../</SolutionDir>
   </PropertyGroup>
+
 </Project>

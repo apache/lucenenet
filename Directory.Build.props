@@ -105,6 +105,11 @@
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
+  <PropertyGroup Label="AOT Trimming Compatibility">
+    <EnableTrimAnalyzer Condition="'$(EnableAotStrict)' != 'true'">false</EnableTrimAnalyzer>
+    <EnableAotAnalyzer Condition="'$(EnableAotStrict)' != 'true'">false</EnableAotAnalyzer>
+  </PropertyGroup>
+
   <!-- Settings to override the above Version of Builds. These can be used to
       "freeze" the build number for a release, so whether building within
       an IDE or from the command line, the version is always what is
