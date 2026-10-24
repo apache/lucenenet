@@ -4,6 +4,7 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Fst
@@ -70,13 +71,10 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
 
             // LUCENENET specific - per CS0660 and CS0661, we need to override Equals and GetHashCode
-            // ReSharper disable once BaseObjectEqualsIsObjectEquals
-            // ReSharper disable once RedundantOverriddenMember
-            public override bool Equals(object obj) => base.Equals(obj);
+            // (reference equality, same as object.Equals and object.GetHashCode)
+            public override bool Equals(object obj) => ReferenceEquals(this, obj);
 
-            // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
-            // ReSharper disable once RedundantOverriddenMember
-            public override int GetHashCode() => base.GetHashCode();
+            public override int GetHashCode() => RuntimeHelpers.GetHashCode(this);
 
             #region Operator overrides
 #nullable enable

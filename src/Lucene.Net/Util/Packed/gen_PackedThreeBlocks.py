@@ -63,7 +63,6 @@ CASTS = {8: "(byte)", 16: "(short)", 32: "(int)", 64: ""} # LUCENENET specific -
 
 if __name__ == '__main__':
   for bpv in TYPES.keys():
-    type
     f = open("Packed%dThreeBlocks.cs" %bpv, 'w')
     f.write(HEADER)
     f.write("""    /// <summary>
