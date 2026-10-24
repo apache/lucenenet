@@ -35,7 +35,7 @@ namespace Lucene.Net.Util
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public sealed class Int64BitSet
+    public sealed class Int64BitSet : ICloneable // LUCENENET specific: Added ICloneable is to support the Clone<T>() extension method
     {
         internal readonly long[] bits; // LUCENENET: Internal for testing
         private readonly long numBits;
@@ -410,8 +410,10 @@ namespace Lucene.Net.Util
             bits[endWord] &= endmask;
         }
 
+        object ICloneable.Clone() => Clone();
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Int64BitSet Clone()
+        private Int64BitSet Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             long[] bits = new long[this.bits.Length];
             Arrays.Copy(this.bits, 0, bits, 0, bits.Length);
