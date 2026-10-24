@@ -158,7 +158,7 @@ namespace Lucene.Net.Facet
 
 
             // TODO: is it intentional that clone doesn't wrap?
-            public override object Clone()
+            protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 return ii.Clone();
             }

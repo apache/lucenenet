@@ -186,8 +186,10 @@ namespace Lucene.Net.Codecs.Compressing
             return startPointers[block] + RelativeStartPointer(block, relativeChunk);
         }
 
+        object ICloneable.Clone() => Clone();
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public object Clone()
+        private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             return this;
         }

@@ -44,9 +44,10 @@ namespace Lucene.Net.Index
         ///          the <see cref="TermState"/> to copy </param>
         public abstract void CopyFrom(TermState other);
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
-            return base.MemberwiseClone();
+            return MemberwiseClone();
         }
 
         public override string ToString()

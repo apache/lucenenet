@@ -551,7 +551,7 @@ namespace Lucene.Net.Search
                 return J2N.BitConversion.SingleToInt32Bits(Boost) == J2N.BitConversion.SingleToInt32Bits(other.Boost) && reverse == other.reverse && Arrays.Equals(idToNum, other.idToNum);
             }
 
-            public override object Clone()
+            protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 return new FixedScoreQuery(idToNum, reverse);
             }

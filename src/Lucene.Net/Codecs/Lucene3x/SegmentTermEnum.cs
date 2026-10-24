@@ -111,7 +111,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public object Clone()
+        object ICloneable.Clone() => Clone();
+        private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             // LUCENENET: MemberwiseClone() doesn't throw in .NET
             SegmentTermEnum clone = (SegmentTermEnum)base.MemberwiseClone();

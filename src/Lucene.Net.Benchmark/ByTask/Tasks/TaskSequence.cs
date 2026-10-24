@@ -626,7 +626,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// </summary>
         public virtual IList<PerfTask> Tasks => tasks;
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             TaskSequence res = (TaskSequence)base.Clone();
             res.tasks = new JCG.List<PerfTask>();

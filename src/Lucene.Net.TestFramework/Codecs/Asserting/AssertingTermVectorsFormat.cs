@@ -62,7 +62,7 @@ namespace Lucene.Net.Codecs.Asserting
                 return fields is null ? null : new AssertingFields(fields);
             }
 
-            public override object Clone()
+            protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 return new AssertingTermVectorsReader((TermVectorsReader)@in.Clone());
             }

@@ -176,7 +176,9 @@ namespace Lucene.Net.Index
             freeList = new ThreadState[maxNumThreadStates];
         }
 
-        public object Clone()
+        object ICloneable.Clone() => Clone();
+
+        private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             // We should only be cloned before being used:
             if (numThreadStatesActive != 0)

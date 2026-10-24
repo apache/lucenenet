@@ -188,7 +188,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
             }
         }
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             TaskStats c = (TaskStats)base.MemberwiseClone();
             if (c.countsByTime != null)

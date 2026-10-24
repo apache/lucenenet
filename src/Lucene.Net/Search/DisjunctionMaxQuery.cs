@@ -294,7 +294,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Create a shallow copy of us -- used in rewriting if necessary </summary>
         /// <returns> A copy of us (but reuse, don't copy, our subqueries)  </returns>
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             DisjunctionMaxQuery clone = (DisjunctionMaxQuery)base.Clone();
             clone.disjuncts = new JCG.List<Query>(this.disjuncts);

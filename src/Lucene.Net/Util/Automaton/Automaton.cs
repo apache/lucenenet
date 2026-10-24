@@ -787,10 +787,12 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Returns a clone of this automaton.
         /// </summary>
-        public virtual object Clone()
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             Automaton a = (Automaton)base.MemberwiseClone();
             if (!IsSingleton)

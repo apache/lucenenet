@@ -135,14 +135,16 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Clones this transition.
         /// </summary>
         /// <returns> Clone with same character interval and destination state. </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual object Clone()
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
-            return base.MemberwiseClone();
+            return MemberwiseClone();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

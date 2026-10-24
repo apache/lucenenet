@@ -847,11 +847,13 @@ namespace Lucene.Net.Index
             return fileName;
         }
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Returns a copy of this instance, also copying each
         /// <see cref="SegmentInfo"/>.
         /// </summary>
-        public object Clone()
+        private object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             var sis = (SegmentInfos)base.MemberwiseClone();
             // deep clone, first recreate all collections:

@@ -167,7 +167,7 @@ namespace Lucene.Net.Store
 
             protected override long ChunkLength(int index) => region.Chunks[index].Length;
 
-            public override object Clone()
+            protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 EnsureOpen();
                 var clone = (ManagedChunkIndexInput)base.Clone();

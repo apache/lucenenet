@@ -98,6 +98,8 @@ namespace Lucene.Net.Util
             if (Debugging.AssertsEnabled) Debugging.Assert(IsValid());
         }
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Returns a shallow clone of this instance (the underlying <see cref="int"/>s are
         /// <b>not</b> copied and will be shared by both the returned object and this
@@ -105,7 +107,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <seealso cref="DeepCopyOf(Int32sRef)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public object Clone()
+        private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             return new Int32sRef(ints, Offset, Length);
         }

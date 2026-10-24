@@ -60,11 +60,13 @@ namespace Lucene.Net.Codecs
         /// </summary>
         public abstract void CheckIntegrity();
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Create a clone that one caller at a time may use to
         /// read term vectors.
         /// </summary>
-        public abstract object Clone();
+        protected abstract object Clone(); // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
 
         /// <summary>
         /// Disposes all resources used by this object.

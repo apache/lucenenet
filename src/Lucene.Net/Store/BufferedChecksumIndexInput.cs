@@ -66,7 +66,7 @@ namespace Lucene.Net.Store
 
         public override long Length => main.Length;
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             throw UnsupportedOperationException.Create();
         }

@@ -110,7 +110,7 @@ namespace Lucene.Net.Codecs.Pulsing
             internal int PostingsSize { get; set; } // -1 if this term was not inlined
             internal BlockTermState WrappedTermState { get; set; }
 
-            public override object Clone()
+            protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 var clone = (PulsingTermState)base.Clone();
                 if (PostingsSize != -1)

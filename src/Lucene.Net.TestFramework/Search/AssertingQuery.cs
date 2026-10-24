@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
             return -@in.GetHashCode();
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             return Wrap(new J2N.Randomizer(random.NextInt64()), (Query)@in.Clone());
         }

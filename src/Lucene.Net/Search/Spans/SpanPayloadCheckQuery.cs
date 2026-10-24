@@ -114,7 +114,7 @@ namespace Lucene.Net.Search.Spans
             return buffer.ToString();
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             SpanPayloadCheckQuery result = new SpanPayloadCheckQuery((SpanQuery)m_match.Clone(), m_payloadToMatch);
             result.Boost = Boost;

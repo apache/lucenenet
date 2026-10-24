@@ -357,7 +357,7 @@ namespace Lucene.Net.Analysis
             type = TokenAttributes.TypeAttribute.DEFAULT_TYPE;
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             var t = (Token)base.Clone();
             // Do a deep clone

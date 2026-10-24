@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
             other.Tags = cloned;
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             MorphosyntacticTagsAttribute cloned = new MorphosyntacticTagsAttribute();
             this.CopyTo(cloned);

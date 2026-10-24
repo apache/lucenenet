@@ -107,9 +107,11 @@ namespace Lucene.Net.Search
             throw UnsupportedOperationException.Create();
         }
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Returns a clone of this query. </summary>
-        public virtual object Clone()
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             return MemberwiseClone(); // LUCENENET: MemberwiseClone() never throws in .NET and there is no need to cast the result here.
         }

@@ -420,7 +420,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual int Length => m_length;
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             TernaryTree t = new TernaryTree();
             t.m_lo = (char[])this.m_lo.Clone();
@@ -593,7 +595,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     child = c;
                 }
 
-                public object Clone()
+                object ICloneable.Clone() => Clone();
+
+                protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
                 {
                     return new Item(parent, child);
                 }

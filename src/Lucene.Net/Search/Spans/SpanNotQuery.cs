@@ -109,7 +109,7 @@ namespace Lucene.Net.Search.Spans
             return buffer.ToString();
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             SpanNotQuery spanNotQuery = new SpanNotQuery((SpanQuery)include.Clone(), (SpanQuery)exclude.Clone(), pre, post);
             spanNotQuery.Boost = Boost;

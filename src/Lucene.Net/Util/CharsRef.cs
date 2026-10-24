@@ -121,6 +121,8 @@ namespace Lucene.Net.Util
             this.Length = chars.Length;
         }
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Returns a shallow clone of this instance (the underlying characters are
         /// <b>not</b> copied and will be shared by both the returned object and this
@@ -128,7 +130,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <seealso cref="DeepCopyOf(CharsRef)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public object Clone()
+        private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             return new CharsRef(chars, Offset, Length);
         }

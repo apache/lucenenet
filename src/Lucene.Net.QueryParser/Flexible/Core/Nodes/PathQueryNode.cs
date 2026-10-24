@@ -73,8 +73,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 this.end = end;
             }
 
+            object ICloneable.Clone() => Clone();
 
-            public virtual /*QueryText*/ object Clone()
+            protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 QueryText clone = (QueryText)this.MemberwiseClone();
                 clone.value = this.value;

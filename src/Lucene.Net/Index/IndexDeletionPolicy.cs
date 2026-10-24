@@ -105,9 +105,11 @@ namespace Lucene.Net.Index
         /// sorted by age (the 0th one is the oldest commit). </param>
         public abstract void OnCommit<T>(IList<T> commits) where T : IndexCommit;
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
-            return base.MemberwiseClone();
+            return MemberwiseClone();
         }
     }
 }

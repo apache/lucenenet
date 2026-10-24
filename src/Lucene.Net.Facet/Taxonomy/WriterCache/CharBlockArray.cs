@@ -57,7 +57,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 this.length = 0;
             }
 
-            public object Clone()
+            object ICloneable.Clone() => Clone();
+
+            private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
             {
                 var clone = new Block(chars.Length);
                 clone.length = length;

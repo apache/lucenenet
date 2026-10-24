@@ -194,7 +194,9 @@ namespace Lucene.Net.Util
             internal Attribute attribute;
             internal State next;
 
-            public object Clone()
+            object ICloneable.Clone() => Clone();
+
+            private object Clone()
             {
                 State clone = new State();
                 clone.attribute = (Attribute)attribute.Clone();

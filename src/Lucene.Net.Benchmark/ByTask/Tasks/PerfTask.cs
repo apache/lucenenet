@@ -141,7 +141,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
         }
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             // tasks having non primitive data structures should override this.
             // otherwise parallel running of a task sequence might not run correctly.

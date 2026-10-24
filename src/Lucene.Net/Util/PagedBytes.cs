@@ -350,7 +350,7 @@ namespace Lucene.Net.Util
                 currentBlock = outerInstance.blocks[0];
             }
 
-            public override object Clone()
+            protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 PagedBytesDataInput clone = outerInstance.GetDataInput();
                 clone.SetPosition(GetPosition());

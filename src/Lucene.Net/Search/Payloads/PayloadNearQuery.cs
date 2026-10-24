@@ -69,7 +69,7 @@ namespace Lucene.Net.Search.Payloads
             return new PayloadNearSpanWeight(this, this, searcher);
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             int sz = m_clauses.Count;
             SpanQuery[] newClauses = new SpanQuery[sz];

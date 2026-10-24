@@ -48,6 +48,9 @@ namespace Lucene.Net.Codecs.Compressing
         /// <param name="bytes"> a <see cref="BytesRef"/> where to store the decompressed data. </param>
         public abstract void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes);
 
-        public abstract object Clone();
+
+        object ICloneable.Clone() => Clone();
+
+        protected abstract object Clone(); // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
     }
 }
