@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
 
             public override long EncodeNormValue(float f)
             {
-                return (sbyte)f;
+                return (sbyte)(int)f; // LUCENENET: Cast to int first to match Java's wrapping narrowing conversion; .NET 11+ saturates direct float-to-sbyte casts
             }
 
             public override float DecodeNormValue(long norm)

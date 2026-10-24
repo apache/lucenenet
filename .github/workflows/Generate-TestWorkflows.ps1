@@ -68,7 +68,7 @@
 
  .PARAMETER TestFrameworks
     A string array of Dotnet target framework monikers to run the tests on. The default is
-    @('net10.0','net8.0','net472','net48').
+    @('net11.0','net10.0','net8.0','net472','net48').
 
  .PARAMETER OperatingSystems
     A string array of GitHub Actions operating system monikers to run the tests on.
@@ -80,6 +80,10 @@
 
  .PARAMETER Configurations
     A string array of build configurations to run the tests on. The default is @('Release').
+
+ .PARAMETER DotNet11SDKVersion
+    The SDK version of .NET 11.x to install on the build agent to be used for building and
+    testing. This SDK is always installed on the build agent. The default is 11.0.x.
 
  .PARAMETER DotNet10SDKVersion
     The SDK version of .NET 10.x to install on the build agent to be used for building and
@@ -95,13 +99,15 @@ param(
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net10.0', 'net8.0', 'net472', 'net48'), # targets under test: net10.0, net8.0, netstandard2.0, net462
+    [string[]]$TestFrameworks = @('net11.0', 'net10.0', 'net8.0', 'net472', 'net48'), # targets under test: net10.0, net10.0, net8.0, netstandard2.0, net462
 
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
     [string[]]$TestPlatforms = @('x64'),
 
     [string[]]$Configurations = @('Release'),
+
+    [string]$DotNet11SDKVersion = '11.0.x',
 
     [string]$DotNet10SDKVersion = '10.0.x',
 
@@ -212,6 +218,7 @@ function Write-TestWorkflow(
     [string[]]$TestFrameworks = @('net6.0', 'net48'),
     [string[]]$TestPlatforms = @('x64'),
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
+    [string]$DotNet11SDKVersion = $DotNet11SDKVersion,
     [string]$DotNet10SDKVersion = $DotNet10SDKVersion,
     [string]$DotNet8SDKVersion = $DotNet8SDKVersion) {
 
@@ -341,7 +348,15 @@ jobs:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       DOTNET_NOLOGO: 1
       NUGET_PACKAGES: `${{ github.workspace }}/.nuget/packages
-      BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS: 'true'"
+      BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS: 'true'
+      # LUCENENET TODO: Workaround for an IKVM bug on Linux with the .NET 11 SDK. IKVM's libsunec.so uses libstdc++
+      # symbols (_Znam, _ZdaPv) but does not declare libstdc++ as a dependency, so it only loads if the host process has
+      # already loaded libstdc++. The .NET 11 SDK's MSBuild apphost (used for worker nodes and task hosts) no longer links
+      # libstdc++, so the IKVM.Maven.Sdk tasks crash during the TLS handshake to Maven Central when building
+      # Lucene.Net.Analysis.OpenNLP (MSB4217/MSB4027). Preloading libstdc++ satisfies the missing symbols.
+      # This can be removed once IKVM ships a libsunec.so that links libstdc++, or once Lucene.Net.Analysis.OpenNLP
+      # no longer depends on IKVM.
+      LD_PRELOAD: `${{ startsWith(matrix.os, 'ubuntu') && 'libstdc++.so.6' || '' }}"
 
     # A grouped workflow builds and tests each project in its own step, so there is no single
     # project_path for the job; each step passes its own path instead.
@@ -377,6 +392,12 @@ jobs:
         uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
         with:
           dotnet-version: '$DotNet10SDKVersion'
+
+      - name: Setup .NET 11 SDK
+        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
+        with:
+          dotnet-version: '$DotNet11SDKVersion'
+          dotnet-quality: 'preview'
 
       - name: Cache NuGet Packages
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
@@ -643,5 +664,5 @@ foreach ($workflowName in $workflowProjects.Keys) {
         Write-Host "Grouping $($projectPaths.Count) projects into workflow '${workflowName}': $(($projectPaths | ForEach-Object { [System.IO.Path]::GetFileNameWithoutExtension($_) }) -join ', ')" -ForegroundColor Green
     }
 
-    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPaths $projectPaths -WorkflowName $workflowName -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet8SDKVersion $DotNet8SDKVersion
+    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPaths $projectPaths -WorkflowName $workflowName -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet8SDKVersion $DotNet8SDKVersion -DotNet10SDKVersion $DotNet10SDKVersion -DotNet11SDKVersion $DotNet11SDKVersion
 }

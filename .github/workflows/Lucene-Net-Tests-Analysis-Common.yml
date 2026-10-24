@@ -71,7 +71,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
-        framework: [net10.0, net8.0, net48, net472]
+        framework: [net11.0, net10.0, net8.0, net48, net472]
         platform: [x64]
         configuration: [Release]
         exclude:
@@ -88,6 +88,14 @@ jobs:
       DOTNET_NOLOGO: 1
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
       BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS: 'true'
+      # LUCENENET TODO: Workaround for an IKVM bug on Linux with the .NET 11 SDK. IKVM's libsunec.so uses libstdc++
+      # symbols (_Znam, _ZdaPv) but does not declare libstdc++ as a dependency, so it only loads if the host process has
+      # already loaded libstdc++. The .NET 11 SDK's MSBuild apphost (used for worker nodes and task hosts) no longer links
+      # libstdc++, so the IKVM.Maven.Sdk tasks crash during the TLS handshake to Maven Central when building
+      # Lucene.Net.Analysis.OpenNLP (MSB4217/MSB4027). Preloading libstdc++ satisfies the missing symbols.
+      # This can be removed once IKVM ships a libsunec.so that links libstdc++, or once Lucene.Net.Analysis.OpenNLP
+      # no longer depends on IKVM.
+      LD_PRELOAD: ${{ startsWith(matrix.os, 'ubuntu') && 'libstdc++.so.6' || '' }}
       project_path: './src/Lucene.Net.Tests.Analysis.Common/Lucene.Net.Tests.Analysis.Common.csproj'
       run_slow_tests: 'false'
       trx_file_name: 'TestResults.trx'
@@ -107,6 +115,12 @@ jobs:
         uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
         with:
           dotnet-version: '10.0.x'
+
+      - name: Setup .NET 11 SDK
+        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
+        with:
+          dotnet-version: '11.0.x'
+          dotnet-quality: 'preview'
 
       - name: Cache NuGet Packages
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5

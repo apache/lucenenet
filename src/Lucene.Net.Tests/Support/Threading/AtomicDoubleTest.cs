@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -235,6 +236,27 @@ namespace Lucene.Net.Threading
                 ai.Value = i;
                 assertEquals((double)i, Convert.ToDouble(ai));
             }
+        }
+
+        /**
+         * narrowing conversions wrap like Java's Number.byteValue()/shortValue()
+         * rather than saturating
+         */
+        [Test, LuceneNetSpecific]
+        public void TestNarrowingConversionsWrapLikeJava()
+        {
+            AtomicDouble ai = new AtomicDouble(135.0d);
+            assertEquals((sbyte)-121, ai.ToSByte()); // Java: (byte) 135d == -121
+            assertEquals((byte)135, ai.ToByte());
+
+            ai.Value = 300.0d;
+            assertEquals((byte)44, ai.ToByte()); // Java: (byte) 300d == 44
+
+            ai.Value = -1.0d;
+            assertEquals((byte)255, ai.ToByte()); // Java: (byte) -1d == -1 (0xFF)
+
+            ai.Value = 70000.0d;
+            assertEquals((short)4464, ai.ToInt16()); // Java: (short) 70000d == 4464
         }
 
         /**
