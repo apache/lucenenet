@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-    public abstract class MergePolicy : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class MergePolicy : ICloneable, IDisposable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// A map of doc IDs. </summary>

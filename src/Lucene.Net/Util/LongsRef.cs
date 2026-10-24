@@ -36,7 +36,7 @@ namespace Lucene.Net.Util
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public sealed class Int64sRef : IComparable<Int64sRef> // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public sealed class Int64sRef : IComparable<Int64sRef>, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// An empty <see cref="long"/> array for convenience

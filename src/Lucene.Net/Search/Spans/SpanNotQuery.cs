@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Spans
     /// Removes matches which overlap with another <see cref="SpanQuery"/> or
     /// within a x tokens before or y tokens after another <see cref="SpanQuery"/>.
     /// </summary>
-    public class SpanNotQuery : SpanQuery // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class SpanNotQuery : SpanQuery, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private SpanQuery include;
         private SpanQuery exclude;

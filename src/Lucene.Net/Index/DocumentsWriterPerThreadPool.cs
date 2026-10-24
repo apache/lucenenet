@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
     /// new <see cref="DocumentsWriterPerThread"/> instance.
     /// </summary>
 
-    internal sealed class DocumentsWriterPerThreadPool // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    internal sealed class DocumentsWriterPerThreadPool : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// <see cref="ThreadState"/> references and guards a

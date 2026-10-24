@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
 
-    public sealed class SegmentInfos : IEnumerable<SegmentCommitInfo> // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public sealed class SegmentInfos : ICloneable, IEnumerable<SegmentCommitInfo> // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// The file format version for the segments_N codec header, up to 4.5. </summary>

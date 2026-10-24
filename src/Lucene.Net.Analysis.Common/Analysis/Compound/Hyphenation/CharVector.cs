@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     ///
     /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified.
     /// </summary>
-    public class CharVector // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class CharVector : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// Capacity increment size

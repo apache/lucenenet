@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <summary>
         /// Term text with a beginning and end position
         /// </summary>
-        public class QueryText // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+        public class QueryText : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
         {
             private string value = null;
 

@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.Compressing
     /// <summary>
     /// A decompressor.
     /// </summary>
-    public abstract class Decompressor // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class Decompressor : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// Sole constructor, typically called from sub-classes. </summary>

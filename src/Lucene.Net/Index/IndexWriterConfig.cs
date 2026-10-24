@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
     /// @since 3.1
     /// </summary>
     /// <seealso cref="IndexWriter.Config"/>
-    public sealed class IndexWriterConfig : LiveIndexWriterConfig // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public sealed class IndexWriterConfig : LiveIndexWriterConfig, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         // LUCENENET specific: De-nested OpenMode enum from this class to prevent naming conflict
 

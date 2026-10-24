@@ -42,7 +42,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// @lucene.internal
     /// </summary>
     /// <seealso cref="Lucene40StoredFieldsFormat"/>
-    public sealed class Lucene40StoredFieldsReader : StoredFieldsReader // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public sealed class Lucene40StoredFieldsReader : StoredFieldsReader, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private readonly FieldInfos fieldInfos;
 #pragma warning disable CA2213 // Disposable fields should be disposed

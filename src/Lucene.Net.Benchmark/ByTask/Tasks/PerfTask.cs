@@ -57,7 +57,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     ///     </description></item>
     /// </list>
     /// </remarks>
-    public abstract class PerfTask : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class PerfTask : ICloneable, IDisposable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         internal const int DEFAULT_LOG_STEP = 1000;
 

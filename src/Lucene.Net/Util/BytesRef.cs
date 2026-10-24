@@ -45,9 +45,9 @@ namespace Lucene.Net.Util
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public sealed class BytesRef : IComparable<BytesRef>, IComparable, IEquatable<BytesRef> // LUCENENET specific - implemented IComparable for FieldComparator, IEquatable<BytesRef>
+    public sealed class BytesRef : IComparable<BytesRef>, IComparable, IEquatable<BytesRef>, ICloneable // LUCENENET specific - implemented IComparable for FieldComparator, IEquatable<BytesRef>
     {
         /// <summary>
         /// An empty byte array for convenience </summary>

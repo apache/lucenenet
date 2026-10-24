@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
     /// or <see cref="Store.Directory"/> instance.</para>
     /// </summary>
 
-    public abstract class IndexDeletionPolicy // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class IndexDeletionPolicy : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// Sole constructor, typically called by sub-classes constructors. </summary>

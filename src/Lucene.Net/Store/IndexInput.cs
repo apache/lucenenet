@@ -34,7 +34,7 @@ namespace Lucene.Net.Store
     /// <see cref="ObjectDisposedException"/> when the original one is closed.
     /// </summary>
     /// <seealso cref="Directory"/>
-    public abstract class IndexInput : DataInput, IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class IndexInput : DataInput, ICloneable, IDisposable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private readonly string resourceDescription;
 

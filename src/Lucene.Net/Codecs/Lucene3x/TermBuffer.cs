@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// @lucene.experimental
     /// </summary>
     [Obsolete("(4.0)")]
-    internal sealed class TermBuffer // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    internal sealed class TermBuffer : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private string field;
         private Term term; // cached

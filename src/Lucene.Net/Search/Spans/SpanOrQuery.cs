@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.Spans
 
     /// <summary>
     /// Matches the union of its clauses. </summary>
-    public class SpanOrQuery : SpanQuery // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class SpanOrQuery : SpanQuery, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private readonly IList<SpanQuery> clauses;
         private string field;

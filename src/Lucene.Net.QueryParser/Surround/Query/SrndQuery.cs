@@ -26,7 +26,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// <summary>
     /// Lowest level base class for surround queries
     /// </summary>
-    public abstract class SrndQuery // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class SrndQuery : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         //public SrndQuery() { }
 

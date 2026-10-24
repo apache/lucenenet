@@ -39,8 +39,8 @@ namespace Lucene.Net.Util
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
-    public sealed class CharsRef : IComparable<CharsRef>, IEquatable<CharsRef> // LUCENENET specific - implemented IEquatable<CharsRef>
+    // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
+    public sealed class CharsRef : IComparable<CharsRef>, IEquatable<CharsRef>, ICloneable // LUCENENET specific - implemented IEquatable<CharsRef>
     {
         /// <summary>
         /// An empty character array for convenience </summary>

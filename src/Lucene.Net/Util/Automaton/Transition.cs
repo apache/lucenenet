@@ -1,5 +1,6 @@
 using J2N.Text;
 using Lucene.Net.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -44,7 +45,7 @@ namespace Lucene.Net.Util.Automaton
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class Transition // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class Transition : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /*
          * CLASS INVARIANT: min<=max

@@ -72,7 +72,7 @@ namespace Lucene.Net.Util.Automaton
     /// </para>
     /// @lucene.experimental
     /// </summary>
-    public class Automaton // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class Automaton : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         // LUCENENET specific - commented out; unused and removed in later Lucene versions
         // /// <summary>

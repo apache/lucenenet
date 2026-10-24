@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// </summary>
     // pkg-private: if this thing is generally useful then it can go back in .util,
     // but the serialization must be here underneath the codec.
-    internal sealed class BitVector : IMutableBits // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    internal sealed class BitVector : ICloneable, IMutableBits // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private byte[] bits;
         private int size;

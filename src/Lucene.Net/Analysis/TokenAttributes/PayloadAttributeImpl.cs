@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="IPayloadAttribute"/>. </summary>
-    public class PayloadAttribute : Attribute, IPayloadAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class PayloadAttribute : Attribute, IPayloadAttribute, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private BytesRef payload;
 

@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// @lucene.experimental
     /// </summary>
     [Obsolete("(4.0) No longer used with flex indexing, except for reading old segments")]
-    internal sealed class SegmentTermEnum : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    internal sealed class SegmentTermEnum : ICloneable, IDisposable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private IndexInput input;
         internal readonly FieldInfos fieldInfos; // LUCENENET: marked readonly

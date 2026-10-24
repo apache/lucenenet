@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
     /// Morphosyntactic annotations for surface forms.
     /// </summary>
     /// <seealso cref="IMorphosyntacticTagsAttribute"/>
-    public class MorphosyntacticTagsAttribute : Attribute, IMorphosyntacticTagsAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class MorphosyntacticTagsAttribute : Attribute, IMorphosyntacticTagsAttribute, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>Initializes this attribute with no tags</summary>
         public MorphosyntacticTagsAttribute() { }

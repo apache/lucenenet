@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
     /// instance.</para>
     /// @lucene.experimental
     /// </summary>
-    public abstract class MergeScheduler : IDisposable, IMergeScheduler // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class MergeScheduler : ICloneable, IDisposable, IMergeScheduler // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
