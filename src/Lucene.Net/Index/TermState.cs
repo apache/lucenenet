@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
 
         public virtual object Clone()
         {
-            return (TermState)base.MemberwiseClone();
+            return base.MemberwiseClone();
         }
 
         public override string ToString()

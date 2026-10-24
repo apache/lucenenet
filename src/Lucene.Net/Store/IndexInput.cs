@@ -106,7 +106,7 @@ namespace Lucene.Net.Store
         /// </summary>
         public override object Clone()
         {
-            return (IndexInput)base.Clone();
+            return base.Clone();
         }
     }
 }
