@@ -44,7 +44,7 @@ namespace Lucene.Net.Codecs.Sep
 
         /// <summary>
         /// Records a single skip-point in the <see cref="Int32IndexInput.GetReader()"/>. </summary>
-        public abstract class Index
+        public abstract class Index : ICloneable // LUCENENET specific - implemented ICloneable to support the Clone<T>() extension method
         {
             public abstract void Read(DataInput indexIn, bool absolute);
 
@@ -53,7 +53,9 @@ namespace Lucene.Net.Codecs.Sep
 
             public abstract void CopyFrom(Index other);
 
-            public abstract object Clone();
+            object ICloneable.Clone() => Clone();
+
+            protected abstract object Clone();
         }
 
         /// <summary>Reads <see cref="int"/> values.</summary>
