@@ -29,7 +29,7 @@ namespace Lucene.Net.Support
     /// </summary>
     [TestFixture]
     [LuceneNetSpecific]
-    public class TestCloneExtensions : LuceneTestCase
+    public class TestCloneableExtensions : LuceneTestCase
     {
         private class ClonableType : ICloneable
         {

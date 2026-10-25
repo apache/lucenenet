@@ -38,7 +38,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(DisableRepositoryGlobalUsings)' != 'true'">
-    <Using Include="Lucene.Net.CloneExtensions.ICloneable"
+    <Using Include="Lucene.Net.CloneableExtensions.ICloneable"
            Alias="ICloneable" />
   </ItemGroup>
 
