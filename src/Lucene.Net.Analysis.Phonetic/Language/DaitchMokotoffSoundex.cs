@@ -141,7 +141,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                     if (builder.Length > MAX_LENGTH)
                     {
                         //builder.delete(MAX_LENGTH, builder.Length);
-                        builder.Remove(MAX_LENGTH, builder.Length - MAX_LENGTH);
+                        builder.Delete(MAX_LENGTH, builder.Length - MAX_LENGTH);
                     }
                     cachedString = null;
                 }

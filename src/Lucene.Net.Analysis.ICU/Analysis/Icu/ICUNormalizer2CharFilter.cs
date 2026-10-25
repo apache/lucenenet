@@ -251,7 +251,7 @@ namespace Lucene.Net.Analysis.Icu
             resultBuffer.CopyTo(0, cbuf, begin, len);
             if (len > 0)
             {
-                resultBuffer.Remove(0, len);
+                resultBuffer.Delete(0, len);
             }
             return len;
         }

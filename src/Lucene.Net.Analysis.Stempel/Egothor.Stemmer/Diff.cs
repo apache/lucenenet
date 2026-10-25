@@ -1,3 +1,4 @@
+using J2N.Text;
 using Lucene;
 using Lucene.Net.Support;
 using System;
@@ -149,7 +150,7 @@ namespace Egothor.Stemmer
                             // String s = orig.toString();
                             // s = s.substring( 0, pos ) + s.substring( o + 1 );
                             // orig = new StringBuffer( s );
-                            dest.Remove(pos, (o + 1) - pos);
+                            dest.Delete(pos, (o + 1) - pos);
                             break;
                         case 'I':
                             dest.Insert(pos += 1, param);
