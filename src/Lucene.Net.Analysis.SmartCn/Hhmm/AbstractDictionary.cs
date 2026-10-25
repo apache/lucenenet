@@ -1,10 +1,7 @@
 // lucene version compatibility level: 4.8.1
+using J2N.Text;
 using System;
 using System.Text;
-
-#if !FEATURE_ENCODING_GETSTRING_READONLYSPAN
-using Lucene.Net.Support.Text;
-#endif
 
 namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 {

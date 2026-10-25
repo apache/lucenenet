@@ -69,6 +69,7 @@
   <!-- Features in .NET 6.x+ only -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or $(TargetFramework.StartsWith('net10.')) ">
 
+    <DefineConstants>$(DefineConstants);FEATURE_FILE_CREATESYMBOLICLINK</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_RANDOM_NEXTINT64_NEXTSINGLE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_RANDOMACCESS_READ</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_SPANFORMATTABLE</DefineConstants>
@@ -110,7 +111,6 @@
     <DefineConstants>$(DefineConstants);FEATURE_ARRAY_FILL</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_ENCODING_GETSTRING_READONLYSPAN</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_INTERLOCKED_MEMORYBARRIERPROCESSWIDE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_NUMBER_PARSE_READONLYSPAN</DefineConstants>
