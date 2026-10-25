@@ -653,7 +653,7 @@ namespace Lucene.Net.Index
                 return result;
             }
 
-            result.NewSegments = (SegmentInfos)sis.Clone();
+            result.NewSegments = sis.Clone();
             result.NewSegments.Clear();
             result.MaxSegmentName = -1;
 
@@ -886,7 +886,7 @@ namespace Lucene.Net.Index
                 }
 
                 // Keeper
-                result.NewSegments.Add((SegmentCommitInfo)info.Clone());
+                result.NewSegments.Add(info.Clone());
             }
 
             if (0 == result.NumBadSegments)

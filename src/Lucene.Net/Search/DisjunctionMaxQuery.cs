@@ -261,7 +261,7 @@ namespace Lucene.Net.Search
                 {
                     if (result == singleton)
                     {
-                        result = (Query)result.Clone();
+                        result = result.Clone();
                     }
                     result.Boost = Boost * result.Boost;
                 }

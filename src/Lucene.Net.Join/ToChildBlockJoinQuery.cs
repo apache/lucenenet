@@ -383,7 +383,7 @@ namespace Lucene.Net.Search.Join
 
         protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
-            return new ToChildBlockJoinQuery((Query)_origParentQuery.Clone(), _parentsFilter, _doScores);
+            return new ToChildBlockJoinQuery(_origParentQuery.Clone(), _parentsFilter, _doScores);
         }
     }
 }

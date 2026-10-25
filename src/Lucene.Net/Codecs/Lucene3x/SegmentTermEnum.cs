@@ -117,11 +117,11 @@ namespace Lucene.Net.Codecs.Lucene3x
             // LUCENENET: MemberwiseClone() doesn't throw in .NET
             SegmentTermEnum clone = (SegmentTermEnum)base.MemberwiseClone();
 
-            clone.input = (IndexInput)input.Clone();
+            clone.input = input.Clone();
             clone.termInfo = new TermInfo(termInfo);
 
-            clone.termBuffer = (TermBuffer)termBuffer.Clone();
-            clone.prevBuffer = (TermBuffer)prevBuffer.Clone();
+            clone.termBuffer = termBuffer.Clone();
+            clone.prevBuffer = prevBuffer.Clone();
             clone.scanBuffer = new TermBuffer();
 
             return clone;

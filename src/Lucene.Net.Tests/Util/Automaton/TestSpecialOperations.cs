@@ -39,7 +39,7 @@ namespace Lucene.Net.Util.Automaton
             for (int i = 0; i < num; i++)
             {
                 Automaton a = AutomatonTestUtil.RandomAutomaton(Random);
-                Automaton b = (Automaton)a.Clone();
+                Automaton b = a.Clone();
                 Assert.AreEqual(AutomatonTestUtil.IsFiniteSlow(a), SpecialOperations.IsFinite(b));
             }
         }

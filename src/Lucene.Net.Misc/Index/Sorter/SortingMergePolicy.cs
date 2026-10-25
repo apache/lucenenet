@@ -248,7 +248,7 @@ namespace Lucene.Net.Index.Sorter
 
         protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
-            return new SortingMergePolicy((MergePolicy)@in.Clone(), sort);
+            return new SortingMergePolicy(@in.Clone(), sort);
         }
 
         protected override void Dispose(bool disposing)

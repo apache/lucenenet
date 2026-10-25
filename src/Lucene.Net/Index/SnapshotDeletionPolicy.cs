@@ -288,7 +288,7 @@ namespace Lucene.Net.Index
             try
             {
                 SnapshotDeletionPolicy other = (SnapshotDeletionPolicy)base.Clone();
-                other.primary = (IndexDeletionPolicy)this.primary.Clone();
+                other.primary = this.primary.Clone();
                 other.m_lastCommit = null;
                 other.m_refCounts = new JCG.Dictionary<long, int>(m_refCounts);
                 other.m_indexCommits = new JCG.Dictionary<long, IndexCommit>(m_indexCommits);

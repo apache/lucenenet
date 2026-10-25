@@ -96,7 +96,7 @@ namespace Lucene.Net.Search.Spans
 
             for (int i = 0; i < sz; i++)
             {
-                newClauses[i] = (SpanQuery)clauses[i].Clone();
+                newClauses[i] = clauses[i].Clone();
             }
             SpanOrQuery soq = new SpanOrQuery(newClauses);
             soq.Boost = Boost;

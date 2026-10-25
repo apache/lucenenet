@@ -862,7 +862,7 @@ namespace Lucene.Net.Index
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Codec != null);
                 // dont directly access segments, use add method!!!
-                sis.Add((SegmentCommitInfo)(info.Clone()));
+                sis.Add(info.Clone());
             }
             sis.userData = new JCG.Dictionary<string, string>(userData);
             return sis;
@@ -1527,7 +1527,7 @@ namespace Lucene.Net.Index
             foreach (var info in segments)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Codec != null);
-                list.Add((SegmentCommitInfo)(info.Clone()));
+                list.Add(info.Clone());
             }
             return list;
         }

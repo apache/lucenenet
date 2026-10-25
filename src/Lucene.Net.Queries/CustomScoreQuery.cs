@@ -128,11 +128,11 @@ namespace Lucene.Net.Queries
         protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             var clone = (CustomScoreQuery)base.Clone();
-            clone.subQuery = (Query)subQuery.Clone();
+            clone.subQuery = subQuery.Clone();
             clone.scoringQueries = new Query[scoringQueries.Length];
             for (int i = 0; i < scoringQueries.Length; i++)
             {
-                clone.scoringQueries[i] = (Query)scoringQueries[i].Clone();
+                clone.scoringQueries[i] = scoringQueries[i].Clone();
             }
             return clone;
         }

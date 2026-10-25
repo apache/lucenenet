@@ -79,7 +79,7 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             dir.inputCloneCount.IncrementAndGet();
-            IndexInput iiclone = (IndexInput)@delegate.Clone();
+            IndexInput iiclone = @delegate.Clone();
             MockIndexInputWrapper clone = new MockIndexInputWrapper(dir, name, iiclone);
             clone.isClone = true;
             // Pending resolution on LUCENE-686 we may want to

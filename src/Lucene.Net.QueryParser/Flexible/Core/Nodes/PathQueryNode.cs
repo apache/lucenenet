@@ -161,7 +161,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             IList<PathQueryNode.QueryText> rValues = new JCG.List<PathQueryNode.QueryText>();
             for (int i = startIndex; i < this.values.Count; i++)
             {
-                rValues.Add((QueryText)this.values[i].Clone());
+                rValues.Add(this.values[i].Clone());
             }
             return rValues;
         }
@@ -210,7 +210,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 IList<QueryText> localValues = new JCG.List<QueryText>();
                 foreach (QueryText value in this.values)
                 {
-                    localValues.Add((QueryText)value.Clone());
+                    localValues.Add(value.Clone());
                 }
                 clone.values = localValues;
             }

@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
 
                 @out.Dispose();
                 IndexInput input = dir.OpenInput("foo", IOContext.DEFAULT);
-                DataInput @in = (DataInput)input.Clone();
+                DataInput @in = input.Clone();
 
                 p.Copy(input, input.Length);
                 PagedBytes.Reader reader = p.Freeze(random.NextBoolean());

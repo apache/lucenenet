@@ -549,7 +549,7 @@ namespace Lucene.Net.Search
                     {
                         if (query == c.Query) // if rewrite was no-op
                         {
-                            query = (Query)query.Clone(); // then clone before boost
+                            query = query.Clone(); // then clone before boost
                         }
                         // Since the BooleanQuery only has 1 clause, the BooleanQuery will be
                         // written out. Therefore the rewritten Query's boost must incorporate both

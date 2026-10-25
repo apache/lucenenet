@@ -363,7 +363,7 @@ namespace Lucene.Net.Analysis
             // Do a deep clone
             if (payload != null)
             {
-                t.payload = (BytesRef)payload.Clone();
+                t.payload = payload.Clone();
             }
             return t;
         }
@@ -386,7 +386,7 @@ namespace Lucene.Net.Analysis
             };
             if (payload != null)
             {
-                t.payload = (BytesRef)payload.Clone();
+                t.payload = payload.Clone();
             }
             return t;
         }
@@ -610,7 +610,7 @@ namespace Lucene.Net.Analysis
                 // reinit shares the payload, so clone it:
                 if (payload != null)
                 {
-                    to.payload = (BytesRef)payload.Clone();
+                    to.payload = payload.Clone();
                 }
             }
             else
@@ -619,7 +619,7 @@ namespace Lucene.Net.Analysis
                 ((IOffsetAttribute)target).SetOffset(startOffset, endOffset);
                 ((IPositionIncrementAttribute)target).PositionIncrement = positionIncrement;
                 ((IPositionLengthAttribute) target).PositionLength = positionLength;
-                ((IPayloadAttribute)target).Payload = (payload is null) ? null : (BytesRef)payload.Clone();
+                ((IPayloadAttribute)target).Payload = (payload is null) ? null : payload.Clone();
                 ((IFlagsAttribute)target).Flags = flags;
                 ((ITypeAttribute)target).Type = type;
             }

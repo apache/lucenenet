@@ -68,7 +68,7 @@ namespace Lucene.Net.Codecs.SimpleText
             bool success = false;
             try
             {
-                fields = ReadFields((IndexInput)input.Clone());
+                fields = ReadFields(input.Clone());
                 success = true;
             }
             finally
@@ -247,7 +247,7 @@ namespace Lucene.Net.Codecs.SimpleText
             public SimpleTextDocsEnum(SimpleTextFieldsReader outerInstance)
             {
                 this.inStart = outerInstance.input;
-                this.input = (IndexInput)this.inStart.Clone();
+                this.input = this.inStart.Clone();
             }
 
             public virtual bool CanReuse(IndexInput @in)
@@ -372,7 +372,7 @@ namespace Lucene.Net.Codecs.SimpleText
             public SimpleTextDocsAndPositionsEnum(SimpleTextFieldsReader outerInstance)
             {
                 this.inStart = outerInstance.input;
-                this.input = (IndexInput)inStart.Clone();
+                this.input = inStart.Clone();
             }
 
             public virtual bool CanReuse(IndexInput @in)
@@ -574,7 +574,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 var outputs = new PairOutputs<Int64, PairOutputs<Int64, Int64>.Pair>(posIntOutputs,
                     outputsInner);
                 var b = new Builder<PairOutputs<Int64, PairOutputs<Int64, Int64>.Pair>.Pair>(FST.INPUT_TYPE.BYTE1, outputs);
-                IndexInput @in = (IndexInput)outerInstance.input.Clone();
+                IndexInput @in = outerInstance.input.Clone();
                 @in.Seek(termsStart);
                 BytesRef lastTerm = new BytesRef(10);
                 long lastDocsStart = -1;

@@ -277,7 +277,7 @@ namespace Lucene.Net.Util.Automaton
             }
             else if (min == 1)
             {
-                b = (Automaton)a.Clone();
+                b = a.Clone();
             }
             else
             {
@@ -290,10 +290,10 @@ namespace Lucene.Net.Util.Automaton
             }
             if (max > 0)
             {
-                Automaton d = (Automaton)a.Clone();
+                Automaton d = a.Clone();
                 while (--max > 0)
                 {
-                    Automaton c = (Automaton)a.Clone();
+                    Automaton c = a.Clone();
                     foreach (State p in c.GetAcceptStates())
                     {
                         p.AddEpsilon(d.initial);

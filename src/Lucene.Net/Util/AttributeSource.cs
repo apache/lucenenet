@@ -196,14 +196,14 @@ namespace Lucene.Net.Util
 
             object ICloneable.Clone() => Clone();
 
-            private object Clone()
+            private State Clone()
             {
                 State clone = new State();
-                clone.attribute = (Attribute)attribute.Clone();
+                clone.attribute = attribute.Clone();
 
                 if (next != null)
                 {
-                    clone.next = (State)next.Clone();
+                    clone.next = next.Clone();
                 }
 
                 return clone;
@@ -500,7 +500,7 @@ namespace Lucene.Net.Util
         public virtual State CaptureState()
         {
             State state = this.GetCurrentState();
-            return (state is null) ? null : (State)state.Clone();
+            return (state is null) ? null : state.Clone();
         }
 
         /// <summary>
@@ -682,7 +682,7 @@ namespace Lucene.Net.Util
                 for (State state = GetCurrentState(); state != null; state = state.next)
                 {
                     //clone.AttributeImpls[state.attribute.GetType()] = state.attribute.Clone();
-                    var impl = (Attribute)state.attribute.Clone();
+                    Attribute impl = state.attribute.Clone();
 
                     if (!clone.attributeImpls.ContainsKey(impl.GetType()))
                     {

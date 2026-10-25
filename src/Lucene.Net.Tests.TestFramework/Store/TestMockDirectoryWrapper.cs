@@ -249,7 +249,7 @@ namespace Lucene.Net.Store
         //            @out.WriteByte((byte)42);
         //        } // @out.close();
         //        IndexInput @in = dir.OpenInput("foo", IOContext.DEFAULT);
-        //        IndexInput clone = (IndexInput)@in.Clone();
+        //        IndexInput clone = @in.Clone();
         //        @in.Dispose();
         //        Assert.Throws<Exception>(() => clone.ReadByte());
         //    } // dir.close();
@@ -266,8 +266,8 @@ namespace Lucene.Net.Store
         //            @out.WriteByte((byte)42);
         //        } // @out.close();
         //        IndexInput @in = dir.OpenInput("foo", IOContext.DEFAULT);
-        //        IndexInput clone1 = (IndexInput)@in.Clone();
-        //        IndexInput clone2 = (IndexInput)clone1.Clone();
+        //        IndexInput clone1 = @in.Clone();
+        //        IndexInput clone2 = clone1.Clone();
         //        @in.Dispose();
         //        Assert.Throws<Exception>(() => clone2.ReadByte());
         //    } // dir.close();

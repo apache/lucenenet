@@ -62,7 +62,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public override IMutableBits NewLiveDocs(IBits existing)
         {
             var bits = (SimpleTextBits)existing;
-            return new SimpleTextMutableBits((BitSet)bits.bits.Clone(), bits.Length);
+            return new SimpleTextMutableBits(bits.bits.Clone(), bits.Length);
         }
 
         public override IBits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)

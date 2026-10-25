@@ -238,7 +238,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 throw AlreadyClosedException.Create(this.GetType().FullName, "this TermVectorsReader is disposed.");
             }
-            return new SimpleTextTermVectorsReader(_offsets, (IndexInput)_input.Clone());
+            return new SimpleTextTermVectorsReader(_offsets, _input.Clone());
         }
 
         protected override void Dispose(bool disposing)

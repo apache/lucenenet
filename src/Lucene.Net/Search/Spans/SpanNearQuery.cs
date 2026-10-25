@@ -176,7 +176,7 @@ namespace Lucene.Net.Search.Spans
 
             for (int i = 0; i < sz; i++)
             {
-                newClauses[i] = (SpanQuery)m_clauses[i].Clone();
+                newClauses[i] = m_clauses[i].Clone();
             }
             SpanNearQuery spanNearQuery = new SpanNearQuery(newClauses, m_slop, m_inOrder);
             spanNearQuery.Boost = Boost;

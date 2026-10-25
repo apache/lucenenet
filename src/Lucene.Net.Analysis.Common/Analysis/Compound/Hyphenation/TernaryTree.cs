@@ -429,7 +429,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             t.m_hi = (char[])this.m_hi.Clone();
             t.m_eq = (char[])this.m_eq.Clone();
             t.m_sc = (char[])this.m_sc.Clone();
-            t.m_kv = (CharVector)this.m_kv.Clone();
+            t.m_kv = this.m_kv.Clone();
             t.m_root = this.m_root;
             t.m_freenode = this.m_freenode;
             t.m_length = this.m_length;
@@ -674,13 +674,13 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                             if (outerInstance.m_sc[i.parent] != 0)
                             {
                                 res = outerInstance.m_eq[i.parent];
-                                ns.Push((Item)i.Clone());
+                                ns.Push(i.Clone());
                                 ks.Append(outerInstance.m_sc[i.parent]);
                             }
                             else
                             {
                                 i.child++;
-                                ns.Push((Item)i.Clone());
+                                ns.Push(i.Clone());
                                 res = outerInstance.m_hi[i.parent];
                             }
                             climb = false;
@@ -688,7 +688,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
                         case 2:
                             res = outerInstance.m_hi[i.parent];
-                            ns.Push((Item)i.Clone());
+                            ns.Push(i.Clone());
                             if (ks.Length > 0)
                             {
                                 ks.Length = ks.Length - 1; // pop

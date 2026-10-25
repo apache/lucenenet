@@ -64,7 +64,7 @@ namespace Lucene.Net.Codecs.Lucene40
         protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             EnsureOpen();
-            return new Lucene40StoredFieldsReader(fieldInfos, numTotalDocs, size, (IndexInput)fieldsStream.Clone(), (IndexInput)indexStream.Clone());
+            return new Lucene40StoredFieldsReader(fieldInfos, numTotalDocs, size, fieldsStream.Clone(), indexStream.Clone());
         }
 
         /// <summary>

@@ -76,8 +76,8 @@ namespace Lucene.Net.Store
             io.WriteVInt32(5);
             io.Dispose();
             IndexInput one = mmapDir.OpenInput("bytes", IOContext.DEFAULT);
-            IndexInput two = (IndexInput)one.Clone();
-            IndexInput three = (IndexInput)two.Clone(); // clone of clone
+            IndexInput two = one.Clone();
+            IndexInput three = two.Clone(); // clone of clone
             one.Dispose();
             try
             {
@@ -121,8 +121,8 @@ namespace Lucene.Net.Store
             io.WriteVInt32(5);
             io.Dispose();
             IndexInput one = mmapDir.OpenInput("bytes", IOContext.DEFAULT);
-            IndexInput two = (IndexInput)one.Clone();
-            IndexInput three = (IndexInput)two.Clone(); // clone of clone
+            IndexInput two = one.Clone();
+            IndexInput three = two.Clone(); // clone of clone
             two.Dispose();
             Assert.AreEqual(5, one.ReadVInt32());
             try
@@ -151,8 +151,8 @@ namespace Lucene.Net.Store
             IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random));
             IndexInput one = slicer.OpenSlice("first int", 0, 4);
             IndexInput two = slicer.OpenSlice("second int", 4, 4);
-            IndexInput three = (IndexInput)one.Clone(); // clone of clone
-            IndexInput four = (IndexInput)two.Clone(); // clone of clone
+            IndexInput three = one.Clone(); // clone of clone
+            IndexInput four = two.Clone(); // clone of clone
             slicer.Dispose();
             try
             {
@@ -255,12 +255,12 @@ namespace Lucene.Net.Store
             // Open several IndexInputs for the same file through both
             // OpenInput and CreateSlicer. All should share one mapping.
             IndexInput root = mmapDir.OpenInput(name, IOContext.DEFAULT);
-            IndexInput rootClone = (IndexInput)root.Clone();
+            IndexInput rootClone = root.Clone();
 
             IndexInputSlicer slicer = mmapDir.CreateSlicer(name, NewIOContext(Random));
             IndexInput sliceA = slicer.OpenSlice("a", 0, 4);
             IndexInput sliceB = slicer.OpenSlice("b", 8, 4);
-            IndexInput sliceAClone = (IndexInput)sliceA.Clone();
+            IndexInput sliceAClone = sliceA.Clone();
 
             // Reads across all instances must be independent and correct.
             Assert.AreEqual(10, root.ReadInt32());
@@ -663,7 +663,7 @@ namespace Lucene.Net.Store
                                 try
                                 {
                                     // ReSharper disable once AccessToDisposedClosure - thread joined below
-                                    clone = (IndexInput)primary.Clone();
+                                    clone = primary.Clone();
                                 }
                                 catch (Exception e) when (e.IsAlreadyClosedException())
                                 {
@@ -796,7 +796,7 @@ namespace Lucene.Net.Store
                         try
                         {
                             // ReSharper disable once AccessToDisposedClosure - thread joined below
-                            clone = (IndexInput)primary.Clone();
+                            clone = primary.Clone();
                         }
                         catch (Exception e) when (e.IsAlreadyClosedException())
                         {
@@ -925,7 +925,7 @@ namespace Lucene.Net.Store
                             {
                                 IndexInput c;
                                 // ReSharper disable once AccessToDisposedClosure - thread joined below
-                                try { c = (IndexInput)primary.Clone(); }
+                                try { c = primary.Clone(); }
                                 catch (Exception e) when (e.IsAlreadyClosedException()) { return; }
                                 // Touch a byte on the clone — but don't read past dispose to keep the test focused on Clone itself.
                                 try { c.ReadByte(); }
@@ -955,7 +955,7 @@ namespace Lucene.Net.Store
                 // bytes from a released mapping.
                 try
                 {
-                    var postDisposeClone = (IndexInput)primary.Clone();
+                    IndexInput postDisposeClone = primary.Clone();
                     try
                     {
                         postDisposeClone.ReadByte();
@@ -1019,7 +1019,7 @@ namespace Lucene.Net.Store
                         // IndexInput.
                         IndexInput clone;
                         // ReSharper disable once AccessToDisposedClosure - thread joined below
-                        try { clone = (IndexInput)input.Clone(); }
+                        try { clone = input.Clone(); }
                         catch (Exception e) when (e.IsAlreadyClosedException()) { return; }
 
                         // ReSharper disable once AccessToDisposedClosure - thread joined below
@@ -1139,7 +1139,7 @@ namespace Lucene.Net.Store
 
             using var input = mmapDir.OpenInput("empty", NewIOContext(Random));
             Assert.AreEqual(0L, input.Length);
-            using var clone = (IndexInput)input.Clone();
+            using var clone = input.Clone();
             Assert.AreEqual(0L, clone.Length);
             Assert.AreEqual(0L, input.Position);
             Assert.AreEqual(0L, clone.Position);
@@ -1210,7 +1210,7 @@ namespace Lucene.Net.Store
 
             // Clone taken BEFORE the root is disposed: must fail on read
             // after the root is disposed, because the shared mapping is closed.
-            var preDisposeClone = (IndexInput)root.Clone();
+            IndexInput preDisposeClone = root.Clone();
 
             root.Dispose();
 
@@ -1255,8 +1255,8 @@ namespace Lucene.Net.Store
             }
 
             using var root = mmapDir.OpenInput("bytes", NewIOContext(Random));
-            var cloneA = (IndexInput)root.Clone();
-            var cloneB = (IndexInput)root.Clone();
+            IndexInput cloneA = root.Clone();
+            IndexInput cloneB = root.Clone();
 
             cloneA.Dispose();
 
@@ -1353,7 +1353,7 @@ namespace Lucene.Net.Store
                 {
                     int idx = r;
                     byte expected = (byte)(0x11 * (idx + 1));
-                    var clone = (IndexInput)slices[idx].Clone();
+                    IndexInput clone = slices[idx].Clone();
                     tasks[idx] = Task.Run(() =>
                     {
                         for (int pass = 0; pass < 50; pass++)
@@ -1425,7 +1425,7 @@ namespace Lucene.Net.Store
 
             // Root input + a clone of it.
             using (var input = dir.OpenInput(name, NewIOContext(Random)))
-            using (var inputClone = (IndexInput)input.Clone())
+            using (var inputClone = input.Clone())
             {
                 Assert.AreEqual(42, ReadInt32At(inputClone, 42));
             }
@@ -1433,7 +1433,7 @@ namespace Lucene.Net.Store
             // Slicer + slice + a clone of the slice.
             using (var slicer = dir.CreateSlicer(name, NewIOContext(Random)))
             using (var slice = slicer.OpenSlice("half", 0, 1024 * sizeof(int) / 2))
-            using (var sliceClone = (IndexInput)slice.Clone())
+            using (var sliceClone = slice.Clone())
             {
                 Assert.AreEqual(7, ReadInt32At(sliceClone, 7));
             }
@@ -1521,7 +1521,7 @@ namespace Lucene.Net.Store
             var clones = new IndexInput[numWorkers];
             for (int i = 0; i < numWorkers; i++)
             {
-                clones[i] = (IndexInput)root.Clone();
+                clones[i] = root.Clone();
             }
 
             using var start = new ManualResetEventSlim(false);
@@ -2090,7 +2090,7 @@ namespace Lucene.Net.Store
             parent.Seek(2);
             Assert.AreEqual(bytes[2], parent.ReadByte());
             // Clone: independent position and independent cursor cache.
-            var clone = (IndexInput)parent.Clone();
+            var clone = parent.Clone();
             try
             {
                 clone.Seek(20);
@@ -2231,7 +2231,7 @@ namespace Lucene.Net.Store
 
             for (int trial = 0; trial < 20; trial++)
             {
-                var clone = (IndexInput)parent.Clone();
+                var clone = parent.Clone();
                 int observedAve = 0;
                 int observedAcceptable = 0;
 
@@ -2313,7 +2313,7 @@ namespace Lucene.Net.Store
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void DisposeCloneCrossThread(MMapDirectory.MMapIndexInput parent)
         {
-            IndexInput clone = (IndexInput)parent.Clone();
+            IndexInput clone = parent.Clone();
             // Read on a different thread via a parameterized start so the clone is
             // NOT captured into a closure that the Thread object would keep alive.
             // The Thread is local and gone after return.
@@ -2355,7 +2355,7 @@ namespace Lucene.Net.Store
             // Read through a clone on THIS thread (crossing a chunk boundary), then
             // dispose it. The clone is drained the moment each ReadByte returns, so
             // disposing it must leave the shared mapping untouched.
-            var clone = (IndexInput)root.Clone();
+            MMapDirectory.MMapIndexInput clone = root.Clone();
             clone.Seek(0);
             for (int i = 0; i < 32; i++) clone.ReadByte(); // crosses chunk 0 -> chunk 1
             clone.Dispose();
@@ -2407,7 +2407,7 @@ namespace Lucene.Net.Store
             MMapDirectory.Chunk[] chunks = root.Mapping.Chunks;
             Assert.IsTrue(chunks.Length > 1, "expected a multi-chunk mapping");
 
-            var clone = (MMapDirectory.MMapIndexInput)root.Clone();
+            MMapDirectory.MMapIndexInput clone = root.Clone();
             using var entered = new ManualResetEventSlim(false);
             using var resume = new ManualResetEventSlim(false);
             // Park the clone INSIDE its read bracket (admitted, before the load

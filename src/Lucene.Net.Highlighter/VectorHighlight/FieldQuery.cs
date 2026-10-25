@@ -169,7 +169,7 @@ namespace Lucene.Net.Search.VectorHighlight
             {
                 return query;
             }
-            Query cloned = (Query)query.Clone();
+            Query cloned = query.Clone();
             cloned.Boost = query.Boost * parent.Boost;
             return cloned;
         }

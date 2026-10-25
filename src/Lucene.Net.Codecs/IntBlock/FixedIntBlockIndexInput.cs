@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.IntBlock
         public override Int32IndexInput.Reader GetReader()
         {
             var buffer = new int[m_blockSize];
-            var clone = (IndexInput)input.Clone();
+            IndexInput clone = input.Clone();
             // TODO: can this be simplified?
             return new Reader(clone, buffer, GetBlockReader(clone, buffer));
         }
@@ -187,7 +187,7 @@ namespace Lucene.Net.Codecs.IntBlock
                 upto = idx.upto;
             }
 
-            public override object Clone()
+            protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 Index other = new Index(outerInstance);
                 other.fp = fp;

@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             PayloadAttribute clone = (PayloadAttribute)base.Clone();
             if (payload != null)
             {
-                clone.payload = (BytesRef)payload.Clone();
+                clone.payload = payload.Clone();
             }
             return clone;
         }
@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 throw new ArgumentNullException(nameof(target));
             if (target is not IPayloadAttribute t)
                 throw new ArgumentException($"Argument type {target.GetType().FullName} must implement {nameof(IPayloadAttribute)}", nameof(target));
-            t.Payload = (payload is null) ? null : (BytesRef)payload.Clone();
+            t.Payload = (payload is null) ? null : payload.Clone();
         }
     }
 }

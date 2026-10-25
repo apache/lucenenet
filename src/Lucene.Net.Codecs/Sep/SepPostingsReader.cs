@@ -128,7 +128,7 @@ namespace Lucene.Net.Codecs.Sep
                 SepTermState other_ = (SepTermState)other;
                 if (docIndex is null)
                 {
-                    docIndex = (Int32IndexInput.Index)other_.docIndex.Clone();
+                    docIndex = other_.docIndex.Clone();
                 }
                 else
                 {
@@ -138,7 +138,7 @@ namespace Lucene.Net.Codecs.Sep
                 {
                     if (freqIndex is null)
                     {
-                        freqIndex = (Int32IndexInput.Index)other_.freqIndex.Clone();
+                        freqIndex = other_.freqIndex.Clone();
                     }
                     else
                     {
@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.Sep
                 {
                     if (posIndex is null)
                     {
-                        posIndex = (Int32IndexInput.Index)other_.posIndex.Clone();
+                        posIndex = other_.posIndex.Clone();
                     }
                     else
                     {
@@ -397,7 +397,7 @@ namespace Lucene.Net.Codecs.Sep
                     if (skipper is null)
                     {
                         // This DocsEnum has never done any skipping
-                        skipper = new SepSkipListReader((IndexInput)outerInstance.skipIn.Clone(),
+                        skipper = new SepSkipListReader(outerInstance.skipIn.Clone(),
                                                         outerInstance.freqIn,
                                                         outerInstance.docIn,
                                                         outerInstance.posIn,
@@ -501,7 +501,7 @@ namespace Lucene.Net.Codecs.Sep
                 freqIndex = outerInstance.freqIn.GetIndex();
                 posReader = outerInstance.posIn.GetReader();
                 posIndex = outerInstance.posIn.GetIndex();
-                payloadIn = (IndexInput)outerInstance.payloadIn.Clone();
+                payloadIn = outerInstance.payloadIn.Clone();
             }
 
             internal virtual SepDocsAndPositionsEnum Init(FieldInfo fieldInfo, SepTermState termState, IBits liveDocs)
@@ -591,7 +591,7 @@ namespace Lucene.Net.Codecs.Sep
                     {
                         //System.out.println("  create skipper");
                         // This DocsEnum has never done any skipping
-                        skipper = new SepSkipListReader((IndexInput)outerInstance.skipIn.Clone(),
+                        skipper = new SepSkipListReader(outerInstance.skipIn.Clone(),
                                                         outerInstance.freqIn,
                                                         outerInstance.docIn,
                                                         outerInstance.posIn,

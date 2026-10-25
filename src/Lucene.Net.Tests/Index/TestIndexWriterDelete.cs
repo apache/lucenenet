@@ -1377,7 +1377,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMaxBufferedDocs(2);
-            IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)iwc.Clone());
+            IndexWriter w = new IndexWriter(dir, iwc.Clone());
             Document doc = new Document();
             doc.Add(NewField("field", "0", StringField.TYPE_NOT_STORED));
             w.AddDocument(doc);
@@ -1404,7 +1404,7 @@ namespace Lucene.Net.Index
 
             // Segment should have deletions:
             Assert.IsTrue(s.Contains("has deletions"), "string was: " + s);
-            w = new IndexWriter(dir, (IndexWriterConfig)iwc.Clone());
+            w = new IndexWriter(dir, iwc.Clone());
             w.ForceMerge(1);
             w.Dispose();
 

@@ -280,7 +280,7 @@ namespace Lucene.Net.Store
             [Obsolete("Only for reading CFS files from 3.x indexes.")]
             public override IndexInput OpenFullSlice()
             {
-                return (IndexInput)@base.Clone();
+                return @base.Clone();
             }
         }
 
@@ -338,7 +338,7 @@ namespace Lucene.Net.Store
             internal SlicedIndexInput(string sliceDescription, IndexInput @base, long fileOffset, long length, int readBufferSize)
                 : base("SlicedIndexInput(" + sliceDescription + " in " + @base + " slice=" + fileOffset + ":" + (fileOffset + length) + ")", readBufferSize)
             {
-                this.@base = (IndexInput)@base.Clone();
+                this.@base = @base.Clone();
                 this.fileOffset = fileOffset;
                 this.length = length;
             }
@@ -346,7 +346,7 @@ namespace Lucene.Net.Store
             protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 SlicedIndexInput clone = (SlicedIndexInput)base.Clone();
-                clone.@base = (IndexInput)@base.Clone();
+                clone.@base = @base.Clone();
                 clone.fileOffset = fileOffset;
                 clone.length = length;
                 return clone;

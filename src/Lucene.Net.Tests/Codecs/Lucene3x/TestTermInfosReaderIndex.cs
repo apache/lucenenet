@@ -138,7 +138,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public virtual void TestSeekEnum()
         {
             const int indexPosition = 3;
-            SegmentTermEnum clone = (SegmentTermEnum)termEnum.Clone();
+            SegmentTermEnum clone = termEnum.Clone();
             Term term = FindTermThatWouldBeAtIndex(clone, indexPosition);
             SegmentTermEnum enumerator = clone;
             index.SeekEnum(enumerator, indexPosition);

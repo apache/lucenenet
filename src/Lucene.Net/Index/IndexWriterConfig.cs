@@ -186,18 +186,18 @@ namespace Lucene.Net.Index
         {
             IndexWriterConfig clone = (IndexWriterConfig)this.MemberwiseClone();
 
-            clone.writer = (SetOnce<IndexWriter>)writer.Clone();
+            clone.writer = writer.Clone();
 
             // Mostly shallow clone, but do a deepish clone of
             // certain objects that have state that cannot be shared
             // across IW instances:
-            clone.delPolicy = (IndexDeletionPolicy)delPolicy.Clone();
-            clone.flushPolicy = (FlushPolicy)flushPolicy.Clone();
-            clone.indexerThreadPool = (DocumentsWriterPerThreadPool)indexerThreadPool.Clone();
+            clone.delPolicy = delPolicy.Clone();
+            clone.flushPolicy = flushPolicy.Clone();
+            clone.indexerThreadPool = indexerThreadPool.Clone();
             // we clone the infoStream because some impls might have state variables
             // such as line numbers, message throughput, ...
-            clone.infoStream = (InfoStream)infoStream.Clone();
-            clone.mergePolicy = (MergePolicy)mergePolicy.Clone();
+            clone.infoStream = infoStream.Clone();
+            clone.mergePolicy = mergePolicy.Clone();
             clone.mergeScheduler = (IMergeScheduler)mergeScheduler.Clone();
 
             return clone;

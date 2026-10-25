@@ -229,7 +229,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 throw AlreadyClosedException.Create(this.GetType().FullName, "this FieldsReader is disposed.");
             }
-            return new SimpleTextStoredFieldsReader(_offsets, (IndexInput)_input.Clone(), _fieldInfos);
+            return new SimpleTextStoredFieldsReader(_offsets, _input.Clone(), _fieldInfos);
         }
 
         protected override void Dispose(bool disposing)

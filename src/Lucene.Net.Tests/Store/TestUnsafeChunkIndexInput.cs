@@ -318,7 +318,7 @@ namespace Lucene.Net.Store
             using var root = OpenRoot(data, chunkSizePower: 4, out var region);
             root.Seek(0);
             root.ReadByte();
-            var clone = (IndexInput)root.Clone();
+            ManagedChunkIndexInput clone = root.Clone();
             clone.Seek(0);
             clone.ReadByte();
 
@@ -342,7 +342,7 @@ namespace Lucene.Net.Store
         {
             var data = MakeData(64);
             using var root = OpenRoot(data, chunkSizePower: 4, out var region); // 16-byte chunks
-            var clone = (IndexInput)root.Clone();
+            ManagedChunkIndexInput clone = root.Clone();
             // Read chunk 0 on the clone, then dispose the ROOT (closes all chunks).
             clone.Seek(0);
             clone.ReadByte();
@@ -406,7 +406,7 @@ namespace Lucene.Net.Store
             // pin down the deferral handshake at the engine's logic level.
             var data = MakeData(64);
             using var root = OpenRoot(data, chunkSizePower: 4, out var region);
-            var clone = (ManagedChunkIndexInput)root.Clone();
+            ManagedChunkIndexInput clone = root.Clone();
 
             var entered = new ManualResetEventSlim(false);
             var resume = new ManualResetEventSlim(false);

@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Payloads
 
             for (int i = 0; i < sz; i++)
             {
-                newClauses[i] = (SpanQuery)m_clauses[i].Clone();
+                newClauses[i] = m_clauses[i].Clone();
             }
             PayloadNearQuery boostingNearQuery = new PayloadNearQuery(newClauses, m_slop, m_inOrder, m_function);
             boostingNearQuery.Boost = Boost;

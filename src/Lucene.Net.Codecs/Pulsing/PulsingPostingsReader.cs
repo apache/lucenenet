@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 else
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(WrappedTermState != null);
-                    clone.WrappedTermState = (BlockTermState)WrappedTermState.Clone();
+                    clone.WrappedTermState = WrappedTermState.Clone();
                     clone.Absolute = Absolute;
 
                     if (Int64s is null) return clone;

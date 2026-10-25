@@ -62,7 +62,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 IList<SrndQuery> queries = new JCG.List<SrndQuery>();
                 foreach (var fieldName in fieldNames)
                 {
-                    var qc = (SrndQuery)q.Clone();
+                    SrndQuery qc = q.Clone();
                     queries.Add(new FieldsQuery(qc, fieldName, fieldOp));
                 }
                 OrQuery oq = new OrQuery(queries,

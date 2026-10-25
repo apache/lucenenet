@@ -84,7 +84,7 @@ namespace Lucene.Net.Facet
         /// </summary>
         internal DrillDownQuery(FacetsConfig config, BooleanQuery query, IDictionary<string, int> drillDownDims)
         {
-            this.query = (BooleanQuery)query.Clone();
+            this.query = query.Clone();
             this.drillDownDims.PutAll(drillDownDims);
             this.config = config;
         }
