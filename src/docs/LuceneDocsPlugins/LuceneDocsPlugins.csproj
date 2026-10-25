@@ -29,6 +29,11 @@ under the License.
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Don't generate repository wide global usings in this project. -->
+    <DisableRepositoryGlobalUsings>true</DisableRepositoryGlobalUsings>
+  </PropertyGroup>
+
   <PropertyGroup Label="Version Info">
     <Version>1.0.0.0</Version>
     <FileVersion>$(Version)</FileVersion>

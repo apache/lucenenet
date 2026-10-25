@@ -37,4 +37,9 @@
     <PublishTrimmed Condition="'$(_RunAotAudit)' == 'true'">true</PublishTrimmed>
   </PropertyGroup>
 
+  <ItemGroup Condition="'$(DisableRepositoryGlobalUsings)' != 'true'">
+    <Using Include="Lucene.Net.CloneExtensions.ICloneable"
+           Alias="ICloneable" />
+  </ItemGroup>
+
 </Project>

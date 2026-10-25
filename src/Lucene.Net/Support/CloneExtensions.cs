@@ -24,5 +24,23 @@ namespace Lucene.Net
         {
             return (T)source.Clone();
         }
+
+        /// <summary>
+        /// Specifies that a type is cloneable and requires covariant casting
+        /// via the <see cref="Clone{T}(T)"/> extension method.
+        /// </summary>
+        /// <remarks>
+        /// This interface is nested because it has no purpose other than to provide
+        /// a constraint for types to expose a strongly typed covariant return type.
+        /// We also don't want it to collide with <see cref="System.ICloneable"/>.
+        /// </remarks>
+        public interface ICloneable
+        {
+            /// <summary>
+            /// Creates a new object that is a copy of the current instance.
+            /// </summary>
+            /// <returns>The cloned instance.</returns>
+            object Clone();
+        }
     }
 }

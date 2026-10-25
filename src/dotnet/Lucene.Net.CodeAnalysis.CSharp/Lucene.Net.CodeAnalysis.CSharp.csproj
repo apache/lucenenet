@@ -29,6 +29,11 @@
     <CheckNotRecommendedTargetFramework>false</CheckNotRecommendedTargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Don't generate repository wide global usings in this project. -->
+    <DisableRepositoryGlobalUsings>true</DisableRepositoryGlobalUsings>
+  </PropertyGroup>
+
   <Import Project="..\Lucene.Net.CodeAnalysis\Version.props" />
 
   <ItemGroup>
