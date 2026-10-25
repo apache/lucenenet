@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Fr
     /// </summary>
     /// @deprecated Use <see cref="Tartarus.Snowball.Ext.FrenchStemmer"/> instead,
     /// which has the same functionality. This filter will be removed in Lucene 4.0
-    [Obsolete("Use FrenchStemmer instead, which has the same functionality.")]
+    [Obsolete("Use Lucene.Net.Tartarus.Snowball.Ext.FrenchStemmer instead, which has the same functionality.")]
     public class FrenchStemmer
     {
         private static readonly CultureInfo locale = new CultureInfo("fr-FR");

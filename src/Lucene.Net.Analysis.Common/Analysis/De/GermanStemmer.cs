@@ -102,15 +102,15 @@ namespace Lucene.Net.Analysis.De
             {
                 if ((buffer.Length + substCount > 5) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("nd", StringComparison.Ordinal))
                 {
-                    buffer.Delete(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
+                    buffer.Delete(buffer.Length - 2, 2); // LUCENENET: buffer.Length - (buffer.Length - 2) == 2
                 }
                 else if ((buffer.Length + substCount > 4) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("em", StringComparison.Ordinal))
                 {
-                    buffer.Delete(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
+                    buffer.Delete(buffer.Length - 2, 2); // LUCENENET: buffer.Length - (buffer.Length - 2) == 2
                 }
                 else if ((buffer.Length + substCount > 4) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("er", StringComparison.Ordinal))
                 {
-                    buffer.Delete(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
+                    buffer.Delete(buffer.Length - 2, 2); // LUCENENET: buffer.Length - (buffer.Length - 2) == 2
                 }
                 else if (buffer[buffer.Length - 1] == 'e')
                 {
@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis.De
                 {
                     if (buffer.ToString(c, 4).Equals("gege", StringComparison.Ordinal))
                     {
-                        buffer.Delete(c, (c + 2) - c);
+                        buffer.Delete(c, 2); // LUCENENET: (c + 2) - c == 2
                         return;
                     }
                 }
