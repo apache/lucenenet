@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Lucene.Net.Util;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Index
 
     // LUCENENET specific - Specify to unzip the line file docs
     [UseTempLineDocsFile]
-    [Timeout(900_000)] // 15 minutes
+    [CancelAfter(900_000)] // 15 minutes
     public class TestFlushByRamOrCountsPolicy : LuceneTestCase
     {
         private static LineFileDocs lineDocFile;
@@ -62,7 +63,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestFlushByRam()
+        public virtual void TestFlushByRam(CancellationToken cancellationToken)
         {
             // LUCENENET specific - disable the test if asserts are not enabled
             AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
@@ -71,20 +72,20 @@ namespace Lucene.Net.Index
             // LUCENENET specific - increased size of ramBuffer to reduce the amount of
             // time required and offset AtLeast(2).
             double ramBuffer = (TestNightly ? 2 : 10) + AtLeast(2) + Random.NextDouble();
-            RunFlushByRam(1 + Random.Next(TestNightly ? 5 : 1), ramBuffer, false);
+            RunFlushByRam(1 + Random.Next(TestNightly ? 5 : 1), ramBuffer, false, cancellationToken);
         }
 
         [Test]
-        public virtual void TestFlushByRamLargeBuffer()
+        public virtual void TestFlushByRamLargeBuffer(CancellationToken cancellationToken)
         {
             // LUCENENET specific - disable the test if asserts are not enabled
             AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
 
             // with a 256 mb ram buffer we should never stall
-            RunFlushByRam(1 + Random.Next(TestNightly ? 5 : 1), 256d, true);
+            RunFlushByRam(1 + Random.Next(TestNightly ? 5 : 1), 256d, true, cancellationToken);
         }
 
-        protected internal virtual void RunFlushByRam(int numThreads, double maxRamMB, bool ensureNotStalled)
+        protected internal virtual void RunFlushByRam(int numThreads, double maxRamMB, bool ensureNotStalled, CancellationToken cancellationToken)
         {
             int numDocumentsToIndex = 10 + AtLeast(30);
             AtomicInt32 numDocs = new AtomicInt32(numDocumentsToIndex);
@@ -114,7 +115,7 @@ namespace Lucene.Net.Index
             IndexThread[] threads = new IndexThread[numThreads];
             for (int x = 0; x < threads.Length; x++)
             {
-                threads[x] = new IndexThread(numDocs, writer, lineDocFile, false);
+                threads[x] = new IndexThread(numDocs, writer, lineDocFile, false, cancellationToken);
                 threads[x].Start();
             }
 
@@ -142,7 +143,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestFlushDocCount()
+        public virtual void TestFlushDocCount(CancellationToken cancellationToken)
         {
             // LUCENENET specific - disable the test if asserts are not enabled
             AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
@@ -150,7 +151,6 @@ namespace Lucene.Net.Index
             int[] numThreads = new int[] { 2 + AtLeast(1), 1 };
             for (int i = 0; i < numThreads.Length; i++)
             {
-
                 int numDocumentsToIndex = 50 + AtLeast(30);
                 AtomicInt32 numDocs = new AtomicInt32(numDocumentsToIndex);
                 Directory dir = NewDirectory();
@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
                 IndexThread[] threads = new IndexThread[numThreads[i]];
                 for (int x = 0; x < threads.Length; x++)
                 {
-                    threads[x] = new IndexThread(numDocs, writer, lineDocFile, false);
+                    threads[x] = new IndexThread(numDocs, writer, lineDocFile, false, cancellationToken);
                     threads[x].Start();
                 }
 
@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestRandom()
+        public virtual void TestRandom(CancellationToken cancellationToken)
         {
             // LUCENENET specific - disable the test if asserts are not enabled
             AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
@@ -226,7 +226,7 @@ namespace Lucene.Net.Index
             IndexThread[] threads = new IndexThread[numThreads];
             for (int x = 0; x < threads.Length; x++)
             {
-                threads[x] = new IndexThread(numDocs, writer, lineDocFile, true);
+                threads[x] = new IndexThread(numDocs, writer, lineDocFile, true, cancellationToken);
                 threads[x].Start();
             }
 
@@ -264,7 +264,7 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow] // LUCENENET: occasionally
-        public virtual void TestStallControl()
+        public virtual void TestStallControl(CancellationToken cancellationToken)
         {
             // LUCENENET specific - disable the test if asserts are not enabled
             AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
                 IndexThread[] threads = new IndexThread[numThreads[i]];
                 for (int x = 0; x < threads.Length; x++)
                 {
-                    threads[x] = new IndexThread(numDocs, writer, lineDocFile, false);
+                    threads[x] = new IndexThread(numDocs, writer, lineDocFile, false, cancellationToken);
                     threads[x].Start();
                 }
 
@@ -342,13 +342,22 @@ namespace Lucene.Net.Index
             internal AtomicInt32 pendingDocs;
             internal readonly bool doRandomCommit;
 
-            public IndexThread(AtomicInt32 pendingDocs, IndexWriter writer, LineFileDocs docs, bool doRandomCommit)
+            /// <summary>
+            /// LUCENENET-specific cancellation token for CancelAfter attribute support.
+            /// This will be invoked if the test runs longer than the configured timeout.
+            /// To avoid slowing down the tests too much, we only cancel right before committing, rather than at each
+            /// AddDocument call.
+            /// </summary>
+            private readonly CancellationToken cancellationToken;
+
+            public IndexThread(AtomicInt32 pendingDocs, IndexWriter writer, LineFileDocs docs, bool doRandomCommit, CancellationToken cancellationToken)
             {
                 this.pendingDocs = pendingDocs;
                 this.writer = writer;
                 iwc = writer.Config;
                 this.docs = docs;
                 this.doRandomCommit = doRandomCommit;
+                this.cancellationToken = cancellationToken;
             }
 
             public override void Run()
@@ -367,12 +376,16 @@ namespace Lucene.Net.Index
                         }
                         if (doRandomCommit)
                         {
+                            cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
+
                             if (Rarely())
                             {
                                 writer.Commit();
                             }
                         }
                     }
+
+                    cancellationToken.ThrowIfCancellationRequested(); // LUCENENET-specific: CancelAfter support
                     writer.Commit();
                 }
                 catch (Exception ex) when (ex.IsThrowable())

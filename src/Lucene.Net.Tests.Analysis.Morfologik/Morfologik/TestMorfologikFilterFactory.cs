@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis.Morfologik
 {
@@ -80,7 +81,7 @@ namespace Lucene.Net.Analysis.Morfologik
         {
             IResourceLoader loader = new ClasspathResourceLoader(typeof(TestMorfologikFilterFactory));
 
-            IOException expected = NUnit.Framework.Assert.Throws<IOException>(() =>
+            IOException expected = Assert.Throws<IOException>(() =>
             {
                 IDictionary<String, String> @params = new JCG.Dictionary<String, String>();
                 @params[MorfologikFilterFactory.DICTIONARY_ATTRIBUTE] = "missing-dictionary-resource.dict";
@@ -95,7 +96,7 @@ namespace Lucene.Net.Analysis.Morfologik
         [Test]
         public void TestBogusArguments()
         {
-            ArgumentException expected = NUnit.Framework.Assert.Throws<ArgumentException>(() =>
+            ArgumentException expected = Assert.Throws<ArgumentException>(() =>
             {
                 JCG.Dictionary<String, String> @params = new JCG.Dictionary<String, String>();
                 @params["bogusArg"] = "bogusValue";
