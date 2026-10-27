@@ -221,16 +221,14 @@ namespace Lucene.Net.QueryParsers.Xml
         /// <returns>an <see cref="XmlDocument"/> object</returns>
         public static XmlDocument LoadXML(TextReader input)
         {
-            XmlDocument result = new XmlDocument();
             try
             {
-                result.Load(input);
+                return LoadXMLSecure(input); // LUCENENET specific - disallow external entities and limit entity expansion
             }
             catch (Exception se) // LUCENENET: No need to call the IsException() extension method here because we are dealing only with a .NET platform method
             {
                 throw RuntimeException.Create("Error parsing file:" + se, se);
             }
-            return result;
         }
 
         /// <summary>
@@ -241,20 +239,22 @@ namespace Lucene.Net.QueryParsers.Xml
         // LUCENENET specific
         public static XmlDocument LoadXML(Stream input)
         {
-            XmlDocument result = new XmlDocument();
             try
             {
-                result.Load(input);
+                return LoadXMLSecure(input); // LUCENENET specific - disallow external entities and limit entity expansion
             }
             catch (Exception se) // LUCENENET: No need to call the IsException() extension method here because we are dealing only with a .NET platform method
             {
                 throw RuntimeException.Create("Error parsing file:" + se, se);
             }
-            return result;
         }
 
         /// <summary>
         /// Helper method to parse an XML file into a DOM tree, given an <see cref="XmlReader"/>.
+        /// <para/>
+        /// The caller is responsible for configuring the <see cref="XmlReaderSettings"/> of <paramref name="input"/>
+        /// (such as <see cref="XmlReaderSettings.DtdProcessing"/>, <see cref="XmlReaderSettings.XmlResolver"/>
+        /// and <see cref="XmlReaderSettings.MaxCharactersFromEntities"/>) appropriately for untrusted input.
         /// </summary>
         /// <param name="input">reader of the XML file to be parsed</param>
         /// <returns>an <see cref="XmlDocument"/> object</returns>
@@ -270,6 +270,51 @@ namespace Lucene.Net.QueryParsers.Xml
             {
                 throw RuntimeException.Create("Error parsing file:" + se, se);
             }
+            return result;
+        }
+
+        /// <summary>
+        /// The default maximum number of characters that may be produced by expanding entities
+        /// when parsing XML from a <see cref="Stream"/> or <see cref="TextReader"/>.
+        /// </summary>
+        // LUCENENET specific
+        private const long DEFAULT_MAX_CHARACTERS_FROM_ENTITIES = 10_000;
+
+        /// <summary>
+        /// Creates <see cref="XmlReaderSettings"/> that allow internal DTDs, resolve external entities with
+        /// <paramref name="xmlResolver"/>, and limit the number of characters produced by expanding entities.
+        /// </summary>
+        // LUCENENET specific
+        internal static XmlReaderSettings CreateXmlReaderSettings(XmlResolver xmlResolver)
+        {
+            return new XmlReaderSettings
+            {
+                DtdProcessing = DtdProcessing.Parse,
+                XmlResolver = xmlResolver,
+                MaxCharactersFromEntities = DEFAULT_MAX_CHARACTERS_FROM_ENTITIES,
+            };
+        }
+
+        // LUCENENET specific - parses untrusted XML, disallowing external entities and limiting entity expansion
+        internal static XmlDocument LoadXMLSecure(Stream input)
+        {
+            using XmlReader reader = XmlReader.Create(input, CreateXmlReaderSettings(CoreParser.DisallowExternalEntityResolver));
+            return LoadXML(reader, CoreParser.DisallowExternalEntityResolver);
+        }
+
+        // LUCENENET specific - parses untrusted XML, disallowing external entities and limiting entity expansion
+        internal static XmlDocument LoadXMLSecure(TextReader input)
+        {
+            using XmlReader reader = XmlReader.Create(input, CreateXmlReaderSettings(CoreParser.DisallowExternalEntityResolver));
+            return LoadXML(reader, CoreParser.DisallowExternalEntityResolver);
+        }
+
+        // LUCENENET specific - loads from an XmlReader, using xmlResolver for the document
+        // so the DOCTYPE is not resolved with the framework default resolver
+        internal static XmlDocument LoadXML(XmlReader input, XmlResolver xmlResolver)
+        {
+            XmlDocument result = new XmlDocument { XmlResolver = xmlResolver };
+            result.Load(input);
             return result;
         }
     }
