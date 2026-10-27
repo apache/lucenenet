@@ -59,6 +59,8 @@ variables:
   value: $[counter(variables['VersionSuffix'],coalesce(variables['BuildCounterSeed'], 1250))]
 - name: DotNetSDKVersion
   value: '10.0.301'
+- name: DotNet11SDKVersion
+  value: '11.0.100-rc.2.26504.105'
 - name: DocumentationArtifactName
   value: 'docs'
 - name: DocumentationArtifactZipFileName
@@ -127,6 +129,11 @@ stages:
     - template: '.build/azure-templates/install-dotnet-sdk.yml'
       parameters:
         sdkVersion: '$(DotNetSDKVersion)'
+
+    # The .NET 11 SDK is required to build the net11.0 test target framework
+    - template: '.build/azure-templates/install-dotnet-sdk.yml'
+      parameters:
+        sdkVersion: '$(DotNet11SDKVersion)'
 
     - pwsh: |
         Import-Module "$(BuildDirectory)/psake/psake.psm1"
@@ -233,6 +240,15 @@ stages:
         Remove-Item -Path "$(NuGetArtifactDirectory)/*" -Recurse -Force
       displayName: 'Delete temp publish location: $(NuGetArtifactDirectory)'
       condition: and(succeeded(), ne(variables['RunPack'], 'false'))
+
+    - template: '.build/azure-templates/publish-test-binaries.yml'
+      parameters:
+        publishDirectory: $(PublishDirectory)
+        framework: 'net11.0'
+        binaryArtifactName: '$(BinaryArtifactName)'
+        testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+        configuration: '$(BuildConfiguration)'
+        platform: '$(BuildPlatform)'
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
@@ -365,6 +381,66 @@ stages:
 - stage: Test_Stage
   displayName: 'Test Stage:'
   jobs:
+
+  - job: Test_net11_0_x64
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+    strategy:
+      matrix:
+        Windows:
+          osName: 'Windows'
+          imageName: 'windows-latest'
+          maximumParallelJobs: 2
+          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
+        Linux:
+          osName: 'Linux'
+          imageName: 'ubuntu-latest'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
+        macOS:
+          osName: 'macOS'
+          imageName: 'macOS-latest'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
+    displayName: 'Test net11.0,x64 on'
+    pool:
+      vmImage: $(imageName)
+    steps:
+      - template: '.build/azure-templates/run-tests-on-os.yml'
+        parameters:
+          osName: $(osName)
+          framework: 'net11.0'
+          vsTestPlatform: 'x64'
+          testBinariesArtifactName: '$(TestBinariesArtifactName)'
+          nugetArtifactName: '$(NuGetArtifactName)'
+          testResultsArtifactName: '$(TestResultsArtifactName)'
+          maximumParallelJobs: $(maximumParallelJobs)
+          maximumAllowedFailures: $(maximumAllowedFailures)
+          dotNetSdkVersion: '$(DotNet11SDKVersion)'
+
+  - job: Test_net11_0_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
+    strategy:
+      matrix:
+        Windows:
+          osName: 'Windows'
+          imageName: 'windows-latest'
+          maximumParallelJobs: 2
+          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
+    displayName: 'Test net11.0,x86 on'
+    pool:
+      vmImage: $(imageName)
+    steps:
+      - template: '.build/azure-templates/run-tests-on-os.yml'
+        parameters:
+          osName: $(osName)
+          framework: 'net11.0'
+          vsTestPlatform: 'x86'
+          testBinariesArtifactName: '$(TestBinariesArtifactName)'
+          nugetArtifactName: '$(NuGetArtifactName)'
+          testResultsArtifactName: '$(TestResultsArtifactName)'
+          maximumParallelJobs: $(maximumParallelJobs)
+          maximumAllowedFailures: $(maximumAllowedFailures)
+          dotNetSdkVersion: '$(DotNet11SDKVersion)'
 
   - job: Test_net10_0_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
