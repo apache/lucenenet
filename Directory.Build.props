@@ -49,6 +49,11 @@
 
     <NetCoreOnlyTargetFrameworks>net10.0;net8.0</NetCoreOnlyTargetFrameworks>
     <NetCoreOnlyTargetFrameworks Condition=" '$(IsLegacyVisualStudioVersion)' == 'true' ">net8.0</NetCoreOnlyTargetFrameworks>
+
+    <!-- Projects that only add .NET Framework targets on Windows key off of this property rather than checking the OS directly.
+      Pass IncludeNetFrameworkTargets=true to evaluate those targets on macOS/Linux, which Generate-TestWorkflows.ps1 does
+      so the generated workflows are the same on every platform. -->
+    <IncludeNetFrameworkTargets Condition=" '$(IncludeNetFrameworkTargets)' == '' And $([MSBuild]::IsOsPlatform('Windows')) ">true</IncludeNetFrameworkTargets>
   </PropertyGroup>
 
   <!-- IMPORTANT: When these values are changed, the CI counter number should also be reset. -->

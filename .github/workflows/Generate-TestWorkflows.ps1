@@ -124,6 +124,8 @@ function Get-ProjectDependencies([string]$ProjectPath, [string]$RelativeRoot, [S
     $rootPath = [System.IO.Path]::GetDirectoryName($resolvedProjectPath)
     [xml]$project = Get-Content $resolvedProjectPath
     foreach ($name in $project.SelectNodes("//Project/ItemGroup/ProjectReference") | Where-Object { $_.Include -notmatch '^$' } | ForEach-Object { $_.Include -split ';'}) {
+        # Project files use Windows separators, which are not recognized on macOS/Linux. Forward slashes work everywhere.
+        $name = $name -replace '\\', '/'
         $dependencyFullPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($rootPath, $name))
         Get-ProjectDependencies $dependencyFullPath $RelativeRoot $Result
         $dependency = Resolve-RelativePath $RelativeRoot $dependencyFullPath
@@ -136,17 +138,21 @@ function Get-ProjectExternalPaths([string]$ProjectPath, [string]$RelativeRoot, [
     $rootPath = [System.IO.Path]::GetDirectoryName($resolvedProjectPath)
     [xml]$project = Get-Content $resolvedProjectPath
     foreach ($name in $project.SelectNodes("//Project/ItemGroup/Compile") | Where-Object { $_.Include -notmatch '^$' } | ForEach-Object { $_.Include -split ';'}) {
+        # Project files use Windows separators, which are not recognized on macOS/Linux. Forward slashes work everywhere.
+        $name = $name -replace '\\', '/'
         # Temporarily override wildcard patterns so we can resolve the path and then put them back.
-        $name = $name -replace '\\\*\*\\\*', 'Wildcard1' -replace '\*', 'Wildcard2'
-        $dependencyFullPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($rootPath, $name)) -replace 'Wildcard1', '\**\*' -replace 'Wildcard2', '*'
+        $name = $name -replace '/\*\*/\*', 'Wildcard1' -replace '\*', 'Wildcard2'
+        $dependencyFullPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($rootPath, $name)) -replace 'Wildcard1', '/**/*' -replace 'Wildcard2', '*'
         # Make the path relative to the repo root.
         $dependency = $($($dependencyFullPath.Replace($RelativeRoot, '.')) -replace '\\', '/').TrimStart('./')
         $result.Add($dependency) | Out-Null
     }
     foreach ($name in $project.SelectNodes("//Project/ItemGroup/EmbeddedResource") | Where-Object { $_.Include -notmatch '^$' } | ForEach-Object { $_.Include -split ';'}) {
+        # Project files use Windows separators, which are not recognized on macOS/Linux. Forward slashes work everywhere.
+        $name = $name -replace '\\', '/'
         # Temporarily override wildcard patterns so we can resolve the path and then put them back.
-        $name = $name -replace '\\\*\*\\\*', 'Wildcard1' -replace '\*', 'Wildcard2'
-        $dependencyFullPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($rootPath, $name)) -replace 'Wildcard1', '\**\*' -replace 'Wildcard2', '*'
+        $name = $name -replace '/\*\*/\*', 'Wildcard1' -replace '\*', 'Wildcard2'
+        $dependencyFullPath = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($rootPath, $name)) -replace 'Wildcard1', '/**/*' -replace 'Wildcard2', '*'
         # Make the path relative to the repo root.
         $dependency = $($($dependencyFullPath.Replace($RelativeRoot, '.')) -replace '\\', '/').TrimStart('./')
         $result.Add($dependency) | Out-Null
@@ -174,7 +180,8 @@ function Get-ProjectPathDirectories([string]$ProjectPath, [string]$RelativeRoot,
 
 function Get-SupportedTargetFrameworksString([Parameter(Mandatory)][string] $ProjectPath) {
     # NOTE: This will not appear when run directly in the console with minimal verbosity. MSBuild only produces the output when using a pipe, which is what we are doing here.
-    $output = dotnet build "$ProjectPath" --verbosity minimal --nologo --no-restore /t:PrintTargetFrameworks /p:TestProjectsOnly=true /p:TestFrameworks=true 2>&1 | Out-String
+    # IncludeNetFrameworkTargets=true reports the .NET Framework targets even when not running on Windows, so the result is the same on every platform.
+    $output = dotnet build "$ProjectPath" --verbosity minimal --nologo --no-restore /t:PrintTargetFrameworks /p:TestProjectsOnly=true /p:TestFrameworks=true /p:IncludeNetFrameworkTargets=true 2>&1 | Out-String
     if ($output -match 'SupportedTargetFrameworks=([^\s]+)') {
         return $matches[1]
     }

@@ -36,7 +36,7 @@
     <!-- .NET Framework is conditional on VS version (VS2024+ = 18.0) due to invalid build warnings with C# 14.0 build features -->
     <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(IsLegacyVisualStudioVersion)' == 'true' ">net8.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOsPlatform('Windows')) And '$(IsLegacyVisualStudioVersion)' != 'true' ">$(TargetFrameworks);net472</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(IncludeNetFrameworkTargets)' == 'true' And '$(IsLegacyVisualStudioVersion)' != 'true' ">$(TargetFrameworks);net472</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Analysis.OpenNLP</AssemblyTitle>
     <PackageTags>$(PackageTags);analysis;natural;language;processing;opennlp</PackageTags>
