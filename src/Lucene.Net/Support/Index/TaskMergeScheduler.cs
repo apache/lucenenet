@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,7 +56,7 @@ namespace Lucene.Net.Index
         /// How many <see cref="MergeThread"/>s have kicked off (this is use
         /// to name them).
         /// </summary>
-        private int _mergeThreadCount;
+        private int _mergeTaskCounter;
 
         /// <summary>
         /// <see cref="Directory"/> that holds the index. </summary>
@@ -344,7 +345,7 @@ namespace Lucene.Net.Index
         /// Create and return a new <see cref="MergeThread"/> </summary>
         private MergeThread CreateTask(IndexWriter writer, MergePolicy.OneMerge merge)
         {
-            var count = Interlocked.Increment(ref _mergeThreadCount);
+            var count = Interlocked.Increment(ref _mergeTaskCounter);
             var name = string.Format("Lucene Merge Task #{0}", count);
 
             return new MergeThread(name, writer, merge, writer.infoStream, Verbose, _manualResetEvent, HandleMergeException, DoMerge);
@@ -659,7 +660,7 @@ namespace Lucene.Net.Index
             public override int GetHashCode()
             {
                 return Instance is null
-                    ? base.GetHashCode()
+                    ? RuntimeHelpers.GetHashCode(this)
                     : Instance.GetHashCode();
             }
         }
