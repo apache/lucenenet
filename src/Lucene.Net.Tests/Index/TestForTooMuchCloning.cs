@@ -1,6 +1,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using System.Collections.Generic;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -51,7 +52,13 @@ namespace Lucene.Net.Index
             tmp.MaxMergeAtOnce = 2;
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                 .SetMaxBufferedDocs(2)
-                .SetMergePolicy(tmp));
+                // LUCENENET: Backported from Lucene 8.7.0 (commit cda6a8805c1, "Fix TestForTooMuchCloning to ensure it's MP is
+                // not reconfigured randomly"). Since 4.8.1, RandomIndexWriter calls MaybeChangeLiveIndexWriterConfig, which can
+                // randomly reconfigure a TieredMergePolicy (MaxMergeAtOnce, SegmentsPerTier, etc.) mid-test, leaving more segments
+                // and pushing the TermRangeQuery clone count over the limit.
+                // use a FilterMP otherwise RIW will randomly reconfigure
+                // the MP while the test runs
+                .SetMergePolicy(new FilterMergePolicy(tmp)));
             const int numDocs = 20;
             for (int docs = 0; docs < numDocs; docs++)
             {
@@ -84,6 +91,51 @@ namespace Lucene.Net.Index
             Assert.IsTrue(queryCloneCount < 50, "too many calls to IndexInput.clone during TermRangeQuery: " + queryCloneCount);
             r.Dispose();
             dir.Dispose();
+        }
+
+        /// <summary>
+        /// LUCENENET specific: minimal pass-through port of Lucene 8.7.0's <c>FilterMergePolicy</c>,
+        /// which does not exist in Lucene 4.8. It wraps another <see cref="MergePolicy"/> so that
+        /// <see cref="LuceneTestCase.MaybeChangeLiveIndexWriterConfig"/> does not recognize it as a
+        /// <see cref="TieredMergePolicy"/> and randomly reconfigure it.
+        /// </summary>
+        private sealed class FilterMergePolicy : MergePolicy
+        {
+            private readonly MergePolicy @in;
+
+            public FilterMergePolicy(MergePolicy @in)
+            {
+                this.@in = @in;
+            }
+
+            public override void SetIndexWriter(IndexWriter writer)
+            {
+                base.SetIndexWriter(writer);
+                @in.SetIndexWriter(writer);
+            }
+
+            public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
+                => @in.FindMerges(mergeTrigger, segmentInfos);
+
+            public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool> segmentsToMerge)
+                => @in.FindForcedMerges(segmentInfos, maxSegmentCount, segmentsToMerge);
+
+            public override MergeSpecification FindForcedDeletesMerges(SegmentInfos segmentInfos)
+                => @in.FindForcedDeletesMerges(segmentInfos);
+
+            public override bool UseCompoundFile(SegmentInfos infos, SegmentCommitInfo mergedInfo)
+                => @in.UseCompoundFile(infos, mergedInfo);
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    @in.Dispose();
+                }
+            }
+
+            public override string ToString()
+                => GetType().Name + "(" + @in + ")";
         }
     }
 }
