@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
         private class MockRandomOneMerge : OneMerge
         {
             private readonly J2N.Randomizer r;
-            private JCG.List<AtomicReader> readers;
+            private new JCG.List<AtomicReader> readers; // LUCENENET: added `new` to shadow OneMerge.readers field
 
             public MockRandomOneMerge(JCG.List<SegmentCommitInfo> segments, long seed)
                 : base(segments)
