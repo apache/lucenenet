@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis
         [TestCase(typeof(Lucene.Net.Analysis.Standard.ClassicAnalyzer))]
         public override void TestPrivateFieldNames(Type typeFromTargetAssembly)
         {
-            base.TestPrivateFieldNames(typeFromTargetAssembly, @"Snowball\.Ext\..+Stemmer|Miscellaneous\.Scandinavian.+Filter\.[AO]E_se|En\.KStemmer\.MaxWordLen|CharArraySet\.DefaultSetSize|Enumerator\.(?:KeyValuePair|DictEntry)|CharArrayDictionary\.(?:True|False)String");
+            base.TestPrivateFieldNames(typeFromTargetAssembly, @"Snowball\.Ext\..+Stemmer|Miscellaneous\.Scandinavian.+Filter\.[AO]E_se|En\.KStemmer\.MaxWordLen|CharArraySet\.DefaultSetSize|CharArrayDictionary`1\.DefaultDictionarySize");
         }
 
         [Test, LuceneNetSpecific]

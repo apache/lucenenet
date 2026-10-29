@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.Compound.Hyphenation;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
+using System;
 using System.IO;
 using System.Text;
 
@@ -223,7 +224,7 @@ namespace Lucene.Net.Analysis.Compound
                     }
 
                     // check the dictionary
-                    if (m_dictionary is null || m_dictionary.Contains(m_termAtt.Buffer, start, partLength))
+                    if (m_dictionary is null || m_dictionary.Contains(m_termAtt.Buffer.AsSpan(start, partLength)))
                     {
                         if (this.m_onlyLongestMatch)
                         {
@@ -246,9 +247,9 @@ namespace Lucene.Net.Analysis.Compound
                     }
                     // LUCENENET specific - guard against a negative length (partLength == 0).
                     // Upstream Java relies on CharArrayMap silently treating a negative length as
-                    // "not found", but Lucene.NET's CharArrayMap validates its arguments and throws
+                    // "not found", but in .NET slicing the buffer with a negative length throws
                     // ArgumentOutOfRangeException. See the BOGUS/BROKEN/FUNKY/WACKO note above.
-                    else if (partLength - 1 >= 0 && m_dictionary.Contains(m_termAtt.Buffer, start, partLength - 1))
+                    else if (partLength - 1 >= 0 && m_dictionary.Contains(m_termAtt.Buffer.AsSpan(start, partLength - 1)))
                     {
                         // check the dictionary again with a word that is one character
                         // shorter

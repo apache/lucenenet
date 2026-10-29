@@ -1,6 +1,7 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
+using System;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -49,7 +50,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         protected override bool IsKeyword()
         {
-            return keywordSet.Contains(termAtt.Buffer, 0, termAtt.Length);
+            return keywordSet.Contains(termAtt.Buffer.AsSpan(0, termAtt.Length));
         }
     }
 }
