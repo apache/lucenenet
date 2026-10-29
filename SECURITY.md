@@ -22,7 +22,7 @@
 
 ## Reporting a Vulnerability
 
-Apache Lucene.NET is a project of the Apache Software Foundation (ASF) and follows the standard [ASF vulnerability handling process](https://apache.org/security/#vulnerability-handling). Please report suspected vulnerabilities privately to [security@apache.org](mailto:security@apache.org). Do not report vulnerabilities through public GitHub issues, pull requests, or mailing lists. The Apache Software Foundation, being a volunteer organization, does not have a bug bounty program.
+Apache Lucene.NET is a project of the Apache Software Foundation (ASF) and follows the standard [ASF vulnerability handling process](https://apache.org/security/#vulnerability-handling). Please report suspected vulnerabilities privately to [security@apache.org](mailto:security@apache.org). Do not report vulnerabilities through public GitHub issues, discussions, pull requests, or mailing lists. The Apache Software Foundation, being a volunteer organization, does not have a bug bounty program.
 
 Please do not send automated scanner reports or reports about publicly known CVEs in third-party dependencies. Dependency upgrades can be requested through a regular GitHub issue.
 
