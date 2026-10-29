@@ -1326,7 +1326,7 @@ namespace Lucene.Net.Codecs
         {
             if (disposing)
             {
-                Exception ioe = null; // LUCENENET: No need to cast to IOException
+                bool success = false;
                 try
                 {
                     long dirStart = @out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
@@ -1354,14 +1354,18 @@ namespace Lucene.Net.Codecs
                     CodecUtil.WriteFooter(@out);
                     WriteIndexTrailer(indexOut, indexDirStart);
                     CodecUtil.WriteFooter(indexOut);
-                }
-                catch (Exception ioe2) when (ioe2.IsIOException())
-                {
-                    ioe = ioe2;
+                    success = true;
                 }
                 finally
                 {
-                    IOUtils.DisposeWhileHandlingException(ioe, @out, indexOut, postingsWriter, scratchBytes); // LUCENENET: Added scratchBytes
+                    if (success)
+                    {
+                        IOUtils.Dispose(@out, indexOut, postingsWriter, scratchBytes); // LUCENENET: added scratchBytes
+                    }
+                    else
+                    {
+                        IOUtils.DisposeWhileHandlingException(@out, indexOut, postingsWriter, scratchBytes); // LUCENENET: added scratchBytes
+                    }
                 }
             }
         }

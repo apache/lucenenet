@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
                 {
                     continue;
                 }
-                Exception priorException = null; // LUCENENET: No need to cast to IOException
+                // LUCENENET NOTE: can't use `using` like try-with-resources upstream because TokenStream is ICloseable, not IDisposable
                 TokenStream ts = a.GetTokenStream("foo", new StringReader(s));
                 try
                 {
@@ -88,13 +88,9 @@ namespace Lucene.Net.Index
                         return s;
                     }
                 }
-                catch (Exception e) when (e.IsIOException())
-                {
-                    priorException = e;
-                }
                 finally
                 {
-                    IOUtils.CloseWhileHandlingException(priorException, ts);
+                    ts.Close();
                 }
             }
         }

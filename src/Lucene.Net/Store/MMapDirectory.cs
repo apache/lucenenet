@@ -557,10 +557,10 @@ namespace Lucene.Net.Store
                     chunks = MapChunks(mmf, 0, length, chunkSizePower);
                     return new SharedMapping(mmf, fs, chunks, length);
                 }
-                catch (Exception e) // when (e.IsThrowable())
+                catch (Exception) // when (e.IsThrowable())
                 {
-                    DisposeResourcesWhileHandlingException(e, chunks, mmf, fs);
-                    return null!; // unreachable
+                    DisposeResourcesWhileHandlingException(chunks, mmf, fs);
+                    throw;
                 }
             }
 
@@ -574,7 +574,7 @@ namespace Lucene.Net.Store
                 if (Interlocked.CompareExchange(ref disposed, 1, 0) != 0) return;
                 reclaimer.Close(() =>
                 {
-                    DisposeResourcesWhileHandlingException(null, Chunks, memoryMappedFile, fileStream);
+                    DisposeResourcesWhileHandlingException(Chunks, memoryMappedFile, fileStream);
                 });
             }
 
@@ -614,10 +614,10 @@ namespace Lucene.Net.Store
                     {
                         result[i] = new Chunk(accessor, accessor.PointerOffset, thisChunkLen);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        IOUtils.DisposeWhileHandlingException(e, accessor);
-                        return null!; // unreachable
+                        IOUtils.DisposeWhileHandlingException(accessor);
+                        throw;
                     }
                 }
 
@@ -625,7 +625,7 @@ namespace Lucene.Net.Store
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private static void DisposeResourcesWhileHandlingException(Exception? priorException, Chunk[]? chunks, MemoryMappedFile? mmf, FileStream? fs)
+            private static void DisposeResourcesWhileHandlingException(Chunk[]? chunks, MemoryMappedFile? mmf, FileStream? fs)
             {
                 // With leaveOpen: true we always own fs; dispose mmf first after chunks so the mapping is torn down
                 // before the backing handle closes.
@@ -633,14 +633,7 @@ namespace Lucene.Net.Store
                     .Concat([mmf, fs]);
 
                 // DisposeWhileHandlingException tolerates null disposables
-                if (priorException is null)
-                {
-                    IOUtils.DisposeWhileHandlingException(disposables);
-                }
-                else
-                {
-                    IOUtils.DisposeWhileHandlingException(priorException, disposables);
-                }
+                IOUtils.DisposeWhileHandlingException(disposables);
             }
         }
 

@@ -141,14 +141,14 @@ namespace Lucene.Net.Store
         /// Helper method that reads CFS entries from an input stream </summary>
         private static IDictionary<string, FileEntry> ReadEntries(IndexInputSlicer handle, Directory dir, string name)
         {
-            Exception priorE = null; // LUCENENET: No need to cast to IOException
             IndexInput stream = null;
             ChecksumIndexInput entriesStream = null;
+            IDictionary<string, FileEntry> mapping /*= null*/;
             // read the first VInt. If it is negative, it's the version number
             // otherwise it's the count (pre-3.1 indexes)
+            bool success = false;
             try
             {
-                IDictionary<string, FileEntry> mapping;
 #pragma warning disable 612, 618
                 stream = handle.OpenFullSlice();
 #pragma warning restore 612, 618
@@ -200,18 +200,22 @@ namespace Lucene.Net.Store
                     // TODO remove once 3.x is not supported anymore
                     mapping = ReadLegacyEntries(stream, firstInt);
                 }
-                return mapping;
-            }
-            catch (Exception ioe) when (ioe.IsIOException())
-            {
-                priorE = ioe;
+
+                success = true;
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(priorE, stream, entriesStream);
+                if (success)
+                {
+                    IOUtils.Dispose(stream, entriesStream);
+                }
+                else
+                {
+                    IOUtils.DisposeWhileHandlingException(stream, entriesStream);
+                }
             }
-            // this is needed until Java 7's real try-with-resources:
-            throw AssertionError.Create("impossible to get here");
+
+            return mapping;
         }
 
         private static IDictionary<string, FileEntry> ReadLegacyEntries(IndexInput stream, int firstInt)
