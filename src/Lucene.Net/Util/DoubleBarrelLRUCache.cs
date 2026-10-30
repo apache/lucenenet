@@ -1,4 +1,5 @@
 using J2N.Threading.Atomic;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -81,7 +82,7 @@ namespace Lucene.Net.Util
                 if (secondary.TryGetValue(key, out result))
                 {
                     // Promote to primary
-                    Put((TKey)key.Clone(), result);
+                    Put(key.Clone(), result);
                 }
             }
             return result;
@@ -135,9 +136,11 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Object providing clone(); the key class must subclass this.
         /// </summary>
-        public abstract class CloneableKey
+        public abstract class CloneableKey : ICloneable
         {
-            public abstract object Clone();
+            object ICloneable.Clone() => Clone();
+
+            protected abstract object Clone(); // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         }
     }
 }

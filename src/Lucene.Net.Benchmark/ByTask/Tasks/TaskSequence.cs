@@ -432,7 +432,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             {
                 for (int i = 0; i < tasksArray.Length; i++)
                 {
-                    PerfTask task = (PerfTask)(tasksArray[i].Clone());
+                    PerfTask task = tasksArray[i].Clone();
                     t[index++] = new ParallelTask(this, task);
                 }
             }
@@ -626,13 +626,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// </summary>
         public virtual IList<PerfTask> Tasks => tasks;
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             TaskSequence res = (TaskSequence)base.Clone();
             res.tasks = new JCG.List<PerfTask>();
             for (int i = 0; i < tasks.Count; i++)
             {
-                res.tasks.Add((PerfTask)tasks[i].Clone());
+                res.tasks.Add(tasks[i].Clone());
             }
             return res;
         }

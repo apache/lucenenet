@@ -72,7 +72,7 @@ namespace Lucene.Net.Util.Automaton
     /// </para>
     /// @lucene.experimental
     /// </summary>
-    public class Automaton // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class Automaton : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         // LUCENENET specific - commented out; unused and removed in later Lucene versions
         // /// <summary>
@@ -787,10 +787,12 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Returns a clone of this automaton.
         /// </summary>
-        public virtual object Clone()
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             Automaton a = (Automaton)base.MemberwiseClone();
             if (!IsSingleton)

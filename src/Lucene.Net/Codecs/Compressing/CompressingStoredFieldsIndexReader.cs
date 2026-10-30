@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.Compressing
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public sealed class CompressingStoredFieldsIndexReader // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public sealed class CompressingStoredFieldsIndexReader : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         internal static long MoveLowOrderBitToSign(long n)
         {
@@ -186,8 +186,10 @@ namespace Lucene.Net.Codecs.Compressing
             return startPointers[block] + RelativeStartPointer(block, relativeChunk);
         }
 
+        object ICloneable.Clone() => Clone();
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public object Clone()
+        private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             return this;
         }

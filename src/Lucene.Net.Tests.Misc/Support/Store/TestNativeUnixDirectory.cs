@@ -162,7 +162,7 @@ namespace Lucene.Net.Store
 
                 // a clone reads independently from the same shared descriptor
                 input.Seek(0);
-                using IndexInput clone = (IndexInput)input.Clone();
+                using IndexInput clone = input.Clone();
                 int clonePos = Random.Next(len);
                 clone.Seek(clonePos);
                 Assert.AreEqual(expected[clonePos], clone.ReadByte());
@@ -188,7 +188,7 @@ namespace Lucene.Net.Store
                 Assert.DoesNotThrow(() => output.Dispose()); // double dispose is a no-op
 
                 IndexInput input = dir.OpenInput("data", MERGE_CONTEXT);
-                IndexInput clone = (IndexInput)input.Clone();
+                IndexInput clone = input.Clone();
 
                 // disposing the clone must not close the shared descriptor: the original still reads
                 Assert.DoesNotThrow(() => clone.Dispose());
@@ -239,7 +239,7 @@ namespace Lucene.Net.Store
                             try
                             {
                                 var rnd = new J2N.Randomizer(seed + 1);
-                                using IndexInput clone = (IndexInput)input.Clone();
+                                using IndexInput clone = input.Clone();
                                 start.Wait();
                                 for (int i = 0; i < 1000; i++)
                                 {

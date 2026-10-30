@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-    public abstract class MergePolicy : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class MergePolicy : ICloneable, IDisposable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// A map of doc IDs. </summary>
@@ -616,10 +616,12 @@ namespace Lucene.Net.Index
         /// </summary>
         protected long m_maxCFSSegmentSize = DEFAULT_MAX_CFS_SEGMENT_SIZE;
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             MergePolicy clone;
-            clone = (MergePolicy)base.MemberwiseClone();
+            clone = (MergePolicy)MemberwiseClone();
 
             clone.m_writer = new SetOnce<IndexWriter>();
             return clone;

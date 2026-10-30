@@ -223,13 +223,13 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             if (_input is null)
             {
                 throw AlreadyClosedException.Create(this.GetType().FullName, "this FieldsReader is disposed.");
             }
-            return new SimpleTextStoredFieldsReader(_offsets, (IndexInput)_input.Clone(), _fieldInfos);
+            return new SimpleTextStoredFieldsReader(_offsets, _input.Clone(), _fieldInfos);
         }
 
         protected override void Dispose(bool disposing)

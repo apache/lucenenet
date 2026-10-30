@@ -62,7 +62,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     string rname = stat1.Round + "." + name; // group by round
                     if (!p2.TryGetValue(rname, out TaskStats stat2) || stat2 is null)
                     {
-                        stat2 = (TaskStats)stat1.Clone();
+                        stat2 = stat1.Clone();
 
                         p2[rname] = stat2;
                     }

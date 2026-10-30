@@ -83,7 +83,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 return o.Field.Equals(Field, StringComparison.Ordinal) && Term.BytesEquals(o.Term);
             }
 
-            public override object Clone()
+            protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 return new FieldAndTerm(this);
             }
@@ -352,7 +352,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     this.outerInstance = outerInstance;
 
-                    input = (IndexInput)outerInstance.outerInstance.input.Clone();
+                    input = outerInstance.outerInstance.input.Clone();
                     input.Seek(outerInstance.termsStartPointer);
                     indexEnum = outerInstance.outerInstance.indexReader.GetFieldEnum(outerInstance.fieldInfo);
                     doOrd = outerInstance.outerInstance.indexReader.SupportsOrd;
@@ -820,7 +820,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     //System.out.println("BTR.termState this=" + this);
                     DecodeMetaData();
-                    TermState ts = (TermState)state.Clone();
+                    TermState ts = state.Clone();
                     //System.out.println("  return ts=" + ts);
                     return ts;
                 }

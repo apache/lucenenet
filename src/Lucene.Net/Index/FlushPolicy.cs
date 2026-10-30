@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -52,7 +53,7 @@ namespace Lucene.Net.Index
     /// <seealso cref="DocumentsWriterFlushControl"/>
     /// <seealso cref="DocumentsWriterPerThread"/>
     /// <seealso cref="IndexWriterConfig.FlushPolicy"/>
-    internal abstract class FlushPolicy // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    internal abstract class FlushPolicy : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         protected LiveIndexWriterConfig m_indexWriterConfig;
         protected InfoStream m_infoStream;
@@ -157,7 +158,9 @@ namespace Lucene.Net.Index
             return true;
         }
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             FlushPolicy clone;
 

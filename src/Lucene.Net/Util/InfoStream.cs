@@ -30,7 +30,7 @@ namespace Lucene.Net.Util
     /// </para>
     /// @lucene.internal
     /// </summary>
-    public abstract class InfoStream : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class InfoStream : IDisposable, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// Instance of <see cref="InfoStream"/> that does no logging at all. </summary>
@@ -114,10 +114,12 @@ namespace Lucene.Net.Util
         {
         }
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Clones this <see cref="InfoStream"/>
         /// </summary>
-        public virtual object Clone()
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             return MemberwiseClone(); // LUCENENET: No exception can occur in .NET and there is no need to cast.
         }

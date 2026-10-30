@@ -26,7 +26,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// <summary>
     /// Lowest level base class for surround queries
     /// </summary>
-    public abstract class SrndQuery // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class SrndQuery : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         //public SrndQuery() { }
 
@@ -79,10 +79,12 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         public virtual bool IsFieldsSubQueryAcceptable => true;
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary> Shallow clone. Subclasses must override this if they
         /// need to clone any members deeply,
         /// </summary>
-        public virtual object Clone()
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             return MemberwiseClone(); // LUCENENET: never throws in .NET
         }

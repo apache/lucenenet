@@ -412,7 +412,7 @@ namespace Lucene.Net.Codecs.Memory
                 public override TermState GetTermState()
                 {
                     DecodeMetaData();
-                    return (TermState)state.Clone();
+                    return state.Clone();
                 }
 
                 public override BytesRef Term => term;

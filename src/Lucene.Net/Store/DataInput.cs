@@ -42,7 +42,7 @@ namespace Lucene.Net.Store
     /// returning a new <see cref="DataInput"/> which operates on the same underlying
     /// resource, but positioned independently.
     /// </summary>
-    public abstract class DataInput // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class DataInput : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private const int SKIP_BUFFER_SIZE = 1024;
 
@@ -333,6 +333,8 @@ namespace Lucene.Net.Store
             }
         }
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Returns a clone of this stream.
         ///
@@ -343,9 +345,9 @@ namespace Lucene.Net.Store
         /// different points in the input from each other and from the stream they
         /// were cloned from.
         /// </summary>
-        public virtual object Clone()
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
-            return base.MemberwiseClone();
+            return MemberwiseClone();
         }
 
         /// <summary>

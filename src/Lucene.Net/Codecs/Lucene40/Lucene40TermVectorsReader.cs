@@ -412,7 +412,7 @@ namespace Lucene.Net.Codecs.Lucene40
             public TVTermsEnum(Lucene40TermVectorsReader outerInstance)
             {
                 this.origTVF = outerInstance.tvf;
-                tvf = (IndexInput)origTVF.Clone();
+                tvf = origTVF.Clone();
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -805,7 +805,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             IndexInput cloneTvx = null;
             IndexInput cloneTvd = null;
@@ -815,9 +815,9 @@ namespace Lucene.Net.Codecs.Lucene40
             // on a segment that did not have term vectors saved
             if (tvx != null && tvd != null && tvf != null)
             {
-                cloneTvx = (IndexInput)tvx.Clone();
-                cloneTvd = (IndexInput)tvd.Clone();
-                cloneTvf = (IndexInput)tvf.Clone();
+                cloneTvx = tvx.Clone();
+                cloneTvd = tvd.Clone();
+                cloneTvf = tvf.Clone();
             }
 
             return new Lucene40TermVectorsReader(fieldInfos, cloneTvx, cloneTvd, cloneTvf, size, numTotalDocs);

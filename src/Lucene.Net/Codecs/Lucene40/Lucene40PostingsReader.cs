@@ -129,7 +129,7 @@ namespace Lucene.Net.Codecs.Lucene40
             internal long skipOffset;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override object Clone()
+            protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 StandardTermState other = new StandardTermState();
                 other.CopyFrom(this);
@@ -323,7 +323,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 this.outerInstance = outerInstance;
                 this.startFreqIn = startFreqIn;
-                this.freqIn = (IndexInput)startFreqIn.Clone();
+                this.freqIn = startFreqIn.Clone();
                 this.m_liveDocs = liveDocs;
             }
 
@@ -492,7 +492,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     if (skipper is null)
                     {
                         // this is the first time this enum has ever been used for skipping -- do lazy init
-                        skipper = new Lucene40SkipListReader((IndexInput)freqIn.Clone(), outerInstance.maxSkipLevels, outerInstance.skipInterval);
+                        skipper = new Lucene40SkipListReader(freqIn.Clone(), outerInstance.maxSkipLevels, outerInstance.skipInterval);
                     }
 
                     if (!m_skipped)
@@ -760,8 +760,8 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 this.outerInstance = outerInstance;
                 startFreqIn = freqIn;
-                this.freqIn = (IndexInput)freqIn.Clone();
-                this.proxIn = (IndexInput)proxIn.Clone();
+                this.freqIn = freqIn.Clone();
+                this.proxIn = proxIn.Clone();
             }
 
             public SegmentDocsAndPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, IBits liveDocs)
@@ -854,7 +854,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     if (skipper is null)
                     {
                         // this is the first time this enum has ever been used for skipping -- do lazy init
-                        skipper = new Lucene40SkipListReader((IndexInput)freqIn.Clone(), outerInstance.maxSkipLevels, outerInstance.skipInterval);
+                        skipper = new Lucene40SkipListReader(freqIn.Clone(), outerInstance.maxSkipLevels, outerInstance.skipInterval);
                     }
 
                     if (!skipped)
@@ -983,8 +983,8 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 this.outerInstance = outerInstance;
                 startFreqIn = freqIn;
-                this.freqIn = (IndexInput)freqIn.Clone();
-                this.proxIn = (IndexInput)proxIn.Clone();
+                this.freqIn = freqIn.Clone();
+                this.proxIn = proxIn.Clone();
             }
 
             public virtual SegmentFullPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, IBits liveDocs)
@@ -1086,7 +1086,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     if (skipper is null)
                     {
                         // this is the first time this enum has ever been used for skipping -- do lazy init
-                        skipper = new Lucene40SkipListReader((IndexInput)freqIn.Clone(), outerInstance.maxSkipLevels, outerInstance.skipInterval);
+                        skipper = new Lucene40SkipListReader(freqIn.Clone(), outerInstance.maxSkipLevels, outerInstance.skipInterval);
                     }
 
                     if (!skipped)

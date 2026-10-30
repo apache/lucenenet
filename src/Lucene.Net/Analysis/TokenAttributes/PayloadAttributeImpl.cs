@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="IPayloadAttribute"/>. </summary>
-    public class PayloadAttribute : Attribute, IPayloadAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class PayloadAttribute : Attribute, IPayloadAttribute, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private BytesRef payload;
 
@@ -53,12 +53,12 @@ namespace Lucene.Net.Analysis.TokenAttributes
             payload = null;
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             PayloadAttribute clone = (PayloadAttribute)base.Clone();
             if (payload != null)
             {
-                clone.payload = (BytesRef)payload.Clone();
+                clone.payload = payload.Clone();
             }
             return clone;
         }
@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 throw new ArgumentNullException(nameof(target));
             if (target is not IPayloadAttribute t)
                 throw new ArgumentException($"Argument type {target.GetType().FullName} must implement {nameof(IPayloadAttribute)}", nameof(target));
-            t.Payload = (payload is null) ? null : (BytesRef)payload.Clone();
+            t.Payload = (payload is null) ? null : payload.Clone();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
     /// instance.</para>
     /// @lucene.experimental
     /// </summary>
-    public abstract class MergeScheduler : IDisposable, IMergeScheduler // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class MergeScheduler : ICloneable, IDisposable, IMergeScheduler // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
@@ -59,9 +59,10 @@ namespace Lucene.Net.Index
         /// Dispose this MergeScheduler. </summary>
         protected abstract void Dispose(bool disposing);
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
-            return base.MemberwiseClone();
+            return MemberwiseClone();
         }
     }
 }

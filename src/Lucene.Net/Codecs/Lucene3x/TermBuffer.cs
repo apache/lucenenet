@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// @lucene.experimental
     /// </summary>
     [Obsolete("(4.0)")]
-    internal sealed class TermBuffer // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    internal sealed class TermBuffer : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private string field;
         private Term term; // cached
@@ -142,7 +142,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             return term ?? (term = new Term(field, BytesRef.DeepCopyOf(bytes)));
         }
 
-        public object Clone()
+        object ICloneable.Clone() => Clone();
+
+        private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             // LUCENENET: MemberwiseClone() doesn't throw in .NET
             TermBuffer clone = (TermBuffer)base.MemberwiseClone();

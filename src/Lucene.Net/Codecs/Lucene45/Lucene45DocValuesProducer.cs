@@ -375,7 +375,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         internal virtual Int64Values GetNumeric(NumericEntry entry)
         {
-            IndexInput data = (IndexInput)this.data.Clone();
+            IndexInput data = this.data.Clone();
             data.Seek(entry.Offset);
 
             switch (entry.format)
@@ -461,7 +461,7 @@ namespace Lucene.Net.Codecs.Lucene45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private BinaryDocValues GetFixedBinary(/* FieldInfo field, // LUCENENET: Never read */ BinaryEntry bytes)
         {
-            IndexInput data = (IndexInput)this.data.Clone();
+            IndexInput data = this.data.Clone();
 
             return new Int64BinaryDocValuesAnonymousClass(bytes, data);
         }
@@ -528,7 +528,7 @@ namespace Lucene.Net.Codecs.Lucene45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private BinaryDocValues GetVariableBinary(FieldInfo field, BinaryEntry bytes)
         {
-            IndexInput data = (IndexInput)this.data.Clone();
+            IndexInput data = this.data.Clone();
 
             MonotonicBlockPackedReader addresses = GetAddressInstance(data, field, bytes);
 
@@ -611,7 +611,7 @@ namespace Lucene.Net.Codecs.Lucene45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private BinaryDocValues GetCompressedBinary(FieldInfo field, BinaryEntry bytes)
         {
-            IndexInput data = (IndexInput)this.data.Clone();
+            IndexInput data = this.data.Clone();
 
             MonotonicBlockPackedReader addresses = GetIntervalInstance(data, field, bytes);
 
@@ -623,7 +623,7 @@ namespace Lucene.Net.Codecs.Lucene45
             int valueCount = (int)binaries[field.Number].Count;
             BinaryDocValues binary = GetBinary(field);
             NumericEntry entry = ords[field.Number];
-            IndexInput data = (IndexInput)this.data.Clone();
+            IndexInput data = this.data.Clone();
             data.Seek(entry.Offset);
             BlockPackedReader ordinals = new BlockPackedReader(data, entry.PackedInt32sVersion, entry.BlockSize, entry.Count, true);
 
@@ -724,7 +724,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 throw AssertionError.Create();
             }
 
-            IndexInput data = (IndexInput)this.data.Clone();
+            IndexInput data = this.data.Clone();
             long valueCount = binaries[field.Number].Count;
             // we keep the byte[]s and list of ords on disk, these could be large
             Int64BinaryDocValues binary = (Int64BinaryDocValues)GetBinary(field);
@@ -828,7 +828,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
             else
             {
-                IndexInput @in = (IndexInput)data.Clone();
+                IndexInput @in = data.Clone();
                 return new BitsAnonymousClass(this, offset, @in);
             }
         }
@@ -1070,7 +1070,7 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 try
                 {
-                    return GetTermsEnum((IndexInput)data.Clone());
+                    return GetTermsEnum(data.Clone());
                 }
                 catch (Exception e) when (e.IsIOException())
                 {

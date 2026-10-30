@@ -79,7 +79,7 @@ namespace Lucene.Net.Util
     ///     </item>
     /// </list>
     /// </summary>
-    public class OpenBitSet : DocIdSet, IBits // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class OpenBitSet : DocIdSet, IBits, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         protected internal long[] m_bits;
         protected internal int m_wlen; // number of words (elements) used in the array
@@ -876,8 +876,10 @@ namespace Lucene.Net.Util
             return -1;
         }
 
+        object ICloneable.Clone() => Clone();
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public object Clone()
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             //OpenBitSet obs = (OpenBitSet)base.Clone();
             //obs.bits = (long[])obs.bits.Clone(); // hopefully an array clone is as fast(er) than arraycopy

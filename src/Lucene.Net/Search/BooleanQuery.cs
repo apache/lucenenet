@@ -549,7 +549,7 @@ namespace Lucene.Net.Search
                     {
                         if (query == c.Query) // if rewrite was no-op
                         {
-                            query = (Query)query.Clone(); // then clone before boost
+                            query = query.Clone(); // then clone before boost
                         }
                         // Since the BooleanQuery only has 1 clause, the BooleanQuery will be
                         // written out. Therefore the rewritten Query's boost must incorporate both
@@ -600,7 +600,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             BooleanQuery clone = (BooleanQuery)base.Clone();
             clone.clauses = new JCG.List<BooleanClause>(this.clauses);

@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
     ///    <para/>See also the family of Span Queries (<see cref="Lucene.Net.Search.Spans"/>)
     ///       and additional queries available in the <a href="{@docRoot}/../queries/overview-summary.html">Queries module</a>
     /// </summary>
-    public abstract class Query // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class Query : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         // LUCENENET NOTE: We can't set the default boost in the constructor because the
         // Boost property can be overridden by subclasses (and possibly throw exceptions).
@@ -107,9 +107,11 @@ namespace Lucene.Net.Search
             throw UnsupportedOperationException.Create();
         }
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Returns a clone of this query. </summary>
-        public virtual object Clone()
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             return MemberwiseClone(); // LUCENENET: MemberwiseClone() never throws in .NET and there is no need to cast the result here.
         }

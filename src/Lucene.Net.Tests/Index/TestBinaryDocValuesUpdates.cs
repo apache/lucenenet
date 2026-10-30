@@ -743,7 +743,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             Random random = Random;
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+            IndexWriter writer = new IndexWriter(dir, conf.Clone());
 
             int docid = 0;
             int numRounds = AtLeast(10);
@@ -776,7 +776,7 @@ namespace Lucene.Net.Index
                 else if (random.NextDouble() < 0.1)
                 {
                     writer.Dispose();
-                    writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+                    writer = new IndexWriter(dir, conf.Clone());
                 }
 
                 // add another document with the current value, to be sure forceMerge has
@@ -1421,7 +1421,7 @@ namespace Lucene.Net.Index
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES); // disable merges to simplify test assertions.
             conf.SetCodec(new Lucene46CodecAnonymousClass2());
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+            IndexWriter writer = new IndexWriter(dir, conf.Clone());
             Document doc = new Document();
             doc.Add(new StringField("id", "d0", Store.NO));
             doc.Add(new BinaryDocValuesField("f1", ToBytes(5L)));
@@ -1431,7 +1431,7 @@ namespace Lucene.Net.Index
 
             // change format
             conf.SetCodec(new Lucene46CodecAnonymousClass3());
-            writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+            writer = new IndexWriter(dir, conf.Clone());
             doc = new Document();
             doc.Add(new StringField("id", "d1", Store.NO));
             doc.Add(new BinaryDocValuesField("f1", ToBytes(17L)));

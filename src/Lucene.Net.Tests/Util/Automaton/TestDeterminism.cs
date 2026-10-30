@@ -48,7 +48,7 @@ namespace Lucene.Net.Util.Automaton
             for (int i = 0; i < num; i++)
             {
                 Automaton a = AutomatonTestUtil.RandomAutomaton(Random);
-                Automaton b = (Automaton)a.Clone();
+                Automaton b = a.Clone();
                 AutomatonTestUtil.DeterminizeSimple(a);
                 b.IsDeterministic = false; // force det
                 b.Determinize();
@@ -59,7 +59,7 @@ namespace Lucene.Net.Util.Automaton
 
         private static void AssertAutomaton(Automaton a)
         {
-            Automaton clone = (Automaton)a.Clone();
+            Automaton clone = a.Clone();
             // complement(complement(a)) = a
             Automaton equivalent = BasicOperations.Complement(BasicOperations.Complement(a));
             Assert.IsTrue(BasicOperations.SameLanguage(a, equivalent));

@@ -31,7 +31,7 @@ namespace Lucene.Net.Codecs
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public abstract class StoredFieldsReader : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class StoredFieldsReader : ICloneable, IDisposable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
@@ -45,7 +45,8 @@ namespace Lucene.Net.Codecs
         /// Visit the stored fields for document <paramref name="n"/>. </summary>
         public abstract void VisitDocument(int n, StoredFieldVisitor visitor);
 
-        public abstract object Clone();
+        object ICloneable.Clone() => Clone();
+        protected abstract object Clone(); // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
 
         /// <summary>
         /// Disposes all resources used by this object.

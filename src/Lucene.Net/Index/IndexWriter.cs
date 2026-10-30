@@ -3729,7 +3729,7 @@ namespace Lucene.Net.Index
                                 // no partial changes (eg a delete w/o
                                 // corresponding add from an updateDocument) can
                                 // sneak into the commit point:
-                                toCommit = (SegmentInfos)segmentInfos.Clone();
+                                toCommit = segmentInfos.Clone();
 
                                 pendingCommitChangeCount.Value = changeCount.Value;
 

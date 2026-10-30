@@ -51,11 +51,11 @@ namespace Lucene.Net.Codecs.Compressing
         private CompressingTermVectorsReader(CompressingTermVectorsReader reader)
         {
             this.fieldInfos = reader.fieldInfos;
-            this.vectorsStream = (IndexInput)reader.vectorsStream.Clone();
-            this.indexReader = (CompressingStoredFieldsIndexReader)reader.indexReader.Clone();
+            this.vectorsStream = reader.vectorsStream.Clone();
+            this.indexReader = reader.indexReader.Clone();
             this.packedIntsVersion = reader.packedIntsVersion;
             this.compressionMode = reader.compressionMode;
-            this.decompressor = (Decompressor)reader.decompressor.Clone();
+            this.decompressor = reader.decompressor.Clone();
             this.chunkSize = reader.chunkSize;
             this.numDocs = reader.numDocs;
             this.reader = new BlockPackedReaderIterator(vectorsStream, packedIntsVersion, CompressingTermVectorsWriter.BLOCK_SIZE, 0);
@@ -160,7 +160,7 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             return new CompressingTermVectorsReader(this);
         }

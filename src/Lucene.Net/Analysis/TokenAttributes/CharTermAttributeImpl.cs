@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     /// <para />
     /// This type also implements <see cref="ISpanAppendable"/> to allow for efficient appending of <see cref="ReadOnlySpan{T}"/>.
     /// </remarks>
-    public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute, IAppendable, // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute, ICloneable, IAppendable, // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
         ISpanAppendable /* LUCENENET specific */
     {
         private const int MIN_BUFFER_SIZE = 10;
@@ -359,7 +359,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             termLength = 0;
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             CharTermAttribute t = (CharTermAttribute)base.Clone();
             // Do a deep clone

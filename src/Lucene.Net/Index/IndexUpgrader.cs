@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            IndexWriterConfig c = (IndexWriterConfig)iwc.Clone();
+            IndexWriterConfig c = iwc.Clone();
             c.MergePolicy = new UpgradeIndexMergePolicy(c.MergePolicy);
             c.IndexDeletionPolicy = new KeepOnlyLastCommitDeletionPolicy();
 

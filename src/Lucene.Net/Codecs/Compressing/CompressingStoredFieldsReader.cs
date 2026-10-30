@@ -72,13 +72,13 @@ namespace Lucene.Net.Codecs.Compressing
         {
             this.version = reader.version;
             this.fieldInfos = reader.fieldInfos;
-            this.fieldsStream = (IndexInput)reader.fieldsStream.Clone();
-            this.indexReader = (CompressingStoredFieldsIndexReader)reader.indexReader.Clone();
+            this.fieldsStream = reader.fieldsStream.Clone();
+            this.indexReader = reader.indexReader.Clone();
             this.maxPointer = reader.maxPointer;
             this.chunkSize = reader.chunkSize;
             this.packedIntsVersion = reader.packedIntsVersion;
             this.compressionMode = reader.compressionMode;
-            this.decompressor = (Decompressor)reader.decompressor.Clone();
+            this.decompressor = reader.decompressor.Clone();
             this.numDocs = reader.numDocs;
             this.bytes = new BytesRef(reader.bytes.Bytes.Length);
             this.closed = false;
@@ -477,7 +477,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             EnsureOpen();
             return new CompressingStoredFieldsReader(this);

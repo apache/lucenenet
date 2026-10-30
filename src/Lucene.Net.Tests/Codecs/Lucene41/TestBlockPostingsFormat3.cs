@@ -102,7 +102,7 @@ namespace Lucene.Net.Codecs.Lucene41
             iwc.SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat()));
             // TODO we could actually add more fields implemented with different PFs
             // or, just put this test into the usual rotation?
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, (IndexWriterConfig)iwc.Clone());
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc.Clone());
             Document doc = new Document();
             FieldType docsOnlyType = new FieldType(TextField.TYPE_NOT_STORED);
             // turn this on for a cross-check
@@ -155,7 +155,7 @@ namespace Lucene.Net.Codecs.Lucene41
             Verify(dir);
             TestUtil.CheckIndex(dir); // for some extra coverage, checkIndex before we forceMerge
             iwc.SetOpenMode(OpenMode.APPEND);
-            IndexWriter iw2 = new IndexWriter(dir, (IndexWriterConfig)iwc.Clone());
+            IndexWriter iw2 = new IndexWriter(dir, iwc.Clone());
             iw2.ForceMerge(1);
             iw2.Dispose();
             Verify(dir);

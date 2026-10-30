@@ -47,7 +47,7 @@ namespace Lucene.Net.Queries
         public BoostingQuery(Query match, Query context, float boost)
         {
             this.match = match;
-            this.context = (Query)context.Clone(); // clone before boost
+            this.context = context.Clone(); // clone before boost
             this.boost = boost;
             this.context.Boost = 0.0f; // ignore context-only matches
         }

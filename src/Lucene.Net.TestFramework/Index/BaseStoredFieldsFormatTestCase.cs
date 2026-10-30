@@ -581,7 +581,7 @@ namespace Lucene.Net.Index
             using Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwConf.SetMaxBufferedDocs(RandomInts.RandomInt32Between(Random, 2, 30));
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, (IndexWriterConfig)iwConf.Clone());
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwConf.Clone());
             try
             {
 
@@ -626,7 +626,7 @@ namespace Lucene.Net.Index
                         {
                             iwConf.SetCodec(otherCodec);
                         }
-                        iw = new RandomIndexWriter(Random, dir, (IndexWriterConfig)iwConf.Clone());
+                        iw = new RandomIndexWriter(Random, dir, iwConf.Clone());
                     }
                 }
 

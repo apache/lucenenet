@@ -57,7 +57,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     ///     </description></item>
     /// </list>
     /// </remarks>
-    public abstract class PerfTask : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class PerfTask : ICloneable, IDisposable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         internal const int DEFAULT_LOG_STEP = 1000;
 
@@ -141,7 +141,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
         }
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             // tasks having non primitive data structures should override this.
             // otherwise parallel running of a task sequence might not run correctly.

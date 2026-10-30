@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     ///
     /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified.
     /// </summary>
-    public class CharVector // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class CharVector : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// Capacity increment size
@@ -95,7 +95,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             n = 0;
         }
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             CharVector cv = new CharVector((char[])array.Clone(), blockSize);
             cv.n = this.n;
