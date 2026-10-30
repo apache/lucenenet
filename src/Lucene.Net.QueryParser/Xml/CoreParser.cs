@@ -156,38 +156,32 @@ namespace Lucene.Net.QueryParsers.Xml
         }
 
         /// <summary>
-        /// Returns the <see cref="XmlResolver"/> to be used when parsing XML from a <see cref="Stream"/>
+        /// Gets the <see cref="System.Xml.XmlResolver"/> to be used when parsing XML from a <see cref="Stream"/>
         /// or <see cref="TextReader"/>. By default this returns <see cref="DisallowExternalEntityResolver"/>,
         /// which disallows the expansion of external entities (for security reasons). To restore legacy
-        /// behavior, override this method to return an <see cref="XmlUrlResolver"/>.
+        /// behavior, override this property to return an <see cref="XmlUrlResolver"/>.
         /// </summary>
         // LUCENENET: Corresponds to getEntityResolver() in Lucene 7.1+ (SOLR-11477)
-        protected virtual XmlResolver GetXmlResolver()
-        {
-            return DisallowExternalEntityResolver;
-        }
+        protected virtual XmlResolver XmlResolver => DisallowExternalEntityResolver;
 
         /// <summary>
-        /// Returns the <see cref="XmlReaderSettings"/> to be used when parsing XML from a <see cref="Stream"/>
+        /// Gets the <see cref="System.Xml.XmlReaderSettings"/> to be used when parsing XML from a <see cref="Stream"/>
         /// or <see cref="TextReader"/>. By default, internal DTDs are allowed, external entities are resolved
-        /// with <see cref="GetXmlResolver()"/>, and the number of characters produced by expanding entities is limited
-        /// to guard against entity expansion attacks. Override this method to customize these settings.
+        /// with <see cref="XmlResolver"/>, and the number of characters produced by expanding entities is limited
+        /// to guard against entity expansion attacks. Override this property to customize these settings.
         /// <para/>
         /// Note that these settings do not apply to <see cref="Parse(XmlReader)"/> or <see cref="Parse(XmlDocument)"/>,
         /// since the caller is responsible for the settings of the supplied <see cref="XmlReader"/> or <see cref="XmlDocument"/>.
         /// </summary>
         // LUCENENET specific - .NET equivalent of FEATURE_SECURE_PROCESSING in Lucene 7.1+ (SOLR-11477)
-        protected virtual XmlReaderSettings GetXmlReaderSettings()
-        {
-            return DOMUtils.CreateXmlReaderSettings(GetXmlResolver());
-        }
+        protected virtual XmlReaderSettings XmlReaderSettings => DOMUtils.CreateXmlReaderSettings(XmlResolver);
 
         private XmlDocument ParseXML(Stream pXmlFile) // LUCENENET: No longer static, matching Lucene 7.1+
         {
             try
             {
-                using XmlReader reader = XmlReader.Create(pXmlFile, GetXmlReaderSettings());
-                return DOMUtils.LoadXML(reader, GetXmlResolver());
+                using XmlReader reader = XmlReader.Create(pXmlFile, XmlReaderSettings);
+                return DOMUtils.LoadXML(reader, XmlResolver);
             }
             catch (Exception se) // LUCENENET: No need to call the IsException() extension method here because we are dealing only with a .NET platform method
             {
@@ -200,8 +194,8 @@ namespace Lucene.Net.QueryParsers.Xml
         {
             try
             {
-                using XmlReader reader = XmlReader.Create(pXmlFile, GetXmlReaderSettings());
-                return DOMUtils.LoadXML(reader, GetXmlResolver());
+                using XmlReader reader = XmlReader.Create(pXmlFile, XmlReaderSettings);
+                return DOMUtils.LoadXML(reader, XmlResolver);
             }
             catch (Exception se) // LUCENENET: No need to call the IsException() extension method here because we are dealing only with a .NET platform method
             {
@@ -230,7 +224,7 @@ namespace Lucene.Net.QueryParsers.Xml
         }
 
         /// <summary>
-        /// An <see cref="XmlResolver"/> that disallows the resolution of external entities
+        /// An <see cref="System.Xml.XmlResolver"/> that disallows the resolution of external entities
         /// (including external DTDs) by throwing an <see cref="XmlException"/>.
         /// </summary>
         // LUCENENET: Corresponds to DISALLOW_EXTERNAL_ENTITY_RESOLVER in Lucene 7.1+ (SOLR-11477)
