@@ -85,12 +85,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     previous.Clear();
                 }
 
-                bool duplicate = (posIncrement == 0 && previous.Contains(term, 0, length));
+                bool duplicate = (posIncrement == 0 && previous.Contains(term.AsSpan(0, length)));
 
                 // clone the term, and add to the set of seen terms.
-                char[] saved = new char[length];
-                Arrays.Copy(term, 0, saved, 0, length);
-                previous.Add(saved);
+                // LUCENENET: CharArraySet.Add(ReadOnlySpan<char>) copies the chars into a new string, so cloning first is not necessary
+                //char[] saved = new char[length];
+                //Arrays.Copy(term, 0, saved, 0, length);
+                //previous.Add(saved);
+                previous.Add(term.AsSpan(0, length));
 
                 if (!duplicate)
                 {

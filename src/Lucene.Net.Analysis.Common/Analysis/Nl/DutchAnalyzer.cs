@@ -155,29 +155,28 @@ namespace Lucene.Net.Analysis.Nl
         public DutchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionTable, CharArrayDictionary<string> stemOverrideDict)
         {
             this.matchVersion = matchVersion;
-            this.stoptable = CharArraySet.Copy(matchVersion, stopwords).AsReadOnly();
-            this.excltable = CharArraySet.Copy(matchVersion, stemExclusionTable).AsReadOnly();
+            this.stoptable = new CharArraySet(matchVersion, stopwords).AsReadOnly();
+            this.excltable = new CharArraySet(matchVersion, stemExclusionTable).AsReadOnly();
 #pragma warning disable 612, 618
             if (stemOverrideDict.Count == 0 || !matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
 #pragma warning restore 612, 618
             {
                 this.stemdict = null;
-                this.origStemdict = CharArrayDictionary.Copy(matchVersion, stemOverrideDict).AsReadOnly();
+                this.origStemdict = new CharArrayDictionary<string>(matchVersion, stemOverrideDict).AsReadOnly();
             }
             else
             {
                 this.origStemdict = null;
                 // we don't need to ignore case here since we lowercase in this analyzer anyway
                 StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(false);
-                using (var iter = stemOverrideDict.GetEnumerator())
+                // LUCENENET: CharArrayDictionary<TValue> keys are strings, so they can be added directly
+                //CharsRef spare = new CharsRef();
+                foreach (var pair in stemOverrideDict)
                 {
-                    CharsRef spare = new CharsRef();
-                    while (iter.MoveNext())
-                    {
-                        char[] nextKey = iter.CurrentKey;
-                        spare.CopyChars(nextKey, 0, nextKey.Length);
-                        builder.Add(spare.Chars, iter.CurrentValue);
-                    }
+                    //char[] nextKey = iter.nextKey();
+                    //spare.copyChars(nextKey, 0, nextKey.length);
+                    //builder.add(spare, iter.currentValue());
+                    builder.Add(pair.Key, pair.Value);
                 }
                 try
                 {

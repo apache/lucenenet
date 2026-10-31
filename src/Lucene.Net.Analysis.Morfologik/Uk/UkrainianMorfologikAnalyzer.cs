@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Uk
         public UkrainianMorfologikAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
                     : base(matchVersion, stopwords)
         {
-            this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
+            this.stemExclusionSet = new CharArraySet(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         protected internal override TextReader InitReader(string fieldName, TextReader reader)

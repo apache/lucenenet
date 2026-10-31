@@ -266,7 +266,7 @@ namespace Lucene.Net.Analysis.El
                 EndsWith(s, len, "εων")))
             {
                 len -= 3;
-                if (exc4.Contains(s, 0, len))
+                if (exc4.Contains(s.AsSpan(0, len)))
                 {
                     len++; // add back -ε
                 }
@@ -324,7 +324,7 @@ namespace Lucene.Net.Analysis.El
 
             if (removed)
             {
-                if (EndsWithVowel(s, len) || exc6.Contains(s, 0, len))
+                if (EndsWithVowel(s, len) || exc6.Contains(s.AsSpan(0, len)))
                 {
                     len += 2; // add back -ικ
                 }
@@ -364,7 +364,7 @@ namespace Lucene.Net.Analysis.El
             if (len > 3 && EndsWith(s, len, "αμε"))
             {
                 len -= 3;
-                if (exc7.Contains(s, 0, len))
+                if (exc7.Contains(s.AsSpan(0, len)))
                 {
                     len += 2; // add back -αμ
                 }
@@ -429,7 +429,7 @@ namespace Lucene.Net.Analysis.El
                 removed = true;
             }
 
-            if (removed && exc8a.Contains(s, 0, len))
+            if (removed && exc8a.Contains(s.AsSpan(0, len)))
             {
                 // add -αγαν (we removed > 4 chars so its safe)
                 len += 4;
@@ -442,7 +442,7 @@ namespace Lucene.Net.Analysis.El
             if (len > 3 && EndsWith(s, len, "ανε"))
             {
                 len -= 3;
-                if (EndsWithVowelNoY(s, len) || exc8b.Contains(s, 0, len))
+                if (EndsWithVowelNoY(s, len) || exc8b.Contains(s.AsSpan(0, len)))
                 {
                     len += 2; // add back -αν
                 }
@@ -469,7 +469,7 @@ namespace Lucene.Net.Analysis.El
             if (len > 3 && EndsWith(s, len, "ετε"))
             {
                 len -= 3;
-                if (exc9.Contains(s, 0, len) ||
+                if (exc9.Contains(s.AsSpan(0, len)) ||
                     EndsWithVowelNoY(s, len) ||
                     EndsWith(s, len, "οδ") ||
                     EndsWith(s, len, "αιρ") ||
@@ -569,7 +569,7 @@ namespace Lucene.Net.Analysis.El
             if (len > 5 && EndsWith(s, len, "ιεστε"))
             {
                 len -= 5;
-                if (exc12a.Contains(s, 0, len))
+                if (exc12a.Contains(s.AsSpan(0, len)))
                 {
                     len += 4; // add back -ιεστ
                 }
@@ -578,7 +578,7 @@ namespace Lucene.Net.Analysis.El
             if (len > 4 && EndsWith(s, len, "εστε"))
             {
                 len -= 4;
-                if (exc12b.Contains(s, 0, len))
+                if (exc12b.Contains(s.AsSpan(0, len)))
                 {
                     len += 3; // add back -εστ
                 }
@@ -617,7 +617,7 @@ namespace Lucene.Net.Analysis.El
                 removed = true;
             }
 
-            if (removed && (exc13.Contains(s, 0, len) ||
+            if (removed && (exc13.Contains(s.AsSpan(0, len)) ||
                 EndsWith(s, len, "σκωλ") ||
                 EndsWith(s, len, "σκουλ") ||
                 EndsWith(s, len, "ναρθ") ||
@@ -655,7 +655,7 @@ namespace Lucene.Net.Analysis.El
                 removed = true;
             }
 
-            if (removed && (exc14.Contains(s, 0, len) ||
+            if (removed && (exc14.Contains(s.AsSpan(0, len)) ||
                 EndsWithVowel(s, len) ||
                 EndsWith(s, len, "ποδαρ") ||
                 EndsWith(s, len, "βλεπ") ||
@@ -709,7 +709,7 @@ namespace Lucene.Net.Analysis.El
 
             if (removed)
             {
-                bool cond1 = exc15a.Contains(s, 0, len) ||
+                bool cond1 = exc15a.Contains(s.AsSpan(0, len)) ||
                     EndsWith(s, len, "οφ") ||
                     EndsWith(s, len, "πελ") ||
                     EndsWith(s, len, "χορτ") ||
@@ -721,7 +721,7 @@ namespace Lucene.Net.Analysis.El
                     EndsWith(s, len, "λοχ") ||
                     EndsWith(s, len, "σμην");
 
-                bool cond2 = exc15b.Contains(s, 0, len) || EndsWith(s, len, "κολλ");
+                bool cond2 = exc15b.Contains(s.AsSpan(0, len)) || EndsWith(s, len, "κολλ");
 
                 if (cond1 && !cond2)
                 {
@@ -752,7 +752,7 @@ namespace Lucene.Net.Analysis.El
                 removed = true;
             }
 
-            if (removed && exc16.Contains(s, 0, len))
+            if (removed && exc16.Contains(s.AsSpan(0, len)))
             {
                 len += 2; // add back -ησ
             }
@@ -771,7 +771,7 @@ namespace Lucene.Net.Analysis.El
             if (len > 4 && EndsWith(s, len, "ηστε"))
             {
                 len -= 4;
-                if (exc17.Contains(s, 0, len))
+                if (exc17.Contains(s.AsSpan(0, len)))
                 {
                     len += 3; // add back the -ηστ
                 }
@@ -801,7 +801,7 @@ namespace Lucene.Net.Analysis.El
                 removed = true;
             }
 
-            if (removed && exc18.Contains(s, 0, len))
+            if (removed && exc18.Contains(s.AsSpan(0, len)))
             {
                 len += 3;
                 s[len - 3] = 'ο';
@@ -832,7 +832,7 @@ namespace Lucene.Net.Analysis.El
                 removed = true;
             }
 
-            if (removed && exc19.Contains(s, 0, len))
+            if (removed && exc19.Contains(s.AsSpan(0, len)))
             {
                 len += 3;
                 s[len - 3] = 'ο';

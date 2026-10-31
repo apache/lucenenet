@@ -170,7 +170,7 @@ namespace Lucene.Net.Analysis.Fr
         public FrenchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclutionSet)
             : base(matchVersion, stopwords)
         {
-            this.excltable = CharArraySet.Copy(matchVersion, stemExclutionSet).AsReadOnly();
+            this.excltable = new CharArraySet(matchVersion, stemExclutionSet).AsReadOnly();
         }
 
         /// <summary>

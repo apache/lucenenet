@@ -219,7 +219,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 return;
             }
 
-            if (keep != null && keep.Contains(buffer, offset, length))
+            if (keep != null && keep.Contains(buffer.AsSpan(offset, length)))
             {
                 if (wordCount == 0 && forceFirstLetter)
                 {
