@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Standard
     public static class StandardTokenizerInterface
     {
         /// <summary>
-        /// This character denotes the end of file </summary>
+        /// This token type, as returned from <see cref="IStandardTokenizerInterface.GetNextToken()"/>, denotes the end of file </summary>
         public const int YYEOF = -1;
     }
 }

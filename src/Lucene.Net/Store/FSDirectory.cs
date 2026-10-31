@@ -149,7 +149,7 @@ namespace Lucene.Net.Store
         /// best implementation given the current environment.
         /// The directory returned uses the <see cref="NativeFSLockFactory"/>.
         ///
-        /// <para/>Currently this returns <see cref="MMapDirectory"/> for most Solaris
+        /// <para/>Currently this returns <see cref="MMapDirectory"/> for Linux, Solaris,
         /// and Windows 64-bit runtimes, <see cref="NIOFSDirectory"/> for other
         /// non-Windows runtimes, and <see cref="SimpleFSDirectory"/> for other
         /// runtimes on Windows. It is highly recommended that you consult the

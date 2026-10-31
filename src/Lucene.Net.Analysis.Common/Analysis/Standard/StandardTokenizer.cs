@@ -181,8 +181,8 @@ namespace Lucene.Net.Analysis.Standard
             typeAtt = AddAttribute<ITypeAttribute>();
         }
 
-        // this tokenizer generates three attributes:
-        // term offset, positionIncrement and type
+        // this tokenizer generates four attributes:
+        // term, offset, positionIncrement and type
         private ICharTermAttribute termAtt;
         private IOffsetAttribute offsetAtt;
         private IPositionIncrementAttribute posIncrAtt;
