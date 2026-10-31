@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 
         internal readonly int bytesUsed;
         internal readonly int numTermDeletes;
-        private long gen = -1; // assigned by BufferedDeletesStream once pushed
+        private long gen = -1; // assigned by BufferedUpdatesStream once pushed
         internal readonly bool isSegmentPrivate; // set to true iff this frozen packet represents
         // a segment private deletes. in that case is should
         // only have Queries

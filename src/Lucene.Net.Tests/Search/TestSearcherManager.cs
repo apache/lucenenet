@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
         {
             if (Random.Next(10) == 7)
             {
-                // NOTE: not best practice to call maybeReopen
+                // NOTE: not best practice to call MaybeRefresh
                 // synchronous to your search threads, but still we
                 // test as apps will presumably do this for
                 // simplicity:
@@ -387,7 +387,7 @@ namespace Lucene.Net.Search
                     triedReopen.Value = true;
                     if (Verbose)
                     {
-                        Console.WriteLine("NOW call maybeReopen");
+                        Console.WriteLine("NOW call MaybeRefresh");
                     }
                     searcherManager.MaybeRefresh();
                     success.Value = true;
