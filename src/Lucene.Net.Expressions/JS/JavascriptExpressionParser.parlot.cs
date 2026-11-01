@@ -67,8 +67,8 @@ namespace Lucene.Net.Expressions.JS
                 .SkipAnd(primary);
 
             // unary: postfix | '+' unary | ('-' | '~' | '!') unary, then the binary operators from the tightest
-            // level. The choice of the binary operators takes the first that matches, from the tightest level, so
-            // '&' and '|' must not match the start of "&&" and "||". "<<" and ">>" bind tighter than '<' and '>'.
+            // level. An operator not followed by an operand, such as '&' at the start of "&&", is tried again in
+            // the looser levels.
             var logicalOr = operand.Operators()
                 .Unary(
                     (Terms.Char('+'), static x => new UnaryNode(UnaryOperator.Plus, x)),
@@ -95,11 +95,11 @@ namespace Lucene.Net.Expressions.JS
                     (Terms.Text("=="), static (a, b) => CreateChain(ChainLevel.Equality, BinaryOperator.Equal, a, b)),
                     (Terms.Text("!="), static (a, b) => CreateChain(ChainLevel.Equality, BinaryOperator.NotEqual, a, b)))
                 .LeftAssociative(
-                    (Terms.Char('&').WhenNotFollowedBy(Literals.Char('&')), static (a, b) => CreateChain(ChainLevel.BitwiseAnd, BinaryOperator.BitAnd, a, b)))
+                    (Terms.Char('&'), static (a, b) => CreateChain(ChainLevel.BitwiseAnd, BinaryOperator.BitAnd, a, b)))
                 .LeftAssociative(
                     (Terms.Char('^'), static (a, b) => CreateChain(ChainLevel.BitwiseXor, BinaryOperator.BitXor, a, b)))
                 .LeftAssociative(
-                    (Terms.Char('|').WhenNotFollowedBy(Literals.Char('|')), static (a, b) => CreateChain(ChainLevel.BitwiseOr, BinaryOperator.BitOr, a, b)))
+                    (Terms.Char('|'), static (a, b) => CreateChain(ChainLevel.BitwiseOr, BinaryOperator.BitOr, a, b)))
                 .LeftAssociative(
                     (Terms.Text("&&"), static (a, b) => CreateChain(ChainLevel.LogicalAnd, BinaryOperator.BoolAnd, a, b)))
                 .LeftAssociative(
