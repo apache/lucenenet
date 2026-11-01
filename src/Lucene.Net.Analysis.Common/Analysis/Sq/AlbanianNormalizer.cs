@@ -61,11 +61,6 @@ namespace Lucene.Net.Analysis.Sq
     /// from <c>keq</c> while <c>cdo</c> still meets <c>çdo</c>.
     /// </para>
     /// <para>
-    /// The digraph <c>xh</c> is folded to <c>gj</c> for the same reason: the two sound alike to many
-    /// speakers, and the logs have <c>xhami</c> and <c>gjami</c>, <c>haxh</c> and <c>hagj</c> for the
-    /// same word.
-    /// </para>
-    /// <para>
     /// The folding is applied to both indexed text and queries, so it also lets the
     /// <see cref="AlbanianLightStemmer"/> work on a single spelling of every suffix.
     /// </para>
@@ -153,16 +148,6 @@ namespace Lucene.Net.Analysis.Sq
                     case 'Ê':
                     case 'É':
                         s[i] = 'E';
-                        break;
-                    case 'x':
-                    case 'X':
-                        // the digraph xh is heard as gj by many speakers (xhami / gjami, haxh / hagj): one class
-                        if (i + 1 < len && (s[i + 1] == 'h' || s[i + 1] == 'H'))
-                        {
-                            s[i] = s[i] == 'x' ? 'g' : 'G';
-                            s[i + 1] = s[i + 1] == 'h' ? 'j' : 'J';
-                            i++;
-                        }
                         break;
                     case 'ç':
                         // ç is typed as c (no cedilla) and as q (the same sound to most speakers): one class,

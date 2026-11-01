@@ -65,9 +65,6 @@ namespace Lucene.Net.Analysis.Sq
             AssertAnalyzesTo(a, "Qka ke qdo dite?", new string[] { "dit" });
             // kec (a kid goat) is not keq (bad), which is a stop word: the real c-words keep their c
             AssertAnalyzesTo(a, "kec keca keq", new string[] { "kec", "kec" });
-            AssertAnalyzesTo(a, "xhami gjami xhamia", new string[] { "gjam", "gjam", "gjam" });
-            AssertAnalyzesTo(a, "haxh hagj haxhi", new string[] { "hag", "hag", "hag" });
-            AssertAnalyzesTo(a, "nxënës nxenes", new string[] { "nxen", "nxen" });
             // çfarë is a stop word; without the list its three spellings are one stem
             Analyzer noStop = new AlbanianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty);
             AssertAnalyzesTo(noStop, "çfarë qfare cfare", new string[] { "qfar", "qfar", "qfar" });

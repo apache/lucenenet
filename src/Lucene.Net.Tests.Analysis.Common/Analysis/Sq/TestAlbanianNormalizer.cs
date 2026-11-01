@@ -83,15 +83,6 @@ namespace Lucene.Net.Analysis.Sq
             Check("ceshtje", "qeshtje");
             Check("qeshtje", "qeshtje");
             Check("mençur", "menqur");
-            // xh and gj: the same sound to many speakers, so xhami / gjami, haxh / hagj are one term
-            Check("xhami", "gjami");
-            Check("gjami", "gjami");
-            Check("haxh", "hagj");
-            Check("XHAMI", "GJAMI");
-            Check("Xhuma", "Gjuma");
-            // x on its own is another letter and stays
-            Check("nxënës", "nxenes");
-            Check("xixa", "xixa");
         }
 
         /// <summary>
@@ -115,6 +106,9 @@ namespace Lucene.Net.Analysis.Sq
             Check("care", "qare");
             Check("cdo", "qdo");
             Check("kryenec", "kryeneq");
+            // xh is not folded to gj: xhenet (paradise) would stem into gjen (to find)
+            Check("xhenet", "xhenet");
+            Check("gjenet", "gjenet");
         }
 
         [Test]
