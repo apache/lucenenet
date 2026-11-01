@@ -36,8 +36,6 @@ namespace Lucene.Net.Expressions.JS
             var lparen = Terms.Char('(');
             var rparen = Terms.Char(')');
             var comma = Terms.Char(',');
-            var question = Terms.Char('?');
-            var colon = Terms.Char(':');
 
             var number = Terms.Scan(ScanNumber, "0123456789.")
                 .Then(static value => (JavascriptNode)CreateNumber(value.ToString()));
@@ -59,9 +57,9 @@ namespace Lucene.Net.Expressions.JS
                 nameOrCall);
 
             // unary: postfix | '+' unary | ('-' | '~' | '!') unary, then the binary operators from the tightest
-            // level. An operator not followed by an operand, such as '&' at the start of "&&", is tried again in
-            // the looser levels.
-            var logicalOr = primary.Operators()
+            // level, and conditional: logical_or ('?' conditional ':' conditional)?. An operator not followed by
+            // an operand, such as '&' at the start of "&&", is tried again in the looser levels.
+            conditional.Parser = primary.Operators()
                 .Unary(
                     (Terms.Char('+'), static x => new UnaryNode(UnaryOperator.Plus, x)),
                     (Terms.Char('-'), static x => new UnaryNode(UnaryOperator.Negate, x)),
@@ -95,13 +93,8 @@ namespace Lucene.Net.Expressions.JS
                 .LeftAssociative(
                     (Terms.Text("&&"), static (a, b) => CreateChain(ChainLevel.LogicalAnd, BinaryOperator.BoolAnd, a, b)))
                 .LeftAssociative(
-                    (Terms.Text("||"), static (a, b) => CreateChain(ChainLevel.LogicalOr, BinaryOperator.BoolOr, a, b)));
-
-            // conditional: logical_or ('?' conditional ':' conditional)?
-            conditional.Parser = logicalOr.And(question.SkipAnd(conditional).AndSkip(colon).And(conditional).Optional())
-                .Then(static x => x.Item2.TryGetValue(out var branches)
-                    ? new ConditionalNode(x.Item1, branches.Item1, branches.Item2)
-                    : x.Item1);
+                    (Terms.Text("||"), static (a, b) => CreateChain(ChainLevel.LogicalOr, BinaryOperator.BoolOr, a, b)))
+                .Ternary(Terms.Char('?'), conditional, Terms.Char(':'), static (condition, whenTrue, whenFalse) => new ConditionalNode(condition, whenTrue, whenFalse));
 
             // expression: conditional EOF, where Eof() itself doesn't skip trailing white space
             return conditional.AndSkip(SkipWhiteSpace(Eof())).WithWhiteSpaceSet(WhiteSpaceSet.Ascii);
