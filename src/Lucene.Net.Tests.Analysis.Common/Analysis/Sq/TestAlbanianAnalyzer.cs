@@ -48,7 +48,31 @@ namespace Lucene.Net.Analysis.Sq
         public virtual void TestCustomStopwords()
         {
             Analyzer a = new AlbanianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty);
-            AssertAnalyzesTo(a, "Çfarë është durimi?", new string[] { "cfar", "esht", "dur" });
+            AssertAnalyzesTo(a, "Çfarë është durimi?", new string[] { "qfar", "esht", "dur" });
+        }
+
+        /// <summary>
+        /// People type ç as c or q: the three spellings of a word are one term, stop words included, and
+        /// the palatal plural (miq) still meets its singular after the fold.
+        /// </summary>
+        [Test]
+        public virtual void TestTypedSpellings()
+        {
+            Analyzer a = new AlbanianAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(a, "kryeneç kryeneq kryenec", new string[] { "kryenek", "kryenek", "kryenek" });
+            AssertAnalyzesTo(a, "çdo qdo cdo çka qka cka", new string[] { });
+            AssertAnalyzesTo(a, "mik miq miqtë miqve", new string[] { "mik", "mik", "mik", "mik" });
+            AssertAnalyzesTo(a, "Qka ke qdo dite?", new string[] { "dit" });
+            // kec (a kid goat) is not keq (bad), which is a stop word: the real c-words keep their c
+            AssertAnalyzesTo(a, "kec keca keq", new string[] { "kec", "kec" });
+            AssertAnalyzesTo(a, "xhami gjami xhamia", new string[] { "gjam", "gjam", "gjam" });
+            AssertAnalyzesTo(a, "haxh hagj haxhi", new string[] { "hag", "hag", "hag" });
+            AssertAnalyzesTo(a, "nxënës nxenes", new string[] { "nxen", "nxen" });
+            // çfarë is a stop word; without the list its three spellings are one stem
+            Analyzer noStop = new AlbanianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty);
+            AssertAnalyzesTo(noStop, "çfarë qfare cfare", new string[] { "qfar", "qfar", "qfar" });
+            // cili and cilët are stop words too; without the list their real c shows in the stem
+            AssertAnalyzesTo(noStop, "cili cilët secili copë forcë", new string[] { "cil", "cil", "secil", "cop", "forc" });
         }
 
         [Test]
@@ -144,7 +168,7 @@ namespace Lucene.Net.Analysis.Sq
         {
             Analyzer a = new AlbanianAnalyzer(TEST_VERSION_CURRENT);
             AssertAnalyzesTo(a, "Gjuha shqipe është gjuhë dhe degë e veçantë e familjes indo-evropiane.",
-                new string[] { "gjuh", "shqip", "gjuh", "deg", "vecant", "famil", "ind", "evropian" });
+                new string[] { "gjuh", "shqip", "gjuh", "deg", "veqant", "famil", "ind", "evropian" });
             AssertAnalyzesTo(a, "Shqipja është gjuha zyrtare e Shqipërisë dhe Kosovës.",
                 new string[] { "shqip", "gjuh", "zyr", "shqipr", "kos" });
             AssertAnalyzesTo(a, "Shqipëria është një shtet në Europën Juglindore.",

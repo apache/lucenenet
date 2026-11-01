@@ -31,9 +31,9 @@ namespace Lucene.Net.Analysis.Sq
         public virtual void TestDiacritics()
         {
             Check("është", "eshte");
-            Check("çfarë", "cfare");
+            Check("çfarë", "qfare");
             Check("mëshirëbërës", "meshireberes");
-            Check("ÇËSHTJE", "CESHTJE");
+            Check("ÇËSHTJE", "QESHTJE");
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Sq
         public virtual void TestCombiningMarks()
         {
             Check("është", "eshte");
-            Check("çfarë", "cfare");
+            Check("çfarë", "qfare");
             Check("âsht", "asht");
         }
 
@@ -61,9 +61,60 @@ namespace Lucene.Net.Analysis.Sq
             Check("hûni", "huni");
             Check("ÂSHT", "ASHT");
             // acute accents mark long vowels in the same tradition (Lahuta e Malcís)
-            Check("malcís", "malcis");
+            Check("malcís", "malqis");
             Check("lirís", "liris");
             Check("kángë", "kange");
+        }
+
+        /// <summary>
+        /// ç is typed as c (without the cedilla) and as q (the same sound to most speakers): the three
+        /// spellings land on one term. Every row is a spelling seen in the search logs of an Albanian site.
+        /// </summary>
+        [Test]
+        public virtual void TestKeyboardSpellings()
+        {
+            Check("çdo", "qdo");
+            Check("cdo", "qdo");
+            Check("qdo", "qdo");
+            Check("kryeneç", "kryeneq");
+            Check("kryenec", "kryeneq");
+            Check("kryeneq", "kryeneq");
+            Check("çështje", "qeshtje");
+            Check("ceshtje", "qeshtje");
+            Check("qeshtje", "qeshtje");
+            Check("mençur", "menqur");
+            // xh and gj: the same sound to many speakers, so xhami / gjami, haxh / hagj are one term
+            Check("xhami", "gjami");
+            Check("gjami", "gjami");
+            Check("haxh", "hagj");
+            Check("XHAMI", "GJAMI");
+            Check("Xhuma", "Gjuma");
+            // x on its own is another letter and stays
+            Check("nxënës", "nxenes");
+            Check("xixa", "xixa");
+        }
+
+        /// <summary>
+        /// Words that really have a c keep it (cwords.txt): cili, copë, forcë, kec, and the whole word
+        /// ca; a c typed for ç still folds, also in a word that looks like one of them (care for çarë).
+        /// </summary>
+        [Test]
+        public virtual void TestRealCIsKept()
+        {
+            Check("kec", "kec");
+            Check("kecat", "kecat");
+            Check("Kec", "Kec");
+            Check("cili", "cili");
+            Check("cilët", "cilet");
+            Check("secili", "secili");
+            Check("copë", "cope");
+            Check("forcë", "force");
+            Check("caktuar", "caktuar");
+            Check("shumica", "shumica");
+            Check("ca", "ca");
+            Check("care", "qare");
+            Check("cdo", "qdo");
+            Check("kryenec", "kryeneq");
         }
 
         [Test]

@@ -66,7 +66,9 @@ namespace Lucene.Net.Analysis.Sq
             {
                 try
                 {
-                    return LoadStopwordSet(false, typeof(AlbanianAnalyzer), DEFAULT_STOPWORD_FILE, "#").AsReadOnly();
+                    // the stop filter runs after the normalizer, so the list (kept readable: që, aq, çdo)
+                    // is matched in its normalized spelling
+                    return Normalized(LoadStopwordSet(false, typeof(AlbanianAnalyzer), DEFAULT_STOPWORD_FILE, "#"));
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {
@@ -75,6 +77,19 @@ namespace Lucene.Net.Analysis.Sq
                     throw RuntimeException.Create("Unable to load default stopword set", ex);
                 }
             }
+        }
+
+        private static CharArraySet Normalized(CharArraySet words)
+        {
+            var normalizer = new AlbanianNormalizer();
+            var result = new CharArraySet(LuceneVersion.LUCENE_48, words.Count, ignoreCase: false);
+            foreach (string word in words)
+            {
+                char[] chars = word.ToCharArray();
+                int len = normalizer.Normalize(chars, chars.Length);
+                result.Add(new string(chars, 0, len));
+            }
+            return result.AsReadOnly();
         }
 
         private readonly CharArraySet stemExclusionSet;
