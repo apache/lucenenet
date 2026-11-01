@@ -35,9 +35,13 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
   on the console, so that `$a`, `a=b`, `a+b#` or `a<=b=` compiled. They are syntax errors again, as in the
   ANTLR 3 parser and Java Lucene. White space is space, tab, CR and LF, as in the grammar's `WS` rule, so a form
   feed or a vertical tab is an unexpected character too.
-- **Deep nesting is a syntax error, not a crash.** The parser checks the stack in its recursive rules and throws a
-  `ParseException` where it would overflow. The ANTLR 4 parser crashed the process with a `StackOverflowException`
-  instead, and the parenthesized depth it handled was lower:
+- **Deep nesting is a syntax error, not a crash (denial of service fixed).** The parser checks the stack in its
+  recursive rules and throws a `ParseException` where it would overflow. The ANTLR 4 parser never checks the stack,
+  so a deeply nested expression overflowed it, and .NET doesn't let code catch a stack overflow: the runtime
+  terminates the whole process, whatever `catch` blocks surround `JavascriptCompiler.Compile`. An application
+  that compiles expressions taken from requests could be stopped by a 2 KB expression of parentheses (CWE-674,
+  uncontrolled recursion), and running the parse on a thread with a larger stack only raised the limit. The
+  parenthesized depth ANTLR handled was also lower:
 
   | Maximum depth that compiles | ANTLR 4, 1 MB stack | Parlot, 1 MB stack | ANTLR 4, 8 MB stack | Parlot, 8 MB stack |
   |---|--:|--:|--:|--:|
