@@ -40,8 +40,9 @@ namespace Lucene.Net.Expressions.JS
             var number = Terms.Scan(ScanNumber, "0123456789.")
                 .Then(static value => (JavascriptNode)CreateNumber(value.ToString()));
 
+            // Names repeat across expressions and are kept by the compiled ones: share their strings.
             var namespaceId = Terms.Scan(ScanNamespaceId, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_")
-                .Then(static value => value.ToString());
+                .ToPooledString();
 
             // arguments: '(' (conditional (',' conditional)*)? ')'
             var arguments = lparen.SkipAnd(Separated(comma, conditional, min: 0)).AndSkip(rparen);
