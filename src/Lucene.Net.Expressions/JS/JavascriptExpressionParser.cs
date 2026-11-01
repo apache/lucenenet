@@ -76,8 +76,8 @@ namespace Lucene.Net.Expressions.JS
 
         private const string OperatorChars = "(),?:<>=!&|+-*/%^~";
 
-        // The white space of the generated parser (WhiteSpaceSet.Ascii)
-        private static bool IsWhiteSpace(char c) => c is ' ' or '\t' or '\n' or '\r' or '\f' or '\v';
+        // The white space of the generated parser (WhiteSpaceSet.SpaceTabCrLf)
+        private static bool IsWhiteSpace(char c) => c is ' ' or '\t' or '\n' or '\r';
 
         private static bool IsIdStart(char c) => (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 

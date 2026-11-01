@@ -151,6 +151,8 @@ namespace Lucene.Net.Expressions.JS
             AssertParseError("1 +\n  * 2", 6, "invalid sequence of tokens near '*' at position (6).");
             AssertParseError("a $ b", 2, "unexpected character '$' at position (2).");
             AssertParseError("a = b", 2, "invalid sequence of tokens near '=' at position (2).");
+            // White space is only space, tab, CR and LF, as in the grammar
+            AssertParseError("1\f+ 2", 1, "unexpected character '\f' at position (1).");
         }
 
         private static void AssertParseError(string expression, int offset, string message)

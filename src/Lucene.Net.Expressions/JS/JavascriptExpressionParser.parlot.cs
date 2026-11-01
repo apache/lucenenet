@@ -97,7 +97,7 @@ namespace Lucene.Net.Expressions.JS
                 .Ternary(Terms.Char('?'), conditional, Terms.Char(':'), static (condition, whenTrue, whenFalse) => new ConditionalNode(condition, whenTrue, whenFalse));
 
             // expression: conditional EOF, where Eof() itself doesn't skip trailing white space
-            return conditional.AndSkip(SkipWhiteSpace(Eof())).WithWhiteSpaceSet(WhiteSpaceSet.Ascii);
+            return conditional.AndSkip(SkipWhiteSpace(Eof())).WithWhiteSpaceSet(WhiteSpaceSet.SpaceTabCrLf);
         }
     }
 }
