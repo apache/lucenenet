@@ -155,6 +155,24 @@ namespace Lucene.Net.Expressions.JS
             AssertParseError("1\f+ 2", 1, "unexpected character '\f' at position (1).");
         }
 
+        // LUCENENET specific: nesting too deep for the stack is a parse error rather than a stack overflow
+        [Test]
+        public virtual void TestDeepNesting()
+        {
+            foreach (string expression in new[] { new string('(', 100000) + "1" + new string(')', 100000), new string('-', 100000) + "1" })
+            {
+                try
+                {
+                    JavascriptCompiler.Compile(expression);
+                    Assert.Fail(expression.Substring(0, 10));
+                }
+                catch (Exception e) when (e.IsParseException())
+                {
+                    // expected
+                }
+            }
+        }
+
         private static void AssertParseError(string expression, int offset, string message)
         {
             try
