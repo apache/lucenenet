@@ -23,6 +23,7 @@
     <Antlr4CodeGeneratorPackageVersion>4.6.6</Antlr4CodeGeneratorPackageVersion>
     <Antlr4RuntimeStandardPackageVersion>4.13.1</Antlr4RuntimeStandardPackageVersion>
     <Antlr4BuildTasksPackageVersion>12.14.0</Antlr4BuildTasksPackageVersion>
+    <BenchmarkDotNetPackageVersion>0.15.8</BenchmarkDotNetPackageVersion>
     <!-- LUCENENET TODO: When ICU4N is released to production,
         be sure to lock down the version range below. The resource
         files in Lucene.Net.ICU are not compatible with any other
@@ -66,9 +67,9 @@
     <MorfologikPolishPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikPolishPackageVersion>
     <MorfologikStemmingPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikStemmingPackageVersion>
     <NETStandardLibrary20PackageVersion>2.0.3</NETStandardLibrary20PackageVersion>
-    <ParlotSourceGeneratorPackageVersion>2.1.0</ParlotSourceGeneratorPackageVersion>
     <NUnit3TestAdapterPackageVersion>4.6.0</NUnit3TestAdapterPackageVersion>
     <NUnitPackageVersion>3.14.0</NUnitPackageVersion>
+    <ParlotSourceGeneratorPackageVersion>2.1.0</ParlotSourceGeneratorPackageVersion>
     <RandomizedTestingGeneratorsPackageVersion>2.7.8</RandomizedTestingGeneratorsPackageVersion>
     <SharpZipLibPackageVersion>1.4.2</SharpZipLibPackageVersion>
     <SpanToolsValueStringBuilderGeneratorPackageVersion>1.0.0-alpha.113</SpanToolsValueStringBuilderGeneratorPackageVersion>

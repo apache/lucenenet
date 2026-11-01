@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- LUCENENET specific: BenchmarkDotNet comparison of the expression parser (Parlot) with the
+      ANTLR 4 parser it replaced. The ANTLR baseline is a copy kept in the Antlr folder. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyTitle>Lucene.Net.Expressions.Benchmarks</AssemblyTitle>
+    <RootNamespace>Lucene.Net.Expressions.Benchmarks</RootNamespace>
+    <NoWarn>$(NoWarn);1591;1573;CS3021</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Expressions\Lucene.Net.Expressions.csproj" />
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="$(BenchmarkDotNetPackageVersion)" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <Antlr4CodeGeneratorVersion>$([System.IO.Path]::GetFileName('$(PkgAntlr4_CodeGenerator)'))</Antlr4CodeGeneratorVersion>
+    <Antlr4ToolPath>$(PkgAntlr4_CodeGenerator)\tools\antlr4-csharp-$(Antlr4CodeGeneratorVersion)-complete.jar</Antlr4ToolPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4.CodeGenerator" Version="$(Antlr4CodeGeneratorPackageVersion)" PrivateAssets="all" ExcludeAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="$(Antlr4RuntimeStandardPackageVersion)" />
+    <PackageReference Include="Antlr4BuildTasks" Version="$(Antlr4BuildTasksPackageVersion)" PrivateAssets="all" IncludeAssets="build" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Antlr4 Include="Antlr\Javascript.g4">
+      <Listener>true</Listener>
+      <Visitor>false</Visitor>
+      <Package>Lucene.Net.Expressions.Benchmarks.Antlr</Package>
+    </Antlr4>
+  </ItemGroup>
+
+</Project>
