@@ -169,21 +169,4 @@ namespace Lucene.Net.Expressions.JS
 
         public JavascriptNode WhenFalse { get; }
     }
-
-    /// <summary>
-    /// Mutable state shared by one parse: the end of the furthest token matched, used to
-    /// report where a syntax error is when the parse fails.
-    /// </summary>
-    internal sealed class JavascriptParseState
-    {
-        public int FurthestTokenEnd;
-
-        public void Track(int end)
-        {
-            if (end > FurthestTokenEnd)
-            {
-                FurthestTokenEnd = end;
-            }
-        }
-    }
 }

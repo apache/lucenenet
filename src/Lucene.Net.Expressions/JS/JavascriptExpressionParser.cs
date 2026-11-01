@@ -32,8 +32,8 @@ namespace Lucene.Net.Expressions.JS
     /// </remarks>
     internal static partial class JavascriptExpressionParser
     {
-        /// <summary>Parses <paramref name="text"/>; on failure, <see cref="JavascriptParseState.FurthestTokenEnd"/> locates the error.</summary>
-        public static partial bool TryParse(string text, JavascriptParseState state, out JavascriptNode value);
+        /// <summary>Parses <paramref name="text"/>; on failure, <paramref name="failure"/> is the offset of the furthest failure.</summary>
+        public static partial bool TryParse(string text, out JavascriptNode value, out int failure);
 
         /// <summary>
         /// Parses <paramref name="sourceText"/> or throws a <see cref="ParseException"/> with the offset of the
@@ -41,13 +41,11 @@ namespace Lucene.Net.Expressions.JS
         /// </summary>
         public static JavascriptNode Parse(string sourceText)
         {
-            var state = new JavascriptParseState();
-            if (TryParse(sourceText, state, out JavascriptNode node))
+            if (TryParse(sourceText, out JavascriptNode node, out int offset))
             {
                 return node;
             }
 
-            int offset = state.FurthestTokenEnd;
             while (offset < sourceText.Length && IsWhiteSpace(sourceText[offset]))
             {
                 offset++;

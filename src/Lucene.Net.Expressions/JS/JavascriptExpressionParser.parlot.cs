@@ -26,26 +26,24 @@ namespace Lucene.Net.Expressions.JS
     // LUCENENET specific: the grammar of the javascript expression syntax, a port of the
     // former ANTLR grammar (Javascript.g4) to Parlot. This file is build-only: the Parlot
     // source generator runs it at compile time and emits JavascriptExpressionParser.TryParse.
-    // The tokens and the start of each operand report their position to the parse state,
-    // which locates syntax errors.
     internal static partial class JavascriptExpressionParser
     {
         [GenerateParser(nameof(TryParse))]
-        private static Parser<JavascriptNode> Build(JavascriptParseState state)
+        private static Parser<JavascriptNode> Build()
         {
             var conditional = Deferred<JavascriptNode>();
 
-            var lparen = Terms.Char('(').Then((context, start, end, value) => { state.Track(end); return value; });
-            var rparen = Terms.Char(')').Then((context, start, end, value) => { state.Track(end); return value; });
-            var comma = Terms.Char(',').Then((context, start, end, value) => { state.Track(end); return value; });
-            var question = Terms.Char('?').Then((context, start, end, value) => { state.Track(end); return value; });
-            var colon = Terms.Char(':').Then((context, start, end, value) => { state.Track(end); return value; });
+            var lparen = Terms.Char('(');
+            var rparen = Terms.Char(')');
+            var comma = Terms.Char(',');
+            var question = Terms.Char('?');
+            var colon = Terms.Char(':');
 
             var number = Terms.Scan(ScanNumber, "0123456789.")
-                .Then((context, start, end, value) => { state.Track(end); return (JavascriptNode)CreateNumber(value.ToString()); });
+                .Then(static value => (JavascriptNode)CreateNumber(value.ToString()));
 
             var namespaceId = Terms.Scan(ScanNamespaceId, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_")
-                .Then((context, start, end, value) => { state.Track(end); return value.ToString(); });
+                .Then(static value => value.ToString());
 
             // arguments: '(' (conditional (',' conditional)*)? ')'
             var arguments = lparen.SkipAnd(Separated(comma, conditional, min: 0)).AndSkip(rparen);
@@ -60,16 +58,10 @@ namespace Lucene.Net.Expressions.JS
                 number,
                 nameOrCall);
 
-            // Records where an operand starts, after an operator, so that a missing operand reports
-            // the end of the operator rather than the end of the previous operand
-            var operand = Always(0)
-                .Then((context, start, end, value) => { state.Track(start); return value; })
-                .SkipAnd(primary);
-
             // unary: postfix | '+' unary | ('-' | '~' | '!') unary, then the binary operators from the tightest
             // level. An operator not followed by an operand, such as '&' at the start of "&&", is tried again in
             // the looser levels.
-            var logicalOr = operand.Operators()
+            var logicalOr = primary.Operators()
                 .Unary(
                     (Terms.Char('+'), static x => new UnaryNode(UnaryOperator.Plus, x)),
                     (Terms.Char('-'), static x => new UnaryNode(UnaryOperator.Negate, x)),
