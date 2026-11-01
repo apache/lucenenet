@@ -761,7 +761,8 @@ falls under the following license:
 
 ========
 
-The code in src/Lucene.Net.Expressions/JS/Javascript.g4 falls under the following license:
+The code in src/Lucene.Net.Expressions.Benchmarks/Antlr/Javascript.g4 and its port
+src/Lucene.Net.Expressions/JS/JavascriptExpressionParser.parlot.cs falls under the following license:
 
 Copyrights 2008-2009 Xebic Reasearch BV. All rights reserved..
 Original work by Patrick Hulsmeijer.
