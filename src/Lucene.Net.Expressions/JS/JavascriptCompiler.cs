@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -229,6 +230,11 @@ namespace Lucene.Net.Expressions.JS
 
             public void Compile(JavascriptNode node)
             {
+                // The parser bounds the nesting it recurses on, and the chains it reads in a
+                // loop are compiled in a loop: this only turns a deeper tree into an exception
+                // rather than a stack overflow, which would terminate the process.
+                RuntimeHelpers.EnsureSufficientExecutionStack();
+
                 switch (node)
                 {
                     case ConditionalNode conditional:
@@ -315,9 +321,35 @@ namespace Lucene.Net.Expressions.JS
 
             private void CompileUnary(UnaryNode node)
             {
-                Compile(node.Operand);
+                if (node.Operand is not UnaryNode)
+                {
+                    Compile(node.Operand);
+                    EmitUnaryOperator(node.Operator);
+                    return;
+                }
 
-                switch (node.Operator)
+                // The parser reads a chain of unary operators such as "---1" in a loop, so it
+                // can be longer than the stack allows to recurse: compile it in a loop too,
+                // the operand first and then the operators from the innermost one.
+                var chain = new List<UnaryOperator>();
+                JavascriptNode operand = node;
+                while (operand is UnaryNode unary)
+                {
+                    chain.Add(unary.Operator);
+                    operand = unary.Operand;
+                }
+
+                Compile(operand);
+
+                for (int i = chain.Count - 1; i >= 0; i--)
+                {
+                    EmitUnaryOperator(chain[i]);
+                }
+            }
+
+            private void EmitUnaryOperator(UnaryOperator op)
+            {
+                switch (op)
                 {
                     case UnaryOperator.Plus:
                         compiler.Emit(OpCodes.Conv_R8);
@@ -463,24 +495,38 @@ namespace Lucene.Net.Expressions.JS
 
             private void CompileConditional(ConditionalNode node)
             {
-                Label condFalse = compiler.gen.DefineLabel();
-                Label condEnd = compiler.gen.DefineLabel();
+                // The parser reads the false branches of "a ? b : c ? d : e" in a loop, so
+                // they can nest deeper than the stack allows to recurse: compile them in a
+                // loop too, and mark the ends of the conditionals from the innermost one.
+                List<Label> ends = null;
+                JavascriptNode whenFalse = node;
+                while (whenFalse is ConditionalNode conditional)
+                {
+                    Label condFalse = compiler.gen.DefineLabel();
+                    Label condEnd = compiler.gen.DefineLabel();
 
-                // Evaluate the condition
-                Compile(node.Condition);
-                compiler.Emit(OpCodes.Ldc_I4_0);
-                compiler.Emit(OpCodes.Beq, condFalse);
+                    // Evaluate the condition
+                    Compile(conditional.Condition);
+                    compiler.Emit(OpCodes.Ldc_I4_0);
+                    compiler.Emit(OpCodes.Beq, condFalse);
 
-                // Evaluate the true branch
-                Compile(node.WhenTrue);
-                compiler.Emit(OpCodes.Br_S, condEnd);
+                    // Evaluate the true branch
+                    Compile(conditional.WhenTrue);
+                    compiler.Emit(OpCodes.Br_S, condEnd);
 
-                // Evaluate the false branch
-                compiler.gen.MarkLabel(condFalse);
-                Compile(node.WhenFalse);
+                    // Evaluate the false branch
+                    compiler.gen.MarkLabel(condFalse);
+                    (ends ??= new List<Label>()).Add(condEnd);
+                    whenFalse = conditional.WhenFalse;
+                }
 
-                // Mark the end of the conditional
-                compiler.gen.MarkLabel(condEnd);
+                Compile(whenFalse);
+
+                // Mark the ends of the conditionals
+                for (int i = ends.Count - 1; i >= 0; i--)
+                {
+                    compiler.gen.MarkLabel(ends[i]);
+                }
             }
         }
 

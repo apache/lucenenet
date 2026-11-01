@@ -1,6 +1,7 @@
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Expressions.JS
@@ -159,7 +160,11 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestDeepNesting()
         {
-            foreach (string expression in new[] { new string('(', 100000) + "1" + new string(')', 100000), new string('-', 100000) + "1" })
+            foreach (string expression in new[]
+            {
+                new string('(', 100000) + "1" + new string(')', 100000),
+                string.Concat(Enumerable.Repeat("-(", 100000)) + "1" + new string(')', 100000),
+            })
             {
                 try
                 {
@@ -170,6 +175,26 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // expected
                 }
+            }
+        }
+
+        // LUCENENET specific: chains the parser reads in a loop are compiled in a loop, however long
+        [Test]
+        public virtual void TestLongChains()
+        {
+            Assert.AreEqual(1, JavascriptCompiler.Compile(new string('-', 100000) + "1").Evaluate(0, null), 0);
+            Assert.AreEqual(3, JavascriptCompiler.Compile("0?1:0?1:0?1:3").Evaluate(0, null), 0);
+            Assert.AreEqual(2, JavascriptCompiler.Compile("0?1:1?2:0?1:3").Evaluate(0, null), 0);
+
+            // The branches of a conditional are one-byte branches, so a branch of more than 127 bytes
+            // of IL can't be emitted, but it must not overflow the stack either.
+            try
+            {
+                JavascriptCompiler.Compile(string.Concat(Enumerable.Repeat("0?1:", 100000)) + "3");
+            }
+            catch (NotSupportedException)
+            {
+                // expected
             }
         }
 
