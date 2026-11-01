@@ -149,6 +149,9 @@ namespace Lucene.Net.Expressions.JS
         public JavascriptNode[] Operands { get; }
 
         public BinaryOperator[] Operators { get; }
+
+        /// <summary>Whether the chain is in parentheses, such that an operator following them starts a new chain.</summary>
+        public bool Parenthesized { get; set; }
     }
 
     internal sealed class ConditionalNode : JavascriptNode

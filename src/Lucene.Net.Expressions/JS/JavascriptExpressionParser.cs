@@ -238,23 +238,35 @@ namespace Lucene.Net.Expressions.JS
             return new NumberNode(kind, text);
         }
 
-        internal static JavascriptNode CreateChain(ChainLevel level, JavascriptNode first, IReadOnlyList<(BinaryOperator, JavascriptNode)> rest)
+        /// <summary>
+        /// Combines two operands, extending <paramref name="left"/> when it is a chain of the same
+        /// <paramref name="level"/> not in parentheses, as the ANTLR grammar rules did.
+        /// </summary>
+        internal static JavascriptNode CreateChain(ChainLevel level, BinaryOperator op, JavascriptNode left, JavascriptNode right)
         {
-            int count = rest.Count;
-            if (count == 0)
+            if (left is ChainNode chain && chain.Level == level && !chain.Parenthesized)
             {
-                return first;
+                int count = chain.Operators.Length;
+                var operands = new JavascriptNode[count + 2];
+                var operators = new BinaryOperator[count + 1];
+                Array.Copy(chain.Operands, operands, count + 1);
+                Array.Copy(chain.Operators, operators, count);
+                operands[count + 1] = right;
+                operators[count] = op;
+                return new ChainNode(level, operands, operators);
             }
 
-            var operands = new JavascriptNode[count + 1];
-            var operators = new BinaryOperator[count];
-            operands[0] = first;
-            for (int i = 0; i < count; i++)
+            return new ChainNode(level, new[] { left, right }, new[] { op });
+        }
+
+        internal static JavascriptNode Parenthesize(JavascriptNode node)
+        {
+            if (node is ChainNode chain)
             {
-                (operators[i], operands[i + 1]) = rest[i];
+                chain.Parenthesized = true;
             }
 
-            return new ChainNode(level, operands, operators);
+            return node;
         }
 
         internal static JavascriptNode CreateCall(string name, IReadOnlyList<JavascriptNode> arguments)
