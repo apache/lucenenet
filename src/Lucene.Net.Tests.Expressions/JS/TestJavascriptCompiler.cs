@@ -137,6 +137,36 @@ namespace Lucene.Net.Expressions.JS
             }
         }
 
+        // LUCENENET specific: the offset is the first token that cannot be parsed, as in Java Lucene
+        [Test]
+        public virtual void TestParseErrorOffsets()
+        {
+            AssertParseError("", 0, "unexpected end of expression.");
+            AssertParseError("1 +", 3, "unexpected end of expression.");
+            AssertParseError("(1", 2, "unexpected end of expression.");
+            AssertParseError("100 100", 4, "invalid sequence of tokens near '100' at position (4).");
+            AssertParseError("7*/-8", 2, "invalid sequence of tokens near '/' at position (2).");
+            AssertParseError("max(1 2)", 6, "invalid sequence of tokens near '2' at position (6).");
+            AssertParseError("0y1234", 1, "invalid sequence of tokens near 'y1234' at position (1).");
+            AssertParseError("1 +\n  * 2", 6, "invalid sequence of tokens near '*' at position (6).");
+            AssertParseError("a $ b", 2, "unexpected character '$' at position (2).");
+            AssertParseError("a = b", 2, "invalid sequence of tokens near '=' at position (2).");
+        }
+
+        private static void AssertParseError(string expression, int offset, string message)
+        {
+            try
+            {
+                JavascriptCompiler.Compile(expression);
+                Assert.Fail(expression);
+            }
+            catch (Exception e) when (e.IsParseException())
+            {
+                Assert.AreEqual(offset, ((J2N.Text.ParseException)e).ErrorOffset, expression);
+                Assert.AreEqual(message, e.Message, expression);
+            }
+        }
+
         [Test]
         public virtual void TestEmpty()
         {

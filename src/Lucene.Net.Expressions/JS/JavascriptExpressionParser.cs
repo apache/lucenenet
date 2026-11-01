@@ -53,12 +53,30 @@ namespace Lucene.Net.Expressions.JS
                 offset++;
             }
 
-            string message = offset >= sourceText.Length
-                ? "Invalid expression '" + sourceText + "': unexpected end of expression."
-                : "Invalid expression '" + sourceText + "': unexpected character '" + sourceText[offset] + "' at position (" + offset + ").";
+            // The messages of the ANTLR 3 parser in Lucene.NET 4.8.0-beta00017 and earlier
+            string message;
+            if (offset >= sourceText.Length)
+            {
+                message = "unexpected end of expression.";
+            }
+            else
+            {
+                ReadOnlySpan<char> rest = sourceText.AsSpan(offset);
+                int length = Math.Max(ScanNamespaceId(rest), ScanNumber(rest));
+                if (length == 0 && OperatorChars.IndexOf(rest[0]) < 0)
+                {
+                    message = "unexpected character '" + rest[0] + "' at position (" + offset + ").";
+                }
+                else
+                {
+                    message = "invalid sequence of tokens near '" + rest.Slice(0, Math.Max(length, 1)).ToString() + "' at position (" + offset + ").";
+                }
+            }
 
             throw new ParseException(message, offset);
         }
+
+        private const string OperatorChars = "(),?:<>=!&|+-*/%^~";
 
         // The white space of the generated parser (WhiteSpaceSet.Ascii)
         private static bool IsWhiteSpace(char c) => c is ' ' or '\t' or '\n' or '\r' or '\f' or '\v';
