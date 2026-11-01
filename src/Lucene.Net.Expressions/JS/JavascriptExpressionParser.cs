@@ -1,0 +1,253 @@
+using J2N.Text;
+using System;
+using System.Collections.Generic;
+
+namespace Lucene.Net.Expressions.JS
+{
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
+    /// <summary>
+    /// LUCENENET specific: parses the javascript expression syntax into a <see cref="JavascriptNode"/> tree.
+    /// </summary>
+    /// <remarks>
+    /// The grammar is in <c>JavascriptExpressionParser.parlot.cs</c>. That file is only read at build time by
+    /// the Parlot source generator, which emits the body of <see cref="TryParse"/> into this assembly, so there
+    /// is no runtime dependency on a parsing library. The token rules below are the lexer rules of the former
+    /// ANTLR grammar, which matched the longest token.
+    /// </remarks>
+    internal static partial class JavascriptExpressionParser
+    {
+        /// <summary>Parses <paramref name="text"/>; on failure, <see cref="JavascriptParseState.FurthestTokenEnd"/> locates the error.</summary>
+        public static partial bool TryParse(string text, JavascriptParseState state, out JavascriptNode value);
+
+        /// <summary>
+        /// Parses <paramref name="sourceText"/> or throws a <see cref="ParseException"/> with the offset of the
+        /// first token that could not be parsed.
+        /// </summary>
+        public static JavascriptNode Parse(string sourceText)
+        {
+            var state = new JavascriptParseState();
+            if (TryParse(sourceText, state, out JavascriptNode node))
+            {
+                return node;
+            }
+
+            int offset = state.FurthestTokenEnd;
+            while (offset < sourceText.Length && IsWhiteSpace(sourceText[offset]))
+            {
+                offset++;
+            }
+
+            string message = offset >= sourceText.Length
+                ? "Invalid expression '" + sourceText + "': unexpected end of expression."
+                : "Invalid expression '" + sourceText + "': unexpected character '" + sourceText[offset] + "' at position (" + offset + ").";
+
+            throw new ParseException(message, offset);
+        }
+
+        // The white space of the generated parser (WhiteSpaceSet.Ascii)
+        private static bool IsWhiteSpace(char c) => c is ' ' or '\t' or '\n' or '\r' or '\f' or '\v';
+
+        private static bool IsIdStart(char c) => (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+
+        private static bool IsIdPart(char c) => IsIdStart(c) || IsDigit(c);
+
+        private static bool IsDigit(char c) => c >= '0' && c <= '9';
+
+        private static bool IsOctalDigit(char c) => c >= '0' && c <= '7';
+
+        private static bool IsHexDigit(char c) => IsDigit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+
+        /// <summary>NAMESPACE_ID: <c>ID ('.' ID)*</c>, where ID is <c>[a-zA-Z_][a-zA-Z0-9_]*</c>.</summary>
+        internal static int ScanNamespaceId(ReadOnlySpan<char> span)
+        {
+            int size = 0;
+            while (size < span.Length && IsIdStart(span[size]))
+            {
+                size++;
+                while (size < span.Length && IsIdPart(span[size]))
+                {
+                    size++;
+                }
+
+                // A dot continues the name only when an ID follows it
+                if (size + 1 < span.Length && span[size] == '.' && IsIdStart(span[size + 1]))
+                {
+                    size++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return size;
+        }
+
+        /// <summary>The longest of HEX, OCTAL and DECIMAL.</summary>
+        internal static int ScanNumber(ReadOnlySpan<char> span)
+        {
+            if (span.IsEmpty)
+            {
+                return 0;
+            }
+
+            if (span[0] == '0' && span.Length > 1)
+            {
+                // HEX: ('0x'|'0X') HEXDIGIT+
+                if (span[1] is 'x' or 'X')
+                {
+                    int hex = 2;
+                    while (hex < span.Length && IsHexDigit(span[hex]))
+                    {
+                        hex++;
+                    }
+
+                    if (hex > 2)
+                    {
+                        return hex;
+                    }
+                }
+
+                // OCTAL: '0' OCTALDIGIT+, always longer than the DECIMAL '0' it starts with
+                int octal = 1;
+                while (octal < span.Length && IsOctalDigit(span[octal]))
+                {
+                    octal++;
+                }
+
+                if (octal > 1)
+                {
+                    return octal;
+                }
+            }
+
+            // DECIMAL: DECIMALINTEGER ('.' DECIMALDIGIT*)? EXPONENT? | '.' DECIMALDIGIT+ EXPONENT?
+            int size;
+            if (span[0] == '.')
+            {
+                size = 1;
+                while (size < span.Length && IsDigit(span[size]))
+                {
+                    size++;
+                }
+
+                if (size == 1)
+                {
+                    return 0;
+                }
+            }
+            else if (IsDigit(span[0]))
+            {
+                // DECIMALINTEGER: '0' | [1-9] DECIMALDIGIT*
+                size = 1;
+                if (span[0] != '0')
+                {
+                    while (size < span.Length && IsDigit(span[size]))
+                    {
+                        size++;
+                    }
+                }
+
+                if (size < span.Length && span[size] == '.')
+                {
+                    size++;
+                    while (size < span.Length && IsDigit(span[size]))
+                    {
+                        size++;
+                    }
+                }
+            }
+            else
+            {
+                return 0;
+            }
+
+            // EXPONENT: ('e'|'E') ('+'|'-')? DECIMALDIGIT+, only when complete
+            if (size < span.Length && span[size] is 'e' or 'E')
+            {
+                int exponent = size + 1;
+                if (exponent < span.Length && span[exponent] is '+' or '-')
+                {
+                    exponent++;
+                }
+
+                int digits = exponent;
+                while (digits < span.Length && IsDigit(span[digits]))
+                {
+                    digits++;
+                }
+
+                if (digits > exponent)
+                {
+                    size = digits;
+                }
+            }
+
+            return size;
+        }
+
+        internal static NumberNode CreateNumber(string text)
+        {
+            NumberKind kind = NumberKind.Decimal;
+            if (text.Length > 1 && text[0] == '0')
+            {
+                if (text[1] is 'x' or 'X')
+                {
+                    kind = NumberKind.Hex;
+                }
+                else if (IsOctalDigit(text[1]))
+                {
+                    kind = NumberKind.Octal;
+                }
+            }
+
+            return new NumberNode(kind, text);
+        }
+
+        internal static JavascriptNode CreateChain(ChainLevel level, JavascriptNode first, IReadOnlyList<(BinaryOperator, JavascriptNode)> rest)
+        {
+            int count = rest.Count;
+            if (count == 0)
+            {
+                return first;
+            }
+
+            var operands = new JavascriptNode[count + 1];
+            var operators = new BinaryOperator[count];
+            operands[0] = first;
+            for (int i = 0; i < count; i++)
+            {
+                (operators[i], operands[i + 1]) = rest[i];
+            }
+
+            return new ChainNode(level, operands, operators);
+        }
+
+        internal static JavascriptNode CreateCall(string name, IReadOnlyList<JavascriptNode> arguments)
+        {
+            var array = new JavascriptNode[arguments.Count];
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = arguments[i];
+            }
+
+            return new CallNode(name, array);
+        }
+    }
+}

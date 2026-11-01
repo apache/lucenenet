@@ -134,6 +134,17 @@ namespace Lucene.Net.Expressions.JS
             return new JavascriptCompiler(sourceText, functions).CompileExpression();
         }
 
+        // LUCENENET TODO: remove, the ANTLR parser is kept for differential tests and benchmarks
+        internal static Expression CompileWithAntlr(string sourceText, IDictionary<string, MethodInfo> functions)
+        {
+            return new JavascriptCompiler(sourceText, functions).CompileExpression(useAntlr: true);
+        }
+
+        internal static object ParseWithAntlr(string sourceText)
+        {
+            return new JavascriptCompiler(sourceText).GetAntlrComputedExpressionTree();
+        }
+
         /// <summary>This method is unused, it is just here to make sure that the function signatures don't change.</summary>
         /// <remarks>
         /// This method is unused, it is just here to make sure that the function signatures don't change.
@@ -168,13 +179,22 @@ namespace Lucene.Net.Expressions.JS
         /// <summary>Compiles the given expression with the specified parent classloader</summary>
         /// <returns>A new compiled expression</returns>
         /// <exception cref="ParseException">on failure to compile</exception>
-        private Expression CompileExpression()
+        private Expression CompileExpression(bool useAntlr = false)
         {
             try
             {
-                var antlrTree = GetAntlrComputedExpressionTree();
-                BeginCompile();
-                RecursiveCompile(antlrTree);
+                if (useAntlr)
+                {
+                    var antlrTree = GetAntlrComputedExpressionTree();
+                    BeginCompile();
+                    RecursiveCompile(antlrTree);
+                }
+                else
+                {
+                    JavascriptNode tree = JavascriptExpressionParser.Parse(sourceText);
+                    BeginCompile();
+                    new JavascriptNodeCompiler(this).Compile(tree);
+                }
                 EndCompile();
                 return
                     (Expression)
@@ -711,6 +731,274 @@ namespace Lucene.Net.Expressions.JS
                         throw new ParseException("Unexpected child", context.Start.StartIndex);
                     }
                 }
+            }
+        }
+
+        // LUCENENET specific: compiles the tree built by JavascriptExpressionParser, emitting
+        // the same IL as the former ANTLR listener did for each rule of the grammar.
+        private sealed class JavascriptNodeCompiler
+        {
+            private readonly JavascriptCompiler compiler;
+
+            public JavascriptNodeCompiler(JavascriptCompiler compiler)
+            {
+                this.compiler = compiler;
+            }
+
+            public void Compile(JavascriptNode node)
+            {
+                switch (node)
+                {
+                    case ConditionalNode conditional:
+                        CompileConditional(conditional);
+                        break;
+                    case ChainNode chain:
+                        CompileChain(chain);
+                        break;
+                    case UnaryNode unary:
+                        CompileUnary(unary);
+                        break;
+                    case CallNode call:
+                        CompileCall(call);
+                        break;
+                    case VariableNode variable:
+                        CompileVariable(variable);
+                        break;
+                    case NumberNode number:
+                        CompileNumber(number);
+                        break;
+                    default:
+                        throw IllegalStateException.Create("Unknown node " + node);
+                }
+            }
+
+            private void CompileCall(CallNode node)
+            {
+                string call = node.Name;
+                JavascriptNode[] arguments = node.Arguments;
+                int argumentCount = arguments.Length;
+                if (!compiler.functions.TryGetValue(call, out MethodInfo method) || method is null)
+                {
+                    throw new ArgumentException("Unrecognized method call (" + call + ").");
+                }
+                int arity = method.GetParameters().Length;
+                if (argumentCount != arity)
+                {
+                    throw new ArgumentException("Expected (" + arity + ") arguments for method call ("
+                                                + call + "), but found (" + argumentCount + ").");
+                }
+                for (int argument = 0; argument < argumentCount; ++argument)
+                {
+                    Compile(arguments[argument]);
+                }
+                compiler.Emit(OpCodes.Call, method);
+            }
+
+            private void CompileVariable(VariableNode node)
+            {
+                string text = node.Name;
+
+                if (!compiler.externalsMap.TryGetValue(text, out int index))
+                {
+                    compiler.externalsMap[text] = index = compiler.externalsMap.Count;
+                }
+
+                compiler.Emit(OpCodes.Nop);
+
+                compiler.Emit(OpCodes.Ldarg_2);
+                compiler.Emit(OpCodes.Ldc_I4, index);
+
+                compiler.Emit(OpCodes.Ldelem_Ref);
+                compiler.Emit(OpCodes.Ldarg_1);
+                compiler.Emit(OpCodes.Callvirt, DOUBLE_VAL_METHOD);
+            }
+
+            private void CompileNumber(NumberNode node)
+            {
+                string text = node.Text;
+
+                switch (node.Kind)
+                {
+                    case NumberKind.Hex:
+                        compiler.PushInt64(Convert.ToInt64(text, 16));
+                        break;
+                    case NumberKind.Octal:
+                        compiler.PushInt64(Convert.ToInt64(text, 8));
+                        break;
+                    default:
+                        compiler.Emit(OpCodes.Ldc_R8, double.Parse(text, CultureInfo.InvariantCulture));
+                        break;
+                }
+            }
+
+            private void CompileUnary(UnaryNode node)
+            {
+                Compile(node.Operand);
+
+                switch (node.Operator)
+                {
+                    case UnaryOperator.Plus:
+                        compiler.Emit(OpCodes.Conv_R8);
+                        break;
+                    case UnaryOperator.Negate:
+                        compiler.Emit(OpCodes.Neg);
+                        break;
+                    case UnaryOperator.BitNot:
+                        compiler.Emit(OpCodes.Conv_I8); // cast to long (truncate)
+                        compiler.Emit(OpCodes.Not);
+                        compiler.Emit(OpCodes.Conv_R8);
+                        break;
+                    case UnaryOperator.BoolNot:
+                        compiler.Emit(OpCodes.Ldc_I4_0);
+                        compiler.Emit(OpCodes.Ceq);
+                        compiler.Emit(OpCodes.Conv_R8);
+                        break;
+                }
+            }
+
+            private void CompileChain(ChainNode node)
+            {
+                JavascriptNode[] operands = node.Operands;
+                BinaryOperator[] operators = node.Operators;
+
+                switch (node.Level)
+                {
+                    case ChainLevel.LogicalOr:
+                        // Evaluate each operand and check if it is true, combining the results using OR
+                        for (int i = 0; i < operands.Length; i++)
+                        {
+                            Compile(operands[i]);
+                            compiler.Emit(OpCodes.Ldc_I4_0);
+                            compiler.Emit(OpCodes.Ceq);
+                            compiler.Emit(OpCodes.Ldc_I4_1);
+                            compiler.Emit(OpCodes.Xor);
+                            if (i > 0)
+                            {
+                                compiler.Emit(OpCodes.Or);
+                            }
+                        }
+
+                        // Check if the combined result is true and convert it to a double
+                        compiler.Emit(OpCodes.Ldc_I4_1);
+                        compiler.Emit(OpCodes.Ceq);
+                        compiler.Emit(OpCodes.Conv_R8);
+                        break;
+
+                    case ChainLevel.LogicalAnd:
+                        // Evaluate each operand and check if it is false, combining the results using OR
+                        for (int i = 0; i < operands.Length; i++)
+                        {
+                            Compile(operands[i]);
+                            compiler.Emit(OpCodes.Ldc_I4_0);
+                            compiler.Emit(OpCodes.Ceq);
+                            if (i > 0)
+                            {
+                                compiler.Emit(OpCodes.Or);
+                            }
+                        }
+
+                        // Check if the combined result is false and convert it to a double
+                        compiler.Emit(OpCodes.Ldc_I4_0);
+                        compiler.Emit(OpCodes.Ceq);
+                        compiler.Emit(OpCodes.Conv_R8);
+                        break;
+
+                    case ChainLevel.BitwiseOr:
+                    case ChainLevel.BitwiseXor:
+                    case ChainLevel.BitwiseAnd:
+                        Compile(operands[0]);
+                        compiler.Emit(OpCodes.Conv_I8); // cast to long (truncate)
+                        for (int i = 0; i < operators.Length; i++)
+                        {
+                            Compile(operands[i + 1]);
+                            compiler.Emit(OpCodes.Conv_I8); // cast to long (truncate)
+                            compiler.PushOpWithConvert(GetOpCode(operators[i]));
+                        }
+                        break;
+
+                    case ChainLevel.Shift:
+                        Compile(operands[0]);
+                        compiler.Emit(OpCodes.Conv_I8); // cast to long (truncate)
+                        for (int i = 0; i < operators.Length; i++)
+                        {
+                            Compile(operands[i + 1]);
+                            compiler.Emit(OpCodes.Conv_I4); // cast to int (truncate)
+
+                            // mask off 63 to prevent overflow (fixes issue on x86 .NET Framework, #1034)
+                            compiler.Emit(OpCodes.Ldc_I4, 0x3F);
+                            compiler.Emit(OpCodes.And);
+
+                            compiler.PushOpWithConvert(GetOpCode(operators[i]));
+                        }
+                        break;
+
+                    default:
+                        Compile(operands[0]);
+                        for (int i = 0; i < operators.Length; i++)
+                        {
+                            Compile(operands[i + 1]);
+                            switch (operators[i])
+                            {
+                                case BinaryOperator.LessThanOrEqual:
+                                    compiler.PushCondEq(OpCodes.Cgt);
+                                    break;
+                                case BinaryOperator.GreaterThanOrEqual:
+                                    compiler.PushCondEq(OpCodes.Clt);
+                                    break;
+                                case BinaryOperator.NotEqual:
+                                    compiler.PushCondEq(OpCodes.Ceq);
+                                    break;
+                                default:
+                                    compiler.PushOpWithConvert(GetOpCode(operators[i]));
+                                    break;
+                            }
+                        }
+                        break;
+                }
+            }
+
+            private static OpCode GetOpCode(BinaryOperator op)
+            {
+                return op switch
+                {
+                    BinaryOperator.BitOr => OpCodes.Or,
+                    BinaryOperator.BitXor => OpCodes.Xor,
+                    BinaryOperator.BitAnd => OpCodes.And,
+                    BinaryOperator.Equal => OpCodes.Ceq,
+                    BinaryOperator.LessThan => OpCodes.Clt,
+                    BinaryOperator.GreaterThan => OpCodes.Cgt,
+                    BinaryOperator.ShiftLeft => OpCodes.Shl,
+                    BinaryOperator.ShiftRight => OpCodes.Shr,
+                    BinaryOperator.ShiftRightUnsigned => OpCodes.Shr_Un,
+                    BinaryOperator.Add => OpCodes.Add,
+                    BinaryOperator.Subtract => OpCodes.Sub,
+                    BinaryOperator.Multiply => OpCodes.Mul,
+                    BinaryOperator.Divide => OpCodes.Div,
+                    BinaryOperator.Modulo => OpCodes.Rem,
+                    _ => throw IllegalStateException.Create("Unexpected operator " + op),
+                };
+            }
+
+            private void CompileConditional(ConditionalNode node)
+            {
+                Label condFalse = compiler.gen.DefineLabel();
+                Label condEnd = compiler.gen.DefineLabel();
+
+                // Evaluate the condition
+                Compile(node.Condition);
+                compiler.Emit(OpCodes.Ldc_I4_0);
+                compiler.Emit(OpCodes.Beq, condFalse);
+
+                // Evaluate the true branch
+                Compile(node.WhenTrue);
+                compiler.Emit(OpCodes.Br_S, condEnd);
+
+                // Evaluate the false branch
+                compiler.gen.MarkLabel(condFalse);
+                Compile(node.WhenFalse);
+
+                // Mark the end of the conditional
+                compiler.gen.MarkLabel(condEnd);
             }
         }
 
