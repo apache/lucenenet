@@ -12,7 +12,7 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
 - **No Java to build.** `Antlr4BuildTasks` ran the ANTLR tool, a Java program, on every build.
 - **For now, a preview package to build.** The grammar uses `Operators()` with a `Ternary` level and the furthest
   failure of the generated entry point, which are only in the Parlot previews (`Parlot.SourceGenerator`
-  2.0.0-preview.1077, from the Parlot preview feed added to `NuGet.config`). The PR should
+  2.0.0-preview.1083, from the Parlot preview feed added to `NuGet.config`). The PR should
   move to the next Parlot release before it merges; consumers of the Lucene.NET package are not affected either way.
 - **No public ANTLR types.** The ANTLR 4 migration (#996, not released yet) made the generated `JavascriptLexer`,
   `JavascriptParser`, `JavascriptBaseListener` and `IJavascriptListener` public, exposing `Antlr4.Runtime` types. They
@@ -21,7 +21,7 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
   (an operator chain such as `a + b - c` is one node, a parenthesized expression is its own node), and the IL
   emission was retargeted from the parse-tree listener to that tree without changing what it emits. A differential
   test (in the history of this branch, removed with ANTLR, and run again against the benchmark's ANTLR copy after
-  the move to `Operators()` and again with preview-1059 and preview.1077) compiled 60,000 random expressions with both parsers and asserted byte-identical
+  the move to `Operators()` and again with preview-1059, preview.1077 and preview.1083) compiled 60,000 random expressions with both parsers and asserted byte-identical
   `Evaluate` IL and identical variables, and 150,000 mutated ones were accepted or rejected alike.
 - **Syntax errors as in the released versions.** `ParseException.ErrorOffset` is the offset of the first token that
   cannot be parsed, with the messages of the ANTLR 3 parser of 4.8.0-beta00017 (`unexpected end of expression.`,
@@ -29,7 +29,7 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
   are also Java Lucene's. The ANTLR 4 port reported the start of the enclosing grammar rule instead (often 0, for
   example for `100 100`) with ANTLR's own messages such as `Exception of type 'Antlr4.Runtime.NoViableAltException'
   was thrown.`. The offset is absolute, where the ANTLR 3 parser used the column within the line. It is the
-  furthest failure the generated `TryParse` returns: preview-1059 and preview.1077 give the same offsets and messages
+  furthest failure the generated `TryParse` returns: preview-1059, preview.1077 and preview.1083 give the same offsets and messages
   as the earlier callbacks recording each token's position, on 104,232 rejected mutated expressions.
 - **Unknown characters are rejected.** The ANTLR 4 lexer dropped the characters it had no token for, with a warning
   on the console, so that `$a`, `a=b`, `a+b#` or `a<=b=` compiled. They are syntax errors again, as in the
@@ -47,8 +47,8 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
 
   | Maximum depth that compiles | ANTLR 4, 1 MB stack | Parlot, 1 MB stack | ANTLR 4, 8 MB stack | Parlot, 8 MB stack |
   |---|--:|--:|--:|--:|
-  | `((((1))))` | 250, then crash | 1,167 | 2,007, then crash | 10,335 |
-  | `-(-(-(1)))` | not measured | 1,007 | not measured | 9,951 |
+  | `((((1))))` | 250, then crash | 1,167 | 2,007, then crash | 10,350 |
+  | `-(-(-(1)))` | not measured | 1,007 | not measured | 11,759 |
   | `----1` | 8,120, then crash | no limit (200,000 tested) | over 40,000 | no limit |
 
   With preview-1059, which recursed on each prefix operator, `----1` stopped at 1,823 and 16,159 operators, and
@@ -90,10 +90,9 @@ Two machines, BenchmarkDotNet v0.15.8, `MinIterationCount=40`:
 - **x64:** Windows 11 25H2 (Hyper-V), AMD EPYC 7763 2.44 GHz, 8 cores, .NET 10.0.12 X64 RyuJIT x86-64-v3.
 
 Two Parlot versions: **2.1.0**, the release, with the operator levels written as nested `And(ZeroOrMany(...))`
-sequences, and **preview**, 2.0.0-preview-1039/1043 (same generated code) with `Operators()`, the version on this
-branch. The x64 preview column is the final commit (`LaunchCount=2`); the Arm64 one is the first `Operators()`
-commit, which also had a lookahead after `&` and `|`; only *Large* has those operators. A later Arm64
-run of the final commit was taken on a loaded machine (load average 21) and is not shown.
+sequences, and **preview**, 2.0.0-preview.1083 with `Operators()`, the version on this branch. The preview numbers are
+one run of everything (`LaunchCount=1`) on each machine, with a load average of 4 on the 14 cores of the Arm64 one, and
+so less settled than repeated runs; the 2.1.0 columns are from earlier runs of the same machines.
 
 ### Parsing only
 
@@ -101,78 +100,84 @@ The ANTLR parse tree versus the Parlot syntax tree, without emitting IL. Mean ti
 
 | Size   | ANTLR, Arm64 | Parlot 2.1.0, Arm64 | Parlot preview, Arm64 | ANTLR, x64 | Parlot 2.1.0, x64 | Parlot preview, x64 |
 |--------|-------------:|--------------------:|----------------------:|-----------:|------------------:|--------------------:|
-| Small  | 6,498 ns, 23,928 B | 227 ns, 544 B | 106 ns, 400 B | 13,961 ns, 23,928 B | 522 ns, 544 B | 218 ns, 400 B |
-| Medium | 31,388 ns, 106,144 B | 1,334 ns, 2,272 B | 618 ns, 1,816 B | 67,602 ns, 106,144 B | 3,102 ns, 2,272 B | 1,301 ns, 1,816 B |
-| Large  | 547,052 ns, 1,602,512 B | 22,038 ns, 29,520 B | 9,292 ns, 24,256 B | 1,087,578 ns, 1,602,512 B | 52,018 ns, 29,520 B | 20,317 ns, 24,256 B |
+| Small  | 6,375 ns, 23,928 B | 227 ns, 544 B | 88 ns, 344 B | 15,478 ns, 23,928 B | 522 ns, 544 B | 192 ns, 344 B |
+| Medium | 30,652 ns, 106,144 B | 1,334 ns, 2,272 B | 591 ns, 1,760 B | 71,247 ns, 106,144 B | 3,102 ns, 2,272 B | 1,294 ns, 1,760 B |
+| Large  | 523,523 ns, 1,602,512 B | 22,038 ns, 29,520 B | 8,401 ns, 23,504 B | 1,100,719 ns, 1,602,512 B | 52,018 ns, 29,520 B | 18,217 ns, 23,504 B |
 
-Parlot 2.1.0 parses 21 to 29 times faster than ANTLR, and the preview's `Operators()` 2.1 to 2.6 times faster
-again: 51 to 61 times faster than ANTLR on Arm64, 52 to 63 times on x64. Allocations are 98% lower than ANTLR's (the syntax tree and the names), and 18% to 26%
-lower than with 2.1.0, which built a list per operator level.
+Parlot 2.1.0 parses 21 to 29 times faster than ANTLR, and the preview's `Operators()` 2.3 to 2.9 times faster
+again: 52 to 73 times faster than ANTLR on Arm64, 55 to 81 times on x64. Allocations are 98% lower than ANTLR's (the
+syntax tree and the names), and 20% to 37% lower than with 2.1.0, which built a list per operator level.
 
-Preview-1059, with the furthest failure instead of the position callbacks and the conditional as a `Ternary`
-level, parses as fast as 1043 and allocates 32 bytes less per parse (the parse state object). Preview.1077 parses 7%
-to 13% faster than 1059 (its operator table no longer looks up an operator after a prefix-only climb, and its
-`Ternary` level keeps exception handling out of the climb). Pooling the names with `ToPooledString()` was tried and
-dropped: it allocated 12% to 16% less, the strings of the names, but gave back 1% to 9% of the time, as a lookup costs
-about as much as creating a short string, and compiling an expression showed neither. x64, two runs of each,
-`LaunchCount=2`:
+How the previews compare on x64, with the time of each run. 1043 used position callbacks; 1059 replaced them with the
+furthest failure and the conditional with a `Ternary` level, and allocates 32 bytes less per parse (the parse state
+object). 1077 parses 4% to 13% faster than 1059, which keeps exception handling out of the climb of its `Ternary` level
+([sebastienros/parlot#485](https://github.com/sebastienros/parlot/pull/485), the likely cause; this wasn't isolated).
+1083 is the same as 1077 within the noise of its single run. Pooling the names with `ToPooledString()` on 1077 was tried
+and dropped: it allocated 12% to 13% less, the strings of the names, but gave back 1% to 11% of the time, as a lookup
+costs about as much as creating a short string, and compiling an expression showed neither.
 
-| Size   | 1043 | 1059 | 1077 | 1077, pooled names |
-|--------|-----:|-----:|-----:|-------------------:|
-| Small  | 211 ns, 208 ns, 400 B | 222 ns, 228 ns, 368 B | 192 ns, 199 ns, 344 B | 217 ns, 216 ns, 304 B |
-| Medium | 1,314 ns, 1,311 ns, 1,816 B | 1,421 ns, 1,379 ns, 1,784 B | 1,324 ns, 1,353 ns, 1,760 B | 1,350 ns, 1,363 ns, 1,536 B |
-| Large  | 20,509 ns, 20,633 ns, 24,256 B | 20,129 ns, 20,601 ns, 24,224 B | 18,433 ns, 18,979 ns, 23,504 B | 19,244 ns, 19,816 ns, 20,360 B |
+| Size   | 1043 | 1059 | 1077 | 1077, pooled names | 1083 |
+|--------|-----:|-----:|-----:|-------------------:|-----:|
+| Small  | 211 ns, 208 ns, 400 B | 222 ns, 228 ns, 368 B | 192 ns, 199 ns, 344 B | 217 ns, 216 ns, 304 B | 192 ns, 344 B |
+| Medium | 1,314 ns, 1,311 ns, 1,816 B | 1,421 ns, 1,379 ns, 1,784 B | 1,324 ns, 1,353 ns, 1,760 B | 1,350 ns, 1,363 ns, 1,536 B | 1,294 ns, 1,760 B |
+| Large  | 20,509 ns, 20,633 ns, 24,256 B | 20,129 ns, 20,601 ns, 24,224 B | 18,433 ns, 18,979 ns, 23,504 B | 19,244 ns, 19,816 ns, 20,360 B | 18,217 ns, 23,504 B |
 
-The 1043 column is from an earlier session of the same machine, so compare it with the others loosely. End to end,
-`JavascriptCompiler.Compile` takes 590 to 1,000 μs on x64 for all three versions, within its noise; *Large* allocates
-46.3 KB with 1077 against 47.0 KB with 1059, and *Small* and *Medium* (6.8 KB and 9.3 KB) change by less than their
-noise.
+The 1043 and 1083 columns are from other sessions of the same machine than the three in the middle, so compare them
+loosely.
 
-The full table for the preview on Arm64:
+The full tables for the preview, Arm64 and x64:
 
-| Method | Size   | Mean         | Error       | StdDev      | Median       | Ratio | Gen0     | Gen1    | Allocated | Alloc Ratio |
-|------- |------- |-------------:|------------:|------------:|-------------:|------:|---------:|--------:|----------:|------------:|
-| Antlr  | Small  |   6,497.6 ns |    36.28 ns |    64.48 ns |   6,495.6 ns |  1.00 |   2.8534 |  0.0839 |   23928 B |        1.00 |
-| Parlot | Small  |     106.3 ns |     0.75 ns |     1.29 ns |     106.5 ns |  0.02 |   0.0478 |       - |     400 B |        0.02 |
-| Antlr  | Medium |  31,387.6 ns |    98.59 ns |   167.42 ns |  31,380.1 ns |  1.00 |  12.6343 |  1.0986 |  106144 B |        1.00 |
-| Parlot | Medium |     618.1 ns |     3.35 ns |     5.60 ns |     617.3 ns |  0.02 |   0.2165 |       - |    1816 B |        0.02 |
-| Antlr  | Large  | 547,052.0 ns | 2,647.30 ns | 4,636.53 ns | 547,767.5 ns |  1.00 | 191.4063 | 83.9844 | 1602512 B |        1.00 |
-| Parlot | Large  |   9,291.6 ns |    67.16 ns |   119.39 ns |   9,232.3 ns |  0.02 |   2.8992 |  0.0916 |   24256 B |        0.02 |
+| Method | Size   | Mean          | Error        | StdDev       | Ratio | Gen0     | Gen1    | Allocated | Alloc Ratio |
+|------- |------- |--------------:|-------------:|-------------:|------:|---------:|--------:|----------:|------------:|
+| Antlr  | Small  |   6,375.48 ns |    26.847 ns |    25.112 ns |  1.00 |   2.8534 |  0.0839 |   23928 B |        1.00 |
+| Parlot | Small  |      87.84 ns |     0.684 ns |     0.640 ns |  0.01 |   0.0411 |       - |     344 B |        0.01 |
+| Antlr  | Medium |  30,652.40 ns |   162.209 ns |   151.730 ns |  1.00 |  12.6343 |  1.0986 |  106144 B |        1.00 |
+| Parlot | Medium |     591.00 ns |     5.245 ns |     4.906 ns |  0.02 |   0.2098 |       - |    1760 B |        0.02 |
+| Antlr  | Large  | 523,523.18 ns | 3,269.301 ns | 3,058.106 ns |  1.00 | 191.4063 | 83.9844 | 1602512 B |        1.00 |
+| Parlot | Large  |   8,401.05 ns |    51.907 ns |    48.554 ns |  0.02 |   2.8076 |  0.0916 |   23504 B |        0.01 |
+
+| Method | Size   | Mean           | Error        | StdDev       | Ratio | RatioSD | Gen0    | Gen1    | Allocated | Alloc Ratio |
+|------- |------- |---------------:|-------------:|-------------:|------:|--------:|--------:|--------:|----------:|------------:|
+| Antlr  | Small  |    15,478.3 ns |    306.60 ns |    612.31 ns |  1.00 |    0.06 |  1.4191 |  0.0305 |   23928 B |        1.00 |
+| Parlot | Small  |       192.1 ns |      3.82 ns |      3.76 ns |  0.01 |    0.00 |  0.0205 |       - |     344 B |        0.01 |
+| Antlr  | Medium |    71,246.9 ns |  1,383.90 ns |  1,699.56 ns |  1.00 |    0.03 |  6.2256 |  0.4883 |  106144 B |        1.00 |
+| Parlot | Medium |     1,293.6 ns |     22.20 ns |     19.68 ns |  0.02 |    0.00 |  0.1049 |       - |    1760 B |        0.02 |
+| Antlr  | Large  | 1,100,719.2 ns | 19,817.41 ns | 17,567.62 ns |  1.00 |    0.02 | 95.7031 | 50.7813 | 1602512 B |        1.00 |
+| Parlot | Large  |    18,216.5 ns |    102.46 ns |     79.99 ns |  0.02 |    0.00 |  1.4038 |  0.0305 |   23504 B |        0.01 |
 
 ### `JavascriptCompiler.Compile`, end to end
 
-Parsing, IL emission and the creation of a collectible dynamic assembly and type. Arm64, preview,
-`LaunchCount=4`:
+Parsing, IL emission and the creation of a collectible dynamic assembly and type. Arm64, preview:
 
-| Method | Size   | Mean     | Error   | StdDev   | Median   | Ratio | RatioSD | Gen0     | Gen1    | Gen2   | Allocated  | Alloc Ratio |
-|------- |------- |---------:|--------:|---------:|---------:|------:|--------:|---------:|--------:|-------:|-----------:|------------:|
-| Antlr  | Small  | 173.3 μs | 2.25 μs | 13.40 μs | 171.9 μs |  1.01 |    0.11 |   6.3477 |  5.6152 | 5.6152 |   31.25 KB |        1.00 |
-| Parlot | Small  | 214.6 μs | 6.03 μs | 36.36 μs | 211.0 μs |  1.25 |    0.23 |   1.4648 |  0.9766 | 0.9766 |    7.44 KB |        0.24 |
-| Antlr  | Medium | 199.9 μs | 2.48 μs | 14.81 μs | 199.1 μs |  1.01 |    0.10 |  15.6250 |  5.3711 | 5.3711 |  115.24 KB |        1.00 |
-| Parlot | Medium | 203.2 μs | 4.55 μs | 27.46 μs | 201.9 μs |  1.02 |    0.16 |   3.4180 |  3.4180 | 3.4180 |   10.29 KB |        0.09 |
-| Antlr  | Large  | 845.3 μs | 4.82 μs | 18.14 μs | 848.2 μs |  1.00 |    0.03 | 199.2188 | 95.7031 | 3.9063 | 1631.97 KB |        1.00 |
-| Parlot | Large  | 255.2 μs | 2.82 μs | 17.02 μs | 251.3 μs |  0.30 |    0.02 |   6.3477 |  2.4414 | 2.4414 |    47.2 KB |        0.03 |
+| Method | Size   | Mean     | Error    | StdDev   | Median   | Ratio | RatioSD | Gen0     | Gen1    | Gen2   | Allocated  | Alloc Ratio |
+|------- |------- |---------:|---------:|---------:|---------:|------:|--------:|---------:|--------:|-------:|-----------:|------------:|
+| Antlr  | Small  | 159.3 μs |  4.09 μs | 12.07 μs | 161.4 μs |  1.01 |    0.11 |   4.8828 |  2.4414 | 2.4414 |   31.19 KB |        1.00 |
+| Parlot | Small  | 211.3 μs | 11.63 μs | 34.30 μs | 220.5 μs |  1.33 |    0.24 |   4.8828 |  4.8828 | 4.8828 |    7.55 KB |        0.24 |
+| Antlr  | Medium | 179.1 μs |  4.09 μs | 12.07 μs | 180.6 μs |  1.00 |    0.09 |  15.6250 |  4.3945 | 4.3945 |  114.92 KB |        1.00 |
+| Parlot | Medium | 190.0 μs |  9.10 μs | 26.82 μs | 181.4 μs |  1.07 |    0.17 |   4.6387 |  4.6387 | 4.6387 |   10.15 KB |        0.09 |
+| Antlr  | Large  | 758.8 μs |  5.76 μs |  5.10 μs | 758.1 μs |  1.00 |    0.01 | 199.2188 | 93.7500 | 3.9063 | 1632.83 KB |        1.00 |
+| Parlot | Large  | 237.9 μs |  5.02 μs | 14.81 μs | 231.8 μs |  0.31 |    0.02 |   7.8125 |  4.3945 | 4.3945 |   47.06 KB |        0.03 |
 
-x64, Parlot 2.1.0 (the compile and search benchmarks were not rerun with the preview there; on Arm64 the preview
-changed them by less than their noise, as the parse is a small part of them):
+x64, preview:
 
-| Method | Size   | Mean       | Error    | StdDev   | Median     | Ratio | RatioSD | Gen0     | Gen1    | Gen2   | Allocated  | Alloc Ratio |
-|------- |------- |-----------:|---------:|---------:|-----------:|------:|--------:|---------:|--------:|-------:|-----------:|------------:|
-| Antlr  | Small  |   644.2 μs | 12.86 μs | 23.19 μs |   649.7 μs |  1.00 |    0.05 |   3.9063 |  3.9063 | 3.9063 |   30.56 KB |        1.00 |
-| Parlot | Small  |   702.8 μs | 14.00 μs | 25.24 μs |   699.8 μs |  1.09 |    0.06 |   1.9531 |  1.9531 | 1.9531 |    6.84 KB |        0.22 |
-| Antlr  | Medium |   922.6 μs | 24.19 μs | 68.24 μs |   917.4 μs |  1.01 |    0.10 |   9.7656 |  3.9063 | 3.9063 |   114.4 KB |        1.00 |
-| Parlot | Medium |   722.1 μs | 16.43 μs | 46.60 μs |   715.4 μs |  0.79 |    0.08 |   3.9063 |  3.9063 | 3.9063 |    9.97 KB |        0.09 |
-| Antlr  | Large  | 5,394.4 μs | 43.16 μs | 74.46 μs | 5,371.6 μs |  1.00 |    0.02 | 101.5625 | 31.2500 | 3.9063 | 1633.34 KB |        1.00 |
-| Parlot | Large  | 1,022.2 μs | 20.42 μs | 54.86 μs | 1,046.2 μs |  0.19 |    0.01 |   3.9063 |  3.9063 | 3.9063 |    52.2 KB |        0.03 |
+| Method | Size   | Mean       | Error    | StdDev   | Ratio | RatioSD | Gen0    | Gen1    | Gen2   | Allocated  | Alloc Ratio |
+|------- |------- |-----------:|---------:|---------:|------:|--------:|--------:|--------:|-------:|-----------:|------------:|
+| Antlr  | Small  |   643.6 μs | 12.78 μs | 12.55 μs |  1.00 |    0.03 |  3.9063 |  3.9063 | 3.9063 |   30.52 KB |        1.00 |
+| Parlot | Small  |   598.0 μs | 11.92 μs | 18.56 μs |  0.93 |    0.03 |  1.9531 |  1.9531 | 1.9531 |    6.57 KB |        0.22 |
+| Antlr  | Medium |   694.7 μs | 13.73 μs | 32.62 μs |  1.00 |    0.07 |  9.7656 |  3.9063 | 3.9063 |  115.43 KB |        1.00 |
+| Parlot | Medium |   615.4 μs | 11.92 μs | 17.83 μs |  0.89 |    0.05 |  3.9063 |  3.9063 | 3.9063 |    9.48 KB |        0.08 |
+| Antlr  | Large  | 5,189.2 μs | 69.63 μs | 58.15 μs |  1.00 |    0.02 | 93.7500 | 39.0625 |      - | 1632.26 KB |        1.00 |
+| Parlot | Large  |   832.5 μs | 15.86 μs | 20.05 μs |  0.16 |    0.00 |  3.9063 |  3.9063 | 3.9063 |   46.91 KB |        0.03 |
 
-Creating the dynamic assembly and type costs about 170 μs on Arm64 and 630 μs on x64 whatever the expression, so
-the parser shows on larger expressions: *Large* compiles 3.3 times faster on Arm64 and 5.3 times on x64, *Medium*
-the same on Arm64 and 21% faster on x64. Allocations drop by 76% to 97%.
+Creating the dynamic assembly and type costs about 160 μs on Arm64 and 600 μs on x64 whatever the expression, so
+the parser shows on larger expressions: *Large* compiles 3.2 times faster on Arm64 and 6.2 times on x64, and *Medium*
+takes the same time on Arm64 (the medians are 181 μs for both) and is 11% faster on x64. Allocations drop by 76% to
+97%.
 
-*Small* is 9% (x64) to 25% (Arm64) slower with Parlot, which is not the parser: it parses 6 μs (Arm64) faster and
-emits the same IL. Every compilation creates a collectible assembly that only a garbage collection reclaims, and
-with fewer allocations there are fewer gen0 collections, so every collection Parlot's loop gets is a gen2 one
-(Gen0 = Gen2 above). Adding the allocations of the ANTLR parser back (100 arrays of 200 bytes per call) made the
+*Small* is 33% slower on Arm64 with Parlot in this run and 7% faster on x64, which is not the parser: it parses 6 μs
+(Arm64) faster and emits the same IL. Every compilation creates a collectible assembly that only a garbage collection
+reclaims, and with fewer allocations there are fewer gen0 collections, so every collection Parlot's loop gets is a gen2
+one (Gen0 = Gen2 above). Adding the allocations of the ANTLR parser back (100 arrays of 200 bytes per call) made the
 Parlot 2.1.0 version 3% faster than ANTLR on Arm64 (170.7 μs median against 177.3 μs, `LaunchCount=2`). This is an
 artifact of compiling thousands of expressions in a loop; an application compiling an expression now and then
 doesn't see it.
@@ -184,43 +189,45 @@ A `TermQuery` matching every document of an in-memory index, sorted by an expres
 does: the parser plays no part. `CompileAntlr` and `CompileParlot` compile the expression for every search, as an
 application taking it from each request would. Arm64, preview:
 
-| Method        | Documents | Size   | Mean         | Error     | StdDev     | Ratio | RatioSD | Gen0     | Gen1    | Gen2   | Allocated  | Alloc Ratio |
-|-------------- |---------- |------- |-------------:|----------:|-----------:|------:|--------:|---------:|--------:|-------:|-----------:|------------:|
-| Precompiled   | 1000      | Medium |     78.23 μs |  0.142 μs |   0.240 μs |  0.17 |    0.00 |   1.3428 |       - |      - |   11.73 KB |        0.09 |
-| CompileAntlr  | 1000      | Medium |    449.40 μs |  5.581 μs |   9.477 μs |  1.00 |    0.03 |  18.5547 |  4.8828 | 4.8828 |  127.11 KB |        1.00 |
-| CompileParlot | 1000      | Medium |    452.28 μs |  8.948 μs |  18.678 μs |  1.01 |    0.05 |   2.9297 |  1.4648 | 1.4648 |   21.46 KB |        0.17 |
-| Precompiled   | 1000      | Large  |    453.42 μs |  2.783 μs |   4.874 μs |  0.20 |    0.01 |   1.4648 |       - |      - |   12.01 KB |       0.007 |
-| CompileAntlr  | 1000      | Large  |  2,285.77 μs | 38.989 μs |  69.303 μs |  1.00 |    0.04 | 203.1250 | 74.2188 | 3.9063 | 1646.39 KB |       1.000 |
-| CompileParlot | 1000      | Large  |  1,602.14 μs | 24.555 μs |  41.697 μs |  0.70 |    0.03 |  11.7188 |  7.8125 | 5.8594 |   59.51 KB |       0.036 |
-| Precompiled   | 100000    | Medium |  7,444.47 μs |  6.747 μs |  11.993 μs |  0.93 |    0.00 |        - |       - |      - |   11.77 KB |        0.09 |
-| CompileAntlr  | 100000    | Medium |  7,970.31 μs | 20.045 μs |  34.576 μs |  1.00 |    0.01 |        - |       - |      - |  125.86 KB |        1.00 |
-| CompileParlot | 100000    | Medium |  7,841.53 μs | 22.005 μs |  38.539 μs |  0.98 |    0.01 |        - |       - |      - |   21.08 KB |        0.17 |
-| Precompiled   | 100000    | Large  | 44,932.14 μs | 71.401 μs | 117.314 μs |  0.95 |    0.00 |        - |       - |      - |   12.05 KB |       0.007 |
-| CompileAntlr  | 100000    | Large  | 47,352.18 μs | 58.404 μs |  99.174 μs |  1.00 |    0.00 | 181.8182 | 90.9091 |      - | 1645.07 KB |       1.000 |
-| CompileParlot | 100000    | Large  | 46,925.25 μs | 75.243 μs | 125.713 μs |  0.99 |    0.00 |        - |       - |      - |   59.27 KB |       0.036 |
+| Method        | Documents | Size   | Mean         | Error      | StdDev     | Ratio | RatioSD | Gen0     | Gen1    | Gen2   | Allocated  | Alloc Ratio |
+|-------------- |---------- |------- |-------------:|-----------:|-----------:|------:|--------:|---------:|--------:|-------:|-----------:|------------:|
+| Precompiled   | 1000      | Medium |     76.78 μs |   0.384 μs |   0.359 μs |  0.18 |    0.00 |   1.3428 |       - |      - |   11.73 KB |        0.09 |
+| CompileAntlr  | 1000      | Medium |    419.70 μs |   6.448 μs |   6.032 μs |  1.00 |    0.02 |  17.5781 |  4.8828 | 4.8828 |  127.18 KB |        1.00 |
+| CompileParlot | 1000      | Medium |    414.86 μs |   8.199 μs |  13.472 μs |  0.99 |    0.03 |   2.9297 |  1.4648 | 1.4648 |   21.46 KB |        0.17 |
+| Precompiled   | 1000      | Large  |    440.80 μs |   1.312 μs |   1.227 μs |  0.21 |    0.00 |   1.4648 |       - |      - |   12.01 KB |       0.007 |
+| CompileAntlr  | 1000      | Large  |  2,087.88 μs |  16.169 μs |  15.125 μs |  1.00 |    0.01 | 195.3125 | 70.3125 |      - | 1644.99 KB |       1.000 |
+| CompileParlot | 1000      | Large  |  1,504.97 μs |  10.788 μs |   9.563 μs |  0.72 |    0.01 |   7.8125 |  3.9063 | 3.9063 |   59.32 KB |       0.036 |
+| Precompiled   | 100000    | Medium |  7,110.32 μs |  50.140 μs |  46.901 μs |  0.94 |    0.01 |        - |       - |      - |   11.77 KB |        0.09 |
+| CompileAntlr  | 100000    | Medium |  7,556.37 μs |  40.126 μs |  37.534 μs |  1.00 |    0.01 |   7.8125 |       - |      - |  125.91 KB |        1.00 |
+| CompileParlot | 100000    | Medium |  7,426.26 μs |  67.508 μs |  63.147 μs |  0.98 |    0.01 |        - |       - |      - |   21.03 KB |        0.17 |
+| Precompiled   | 100000    | Large  | 44,091.11 μs | 204.657 μs | 191.436 μs |  0.96 |    0.01 |        - |       - |      - |   12.05 KB |       0.007 |
+| CompileAntlr  | 100000    | Large  | 46,158.01 μs | 229.397 μs | 214.578 μs |  1.00 |    0.01 | 181.8182 | 90.9091 |      - | 1646.87 KB |       1.000 |
+| CompileParlot | 100000    | Large  | 45,234.87 μs | 270.948 μs | 253.445 μs |  0.98 |    0.01 |        - |       - |      - |   59.17 KB |       0.036 |
 
-x64, Parlot 2.1.0:
+x64, preview:
 
-| Method        | Documents | Size   | Mean         | Error     | StdDev      | Ratio | RatioSD | Gen0    | Gen1    | Gen2   | Allocated  | Alloc Ratio |
-|-------------- |---------- |------- |-------------:|----------:|------------:|------:|--------:|--------:|--------:|-------:|-----------:|------------:|
-| Precompiled   | 1000      | Medium |     163.1 μs |   0.64 μs |     1.12 μs |  0.09 |    0.00 |  0.4883 |       - |      - |   11.73 KB |        0.09 |
-| CompileAntlr  | 1000      | Medium |   1,809.4 μs |  14.70 μs |    25.75 μs |  1.00 |    0.02 |  7.8125 |  3.9063 | 3.9063 |  125.96 KB |        1.00 |
-| CompileParlot | 1000      | Medium |   1,450.6 μs |  28.36 μs |    52.56 μs |  0.80 |    0.03 |  5.8594 |  5.8594 | 5.8594 |   21.87 KB |        0.17 |
-| Precompiled   | 1000      | Large  |   1,083.5 μs |   2.88 μs |     5.05 μs |  0.12 |    0.00 |       - |       - |      - |   12.01 KB |       0.007 |
-| CompileAntlr  | 1000      | Large  |   9,028.2 μs |  26.24 μs |    45.27 μs |  1.00 |    0.01 | 93.7500 | 62.5000 |      - | 1645.62 KB |       1.000 |
-| CompileParlot | 1000      | Large  |   4,565.3 μs |  18.39 μs |    31.73 μs |  0.51 |    0.00 |       - |       - |      - |   64.43 KB |       0.039 |
-| Precompiled   | 100000    | Medium |  15,851.9 μs |  54.68 μs |    95.77 μs |  0.90 |    0.01 |       - |       - |      - |   11.77 KB |        0.09 |
-| CompileAntlr  | 100000    | Medium |  17,566.0 μs |  54.52 μs |    94.04 μs |  1.00 |    0.01 |       - |       - |      - |   126.1 KB |        1.00 |
-| CompileParlot | 100000    | Medium |  17,039.8 μs |  48.47 μs |    79.63 μs |  0.97 |    0.01 |       - |       - |      - |  21.48 KB |        0.17 |
-| Precompiled   | 100000    | Large  | 109,653.7 μs | 502.41 μs |   866.64 μs |  0.90 |    0.01 |       - |       - |      - |   12.05 KB |       0.007 |
-| CompileAntlr  | 100000    | Large  | 121,845.6 μs | 649.45 μs | 1,120.28 μs |  1.00 |    0.01 |       - |       - |      - |  1643.9 KB |       1.000 |
-| CompileParlot | 100000    | Large  | 120,896.2 μs | 435.11 μs |   738.85 μs |  0.99 |    0.01 |       - |       - |      - |   64.41 KB |       0.039 |
+| Method        | Documents | Size   | Mean         | Error       | StdDev      | Median       | Ratio | RatioSD | Gen0    | Gen1    | Gen2   | Allocated  | Alloc Ratio |
+|-------------- |---------- |------- |-------------:|------------:|------------:|-------------:|------:|--------:|--------:|--------:|-------:|-----------:|------------:|
+| Precompiled   | 1000      | Medium |     161.5 μs |     0.99 μs |     0.88 μs |     161.5 μs |  0.09 |    0.00 |  0.4883 |       - |      - |   11.73 KB |        0.09 |
+| CompileAntlr  | 1000      | Medium |   1,851.8 μs |    36.53 μs |    42.07 μs |   1,848.5 μs |  1.00 |    0.03 |  7.8125 |  3.9063 | 3.9063 |   125.9 KB |        1.00 |
+| CompileParlot | 1000      | Medium |   1,587.4 μs |    31.66 μs |    66.79 μs |   1,603.4 μs |  0.86 |    0.04 |  5.8594 |  5.8594 | 5.8594 |   21.01 KB |        0.17 |
+| Precompiled   | 1000      | Large  |   1,219.9 μs |    53.42 μs |   157.52 μs |   1,135.8 μs |  0.13 |    0.02 |       - |       - |      - |   12.01 KB |       0.007 |
+| CompileAntlr  | 1000      | Large  |   9,094.4 μs |   180.39 μs |   200.51 μs |   9,046.9 μs |  1.00 |    0.03 | 93.7500 | 54.6875 |      - | 1645.49 KB |       1.000 |
+| CompileParlot | 1000      | Large  |   4,537.9 μs |    72.20 μs |    64.00 μs |   4,519.3 μs |  0.50 |    0.01 |       - |       - |      - |   59.17 KB |       0.036 |
+| Precompiled   | 100000    | Medium |  16,353.5 μs |   262.70 μs |   269.77 μs |  16,276.5 μs |  0.87 |    0.04 |       - |       - |      - |   11.77 KB |        0.09 |
+| CompileAntlr  | 100000    | Medium |  18,796.5 μs |   370.55 μs |   901.96 μs |  18,475.4 μs |  1.00 |    0.06 |       - |       - |      - |  125.91 KB |        1.00 |
+| CompileParlot | 100000    | Medium |  17,458.2 μs |   288.74 μs |   255.96 μs |  17,419.4 μs |  0.93 |    0.04 |       - |       - |      - |   20.98 KB |        0.17 |
+| Precompiled   | 100000    | Large  | 107,221.1 μs |   669.58 μs |   593.56 μs | 107,268.2 μs |  0.95 |    0.01 |       - |       - |      - |   12.05 KB |       0.007 |
+| CompileAntlr  | 100000    | Large  | 112,530.1 μs |   485.90 μs |   454.51 μs | 112,400.3 μs |  1.00 |    0.01 |       - |       - |      - |  1643.9 KB |       1.000 |
+| CompileParlot | 100000    | Large  | 119,140.1 μs | 1,704.79 μs | 1,594.66 μs | 118,803.0 μs |  1.06 |    0.01 |       - |       - |      - |   59.17 KB |       0.036 |
 
 The honest summary: the effective gain depends on how often expressions are compiled. With a cached expression
 there is none, as the parser is not involved. Compiling for each search on a small index or result set makes the
-search 30% (Arm64) to 49% (x64) faster for the large expression, and for the medium one from no change (Arm64) to 20% faster (x64). On 100,000
-documents, evaluating the expression per document dominates and the gain is 1% to 3%. In every case the
-allocations per compiled search drop from 126 KB to 21 KB (medium) and from 1.6 MB to 59 KB (large), which
+search 28% (Arm64) to 50% (x64) faster for the large expression, and for the medium one from no change (Arm64) to 14%
+faster (x64). On 100,000 documents, evaluating the expression per document dominates, and the difference is within
+what one run can tell: 2% faster on Arm64, and on x64 7% faster for the medium expression and 6% slower for the large
+one, which can't come from the parser since the IL is the same and compiling is about 4 ms faster. In every
+case the allocations per compiled search drop from 126 KB to 21 KB (medium) and from 1.6 MB to 59 KB (large), which
 matters more for a server than the time.
 
 ## Tests
@@ -277,7 +284,7 @@ nested conditionals don't overflow the stack).
    and they have to be pinned.
 
 What worked well: `Operators()` replaced the ten nested operator levels and the conditional with one table and made
-parsing 2.1 to 2.6 times faster again, the furthest failure of the generated entry point located syntax errors
+parsing 2.3 to 2.9 times faster again, the furthest failure of the generated entry point located syntax errors
 without any grammar change, `Terms.Scan` ported the ANTLR lexer rules (longest match of `HEX`/`OCTAL`/`DECIMAL`,
 dotted names) one to one, `WithWhiteSpaceSet(WhiteSpaceSet.SpaceTabCrLf)` is exactly the grammar's white space, and
 the existing tests pass unchanged (only a stale ANTLR exclusion was dropped from `TestApiConsistency`).
