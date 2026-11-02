@@ -112,9 +112,10 @@ lower than with 2.1.0, which built a list per operator level.
 Preview-1059, with the furthest failure instead of the position callbacks and the conditional as a `Ternary`
 level, parses as fast as 1043 and allocates 32 bytes less per parse (the parse state object). Preview.1077 parses 7%
 to 13% faster than 1059 (its operator table no longer looks up an operator after a prefix-only climb, and its
-`Ternary` level keeps exception handling out of the climb). Pooling the names with `ToPooledString()` then allocates
-12% to 16% less, the strings of the names, for 1% to 9% of the time back: a lookup costs about as much as creating a
-short string, and the benchmark drops the names that a compiled expression keeps. x64, two runs of each, `LaunchCount=2`:
+`Ternary` level keeps exception handling out of the climb). Pooling the names with `ToPooledString()` was tried and
+dropped: it allocated 12% to 16% less, the strings of the names, but gave back 1% to 9% of the time, as a lookup costs
+about as much as creating a short string, and compiling an expression showed neither. x64, two runs of each,
+`LaunchCount=2`:
 
 | Size   | 1043 | 1059 | 1077 | 1077, pooled names |
 |--------|-----:|-----:|-----:|-------------------:|
@@ -124,8 +125,8 @@ short string, and the benchmark drops the names that a compiled expression keeps
 
 The 1043 column is from an earlier session of the same machine, so compare it with the others loosely. End to end,
 `JavascriptCompiler.Compile` takes 590 to 1,000 μs on x64 for all three versions, within its noise; *Large* allocates
-43.8 KB with 1077 and pooled names against 47.0 KB with 1059, and *Small* and *Medium* (6.8 KB and 9.3 KB) change by
-less than their noise.
+46.3 KB with 1077 against 47.0 KB with 1059, and *Small* and *Medium* (6.8 KB and 9.3 KB) change by less than their
+noise.
 
 The full table for the preview on Arm64:
 
@@ -278,6 +279,5 @@ nested conditionals don't overflow the stack).
 What worked well: `Operators()` replaced the ten nested operator levels and the conditional with one table and made
 parsing 2.1 to 2.6 times faster again, the furthest failure of the generated entry point located syntax errors
 without any grammar change, `Terms.Scan` ported the ANTLR lexer rules (longest match of `HEX`/`OCTAL`/`DECIMAL`,
-dotted names) one to one, `ToPooledString()` shares the strings of the names the compiled expressions keep,
-`WithWhiteSpaceSet(WhiteSpaceSet.SpaceTabCrLf)` is exactly the grammar's white space, and
+dotted names) one to one, `WithWhiteSpaceSet(WhiteSpaceSet.SpaceTabCrLf)` is exactly the grammar's white space, and
 the existing tests pass unchanged (only a stale ANTLR exclusion was dropped from `TestApiConsistency`).
