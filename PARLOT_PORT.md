@@ -12,7 +12,7 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
 - **No Java to build.** `Antlr4BuildTasks` ran the ANTLR tool, a Java program, on every build.
 - **For now, a preview package to build.** The grammar uses `Operators()` with a `Ternary` level and the furthest
   failure of the generated entry point, which are only in the Parlot previews (`Parlot.SourceGenerator`
-  2.0.0-preview-1059, from the Parlot preview feed added to `NuGet.config`). The PR should
+  2.0.0-preview.1077, from the Parlot preview feed added to `NuGet.config`). The PR should
   move to the next Parlot release before it merges; consumers of the Lucene.NET package are not affected either way.
 - **No public ANTLR types.** The ANTLR 4 migration (#996, not released yet) made the generated `JavascriptLexer`,
   `JavascriptParser`, `JavascriptBaseListener` and `IJavascriptListener` public, exposing `Antlr4.Runtime` types. They
@@ -21,7 +21,7 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
   (an operator chain such as `a + b - c` is one node, a parenthesized expression is its own node), and the IL
   emission was retargeted from the parse-tree listener to that tree without changing what it emits. A differential
   test (in the history of this branch, removed with ANTLR, and run again against the benchmark's ANTLR copy after
-  the move to `Operators()` and again with preview-1059) compiled 60,000 random expressions with both parsers and asserted byte-identical
+  the move to `Operators()` and again with preview-1059 and preview.1077) compiled 60,000 random expressions with both parsers and asserted byte-identical
   `Evaluate` IL and identical variables, and 150,000 mutated ones were accepted or rejected alike.
 - **Syntax errors as in the released versions.** `ParseException.ErrorOffset` is the offset of the first token that
   cannot be parsed, with the messages of the ANTLR 3 parser of 4.8.0-beta00017 (`unexpected end of expression.`,
@@ -29,14 +29,16 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
   are also Java Lucene's. The ANTLR 4 port reported the start of the enclosing grammar rule instead (often 0, for
   example for `100 100`) with ANTLR's own messages such as `Exception of type 'Antlr4.Runtime.NoViableAltException'
   was thrown.`. The offset is absolute, where the ANTLR 3 parser used the column within the line. It is the
-  furthest failure the generated `TryParse` returns: the 1059 version gives the same offsets and messages as the
-  earlier callbacks recording each token's position, on 104,232 rejected mutated expressions.
+  furthest failure the generated `TryParse` returns: preview-1059 and preview.1077 give the same offsets and messages
+  as the earlier callbacks recording each token's position, on 104,232 rejected mutated expressions.
 - **Unknown characters are rejected.** The ANTLR 4 lexer dropped the characters it had no token for, with a warning
   on the console, so that `$a`, `a=b`, `a+b#` or `a<=b=` compiled. They are syntax errors again, as in the
   ANTLR 3 parser and Java Lucene. White space is space, tab, CR and LF, as in the grammar's `WS` rule, so a form
   feed or a vertical tab is an unexpected character too.
 - **Deep nesting is a syntax error, not a crash (denial of service fixed).** The parser checks the stack in its
-  recursive rules and throws a `ParseException` where it would overflow. The ANTLR 4 parser never checks the stack,
+  recursive rules and throws a `ParseException` where it would overflow. It reads chains of prefix operators and of
+  conditionals in their false branch (`a ? b : c ? d : e`) in a loop, and the compiler compiles these chains in a
+  loop too, so they have no limit; it also checks the stack, in case a tree were deeper than it can recurse. The ANTLR 4 parser never checks the stack,
   so a deeply nested expression overflowed it, and .NET doesn't let code catch a stack overflow: the runtime
   terminates the whole process, whatever `catch` blocks surround `JavascriptCompiler.Compile`. An application
   that compiles expressions taken from requests could be stopped by a 2 KB expression of parentheses (CWE-674,
@@ -45,11 +47,13 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
 
   | Maximum depth that compiles | ANTLR 4, 1 MB stack | Parlot, 1 MB stack | ANTLR 4, 8 MB stack | Parlot, 8 MB stack |
   |---|--:|--:|--:|--:|
-  | `((((1))))` | 250, then crash | 927 | 2,007, then crash | 8,281 |
-  | `----1` | 8,120, then crash | 1,823 | over 40,000 | 16,159 |
+  | `((((1))))` | 250, then crash | 1,167 | 2,007, then crash | 10,335 |
+  | `-(-(-(1)))` | not measured | 1,007 | not measured | 9,951 |
+  | `----1` | 8,120, then crash | no limit (200,000 tested) | over 40,000 | no limit |
 
-  Chains of prefix operators recurse in Parlot 1059, hence the lower limit there; thousands of consecutive unary
-  operators are not a realistic expression.
+  With preview-1059, which recursed on each prefix operator, `----1` stopped at 1,823 and 16,159 operators, and
+  `((1))` at 927 and 8,281. Its `Ternary` level read the false branches in a loop but the compiler recursed on them,
+  so 100,000 nested `0?1:` crashed the process when compiled; the compiler loops on them since preview.1077.
 
 ## Design
 
@@ -58,7 +62,7 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
 | `JS/JavascriptExpressionParser.parlot.cs` | The grammar, a port of `Javascript.g4`: one `Operators()` precedence table for the unary, the ten binary and the conditional levels. Build-only: read by the generator, not compiled. |
 | `JS/JavascriptExpressionParser.cs` | The generated `TryParse` declaration, which returns the offset of the furthest failure, the lexer rules (`NAMESPACE_ID` and the longest of `HEX`, `OCTAL`, `DECIMAL`, as `Terms.Scan` scanners), and the error messages. |
 | `JS/JavascriptAst.cs` | The syntax tree. The binary operator factories extend a chain of the same level unless it is in parentheses, which keeps the shape of the ANTLR parse tree. |
-| `JS/JavascriptCompiler.cs` | `JavascriptNodeCompiler` replaces `JavascriptListener`, emitting the same IL per node. |
+| `JS/JavascriptCompiler.cs` | `JavascriptNodeCompiler` replaces `JavascriptListener`, emitting the same IL per node, with chains of unary operators and of conditionals compiled in a loop. |
 
 **Why the source generator rather than the `Parlot` runtime package:** Lucene.NET is a port with few dependencies, and
 the expressions module is compiled once per expression rather than parsed on a hot path, so a new runtime
@@ -106,14 +110,22 @@ again: 51 to 61 times faster than ANTLR on Arm64, 52 to 63 times on x64. Allocat
 lower than with 2.1.0, which built a list per operator level.
 
 Preview-1059, with the furthest failure instead of the position callbacks and the conditional as a `Ternary`
-level, parses as fast as 1043 and allocates 32 bytes less per parse (the parse state object). x64, two runs of each
-version, `LaunchCount=2`:
+level, parses as fast as 1043 and allocates 32 bytes less per parse (the parse state object). Preview.1077 parses 7%
+to 13% faster than 1059 (its operator table no longer looks up an operator after a prefix-only climb, and its
+`Ternary` level keeps exception handling out of the climb). Pooling the names with `ToPooledString()` then allocates
+12% to 16% less, the strings of the names, for 1% to 9% of the time back: a lookup costs about as much as creating a
+short string, and the benchmark drops the names that a compiled expression keeps. x64, two runs of each, `LaunchCount=2`:
 
-| Size   | 1043 | 1059 |
-|--------|-----:|-----:|
-| Small  | 211 ns, 208 ns, 400 B | 213 ns, 210 ns, 368 B |
-| Medium | 1,314 ns, 1,311 ns, 1,816 B | 1,356 ns, 1,305 ns, 1,784 B |
-| Large  | 20,509 ns, 20,633 ns, 24,256 B | 19,757 ns, 19,839 ns, 24,224 B |
+| Size   | 1043 | 1059 | 1077 | 1077, pooled names |
+|--------|-----:|-----:|-----:|-------------------:|
+| Small  | 211 ns, 208 ns, 400 B | 222 ns, 228 ns, 368 B | 192 ns, 199 ns, 344 B | 217 ns, 216 ns, 304 B |
+| Medium | 1,314 ns, 1,311 ns, 1,816 B | 1,421 ns, 1,379 ns, 1,784 B | 1,324 ns, 1,353 ns, 1,760 B | 1,350 ns, 1,363 ns, 1,536 B |
+| Large  | 20,509 ns, 20,633 ns, 24,256 B | 20,129 ns, 20,601 ns, 24,224 B | 18,433 ns, 18,979 ns, 23,504 B | 19,244 ns, 19,816 ns, 20,360 B |
+
+The 1043 column is from an earlier session of the same machine, so compare it with the others loosely. End to end,
+`JavascriptCompiler.Compile` takes 590 to 1,000 μs on x64 for all three versions, within its noise; *Large* allocates
+43.8 KB with 1077 and pooled names against 47.0 KB with 1059, and *Small* and *Medium* (6.8 KB and 9.3 KB) change by
+less than their noise.
 
 The full table for the preview on Arm64:
 
@@ -214,14 +226,17 @@ matters more for a server than the time.
 
 `dotnet test src/Lucene.Net.Tests.Expressions` passes on net10.0 and net8.0 (macOS and Windows), and on net48 and
 net472 on Windows (`-p:TestFrameworks=true -p:IncludeNetFrameworkTargets=true`), which run the `net462` and the
-`netstandard2.0` builds: 106 passed, 5 skipped (the existing ignored recursion tests) on each. New:
-`TestJavascriptCompiler.TestParseErrorOffsets` and `TestJavascriptCompiler.TestDeepNesting`.
+`netstandard2.0` builds: 107 passed, 5 skipped (the existing ignored recursion tests) on each. New:
+`TestJavascriptCompiler.TestParseErrorOffsets`, `TestJavascriptCompiler.TestDeepNesting` (100,000 nested parentheses
+are a `ParseException`) and `TestJavascriptCompiler.TestLongChains` (100,000 prefix operators compile, and 100,000
+nested conditionals don't overflow the stack).
 
 ## Known issues
 
-- **Existing bug, unchanged:** a conditional whose true branch emits more than 127 bytes of IL fails with
-  `NotSupportedException: Illegal one-byte branch`, because `CompileConditional` emits `Br_S`. Both parsers emit the
-  same IL, so both fail; `OpCodes.Br` would fix it in a separate change.
+- **Existing bug, unchanged:** a conditional whose false branch emits more than 127 bytes of IL fails with
+  `NotSupportedException: Illegal one-byte branch`, because `CompileConditional` jumps from the end of the true
+  branch over the false one with `Br_S`. Twenty nested `0?1:` are enough. Both parsers emit the same IL, so both fail;
+  `OpCodes.Br` would fix it in a separate change.
 - **net462 build workaround:** the Parlot generator refuses .NET Framework below 4.7.2 (`PARLOT026`), and its
   package adds a `netstandard` reference that only the 4.7.1+ reference assemblies have. The code it generates for
   .NET Standard 2.0 only needs `System.Memory` and `System.ValueTuple`, which net462 references, so three targets in
@@ -247,17 +262,22 @@ net472 on Windows (`-p:TestFrameworks=true -p:IncludeNetFrameworkTargets=true`),
    [sebastienros/parlot#474](https://github.com/sebastienros/parlot/pull/474) adds an overload with a last
    `out int` returning the furthest failure, which gives the same offsets here; the grammar has neither callbacks nor
    configuration anymore.
-4. **Prefix operator chains recurse.** See the depth table above: `Operators()` in 1059 recurses once per prefix
-   operator, which bounds `----1` lower than ANTLR did. The bound is a clean `ParseException`
-   ([sebastienros/parlot#475](https://github.com/sebastienros/parlot/pull/475)), and an unmerged Parlot change
-   (`7d4c3d0`, "Read chains of prefix operators in a loop") removes the recursion.
+4. **Prefix operator chains recursed (fixed).** `Operators()` in 1059 recursed once per prefix operator, which bounded
+   `----1` lower than ANTLR did, with a clean `ParseException`
+   ([sebastienros/parlot#475](https://github.com/sebastienros/parlot/pull/475)).
+   [sebastienros/parlot#483](https://github.com/sebastienros/parlot/pull/483) reads them in a loop. A grammar whose
+   parser loops can still build a tree deeper than the code walking it can recurse, which is what happened to the
+   compiler here; Parlot can't see that, but the docs of `Unary`, `Operators()` and right-associative levels could say
+   it.
 5. **`Eof()` doesn't skip trailing white space**, as documented, so `conditional.Eof()` rejected `" 1 "`; the grammar
    uses `AndSkip(SkipWhiteSpace(Eof()))`. Easy to miss with `Terms` parsers everywhere else.
 6. **Preview versions sort below the release.** `main` still has `VersionPrefix` 2.0.0, so its Feedz previews are
-   `2.0.0-preview-N`, older than 2.1.0 for NuGet: an update check never offers them, and they have to be pinned.
+   `2.0.0-preview.N` (`2.0.0-preview-N` before #482), older than 2.1.0 for NuGet: an update check never offers them,
+   and they have to be pinned.
 
 What worked well: `Operators()` replaced the ten nested operator levels and the conditional with one table and made
 parsing 2.1 to 2.6 times faster again, the furthest failure of the generated entry point located syntax errors
 without any grammar change, `Terms.Scan` ported the ANTLR lexer rules (longest match of `HEX`/`OCTAL`/`DECIMAL`,
-dotted names) one to one, `WithWhiteSpaceSet(WhiteSpaceSet.SpaceTabCrLf)` is exactly the grammar's white space, and
+dotted names) one to one, `ToPooledString()` shares the strings of the names the compiled expressions keep,
+`WithWhiteSpaceSet(WhiteSpaceSet.SpaceTabCrLf)` is exactly the grammar's white space, and
 the existing tests pass unchanged (only a stale ANTLR exclusion was dropped from `TestApiConsistency`).
