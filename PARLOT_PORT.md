@@ -10,10 +10,6 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
   parser into the assembly. The only package added to the nuspec is `System.Memory` 4.6.3 on `netstandard2.0` and
   `net462`, which `Lucene.Net` already depends on.
 - **No Java to build.** `Antlr4BuildTasks` ran the ANTLR tool, a Java program, on every build.
-- **For now, a preview package to build.** The grammar uses `Operators()` with a `Ternary` level and the furthest
-  failure of the generated entry point, which are only in the Parlot previews (`Parlot.SourceGenerator`
-  2.0.0-preview.1083, from the Parlot preview feed added to `NuGet.config`). The PR should
-  move to the next Parlot release before it merges; consumers of the Lucene.NET package are not affected either way.
 - **No public ANTLR types.** The ANTLR 4 migration (#996, not released yet) made the generated `JavascriptLexer`,
   `JavascriptParser`, `JavascriptBaseListener` and `IJavascriptListener` public, exposing `Antlr4.Runtime` types. They
   are gone. The ANTLR 3 parser in the released 4.8.0-beta00017 had them internal.
@@ -21,7 +17,7 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
   (an operator chain such as `a + b - c` is one node, a parenthesized expression is its own node), and the IL
   emission was retargeted from the parse-tree listener to that tree without changing what it emits. A differential
   test (in the history of this branch, removed with ANTLR, and run again against the benchmark's ANTLR copy after
-  the move to `Operators()` and again with preview-1059, preview.1077 and preview.1083) compiled 60,000 random expressions with both parsers and asserted byte-identical
+  the move to `Operators()` and again with preview-1059, preview.1077 and preview.1083, the commit Parlot 2.2.0 was built from) compiled 60,000 random expressions with both parsers and asserted byte-identical
   `Evaluate` IL and identical variables, and 150,000 mutated ones were accepted or rejected alike.
 - **Syntax errors as in the released versions.** `ParseException.ErrorOffset` is the offset of the first token that
   cannot be parsed, with the messages of the ANTLR 3 parser of 4.8.0-beta00017 (`unexpected end of expression.`,
@@ -29,7 +25,7 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
   are also Java Lucene's. The ANTLR 4 port reported the start of the enclosing grammar rule instead (often 0, for
   example for `100 100`) with ANTLR's own messages such as `Exception of type 'Antlr4.Runtime.NoViableAltException'
   was thrown.`. The offset is absolute, where the ANTLR 3 parser used the column within the line. It is the
-  furthest failure the generated `TryParse` returns: preview-1059, preview.1077 and preview.1083 give the same offsets and messages
+  furthest failure the generated `TryParse` returns: preview-1059, preview.1077 and preview.1083 (2.2.0's commit) give the same offsets and messages
   as the earlier callbacks recording each token's position, on 104,232 rejected mutated expressions.
 - **Unknown characters are rejected.** The ANTLR 4 lexer dropped the characters it had no token for, with a warning
   on the console, so that `$a`, `a=b`, `a+b#` or `a<=b=` compiled. They are syntax errors again, as in the
@@ -89,22 +85,24 @@ Two machines, BenchmarkDotNet v0.15.8, `MinIterationCount=40`:
 - **Arm64:** macOS Sequoia 15.8.2, Apple M4 Pro, .NET 10.0.11 Arm64 RyuJIT.
 - **x64:** Windows 11 25H2 (Hyper-V), AMD EPYC 7763 2.44 GHz, 8 cores, .NET 10.0.12 X64 RyuJIT x86-64-v3.
 
-Two Parlot versions: **2.1.0**, the release, with the operator levels written as nested `And(ZeroOrMany(...))`
-sequences, and **preview**, 2.0.0-preview.1083 with `Operators()`, the version on this branch. The preview numbers are
-one run of everything (`LaunchCount=1`) on each machine, with a load average of 4 on the 14 cores of the Arm64 one, and
-so less settled than repeated runs; the 2.1.0 columns are from earlier runs of the same machines.
+Two Parlot versions: **2.1.0**, with the operator levels written as nested `And(ZeroOrMany(...))` sequences, and
+**2.2.0** with `Operators()`, the version on this branch. 2.2.0 was built from the same commit as preview.1083 and
+generates the same files for this project (compared with `EmitCompilerGeneratedFiles`), so its numbers were measured
+on 1083 and not run again. They are one run of everything (`LaunchCount=1`) on each machine, with a load average of 4
+on the 14 cores of the Arm64 one, and so less settled than repeated runs; the 2.1.0 columns are from earlier runs of
+the same machines.
 
 ### Parsing only
 
 The ANTLR parse tree versus the Parlot syntax tree, without emitting IL. Mean time and allocations per parse:
 
-| Size   | ANTLR, Arm64 | Parlot 2.1.0, Arm64 | Parlot preview, Arm64 | ANTLR, x64 | Parlot 2.1.0, x64 | Parlot preview, x64 |
+| Size   | ANTLR, Arm64 | Parlot 2.1.0, Arm64 | Parlot 2.2.0, Arm64 | ANTLR, x64 | Parlot 2.1.0, x64 | Parlot 2.2.0, x64 |
 |--------|-------------:|--------------------:|----------------------:|-----------:|------------------:|--------------------:|
 | Small  | 6,375 ns, 23,928 B | 227 ns, 544 B | 88 ns, 344 B | 15,478 ns, 23,928 B | 522 ns, 544 B | 192 ns, 344 B |
 | Medium | 30,652 ns, 106,144 B | 1,334 ns, 2,272 B | 591 ns, 1,760 B | 71,247 ns, 106,144 B | 3,102 ns, 2,272 B | 1,294 ns, 1,760 B |
 | Large  | 523,523 ns, 1,602,512 B | 22,038 ns, 29,520 B | 8,401 ns, 23,504 B | 1,100,719 ns, 1,602,512 B | 52,018 ns, 29,520 B | 18,217 ns, 23,504 B |
 
-Parlot 2.1.0 parses 21 to 29 times faster than ANTLR, and the preview's `Operators()` 2.3 to 2.9 times faster
+Parlot 2.1.0 parses 21 to 29 times faster than ANTLR, and 2.2.0's `Operators()` 2.3 to 2.9 times faster
 again: 52 to 73 times faster than ANTLR on Arm64, 55 to 81 times on x64. Allocations are 98% lower than ANTLR's (the
 syntax tree and the names), and 20% to 37% lower than with 2.1.0, which built a list per operator level.
 
@@ -125,7 +123,7 @@ costs about as much as creating a short string, and compiling an expression show
 The 1043 and 1083 columns are from other sessions of the same machine than the three in the middle, so compare them
 loosely.
 
-The full tables for the preview, Arm64 and x64:
+The full tables for 2.2.0, Arm64 and x64:
 
 | Method | Size   | Mean          | Error        | StdDev       | Ratio | Gen0     | Gen1    | Allocated | Alloc Ratio |
 |------- |------- |--------------:|-------------:|-------------:|------:|---------:|--------:|----------:|------------:|
@@ -147,7 +145,7 @@ The full tables for the preview, Arm64 and x64:
 
 ### `JavascriptCompiler.Compile`, end to end
 
-Parsing, IL emission and the creation of a collectible dynamic assembly and type. Arm64, preview:
+Parsing, IL emission and the creation of a collectible dynamic assembly and type. Arm64, 2.2.0:
 
 | Method | Size   | Mean     | Error    | StdDev   | Median   | Ratio | RatioSD | Gen0     | Gen1    | Gen2   | Allocated  | Alloc Ratio |
 |------- |------- |---------:|---------:|---------:|---------:|------:|--------:|---------:|--------:|-------:|-----------:|------------:|
@@ -158,7 +156,7 @@ Parsing, IL emission and the creation of a collectible dynamic assembly and type
 | Antlr  | Large  | 758.8 μs |  5.76 μs |  5.10 μs | 758.1 μs |  1.00 |    0.01 | 199.2188 | 93.7500 | 3.9063 | 1632.83 KB |        1.00 |
 | Parlot | Large  | 237.9 μs |  5.02 μs | 14.81 μs | 231.8 μs |  0.31 |    0.02 |   7.8125 |  4.3945 | 4.3945 |   47.06 KB |        0.03 |
 
-x64, preview:
+x64, 2.2.0:
 
 | Method | Size   | Mean       | Error    | StdDev   | Ratio | RatioSD | Gen0    | Gen1    | Gen2   | Allocated  | Alloc Ratio |
 |------- |------- |-----------:|---------:|---------:|------:|--------:|--------:|--------:|-------:|-----------:|------------:|
@@ -187,7 +185,7 @@ doesn't see it.
 A `TermQuery` matching every document of an in-memory index, sorted by an expression of six doc-values fields and
 `_score`, top 10. `Precompiled` sorts with an expression compiled once, as an application caching its expressions
 does: the parser plays no part. `CompileAntlr` and `CompileParlot` compile the expression for every search, as an
-application taking it from each request would. Arm64, preview:
+application taking it from each request would. Arm64, 2.2.0:
 
 | Method        | Documents | Size   | Mean         | Error      | StdDev     | Ratio | RatioSD | Gen0     | Gen1    | Gen2   | Allocated  | Alloc Ratio |
 |-------------- |---------- |------- |-------------:|-----------:|-----------:|------:|--------:|---------:|--------:|-------:|-----------:|------------:|
@@ -204,7 +202,7 @@ application taking it from each request would. Arm64, preview:
 | CompileAntlr  | 100000    | Large  | 46,158.01 μs | 229.397 μs | 214.578 μs |  1.00 |    0.01 | 181.8182 | 90.9091 |      - | 1646.87 KB |       1.000 |
 | CompileParlot | 100000    | Large  | 45,234.87 μs | 270.948 μs | 253.445 μs |  0.98 |    0.01 |        - |       - |      - |   59.17 KB |       0.036 |
 
-x64, preview:
+x64, 2.2.0:
 
 | Method        | Documents | Size   | Mean         | Error       | StdDev      | Median       | Ratio | RatioSD | Gen0    | Gen1    | Gen2   | Allocated  | Alloc Ratio |
 |-------------- |---------- |------- |-------------:|------------:|------------:|-------------:|------:|--------:|--------:|--------:|-------:|-----------:|------------:|
@@ -249,7 +247,6 @@ nested conditionals don't overflow the stack).
   package adds a `netstandard` reference that only the 4.7.1+ reference assemblies have. The code it generates for
   .NET Standard 2.0 only needs `System.Memory` and `System.ValueTuple`, which net462 references, so three targets in
   `Lucene.Net.Expressions.csproj` report 4.7.2 to the generator and supply the facade. This should move into Parlot.
-- **Preview dependency:** see above. Building needs the Parlot preview feed until the next Parlot release.
 
 ## Parlot gaps found
 
@@ -281,7 +278,7 @@ nested conditionals don't overflow the stack).
    uses `AndSkip(SkipWhiteSpace(Eof()))`. Easy to miss with `Terms` parsers everywhere else.
 6. **Preview versions sort below the release.** `main` still has `VersionPrefix` 2.0.0, so its Feedz previews are
    `2.0.0-preview.N` (`2.0.0-preview-N` before #482), older than 2.1.0 for NuGet: an update check never offers them,
-   and they have to be pinned.
+   and they have to be pinned. This branch no longer uses them.
 
 What worked well: `Operators()` replaced the ten nested operator levels and the conditional with one table and made
 parsing 2.3 to 2.9 times faster again, the furthest failure of the generated entry point located syntax errors
