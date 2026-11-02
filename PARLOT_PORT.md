@@ -17,7 +17,7 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
   (an operator chain such as `a + b - c` is one node, a parenthesized expression is its own node), and the IL
   emission was retargeted from the parse-tree listener to that tree without changing what it emits. A differential
   test (in the history of this branch, removed with ANTLR, and run again against the benchmark's ANTLR copy after
-  the move to `Operators()` and again with preview-1059, preview.1077 and preview.1083, the commit Parlot 2.2.0 was built from) compiled 60,000 random expressions with both parsers and asserted byte-identical
+  the move to `Operators()` and again with preview-1059, preview.1077, preview.1083 and 2.2.1) compiled 60,000 random expressions with both parsers and asserted byte-identical
   `Evaluate` IL and identical variables, and 150,000 mutated ones were accepted or rejected alike.
 - **Syntax errors as in the released versions.** `ParseException.ErrorOffset` is the offset of the first token that
   cannot be parsed, with the messages of the ANTLR 3 parser of 4.8.0-beta00017 (`unexpected end of expression.`,
@@ -25,7 +25,7 @@ generated at build time by [Parlot](https://github.com/sebastienros/parlot)'s so
   are also Java Lucene's. The ANTLR 4 port reported the start of the enclosing grammar rule instead (often 0, for
   example for `100 100`) with ANTLR's own messages such as `Exception of type 'Antlr4.Runtime.NoViableAltException'
   was thrown.`. The offset is absolute, where the ANTLR 3 parser used the column within the line. It is the
-  furthest failure the generated `TryParse` returns: preview-1059, preview.1077 and preview.1083 (2.2.0's commit) give the same offsets and messages
+  furthest failure the generated `TryParse` returns: preview-1059, preview.1077, preview.1083 and 2.2.1 give the same offsets and messages
   as the earlier callbacks recording each token's position, on 104,232 rejected mutated expressions.
 - **Unknown characters are rejected.** The ANTLR 4 lexer dropped the characters it had no token for, with a warning
   on the console, so that `$a`, `a=b`, `a+b#` or `a<=b=` compiled. They are syntax errors again, as in the
@@ -86,23 +86,25 @@ Two machines, BenchmarkDotNet v0.15.8, `MinIterationCount=40`:
 - **x64:** Windows 11 25H2 (Hyper-V), AMD EPYC 7763 2.44 GHz, 8 cores, .NET 10.0.12 X64 RyuJIT x86-64-v3.
 
 Two Parlot versions: **2.1.0**, with the operator levels written as nested `And(ZeroOrMany(...))` sequences, and
-**2.2.0** with `Operators()`, the version on this branch. 2.2.0 was built from the same commit as preview.1083 and
-generates the same files for this project (compared with `EmitCompilerGeneratedFiles`), so its numbers were measured
-on 1083 and not run again. They are one run of everything (`LaunchCount=1`) on each machine, with a load average of 4
-on the 14 cores of the Arm64 one, and so less settled than repeated runs; the 2.1.0 columns are from earlier runs of
-the same machines.
+**2.2.1** with `Operators()`, the version on this branch. Its numbers were measured on preview.1083, the commit of 2.2.0.
+2.2.1 only changes how the generated climb encodes the level it resumes at, which this grammar's prefix level resolves
+to the same level, and two short alternating parse runs on x64 showed no difference from 2.2.0 (Small 187 ns and 197 ns
+against 191 ns and 194 ns, Medium 1,267 ns and 1,288 ns against 1,269 ns and 1,273 ns, Large 18,935 ns and 18,009 ns
+against 18,390 ns and 18,219 ns, the same allocations), so the rest wasn't run again. They are one run of everything
+(`LaunchCount=1`) on each machine, with a load average of 4 on the 14 cores of the Arm64 one, and so less settled than
+repeated runs; the 2.1.0 columns are from earlier runs of the same machines.
 
 ### Parsing only
 
 The ANTLR parse tree versus the Parlot syntax tree, without emitting IL. Mean time and allocations per parse:
 
-| Size   | ANTLR, Arm64 | Parlot 2.1.0, Arm64 | Parlot 2.2.0, Arm64 | ANTLR, x64 | Parlot 2.1.0, x64 | Parlot 2.2.0, x64 |
+| Size   | ANTLR, Arm64 | Parlot 2.1.0, Arm64 | Parlot 2.2.1, Arm64 | ANTLR, x64 | Parlot 2.1.0, x64 | Parlot 2.2.1, x64 |
 |--------|-------------:|--------------------:|----------------------:|-----------:|------------------:|--------------------:|
 | Small  | 6,375 ns, 23,928 B | 227 ns, 544 B | 88 ns, 344 B | 15,478 ns, 23,928 B | 522 ns, 544 B | 192 ns, 344 B |
 | Medium | 30,652 ns, 106,144 B | 1,334 ns, 2,272 B | 591 ns, 1,760 B | 71,247 ns, 106,144 B | 3,102 ns, 2,272 B | 1,294 ns, 1,760 B |
 | Large  | 523,523 ns, 1,602,512 B | 22,038 ns, 29,520 B | 8,401 ns, 23,504 B | 1,100,719 ns, 1,602,512 B | 52,018 ns, 29,520 B | 18,217 ns, 23,504 B |
 
-Parlot 2.1.0 parses 21 to 29 times faster than ANTLR, and 2.2.0's `Operators()` 2.3 to 2.9 times faster
+Parlot 2.1.0 parses 21 to 29 times faster than ANTLR, and 2.2.1's `Operators()` 2.3 to 2.9 times faster
 again: 52 to 73 times faster than ANTLR on Arm64, 55 to 81 times on x64. Allocations are 98% lower than ANTLR's (the
 syntax tree and the names), and 20% to 37% lower than with 2.1.0, which built a list per operator level.
 
@@ -123,7 +125,7 @@ costs about as much as creating a short string, and compiling an expression show
 The 1043 and 1083 columns are from other sessions of the same machine than the three in the middle, so compare them
 loosely.
 
-The full tables for 2.2.0, Arm64 and x64:
+The full tables for 2.2.1, Arm64 and x64:
 
 | Method | Size   | Mean          | Error        | StdDev       | Ratio | Gen0     | Gen1    | Allocated | Alloc Ratio |
 |------- |------- |--------------:|-------------:|-------------:|------:|---------:|--------:|----------:|------------:|
@@ -145,7 +147,7 @@ The full tables for 2.2.0, Arm64 and x64:
 
 ### `JavascriptCompiler.Compile`, end to end
 
-Parsing, IL emission and the creation of a collectible dynamic assembly and type. Arm64, 2.2.0:
+Parsing, IL emission and the creation of a collectible dynamic assembly and type. Arm64, 2.2.1:
 
 | Method | Size   | Mean     | Error    | StdDev   | Median   | Ratio | RatioSD | Gen0     | Gen1    | Gen2   | Allocated  | Alloc Ratio |
 |------- |------- |---------:|---------:|---------:|---------:|------:|--------:|---------:|--------:|-------:|-----------:|------------:|
@@ -156,7 +158,7 @@ Parsing, IL emission and the creation of a collectible dynamic assembly and type
 | Antlr  | Large  | 758.8 μs |  5.76 μs |  5.10 μs | 758.1 μs |  1.00 |    0.01 | 199.2188 | 93.7500 | 3.9063 | 1632.83 KB |        1.00 |
 | Parlot | Large  | 237.9 μs |  5.02 μs | 14.81 μs | 231.8 μs |  0.31 |    0.02 |   7.8125 |  4.3945 | 4.3945 |   47.06 KB |        0.03 |
 
-x64, 2.2.0:
+x64, 2.2.1:
 
 | Method | Size   | Mean       | Error    | StdDev   | Ratio | RatioSD | Gen0    | Gen1    | Gen2   | Allocated  | Alloc Ratio |
 |------- |------- |-----------:|---------:|---------:|------:|--------:|--------:|--------:|-------:|-----------:|------------:|
@@ -185,7 +187,7 @@ doesn't see it.
 A `TermQuery` matching every document of an in-memory index, sorted by an expression of six doc-values fields and
 `_score`, top 10. `Precompiled` sorts with an expression compiled once, as an application caching its expressions
 does: the parser plays no part. `CompileAntlr` and `CompileParlot` compile the expression for every search, as an
-application taking it from each request would. Arm64, 2.2.0:
+application taking it from each request would. Arm64, 2.2.1:
 
 | Method        | Documents | Size   | Mean         | Error      | StdDev     | Ratio | RatioSD | Gen0     | Gen1    | Gen2   | Allocated  | Alloc Ratio |
 |-------------- |---------- |------- |-------------:|-----------:|-----------:|------:|--------:|---------:|--------:|-------:|-----------:|------------:|
@@ -202,7 +204,7 @@ application taking it from each request would. Arm64, 2.2.0:
 | CompileAntlr  | 100000    | Large  | 46,158.01 μs | 229.397 μs | 214.578 μs |  1.00 |    0.01 | 181.8182 | 90.9091 |      - | 1646.87 KB |       1.000 |
 | CompileParlot | 100000    | Large  | 45,234.87 μs | 270.948 μs | 253.445 μs |  0.98 |    0.01 |        - |       - |      - |   59.17 KB |       0.036 |
 
-x64, 2.2.0:
+x64, 2.2.1:
 
 | Method        | Documents | Size   | Mean         | Error       | StdDev      | Median       | Ratio | RatioSD | Gen0    | Gen1    | Gen2   | Allocated  | Alloc Ratio |
 |-------------- |---------- |------- |-------------:|------------:|------------:|-------------:|------:|--------:|--------:|--------:|-------:|-----------:|------------:|
