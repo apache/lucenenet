@@ -27,13 +27,15 @@ namespace Lucene.Net.Expressions.JS
     /// <remarks>
     /// The grammar is in <c>JavascriptExpressionParser.parlot.cs</c>. That file is only read at build time by
     /// the Parlot source generator, which emits the body of <see cref="TryParse"/> into this assembly, so there
-    /// is no runtime dependency on a parsing library. The token rules below are the lexer rules of the former
-    /// ANTLR grammar, which matched the longest token.
+    /// is no runtime dependency on a parsing library. The token rules are there too.
     /// </remarks>
     internal static partial class JavascriptExpressionParser
     {
         /// <summary>Parses <paramref name="text"/>; on failure, <paramref name="failure"/> is the offset of the furthest failure.</summary>
         public static partial bool TryParse(string text, out JavascriptNode value, out int failure);
+
+        /// <summary>Gets the length of the name or number <paramref name="text"/> starts with, to report it in an error.</summary>
+        private static partial bool TryParseToken(string text, out int length);
 
         /// <summary>
         /// Parses <paramref name="sourceText"/> or throws a <see cref="ParseException"/> with the offset of the
@@ -59,15 +61,19 @@ namespace Lucene.Net.Expressions.JS
             }
             else
             {
-                ReadOnlySpan<char> rest = sourceText.AsSpan(offset);
-                int length = Math.Max(ScanNamespaceId(rest), ScanNumber(rest));
+                string rest = sourceText.Substring(offset);
+                if (!TryParseToken(rest, out int length))
+                {
+                    length = 0;
+                }
+
                 if (length == 0 && OperatorChars.IndexOf(rest[0]) < 0)
                 {
                     message = "unexpected character '" + rest[0] + "' at position (" + offset + ").";
                 }
                 else
                 {
-                    message = "invalid sequence of tokens near '" + rest.Slice(0, Math.Max(length, 1)).ToString() + "' at position (" + offset + ").";
+                    message = "invalid sequence of tokens near '" + rest.Substring(0, Math.Max(length, 1)) + "' at position (" + offset + ").";
                 }
             }
 
@@ -79,145 +85,6 @@ namespace Lucene.Net.Expressions.JS
         // The white space of the generated parser (WhiteSpaceSet.SpaceTabCrLf)
         private static bool IsWhiteSpace(char c) => c is ' ' or '\t' or '\n' or '\r';
 
-        private static bool IsIdStart(char c) => (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
-
-        private static bool IsIdPart(char c) => IsIdStart(c) || IsDigit(c);
-
-        private static bool IsDigit(char c) => c >= '0' && c <= '9';
-
-        private static bool IsOctalDigit(char c) => c >= '0' && c <= '7';
-
-        private static bool IsHexDigit(char c) => IsDigit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
-
-        /// <summary>NAMESPACE_ID: <c>ID ('.' ID)*</c>, where ID is <c>[a-zA-Z_][a-zA-Z0-9_]*</c>.</summary>
-        internal static int ScanNamespaceId(ReadOnlySpan<char> span)
-        {
-            int size = 0;
-            while (size < span.Length && IsIdStart(span[size]))
-            {
-                size++;
-                while (size < span.Length && IsIdPart(span[size]))
-                {
-                    size++;
-                }
-
-                // A dot continues the name only when an ID follows it
-                if (size + 1 < span.Length && span[size] == '.' && IsIdStart(span[size + 1]))
-                {
-                    size++;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            return size;
-        }
-
-        /// <summary>The longest of HEX, OCTAL and DECIMAL.</summary>
-        internal static int ScanNumber(ReadOnlySpan<char> span)
-        {
-            if (span.IsEmpty)
-            {
-                return 0;
-            }
-
-            if (span[0] == '0' && span.Length > 1)
-            {
-                // HEX: ('0x'|'0X') HEXDIGIT+
-                if (span[1] is 'x' or 'X')
-                {
-                    int hex = 2;
-                    while (hex < span.Length && IsHexDigit(span[hex]))
-                    {
-                        hex++;
-                    }
-
-                    if (hex > 2)
-                    {
-                        return hex;
-                    }
-                }
-
-                // OCTAL: '0' OCTALDIGIT+, always longer than the DECIMAL '0' it starts with
-                int octal = 1;
-                while (octal < span.Length && IsOctalDigit(span[octal]))
-                {
-                    octal++;
-                }
-
-                if (octal > 1)
-                {
-                    return octal;
-                }
-            }
-
-            // DECIMAL: DECIMALINTEGER ('.' DECIMALDIGIT*)? EXPONENT? | '.' DECIMALDIGIT+ EXPONENT?
-            int size;
-            if (span[0] == '.')
-            {
-                size = 1;
-                while (size < span.Length && IsDigit(span[size]))
-                {
-                    size++;
-                }
-
-                if (size == 1)
-                {
-                    return 0;
-                }
-            }
-            else if (IsDigit(span[0]))
-            {
-                // DECIMALINTEGER: '0' | [1-9] DECIMALDIGIT*
-                size = 1;
-                if (span[0] != '0')
-                {
-                    while (size < span.Length && IsDigit(span[size]))
-                    {
-                        size++;
-                    }
-                }
-
-                if (size < span.Length && span[size] == '.')
-                {
-                    size++;
-                    while (size < span.Length && IsDigit(span[size]))
-                    {
-                        size++;
-                    }
-                }
-            }
-            else
-            {
-                return 0;
-            }
-
-            // EXPONENT: ('e'|'E') ('+'|'-')? DECIMALDIGIT+, only when complete
-            if (size < span.Length && span[size] is 'e' or 'E')
-            {
-                int exponent = size + 1;
-                if (exponent < span.Length && span[exponent] is '+' or '-')
-                {
-                    exponent++;
-                }
-
-                int digits = exponent;
-                while (digits < span.Length && IsDigit(span[digits]))
-                {
-                    digits++;
-                }
-
-                if (digits > exponent)
-                {
-                    size = digits;
-                }
-            }
-
-            return size;
-        }
-
         internal static NumberNode CreateNumber(string text)
         {
             NumberKind kind = NumberKind.Decimal;
@@ -227,7 +94,7 @@ namespace Lucene.Net.Expressions.JS
                 {
                     kind = NumberKind.Hex;
                 }
-                else if (IsOctalDigit(text[1]))
+                else if (text[1] >= '0' && text[1] <= '7')
                 {
                     kind = NumberKind.Octal;
                 }

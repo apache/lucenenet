@@ -28,6 +28,47 @@ namespace Lucene.Net.Expressions.JS
     // source generator runs it at compile time and emits JavascriptExpressionParser.TryParse.
     internal static partial class JavascriptExpressionParser
     {
+        // NAMESPACE_ID: ID ('.' ID)*, where ID is [a-zA-Z_][a-zA-Z0-9_]*. A dot continues the name only when an ID follows it.
+        private static Parser<TextSpan> NameToken()
+        {
+            const string start = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
+
+            var id = Literals.AnyOf(start, minSize: 1, maxSize: 1).And(Literals.AnyOf(start + "0123456789", minSize: 0));
+
+            return Capture(Separated(Literals.Char('.'), id));
+        }
+
+        // The longest of HEX, OCTAL and DECIMAL, in an order where each alternative is longer than those after it
+        private static Parser<TextSpan> NumberToken()
+        {
+            const string digits = "0123456789";
+
+            // EXPONENT: ('e'|'E') ('+'|'-')? DECIMALDIGIT+, only when complete
+            var exponent = Literals.AnyOf("eE", minSize: 1, maxSize: 1)
+                .And(Literals.AnyOf("+-", minSize: 0, maxSize: 1))
+                .And(Literals.AnyOf(digits))
+                .Optional();
+
+            // DECIMALINTEGER: '0' | [1-9] DECIMALDIGIT*
+            var integer = Capture(Literals.Char('0')).Or(Capture(Literals.AnyOf("123456789", minSize: 1, maxSize: 1).And(Literals.AnyOf(digits, minSize: 0))));
+
+            return OneOf(
+                // HEX: ('0x'|'0X') HEXDIGIT+
+                Capture(Literals.Text("0x", caseInsensitive: true).And(Literals.AnyOf(digits + "abcdefABCDEF"))),
+                // OCTAL: '0' OCTALDIGIT+
+                Capture(Literals.Char('0').And(Literals.AnyOf("01234567"))),
+                // DECIMAL: DECIMALINTEGER ('.' DECIMALDIGIT*)? EXPONENT? | '.' DECIMALDIGIT+ EXPONENT?
+                Capture(integer.And(Literals.Char('.').And(Literals.AnyOf(digits, minSize: 0)).Optional()).And(exponent)),
+                Capture(Literals.Char('.').And(Literals.AnyOf(digits)).And(exponent)));
+        }
+
+        // The token at the position of a syntax error. A name and a number can't start with the same char.
+        [GenerateParser(nameof(TryParseToken))]
+        private static Parser<int> BuildToken()
+        {
+            return NameToken().Or(NumberToken()).Then(static value => value.Length);
+        }
+
         [GenerateParser(nameof(TryParse))]
         private static Parser<JavascriptNode> Build()
         {
@@ -37,11 +78,9 @@ namespace Lucene.Net.Expressions.JS
             var rparen = Terms.Char(')');
             var comma = Terms.Char(',');
 
-            var number = Terms.Scan(ScanNumber, "0123456789.")
-                .Then(static value => (JavascriptNode)CreateNumber(value.ToString()));
+            var number = SkipWhiteSpace(NumberToken()).Then(static value => (JavascriptNode)CreateNumber(value.ToString()));
 
-            var namespaceId = Terms.Scan(ScanNamespaceId, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_")
-                .Then(static value => value.ToString());
+            var namespaceId = SkipWhiteSpace(NameToken()).Then(static value => value.ToString());
 
             // arguments: '(' (conditional (',' conditional)*)? ')'
             var arguments = lparen.SkipAnd(Separated(comma, conditional, min: 0)).AndSkip(rparen);
