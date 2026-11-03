@@ -1,7 +1,6 @@
 using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Support
@@ -24,8 +23,9 @@ namespace Lucene.Net.Support
      */
 
     /// <summary>
-    /// Tests for <see cref="VIntUtils"/>, the shared variable-length integer
-    /// decoder used by the buffer-backed <see cref="DataInput"/> implementations.
+    /// Tests for <see cref="CloneableExtensions"/>, a helper to cast the
+    /// result of the Clone() methods to the most derived type, so that
+    /// the caller doesn't have to cast it themselves.
     /// </summary>
     [TestFixture]
     [LuceneNetSpecific]
