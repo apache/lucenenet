@@ -221,10 +221,10 @@ namespace Lucene.Net.Analysis.Util
             var result = CreateDictionary(capacity, comparer);
             foreach (var pair in collection)
             {
-                if (pair.Key is null)
-                    throw new ArgumentNullException(nameof(collection), "A given key within the collection is null.");
-                if (!result.TryAdd(comparer is null ? pair.Key : comparer.Fold(pair.Key), pair.Value))
-                    throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, pair.Key), nameof(collection));
+                string key = pair.Key;
+                if (key is null)
+                    throw new ArgumentNullException(nameof(collection), SR.ArgumentNull_NullKeyWithinCollection);
+                result.Add(comparer is null ? key : comparer.Fold(key), pair.Value);
             }
             return result;
         }
@@ -268,8 +268,7 @@ namespace Lucene.Net.Analysis.Util
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
             ThrowIfReadOnly();
-            if (!dictionary.TryAdd(Fold(text), value))
-                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, text), nameof(text));
+            dictionary.Add(Fold(text), value);
         }
 
         void ICollection<KeyValuePair<string, TValue>>.Add(KeyValuePair<string, TValue> item) => Add(item.Key, item.Value);
@@ -316,13 +315,6 @@ namespace Lucene.Net.Analysis.Util
         /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
         void ICollection<KeyValuePair<string, TValue>>.CopyTo(KeyValuePair<string, TValue>[] array, int arrayIndex)
         {
-            if (array is null)
-                throw new ArgumentNullException(nameof(array));
-            if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, SR.ArgumentOutOfRange_NeedNonNegNum);
-            if (arrayIndex > array.Length || Count > array.Length - arrayIndex)
-                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
-
             dictionary.CopyTo(array, arrayIndex);
         }
 
@@ -345,7 +337,7 @@ namespace Lucene.Net.Analysis.Util
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            return lookup.ContainsKey(text.AsSpan());
+            return lookup.ContainsKey(text);
         }
 
         /// <summary>
@@ -377,7 +369,7 @@ namespace Lucene.Net.Analysis.Util
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            return lookup.TryGetValue(text.AsSpan(), out value);
+            return lookup.TryGetValue(text, out value);
         }
 
         /// <summary>
@@ -390,12 +382,7 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="NotSupportedException">The property is set and the dictionary is read-only.</exception>
         public TValue this[ReadOnlySpan<char> text]
         {
-            get
-            {
-                if (lookup.TryGetValue(text, out TValue? value))
-                    return value;
-                throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, text.ToString()));
-            }
+            get => lookup[text];
             set
             {
                 ThrowIfReadOnly();
@@ -418,9 +405,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (text is null)
                     throw new ArgumentNullException(nameof(text));
-                if (lookup.TryGetValue(text.AsSpan(), out TValue? value))
-                    return value;
-                throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, text));
+                return lookup[text];
             }
             set
             {
@@ -595,41 +580,7 @@ namespace Lucene.Net.Analysis.Util
 
         void ICollection.CopyTo(Array array, int index)
         {
-            if (array is null)
-                throw new ArgumentNullException(nameof(array));
-            if (array.Rank != 1)
-                throw new ArgumentException(SR.Arg_RankMultiDimNotSupported, nameof(array));
-            if (array.GetLowerBound(0) != 0)
-                throw new ArgumentException(SR.Arg_NonZeroLowerBound, nameof(array));
-            if (index < 0)
-                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
-            if (array.Length - index < Count)
-                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
-
-            if (array is KeyValuePair<string, TValue>[] pairs)
-            {
-                dictionary.CopyTo(pairs, index);
-            }
-            else if (array is DictionaryEntry[] dictEntryArray)
-            {
-                foreach (var pair in dictionary)
-                    dictEntryArray[index++] = new DictionaryEntry(pair.Key, pair.Value);
-            }
-            else
-            {
-                if (array is not object?[] objects)
-                    throw new ArgumentException(SR.Argument_InvalidArrayType, nameof(array));
-
-                try
-                {
-                    foreach (var pair in dictionary)
-                        objects[index++] = new KeyValuePair<string, TValue>(pair.Key, pair.Value);
-                }
-                catch (ArrayTypeMismatchException)
-                {
-                    throw new ArgumentException(SR.Argument_InvalidArrayType, nameof(array));
-                }
-            }
+            ((ICollection)dictionary).CopyTo(array, index);
         }
 
         bool IDictionary.IsFixedSize => isReadOnly;
@@ -648,17 +599,13 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (key is null)
                     throw new ArgumentNullException(nameof(key));
-                if (key is string text && TryGetValue(text, out TValue? value))
-                    return value;
-                return null;
+                return ((IDictionary)dictionary)[key];
             }
             set
             {
                 if (key is null)
                     throw new ArgumentNullException(nameof(key));
-                if (key is not string text)
-                    throw new ArgumentException(string.Format(SR.Arg_WrongType, key, typeof(string)), nameof(key));
-                this[text] = CastValue(value);
+                ((IDictionary)dictionary)[key] = value;
             }
         }
 
@@ -666,29 +613,14 @@ namespace Lucene.Net.Analysis.Util
         {
             if (key is null)
                 throw new ArgumentNullException(nameof(key));
-            if (key is not string text)
-                throw new ArgumentException(string.Format(SR.Arg_WrongType, key, typeof(string)), nameof(key));
-            Add(text, CastValue(value));
+            ((IDictionary)dictionary).Add(key, value);
         }
 
         bool IDictionary.Contains(object key)
         {
             if (key is null)
                 throw new ArgumentNullException(nameof(key));
-            return key is string text && ContainsKey(text);
-        }
-
-        private static TValue CastValue(object? value)
-        {
-            if (value is null)
-            {
-                if (default(TValue) is null)
-                    return default!;
-                throw new ArgumentNullException(nameof(value));
-            }
-            if (value is TValue result)
-                return result;
-            throw new ArgumentException(string.Format(SR.Arg_WrongType, value, typeof(TValue)), nameof(value));
+            return ((IDictionary)dictionary).Contains(key);
         }
 
         /// <summary>
@@ -1072,18 +1004,13 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     internal static class SR
     {
-        public const string Arg_ArrayPlusOffTooSmall = "Destination array is not long enough to copy all the items in the collection. Check array index and length.";
-        public const string Arg_KeyNotFoundWithKey = "The given text '{0}' was not present in the dictionary.";
-        public const string Arg_NonZeroLowerBound = "The lower bound of target array must be zero.";
-        public const string Arg_RankMultiDimNotSupported = "Only single dimensional arrays are supported for the requested action.";
-        public const string Arg_WrongType = "The value '{0}' is not of type '{1}' and cannot be used in this generic collection.";
+        public const string ArgumentNull_NullKeyWithinCollection = "A given key within the collection is null.";
 
         public const string Argument_AddingDuplicate = "An item with the same text has already been added. Key: {0}";
-        public const string Argument_InvalidArrayType = "Target array type is not compatible with the type of items in the collection.";
 
         public const string ArgumentOutOfRange_NeedNonNegNum = "Non-negative number required.";
 
-        public const string NotSupported_KeyCollectionSet = "Mutating a text collection derived from a dictionary is not allowed.";
+        public const string NotSupported_KeyCollectionSet = "Mutating a key collection derived from a dictionary is not allowed.";
         public const string NotSupported_ReadOnlyCollection = "Collection is read-only.";
         public const string NotSupported_ValueCollectionSet = "Mutating a value collection derived from a dictionary is not allowed.";
     }

@@ -416,7 +416,7 @@ namespace Lucene.Net.Analysis.Util
         /// than the available space in the destination array.</exception>
         public void CopyTo(string[] array)
         {
-            CopyTo(array, 0, set.Count);
+            set.CopyTo(array);
         }
 
         /// <summary>
@@ -432,7 +432,7 @@ namespace Lucene.Net.Analysis.Util
         /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
         public void CopyTo(string[] array, int arrayIndex)
         {
-            CopyTo(array, arrayIndex, set.Count);
+            set.CopyTo(array, arrayIndex);
         }
 
         /// <summary>
@@ -449,49 +449,12 @@ namespace Lucene.Net.Analysis.Util
         /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
         public void CopyTo(string[] array, int arrayIndex, int count)
         {
-            if (array is null)
-                throw new ArgumentNullException(nameof(array));
-            if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, SR.ArgumentOutOfRange_NeedNonNegNum);
-            if (count < 0)
-                throw new ArgumentOutOfRangeException(nameof(count), count, SR.ArgumentOutOfRange_NeedNonNegNum);
-            if (arrayIndex > array.Length || count > array.Length - arrayIndex)
-                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
-
             set.CopyTo(array, arrayIndex, count);
         }
 
         void ICollection.CopyTo(Array array, int index)
         {
-            if (array is null)
-                throw new ArgumentNullException(nameof(array));
-            if (array.Rank != 1)
-                throw new ArgumentException(SR.Arg_RankMultiDimNotSupported, nameof(array));
-            if (array.GetLowerBound(0) != 0)
-                throw new ArgumentException(SR.Arg_NonZeroLowerBound, nameof(array));
-            if (index < 0)
-                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
-            if (array.Length - index < Count)
-                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
-
-            if (array is string[] strings)
-            {
-                CopyTo(strings, index);
-                return;
-            }
-
-            if (array is not object?[] objects)
-                throw new ArgumentException(SR.Argument_InvalidArrayType, nameof(array));
-
-            try
-            {
-                foreach (string item in set)
-                    objects[index++] = item;
-            }
-            catch (ArrayTypeMismatchException)
-            {
-                throw new ArgumentException(SR.Argument_InvalidArrayType, nameof(array));
-            }
+            ((ICollection)set).CopyTo(array, index);
         }
 
         /// <summary>
@@ -513,21 +476,13 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public bool SetEquals(IEnumerable<string> other)
         {
-            if (other is null)
-                throw new ArgumentNullException(nameof(other));
-
-            if (other is CharArraySet otherSet && otherSet.comparer == comparer)
+            // A set is always equal to itself
+            if (other == this)
             {
-                if (this.Count != otherSet.Count)
-                    return false;
-
-                // already confirmed that the sets have the same number of distinct elements, so if
-                // one is a superset of the other then they must be equal
-                return ContainsAllElements(otherSet);
+                return true;
             }
 
-            GetFoundAndUnfoundCounts(other, out int uniqueFoundCount, out int unfoundCount);
-            return uniqueFoundCount == this.Count && unfoundCount == 0;
+            return set.SetEquals(other);
         }
 
         /// <summary>
@@ -549,6 +504,12 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             ThrowIfReadOnly();
+
+            // A set unioned with itself is unchanged
+            if (other == this)
+            {
+                return false;
+            }
 
             bool modified = false;
             foreach (string item in other)
@@ -598,23 +559,14 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public bool IsSubsetOf(IEnumerable<string> other)
         {
-            if (other is null)
-                throw new ArgumentNullException(nameof(other));
-
-            if (this.Count == 0)
-                return true;
-
-            if (other is CharArraySet otherSet)
+            // The empty set is a subset of any set, and a set is a subset of itself.
+            // Set is always a subset of itself.
+            if (set.Count == 0 || other == this)
             {
-                if (this.Count > otherSet.Count)
-                    return false;
-                return this.IsSubsetOfCharArraySet(otherSet);
+                return true;
             }
-            // we just need to return true if the other set
-            // contains all of the elements of the this set,
-            // but we need to use the comparison rules of the current set.
-            GetFoundAndUnfoundCounts(other, out int uniqueFoundCount, out _);
-            return uniqueFoundCount == this.Count;
+
+            return set.IsSubsetOf(other);
         }
 
         /// <summary>
@@ -625,17 +577,13 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public bool IsSupersetOf(IEnumerable<string> other)
         {
-            if (other is null)
-                throw new ArgumentNullException(nameof(other));
-
-            if (other is ICollection<string> otherAsCollection)
+            // A set is always a superset of itself.
+            if (other == this)
             {
-                if (otherAsCollection.Count == 0)
-                    return true;
-                if (other is CharArraySet otherSet && otherSet.Count > this.Count)
-                    return false;
+                return true;
             }
-            return this.ContainsAllElements(other);
+
+            return set.IsSupersetOf(other);
         }
 
         /// <summary>
@@ -646,25 +594,13 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public bool IsProperSubsetOf(IEnumerable<string> other)
         {
-            if (other is null)
-                throw new ArgumentNullException(nameof(other));
-
-            if (other is ICollection<string> otherAsCollection)
+            // No set is a proper subset of itself.
+            if (other == this)
             {
-                if (this.Count == 0)
-                    return otherAsCollection.Count > 0;
-                if (other is CharArraySet otherSet)
-                {
-                    if (this.Count >= otherSet.Count)
-                        return false;
-                    return this.IsSubsetOfCharArraySet(otherSet);
-                }
+                return false;
             }
-            // we just need to return true if the other set
-            // contains all of the elements of the this set plus at least one more,
-            // but we need to use the comparison rules of the current set.
-            GetFoundAndUnfoundCounts(other, out int uniqueFoundCount, out int unfoundCount);
-            return uniqueFoundCount == this.Count && unfoundCount > 0;
+
+            return set.IsProperSubsetOf(other);
         }
 
         /// <summary>
@@ -675,25 +611,13 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public bool IsProperSupersetOf(IEnumerable<string> other)
         {
-            if (other is null)
-                throw new ArgumentNullException(nameof(other));
-
-            if (this.Count == 0)
-                return false;
-
-            if (other is ICollection<string> otherAsCollection)
+            // The empty set isn't a proper superset of any set, and a set is never a strict superset of itself.
+            if (set.Count == 0 || other == this)
             {
-                if (otherAsCollection.Count == 0)
-                    return true;
-                if (other is CharArraySet otherSet)
-                {
-                    if (otherSet.Count >= this.Count)
-                        return false;
-                    return this.ContainsAllElements(otherSet);
-                }
+                return false;
             }
-            GetFoundAndUnfoundCounts(other, out int uniqueFoundCount, out int unfoundCount);
-            return uniqueFoundCount < this.Count && unfoundCount == 0;
+
+            return set.IsProperSupersetOf(other);
         }
 
         /// <summary>
@@ -707,14 +631,23 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
-            if (this.Count != 0)
+            if (set.Count == 0)
             {
-                foreach (string item in other)
-                {
-                    if (item is not null && this.Contains(item))
-                        return true;
-                }
+                return false;
             }
+
+            // Set overlaps itself
+            if (other == this)
+            {
+                return true;
+            }
+
+            foreach (string item in other)
+            {
+                if (item is not null && set.Contains(item))
+                    return true;
+            }
+
             return false;
         }
 
@@ -726,52 +659,6 @@ namespace Lucene.Net.Analysis.Util
         {
             if (isReadOnly)
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
-        }
-
-        /// <summary>
-        /// Checks if this <see cref="CharArraySet"/> is a subset of <paramref name="other"/>.
-        /// </summary>
-        private bool IsSubsetOfCharArraySet(CharArraySet other)
-        {
-            foreach (string item in set)
-            {
-                if (!other.Contains(item))
-                    return false;
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Returns <c>true</c> if this collection contains all of the elements
-        /// in the specified collection.
-        /// </summary>
-        private bool ContainsAllElements(IEnumerable<string> other)
-        {
-            foreach (string item in other)
-            {
-                if (item is null || !this.Contains(item))
-                    return false;
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Enumerates <paramref name="other"/> once, counting the number of distinct elements of this set
-        /// that it contains (using the comparison rules of this set) and the number of its elements that
-        /// are not in this set.
-        /// </summary>
-        private void GetFoundAndUnfoundCounts(IEnumerable<string> other, out int uniqueFoundCount, out int unfoundCount)
-        {
-            JCG.HashSet<string>? found = null;
-            unfoundCount = 0;
-            foreach (string item in other)
-            {
-                if (item is not null && this.Contains(item))
-                    (found ??= new JCG.HashSet<string>(set.EqualityComparer)).Add(comparer is null ? item : comparer.Fold(item));
-                else
-                    unfoundCount++;
-            }
-            uniqueFoundCount = found?.Count ?? 0;
         }
 
         #endregion
