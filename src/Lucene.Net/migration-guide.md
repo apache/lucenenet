@@ -748,7 +748,7 @@ together by Lucene.
 
 * [#1478](https://github.com/apache/lucenenet/issues/1478): On `CharArrayDictionary<TValue>` and `CharArraySet`, removed
   `ICharSequence`, `object` and `char[]` overloads and added support for `ReadOnlySpan<char>` via alternate lookup methods. This allows for more
-  efficent lookups without needing to allocate a `char[]` or `string` for the lookup key in many cases. The static `CharArraySet.Copy()`
+  efficient lookups without needing to allocate a `char[]` or `string` for the lookup key in many cases. The static `CharArraySet.Copy()`
   and `CharArrayDictionary.Copy()` methods have been removed and replaced with copy constructors on each type. Implicit conversion
   of collections of arbitrary types to collections of `string` is no longer supported and must be done explicitly. The `CharArraySet`
   and `CharArrayDictionary<TValue>` types are now sealed and cannot be inherited.
