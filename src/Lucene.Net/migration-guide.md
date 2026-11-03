@@ -433,7 +433,7 @@ package names have changed, and `ReusableAnalyzerBase` was renamed to
   - `Lucene.Net.Analysis.MappingCharFilter` -> `Lucene.Net.Analysis.CharFilter.MappingCharFilter`
   - `Lucene.Net.Analysis.NormalizeCharMap` -> `Lucene.Net.Analysis.CharFilter.NormalizeCharMap`
   - `Lucene.Net.Analysis.CharArraySet` -> `Lucene.Net.Analysis.Util.CharArraySet`
-  - `Lucene.Net.Analysis.CharArrayMap` -> `Lucene.Net.Analysis.Util.CharArrayMap`
+  - `Lucene.Net.Analysis.CharArrayMap` -> `Lucene.Net.Analysis.Util.CharArrayDictionary`
   - `Lucene.Net.Analysis.ReusableAnalyzerBase` -> `Lucene.Net.Analysis.Analyzer`
   - `Lucene.Net.Analysis.StopwordAnalyzerBase` -> `Lucene.Net.Analysis.Util.StopwordAnalyzerBase`
   - `Lucene.Net.Analysis.WordListLoader` -> `Lucene.Net.Analysis.Util.WordListLoader`
@@ -745,3 +745,10 @@ together by Lucene.
   `PayloadAttribute`'s name is unchanged, it just uses the `BytesRef`
   class to refer to the payload bytes/start offset/end offset
   (or `null` if there is no payload).
+
+* [#1478](https://github.com/apache/lucenenet/issues/1478): On `CharArrayDictionary<TValue>` and `CharArraySet`, removed
+  `ICharSequence`, `object` and `char[]` overloads and added support for `ReadOnlySpan<char>` via alternate lookup methods. This allows for more
+  efficent lookups without needing to allocate a `char[]` or `string` for the lookup key in many cases. The static `CharArraySet.Copy()`
+  and `CharArrayDictionary.Copy()` methods have been removed and replaced with copy constructors on each type. Implicit conversion
+  of collections of arbitrary types to collections of `string` is no longer supported and must be done explicitly. The `CharArraySet`
+  and `CharArrayDictionary<TValue>` types are now sealed and cannot be inherited.
