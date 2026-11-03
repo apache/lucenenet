@@ -1065,7 +1065,17 @@ namespace Lucene.Net.Index
                         infoStream.Message("IW", "now flush at close");
                     }
                     Flush(true, true);
-                    FinishMerges(waitForMerges);
+                    // LUCENENET: match upstream 4.10.4 shutdown(boolean). WaitForMerges() must not be
+                    // called while holding IW's lock (as FinishMerges(true) does), because it now gives
+                    // the merge scheduler a last chance to run pending merges.
+                    if (waitForMerges)
+                    {
+                        WaitForMerges();
+                    }
+                    else
+                    {
+                        FinishMerges(false);
+                    }
                     CommitInternal();
                     RollbackInternal(); // ie close, since we just committed
                     success = true;
@@ -2867,6 +2877,14 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual void WaitForMerges()
         {
+            // LUCENENET: ported from upstream 4.10.4. In 4.8.1 this call lived in closeInternal(),
+            // which was replaced by Shutdown() when backporting LUCENE-5871 (#1284).
+
+            // Give merge scheduler last chance to run, in case
+            // any pending merges are waiting. We can't hold IW's lock
+            // when going into merge because it can lead to deadlock.
+            mergeScheduler.Merge(this, MergeTrigger.CLOSING, false);
+
             UninterruptableMonitor.Enter(this);
             try
             {
