@@ -346,8 +346,8 @@ namespace Lucene.Net.Index
         }
 
         // LUCENENET specific - Dispose() must give the merge scheduler a last chance to run
-        // merges that are still pending (upstream 4.10.4 IndexWriter.waitForMerges() calls
-        // mergeScheduler.merge(this, MergeTrigger.CLOSING, false)). Merges can be left pending
+        // merges that are still pending (since Lucene 4.10.0, commit 969c919b9a2, IndexWriter.waitForMerges()
+        // calls mergeScheduler.merge(this, MergeTrigger.CLOSING, false)). Merges can be left pending
         // when a scheduler returns without draining the queue, e.g. SerialMergeScheduler after
         // a merge throws. Without that call, Dispose() waits forever on pendingMerges when there
         // is nothing left to flush, as seen in TestIndexWriterExceptions2.TestBasics.

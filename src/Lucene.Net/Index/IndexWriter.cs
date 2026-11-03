@@ -1065,16 +1065,16 @@ namespace Lucene.Net.Index
                         infoStream.Message("IW", "now flush at close");
                     }
                     Flush(true, true);
-                    // LUCENENET: match upstream 4.10.4 shutdown(boolean). WaitForMerges() must not be
-                    // called while holding IW's lock (as FinishMerges(true) does), because it now gives
-                    // the merge scheduler a last chance to run pending merges.
+                    // LUCENENET: compatible with Lucene 4.10.0 (commit 969c919b9a2), which replaced
+                    // finishMerges(waitForMerges) here. WaitForMerges() runs the merge scheduler, so it
+                    // must not be called while holding IW's lock.
                     if (waitForMerges)
                     {
                         WaitForMerges();
                     }
                     else
                     {
-                        FinishMerges(false);
+                        AbortMerges();
                     }
                     CommitInternal();
                     RollbackInternal(); // ie close, since we just committed
@@ -2573,7 +2573,7 @@ namespace Lucene.Net.Index
                 UninterruptableMonitor.Enter(this);
                 try
                 {
-                    FinishMerges(false);
+                    AbortMerges(); // LUCENENET: compatible with Lucene 4.10.0 (commit 969c919b9a2); was finishMerges(false) in 4.8.1
                     stopMerges = true;
                 }
                 finally
@@ -2749,7 +2749,7 @@ namespace Lucene.Net.Index
                         try
                         {
                             // Abort any running merges
-                            FinishMerges(false);
+                            AbortMerges(); // LUCENENET: compatible with Lucene 4.10.0 (commit 969c919b9a2); was finishMerges(false) in 4.8.1
                             // Remove all segments
                             segmentInfos.Clear();
                             // Ask deleter to locate unreferenced files & remove them:
@@ -2799,68 +2799,67 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void FinishMerges(bool waitForMerges)
+        /// <summary>
+        /// Aborts running merges.  Be careful when using this
+        /// method: when you abort a long-running merge, you lose
+        /// a lot of work that must later be redone.
+        /// </summary>
+        // LUCENENET: compatible with Lucene 4.10.0 (commit 969c919b9a2, "Fix waitForMerges to allow
+        // merge schedule to run one last time"), which replaced 4.8.1's finishMerges(boolean) with
+        // abortMerges() and moved the wait-for-merges half into WaitForMerges(). Upstream made
+        // abortMerges() public in 4.10.0, deprecated it in 4.10.3 (LUCENE-6097, commit 7fae699bd41),
+        // and made it private in 5.0, so we follow that 5.0 end state and keep it private rather
+        // than adding public API that upstream removed.
+        private void AbortMerges()
         {
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (!waitForMerges)
+                stopMerges = true;
+
+                // Abort all pending & running merges:
+                foreach (MergePolicy.OneMerge merge in pendingMerges)
                 {
-                    stopMerges = true;
-
-                    // Abort all pending & running merges:
-                    foreach (MergePolicy.OneMerge merge in pendingMerges)
-                    {
-                        if (infoStream.IsEnabled("IW"))
-                        {
-                            infoStream.Message("IW", "now abort pending merge " + SegString(merge.Segments));
-                        }
-                        merge.Abort();
-                        MergeFinish(merge);
-                    }
-                    pendingMerges.Clear();
-
-                    foreach (MergePolicy.OneMerge merge in runningMerges)
-                    {
-                        if (infoStream.IsEnabled("IW"))
-                        {
-                            infoStream.Message("IW", "now abort running merge " + SegString(merge.Segments));
-                        }
-                        merge.Abort();
-                    }
-
-                    // These merges periodically check whether they have
-                    // been aborted, and stop if so.  We wait here to make
-                    // sure they all stop.  It should not take very long
-                    // because the merge threads periodically check if
-                    // they are aborted.
-                    while (runningMerges.Count > 0)
-                    {
-                        if (infoStream.IsEnabled("IW"))
-                        {
-                            infoStream.Message("IW", "now wait for " + runningMerges.Count + " running merge/s to abort");
-                        }
-                        DoWait();
-                    }
-
-                    stopMerges = false;
-                    UninterruptableMonitor.PulseAll(this);
-
-                    if (Debugging.AssertsEnabled) Debugging.Assert(0 == mergingSegments.Count);
-
                     if (infoStream.IsEnabled("IW"))
                     {
-                        infoStream.Message("IW", "all running merges have aborted");
+                        infoStream.Message("IW", "now abort pending merge " + SegString(merge.Segments));
                     }
+                    merge.Abort();
+                    MergeFinish(merge);
                 }
-                else
+                pendingMerges.Clear();
+
+                foreach (MergePolicy.OneMerge merge in runningMerges)
                 {
-                    // waitForMerges() will ensure any running addIndexes finishes.
-                    // It's fine if a new one attempts to start because from our
-                    // caller above the call will see that we are in the
-                    // process of closing, and will throw an
-                    // ObjectDisposedException.
-                    WaitForMerges();
+                    if (infoStream.IsEnabled("IW"))
+                    {
+                        infoStream.Message("IW", "now abort running merge " + SegString(merge.Segments));
+                    }
+                    merge.Abort();
+                }
+
+                // These merges periodically check whether they have
+                // been aborted, and stop if so.  We wait here to make
+                // sure they all stop.  It should not take very long
+                // because the merge threads periodically check if
+                // they are aborted.
+                while (runningMerges.Count > 0)
+                {
+                    if (infoStream.IsEnabled("IW"))
+                    {
+                        infoStream.Message("IW", "now wait for " + runningMerges.Count + " running merge/s to abort");
+                    }
+                    DoWait();
+                }
+
+                stopMerges = false;
+                UninterruptableMonitor.PulseAll(this);
+
+                if (Debugging.AssertsEnabled) Debugging.Assert(0 == mergingSegments.Count);
+
+                if (infoStream.IsEnabled("IW"))
+                {
+                    infoStream.Message("IW", "all running merges have aborted");
                 }
             }
             finally
@@ -2877,8 +2876,11 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual void WaitForMerges()
         {
-            // LUCENENET: ported from upstream 4.10.4. In 4.8.1 this call lived in closeInternal(),
-            // which was replaced by Shutdown() when backporting LUCENE-5871 (#1284).
+            // LUCENENET: compatible with Lucene 4.10.0 (commit 969c919b9a2). In 4.8.1 this method was
+            // synchronized and did not call the merge scheduler; the "last chance" merge below was
+            // made from closeInternal() instead, which was replaced by Shutdown() when LUCENE-5871
+            // was backported (#1284). Without it, Dispose() can wait forever on pending merges that
+            // no scheduler will run.
 
             // Give merge scheduler last chance to run, in case
             // any pending merges are waiting. We can't hold IW's lock
@@ -5130,7 +5132,8 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                // forceMerge, addIndexes or finishMerges may be waiting
+                // LUCENENET: comment compatible with Lucene 4.10.0 (commit 969c919b9a2); 4.8.1 said finishMerges
+                // forceMerge, addIndexes or waitForMerges may be waiting
                 // on merges to finish.
                 UninterruptableMonitor.PulseAll(this);
 
