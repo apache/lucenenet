@@ -102,7 +102,6 @@ namespace Lucene.Net.Analysis.Util
             return sb.ToString();
         }
 
-        [Test]
         [TestCaseSource(nameof(CaseFoldingCases))]
         public void TestCaseFoldingFollowsInvariantLowercase(string added, string probe, bool expectedIgnoreCaseMatch)
         {
@@ -150,7 +149,6 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        [Test]
         [TestCaseSource(nameof(CaseFoldingCases))]
         public void TestCaseFoldingIsSymmetric(string added, string probe, bool expectedIgnoreCaseMatch)
         {
