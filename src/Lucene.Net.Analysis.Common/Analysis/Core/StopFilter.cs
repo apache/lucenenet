@@ -122,7 +122,7 @@ namespace Lucene.Net.Analysis.Core
         /// </summary>
         protected override bool Accept()
         {
-            return !stopWords.Contains(termAtt.Buffer.AsSpan(0, termAtt.Length));
+            return !stopWords.Contains(termAtt.AsSpan());
         }
     }
 }

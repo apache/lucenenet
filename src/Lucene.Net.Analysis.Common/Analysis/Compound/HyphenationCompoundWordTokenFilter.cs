@@ -224,7 +224,7 @@ namespace Lucene.Net.Analysis.Compound
                     }
 
                     // check the dictionary
-                    if (m_dictionary is null || m_dictionary.Contains(m_termAtt.Buffer.AsSpan(start, partLength)))
+                    if (m_dictionary is null || m_dictionary.Contains(m_termAtt.AsSpan(start, partLength)))
                     {
                         if (this.m_onlyLongestMatch)
                         {
@@ -249,7 +249,7 @@ namespace Lucene.Net.Analysis.Compound
                     // Upstream Java relies on CharArrayMap silently treating a negative length as
                     // "not found", but in .NET slicing the buffer with a negative length throws
                     // ArgumentOutOfRangeException. See the BOGUS/BROKEN/FUNKY/WACKO note above.
-                    else if (partLength - 1 >= 0 && m_dictionary.Contains(m_termAtt.Buffer.AsSpan(start, partLength - 1)))
+                    else if (partLength - 1 >= 0 && m_dictionary.Contains(m_termAtt.AsSpan(start, partLength - 1)))
                     {
                         // check the dictionary again with a word that is one character
                         // shorter

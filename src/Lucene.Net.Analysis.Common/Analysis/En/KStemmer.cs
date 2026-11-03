@@ -652,7 +652,7 @@ namespace Lucene.Net.Analysis.En
             {
                 return matchedEntry;
             }
-            if (dict_ht.TryGetValue(word.Array.AsSpan(0, word.Length), out DictEntry e) && e != null && !e.exception)
+            if (dict_ht.TryGetValue(word.AsSpan(), out DictEntry e) && e != null && !e.exception)
             {
                 matchedEntry = e; // only cache if it's not an exception.
             }
@@ -770,7 +770,7 @@ namespace Lucene.Net.Analysis.En
             // thisLookup); } else { // System.out.println("new lookup:" + thisLookup);
             // }
 
-            return dict_ht.TryGetValue(word.Array.AsSpan(0, word.Length), out matchedEntry) && matchedEntry != null;
+            return dict_ht.TryGetValue(word.AsSpan(), out matchedEntry) && matchedEntry != null;
         }
 
         // Set<String> lookups = new HashSet<>();

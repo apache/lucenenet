@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         protected override bool IsKeyword()
         {
-            return keywordSet.Contains(termAtt.Buffer.AsSpan(0, termAtt.Length));
+            return keywordSet.Contains(termAtt.AsSpan());
         }
     }
 }
