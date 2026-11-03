@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Ru
         public RussianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
             : base(matchVersion, stopwords)
         {
-            this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
+            this.stemExclusionSet = new CharArraySet(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

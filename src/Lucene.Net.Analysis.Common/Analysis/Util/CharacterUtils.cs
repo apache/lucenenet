@@ -1,6 +1,5 @@
 // Lucene version compatibility level 4.8.1
 using J2N;
-using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -69,13 +68,6 @@ namespace Lucene.Net.Analysis.Util
 #pragma warning disable 612, 618
             return matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? JAVA_4 : JAVA_4_BW_COMPAT;
 #pragma warning restore 612, 618
-        }
-
-        // LUCENENET specific - ICharSequence support is only kept internally for CharArrayDictionary<TValue>,
-        // which still needs it until it is refactored. This is not part of the public API.
-        internal virtual int CodePointAt(ICharSequence seq, int offset)
-        {
-            return Character.CodePointAt(seq, offset);
         }
 
         /// <summary>
@@ -181,6 +173,18 @@ namespace Lucene.Net.Analysis.Util
             //        Character.ToLower(
             //            CodePointAt(buffer, i, limit), CultureInfo.InvariantCulture), buffer, i);
             //}
+        }
+
+        /// <summary>
+        /// Converts each unicode codepoint in <paramref name="source"/> to lowercase in the invariant culture,
+        /// writing the result to <paramref name="destination"/>. The two spans must not overlap and
+        /// <paramref name="destination"/> must be at least as long as <paramref name="source"/>.
+        /// </summary>
+        // LUCENENET specific - used by CharArrayComparer to fold keys of case-insensitive CharArraySet
+        // and CharArrayDictionary<TValue> instances without allocating.
+        internal virtual void ToLower(ReadOnlySpan<char> source, Span<char> destination)
+        {
+            source.ToLower(destination, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -400,17 +404,6 @@ namespace Lucene.Net.Analysis.Util
         private class Java4CharacterUtils : CharacterUtils
         {
 
-            internal override int CodePointAt(ICharSequence seq, int offset)
-            {
-                // LUCENENET specific - added guard clauses
-                if (seq is null)
-                    throw new ArgumentNullException(nameof(seq));
-                if ((uint)offset >= (uint)seq.Length)
-                    throw new ArgumentOutOfRangeException(nameof(offset));
-
-                return seq[offset];
-            }
-
             public override int CodePointAt(ReadOnlySpan<char> seq, int offset)
             {
                 // LUCENENET specific - added guard clauses
@@ -474,6 +467,16 @@ namespace Lucene.Net.Analysis.Util
         // implementation that represents the original Lucene toUpperCase and toLowerCase methods.
         private class Java4CharacterUtilsBWCompatibility : Java4CharacterUtils
         {
+            internal override void ToLower(ReadOnlySpan<char> source, Span<char> destination)
+            {
+                // Each char is lowercased on its own, so surrogate pairs are never combined into
+                // supplementary code points and are therefore left as is.
+                for (int i = 0; i < source.Length; i++)
+                {
+                    destination[i] = (char)Character.ToLower(source[i], CultureInfo.InvariantCulture);
+                }
+            }
+
             public override void ToLower(char[] buffer, int offset, int limit)
             {
                 if (buffer is null)

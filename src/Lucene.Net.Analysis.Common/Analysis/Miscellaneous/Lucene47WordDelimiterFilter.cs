@@ -139,7 +139,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     iterator.Next();
 
                     // word of no delimiters, or protected word: just return it
-                    if ((iterator.current == 0 && iterator.end == termLength) || (protWords != null && protWords.Contains(termBuffer, 0, termLength)))
+                    if ((iterator.current == 0 && iterator.end == termLength) || (protWords != null && protWords.Contains(termBuffer.AsSpan(0, termLength))))
                     {
                         posIncAttribute.PositionIncrement = accumPosInc;
                         accumPosInc = 0;

@@ -1,5 +1,6 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
+using System;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -64,7 +65,7 @@ namespace Lucene.Net.Analysis.Util
                 }
 
                 // An apostrophe has been found. If the prefix is an article strip it off.
-                if (index >= 0 && articles.Contains(termBuffer, 0, index))
+                if (index >= 0 && articles.Contains(termBuffer.AsSpan(0, index)))
                 {
                     termAtt.CopyBuffer(termBuffer, index + 1, termLength - (index + 1));
                 }

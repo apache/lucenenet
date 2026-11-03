@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Hu
         public HungarianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
             : base(matchVersion, stopwords)
         {
-            this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
+            this.stemExclusionSet = new CharArraySet(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

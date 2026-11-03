@@ -147,7 +147,7 @@ namespace Lucene.Net.Analysis.Pt
 
             public override bool Matches(char[] s, int len)
             {
-                return base.Matches(s, len) && !m_exceptions.Contains(s, 0, len);
+                return base.Matches(s, len) && !m_exceptions.Contains(s.AsSpan(0, len));
             }
         }
 
