@@ -35,7 +35,7 @@ namespace Lucene.Net.Util.Automaton
             for (int i = 0; i < num; i++)
             {
                 Automaton a = AutomatonTestUtil.RandomAutomaton(Random);
-                Automaton b = (Automaton)a.Clone();
+                Automaton b = a.Clone();
                 MinimizationOperations.Minimize(b);
                 Assert.IsTrue(BasicOperations.SameLanguage(a, b));
             }
@@ -54,7 +54,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 Automaton a = AutomatonTestUtil.RandomAutomaton(Random);
                 AutomatonTestUtil.MinimizeSimple(a);
-                Automaton b = (Automaton)a.Clone();
+                Automaton b = a.Clone();
                 MinimizationOperations.Minimize(b);
                 Assert.IsTrue(BasicOperations.SameLanguage(a, b));
                 Assert.AreEqual(a.GetNumberOfStates(), b.GetNumberOfStates());

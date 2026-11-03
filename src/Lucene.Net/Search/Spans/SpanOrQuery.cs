@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.Spans
 
     /// <summary>
     /// Matches the union of its clauses. </summary>
-    public class SpanOrQuery : SpanQuery // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class SpanOrQuery : SpanQuery, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private readonly IList<SpanQuery> clauses;
         private string field;
@@ -89,14 +89,14 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             int sz = clauses.Count;
             SpanQuery[] newClauses = new SpanQuery[sz];
 
             for (int i = 0; i < sz; i++)
             {
-                newClauses[i] = (SpanQuery)clauses[i].Clone();
+                newClauses[i] = clauses[i].Clone();
             }
             SpanOrQuery soq = new SpanOrQuery(newClauses);
             soq.Boost = Boost;

@@ -921,7 +921,7 @@ namespace Lucene.Net.Codecs.Compressing
                     CompressingStoredFieldsIndexReader index = matchingVectorsReader.Index;
                     IndexInput vectorsStreamOrig = matchingVectorsReader.VectorsStream;
                     vectorsStreamOrig.Seek(0);
-                    ChecksumIndexInput vectorsStream = new BufferedChecksumIndexInput((IndexInput)vectorsStreamOrig.Clone());
+                    ChecksumIndexInput vectorsStream = new BufferedChecksumIndexInput(vectorsStreamOrig.Clone());
 
                     for (int i = NextLiveDoc(0, liveDocs, maxDoc); i < maxDoc;)
                     {

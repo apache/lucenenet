@@ -267,7 +267,7 @@ namespace Lucene.Net.Codecs
         /// </summary>
         public static long ChecksumEntireFile(IndexInput input)
         {
-            IndexInput clone = (IndexInput)input.Clone();
+            IndexInput clone = input.Clone();
             clone.Seek(0);
             ChecksumIndexInput @in = new BufferedChecksumIndexInput(clone);
             if (Debugging.AssertsEnabled) Debugging.Assert(@in.Position == 0); // LUCENENET specific: Renamed from getFilePointer() to match FileStream

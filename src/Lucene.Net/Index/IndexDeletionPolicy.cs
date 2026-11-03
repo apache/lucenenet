@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
     /// or <see cref="Store.Directory"/> instance.</para>
     /// </summary>
 
-    public abstract class IndexDeletionPolicy // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class IndexDeletionPolicy : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// Sole constructor, typically called by sub-classes constructors. </summary>
@@ -105,9 +105,11 @@ namespace Lucene.Net.Index
         /// sorted by age (the 0th one is the oldest commit). </param>
         public abstract void OnCommit<T>(IList<T> commits) where T : IndexCommit;
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
-            return base.MemberwiseClone();
+            return MemberwiseClone();
         }
     }
 }

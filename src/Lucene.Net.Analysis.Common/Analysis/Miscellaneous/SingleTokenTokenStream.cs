@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             : base(Token.TOKEN_ATTRIBUTE_FACTORY)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(token != null);
-            this.singleToken = (Token)token.Clone();
+            this.singleToken = token.Clone();
 
             tokenAtt = AddAttribute<ICharTermAttribute>();
             if (Debugging.AssertsEnabled) Debugging.Assert(tokenAtt is Token);
@@ -70,12 +70,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public Token GetToken() // LUCENENET NOTE: These remain methods because they make a conversion of the value
         {
-            return (Token)singleToken.Clone();
+            return singleToken.Clone();
         }
 
         public void SetToken(Token token)
         {
-            this.singleToken = (Token)token.Clone();
+            this.singleToken = token.Clone();
         }
     }
 }

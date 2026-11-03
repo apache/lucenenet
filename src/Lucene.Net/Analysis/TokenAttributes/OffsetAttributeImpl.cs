@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="IOffsetAttribute"/>. </summary>
-    public class OffsetAttribute : Attribute, IOffsetAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class OffsetAttribute : Attribute, IOffsetAttribute, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private int startOffset;
         private int endOffset;

@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
             // also cloning it won't help, after it has been used already
             try
             {
-                Assert.IsNotNull(new RandomIndexWriter(Random, dir, (IndexWriterConfig)conf.Clone()));
+                Assert.IsNotNull(new RandomIndexWriter(Random, dir, conf.Clone()));
                 Assert.Fail("should have hit AlreadySetException");
             }
 #pragma warning disable 168
@@ -188,8 +188,8 @@ namespace Lucene.Net.Index
 
             // if it's cloned in advance, it should be ok
             conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
-            new RandomIndexWriter(Random, dir, (IndexWriterConfig)conf.Clone()).Dispose();
-            new RandomIndexWriter(Random, dir, (IndexWriterConfig)conf.Clone()).Dispose();
+            new RandomIndexWriter(Random, dir, conf.Clone()).Dispose();
+            new RandomIndexWriter(Random, dir, conf.Clone()).Dispose();
 
             dir.Dispose();
         }
@@ -268,7 +268,7 @@ namespace Lucene.Net.Index
         public virtual void TestClone()
         {
             IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            IndexWriterConfig clone = (IndexWriterConfig)conf.Clone();
+            IndexWriterConfig clone = conf.Clone();
 
             // Make sure parameters that can't be reused are cloned
             IndexDeletionPolicy delPolicy = conf.IndexDeletionPolicy;

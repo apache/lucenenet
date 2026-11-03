@@ -232,13 +232,13 @@ namespace Lucene.Net.Codecs.SimpleText
             return new SimpleTVFields(fields);
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             if (_input is null)
             {
                 throw AlreadyClosedException.Create(this.GetType().FullName, "this TermVectorsReader is disposed.");
             }
-            return new SimpleTextTermVectorsReader(_offsets, (IndexInput)_input.Clone());
+            return new SimpleTextTermVectorsReader(_offsets, _input.Clone());
         }
 
         protected override void Dispose(bool disposing)

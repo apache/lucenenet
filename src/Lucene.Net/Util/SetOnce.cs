@@ -35,7 +35,7 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public sealed partial class SetOnce<T> // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public sealed partial class SetOnce<T> : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
         where T : class // LUCENENET specific - added class constraint so we don't accept value types (which cannot be volatile)
     {
         private volatile T? obj;
@@ -86,8 +86,10 @@ namespace Lucene.Net.Util
             }
         }
 
+        object ICloneable.Clone() => Clone();
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public object Clone()
+        private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             return obj is null ? new SetOnce<T>() : new SetOnce<T>(obj);
         }

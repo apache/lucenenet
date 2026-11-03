@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <summary>
         /// Term text with a beginning and end position
         /// </summary>
-        public class QueryText // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+        public class QueryText : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
         {
             private string value = null;
 
@@ -73,8 +73,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 this.end = end;
             }
 
+            object ICloneable.Clone() => Clone();
 
-            public virtual /*QueryText*/ object Clone()
+            protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 QueryText clone = (QueryText)this.MemberwiseClone();
                 clone.value = this.value;
@@ -160,7 +161,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             IList<PathQueryNode.QueryText> rValues = new JCG.List<PathQueryNode.QueryText>();
             for (int i = startIndex; i < this.values.Count; i++)
             {
-                rValues.Add((QueryText)this.values[i].Clone());
+                rValues.Add(this.values[i].Clone());
             }
             return rValues;
         }
@@ -209,7 +210,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 IList<QueryText> localValues = new JCG.List<QueryText>();
                 foreach (QueryText value in this.values)
                 {
-                    localValues.Add((QueryText)value.Clone());
+                    localValues.Add(value.Clone());
                 }
                 clone.values = localValues;
             }

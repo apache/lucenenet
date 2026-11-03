@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
     /// <summary>
     /// Attribute for <see cref="Token.GetPartOfSpeech()"/>.
     /// </summary>
-    public class PartOfSpeechAttribute : Attribute, IPartOfSpeechAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class PartOfSpeechAttribute : Attribute, IPartOfSpeechAttribute, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private Token? token;
 

@@ -237,7 +237,7 @@ namespace Lucene.Net.Util
 
                 BitSet aa = (BitSet)a.Clone();
                 aa.Flip(fromIndex, toIndex);
-                OpenBitSet bb = (OpenBitSet)b.Clone();
+                OpenBitSet bb = b.Clone();
                 bb.Flip(fromIndex, toIndex);
 
                 DoIterate(aa, bb, mode); // a problem here is from flip or doIterate
@@ -246,7 +246,7 @@ namespace Lucene.Net.Util
                 toIndex = fromIndex + Random.Next((sz >> 1) + 1);
                 aa = (BitSet)a.Clone();
                 aa.Clear(fromIndex, toIndex);
-                bb = (OpenBitSet)b.Clone();
+                bb = b.Clone();
                 bb.Clear(fromIndex, toIndex);
 
                 DoNextSetBit(aa, bb); // a problem here is from clear() or nextSetBit
@@ -259,7 +259,7 @@ namespace Lucene.Net.Util
                 toIndex = fromIndex + Random.Next((sz >> 1) + 1);
                 aa = (BitSet)a.Clone();
                 aa.Set(fromIndex, toIndex);
-                bb = (OpenBitSet)b.Clone();
+                bb = b.Clone();
                 bb.Set(fromIndex, toIndex);
 
                 DoNextSetBit(aa, bb); // a problem here is from set() or nextSetBit
@@ -283,14 +283,14 @@ namespace Lucene.Net.Util
                     BitSet a_andn = (BitSet)a.Clone();
                     a_andn.AndNot(a0);
 
-                    OpenBitSet b_and = (OpenBitSet)b.Clone();
+                    OpenBitSet b_and = b.Clone();
                     Assert.AreEqual(b, b_and);
                     b_and.And(b0);
-                    OpenBitSet b_or = (OpenBitSet)b.Clone();
+                    OpenBitSet b_or = b.Clone();
                     b_or.Or(b0);
-                    OpenBitSet b_xor = (OpenBitSet)b.Clone();
+                    OpenBitSet b_xor = b.Clone();
                     b_xor.Xor(b0);
-                    OpenBitSet b_andn = (OpenBitSet)b.Clone();
+                    OpenBitSet b_andn = b.Clone();
                     b_andn.AndNot(b0);
 
                     DoIterate(a_and, b_and, mode);

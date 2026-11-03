@@ -324,7 +324,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     this.termsStart = termsStart;
                     termBytesStart = outerInstance.outerInstance.termBytes.GetPointer();
 
-                    IndexInput clone = (IndexInput)outerInstance.outerInstance.input.Clone();
+                    IndexInput clone = outerInstance.outerInstance.input.Clone();
                     clone.Seek(indexStart);
 
                     // -1 is passed to mean "don't load term index", but
@@ -361,8 +361,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                     else
                     {
                         // Get packed iterators
-                        IndexInput clone1 = (IndexInput)outerInstance.outerInstance.input.Clone();
-                        IndexInput clone2 = (IndexInput)outerInstance.outerInstance.input.Clone();
+                        IndexInput clone1 = outerInstance.outerInstance.input.Clone();
+                        IndexInput clone2 = outerInstance.outerInstance.input.Clone();
 
                         try
                         {

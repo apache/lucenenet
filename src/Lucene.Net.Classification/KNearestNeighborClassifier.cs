@@ -117,7 +117,7 @@ namespace Lucene.Net.Classification
                 if (count > max)
                 {
                     max = count;
-                    assignedClass = (BytesRef)entry.Key.Clone();
+                    assignedClass = entry.Key.Clone();
                 }
             }
             double score = max / (double)k;

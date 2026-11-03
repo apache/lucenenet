@@ -201,7 +201,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             if (proxStream is null)
             {
                 // clone lazily
-                proxStream = (IndexInput)proxStreamOrig.Clone();
+                proxStream = proxStreamOrig.Clone();
             }
 
             // we might have to skip the current payload

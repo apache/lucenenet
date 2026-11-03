@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override object Clone()
+            protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 return new CloneableTerm(term);
             }
@@ -423,7 +423,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public SegmentTermEnum Terms()
         {
-            return (SegmentTermEnum)origEnum.Clone();
+            return origEnum.Clone();
         }
 
         /// <summary>
@@ -432,7 +432,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public SegmentTermEnum Terms(Term term)
         {
             Get(term, true);
-            return (SegmentTermEnum)GetThreadResources().termEnum.Clone();
+            return GetThreadResources().termEnum.Clone();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

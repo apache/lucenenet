@@ -265,7 +265,7 @@ namespace Lucene.Net.Facet
             var q = new DrillDownQuery(config, new MatchAllDocsQuery());
             q.Add("a");
 
-            var clone = (DrillDownQuery)q.Clone();
+            DrillDownQuery clone = q.Clone();
             Assert.IsNotNull(clone);
             clone.Add("b");
             Assert.IsFalse(q.ToString().Equals(clone.ToString(), StringComparison.Ordinal), "query wasn't cloned: source=" + q + " clone=" + clone);

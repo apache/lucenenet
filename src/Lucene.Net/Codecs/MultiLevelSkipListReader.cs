@@ -305,7 +305,7 @@ namespace Lucene.Net.Codecs
                 else
                 {
                     // clone this stream, it is already at the start of the current level
-                    skipStream[i] = (IndexInput)skipStream[0].Clone();
+                    skipStream[i] = skipStream[0].Clone();
                     if (inputIsBuffered && length < BufferedIndexInput.BUFFER_SIZE)
                     {
                         ((BufferedIndexInput)skipStream[i]).SetBufferSize((int)length);

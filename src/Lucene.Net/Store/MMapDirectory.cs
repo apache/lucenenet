@@ -390,7 +390,7 @@ namespace Lucene.Net.Store
 
             // --- Clone / dispose ----------------------------------------------
 
-            public override object Clone()
+            protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 // A disposed input must not hand out a working clone.
                 EnsureOpen();

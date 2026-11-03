@@ -357,7 +357,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     if (docIn is null)
                     {
                         // lazy init
-                        docIn = (IndexInput)startDocIn.Clone();
+                        docIn = startDocIn.Clone();
                     }
                     docIn.Seek(docTermStartFP);
                 }
@@ -487,7 +487,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     if (skipper is null)
                     {
                         // Lazy init: first time this enum has ever been used for skipping
-                        skipper = new Lucene41SkipReader((IndexInput)docIn.Clone(), Lucene41PostingsWriter.maxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, indexHasPos, indexHasOffsets, indexHasPayloads);
+                        skipper = new Lucene41SkipReader(docIn.Clone(), Lucene41PostingsWriter.maxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, indexHasPos, indexHasOffsets, indexHasPayloads);
                     }
 
                     if (!skipped)
@@ -647,7 +647,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 this.outerInstance = outerInstance;
                 this.startDocIn = outerInstance.docIn;
                 this.docIn = null;
-                this.posIn = (IndexInput)outerInstance.posIn.Clone();
+                this.posIn = outerInstance.posIn.Clone();
                 encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
                 // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
                 indexHasOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
@@ -680,7 +680,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     if (docIn is null)
                     {
                         // lazy init
-                        docIn = (IndexInput)startDocIn.Clone();
+                        docIn = startDocIn.Clone();
                     }
                     docIn.Seek(docTermStartFP);
                 }
@@ -854,7 +854,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("    create skipper");
                         // }
-                        skipper = new Lucene41SkipReader((IndexInput)docIn.Clone(), Lucene41PostingsWriter.maxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, indexHasOffsets, indexHasPayloads);
+                        skipper = new Lucene41SkipReader(docIn.Clone(), Lucene41PostingsWriter.maxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, indexHasOffsets, indexHasPayloads);
                     }
 
                     if (!skipped)
@@ -1126,8 +1126,8 @@ namespace Lucene.Net.Codecs.Lucene41
                 this.outerInstance = outerInstance;
                 this.startDocIn = outerInstance.docIn;
                 this.docIn = null;
-                this.posIn = (IndexInput)outerInstance.posIn.Clone();
-                this.payIn = (IndexInput)outerInstance.payIn.Clone();
+                this.posIn = outerInstance.posIn.Clone();
+                this.payIn = outerInstance.payIn.Clone();
                 encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
                 // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
                 indexHasOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
@@ -1186,7 +1186,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     if (docIn is null)
                     {
                         // lazy init
-                        docIn = (IndexInput)startDocIn.Clone();
+                        docIn = startDocIn.Clone();
                     }
                     docIn.Seek(docTermStartFP);
                 }
@@ -1434,7 +1434,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("    create skipper");
                         // }
-                        skipper = new Lucene41SkipReader((IndexInput)docIn.Clone(), Lucene41PostingsWriter.maxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, indexHasOffsets, indexHasPayloads);
+                        skipper = new Lucene41SkipReader(docIn.Clone(), Lucene41PostingsWriter.maxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, indexHasOffsets, indexHasPayloads);
                     }
 
                     if (!skipped)

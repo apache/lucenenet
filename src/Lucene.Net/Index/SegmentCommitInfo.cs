@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class SegmentCommitInfo
+    public class SegmentCommitInfo : ICloneable // LUCENENET specific - added IClonable interface so callers can avoid casting clones
     {
         /// <summary>
         /// The <see cref="SegmentInfo"/> that we wrap. </summary>
@@ -271,7 +271,9 @@ namespace Lucene.Net.Index
             return ToString(Info.Dir, 0);
         }
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             SegmentCommitInfo other = new SegmentCommitInfo(Info, delCount, delGen, fieldInfosGen);
             // Not clear that we need to carry over nextWriteDelGen

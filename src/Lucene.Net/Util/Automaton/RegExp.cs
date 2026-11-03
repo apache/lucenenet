@@ -626,7 +626,7 @@ namespace Lucene.Net.Util.Automaton
                     {
                         throw new ArgumentException("'" + s + "' not found");
                     }
-                    a = (Automaton)aa.Clone(); // always clone here (ignore allow_mutate)
+                    a = aa.Clone(); // always clone here (ignore allow_mutate)
                     break;
 
                 case Kind.REGEXP_INTERVAL:

@@ -191,7 +191,7 @@ namespace Lucene.Net.Util.Automaton
             }
 
             // reverse the language of the automaton, then reverse its common prefix.
-            Automaton r = (Automaton)a.Clone();
+            Automaton r = a.Clone();
             Reverse(r);
             r.Determinize();
             return (new StringBuilder(SpecialOperations.GetCommonPrefix(r))).Reverse().ToString();
@@ -205,7 +205,7 @@ namespace Lucene.Net.Util.Automaton
             }
 
             // reverse the language of the automaton, then reverse its common prefix.
-            Automaton r = (Automaton)a.Clone();
+            Automaton r = a.Clone();
             Reverse(r);
             r.Determinize();
             BytesRef @ref = SpecialOperations.GetCommonPrefixBytesRef(r);

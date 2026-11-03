@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.Lucene41
             dir = NewFSDirectory(CreateTempDir("testDFBlockSize"));
             iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat()));
-            iw = new RandomIndexWriter(Random, dir, (IndexWriterConfig)iwc.Clone());
+            iw = new RandomIndexWriter(Random, dir, iwc.Clone());
             iw.DoRandomForceMerge = false; // we will ourselves
         }
 
@@ -65,7 +65,7 @@ namespace Lucene.Net.Codecs.Lucene41
             this.iw.Dispose();
             TestUtil.CheckIndex(dir); // for some extra coverage, checkIndex before we forceMerge
             iwc.SetOpenMode(OpenMode.APPEND);
-            IndexWriter iw = new IndexWriter(dir, (IndexWriterConfig)iwc.Clone());
+            IndexWriter iw = new IndexWriter(dir, iwc.Clone());
             iw.ForceMerge(1);
             iw.Dispose();
             dir.Dispose(); // just force a checkindex for now

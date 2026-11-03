@@ -235,9 +235,9 @@ namespace Lucene.Net.Index
 
             public override long Length => this.input.Length;
 
-            public override object Clone()
+            protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
-                return new SeeksCountingStream(outerInstance, (IndexInput)this.input.Clone());
+                return new SeeksCountingStream(outerInstance, this.input.Clone());
             }
         }
     }

@@ -654,13 +654,13 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+            IndexWriter writer = new IndexWriter(dir, conf.Clone());
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("dv", 0L));
             writer.AddDocument(doc);
             writer.Dispose();
 
-            writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+            writer = new IndexWriter(dir, conf.Clone());
             doc = new Document();
             doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
             try
@@ -681,13 +681,13 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+            IndexWriter writer = new IndexWriter(dir, conf.Clone());
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("dv", 0L));
             writer.AddDocument(doc);
             writer.Dispose();
 
-            writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+            writer = new IndexWriter(dir, conf.Clone());
             writer.DeleteAll();
             doc = new Document();
             doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
@@ -736,13 +736,13 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+            IndexWriter writer = new IndexWriter(dir, conf.Clone());
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("dv", 0L));
             writer.AddDocument(doc);
             writer.Dispose();
             conf.SetOpenMode(OpenMode.CREATE);
-            writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+            writer = new IndexWriter(dir, conf.Clone());
             doc = new Document();
             doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
             writer.AddDocument(doc);
@@ -755,14 +755,14 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+            IndexWriter writer = new IndexWriter(dir, conf.Clone());
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("dv", 0L));
             writer.AddDocument(doc);
             writer.Dispose();
 
             Directory dir2 = NewDirectory();
-            writer = new IndexWriter(dir2, (IndexWriterConfig)conf.Clone());
+            writer = new IndexWriter(dir2, conf.Clone());
             doc = new Document();
             doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
             writer.AddDocument(doc);
@@ -786,14 +786,14 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+            IndexWriter writer = new IndexWriter(dir, conf.Clone());
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("dv", 0L));
             writer.AddDocument(doc);
             writer.Dispose();
 
             Directory dir2 = NewDirectory();
-            writer = new IndexWriter(dir2, (IndexWriterConfig)conf.Clone());
+            writer = new IndexWriter(dir2, conf.Clone());
             doc = new Document();
             doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
             writer.AddDocument(doc);
@@ -819,14 +819,14 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+            IndexWriter writer = new IndexWriter(dir, conf.Clone());
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("dv", 0L));
             writer.AddDocument(doc);
             writer.Dispose();
 
             Directory dir2 = NewDirectory();
-            writer = new IndexWriter(dir2, (IndexWriterConfig)conf.Clone());
+            writer = new IndexWriter(dir2, conf.Clone());
             writer.AddIndexes(dir);
             doc = new Document();
             doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
@@ -849,14 +849,14 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+            IndexWriter writer = new IndexWriter(dir, conf.Clone());
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("dv", 0L));
             writer.AddDocument(doc);
             writer.Dispose();
 
             Directory dir2 = NewDirectory();
-            writer = new IndexWriter(dir2, (IndexWriterConfig)conf.Clone());
+            writer = new IndexWriter(dir2, conf.Clone());
             IndexReader[] readers = new IndexReader[] { DirectoryReader.Open(dir) };
             writer.AddIndexes(readers);
             readers[0].Dispose();

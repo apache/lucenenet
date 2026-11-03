@@ -201,7 +201,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 if (fst is null)
                 {
-                    using (IndexInput clone = (IndexInput)outerInstance.input.Clone())
+                    using (IndexInput clone = outerInstance.input.Clone())
                     {
                         clone.Seek(indexStart);
                         fst = new FST<Int64>(clone, outerInstance.fstOutputs);

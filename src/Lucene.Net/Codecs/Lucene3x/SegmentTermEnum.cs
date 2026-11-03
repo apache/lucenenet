@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// @lucene.experimental
     /// </summary>
     [Obsolete("(4.0) No longer used with flex indexing, except for reading old segments")]
-    internal sealed class SegmentTermEnum : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    internal sealed class SegmentTermEnum : ICloneable, IDisposable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private IndexInput input;
         internal readonly FieldInfos fieldInfos; // LUCENENET: marked readonly
@@ -111,16 +111,17 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public object Clone()
+        object ICloneable.Clone() => Clone();
+        private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             // LUCENENET: MemberwiseClone() doesn't throw in .NET
             SegmentTermEnum clone = (SegmentTermEnum)base.MemberwiseClone();
 
-            clone.input = (IndexInput)input.Clone();
+            clone.input = input.Clone();
             clone.termInfo = new TermInfo(termInfo);
 
-            clone.termBuffer = (TermBuffer)termBuffer.Clone();
-            clone.prevBuffer = (TermBuffer)prevBuffer.Clone();
+            clone.termBuffer = termBuffer.Clone();
+            clone.prevBuffer = prevBuffer.Clone();
             clone.scanBuffer = new TermBuffer();
 
             return clone;

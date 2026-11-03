@@ -132,7 +132,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal virtual void SeekEnum(SegmentTermEnum enumerator, int indexOffset)
         {
-            PagedBytesDataInput input = (PagedBytesDataInput)dataInput.Clone();
+            PagedBytesDataInput input = dataInput.Clone();
 
             input.SetPosition(indexToDataOffset.Get(indexOffset));
 
@@ -171,7 +171,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             int lo = 0;
             int hi = indexSize - 1;
-            PagedBytesDataInput input = (PagedBytesDataInput)dataInput.Clone();
+            PagedBytesDataInput input = dataInput.Clone();
             BytesRef scratch = new BytesRef();
             while (hi >= lo)
             {
@@ -202,7 +202,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         internal virtual Term GetTerm(int termIndex)
         {
-            PagedBytesDataInput input = (PagedBytesDataInput)dataInput.Clone();
+            PagedBytesDataInput input = dataInput.Clone();
             input.SetPosition(indexToDataOffset.Get(termIndex));
 
             // read the term
@@ -230,7 +230,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int CompareTo(Term term, int termIndex)
         {
-            return CompareTo(term, termIndex, (PagedBytesDataInput)dataInput.Clone(), new BytesRef());
+            return CompareTo(term, termIndex, dataInput.Clone(), new BytesRef());
         }
 
         /// <summary>

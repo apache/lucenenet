@@ -20,10 +20,8 @@ namespace Lucene.Net.Index
      */
 
     // LUCENENET specific
-    public interface IMergeScheduler : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public interface IMergeScheduler : ICloneable, IDisposable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound);
-
-        object Clone();
     }
 }

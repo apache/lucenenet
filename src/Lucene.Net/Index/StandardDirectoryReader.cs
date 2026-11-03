@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
             IList<SegmentReader> readers = new JCG.List<SegmentReader>();
             Directory dir = writer.Directory;
 
-            SegmentInfos segmentInfos = (SegmentInfos)infos.Clone();
+            SegmentInfos segmentInfos = infos.Clone();
             int infosUpto = 0;
             bool success = false;
             try

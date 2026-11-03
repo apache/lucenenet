@@ -100,7 +100,7 @@ namespace Lucene.Net.Store
 
             // a clone shares the same handle but must read independently of the original
             input.Seek(0);
-            using (IndexInput clone = (IndexInput)input.Clone())
+            using (IndexInput clone = input.Clone())
             {
                 int clonePos = Random.Next(len);
                 clone.Seek(clonePos);
@@ -170,7 +170,7 @@ namespace Lucene.Net.Store
             }
 
             IndexInput input = dir.OpenInput("data", NewIOContext(Random));
-            IndexInput clone = (IndexInput)input.Clone();
+            IndexInput clone = input.Clone();
 
             // disposing the clone must not close the shared handle: original still reads
             Assert.DoesNotThrow(() => clone.Dispose());
@@ -216,7 +216,7 @@ namespace Lucene.Net.Store
                         try
                         {
                             var rnd = new J2N.Randomizer(seed + 1);
-                            using IndexInput clone = (IndexInput)input.Clone();
+                            using IndexInput clone = input.Clone();
                             start.Wait();
                             for (int i = 0; i < 2000; i++)
                             {

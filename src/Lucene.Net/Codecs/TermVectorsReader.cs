@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public abstract class TermVectorsReader : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class TermVectorsReader : ICloneable, IDisposable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
@@ -60,11 +60,13 @@ namespace Lucene.Net.Codecs
         /// </summary>
         public abstract void CheckIntegrity();
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Create a clone that one caller at a time may use to
         /// read term vectors.
         /// </summary>
-        public abstract object Clone();
+        protected abstract object Clone(); // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
 
         /// <summary>
         /// Disposes all resources used by this object.

@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
 
-    public sealed class SegmentInfos : IEnumerable<SegmentCommitInfo> // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public sealed class SegmentInfos : ICloneable, IEnumerable<SegmentCommitInfo> // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// The file format version for the segments_N codec header, up to 4.5. </summary>
@@ -847,11 +847,13 @@ namespace Lucene.Net.Index
             return fileName;
         }
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Returns a copy of this instance, also copying each
         /// <see cref="SegmentInfo"/>.
         /// </summary>
-        public object Clone()
+        private object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             var sis = (SegmentInfos)base.MemberwiseClone();
             // deep clone, first recreate all collections:
@@ -860,7 +862,7 @@ namespace Lucene.Net.Index
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Codec != null);
                 // dont directly access segments, use add method!!!
-                sis.Add((SegmentCommitInfo)(info.Clone()));
+                sis.Add(info.Clone());
             }
             sis.userData = new JCG.Dictionary<string, string>(userData);
             return sis;
@@ -1525,7 +1527,7 @@ namespace Lucene.Net.Index
             foreach (var info in segments)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Codec != null);
-                list.Add((SegmentCommitInfo)(info.Clone()));
+                list.Add(info.Clone());
             }
             return list;
         }

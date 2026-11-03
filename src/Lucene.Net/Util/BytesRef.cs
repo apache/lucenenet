@@ -45,9 +45,9 @@ namespace Lucene.Net.Util
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public sealed class BytesRef : IComparable<BytesRef>, IComparable, IEquatable<BytesRef> // LUCENENET specific - implemented IComparable for FieldComparator, IEquatable<BytesRef>
+    public sealed class BytesRef : IComparable<BytesRef>, IComparable, IEquatable<BytesRef>, ICloneable // LUCENENET specific - implemented IComparable for FieldComparator, IEquatable<BytesRef>
     {
         /// <summary>
         /// An empty byte array for convenience </summary>
@@ -189,6 +189,8 @@ namespace Lucene.Net.Util
             return Length == other.Length && AsSpan().SequenceEqual(other.AsSpan());
         }
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Returns a shallow clone of this instance (the underlying bytes are
         /// <b>not</b> copied and will be shared by both the returned object and this
@@ -196,7 +198,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <seealso cref="DeepCopyOf(BytesRef)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public object Clone()
+        private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             return new BytesRef(bytes, Offset, Length);
         }

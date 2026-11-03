@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// It uses &lt;segment&gt;.fdt and &lt;segment&gt;.fdx; files.
     /// </summary>
     [Obsolete("Only for reading existing 3.x indexes")]
-    internal sealed class Lucene3xStoredFieldsReader : StoredFieldsReader, IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    internal sealed class Lucene3xStoredFieldsReader : StoredFieldsReader, ICloneable, IDisposable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private const int FORMAT_SIZE = 4;
 
@@ -110,10 +110,10 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// this logic).
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             EnsureOpen();
-            return new Lucene3xStoredFieldsReader(fieldInfos, numTotalDocs, size, format, docStoreOffset, (IndexInput)fieldsStream.Clone(), (IndexInput)indexStream.Clone());
+            return new Lucene3xStoredFieldsReader(fieldInfos, numTotalDocs, size, format, docStoreOffset, fieldsStream.Clone(), indexStream.Clone());
         }
 
         /// <summary>
