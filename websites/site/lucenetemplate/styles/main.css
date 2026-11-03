@@ -499,7 +499,6 @@ header.is-sticky nav.navbar {
   margin: 0 0 16px 0 !important;
   min-height: 40px;
   border: none;
-  box-shadow: none;
   background: var(--color-bg);
   position: relative;
   z-index: 900;

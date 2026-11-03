@@ -371,10 +371,10 @@ namespace Lucene.Net.Store
             internal MMapIndexInput(string resourceDescription,
                 bool ownsMapping, SharedMapping mapping,
                 long offset, long length, int chunkSizePower)
-                : base(mapping.Reclaimer, resourceDescription, offset, length, chunkSizePower)
+                : base((mapping ?? throw new ArgumentNullException(nameof(mapping))).Reclaimer, resourceDescription, offset, length, chunkSizePower)
             {
                 this.isRoot = ownsMapping;
-                this.mapping = mapping ?? throw new ArgumentNullException(nameof(mapping));
+                this.mapping = mapping;
             }
 
             // --- UnsafeChunkIndexInput chunk source ---------------------------

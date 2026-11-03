@@ -60,7 +60,6 @@ CASTS = {8: "(byte)", 16: "(short)", 32: "(int)", 64: ""} # LUCENENET specific -
 
 if __name__ == '__main__':
   for bpv in TYPES.keys():
-    type
     f = open("Direct%d.cs" %bpv, 'w')
 
     # LUCENENET specific - we write the usings before the header
