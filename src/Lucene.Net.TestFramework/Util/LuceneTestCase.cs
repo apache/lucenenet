@@ -1411,7 +1411,7 @@ namespace Lucene.Net.Util
             {
                 int maxThreadCount = TestUtil.NextInt32(Random, 1, 4);
                 int maxMergeCount = TestUtil.NextInt32(Random, maxThreadCount, maxThreadCount + 4);
-                IConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
+                ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
                 cms.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
                 c.SetMergeScheduler(cms);
             }
@@ -1689,7 +1689,7 @@ namespace Lucene.Net.Util
             if (Rarely(r))
             {
                 // change CMS merge parameters
-                IMergeScheduler ms = c.MergeScheduler;
+                MergeScheduler ms = c.MergeScheduler;
                 if (ms is ConcurrentMergeScheduler cms)
                 {
                     int maxThreadCount = TestUtil.NextInt32(r, 1, 4);

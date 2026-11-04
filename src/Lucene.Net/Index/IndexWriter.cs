@@ -261,7 +261,7 @@ namespace Lucene.Net.Index
         private readonly JCG.HashSet<SegmentCommitInfo> mergingSegments = new JCG.HashSet<SegmentCommitInfo>();
 
         private readonly MergePolicy mergePolicy;
-        private readonly IMergeScheduler mergeScheduler;
+        private readonly MergeScheduler mergeScheduler;
         private readonly Queue<MergePolicy.OneMerge> pendingMerges = new Queue<MergePolicy.OneMerge>();
         private readonly JCG.HashSet<MergePolicy.OneMerge> runningMerges = new JCG.HashSet<MergePolicy.OneMerge>();
         private IList<MergePolicy.OneMerge> mergeExceptions = new JCG.List<MergePolicy.OneMerge>();

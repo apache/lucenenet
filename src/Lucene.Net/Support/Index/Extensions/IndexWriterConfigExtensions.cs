@@ -292,7 +292,7 @@ namespace Lucene.Net.Index.Extensions
         /// <param name="config">this <see cref="IndexWriterConfig"/> instance</param>
         /// <param name="mergeScheduler"></param>
         /// <returns>this <see cref="IndexWriterConfig"/> instance</returns>
-        public static IndexWriterConfig SetMergeScheduler(this IndexWriterConfig config, IMergeScheduler mergeScheduler)
+        public static IndexWriterConfig SetMergeScheduler(this IndexWriterConfig config, MergeScheduler mergeScheduler)
         {
             config.MergeScheduler = mergeScheduler;
             return config;

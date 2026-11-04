@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
                         .SetMergeScheduler(new ConcurrentMergeScheduler())
                         .SetMergePolicy(NewLogMergePolicy(2));
                 IndexWriter writer1 = new IndexWriter(dir1, config);
-                ((IConcurrentMergeScheduler)writer1.Config.MergeScheduler).SetSuppressExceptions();
+                ((ConcurrentMergeScheduler)writer1.Config.MergeScheduler).SetSuppressExceptions();
 
                 // Intentionally use different params so flush/merge
                 // happen @ different times
@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
                         .SetMergeScheduler(new ConcurrentMergeScheduler())
                         .SetMergePolicy(NewLogMergePolicy(3));
                 IndexWriter writer2 = new IndexWriter(dir2, config2);
-                ((IConcurrentMergeScheduler)writer2.Config.MergeScheduler).SetSuppressExceptions();
+                ((ConcurrentMergeScheduler)writer2.Config.MergeScheduler).SetSuppressExceptions();
 
                 Update(writer1);
                 Update(writer2);

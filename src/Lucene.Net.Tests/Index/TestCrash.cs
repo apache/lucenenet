@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
                 .SetMaxBufferedDocs(10)
                 .SetMergeScheduler(new ConcurrentMergeScheduler()));
 
-            IConcurrentMergeScheduler scheduler = writer.Config.MergeScheduler as IConcurrentMergeScheduler;
+            ConcurrentMergeScheduler scheduler = writer.Config.MergeScheduler as ConcurrentMergeScheduler;
             if (scheduler != null)
             {
                 scheduler.SetSuppressExceptions();
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
         private void Crash(IndexWriter writer)
         {
             MockDirectoryWrapper dir = (MockDirectoryWrapper)writer.Directory;
-            var cms = (IConcurrentMergeScheduler)writer.Config.MergeScheduler;
+            var cms = (ConcurrentMergeScheduler)writer.Config.MergeScheduler;
             cms.Sync();
             dir.Crash();
             cms.Sync();

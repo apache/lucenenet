@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
     /// incoming threads by pausing until one more more merges
     /// complete.</para>
     /// </summary>
-    public class ConcurrentMergeScheduler : MergeScheduler, IConcurrentMergeScheduler
+    public class ConcurrentMergeScheduler : MergeScheduler
     {
         private int mergeThreadPriority = -1;
 

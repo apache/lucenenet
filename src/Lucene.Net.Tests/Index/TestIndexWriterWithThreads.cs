@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
                         .SetMaxBufferedDocs(2)
                         .SetMergeScheduler(new ConcurrentMergeScheduler())
                         .SetMergePolicy(NewLogMergePolicy(4)));
-                ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
+                ((ConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
 
                 dir.MaxSizeInBytes = 4 * 1024 + 20 * iter;
 
@@ -226,7 +226,7 @@ namespace Lucene.Net.Index
                         .SetMaxBufferedDocs(10)
                         .SetMergeScheduler(new ConcurrentMergeScheduler())
                         .SetMergePolicy(NewLogMergePolicy(4)));
-                ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
+                ((ConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
 
                 IndexerThread[] threads = new IndexerThread[NUM_THREADS];
 
@@ -319,7 +319,7 @@ namespace Lucene.Net.Index
                         .SetMaxBufferedDocs(2)
                         .SetMergeScheduler(new ConcurrentMergeScheduler())
                         .SetMergePolicy(NewLogMergePolicy(4)));
-                ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
+                ((ConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
 
                 IndexerThread[] threads = new IndexerThread[NUM_THREADS];
 
