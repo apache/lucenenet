@@ -626,7 +626,7 @@ namespace Lucene.Net.Index
                                 .SetMergeScheduler(new ConcurrentMergeScheduler());
 
                 // LUCENENET note: Original Java code does an unsafe cast here, so we should as well. Do not change to a safe type check.
-                ((IConcurrentMergeScheduler)config.MergeScheduler).SetSuppressExceptions();
+                ((ConcurrentMergeScheduler)config.MergeScheduler).SetSuppressExceptions();
 
                 IndexWriter modifier = new IndexWriter(dir, config);
 

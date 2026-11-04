@@ -75,8 +75,8 @@ namespace Lucene.Net.Index
                     MockDirectoryWrapper dir = new MockDirectoryWrapper(Random, new RAMDirectory());
                     dir.MaxSizeInBytes = diskFree;
                     IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-                    IMergeScheduler ms = writer.Config.MergeScheduler;
-                    if (ms is IConcurrentMergeScheduler concurrentMergeScheduler)
+                    MergeScheduler ms = writer.Config.MergeScheduler;
+                    if (ms is ConcurrentMergeScheduler concurrentMergeScheduler)
                     {
                         // this test intentionally produces exceptions
                         // in the threads that CMS launches; we don't
@@ -300,10 +300,10 @@ namespace Lucene.Net.Index
                     indWriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetMergePolicy(NewLogMergePolicy(false)));
                     Exception err = null; // LUCENENET: No need to cast to IOException
 
-                    IMergeScheduler ms = indWriter.Config.MergeScheduler;
+                    MergeScheduler ms = indWriter.Config.MergeScheduler;
                     for (int x = 0; x < 2; x++)
                     {
-                        if (ms is IConcurrentMergeScheduler concurrentMergeScheduler)
+                        if (ms is ConcurrentMergeScheduler concurrentMergeScheduler)
                         // this test intentionally produces exceptions
                         // in the threads that CMS launches; we don't
                         // want to pollute test output with these.

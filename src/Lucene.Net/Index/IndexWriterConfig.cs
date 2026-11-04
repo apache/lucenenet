@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
             // such as line numbers, message throughput, ...
             clone.infoStream = infoStream.Clone();
             clone.mergePolicy = mergePolicy.Clone();
-            clone.mergeScheduler = (IMergeScheduler)mergeScheduler.Clone();
+            clone.mergeScheduler = mergeScheduler.Clone();
 
             return clone;
 
@@ -287,7 +287,7 @@ namespace Lucene.Net.Index
         /// </summary>
         // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
-        new public IMergeScheduler MergeScheduler
+        new public MergeScheduler MergeScheduler
         {
             get => mergeScheduler;
             set => mergeScheduler = value ?? throw new ArgumentNullException(nameof(MergeScheduler), "MergeScheduler must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)

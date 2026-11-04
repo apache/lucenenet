@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
     /// incoming threads by pausing until one more more merges
     /// complete.</para>
     /// </summary>
-    public class ConcurrentMergeScheduler : MergeScheduler, IConcurrentMergeScheduler
+    public class ConcurrentMergeScheduler : MergeScheduler
     {
         private int mergeThreadPriority = -1;
 
@@ -782,14 +782,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Used for testing </summary>
-        public virtual void SetSuppressExceptions()
+        internal virtual void SetSuppressExceptions()
         {
             suppressExceptions = true;
         }
 
         /// <summary>
         /// Used for testing </summary>
-        public virtual void ClearSuppressExceptions()
+        internal virtual void ClearSuppressExceptions()
         {
             suppressExceptions = false;
         }

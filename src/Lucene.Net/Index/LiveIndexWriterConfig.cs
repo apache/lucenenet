@@ -77,8 +77,8 @@ namespace Lucene.Net.Index
         internal volatile Similarity similarity;
 
         /// <summary>
-        /// <see cref="IMergeScheduler"/> to use for running merges. </summary>
-        internal volatile IMergeScheduler mergeScheduler;
+        /// <see cref="Index.MergeScheduler"/> to use for running merges. </summary>
+        internal volatile MergeScheduler mergeScheduler;
 
         /// <summary>
         /// Timeout when trying to obtain the write lock on init. </summary>
@@ -483,10 +483,10 @@ namespace Lucene.Net.Index
         public virtual Similarity Similarity => similarity;
 
         /// <summary>
-        /// Returns the <see cref="IMergeScheduler"/> that was set by
+        /// Returns the <see cref="Index.MergeScheduler"/> that was set by
         /// <see cref="IndexWriterConfig.MergeScheduler"/> setter.
         /// </summary>
-        public virtual IMergeScheduler MergeScheduler => mergeScheduler;
+        public virtual MergeScheduler MergeScheduler => mergeScheduler;
 
         /// <summary>
         /// Returns allowed timeout when acquiring the write lock.

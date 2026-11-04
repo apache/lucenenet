@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
                         iwc.SetInfoStream(new TextWriterInfoStream(Console.Out));
                     }
                     var ms = iwc.MergeScheduler;
-                    if (ms is IConcurrentMergeScheduler concurrentMergeScheduler)
+                    if (ms is ConcurrentMergeScheduler concurrentMergeScheduler)
                     {
                         concurrentMergeScheduler.SetSuppressExceptions();
                     }

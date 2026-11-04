@@ -766,7 +766,7 @@ namespace Lucene.Net.Index
             {
                 writer.AddDocument(DocHelper.CreateDocument(i, "test", 4));
             }
-            ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).Sync();
+            ((ConcurrentMergeScheduler)writer.Config.MergeScheduler).Sync();
 
             Assert.IsTrue(warmer.warmCount > 0);
             Console.WriteLine("Count {0}", warmer.warmCount);
@@ -803,7 +803,7 @@ namespace Lucene.Net.Index
             {
                 writer.AddDocument(DocHelper.CreateDocument(i, "test", 4));
             }
-            ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).Sync();
+            ((ConcurrentMergeScheduler)writer.Config.MergeScheduler).Sync();
 
             DirectoryReader r2 = DirectoryReader.OpenIfChanged(r1);
             if (r2 != null)
