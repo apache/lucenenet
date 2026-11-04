@@ -1,4 +1,5 @@
 using J2N.Threading;
+using Lucene.Net.Attributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -6,6 +7,7 @@ using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
@@ -330,6 +332,101 @@ namespace Lucene.Net.Index
                             if (Debugging.AssertsEnabled) Debugging.Assert(merge.Segments[i].Info.DocCount < 20);
                         }
                         writer.Merge(merge);
+                    }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
+                }
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+            }
+        }
+
+        // LUCENENET specific - Dispose() must give the merge scheduler a last chance to run
+        // merges that are still pending (since Lucene 4.10.0, commit 969c919b9a2, IndexWriter.waitForMerges()
+        // calls mergeScheduler.merge(this, MergeTrigger.CLOSING, false)). Merges can be left pending
+        // when a scheduler returns without draining the queue, e.g. SerialMergeScheduler after
+        // a merge throws. Without that call, Dispose() waits forever on pendingMerges when there
+        // is nothing left to flush, as seen in TestIndexWriterExceptions2.TestBasics.
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestDisposeRunsPendingMerges()
+        {
+            Directory dir = NewDirectory();
+            DeferringMergeScheduler scheduler = new DeferringMergeScheduler();
+            LogDocMergePolicy mergePolicy = new LogDocMergePolicy();
+            mergePolicy.MergeFactor = 2;
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(2)
+                .SetMergePolicy(mergePolicy)
+                .SetMergeScheduler(scheduler));
+
+            for (int i = 0; i < 10; i++)
+            {
+                Document doc = new Document();
+                doc.Add(NewStringField("id", i.ToString(CultureInfo.InvariantCulture), Field.Store.NO));
+                writer.AddDocument(doc);
+            }
+            writer.Commit();
+
+            // Merges were registered, but the scheduler declined to run them, and there is
+            // nothing buffered, so Dispose()'s flush will not trigger another MaybeMerge().
+            Assert.IsTrue(writer.HasPendingMerges(), "expected pending merges before Dispose()");
+            scheduler.Defer = false;
+
+            Exception disposeException = null;
+            Thread disposeThread = new Thread(() =>
+            {
+                try
+                {
+                    writer.Dispose();
+                }
+                catch (Exception e) when (e.IsThrowable())
+                {
+                    disposeException = e;
+                }
+            });
+            disposeThread.IsBackground = true; // don't keep the test process alive if Dispose() hangs
+            disposeThread.Start();
+
+            Assert.IsTrue(disposeThread.Join(TimeSpan.FromSeconds(30)), "IndexWriter.Dispose() hung waiting for pending merges");
+            if (disposeException != null)
+            {
+                ExceptionDispatchInfo.Capture(disposeException).Throw();
+            }
+            Assert.IsTrue(scheduler.RanMerges, "expected Dispose() to run the pending merges");
+
+            dir.Dispose();
+        }
+
+        // Leaves registered merges pending while Defer is true, then behaves like SerialMergeScheduler
+        private sealed class DeferringMergeScheduler : MergeScheduler
+        {
+            public volatile bool Defer = true;
+            public volatile bool RanMerges;
+
+            public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
+            {
+                if (Defer)
+                {
+                    return;
+                }
+
+                UninterruptableMonitor.Enter(this);
+                try
+                {
+                    while (true)
+                    {
+                        MergePolicy.OneMerge merge = writer.GetNextMerge();
+                        if (merge is null)
+                        {
+                            break;
+                        }
+                        writer.Merge(merge);
+                        RanMerges = true;
                     }
                 }
                 finally
