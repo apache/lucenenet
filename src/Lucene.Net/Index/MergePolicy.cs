@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
             public IList<SegmentCommitInfo> Segments { get; private set; }
 
             /// <summary>
-            /// Number of documents in the merged segment. </summary>
+            /// Total number of documents in segments to be merged, not accounting for deletions. </summary>
             public int TotalDocCount { get; private set; }
 
             internal bool aborted;
@@ -678,8 +678,7 @@ namespace Lucene.Net.Index
         /// <param name="segmentInfos">
         ///          The total set of segments in the index </param>
         /// <param name="maxSegmentCount">
-        ///          Requested maximum number of segments in the index (currently this
-        ///          is always 1) </param>
+        ///          Requested maximum number of segments in the index </param>
         /// <param name="segmentsToMerge">
         ///          Contains the specific <see cref="SegmentInfo"/> instances that must be merged
         ///          away. This may be a subset of all

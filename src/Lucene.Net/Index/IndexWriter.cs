@@ -303,7 +303,7 @@ namespace Lucene.Net.Index
         /// the writer nor calling <see cref="Commit()"/>.
         ///
         /// <para>Note that this is functionally equivalent to calling
-        /// Flush() and then opening a new reader.  But the turnaround time of this
+        /// <see cref="Commit()"/> and then opening a new reader.  But the turnaround time of this
         /// method should be faster since it avoids the potentially
         /// costly <see cref="Commit()"/>.</para>
         ///
@@ -1257,9 +1257,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Gets total number of docs in this index, including
-        /// docs not yet flushed (still in the RAM buffer),
-        /// not counting deletions.
+        /// Gets total number of docs in this index, counting
+        /// docs not yet flushed (still in the RAM buffer), and
+        /// also counting deleted docs.
         /// </summary>
         /// <seealso cref="NumDocs"/>
         public virtual int MaxDoc
@@ -1280,11 +1280,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Gets total number of docs in this index, including
-        /// docs not yet flushed (still in the RAM buffer), and
-        /// including deletions.  <b>NOTE:</b> buffered deletions
-        /// are not counted.  If you really need these to be
-        /// counted you should call <see cref="Commit()"/> first.
+        /// Gets total number of docs in this index, counting
+        /// docs not yet flushed (still in the RAM buffer), but
+        /// not counting deleted docs.  <b>NOTE:</b> buffered deletions
+        /// have not yet been applied, so their documents are still counted.
+        /// To apply these deletions, call <see cref="Commit()"/> first.
         /// </summary>
         /// <seealso cref="MaxDoc"/>
         public virtual int NumDocs // LUCENENET NOTE: This is not a great candidate for a property, but changing because IndexReader has a property with the same name
@@ -5241,7 +5241,7 @@ namespace Lucene.Net.Index
                     UninterruptableMonitor.Enter(this);
                     try
                     {
-                        // Must sync to ensure BufferedDeletesStream cannot change liveDocs,
+                        // Must sync to ensure BufferedUpdatesStream cannot change liveDocs,
                         // pendingDeleteCount and field updates while we pull a copy:
                         reader = rld.GetReaderForMerge(context);
                         liveDocs = rld.GetReadOnlyLiveDocs();
