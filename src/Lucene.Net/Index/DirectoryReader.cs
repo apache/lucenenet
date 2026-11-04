@@ -151,8 +151,7 @@ namespace Lucene.Net.Index
         /// opened, open and return a new reader; else, return
         /// <c>null</c>.  The new reader, if not <c>null</c>, will be the same
         /// type of reader as the previous one, ie a near-real-time (NRT) reader
-        /// will open a new NRT reader, a <see cref="MultiReader"/> will open a
-        /// new <see cref="MultiReader"/>,  etc.
+        /// will open a new NRT reader, etc.
         ///
         /// <para/>This method is typically far less costly than opening a
         /// fully new <see cref="DirectoryReader"/> as it shares
