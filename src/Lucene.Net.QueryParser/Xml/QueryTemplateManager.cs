@@ -114,14 +114,12 @@ namespace Lucene.Net.QueryParsers.Xml
         /// </summary>
         public static XmlDocument GetQueryAsDOM(IDictionary<string, string> formProperties, XslCompiledTransform template)
         {
-            XmlDocument result = new XmlDocument();
             using (var stream = new MemoryStream())
             {
                 TransformCriteria(formProperties, template, stream);
                 stream.Position = 0;
-                result.Load(stream);
+                return DOMUtils.LoadXMLSecure(stream); // LUCENENET: Disallow external entities and limit entity expansion
             }
-            return result;
         }
 
         /// <summary>
@@ -129,14 +127,12 @@ namespace Lucene.Net.QueryParsers.Xml
         /// </summary>
         public static XmlDocument GetQueryAsDOM(IDictionary<string, string> formProperties, Stream xslIs)
         {
-            XmlDocument result = new XmlDocument();
             using (var stream = new MemoryStream())
             {
                 TransformCriteria(formProperties, xslIs, stream);
                 stream.Position = 0;
-                result.Load(stream);
+                return DOMUtils.LoadXMLSecure(stream); // LUCENENET: Disallow external entities and limit entity expansion
             }
-            return result;
         }
 
         /// <summary>
@@ -144,8 +140,7 @@ namespace Lucene.Net.QueryParsers.Xml
         /// </summary>
         public static void TransformCriteria(IDictionary<string, string> formProperties, Stream xslIs, Stream result)
         {
-            XmlDocument xslDoc = new XmlDocument();
-            xslDoc.Load(xslIs);
+            XmlDocument xslDoc = DOMUtils.LoadXMLSecure(xslIs); // LUCENENET: Disallow external entities and limit entity expansion
 
             XslCompiledTransform transformer = new XslCompiledTransform();
             transformer.Load(xslDoc);
