@@ -118,10 +118,10 @@ namespace Lucene.Net.Analysis.Sq
                 char ch = char.ToLowerInvariant(s[i]);
                 key[i] = ch == 'ë' ? 'e' : ch;
             }
-            if (KEEP_C_WORDS.Contains(key, 0, len)) return true;
+            if (KEEP_C_WORDS.Contains(key.AsSpan(0, len))) return true;
             for (int k = first + 1; k <= len; k++)
             {
-                if (KEEP_C_PREFIXES.Contains(key, 0, k)) return true;
+                if (KEEP_C_PREFIXES.Contains(key.AsSpan(0, k))) return true;
             }
             return false;
         }
