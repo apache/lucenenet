@@ -217,8 +217,7 @@ namespace Lucene.Net.Expressions.JS
         }
 
         // LUCENENET specific: compiles the tree built by JavascriptExpressionParser, emitting
-        // the same IL as the former ANTLR listener did for each rule of the grammar (see
-        // Lucene.Net.Expressions.Benchmarks/Antlr/AntlrJavascriptCompiler.cs).
+        // the same IL as the former ANTLR listener did for each rule of the grammar.
         private sealed class JavascriptNodeCompiler
         {
             private readonly JavascriptCompiler compiler;

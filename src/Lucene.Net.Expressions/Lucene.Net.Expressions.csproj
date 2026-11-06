@@ -91,7 +91,6 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Lucene.Net.Tests.Expressions" />
-    <InternalsVisibleTo Include="Lucene.Net.Expressions.Benchmarks" />
   </ItemGroup>
 
   <ItemGroup>
