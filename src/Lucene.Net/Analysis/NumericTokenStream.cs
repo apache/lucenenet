@@ -238,7 +238,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Creates a token stream for numeric values using the default <seealso cref="precisionStep"/>
+        /// Creates a token stream for numeric values using the default <see cref="PrecisionStep"/>
         /// <see cref="NumericUtils.PRECISION_STEP_DEFAULT"/> (4). The stream is not yet initialized,
         /// before using set a value using the various Set<em>???</em>Value() methods.
         /// </summary>

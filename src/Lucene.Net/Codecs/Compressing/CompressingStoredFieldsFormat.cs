@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// speeds so that you can pick the one that best fits your indexing and
         /// searching throughput. You should never instantiate two
         /// <see cref="CompressingStoredFieldsFormat"/>s that have the same name but
-        /// different <see cref="compressionMode"/>s.
+        /// different <c>compressionMode</c>s.
         /// <para/>
         /// <paramref name="chunkSize"/> is the minimum byte size of a chunk of documents.
         /// A value of <c>1</c> can make sense if there is redundancy across

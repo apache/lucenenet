@@ -120,7 +120,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Creates a <see cref="MultiLevelSkipListReader"/>, where
-        /// <see cref="skipInterval"/> and <see cref="skipMultiplier"/> are
+        /// <c>skipInterval</c> and <c>skipMultiplier</c> are
         /// the same.
         /// </summary>
         protected internal MultiLevelSkipListReader(IndexInput skipStream, int maxSkipLevels, int skipInterval)

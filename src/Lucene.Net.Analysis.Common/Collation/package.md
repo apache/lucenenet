@@ -121,7 +121,7 @@ assertEquals("The index Term should be included.", 1, result.Length);
 
  __WARNING:__ Make sure you use exactly the same collator (`System.Globalization.CompareInfo` *and* `System.Globalization.CompareOptions`) at index and query time -- `System.Globalization.SortKey`s are only comparable when produced by the same collator. Since the platform collator is not independently versioned, it is unsafe to search against stored `System.Globalization.SortKey`s unless the following are exactly the same (best practice is to store this information with the index and check that they remain the same at query time):
 
-1.  The .NET runtime version, and the active globalization backend. .NET Framework uses Windows NLS, while .NET 5+ uses ICU by default; the two produce different sort keys and orderings. You can detect the active backend at runtime via <xref:Lucene.Net.Collation.CollationUtil.IsICU> (or its inverse, <xref:Lucene.Net.Collation.CollationUtil.IsNLS>) and store that value with the index to verify it matches at query time.
+1.  The .NET runtime version, and the active globalization backend. .NET Framework uses Windows NLS, while .NET 5+ uses ICU by default; the two produce different sort keys and orderings. You can detect the active backend at runtime (see [Globalization and ICU](https://learn.microsoft.com/en-us/dotnet/core/extensions/globalization-icu)) and store that value with the index to verify it matches at query time.
 
 2.  The language (and country and variant, if specified) of the culture used when obtaining the collator via `System.Globalization.CompareInfo.GetCompareInfo`.
 

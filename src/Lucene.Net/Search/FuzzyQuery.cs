@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
     /// Higher distances (especially with transpositions enabled), are generally not useful and
     /// will match a significant amount of the term dictionary. If you really want this, consider
     /// using an n-gram indexing technique (such as the SpellChecker in the
-    /// <a href="{@docRoot}/../suggest/overview-summary.html">suggest module</a>) instead.
+    /// <a href="xref:Lucene.Net.Search.Suggest">suggest module</a>) instead.
     ///
     /// <para/>NOTE: terms of length 1 or 2 will sometimes not match because of how the scaled
     /// distance between two terms is computed.  For a term to match, the edit distance between

@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// suggestion "The Ghost of Christmas Past". Note that
     /// position increments MUST NOT be preserved for this example
     /// to work, so you should call the constructor with
-    /// <see cref="preservePositionIncrements"/> parameter set to
+    /// <c>preservePositionIncrements</c> parameter set to
     /// false
     ///
     /// </para>
