@@ -25,7 +25,9 @@ namespace Lucene.Net.Native
             internal const int O_WRONLY = 1;
 
             internal const int EACCES = 13;
+            internal const int EINVAL = 22;
             internal const int ENOENT = 2;
+            internal const int ENOTDIR = 20;
         }
     }
 }

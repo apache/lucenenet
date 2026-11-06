@@ -7,9 +7,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Assert = Lucene.Net.TestFramework.Assert;
-#if !FEATURE_ENCODING_GETSTRING_READONLYSPAN
 using J2N.Text;
-#endif
 
 namespace Lucene.Net.Util
 {

@@ -1,10 +1,6 @@
 using System.Collections.Concurrent;
 using System.Text;
 
-#if !FEATURE_ENCODING_GETSTRING_READONLYSPAN
-using System;
-#endif
-
 #nullable enable
 
 namespace Lucene.Net.Support.Text
@@ -59,15 +55,5 @@ namespace Lucene.Net.Support.Text
                 return newEncoding;
             });
         }
-
-#if !FEATURE_ENCODING_GETSTRING_READONLYSPAN
-        public static unsafe string GetString(this Encoding encoding, ReadOnlySpan<byte> bytes)
-        {
-            fixed (byte* bytesPtr = bytes)
-            {
-                return encoding.GetString(bytesPtr, bytes.Length);
-            }
-        }
-#endif
     }
 }
