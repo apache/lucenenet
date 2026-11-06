@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace LuceneDocsPlugins;
 
@@ -42,12 +43,14 @@ public partial class LuceneNoteProcessor : IPostProcessor
         return metadata;
     }
 
-    public Manifest Process(Manifest manifest, string outputFolder)
+    public Manifest Process(Manifest manifest, string outputFolder, CancellationToken cancellationToken)
     {
         foreach (var manifestItem in manifest.Files)
         {
             foreach (var manifestItemOutputFile in manifestItem.Output)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 var outputPath = Path.Combine(outputFolder, manifestItemOutputFile.Value.RelativePath);
 
                 var content = File.ReadAllText(outputPath);
