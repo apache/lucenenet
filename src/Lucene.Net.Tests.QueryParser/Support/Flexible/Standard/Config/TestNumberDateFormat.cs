@@ -1,16 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using J2N;
 using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using TimeZoneConverter;
 using NUnit.Framework;
-
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 {

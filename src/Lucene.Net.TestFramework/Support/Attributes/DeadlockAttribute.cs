@@ -2,6 +2,7 @@ using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using System;
+using System.Threading;
 
 namespace Lucene.Net.Attributes
 {
@@ -25,8 +26,13 @@ namespace Lucene.Net.Attributes
     /// <summary>
     /// Indicates a test has contention between concurrent processes and may deadlock.
     /// </summary>
+    /// <remarks>
+    /// In order to take advantage of the <see cref="CancelAfterAttribute"/> base class' timeout cancellation support,
+    /// the test method must take a <see cref="CancellationToken"/> and check for cancellation (or pass to supporting
+    /// APIs that do).
+    /// </remarks>
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-    internal sealed class DeadlockAttribute : TimeoutAttribute, IApplyToTest
+    internal sealed class DeadlockAttribute : CancelAfterAttribute, IApplyToTest
     {
         public DeadlockAttribute() : base(600000) { }
 

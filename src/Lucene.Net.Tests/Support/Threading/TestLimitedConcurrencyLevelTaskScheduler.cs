@@ -6,6 +6,7 @@ using NUnit.Framework;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Assert = Lucene.Net.TestFramework.Assert;
 #nullable enable
 
 namespace Lucene.Net.Support.Threading

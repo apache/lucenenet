@@ -55,11 +55,7 @@ namespace Lucene.Net.Store
         public override void SetUp()
         {
             base.SetUp();
-            //IndexDir = CreateTempDir("RAMDirIndex");
-            string tempDir = Path.GetTempPath();
-            if (tempDir is null)
-                throw new IOException("java.io.tmpdir undefined, cannot run test");
-            indexDir = new DirectoryInfo(Path.Combine(tempDir, "RAMDirIndex"));
+            indexDir = CreateTempDir("RAMDirIndex");
 
             Directory dir = NewFSDirectory(indexDir);
             IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
