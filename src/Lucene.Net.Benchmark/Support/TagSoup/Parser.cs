@@ -1123,7 +1123,7 @@ namespace TagSoup
         }
 
         /// <summary>
-        ///   Split the supplied string into words or phrases seperated by spaces.
+        ///   Split the supplied string into words or phrases separated by spaces.
         ///   Recognises quotes around a phrase and doesn't split it.
         /// </summary>
         /// <param name="val"></param>
