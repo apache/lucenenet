@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     BytesRef p = previousPrefixToken.Payload;
                     if (p != null)
                     {
-                        previousPrefixToken.Payload = (BytesRef)p.Clone();
+                        previousPrefixToken.Payload = p.Clone();
                     }
                     SetCurrentToken(nextToken);
                     return true;

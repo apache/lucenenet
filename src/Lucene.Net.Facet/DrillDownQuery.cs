@@ -84,7 +84,7 @@ namespace Lucene.Net.Facet
         /// </summary>
         internal DrillDownQuery(FacetsConfig config, BooleanQuery query, IDictionary<string, int> drillDownDims)
         {
-            this.query = (BooleanQuery)query.Clone();
+            this.query = query.Clone();
             this.drillDownDims.PutAll(drillDownDims);
             this.config = config;
         }
@@ -274,7 +274,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             return new DrillDownQuery(config, query, drillDownDims);
         }

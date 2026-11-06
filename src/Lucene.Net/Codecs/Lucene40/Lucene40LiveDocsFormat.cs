@@ -85,7 +85,7 @@ namespace Lucene.Net.Codecs.Lucene40
         public override IMutableBits NewLiveDocs(IBits existing)
         {
             BitVector liveDocs = (BitVector)existing;
-            return (BitVector)liveDocs.Clone();
+            return liveDocs.Clone();
         }
 
         public override IBits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)

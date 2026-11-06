@@ -147,7 +147,7 @@ namespace Lucene.Net.Store
             CopyThread[] copies = new CopyThread[10];
             for (int i = 0; i < copies.Length; i++)
             {
-                copies[i] = new CopyThread((IndexInput)input.Clone(), d.CreateOutput("copy" + i, IOContext.DEFAULT));
+                copies[i] = new CopyThread(input.Clone(), d.CreateOutput("copy" + i, IOContext.DEFAULT));
             }
 
             for (int i = 0; i < copies.Length; i++)

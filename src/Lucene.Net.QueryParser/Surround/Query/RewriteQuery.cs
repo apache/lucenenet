@@ -77,7 +77,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         /// Not supported by this query.
         /// </summary>
         /// <exception cref="NotSupportedException">throws <see cref="NotSupportedException"/> always: clone is not supported.</exception>
-        public override object Clone()
+        protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             throw UnsupportedOperationException.Create();
         }

@@ -76,9 +76,9 @@ namespace Lucene.Net.Index
         internal SegmentCoreReaders(SegmentReader owner, Directory dir, SegmentCommitInfo si, IOContext context, int termsIndexDivisor)
         {
             fieldsReaderLocal = new DisposableThreadLocal<StoredFieldsReader>(()
-                => (StoredFieldsReader)fieldsReaderOrig.Clone());
+                => fieldsReaderOrig.Clone());
             termVectorsLocal = new DisposableThreadLocal<TermVectorsReader>(()
-                => (termVectorsReaderOrig is null) ? null : (TermVectorsReader)termVectorsReaderOrig.Clone());
+                => (termVectorsReaderOrig is null) ? null : termVectorsReaderOrig.Clone());
 
             if (termsIndexDivisor == 0)
             {

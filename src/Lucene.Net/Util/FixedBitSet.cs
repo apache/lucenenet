@@ -34,7 +34,7 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public sealed class FixedBitSet : DocIdSet, IBits
+    public sealed class FixedBitSet : DocIdSet, IBits, ICloneable // LUCENENET specific: Added ICloneable is support the Clone<T>() extension method
     {
         /// <summary>
         /// A <see cref="DocIdSetIterator"/> which iterates over set bits in a
@@ -682,8 +682,10 @@ namespace Lucene.Net.Util
             bits[endWord] &= endmask;
         }
 
+        object ICloneable.Clone() => Clone();
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public FixedBitSet Clone()
+        private FixedBitSet Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             long[] bits = new long[this.bits.Length];
             Arrays.Copy(this.bits, 0, bits, 0, bits.Length);

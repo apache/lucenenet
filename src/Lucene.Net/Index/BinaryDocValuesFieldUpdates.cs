@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
                 this.lengths = lengths;
                 this.docs = docs;
                 this.docsWithField = docsWithField;
-                value = (BytesRef)values.Clone();
+                value = values.Clone();
             }
 
             public override BytesRef Value

@@ -39,8 +39,8 @@ namespace Lucene.Net.Util
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
-    public sealed class CharsRef : IComparable<CharsRef>, IEquatable<CharsRef> // LUCENENET specific - implemented IEquatable<CharsRef>
+    // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
+    public sealed class CharsRef : IComparable<CharsRef>, IEquatable<CharsRef>, ICloneable // LUCENENET specific - implemented IEquatable<CharsRef>
     {
         /// <summary>
         /// An empty character array for convenience </summary>
@@ -121,6 +121,8 @@ namespace Lucene.Net.Util
             this.Length = chars.Length;
         }
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary>
         /// Returns a shallow clone of this instance (the underlying characters are
         /// <b>not</b> copied and will be shared by both the returned object and this
@@ -128,7 +130,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <seealso cref="DeepCopyOf(CharsRef)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public object Clone()
+        private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             return new CharsRef(chars, Offset, Length);
         }

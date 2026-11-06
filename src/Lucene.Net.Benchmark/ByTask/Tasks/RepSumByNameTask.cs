@@ -66,7 +66,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     string name = stat1.Task.GetName();
                     if (!p2.TryGetValue(name, out TaskStats stat2) || stat2 is null)
                     {
-                        stat2 = (TaskStats)stat1.Clone();
+                        stat2 = stat1.Clone();
                         p2[name] = stat2;
                     }
                     else

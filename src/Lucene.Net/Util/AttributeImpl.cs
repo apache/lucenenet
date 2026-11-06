@@ -29,7 +29,7 @@ namespace Lucene.Net.Util
     /// Attributes are used to add data in a dynamic, yet type-safe way to a source
     /// of usually streamed objects, e. g. a <see cref="Lucene.Net.Analysis.TokenStream" />.
     /// </summary>
-    public abstract class Attribute : IAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class Attribute : ICloneable, IAttribute // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// Clears the values in this <see cref="Attribute"/> and resets it to its
@@ -198,12 +198,14 @@ namespace Lucene.Net.Util
         /// </summary>
         public abstract void CopyTo(IAttribute target); // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
 
+        object ICloneable.Clone() => Clone();
+
         /// <summary> Shallow clone. Subclasses must override this if they
         /// need to clone any members deeply,
         /// </summary>
-        public virtual object Clone()
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
-            return base.MemberwiseClone();
+            return MemberwiseClone();
         }
     }
 }

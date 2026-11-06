@@ -352,7 +352,7 @@ namespace Lucene.Net.Index
 
             IndexInput one = cr.OpenInput("f11", NewIOContext(Random));
 
-            IndexInput two = (IndexInput)one.Clone();
+            IndexInput two = one.Clone();
 
             AssertSameStreams("basic clone one", expected, one);
             expected.Seek(0);
@@ -481,8 +481,8 @@ namespace Lucene.Net.Index
             IndexInput e1 = cr.OpenInput("f11", NewIOContext(Random));
             IndexInput e2 = cr.OpenInput("f3", NewIOContext(Random));
 
-            IndexInput a1 = (IndexInput)e1.Clone();
-            IndexInput a2 = (IndexInput)e2.Clone();
+            IndexInput a1 = e1.Clone();
+            IndexInput a2 = e2.Clone();
 
             // Seek the first pair
             e1.Seek(100);

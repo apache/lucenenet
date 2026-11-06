@@ -123,7 +123,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             {
                 try
                 {
-                    iwConf.MergeScheduler = (IMergeScheduler)Activator.CreateInstance(mergeSchedulerType);
+                    iwConf.MergeScheduler = (MergeScheduler)Activator.CreateInstance(mergeSchedulerType);
                 }
                 catch (Exception e) when (e.IsException())
                 {

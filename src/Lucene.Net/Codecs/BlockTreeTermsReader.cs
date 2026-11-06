@@ -599,7 +599,7 @@ namespace Lucene.Net.Codecs
 
                 if (indexIn != null)
                 {
-                    IndexInput clone = (IndexInput)indexIn.Clone();
+                    IndexInput clone = indexIn.Clone();
                     //System.out.println("start=" + indexStartFP + " field=" + fieldInfo.name);
                     clone.Seek(indexStartFP);
                     index = new FST<BytesRef>(clone, ByteSequenceOutputs.Singleton);
@@ -1015,7 +1015,7 @@ namespace Lucene.Net.Codecs
                     // }
                     runAutomaton = compiled.RunAutomaton;
                     compiledAutomaton = compiled;
-                    @in = (IndexInput)outerInstance.outerInstance.@in.Clone();
+                    @in = outerInstance.outerInstance.@in.Clone();
                     stack = new Frame[5];
                     for (int idx = 0; idx < stack.Length; idx++)
                     {
@@ -1077,7 +1077,7 @@ namespace Lucene.Net.Codecs
                 public override TermState GetTermState()
                 {
                     currentFrame.DecodeMetaData();
-                    return (TermState)currentFrame.termState.Clone();
+                    return currentFrame.termState.Clone();
                 }
 
                 private Frame GetFrame(int ord)
@@ -1594,7 +1594,7 @@ namespace Lucene.Net.Codecs
                 {
                     if (this.@in is null)
                     {
-                        this.@in = (IndexInput)outerInstance.outerInstance.@in.Clone();
+                        this.@in = outerInstance.outerInstance.@in.Clone();
                     }
                 }
 
@@ -2595,7 +2595,7 @@ namespace Lucene.Net.Codecs
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(!eof);
                     currentFrame.DecodeMetaData();
-                    TermState ts = (TermState)currentFrame.state.Clone();
+                    TermState ts = currentFrame.state.Clone();
                     //if (DEBUG) System.out.println("BTTR.termState seg=" + segment + " state=" + ts);
                     return ts;
                 }

@@ -261,7 +261,7 @@ namespace Lucene.Net.Store
 
         public override sealed long Length => length;
 
-        public override sealed object Clone()
+        protected override sealed object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             ByteBufferIndexInput clone = BuildSlice(0L, this.length);
             try

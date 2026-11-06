@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
     /// new <see cref="DocumentsWriterPerThread"/> instance.
     /// </summary>
 
-    internal sealed class DocumentsWriterPerThreadPool // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    internal sealed class DocumentsWriterPerThreadPool : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// <see cref="ThreadState"/> references and guards a
@@ -175,7 +175,9 @@ namespace Lucene.Net.Index
             freeList = new ThreadState[maxNumThreadStates];
         }
 
-        public object Clone()
+        object ICloneable.Clone() => Clone();
+
+        private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             // We should only be cloned before being used:
             if (numThreadStatesActive != 0)

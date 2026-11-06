@@ -31425,7 +31425,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         {
                             inputSegment.Write(zzBuffer, zzStartRead, YyLength);
                             if (null != escapedTags
-                                && escapedTags.Contains(zzBuffer, zzStartRead, YyLength))
+                                && escapedTags.Contains(zzBuffer.AsSpan(zzStartRead, YyLength)))
                             {
                                 YyBegin(START_TAG_TAIL_INCLUDE);
                             }
@@ -31440,7 +31440,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         {
                             inputSegment.Write(zzBuffer, zzStartRead, YyLength);
                             if (null != escapedTags
-                                && escapedTags.Contains(zzBuffer, zzStartRead, YyLength))
+                                && escapedTags.Contains(zzBuffer.AsSpan(zzStartRead, YyLength)))
                             {
                                 YyBegin(START_TAG_TAIL_INCLUDE);
                             }
@@ -31507,7 +31507,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         {
                             inputSegment.Write(zzBuffer, zzStartRead, YyLength);
                             if (null != escapedTags
-                                && escapedTags.Contains(zzBuffer, zzStartRead, YyLength))
+                                && escapedTags.Contains(zzBuffer.AsSpan(zzStartRead, YyLength)))
                             {
                                 YyBegin(END_TAG_TAIL_INCLUDE);
                             }
@@ -31522,7 +31522,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         {
                             inputSegment.Write(zzBuffer, zzStartRead, YyLength);
                             if (null != escapedTags
-                                && escapedTags.Contains(zzBuffer, zzStartRead, YyLength))
+                                && escapedTags.Contains(zzBuffer.AsSpan(zzStartRead, YyLength)))
                             {
                                 YyBegin(END_TAG_TAIL_INCLUDE);
                             }
@@ -31617,7 +31617,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             int length = YyLength;
                             inputSegment.Write(zzBuffer, zzStartRead, length);
                             entitySegment.Clear();
-                            char ch = entityValues[zzBuffer, zzStartRead, length];
+                            char ch = entityValues[zzBuffer.AsSpan(zzStartRead, length)];
                             entitySegment.Append(ch);
                             outputSegment = entitySegment;
                             YyBegin(CHARACTER_REFERENCE_TAIL);

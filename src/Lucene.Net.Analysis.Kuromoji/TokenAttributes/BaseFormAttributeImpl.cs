@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
     /// <summary>
     /// Attribute for <see cref="Token.GetBaseForm()"/>.
     /// </summary>
-    public class BaseFormAttribute : Attribute, IBaseFormAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class BaseFormAttribute : Attribute, IBaseFormAttribute, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private Token? token;
 

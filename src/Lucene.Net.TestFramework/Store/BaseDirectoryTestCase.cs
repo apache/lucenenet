@@ -818,7 +818,7 @@ namespace Lucene.Net.Store
             public CopyBytesThread(Barrier start, IndexInput input, Directory d, int i)
             {
                 this.start = start ?? throw new ArgumentNullException(nameof(start)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-                this.src = (IndexInput)input.Clone();
+                this.src = input.Clone();
                 this.d = d ?? throw new ArgumentNullException(nameof(d)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
                 this.i = i;
             }

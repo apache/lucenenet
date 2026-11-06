@@ -30,16 +30,9 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <!-- Currently, IKVM doesn't officially support building NetFX on anything but Windows, so we skip it for contributors who may be on various platforms.
-        We can remove the condition once that has been addressed. See: https://github.com/ikvmnet/ikvm-maven/issues/49 -->
-    <!-- net10.0 is conditional on VS version (VS2024+ = 18.0) -->
-    <!-- .NET Framework is conditional on VS version (VS2024+ = 18.0) due to invalid build warnings with C# 14.0 build features -->
-    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(IsLegacyVisualStudioVersion)' == 'true' ">net8.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $([MSBuild]::IsOsPlatform('Windows')) And '$(IsLegacyVisualStudioVersion)' != 'true' ">$(TargetFrameworks);net472</TargetFrameworks>
-
+    <TargetFrameworks>$(LibraryTargetFrameworks)</TargetFrameworks>
     <AssemblyTitle>Lucene.Net.Analysis.OpenNLP</AssemblyTitle>
-    <PackageTags>$(PackageTags);analysis;natural;language;processing;opennlp</PackageTags>
+    <PackageTags>$(PackageTags);analysis;natural;language;processing;opennlp;nopennlp</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
     <RootNamespace>Lucene.Net.Analysis.OpenNlp</RootNamespace>
@@ -53,13 +46,7 @@
 
   <ItemGroup>
     <PackageReference Include="ICU4N" Version="$(ICU4NPackageVersion)" />
-    <PackageReference Include="IKVM" Version="$(IKVMPackageVersion)" />
-    <PackageReference Include="IKVM.Maven.Sdk" Version="$(IKVMMavenSdkPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <MavenReference Include="org.apache.opennlp:opennlp-tools" Version="$(OpenNLPToolsMavenReferenceVersion)" />
-    <MavenReference Include="org.osgi:org.osgi.core" Version="$(OSGICoreMavenReferenceVersion)" />
+    <PackageReference Include="NOpenNLP.Tools" Version="$(NOpenNLPPackageVersion)" />
   </ItemGroup>
 
 </Project>

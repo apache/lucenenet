@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
           stress test.
         */
 
-        public virtual void RunStressTest(Directory directory, IConcurrentMergeScheduler mergeScheduler)
+        public virtual void RunStressTest(Directory directory, ConcurrentMergeScheduler mergeScheduler)
         {
             IndexWriter modifier = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(10).SetMergeScheduler(mergeScheduler));
             modifier.Commit();

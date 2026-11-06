@@ -215,7 +215,7 @@ namespace Lucene.Net.Codecs.Lucene41
             internal int singletonDocID = -1;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override object Clone()
+            protected override object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
             {
                 Int32BlockTermState other = new Int32BlockTermState();
                 other.CopyFrom(this);

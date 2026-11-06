@@ -334,7 +334,7 @@ namespace Lucene.Net.Index
 
             IndexWriter writer = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
                 .SetRAMBufferSizeMB(0.1).SetMergeScheduler(new ConcurrentMergeScheduler()), new TestPoint1(this));
-            ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
+            ((ConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
             //writer.SetMaxBufferedDocs(10);
             if (Verbose)
             {
@@ -387,7 +387,7 @@ namespace Lucene.Net.Index
 
             IndexWriter writer = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
                 .SetRAMBufferSizeMB(0.2).SetMergeScheduler(new ConcurrentMergeScheduler()), new TestPoint1(this));
-            ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
+            ((ConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
             //writer.SetMaxBufferedDocs(10);
             writer.Commit();
 
@@ -584,7 +584,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            ((IConcurrentMergeScheduler)w.Config.MergeScheduler).Sync();
+            ((ConcurrentMergeScheduler)w.Config.MergeScheduler).Sync();
             Assert.IsTrue(testPoint.failed);
             w.Dispose();
             dir.Dispose();
@@ -1077,7 +1077,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).Sync();
+            ((ConcurrentMergeScheduler)writer.Config.MergeScheduler).Sync();
             Assert.IsTrue(failure.didFail);
             failure.ClearDoFail();
             writer.Dispose();
@@ -1192,7 +1192,7 @@ namespace Lucene.Net.Index
                 }
                 MockDirectoryWrapper dir = new MockDirectoryWrapper(Random, new RAMDirectory(startDir, NewIOContext(Random)));
                 conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(new ConcurrentMergeScheduler());
-                ((IConcurrentMergeScheduler)conf.MergeScheduler).SetSuppressExceptions();
+                ((ConcurrentMergeScheduler)conf.MergeScheduler).SetSuppressExceptions();
                 w = new IndexWriter(dir, conf);
                 dir.RandomIOExceptionRate = 0.5;
                 try
@@ -2192,10 +2192,10 @@ namespace Lucene.Net.Index
                 if (w is null)
                 {
                     IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-                    IMergeScheduler ms = iwc.MergeScheduler;
-                    if (ms is IConcurrentMergeScheduler cms)
+                    MergeScheduler ms = iwc.MergeScheduler;
+                    if (ms is ConcurrentMergeScheduler cms)
                     {
-                        IConcurrentMergeScheduler suppressFakeIOE = new ConcurrentMergeSchedulerAnonymousClass();
+                        ConcurrentMergeScheduler suppressFakeIOE = new ConcurrentMergeSchedulerAnonymousClass();
 
                         suppressFakeIOE.SetMaxMergesAndThreads(cms.MaxMergeCount, cms.MaxThreadCount);
                         suppressFakeIOE.SetMergeThreadPriority(cms.MergeThreadPriority);

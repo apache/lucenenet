@@ -292,7 +292,7 @@ namespace Lucene.Net.Analysis
 
         public static T AssertCloneIsEqual<T>(T att) where T : Attribute
         {
-            T clone = (T)att.Clone();
+            T clone = att.Clone();
             Assert.AreEqual(att, clone, "Clone must be equal");
             Assert.AreEqual(att.GetHashCode(), clone.GetHashCode(), "Clone's hashcode must be equal");
             return clone;

@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified.
     /// </summary>
 
-    public class TernaryTree // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class TernaryTree : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         // We use 4 arrays to represent a node.I guess I should have created a proper
         // node class, but somehow Knuth's pascal code made me forget we now have a
@@ -420,14 +420,16 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual int Length => m_length;
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             TernaryTree t = new TernaryTree();
             t.m_lo = (char[])this.m_lo.Clone();
             t.m_hi = (char[])this.m_hi.Clone();
             t.m_eq = (char[])this.m_eq.Clone();
             t.m_sc = (char[])this.m_sc.Clone();
-            t.m_kv = (CharVector)this.m_kv.Clone();
+            t.m_kv = this.m_kv.Clone();
             t.m_root = this.m_root;
             t.m_freenode = this.m_freenode;
             t.m_length = this.m_length;
@@ -575,7 +577,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             /// </summary>
             private string curkey;
 
-            private class Item // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+            private class Item : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
             {
                 internal readonly char parent; // LUCENENET: marked readonly
                 internal char child;
@@ -593,7 +595,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     child = c;
                 }
 
-                public object Clone()
+                object ICloneable.Clone() => Clone();
+
+                protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
                 {
                     return new Item(parent, child);
                 }
@@ -670,13 +674,13 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                             if (outerInstance.m_sc[i.parent] != 0)
                             {
                                 res = outerInstance.m_eq[i.parent];
-                                ns.Push((Item)i.Clone());
+                                ns.Push(i.Clone());
                                 ks.Append(outerInstance.m_sc[i.parent]);
                             }
                             else
                             {
                                 i.child++;
-                                ns.Push((Item)i.Clone());
+                                ns.Push(i.Clone());
                                 res = outerInstance.m_hi[i.parent];
                             }
                             climb = false;
@@ -684,7 +688,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
                         case 2:
                             res = outerInstance.m_hi[i.parent];
-                            ns.Push((Item)i.Clone());
+                            ns.Push(i.Clone());
                             if (ks.Length > 0)
                             {
                                 ks.Length = ks.Length - 1; // pop

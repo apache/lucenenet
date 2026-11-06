@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Cn
                 int termLength = termAtt.Length;
 
                 // why not key off token type here assuming ChineseTokenizer comes first?
-                if (!stopTable.Contains(text, 0, termLength))
+                if (!stopTable.Contains(text.AsSpan(0, termLength)))
                 {
                     switch (CharUnicodeInfo.GetUnicodeCategory(text[0]))
                     {

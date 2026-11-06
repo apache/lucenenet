@@ -563,7 +563,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     if (!docsWithFieldInstances.TryGetValue(fieldNumber, out instance))
                     {
-                        var data = (IndexInput)this.data.Clone();
+                        IndexInput data = this.data.Clone();
                         data.Seek(offset);
                         if (Debugging.AssertsEnabled) Debugging.Assert(length % 8 == 0);
                         var bits = new long[(int)length >> 3];

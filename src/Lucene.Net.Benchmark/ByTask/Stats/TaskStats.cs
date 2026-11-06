@@ -29,7 +29,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
     /// The same task can run more than once, but, if that task records statistics,
     /// each run would create its own TaskStats.
     /// </summary>
-    public class TaskStats // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class TaskStats : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>Task for which data was collected.</summary>
         private readonly PerfTask task; // LUCENENET: marked readonly
@@ -188,7 +188,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
             }
         }
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             TaskStats c = (TaskStats)base.MemberwiseClone();
             if (c.countsByTime != null)

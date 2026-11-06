@@ -151,7 +151,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 Debugging.Assert(field != null, "field={0} fields={1}", fieldInfo.Name, fields);
             }
 
-            var @in = (IndexInput)data.Clone();
+            var @in = data.Clone();
             var scratch = new BytesRef();
 
             return new NumericDocValuesAnonymousClass(this, field, @in, scratch);
@@ -204,7 +204,7 @@ namespace Lucene.Net.Codecs.SimpleText
         private IBits GetNumericDocsWithField(FieldInfo fieldInfo)
         {
             var field = fields[fieldInfo.Name];
-            var input = (IndexInput)data.Clone();
+            var input = data.Clone();
             var scratch = new BytesRef();
             return new BitsAnonymousClass(this, field, input, scratch);
         }
@@ -248,7 +248,7 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             var field = fields[fieldInfo.Name];
             if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
-            var input = (IndexInput)data.Clone();
+            var input = data.Clone();
             var scratch = new BytesRef();
 
             return new BinaryDocValuesAnonymousClass(this, field, input, scratch);
@@ -311,7 +311,7 @@ namespace Lucene.Net.Codecs.SimpleText
         private IBits GetBinaryDocsWithField(FieldInfo fieldInfo)
         {
             var field = fields[fieldInfo.Name];
-            var input = (IndexInput)data.Clone();
+            var input = data.Clone();
             var scratch = new BytesRef();
 
             return new BitsAnonymousClass2(this, field, input, scratch);
@@ -374,7 +374,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             // SegmentCoreReaders already verifies this field is valid:
             if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
-            var input = (IndexInput)data.Clone();
+            var input = data.Clone();
             var scratch = new BytesRef();
 
             return new SortedDocValuesAnonymousClass(this, field, input, scratch);
@@ -476,7 +476,7 @@ namespace Lucene.Net.Codecs.SimpleText
             // valid:
             if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
 
-            var input = (IndexInput)data.Clone();
+            var input = data.Clone();
             var scratch = new BytesRef();
 
             return new SortedSetDocValuesAnonymousClass(this, field, input, scratch);
@@ -623,7 +623,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void CheckIntegrity()
         {
             var iScratch = new BytesRef();
-            var clone = (IndexInput)data.Clone();
+            var clone = data.Clone();
             clone.Seek(0);
             ChecksumIndexInput input = new BufferedChecksumIndexInput(clone);
             while (true)

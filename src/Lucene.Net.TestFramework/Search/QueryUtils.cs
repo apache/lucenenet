@@ -65,10 +65,10 @@ namespace Lucene.Net.Search
         /// Check very basic <see cref="object.GetHashCode()"/> and <see cref="object.Equals(object)"/>. </summary>
         public static void CheckHashEquals(Query q)
         {
-            Query q2 = (Query)q.Clone();
+            Query q2 = q.Clone();
             CheckEqual(q, q2);
 
-            Query q3 = (Query)q.Clone();
+            Query q3 = q.Clone();
             q3.Boost = 7.21792348f;
             CheckUnequal(q, q3);
 
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
                     }
                     CheckExplanations(q1, s);
 
-                    Query q2 = (Query)q1.Clone();
+                    Query q2 = q1.Clone();
                     CheckEqual(s.Rewrite(q1), s.Rewrite(q2));
                 }
             }

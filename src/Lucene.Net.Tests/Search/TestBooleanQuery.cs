@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(score * .5F, score2, 1e-6);
 
             // LUCENE-2617: make sure that a clause not in the index still contributes to the score via coord factor
-            BooleanQuery qq = (BooleanQuery)q.Clone();
+            BooleanQuery qq = q.Clone();
             PhraseQuery phrase = new PhraseQuery();
             phrase.Add(new Term("field", "not_in_index"));
             phrase.Add(new Term("field", "another_not_in_index"));

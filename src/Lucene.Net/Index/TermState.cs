@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
     /// </summary>
     /// <seealso cref="TermsEnum.SeekExact(Lucene.Net.Util.BytesRef, TermState)"/>
     /// <seealso cref="TermsEnum.GetTermState()"/>
-    public abstract class TermState // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class TermState : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
@@ -44,9 +44,10 @@ namespace Lucene.Net.Index
         ///          the <see cref="TermState"/> to copy </param>
         public abstract void CopyFrom(TermState other);
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
-            return base.MemberwiseClone();
+            return MemberwiseClone();
         }
 
         public override string ToString()

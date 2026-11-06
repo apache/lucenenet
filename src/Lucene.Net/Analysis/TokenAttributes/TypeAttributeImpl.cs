@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="ITypeAttribute"/>. </summary>
-    public partial class TypeAttribute : Attribute, ITypeAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public partial class TypeAttribute : Attribute, ITypeAttribute, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         private string type;
 

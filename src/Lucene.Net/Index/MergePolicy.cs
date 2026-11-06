@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-    public abstract class MergePolicy : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public abstract class MergePolicy : ICloneable, IDisposable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         /// <summary>
         /// A map of doc IDs. </summary>
@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
             public IList<SegmentCommitInfo> Segments { get; private set; }
 
             /// <summary>
-            /// Number of documents in the merged segment. </summary>
+            /// Total number of documents in segments to be merged, not accounting for deletions. </summary>
             public int TotalDocCount { get; private set; }
 
             internal bool aborted;
@@ -616,10 +616,12 @@ namespace Lucene.Net.Index
         /// </summary>
         protected long m_maxCFSSegmentSize = DEFAULT_MAX_CFS_SEGMENT_SIZE;
 
-        public virtual object Clone()
+        object ICloneable.Clone() => Clone();
+
+        protected virtual object Clone() // LUCENENET specific - marked protected so we can use a Clone<T>() extension method to return the most derived type
         {
             MergePolicy clone;
-            clone = (MergePolicy)base.MemberwiseClone();
+            clone = (MergePolicy)MemberwiseClone();
 
             clone.m_writer = new SetOnce<IndexWriter>();
             return clone;
@@ -678,8 +680,7 @@ namespace Lucene.Net.Index
         /// <param name="segmentInfos">
         ///          The total set of segments in the index </param>
         /// <param name="maxSegmentCount">
-        ///          Requested maximum number of segments in the index (currently this
-        ///          is always 1) </param>
+        ///          Requested maximum number of segments in the index </param>
         /// <param name="segmentsToMerge">
         ///          Contains the specific <see cref="SegmentInfo"/> instances that must be merged
         ///          away. This may be a subset of all

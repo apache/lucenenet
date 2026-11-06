@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
             BytesRef payload = new BytesRef("this is a test!");
             Assert.AreEqual(payload.Length, "this is a test!".Length, "Wrong payload length.");
 
-            BytesRef clone = (BytesRef)payload.Clone();
+            BytesRef clone = payload.Clone();
             Assert.AreEqual(payload.Length, clone.Length);
             for (int i = 0; i < payload.Length; i++)
             {

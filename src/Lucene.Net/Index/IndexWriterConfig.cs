@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
     /// @since 3.1
     /// </summary>
     /// <seealso cref="IndexWriter.Config"/>
-    public sealed class IndexWriterConfig : LiveIndexWriterConfig // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public sealed class IndexWriterConfig : LiveIndexWriterConfig, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         // LUCENENET specific: De-nested OpenMode enum from this class to prevent naming conflict
 
@@ -180,23 +180,25 @@ namespace Lucene.Net.Index
         {
         }
 
-        public object Clone()
+        object ICloneable.Clone() => Clone();
+
+        private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
         {
             IndexWriterConfig clone = (IndexWriterConfig)this.MemberwiseClone();
 
-            clone.writer = (SetOnce<IndexWriter>)writer.Clone();
+            clone.writer = writer.Clone();
 
             // Mostly shallow clone, but do a deepish clone of
             // certain objects that have state that cannot be shared
             // across IW instances:
-            clone.delPolicy = (IndexDeletionPolicy)delPolicy.Clone();
-            clone.flushPolicy = (FlushPolicy)flushPolicy.Clone();
-            clone.indexerThreadPool = (DocumentsWriterPerThreadPool)indexerThreadPool.Clone();
+            clone.delPolicy = delPolicy.Clone();
+            clone.flushPolicy = flushPolicy.Clone();
+            clone.indexerThreadPool = indexerThreadPool.Clone();
             // we clone the infoStream because some impls might have state variables
             // such as line numbers, message throughput, ...
-            clone.infoStream = (InfoStream)infoStream.Clone();
-            clone.mergePolicy = (MergePolicy)mergePolicy.Clone();
-            clone.mergeScheduler = (IMergeScheduler)mergeScheduler.Clone();
+            clone.infoStream = infoStream.Clone();
+            clone.mergePolicy = mergePolicy.Clone();
+            clone.mergeScheduler = mergeScheduler.Clone();
 
             return clone;
 
@@ -285,7 +287,7 @@ namespace Lucene.Net.Index
         /// </summary>
         // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
-        new public IMergeScheduler MergeScheduler
+        new public MergeScheduler MergeScheduler
         {
             get => mergeScheduler;
             set => mergeScheduler = value ?? throw new ArgumentNullException(nameof(MergeScheduler), "MergeScheduler must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)

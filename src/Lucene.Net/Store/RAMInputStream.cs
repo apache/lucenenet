@@ -26,7 +26,7 @@ namespace Lucene.Net.Store
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public class RAMInputStream : IndexInput // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class RAMInputStream : IndexInput, ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
     {
         internal const int BUFFER_SIZE = RAMOutputStream.BUFFER_SIZE;
 

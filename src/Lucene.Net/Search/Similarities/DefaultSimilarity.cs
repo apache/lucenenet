@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Similarities
     /// decoded (<see cref="DecodeNormValue(long)"/>) back to a float <i>norm</i> value.
     /// this encoding/decoding, while reducing index size, comes with the price of
     /// precision loss - it is not guaranteed that <i>Decode(Encode(x)) = x</i>. For
-    /// instance, <i>Decode(Encode(0.89)) = 0.75</i>.
+    /// instance, <i>Decode(Encode(0.89)) = 0.875</i>.
     /// <para/>
     /// Compression of norm values to a single byte saves memory at search time,
     /// because once a field is referenced at search time, its norms - for all

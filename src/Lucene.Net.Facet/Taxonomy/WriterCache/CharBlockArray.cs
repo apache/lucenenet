@@ -44,7 +44,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         private const int DEFAULT_BLOCK_SIZE = 32 * 1024; // 32 KB default size
 
-        internal sealed class Block // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+        internal sealed class Block : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
         {
             internal const long serialVersionUID = 1L;
 
@@ -57,7 +57,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 this.length = 0;
             }
 
-            public object Clone()
+            object ICloneable.Clone() => Clone();
+
+            private object Clone() // LUCENENET specific - marked private so we can use a Clone<T>() extension method to return the most derived type
             {
                 var clone = new Block(chars.Length);
                 clone.length = length;

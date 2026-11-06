@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Snowball
         /// Builds the named analyzer with the given stop words. </summary>
         public SnowballAnalyzer(LuceneVersion matchVersion, string name, CharArraySet stopWords) : this(matchVersion, name)
         {
-            stopSet = CharArraySet.Copy(matchVersion, stopWords).AsReadOnly();
+            stopSet = new CharArraySet(matchVersion, stopWords).AsReadOnly();
         }
 
         /// <summary>

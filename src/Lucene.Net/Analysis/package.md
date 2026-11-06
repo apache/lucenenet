@@ -80,14 +80,14 @@ and proximity searches (though sentence identification is not provided by Lucene
     capability allows highlighting to function over the original text when
     indexed tokens are created from CharFilter-modified text with offsets
     that are not the same as those in the original text. Tokenizers'
-    constructors and Reset() methods accept a CharFilter.  CharFilters may
+    constructors and SetReader() methods accept a CharFilter.  CharFilters may
     be chained to perform multiple pre-tokenization modifications.
 
 *   <xref:Lucene.Net.Analysis.Tokenizer> – A Tokenizer is a
     <xref:Lucene.Net.Analysis.TokenStream> and is responsible for
     breaking up incoming text into tokens. In most cases, an Analyzer will
     use a Tokenizer as the first step in the analysis process.  However,
-    to modify text prior to tokenization, use a CharStream subclass (see
+    to modify text prior to tokenization, use a <xref:Lucene.Net.Analysis.CharFilter> subclass (see
     above).
 
 *   <xref:Lucene.Net.Analysis.TokenFilter> – A TokenFilter is

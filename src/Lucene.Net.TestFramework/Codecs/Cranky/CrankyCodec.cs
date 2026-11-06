@@ -22,6 +22,7 @@ namespace Lucene.Net.Codecs.Cranky
     /// <summary>
     /// Codec for testing that throws random IOExceptions
     /// </summary>
+    [ExcludeCodecFromScan] // LUCENENET specific - impersonates its delegate (not in SPI upstream) and has no parameterless constructor
     public class CrankyCodec : FilterCodec
     {
         private readonly Random random;
