@@ -1,3 +1,5 @@
+using Lucene.Net.Reflection;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -24,6 +26,7 @@ namespace Lucene.Net.Search
     /// <see cref="ICollector"/> and makes sure only documents with
     /// scores &gt; 0 are collected.
     /// </summary>
+    [LuceneBaseTypeDifference("Uses ICollector interface instead of Collector abstract base class")]
     public class PositiveScoresOnlyCollector : ICollector
     {
         private readonly ICollector c;

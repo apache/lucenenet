@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Reflection;
 using System;
 using System.Reflection;
 
@@ -26,3 +27,6 @@ using System.Reflection;
 [assembly: AssemblyCulture("")]
 
 [assembly: CLSCompliant(true)]
+
+[assembly: LuceneMavenMapping("org.apache.lucene", "lucene-core", "4.8.1")]
+[assembly: LucenePackageMapping("Lucene.Net.Documents", "org.apache.lucene.document")]

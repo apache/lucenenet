@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using System;
 
 namespace Lucene.Net.Documents
@@ -42,7 +43,7 @@ namespace Lucene.Net.Documents
     public class Int16DocValuesField : NumericDocValuesField
     {
         /// <summary>
-        /// Creates a new <see cref="Index.DocValues"/> field with the specified 16-bit <see cref="short"/> value </summary>
+        /// Creates a new <see cref="DocValues"/> field with the specified 16-bit <see cref="short"/> value </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> 16-bit <see cref="short"/> value </param>
         /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c> </exception>

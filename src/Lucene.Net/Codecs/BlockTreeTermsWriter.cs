@@ -1,6 +1,7 @@
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Reflection;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
@@ -47,6 +48,7 @@ namespace Lucene.Net.Codecs
     using Util = Lucene.Net.Util.Fst.Util;
 
     // LUCENENET specific - moved out constants from generic class
+    [NoLuceneEquivalent]
     public static class BlockTreeTermsWriter
     {
         /// <summary>

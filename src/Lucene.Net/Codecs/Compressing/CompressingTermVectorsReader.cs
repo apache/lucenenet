@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Reflection;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
@@ -31,6 +32,7 @@ namespace Lucene.Net.Codecs.Compressing
     /// <para/>
     /// @lucene.experimental
     /// </summary>
+    [LuceneInterfaceDifference("Removed IDisposable, it is already implemented in base class.")]
     public sealed class CompressingTermVectorsReader : TermVectorsReader // LUCENENET specific - removed IDisposable, it is already implemented in base class
     {
         private readonly FieldInfos fieldInfos;

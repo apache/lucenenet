@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Reflection;
 using Lucene.Net.Support;
 using System;
 using System.IO;
@@ -251,6 +252,7 @@ namespace Lucene.Net.Search
 
     // LUCENENET specific: Using a non-generic class here so that we avoid having to use the
     // type parameter to access these nested types. Also moving non-generic methods here for casting without generics.
+    [NoLuceneEquivalent(Justification = "Non-generic access of nested types")]
     public abstract class FieldComparer
     {
         // LUCENENET: This class is not intended for user subclassing. Use FieldComparer<T> instead.

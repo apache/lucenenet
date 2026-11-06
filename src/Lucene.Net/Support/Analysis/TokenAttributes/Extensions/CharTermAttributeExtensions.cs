@@ -1,3 +1,4 @@
+using Lucene.Net.Reflection;
 using System;
 
 namespace Lucene.Net.Analysis.TokenAttributes.Extensions
@@ -22,6 +23,7 @@ namespace Lucene.Net.Analysis.TokenAttributes.Extensions
     /// <summary>
     /// Extension methods on <see cref="ICharTermAttribute"/>.
     /// </summary>
+    [NoLuceneEquivalent(Justification = "Extension methods to provide a more fluent API")]
     public static class CharTermAttributeExtensions
     {
         /// <summary>
