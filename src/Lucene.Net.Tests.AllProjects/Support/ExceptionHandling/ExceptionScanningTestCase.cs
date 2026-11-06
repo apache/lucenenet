@@ -116,7 +116,11 @@ namespace Lucene.Net.Support.ExceptionHandling
         // Base class Exception
         public static readonly ICollection<Type> DotNetExceptionTypes = LoadTypesSubclassing(baseClass: typeof(Exception), DotNetAssemblies);
         public static readonly ICollection<Type> NUnitExceptionTypes = LoadTypesSubclassing(baseClass: typeof(Exception), NUnitAssemblies);
-        public static readonly ICollection<Type> LuceneExceptionTypes = LoadTypesSubclassing(baseClass: typeof(Exception), LuceneAssemblies);
+        public static readonly ICollection<Type> LuceneExceptionTypes = LoadTypesSubclassing(baseClass: typeof(Exception), LuceneAssemblies)
+            // LUCENENET specific: the Parlot source generator embeds its runtime as internal types in Lucene.Net.Expressions.
+            // The generated parser catches its ParseException, which never leaves the assembly.
+            .Where(t => t.Namespace is null || !t.Namespace.StartsWith("Parlot.Generated", StringComparison.Ordinal))
+            .ToList();
 
         public static readonly ICollection<Type> AllExceptionTypes = DotNetExceptionTypes.Union(NUnitExceptionTypes).Union(LuceneExceptionTypes).ToList();
 

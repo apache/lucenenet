@@ -1,6 +1,7 @@
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Expressions.JS
@@ -134,6 +135,80 @@ namespace Lucene.Net.Expressions.JS
             catch (Exception expected) when (expected.IsParseException())
             {
                 // expected
+            }
+        }
+
+        // LUCENENET specific: the offset is the first token that cannot be parsed, as in Java Lucene
+        [Test]
+        public virtual void TestParseErrorOffsets()
+        {
+            AssertParseError("", 0, "unexpected end of expression.");
+            AssertParseError("1 +", 3, "unexpected end of expression.");
+            AssertParseError("(1", 2, "unexpected end of expression.");
+            AssertParseError("100 100", 4, "invalid sequence of tokens near '100' at position (4).");
+            AssertParseError("7*/-8", 2, "invalid sequence of tokens near '/' at position (2).");
+            AssertParseError("max(1 2)", 6, "invalid sequence of tokens near '2' at position (6).");
+            AssertParseError("0y1234", 1, "invalid sequence of tokens near 'y1234' at position (1).");
+            AssertParseError("1 +\n  * 2", 6, "invalid sequence of tokens near '*' at position (6).");
+            AssertParseError("a $ b", 2, "unexpected character '$' at position (2).");
+            AssertParseError("a = b", 2, "invalid sequence of tokens near '=' at position (2).");
+            // White space is only space, tab, CR and LF, as in the grammar
+            AssertParseError("1\f+ 2", 1, "unexpected character '\f' at position (1).");
+        }
+
+        // LUCENENET specific: nesting too deep for the stack is a parse error rather than a stack overflow
+        [Test]
+        public virtual void TestDeepNesting()
+        {
+            foreach (string expression in new[]
+            {
+                new string('(', 100000) + "1" + new string(')', 100000),
+                string.Concat(Enumerable.Repeat("-(", 100000)) + "1" + new string(')', 100000),
+            })
+            {
+                try
+                {
+                    JavascriptCompiler.Compile(expression);
+                    Assert.Fail(expression.Substring(0, 10));
+                }
+                catch (Exception e) when (e.IsParseException())
+                {
+                    // expected
+                }
+            }
+        }
+
+        // LUCENENET specific: chains the parser reads in a loop are compiled in a loop, however long
+        [Test]
+        public virtual void TestLongChains()
+        {
+            Assert.AreEqual(1, JavascriptCompiler.Compile(new string('-', 100000) + "1").Evaluate(0, null), 0);
+            Assert.AreEqual(3, JavascriptCompiler.Compile("0?1:0?1:0?1:3").Evaluate(0, null), 0);
+            Assert.AreEqual(2, JavascriptCompiler.Compile("0?1:1?2:0?1:3").Evaluate(0, null), 0);
+
+            // The branches of a conditional are one-byte branches, so a branch of more than 127 bytes
+            // of IL can't be emitted, but it must not overflow the stack either.
+            try
+            {
+                JavascriptCompiler.Compile(string.Concat(Enumerable.Repeat("0?1:", 100000)) + "3");
+            }
+            catch (NotSupportedException)
+            {
+                // expected
+            }
+        }
+
+        private static void AssertParseError(string expression, int offset, string message)
+        {
+            try
+            {
+                JavascriptCompiler.Compile(expression);
+                Assert.Fail(expression);
+            }
+            catch (Exception e) when (e.IsParseException())
+            {
+                Assert.AreEqual(offset, ((J2N.Text.ParseException)e).ErrorOffset, expression);
+                Assert.AreEqual(message, e.Message, expression);
             }
         }
 
