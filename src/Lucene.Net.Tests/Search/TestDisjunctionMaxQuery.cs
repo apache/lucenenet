@@ -433,7 +433,7 @@ namespace Lucene.Net.Search
                 string doc3 = s.Doc(h[3].Doc).Get("id");
 
                 Assert.IsTrue(doc0.Equals("d2", StringComparison.Ordinal) || doc0.Equals("d4", StringComparison.Ordinal), "doc0 should be d2 or d4: " + doc0);
-                Assert.IsTrue(doc1.Equals("d2", StringComparison.Ordinal) || doc1.Equals("d4", StringComparison.Ordinal), "doc1 should be d2 or d4: " + doc0);
+                Assert.IsTrue(doc1.Equals("d2", StringComparison.Ordinal) || doc1.Equals("d4", StringComparison.Ordinal), "doc1 should be d2 or d4: " + doc1); // LUCENENET: upstream prints doc0 here
                 Assert.AreEqual(score0, score1, SCORE_COMP_THRESH, "score0 and score1 should match");
                 Assert.AreEqual("d3", doc2, "wrong third");
                 Assert.IsTrue(score1 > score2, "d3 does not have worse score then d2 and d4: " + score1 + " >? " + score2);
