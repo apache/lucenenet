@@ -1,3 +1,4 @@
+using Lucene.Net.QueryParsers.Flexible.Core.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -34,6 +35,29 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 new IQueryNode[] { nodeA });
             bq.Add(new IQueryNode[] { nodeB });
             assertEquals(2, bq.GetChildren().Count);
+        }
+
+        [Test]
+        public void TestLogicalAndWithSingleAndNode()
+        {
+            var nodeA = new FieldQueryNode("foo", "A", 0, 1);
+            var nodeB = new FieldQueryNode("foo", "B", 1, 2);
+            var nodeC = new FieldQueryNode("foo", "C", 2, 3);
+            var andNode = new AndQueryNode(new IQueryNode[] { nodeB, nodeC });
+
+            var first = (AndQueryNode)QueryNodeOperation.LogicalAnd(andNode, nodeA);
+            assertEquals(3, first.GetChildren().Count);
+            assertEquals("B", ((FieldQueryNode)first.GetChildren()[0]).Text.ToString());
+            assertEquals("C", ((FieldQueryNode)first.GetChildren()[1]).Text.ToString());
+            assertEquals("A", ((FieldQueryNode)first.GetChildren()[2]).Text.ToString());
+
+            var second = (AndQueryNode)QueryNodeOperation.LogicalAnd(nodeA, andNode);
+            assertEquals(3, second.GetChildren().Count);
+            assertEquals("B", ((FieldQueryNode)second.GetChildren()[0]).Text.ToString());
+            assertEquals("C", ((FieldQueryNode)second.GetChildren()[1]).Text.ToString());
+            assertEquals("A", ((FieldQueryNode)second.GetChildren()[2]).Text.ToString());
+            assertEquals(2, andNode.GetChildren().Count);
+            assertEquals("A", nodeA.Text.ToString());
         }
 
         /* LUCENE-3045 bug in QueryNodeImpl.containsTag(String key)*/
