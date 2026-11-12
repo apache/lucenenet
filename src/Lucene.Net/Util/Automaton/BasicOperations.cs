@@ -1,11 +1,11 @@
 using J2N;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using JCG = J2N.Collections.Generic;
 
 /*
@@ -111,7 +111,7 @@ namespace Lucene.Net.Util.Automaton
             }
             if (all_singleton)
             {
-                StringBuilder b = new StringBuilder();
+                using ValueStringBuilder b = new(stackalloc char[128]);
                 foreach (Automaton a in l)
                 {
                     b.Append(a.singleton);
@@ -768,14 +768,18 @@ namespace Lucene.Net.Util.Automaton
 
             public override string ToString()
             {
-                StringBuilder s = new StringBuilder();
+                using ValueStringBuilder s = new(stackalloc char[128]);
                 for (int i = 0; i < count; i++)
                 {
                     if (i > 0)
                     {
                         s.Append(' ');
                     }
-                    s.Append(points[i].point).Append(':').Append(points[i].starts.count).Append(',').Append(points[i].ends.count);
+                    s.Append(points[i].point);
+                    s.Append(':');
+                    s.Append(points[i].starts.count);
+                    s.Append(',');
+                    s.Append(points[i].ends.count);
                 }
                 return s.ToString();
             }
