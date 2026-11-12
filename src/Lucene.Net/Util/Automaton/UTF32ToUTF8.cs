@@ -1,10 +1,9 @@
 using J2N;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
-using System;
-using System.Collections.Generic;
+using Lucene.Net.Text;
 using System.Runtime.CompilerServices;
-using System.Text;
+using Integer = J2N.Numerics.Int32;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Automaton
@@ -140,7 +139,7 @@ namespace Lucene.Net.Util.Automaton
 
             public override string ToString()
             {
-                StringBuilder b = new StringBuilder();
+                using ValueStringBuilder b = new(stackalloc char[128]);
                 for (int i = 0; i < len; i++)
                 {
                     if (i > 0)
