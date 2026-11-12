@@ -1,13 +1,12 @@
 using J2N.Collections.Generic.Extensions;
 using J2N.Runtime.CompilerServices;
-using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using JCG = J2N.Collections.Generic;
 
 /*
@@ -123,7 +122,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return a.singleton;
             }
-            StringBuilder b = new StringBuilder();
+            using ValueStringBuilder b = new ValueStringBuilder(stackalloc char[128]);
             JCG.HashSet<State> visited = new JCG.HashSet<State>();
             State s = a.initial;
             bool done;
@@ -143,6 +142,34 @@ namespace Lucene.Net.Util.Automaton
                 }
             } while (!done);
             return b.ToString();
+        }
+
+        private static void GetCommonPrefix(ref ValueStringBuilder destination, Automaton a)
+        {
+            ref ValueStringBuilder b = ref destination;
+            if (a.IsSingleton)
+            {
+                b.Append(a.singleton);
+                return;
+            }
+            JCG.HashSet<State> visited = new JCG.HashSet<State>();
+            State s = a.initial;
+            bool done;
+            do
+            {
+                done = true;
+                visited.Add(s);
+                if (!s.accept && s.NumTransitions == 1)
+                {
+                    Transition t = s.GetTransitions().First();
+                    if (t.min == t.max && !visited.Contains(t.to))
+                    {
+                        b.AppendCodePoint(t.min);
+                        s = t.to;
+                        done = false;
+                    }
+                }
+            } while (!done);
         }
 
         // TODO: this currently requites a determinized machine,
@@ -194,7 +221,17 @@ namespace Lucene.Net.Util.Automaton
             Automaton r = a.Clone();
             Reverse(r);
             r.Determinize();
-            return (new StringBuilder(SpecialOperations.GetCommonPrefix(r))).Reverse().ToString();
+            ValueStringBuilder b = new(stackalloc char[128]);
+            try
+            {
+                GetCommonPrefix(ref b, r);
+                b.Reverse();
+                return b.ToString();
+            }
+            finally
+            {
+                b.Dispose();
+            }
         }
 
         public static BytesRef GetCommonSuffixBytesRef(Automaton a)
