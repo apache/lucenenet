@@ -1,9 +1,10 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Text;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Text;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Automaton
@@ -246,14 +247,17 @@ namespace Lucene.Net.Util.Automaton
 
         public override string ToString()
         {
-            StringBuilder sb = (new StringBuilder()).Append('[');
+            using ValueStringBuilder sb = new(stackalloc char[128]);
+            sb.Append('[');
             for (int i = 0; i < upto; i++)
             {
                 if (i > 0)
                 {
                     sb.Append(' ');
                 }
-                sb.Append(values[i]).Append(':').Append(counts[i]);
+                sb.Append(values[i], provider: CultureInfo.InvariantCulture);
+                sb.Append(':');
+                sb.Append(counts[i], provider: CultureInfo.InvariantCulture);
             }
             sb.Append(']');
             return sb.ToString();
@@ -339,14 +343,15 @@ namespace Lucene.Net.Util.Automaton
 
             public override string ToString()
             {
-                StringBuilder sb = (new StringBuilder()).Append('[');
+                using ValueStringBuilder sb = new(stackalloc char[128]);
+                sb.Append('[');
                 for (int i = 0; i < values.Length; i++)
                 {
                     if (i > 0)
                     {
                         sb.Append(' ');
                     }
-                    sb.Append(values[i]);
+                    sb.Append(values[i], provider: CultureInfo.InvariantCulture);
                 }
                 sb.Append(']');
                 return sb.ToString();
