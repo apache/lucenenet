@@ -1,12 +1,15 @@
 // Lucene version compatibility level 4.8.1
 using J2N;
 using J2N.Text;
+using Lucene.Net.Support.Buffers;
 using Lucene.Net.Text;
 using Lucene.Net.Util;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml;
 using JCG = J2N.Collections.Generic;
@@ -223,6 +226,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         // So, ProcessToken() is an improved "event" that a subclass may be interested in that doesn't leave out any XML element endings
         // and provides a more sensible read-only token parameter that doesn't change when this ProcessToken() is called.
 
+#nullable enable
+
         /// <summary>
         /// Processes a completed token.
         /// </summary>
@@ -235,39 +240,106 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             switch (currElement)
             {
                 case ELEM_CLASSES:
-                    consumer.AddClass(token.ToString());
+                    consumer.AddClass(token);
                     break;
 
                 case ELEM_EXCEPTIONS:
                     exception.Add(token.ToString());
                     exception = NormalizeException(exception);
-                    consumer.AddException(GetExceptionWord(exception), new JCG.List<object>(exception));
-                    exception.Clear();
+                    // LUCENENET specific - removed allocations by using stack/pooled memory for maximum reuse
+                    int exceptionBufferLength = GetExceptionWordCharCount(exception);
+                    char[]? arrayToReturnToPool = null;
+                    Span<char> exceptionWord = exceptionBufferLength * sizeof(char) <= Constants.MaxStackByteLimit
+                        ? stackalloc char[exceptionBufferLength]
+                        : (arrayToReturnToPool = ArrayPool<char>.Shared.Rent(exceptionBufferLength));
+                    try
+                    {
+                        if (!TryGetExceptionWord(exception, exceptionWord, out int exceptionWordLength))
+                            throw new InvalidOperationException("Exception Word buffer was not large enough for the result"); // Should never happen
+                        consumer.AddException(exceptionWord.Slice(0, exceptionWordLength), new JCG.List<object>(exception));
+                        exception.Clear();
+                    }
+                    finally
+                    {
+                        ArrayPool<char>.Shared.ReturnIfNotNull(arrayToReturnToPool);
+                    }
                     break;
 
                 case ELEM_PATTERNS:
-                    consumer.AddPattern(GetPattern(token), GetInterletterValues(token));
+                    // LUCENENET specific - removed allocations by using stack/pooled memory for maximum reuse
+                    int patternBufferLength = GetMaxPatternCharCount(token);
+                    int valuesBufferLength = GetMaxInterletterValuesCharCount(token);
+                    char[]? patternArrayToReturnToPool = null;
+                    char[]? valuesArrayToReturnToPool = null;
+                    Span<char> pattern = patternBufferLength * sizeof(char) <= Constants.MaxStackByteLimit
+                        ? stackalloc char[patternBufferLength]
+                        : (patternArrayToReturnToPool = ArrayPool<char>.Shared.Rent(patternBufferLength));
+                    Span<char> values = valuesBufferLength * sizeof(char) <= Constants.MaxStackByteLimit
+                        ? stackalloc char[valuesBufferLength]
+                        : (valuesArrayToReturnToPool = ArrayPool<char>.Shared.Rent(valuesBufferLength));
+                    try
+                    {
+                        if (!TryGetPattern(token, pattern, out int patternLength))
+                            throw new InvalidOperationException("Pattern buffer was not large enough for the result"); // Should never happen
+                        if (!TryGetInterletterValues(token, values, out int valuesLength))
+                            throw new InvalidOperationException("Interletter Values buffer was not large enough for the result"); // Should never happen
+                        consumer.AddPattern(pattern.Slice(0, patternLength), values.Slice(0, valuesLength));
+                    }
+                    finally
+                    {
+                        ArrayPool<char>.Shared.ReturnIfNotNull(patternArrayToReturnToPool);
+                        ArrayPool<char>.Shared.ReturnIfNotNull(valuesArrayToReturnToPool);
+                    }
                     break;
             }
         }
 
-        protected static string GetPattern(ReadOnlySpan<char> word)
+        /// <summary>
+        /// Gets the maximum length of the pattern produced by
+        /// <see cref="TryGetPattern(ReadOnlySpan{char}, Span{char}, out int)"/>.
+        /// </summary>
+        /// <param name="word">The word to process.</param>
+        /// <returns>The maximum number of characters required for the resulting pattern.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static int GetMaxPatternCharCount(ReadOnlySpan<char> word)
         {
-            int len = word.Length;
-            using ValueStringBuilder pat = len * sizeof(char) <= Constants.MaxStackByteLimit
-                ? new(stackalloc char[len])
-                : new(len);
-            for (int i = 0; i < len; i++)
-            {
-                if (!char.IsDigit(word[i]))
-                {
-                    pat.Append(word[i]);
-                }
-            }
-            return pat.ToString();
+            return word.Length;
         }
 
-        protected virtual IList<object> NormalizeException<T1>(IList<T1> ex)
+        /// <summary>
+        /// Attempts to extract the pattern from a word, omitting all digit characters.
+        /// </summary>
+        /// <param name="word">The word to process.</param>
+        /// <param name="destination">The buffer into which the pattern is written.</param>
+        /// <param name="charsWritten">When this method returns, contains the number of characters
+        /// written to <paramref name="destination"/>, or zero if the destination was too small.</param>
+        /// <returns><c>true</c> if the pattern was successfully written; otherwise, <c>false</c>.</returns>
+        protected static bool TryGetPattern(ReadOnlySpan<char> word, Span<char> destination, out int charsWritten)
+        {
+            charsWritten = 0;
+
+            for (int i = 0; i < word.Length; i++)
+            {
+                char c = word[i];
+
+                if (!char.IsDigit(c))
+                {
+                    if (charsWritten >= destination.Length)
+                    {
+                        charsWritten = 0;
+                        return false;
+                    }
+
+                    destination[charsWritten++] = c;
+                }
+            }
+
+            return true;
+        }
+
+#nullable restore
+
+        protected virtual IList<object> NormalizeException<T>(IList<T> ex)
         {
             ValueStringBuilder buf = new(stackalloc char[128]);
             try
@@ -317,57 +389,158 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
         }
 
-        protected virtual string GetExceptionWord<T1>(IList<T1> ex)
+        /// <summary>
+        /// Gets the exact length of the exception word produced by <see cref="TryGetExceptionWord"/>.
+        /// </summary>
+        /// <param name="ex">The exception elements.</param>
+        /// <returns>The number of characters required to contain the resulting exception word.</returns>
+        protected virtual int GetExceptionWordCharCount<T>(IList<T> ex)
         {
-            using ValueStringBuilder res = new(stackalloc char[128]);
+            int length = 0;
+
             for (int i = 0; i < ex.Count; i++)
             {
-                object item = ex[i];
-                if (item is string str)
+                T item = ex[i];
+
+                if (item is string text)
                 {
-                    res.Append(str);
+                    length = checked(length + text.Length);
+                }
+                else if (item is Hyphen hyphen)
+                {
+                    string noBreak = hyphen.NoBreak;
+
+                    if (noBreak != null)
+                    {
+                        length = checked(length + noBreak.Length);
+                    }
                 }
                 else
                 {
-                    if (((Hyphen)item).NoBreak != null)
-                    {
-                        res.Append(((Hyphen)item).NoBreak);
-                    }
+                    throw new InvalidCastException("An element of ex is not supported. Subclass GetExceptionWordCharCount if types other than string and Hyphen are required.");
                 }
             }
-            return res.ToString();
+
+            return length;
         }
 
-        protected static string GetInterletterValues(ReadOnlySpan<char> pat)
+        /// <summary>
+        /// Attempts to construct the exception word from its elements.
+        /// </summary>
+        /// <param name="ex">The exception elements.</param>
+        /// <param name="destination">The buffer into which the exception word is written.</param>
+        /// <param name="charsWritten">When this method returns, contains the number of characters
+        /// written to <paramref name="destination"/>, or zero if the destination was too small.</param>
+        /// <returns><c>true</c> if the exception word was successfully written; otherwise, <c>false</c>.</returns>
+        protected virtual bool TryGetExceptionWord<T>(IList<T> ex, Span<char> destination, out int charsWritten)
         {
-            int len = pat.Length + 1;
-            ValueStringBuilder il = len * sizeof(char) <= Constants.MaxStackByteLimit
-                ? new(stackalloc char[len])
-                : new(len);
-            try
+            charsWritten = 0;
+
+            for (int i = 0; i < ex.Count; i++)
             {
-                Span<char> word = stackalloc char[len];
-                pat.CopyTo(word);
-                word[pat.Length] = 'a'; // add dummy letter to serve as sentinel
-                for (int i = 0; i < len; i++)
+                T item = ex[i];
+                string text;
+
+                if (item is string str)
                 {
-                    char c = word[i];
-                    if (char.IsDigit(c))
+                    text = str;
+                }
+                else if (item is Hyphen hyphen)
+                {
+                    text = hyphen.NoBreak;
+
+                    if (text == null)
                     {
-                        il.Append(c);
-                        i++;
-                    }
-                    else
-                    {
-                        il.Append('0');
+                        continue;
                     }
                 }
-                return il.ToString();
+                else
+                {
+                    throw new InvalidCastException("An element of ex is not supported. Subclass TryGetExceptionWord if types other than string and Hyphen are required.");
+                }
+
+                if (text.Length > destination.Length - charsWritten)
+                {
+                    charsWritten = 0;
+                    return false;
+                }
+
+                text.AsSpan().CopyTo(destination.Slice(charsWritten));
+                charsWritten += text.Length;
             }
-            finally
+
+            return true;
+        }
+
+        /// <summary>
+        /// Gets the maximum length of the interletter values produced by
+        /// <see cref="TryGetInterletterValues(ReadOnlySpan{char}, Span{char}, out int)"/>.
+        /// </summary>
+        /// <param name="pat">The pattern to process.</param>
+        /// <returns>The maximum number of characters required for the resulting interletter values.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static int GetMaxInterletterValuesCharCount(ReadOnlySpan<char> pat)
+        {
+            return pat.Length == int.MaxValue ? int.MaxValue : pat.Length + 1;
+        }
+
+        /// <summary>
+        /// Attempts to extract the interletter values from a pattern.
+        /// </summary>
+        /// <param name="pat">The pattern to process.</param>
+        /// <param name="destination">The buffer into which the interletter values are written.</param>
+        /// <param name="charsWritten">When this method returns, contains the number of characters
+        /// written to <paramref name="destination"/>, or zero if the destination was too small.</param>
+        /// <returns><c>true</c> if the interletter values were successfully written; otherwise, <c>false</c>.</returns>
+        protected static bool TryGetInterletterValues(ReadOnlySpan<char> pat, Span<char> destination, out int charsWritten)
+        {
+            charsWritten = 0;
+
+            int i = 0;
+
+            while (i < pat.Length)
             {
-                il.Dispose();
+                char c = pat[i++];
+
+                if (char.IsDigit(c))
+                {
+                    if (charsWritten >= destination.Length)
+                    {
+                        charsWritten = 0;
+                        return false;
+                    }
+
+                    destination[charsWritten++] = c;
+
+                    // Skip the character following the digit.
+                    i++;
+                }
+                else
+                {
+                    if (charsWritten >= destination.Length)
+                    {
+                        charsWritten = 0;
+                        return false;
+                    }
+
+                    destination[charsWritten++] = '0';
+                }
             }
+
+            // Process the virtual sentinel ('a'), unless it was consumed by
+            // a digit at the end of the input.
+            if (i == pat.Length)
+            {
+                if (charsWritten >= destination.Length)
+                {
+                    charsWritten = 0;
+                    return false;
+                }
+
+                destination[charsWritten++] = '0';
+            }
+
+            return true;
         }
 
         /// <summary>
