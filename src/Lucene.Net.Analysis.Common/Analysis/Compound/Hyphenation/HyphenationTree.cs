@@ -709,7 +709,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// case characters, in this case a class for letter 'a', for example, should
         /// be defined as "aA", the first character being the normalization char.
         /// </summary>
-        public virtual void AddClass(string chargroup)
+        public virtual void AddClass(ReadOnlySpan<char> chargroup)
         {
             if (chargroup.Length > 0)
             {
@@ -732,9 +732,25 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="word"> normalized word </param>
         /// <param name="hyphenatedword"> a vector of alternating strings and
         ///        <see cref="Hyphen"/> objects. </param>
-        public virtual void AddException(string word, IList<object> hyphenatedword)
+        public virtual void AddException(ReadOnlySpan<char> word, IList<object> hyphenatedword)
         {
-            m_stoplist[word] = hyphenatedword;
+            // LUCENENET specific - favor alternate lookup, when available
+            if (m_stoplist is JCG.Dictionary<string, IList<object>> jcgStopList &&
+                jcgStopList.TryGetSpanAlternateLookup<char>(out var jcgLookup))
+            {
+                jcgLookup[word] = hyphenatedword;
+                return;
+            }
+#if FEATURE_DICTIONARY_ALTERNATELOOKUP
+            else if (m_stoplist is Dictionary<string, IList<object>> scgStopList &&
+                scgStopList.TryGetAlternateLookup<ReadOnlySpan<char>>(out var scgLookup))
+            {
+                scgLookup[word] = hyphenatedword;
+                return;
+            }
+#endif
+
+            m_stoplist[word.ToString()] = hyphenatedword;
         }
 
         /// <summary>
@@ -746,7 +762,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="ivalue"> interletter weight values indicating the desirability and
         ///        priority of hyphenating at a given point within the pattern. It
         ///        should contain only digit characters. (i.e. '0' to '9'). </param>
-        public virtual void AddPattern(string pattern, string ivalue)
+        public virtual void AddPattern(ReadOnlySpan<char> pattern, ReadOnlySpan<char> ivalue)
         {
             int k = ivalues.Find(ivalue);
             if (k <= 0)

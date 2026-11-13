@@ -259,11 +259,11 @@ namespace Lucene.Net.Analysis.Compound
 
         private sealed class NoOpPatternConsumer : IPatternConsumer
         {
-            public void AddClass(string chargroup) { }
+            public void AddClass(ReadOnlySpan<char> chargroup) { }
 
-            public void AddException(string word, IList<object> hyphenatedword) { }
+            public void AddException(ReadOnlySpan<char> word, IList<object> hyphenatedword) { }
 
-            public void AddPattern(string pattern, string values) { }
+            public void AddPattern(ReadOnlySpan<char> pattern, ReadOnlySpan<char> values) { }
         }
 
         private sealed class TrackingPatternParser : PatternParser
@@ -281,13 +281,13 @@ namespace Lucene.Net.Analysis.Compound
             public IList<(string Word, IList<object> HyphenatedWord)> Exceptions { get; }
                 = new List<(string Word, IList<object> HyphenatedWord)>();
 
-            public void AddClass(string chargroup) { }
+            public void AddClass(ReadOnlySpan<char> chargroup) { }
 
-            public void AddPattern(string pattern, string values) { }
+            public void AddPattern(ReadOnlySpan<char> pattern, ReadOnlySpan<char> values) { }
 
-            public void AddException(string word, IList<object> hyphenatedword)
+            public void AddException(ReadOnlySpan<char> word, IList<object> hyphenatedword)
             {
-                Exceptions.Add((word, hyphenatedword));
+                Exceptions.Add((word.ToString(), hyphenatedword));
             }
         }
     }

@@ -1,4 +1,5 @@
 // Lucene version compatibility level 4.8.1
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
@@ -34,7 +35,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// usually means to ignore case.
         /// </summary>
         /// <param name="chargroup"> character group </param>
-        void AddClass(string chargroup);
+        void AddClass(ReadOnlySpan<char> chargroup);
 
         /// <summary>
         /// Add a hyphenation exception. An exception replaces the result obtained by
@@ -42,13 +43,13 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// his own hyphenation. A hyphenatedword is a vector of alternating String's
         /// and <see cref="Hyphen"/> instances
         /// </summary>
-        void AddException(string word, IList<object> hyphenatedword);
+        void AddException(ReadOnlySpan<char> word, IList<object> hyphenatedword);
 
         /// <summary>
         /// Add hyphenation patterns.
         /// </summary>
         /// <param name="pattern"> the pattern </param>
         /// <param name="values"> interletter values expressed as a string of digit characters. </param>
-        void AddPattern(string pattern, string values);
+        void AddPattern(ReadOnlySpan<char> pattern, ReadOnlySpan<char> values);
     }
 }
