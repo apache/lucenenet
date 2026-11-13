@@ -1,5 +1,8 @@
 // Lucene version compatibility level 4.8.1
 using J2N;
+using J2N.Text;
+using Lucene.Net.Text;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,7 +43,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         internal IPatternConsumer consumer;
 
-        internal readonly StringBuilder token; // LUCENENET: marked readonly
+        internal readonly TextBuilder token; // LUCENENET: marked readonly
 
         internal IList<object> exception;
 
@@ -58,7 +61,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public PatternParser()
         {
-            token = new StringBuilder();
+            token = new TextBuilder();
             hyphenChar = '-'; // default
         }
 
@@ -267,8 +270,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         protected static string GetPattern(string word)
         {
-            StringBuilder pat = new StringBuilder();
             int len = word.Length;
+            using ValueStringBuilder pat = len * sizeof(char) <= Constants.MaxStackByteLimit
+                ? new(stackalloc char[len])
+                : new(len);
             for (int i = 0; i < len; i++)
             {
                 if (!char.IsDigit(word[i]))
@@ -281,48 +286,57 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         protected virtual IList<object> NormalizeException<T1>(IList<T1> ex)
         {
-            IList<object> res = new JCG.List<object>();
-            for (int i = 0; i < ex.Count; i++)
+            ValueStringBuilder buf = new(stackalloc char[128]);
+            try
             {
-                object item = ex[i];
-                if (item is string str)
+                IList<object> res = new JCG.List<object>();
+                for (int i = 0; i < ex.Count; i++)
                 {
-                    StringBuilder buf = new StringBuilder();
-                    for (int j = 0; j < str.Length; j++)
+                    object item = ex[i];
+                    if (item is string str)
                     {
-                        char c = str[j];
-                        if (c != hyphenChar)
+                        // LUCENENET: Moved string builder outside of the loop so we can reuse it.
+                        buf.Length = 0;
+                        for (int j = 0; j < str.Length; j++)
                         {
-                            buf.Append(c);
+                            char c = str[j];
+                            if (c != hyphenChar)
+                            {
+                                buf.Append(c);
+                            }
+                            else
+                            {
+                                res.Add(buf.ToString());
+                                buf.Length = 0;
+                                // LUCENENET: commented out unnecessary array allocation
+                                //char[] h = new char[1];
+                                //h[0] = hyphenChar;
+                                // we use here hyphenChar which is not necessarily
+                                // the one to be printed
+                                res.Add(new Hyphen(new string(hyphenChar, 1), null, null));
+                            }
                         }
-                        else
+                        if (buf.Length > 0)
                         {
                             res.Add(buf.ToString());
-                            buf.Length = 0;
-                            // LUCENENET: commented out unnecessary array allocation
-                            //char[] h = new char[1];
-                            //h[0] = hyphenChar;
-                            // we use here hyphenChar which is not necessarily
-                            // the one to be printed
-                            res.Add(new Hyphen(new string(hyphenChar, 1), null, null));
                         }
                     }
-                    if (buf.Length > 0)
+                    else
                     {
-                        res.Add(buf.ToString());
+                        res.Add(item);
                     }
                 }
-                else
-                {
-                    res.Add(item);
-                }
+                return res;
             }
-            return res;
+            finally
+            {
+                buf.Dispose();
+            }
         }
 
         protected virtual string GetExceptionWord<T1>(IList<T1> ex)
         {
-            StringBuilder res = new StringBuilder();
+            using ValueStringBuilder res = new(stackalloc char[128]);
             for (int i = 0; i < ex.Count; i++)
             {
                 object item = ex[i];
@@ -341,25 +355,36 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return res.ToString();
         }
 
-        protected static string GetInterletterValues(string pat)
+        protected static string GetInterletterValues(ReadOnlySpan<char> pat)
         {
-            StringBuilder il = new StringBuilder();
-            string word = pat + "a"; // add dummy letter to serve as sentinel
-            int len = word.Length;
-            for (int i = 0; i < len; i++)
+            int len = pat.Length + 1;
+            ValueStringBuilder il = len * sizeof(char) <= Constants.MaxStackByteLimit
+                ? new(stackalloc char[len])
+                : new(len);
+            try
             {
-                char c = word[i];
-                if (char.IsDigit(c))
+                Span<char> word = stackalloc char[len];
+                pat.CopyTo(word);
+                word[pat.Length] = 'a'; // add dummy letter to serve as sentinel
+                for (int i = 0; i < len; i++)
                 {
-                    il.Append(c);
-                    i++;
+                    char c = word[i];
+                    if (char.IsDigit(c))
+                    {
+                        il.Append(c);
+                        i++;
+                    }
+                    else
+                    {
+                        il.Append('0');
+                    }
                 }
-                else
-                {
-                    il.Append('0');
-                }
+                return il.ToString();
             }
-            return il.ToString();
+            finally
+            {
+                il.Dispose();
+            }
         }
 
         /// <summary>
