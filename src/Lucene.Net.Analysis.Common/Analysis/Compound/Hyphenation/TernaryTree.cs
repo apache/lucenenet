@@ -1,7 +1,9 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
+using Lucene.Net.Support.Buffers;
 using Lucene.Net.Util;
 using System;
+using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -146,19 +148,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// same prefix is inserted. This saves a lot of space, specially for long
         /// keys.
         /// </summary>
-        // LUCENENET: string overload retained here for public API for non-C#-14 callers
-        public void Insert(string key, char val)
-            => Insert(key.AsSpan(), val);
-
-        /// <summary>
-        /// Branches are initially compressed, needing one node per key plus the size
-        /// of the string key. They are decompressed as needed when another key with
-        /// same prefix is inserted. This saves a lot of space, specially for long
-        /// keys.
-        /// </summary>
-        /// <remarks>
-        /// LUCENENET specific overload for <see cref="ReadOnlySpan{T}"/>
-        /// </remarks>
         public virtual void Insert(ReadOnlySpan<char> key, char val)
         {
             // make sure we have enough room in the arrays
@@ -341,16 +330,29 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return StrLen(a, 0);
         }
 
-        public virtual int Find(string key)
+#nullable enable
+        public virtual int Find(ReadOnlySpan<char> key)
         {
-            int len = key.Length;
+            int bufferLength = key.Length + 1;
             // LUCENENET: add optimization for stackalloc and Span
-            Span<char> strkey = (len + 1) * sizeof(char) > Constants.MaxStackByteLimit ? new char[len + 1] : stackalloc char[len + 1];
-            key.AsSpan().CopyTo(strkey);
-            strkey[len] = (char)0;
+            char[]? arrayToReturnToPool = null;
+            Span<char> strkey = bufferLength * sizeof(char) <= Constants.MaxStackByteLimit
+                ? stackalloc char[bufferLength]
+                : (arrayToReturnToPool = ArrayPool<char>.Shared.Rent(bufferLength));
+            try
+            {
+                key.CopyTo(strkey);
+                strkey[bufferLength - 1] = (char)0;
 
-            return Find(strkey, 0);
+                return Find(strkey, 0);
+            }
+            finally
+            {
+                ArrayPool<char>.Shared.ReturnIfNotNull(arrayToReturnToPool);
+            }
         }
+
+#nullable restore
 
         public virtual int Find(ReadOnlySpan<char> key, int start)
         {
