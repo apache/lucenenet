@@ -257,6 +257,82 @@ namespace Lucene.Net.Analysis.Compound
         }
 
 
+        /// <summary>
+        /// An element without a namespace has an empty namespace URI, and its
+        /// local and qualified names are identical.
+        /// </summary>
+        [Test]
+        public virtual void TestElementNamesWithoutNamespace()
+        {
+            const string xml =
+                "<hyphenation-info>" +
+                "  <classes>abc</classes>" +
+                "</hyphenation-info>";
+
+            var parser = new RecordingElementParser();
+
+            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
+            parser.Parse(stream);
+
+            CollectionAssert.AreEqual(
+                new[]
+                {
+                    (string.Empty, "hyphenation-info", "hyphenation-info"),
+                    (string.Empty, "classes", "classes")
+                },
+                parser.StartElements);
+
+            CollectionAssert.AreEqual(
+                new[]
+                {
+                    (string.Empty, "classes", "classes"),
+                    (string.Empty, "hyphenation-info", "hyphenation-info")
+                },
+                parser.EndElements);
+        }
+
+        /// <summary>
+        /// Elements with namespace prefixes provide the namespace URI, local name,
+        /// and qualified name separately. Empty elements produce both start and
+        /// end notifications with the same values.
+        /// </summary>
+        [Test]
+        public virtual void TestElementNamesWithNamespaces()
+        {
+            const string xml =
+                "<root xmlns=\"urn:default\" xmlns:h=\"urn:hyphen\">" +
+                "  <classes>" +
+                "    <h:patterns>abc</h:patterns>" +
+                "    <h:exceptions />" +
+                "  </classes>" +
+                "</root>";
+
+            var parser = new RecordingElementParser();
+
+            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
+            parser.Parse(stream);
+
+            CollectionAssert.AreEqual(
+                new[]
+                {
+                    ("urn:default", "root", "root"),
+                    ("urn:default", "classes", "classes"),
+                    ("urn:hyphen", "patterns", "h:patterns"),
+                    ("urn:hyphen", "exceptions", "h:exceptions")
+                },
+                parser.StartElements);
+
+            CollectionAssert.AreEqual(
+                new[]
+                {
+                    ("urn:hyphen", "patterns", "h:patterns"),
+                    ("urn:hyphen", "exceptions", "h:exceptions"),
+                    ("urn:default", "classes", "classes"),
+                    ("urn:default", "root", "root")
+                },
+                parser.EndElements);
+        }
+
         private sealed class NoOpPatternConsumer : IPatternConsumer
         {
             public void AddClass(ReadOnlySpan<char> chargroup) { }
@@ -288,6 +364,36 @@ namespace Lucene.Net.Analysis.Compound
             public void AddException(ReadOnlySpan<char> word, IList<object> hyphenatedword)
             {
                 Exceptions.Add((word.ToString(), hyphenatedword));
+            }
+        }
+
+        private sealed class RecordingElementParser : PatternParser
+        {
+            public IList<(string Uri, string Local, string Raw)> StartElements { get; }
+                = new List<(string Uri, string Local, string Raw)>();
+
+            public IList<(string Uri, string Local, string Raw)> EndElements { get; }
+                = new List<(string Uri, string Local, string Raw)>();
+
+            public RecordingElementParser()
+                : base(new NoOpPatternConsumer())
+            {
+            }
+
+            public override void StartElement(
+                string uri,
+                string local,
+                string raw,
+                IDictionary<string, string> attrs)
+            {
+                StartElements.Add((uri, local, raw));
+                base.StartElement(uri, local, raw, attrs);
+            }
+
+            public override void EndElement(string uri, string local, string raw)
+            {
+                EndElements.Add((uri, local, raw));
+                base.EndElement(uri, local, raw);
             }
         }
     }

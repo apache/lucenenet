@@ -144,11 +144,14 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(XmlReader source)
         {
-            source.MoveToContent();
-            while (source.Read())
+            if (source.MoveToContent() == XmlNodeType.None)
+                return;
+
+            do
             {
                 ParseNode(source);
             }
+            while (source.Read());
         }
 
         private void ParseNode(XmlReader node)
@@ -160,10 +163,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
                     // Element start
                     uri = node.NamespaceURI;
-                    name = node.Name;
+                    name = node.LocalName;
+                    raw = node.Name;
                     bool isEmptyElement = node.IsEmptyElement;
                     var attributes = GetAttributes(node);
-                    raw = string.Empty; // node.ReadOuterXml(); - not used, but was messing with the node pointer
 
                     this.StartElement(uri, name, raw, attributes);
                     if (isEmptyElement)
@@ -179,8 +182,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
                 case XmlNodeType.EndElement:
                     uri = node.NamespaceURI;
-                    name = node.Name;
-                    raw = string.Empty; // node.ReadOuterXml(); - not used, but was messing with the node pointer
+                    name = node.LocalName;
+                    raw = node.Name;
 
                     // Element end
                     this.EndElement(uri, name, raw);
@@ -577,10 +580,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// (even when the element is empty). All of the element's content will be reported,
         /// in order, before the corresponding endElement event.
         /// </summary>
-        /// <param name="uri">the Namespace URI, or the empty string if the element has no Namespace URI or if Namespace processing is not being performed</param>
-        /// <param name="local">the local name (without prefix), or the empty string if Namespace processing is not being performed</param>
-        /// <param name="raw"></param>
-        /// <param name="attrs"> the attributes attached to the element. If there are no attributes, it shall be an empty Attributes object. The value of this object after startElement returns is undefined</param>
+        /// /// <param name="uri">The namespace URI of the element, or an empty string if the element has no namespace URI or if namespace processing is not being performed.</param>
+        /// <param name="local">The local name of the element, without a namespace prefix, or an empty string if namespace processing is not being performed.</param>
+        /// <param name="raw">The qualified name of the element, including its namespace prefix, if one is present. If the element has no prefix, this is the same as <paramref name="local"/>.</param>
+        /// <param name="attrs"> the attributes attached to the element. If there are no attributes, it shall be an empty Attributes object. The value of this object after startElement returns is undefined.</param>
         public virtual void StartElement(string uri, string local, string raw, IDictionary<string, string> attrs)
         {
             if (local.Equals("hyphen-char", StringComparison.Ordinal))
@@ -622,9 +625,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// there will be a corresponding <see cref="StartElement"/> event for every
         /// <see cref="EndElement"/> event (even when the element is empty).
         /// </summary>
-        /// <param name="uri">the Namespace URI, or the empty string if the element has no Namespace URI or if Namespace processing is not being performed</param>
-        /// <param name="local">the local name (without prefix), or the empty string if Namespace processing is not being performed</param>
-        /// <param name="raw"></param>
+        /// /// <param name="uri">The namespace URI of the element, or an empty string if the element has no namespace URI or if namespace processing is not being performed.</param>
+        /// <param name="local">The local name of the element, without a namespace prefix, or an empty string if namespace processing is not being performed.</param>
+        /// <param name="raw">The qualified name of the element, including its namespace prefix, if one is present. If the element has no prefix, this is the same as <paramref name="local"/>.</param>
         public virtual void EndElement(string uri, string local, string raw)
         {
             // LUCENENET specific - moved processing logic to a shared
