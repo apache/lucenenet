@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -580,14 +581,16 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 int k = 0;
 
                 // check exception list first
-                string sw = word.Slice(1, len).ToString();
+                ReadOnlySpan<char> sw = word.Slice(1, len);
+                //string sw = word.Slice(1, len).ToString();
                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
-                if (m_stoplist.TryGetValue(sw, out IList<object>? hw))
+                //if (m_stoplist.TryGetValue(sw, out IList<object>? hw))
+                if (TryGetStopListValue(sw, out IList<object>? hw))
                 {
                     // assume only simple hyphens (Hyphen.pre="-", Hyphen.post = Hyphen.no =
                     // null)
                     int j = 0;
-                    for (i = 0; i < hw.Count; i++)
+                    for (i = 0; i < hw!.Count; i++)
                     {
                         object o = hw[i];
                         // j = index(sw) = letterindex(word)?
@@ -726,5 +729,26 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         //base.printStats(@out);
 
         // }
+
+#nullable enable
+
+        // LUCENENET specific - favor alternate lookup, when available
+        private bool TryGetStopListValue(ReadOnlySpan<char> key, [MaybeNullWhen(false)] out IList<object>? value)
+        {
+            if (m_stoplist is JCG.Dictionary<string, IList<object>> jcgStopList &&
+                jcgStopList.TryGetSpanAlternateLookup<char>(out var jcgLookup))
+            {
+                return jcgLookup.TryGetValue(key, out value);
+            }
+#if FEATURE_DICTIONARY_ALTERNATELOOKUP
+            else if (m_stoplist is Dictionary<string, IList<object>> scgStopList &&
+                scgStopList.TryGetAlternateLookup<ReadOnlySpan<char>>(out var scgLookup))
+            {
+                return scgLookup.TryGetValue(key, out value);
+            }
+#endif
+
+            return m_stoplist.TryGetValue(key.ToString(), out value);
+        }
     }
 }
