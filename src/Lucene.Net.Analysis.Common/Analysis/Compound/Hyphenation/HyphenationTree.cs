@@ -1,9 +1,13 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
+using Lucene.Net.Support.Buffers;
+using Lucene.Net.Text;
 using Lucene.Net.Util;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml;
 using JCG = J2N.Collections.Generic;
@@ -80,8 +84,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="values"> a string of digits from '0' to '9' representing the
         ///        interletter values. </param>
         /// <returns> the index into the vspace array where the packed values are stored. </returns>
-        protected virtual int PackValues(string values)
+        protected virtual int PackValues(ReadOnlySpan<char> values)
         {
+            // LUCENENET specific - track the maximum length of all packed values for a quick max allocation reference
+            MaxValueByteCount = Math.Max(MaxValueByteCount, values.Length);
             int i, n = values.Length;
             int m = (n & 1) == 1 ? (n >> 1) + 2 : (n >> 1) + 1;
             int offset = m_vspace.Alloc(m);
@@ -103,24 +109,63 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return offset;
         }
 
+        /// <summary>
+        /// Attempts to unpack the values into the provided character span.
+        /// </summary>
+        /// <param name="k">The offset into the packed values buffer where the encoded interletter values begin.</param>
+        /// <param name="destination">The character span to place the output in.</param>
+        /// <param name="charsWritten">Upon return, contains the number of characters that were placed in <paramref name="destination"/>.</param>
+        /// <returns><c>true</c> if the operation was successful; otherwise <c>false</c>.</returns>
+        /// <seealso cref="GetMaxValueCharCount(int)"/>
+        // LUCENENET specific - added allocation-free unpack
+        protected virtual bool TryUnpackValues(int k, Span<char> destination, out int charsWritten)
+        {
+            ValueStringBuilder buf = new(destination);
+            try
+            {
+                UnpackValues(ref buf, k);
+                return buf.FitsInitialBuffer(out charsWritten);
+            }
+            finally
+            {
+                buf.Dispose();
+            }
+        }
+
         protected virtual string UnpackValues(int k)
         {
-            StringBuilder buf = new StringBuilder();
+            // LUCENENET: Estimate the max number of chars that will be needed and allocate up front
+            int bufferLength = (m_vspace.Length - k - 1) * 2;
+            ValueStringBuilder buf = bufferLength * sizeof(char) <= Constants.MaxStackByteLimit
+                ? new(stackalloc char[bufferLength])
+                : new(bufferLength);
+            try
+            {
+                UnpackValues(ref buf, k);
+                return buf.ToString();
+            }
+            finally
+            {
+                buf.Dispose();
+            }
+        }
+
+        private void UnpackValues(ref ValueStringBuilder destination, int k)
+        {
             byte v = m_vspace[k++];
             while (v != 0)
             {
                 char c = (char)((v >>> 4) - 1 + '0');
-                buf.Append(c);
+                destination.Append(c);
                 c = (char)(v & 0x0f);
                 if (c == 0)
                 {
                     break;
                 }
                 c = (char)(c - 1 + '0');
-                buf.Append(c);
+                destination.Append(c);
                 v = m_vspace[k++];
             }
-            return buf.ToString();
         }
 
         /// <summary>
@@ -238,29 +283,92 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return s[si] - t[ti];
         }
 
-        protected virtual byte[] GetValues(int k)
+#nullable enable
+
+        /// <summary>
+        /// The maximum number of bytes (or chars) required to search for a specific value.
+        /// </summary>
+        public int MaxValueByteCount { get; protected set; }
+
+        /// <summary>
+        /// Calculates the maximum number of bytes produced by unpacking a specific packed values offset.
+        /// </summary>
+        /// <param name="k">The offset into the packed values buffer where the encoded interletter values begin.</param>
+        /// <returns>The maximum number of bytes produced by unpacking a specific packed values offset.</returns>
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected virtual int GetMaxValueByteCount(int k)
         {
-            StringBuilder buf = new StringBuilder();
+            return Math.Max(0, (m_vspace.Length - k - 1) * 2);
+        }
+
+        /// <summary>
+        /// Calculates the maximum number of characters produced by unpacking a specific packed values offset.
+        /// </summary>
+        /// <param name="k">The offset into the packed values buffer where the encoded interletter values begin.</param>
+        /// <returns>The maximum number of characters produced by unpacking a specific packed values offset.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected virtual int GetMaxValueCharCount(int k)
+        {
+            return Math.Max(0, (m_vspace.Length - k - 1) * 2);
+        }
+
+
+        // LUCENENET specific overload to avoid allocating on each call
+        protected virtual bool TryGetValues(int k, Span<byte> destination, out int bytesWritten)
+        {
+            // LUCENENET specific - Lucene uses a StringBuilder as a growable buffer, so it isn't
+            // actually needed if we pass in a large enough buffer up front.
+            bytesWritten = 0;
+
             byte v = m_vspace[k++];
+
             while (v != 0)
             {
-                char c = (char)((v >>> 4) - 1);
-                buf.Append(c);
-                c = (char)(v & 0x0f);
-                if (c == 0)
-                {
+                if (bytesWritten >= destination.Length)
+                    return false;
+
+                destination[bytesWritten++] = (byte)((v >>> 4) - 1);
+
+                byte low = (byte)(v & 0x0f);
+                if (low == 0)
                     break;
-                }
-                c = (char)(c - 1);
-                buf.Append(c);
+
+                if (bytesWritten >= destination.Length)
+                    return false;
+
+                destination[bytesWritten++] = (byte)(low - 1);
                 v = m_vspace[k++];
             }
-            byte[] res = new byte[buf.Length];
-            for (int i = 0; i < res.Length; i++)
+
+            return true;
+        }
+
+        protected virtual byte[] GetValues(int k)
+        {
+            // LUCENENET specific - Lucene used a StringBuilder as a growable buffer and then converted
+            // the result chars to bytes a the end. The StringBuilder was not necessary, we just need
+            // a reasonable way to calculate the buffer to allocate. We do that with GetMaxValueByteCount(),
+            // which is a slight over-estimate. But, we only allocate once and do not immediately release the
+            // allocated memory to the GC.
+
+            // LUCENENET: Estimate the maximum number of bytes needed and allocate up front.
+            int bufferLength = GetMaxValueByteCount(k);
+            byte[]? arrayToReturnToPool = null;
+            Span<byte> values = bufferLength <= Constants.MaxStackByteLimit
+                ? stackalloc byte[bufferLength]
+                : (arrayToReturnToPool = ArrayPool<byte>.Shared.Rent(bufferLength)).AsSpan(0, bufferLength);
+            try
             {
-                res[i] = (byte)buf[i];
+                if (!TryGetValues(k, values, out int bytesWritten))
+                    throw new InvalidOperationException("The values buffer is too small.");
+
+                return values.Slice(0, bytesWritten).ToArray();
             }
-            return res;
+            finally
+            {
+                ArrayPool<byte>.Shared.ReturnIfNotNull(arrayToReturnToPool);
+            }
         }
 
         /// <summary>
@@ -291,55 +399,29 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="il"> interletter values array to update </param>
         protected virtual void SearchPatterns(ReadOnlySpan<char> word, int index, Span<byte> il)
         {
-            byte[] values;
             int i = index;
             char p, q;
             char sp = word[i];
             p = m_root;
-
-            while (p > 0 && p < m_sc.Length)
+            byte[]? arrayToReturnToPool = null;
+            int bufferLength = MaxValueByteCount;
+            Span<byte> values = bufferLength <= Constants.MaxStackByteLimit
+                ? stackalloc byte[bufferLength]
+                : (arrayToReturnToPool = ArrayPool<byte>.Shared.Rent(bufferLength)).AsSpan(0, bufferLength);
+            try
             {
-                if (m_sc[p] == 0xFFFF)
+                while (p > 0 && p < m_sc.Length)
                 {
-                    if (HStrCmp(word, i, m_kv.Array, m_lo[p]) == 0)
+                    if (m_sc[p] == 0xFFFF)
                     {
-                        values = GetValues(m_eq[p]); // data pointer is in eq[]
-                        int j = index;
-                        for (int k = 0; k < values.Length; k++)
+                        if (HStrCmp(word, i, m_kv.Array, m_lo[p]) == 0)
                         {
-                            if (j < il.Length && values[k] > il[j])
-                            {
-                                il[j] = values[k];
-                            }
-                            j++;
-                        }
-                    }
-                    return;
-                }
-                int d = sp - m_sc[p];
-                if (d == 0)
-                {
-                    if (sp == 0)
-                    {
-                        break;
-                    }
-                    sp = word[++i];
-                    p = m_eq[p];
-                    q = p;
+                            // LUCENENET: Refactored GetValues into TryGetValues to eliminate the allocation per loop
+                            if (!TryGetValues(m_eq[p], values, out int valuesLength)) // data pointer is in eq[]
+                                throw new InvalidOperationException("The values buffer is too small."); // LUCENENET: This should never happen, but may if a subclass calculates the buffer length wrong.
 
-                    // look for a pattern ending at this position by searching for
-                    // the null char ( splitchar == 0 )
-                    while (q > 0 && q < m_sc.Length)
-                    {
-                        if (m_sc[q] == 0xFFFF) // stop at compressed branch
-                        {
-                            break;
-                        }
-                        if (m_sc[q] == 0)
-                        {
-                            values = GetValues(m_eq[q]);
                             int j = index;
-                            for (int k = 0; k < values.Length; k++)
+                            for (int k = 0; k < valuesLength; k++)
                             {
                                 if (j < il.Length && values[k] > il[j])
                                 {
@@ -347,21 +429,63 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                                 }
                                 j++;
                             }
+                        }
+                        return;
+                    }
+                    int d = sp - m_sc[p];
+                    if (d == 0)
+                    {
+                        if (sp == 0)
+                        {
                             break;
                         }
-                        else
-                        {
-                            q = m_lo[q];
+                        sp = word[++i];
+                        p = m_eq[p];
+                        q = p;
 
-                            // actually the code should be: q = sc[q] < 0 ? hi[q] : lo[q]; but
-                            // java chars are unsigned
+                        // look for a pattern ending at this position by searching for
+                        // the null char ( splitchar == 0 )
+                        while (q > 0 && q < m_sc.Length)
+                        {
+                            if (m_sc[q] == 0xFFFF) // stop at compressed branch
+                            {
+                                break;
+                            }
+                            if (m_sc[q] == 0)
+                            {
+                                // LUCENENET: Refactored GetValues into TryGetValues to eliminate the allocation per loop
+                                if (!TryGetValues(m_eq[q], values, out int valuesLength))
+                                    throw new InvalidOperationException("The values buffer is too small."); // LUCENENET: This should never happen, but may if a subclass calculates the buffer length wrong.
+
+                                int j = index;
+                                for (int k = 0; k < valuesLength; k++)
+                                {
+                                    if (j < il.Length && values[k] > il[j])
+                                    {
+                                        il[j] = values[k];
+                                    }
+                                    j++;
+                                }
+                                break;
+                            }
+                            else
+                            {
+                                q = m_lo[q];
+
+                                // actually the code should be: q = sc[q] < 0 ? hi[q] : lo[q]; but
+                                // java chars are unsigned
+                            }
                         }
                     }
+                    else
+                    {
+                        p = d < 0 ? m_lo[p] : m_hi[p];
+                    }
                 }
-                else
-                {
-                    p = d < 0 ? m_lo[p] : m_hi[p];
-                }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.ReturnIfNotNull(arrayToReturnToPool);
             }
         }
 
@@ -394,120 +518,149 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <returns>
         /// a <see cref="Hyphenation"/> object representing the hyphenated word or null if word is not hyphenated.
         /// </returns>
-        public virtual Hyphenation Hyphenate(ReadOnlySpan<char> w, int remainCharCount, int pushCharCount)
+        public virtual Hyphenation? Hyphenate(ReadOnlySpan<char> w, int remainCharCount, int pushCharCount)
         {
             int i, len = w.Length;
+            char[]? rentedWord = null;
+            int[]? rentedResult = null;
+            byte[]? rentedIl = null;
+
             // LUCENENET: optimized method for Span and stackalloc
-            Span<char> word = (len + 3) * sizeof(char) > Constants.MaxStackByteLimit ? new char[len + 3] : stackalloc char[len + 3];
-
-            // normalize word
-            Span<char> c = stackalloc char[2];
-            int iIgnoreAtBeginning = 0;
-            int iLength = len;
-            bool bEndOfLetters = false;
-            for (i = 1; i <= len; i++)
+            int wordBufferLength = len + 3;
+            Span<char> word = wordBufferLength * sizeof(char) <= Constants.MaxStackByteLimit
+                ? stackalloc char[wordBufferLength]
+                : (rentedWord = ArrayPool<char>.Shared.Rent(wordBufferLength)).AsSpan(0, wordBufferLength);
+            try
             {
-                c[0] = w[i - 1];
-                int nc = m_classmap.Find(c, 0);
-                if (nc < 0) // found a non-letter character ...
+                // normalize word
+                Span<char> c = stackalloc char[2];
+                int iIgnoreAtBeginning = 0;
+                int iLength = len;
+                bool bEndOfLetters = false;
+                for (i = 1; i <= len; i++)
                 {
-                    if (i == (1 + iIgnoreAtBeginning))
+                    c[0] = w[i - 1];
+                    int nc = m_classmap.Find(c, 0);
+                    if (nc < 0) // found a non-letter character ...
                     {
-                        // ... before any letter character
-                        iIgnoreAtBeginning++;
-                    }
-                    else
-                    {
-                        // ... after a letter character
-                        bEndOfLetters = true;
-                    }
-                    iLength--;
-                }
-                else
-                {
-                    if (!bEndOfLetters)
-                    {
-                        word[i - iIgnoreAtBeginning] = (char)nc;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-            }
-            len = iLength;
-            if (len < (remainCharCount + pushCharCount))
-            {
-                // word is too short to be hyphenated
-                return null;
-            }
-            Span<int> result = (len + 1) * sizeof(int) > Constants.MaxStackByteLimit ? new int[len + 1] : stackalloc int[len + 1];
-            int k = 0;
-
-            // check exception list first
-            string sw = word.Slice(1, len).ToString();
-            // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
-            if (m_stoplist.TryGetValue(sw, out IList<object> hw))
-            {
-                // assume only simple hyphens (Hyphen.pre="-", Hyphen.post = Hyphen.no =
-                // null)
-                int j = 0;
-                for (i = 0; i < hw.Count; i++)
-                {
-                    object o = hw[i];
-                    // j = index(sw) = letterindex(word)?
-                    // result[k] = corresponding index(w)
-                    if (o is string os)
-                    {
-                        j += os.Length;
-                        if (j >= remainCharCount && j < (len - pushCharCount))
+                        if (i == (1 + iIgnoreAtBeginning))
                         {
-                            result[k++] = j + iIgnoreAtBeginning;
+                            // ... before any letter character
+                            iIgnoreAtBeginning++;
+                        }
+                        else
+                        {
+                            // ... after a letter character
+                            bEndOfLetters = true;
+                        }
+                        iLength--;
+                    }
+                    else
+                    {
+                        if (!bEndOfLetters)
+                        {
+                            word[i - iIgnoreAtBeginning] = (char)nc;
+                        }
+                        else
+                        {
+                            return null;
                         }
                     }
                 }
-            }
-            else
-            {
-                // use algorithm to get hyphenation points
-                word[0] = '.'; // word start marker
-                word[len + 1] = '.'; // word end marker
-                word[len + 2] = (char)0; // null terminated
-                Span<byte> il = (len + 3) > Constants.MaxStackByteLimit ? new byte[len + 3] : stackalloc byte[len + 3]; // initialized to zero
-                for (i = 0; i < len + 1; i++)
+                len = iLength;
+                if (len < (remainCharCount + pushCharCount))
                 {
-                    SearchPatterns(word, i, il);
+                    // word is too short to be hyphenated
+                    return null;
                 }
+                int resultBufferLength = len + 1;
+                Span<int> result = resultBufferLength * sizeof(int) <= Constants.MaxStackByteLimit
+                    ? stackalloc int[resultBufferLength]
+                    : (rentedResult = ArrayPool<int>.Shared.Rent(resultBufferLength)).AsSpan(0, resultBufferLength);
+                int k = 0;
 
-                // hyphenation points are located where interletter value is odd
-                // i is letterindex(word),
-                // i + 1 is index(word),
-                // result[k] = corresponding index(w)
-                for (i = 0; i < len; i++)
+                // check exception list first
+                string sw = word.Slice(1, len).ToString();
+                // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+                if (m_stoplist.TryGetValue(sw, out IList<object>? hw))
                 {
-                    if (((il[i + 1] & 1) == 1) && i >= remainCharCount && i <= (len - pushCharCount))
+                    // assume only simple hyphens (Hyphen.pre="-", Hyphen.post = Hyphen.no =
+                    // null)
+                    int j = 0;
+                    for (i = 0; i < hw.Count; i++)
                     {
-                        result[k++] = i + iIgnoreAtBeginning;
+                        object o = hw[i];
+                        // j = index(sw) = letterindex(word)?
+                        // result[k] = corresponding index(w)
+                        if (o is string os)
+                        {
+                            j += os.Length;
+                            if (j >= remainCharCount && j < (len - pushCharCount))
+                            {
+                                result[k++] = j + iIgnoreAtBeginning;
+                            }
+                        }
                     }
                 }
-            }
+                else
+                {
+                    // use algorithm to get hyphenation points
+                    word[0] = '.'; // word start marker
+                    word[len + 1] = '.'; // word end marker
+                    word[len + 2] = (char)0; // null terminated
+                    int ilBufferLength = len + 3;
+                    Span<byte> il = ilBufferLength <= Constants.MaxStackByteLimit
+                        ? stackalloc byte[ilBufferLength] // initialized to zero
+                        : (rentedIl = ArrayPool<byte>.Shared.Rent(ilBufferLength)).AsSpan(0, ilBufferLength);
+                    if (rentedIl is not null)
+                    {
+                        // initialize to zero
+                        il.Clear();
+                    }
 
-            if (k > 0)
-            {
-                // trim result array
-                int[] res = new int[k + 2];
-                result.Slice(0, k).CopyTo(res.AsSpan(1, k));
-                // We add the synthetical hyphenation points
-                // at the beginning and end of the word
-                res[0] = 0;
-                res[k + 1] = len;
-                return new Hyphenation(res);
+                    for (i = 0; i < len + 1; i++)
+                    {
+                        SearchPatterns(word, i, il);
+                    }
+
+                    // hyphenation points are located where interletter value is odd
+                    // i is letterindex(word),
+                    // i + 1 is index(word),
+                    // result[k] = corresponding index(w)
+                    for (i = 0; i < len; i++)
+                    {
+                        if (((il[i + 1] & 1) == 1) && i >= remainCharCount && i <= (len - pushCharCount))
+                        {
+                            result[k++] = i + iIgnoreAtBeginning;
+                        }
+                    }
+                }
+
+                if (k > 0)
+                {
+                    // trim result array
+                    int[] res = new int[k + 2];
+                    result.Slice(0, k).CopyTo(res.AsSpan(1, k));
+                    // We add the synthetical hyphenation points
+                    // at the beginning and end of the word
+                    res[0] = 0;
+                    res[k + 1] = len;
+                    return new Hyphenation(res);
+                }
+                else
+                {
+                    return null;
+                }
             }
-            else
+            finally
             {
-                return null;
+                ArrayPool<char>.Shared.ReturnIfNotNull(rentedWord);
+                ArrayPool<int>.Shared.ReturnIfNotNull(rentedResult);
+                ArrayPool<byte>.Shared.ReturnIfNotNull(rentedIl);
             }
         }
+
+#nullable restore
 
         /// <summary>
         /// Add a character class to the tree. It is used by
