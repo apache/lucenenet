@@ -125,7 +125,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             try
             {
                 UnpackValues(ref buf, k);
-                return buf.FitsInitialBuffer(out charsWritten);
+                bool success = buf.FitsInitialBuffer(out _);
+                charsWritten = success ? buf.Length : 0;
+                return success;
             }
             finally
             {
@@ -255,7 +257,39 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             ivalues = null;
         }
 
-        public virtual string FindPattern(string pat)
+        /// <summary>
+        /// Attempts to find a pattern in the current tree.
+        /// </summary>
+        /// <param name="pat">The pattern to find.</param>
+        /// <param name="destination">Upon successful return, contains the found pattern.</param>
+        /// <param name="charsWritten">Upon successful return, contains the number of characters written
+        /// to <paramref name="destination"/>.</param>
+        /// <returns><c>true</c> if a matching pattern was found and its values were successfully
+        /// written to the destination; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentException">The pattern was found, but the provided <paramref name="destination"/>
+        /// wasn't long enough for it to be written.</exception>
+        /// <remarks>
+        /// Use a <paramref name="destination"/> length that is at least <see cref="MaxValueByteCount"/>
+        /// if the size of pattern that is being searched for is unknown.
+        /// </remarks>
+        /// <seealso cref="MaxValueByteCount"/>
+        public virtual bool TryFindPattern(ReadOnlySpan<char> pat, Span<char> destination, out int charsWritten)
+        {
+            int k = base.Find(pat);
+            if (k < 0)
+            {
+                charsWritten = 0;
+                return false;
+            }
+
+            if (!TryUnpackValues(k, destination, out charsWritten))
+                throw new ArgumentException($"The pattern was found, but the provided destination buffer was not long enough. " +
+                    "To ensure any value can be found, use a buffer size of at least MaxValueByteCount.");
+
+            return true;
+        }
+
+        public virtual string FindPattern(ReadOnlySpan<char> pat)
         {
             int k = base.Find(pat);
             if (k >= 0)
