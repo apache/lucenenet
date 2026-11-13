@@ -171,7 +171,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
                 case XmlNodeType.Text:
 
-                    this.Characters(node.Value.ToCharArray(), 0, node.Value.Length);
+                    this.Characters(node.Value);
                     break;
 
                 case XmlNodeType.EndElement:
@@ -211,64 +211,47 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return result;
         }
 
-        protected virtual string ReadToken(StringBuilder chars)
+        // LUCENENET specific - eliminated the ReadToken() method because it was doing too many responsibilities.
+        // It also exposed System.Text.StringBuilder on the public API and had a weird side-effect of deleting
+        // chars from the input as it processed them.
+        //
+        // ProcessToken() was added to replace it, but is now called in both cases where token processing needs to happen:
+        //
+        // 1. A whitespace delimiter is encountered in Characters(). The token is complete even though the XML element has not ended.
+        // 2. The XML element ends while a token is still buffered. The token is complete even though no trailing whitespace was encountered.
+        //
+        // So, ProcessToken() is an improved "event" that a subclass may be interested in that doesn't leave out any XML element endings
+        // and provides a more sensible read-only token parameter that doesn't change when this ProcessToken() is called.
+
+        /// <summary>
+        /// Processes a completed token.
+        /// </summary>
+        /// <param name="token">
+        /// The completed token. The span is valid only for the duration of this call
+        /// and must not be retained.
+        /// </param>
+        protected virtual void ProcessToken(ReadOnlySpan<char> token)
         {
-            string word;
-            bool space = false;
-            int i;
-            for (i = 0; i < chars.Length; i++)
+            switch (currElement)
             {
-                if (char.IsWhiteSpace(chars[i]))
-                {
-                    space = true;
-                }
-                else
-                {
+                case ELEM_CLASSES:
+                    consumer.AddClass(token.ToString());
                     break;
-                }
-            }
-            if (space)
-            {
-                // chars.delete(0,i);
-                for (int countr = i; countr < chars.Length; countr++)
-                {
-                    chars[countr - i] = chars[countr];
-                }
-                chars.Length = chars.Length - i;
-                if (token.Length > 0)
-                {
-                    word = token.ToString();
-                    token.Length = 0;
-                    return word;
-                }
-            }
-            space = false;
-            for (i = 0; i < chars.Length; i++)
-            {
-                if (char.IsWhiteSpace(chars[i]))
-                {
-                    space = true;
+
+                case ELEM_EXCEPTIONS:
+                    exception.Add(token.ToString());
+                    exception = NormalizeException(exception);
+                    consumer.AddException(GetExceptionWord(exception), new JCG.List<object>(exception));
+                    exception.Clear();
                     break;
-                }
+
+                case ELEM_PATTERNS:
+                    consumer.AddPattern(GetPattern(token), GetInterletterValues(token));
+                    break;
             }
-            token.Append(chars.ToString(0, i - 0));
-            // chars.delete(0,i);
-            for (int countr = i; countr < chars.Length; countr++)
-            {
-                chars[countr - i] = chars[countr];
-            }
-            chars.Length = chars.Length - i;
-            if (space)
-            {
-                word = token.ToString();
-                token.Length = 0;
-                return word;
-            }
-            token.Append(chars); // LUCENENET: CA1830: Prefer strongly-typed Append and Insert method overloads on StringBuilder
-            return null;
         }
 
-        protected static string GetPattern(string word)
+        protected static string GetPattern(ReadOnlySpan<char> word)
         {
             int len = word.Length;
             using ValueStringBuilder pat = len * sizeof(char) <= Constants.MaxStackByteLimit
@@ -471,29 +454,22 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="raw"></param>
         public virtual void EndElement(string uri, string local, string raw)
         {
+            // LUCENENET specific - moved processing logic to a shared
+            // ProcessToken() method that is caleld both here and by Characters().
+            // This provides a more sensible hook for subclasses to tie into
+            // than ReadToken().
             if (token.Length > 0)
             {
-                string word = token.ToString();
-                switch (currElement)
-                {
-                    case ELEM_CLASSES:
-                        consumer.AddClass(word);
-                        break;
-                    case ELEM_EXCEPTIONS:
-                        exception.Add(word);
-                        exception = NormalizeException(exception);
-                        consumer.AddException(GetExceptionWord(exception), new JCG.List<object>(exception));
-                        break;
-                    case ELEM_PATTERNS:
-                        consumer.AddPattern(GetPattern(word), GetInterletterValues(word));
-                        break;
-                    case ELEM_HYPHEN:
-                        // nothing to do
-                        break;
-                }
                 if (currElement != ELEM_HYPHEN)
                 {
-                    token.Length = 0;
+                    try
+                    {
+                        ProcessToken(token);
+                    }
+                    finally
+                    {
+                        token.Length = 0;
+                    }
                 }
             }
             if (currElement == ELEM_HYPHEN)
@@ -506,6 +482,15 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
         }
 
+        // LUCENENET design notes:
+        // 1.   tokenLength can be zero when the input begins with whitespace.In that case, an already accumulated
+        //      token is processed; otherwise, the whitespace is simply skipped.
+        // 2.   Only one delimiter is consumed per iteration.Consecutive whitespace is handled by subsequent iterations.
+        // 3.   If the input ends without whitespace, the partial token remains in token for the next callback.
+        // 4.   The finally ensures the builder is cleared even if the consumer throws.This preserves the original
+        //      behavior, where ReadToken() cleared the token before returning it to the caller.
+        // 5.   The span passed to ProcessToken() is borrowed from token.It must not be retained after ProcessToken() returns.
+
         /// <summary>
         /// Receive notification of character data.
         /// <para/>
@@ -513,36 +498,50 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// return all contiguous character data in a single chunk, or they may split it into
         /// several chunks; however, all of the characters in any single event must come from
         /// the same external entity so that the Locator provides useful information.
-        /// <para/>
-        /// The application must not attempt to read from the array outside of the specified range.
         /// </summary>
-        /// <param name="ch"></param>
-        /// <param name="start"></param>
-        /// <param name="length"></param>
-        public virtual void Characters(char[] ch, int start, int length)
+        /// <param name="chars">The character data to process.</param>
+        public virtual void Characters(ReadOnlySpan<char> chars)
         {
-            StringBuilder chars = new StringBuilder(length);
-            chars.Append(ch, start, length);
-            string word = ReadToken(chars);
-            while (word != null)
+            while (!chars.IsEmpty)
             {
-                // System.out.println("\"" + word + "\"");
-                switch (currElement)
+                int tokenLength = 0;
+
+                // Find the next whitespace character, which terminates the current token.
+                while (tokenLength < chars.Length && !char.IsWhiteSpace(chars[tokenLength]))
                 {
-                    case ELEM_CLASSES:
-                        consumer.AddClass(word);
-                        break;
-                    case ELEM_EXCEPTIONS:
-                        exception.Add(word);
-                        exception = NormalizeException(exception);
-                        consumer.AddException(GetExceptionWord(exception), new JCG.List<object>(exception));
-                        exception.Clear();
-                        break;
-                    case ELEM_PATTERNS:
-                        consumer.AddPattern(GetPattern(word), GetInterletterValues(word));
-                        break;
+                    tokenLength++;
                 }
-                word = ReadToken(chars);
+
+                // Append the next portion of the token. This also handles tokens split
+                // across multiple Characters() calls.
+                token.Append(chars.Slice(0, tokenLength));
+
+                if (tokenLength < chars.Length)
+                {
+                    // A delimiter was found, so the accumulated token is complete.
+                    // Process it before clearing the builder because ProcessToken()
+                    // consumes the span synchronously.
+                    try
+                    {
+                        if (token.Length > 0)
+                        {
+                            ProcessToken(token);
+                        }
+                    }
+                    finally
+                    {
+                        token.Length = 0;
+                    }
+
+                    // Consume the token and its terminating whitespace character.
+                    chars = chars.Slice(tokenLength + 1);
+                }
+                else
+                {
+                    // No delimiter was found. Keep the accumulated token for the next
+                    // Characters() call or the corresponding EndElement() call.
+                    break;
+                }
             }
         }
     }

@@ -96,6 +96,167 @@ namespace Lucene.Net.Analysis.Compound
             Assert.Throws<XmlException>(() => parser.Parse(stream));
         }
 
+        /// <summary>
+        /// A token that has not been terminated by whitespace is processed when its
+        /// containing element ends.
+        /// </summary>
+        [Test]
+        public virtual void TestEndElementProcessesRemainingToken()
+        {
+            var parser = new TrackingPatternParser();
+
+            parser.StartElement(
+                string.Empty,
+                "classes",
+                string.Empty,
+                new Dictionary<string, string>());
+
+            parser.Characters("test-token".AsSpan());
+
+            // The token has not been terminated by whitespace, so it should not
+            // have been processed yet.
+            Assert.AreEqual(0, parser.ProcessedTokens.Count);
+
+            parser.EndElement(string.Empty, "classes", string.Empty);
+
+            Assert.AreEqual(1, parser.ProcessedTokens.Count);
+            Assert.AreEqual("test-token", parser.ProcessedTokens[0]);
+        }
+
+
+        /// <summary>
+        /// A token terminated by whitespace is processed immediately.
+        /// </summary>
+        [Test]
+        public virtual void TestCharactersProcessesWhitespaceTerminatedToken()
+        {
+            var parser = new TrackingPatternParser();
+
+            parser.StartElement(string.Empty, "classes", string.Empty,
+                new Dictionary<string, string>());
+
+            parser.Characters("first ".AsSpan());
+
+            Assert.AreEqual(new[] { "first" }, parser.ProcessedTokens);
+
+            parser.EndElement(string.Empty, "classes", string.Empty);
+
+            Assert.AreEqual(new[] { "first" }, parser.ProcessedTokens);
+        }
+
+        /// <summary>
+        /// A token split across multiple character callbacks is processed as one token.
+        /// </summary>
+        [Test]
+        public virtual void TestCharactersAccumulatesSplitToken()
+        {
+            var parser = new TrackingPatternParser();
+
+            parser.StartElement(string.Empty, "classes", string.Empty,
+                new Dictionary<string, string>());
+
+            parser.Characters("first".AsSpan());
+            Assert.AreEqual(0, parser.ProcessedTokens.Count);
+
+            parser.Characters("-part ".AsSpan());
+
+            Assert.AreEqual(new[] { "first-part" }, parser.ProcessedTokens);
+
+            parser.EndElement(string.Empty, "classes", string.Empty);
+            Assert.AreEqual(new[] { "first-part" }, parser.ProcessedTokens);
+        }
+
+        /// <summary>
+        /// Consecutive whitespace characters do not produce empty tokens.
+        /// </summary>
+        [Test]
+        public virtual void TestCharactersSkipsConsecutiveWhitespace()
+        {
+            var parser = new TrackingPatternParser();
+
+            parser.StartElement(string.Empty, "classes", string.Empty,
+                new Dictionary<string, string>());
+
+            parser.Characters("  first   second  ".AsSpan());
+
+            Assert.AreEqual(new[] { "first", "second" }, parser.ProcessedTokens);
+
+            parser.EndElement(string.Empty, "classes", string.Empty);
+            Assert.AreEqual(new[] { "first", "second" }, parser.ProcessedTokens);
+        }
+
+        /// <summary>
+        /// An element containing no character data does not process a token.
+        /// </summary>
+        [Test]
+        public virtual void TestEndElementDoesNotProcessEmptyToken()
+        {
+            var parser = new TrackingPatternParser();
+
+            parser.StartElement(string.Empty, "classes", string.Empty,
+                new Dictionary<string, string>());
+
+            parser.EndElement(string.Empty, "classes", string.Empty);
+
+            Assert.AreEqual(0, parser.ProcessedTokens.Count);
+        }
+
+        /// <summary>
+        /// A token processed by Characters is not processed again by EndElement.
+        /// </summary>
+        [Test]
+        public virtual void TestEndElementDoesNotProcessTokenTwice()
+        {
+            var parser = new TrackingPatternParser();
+
+            parser.StartElement(string.Empty, "classes", string.Empty,
+                new Dictionary<string, string>());
+
+            parser.Characters("first ".AsSpan());
+
+            Assert.AreEqual(new[] { "first" }, parser.ProcessedTokens);
+
+            parser.EndElement(string.Empty, "classes", string.Empty);
+
+            Assert.AreEqual(new[] { "first" }, parser.ProcessedTokens);
+        }
+
+        /// <summary>
+        /// Text surrounding a hyphen element is preserved and delivered as one exception.
+        /// </summary>
+        [Test]
+        public virtual void TestHyphenElementPreservesSurroundingExceptionText()
+        {
+            var consumer = new RecordingPatternConsumer();
+            var parser = new PatternParser(consumer);
+
+            parser.StartElement(string.Empty, "exceptions", string.Empty,
+                new Dictionary<string, string>());
+
+            parser.Characters("for".AsSpan());
+
+            var attributes = new Dictionary<string, string>
+            {
+                ["pre"] = "for",
+                ["no"] = string.Empty,
+                ["post"] = "get"
+            };
+
+            parser.StartElement(string.Empty, "hyphen", string.Empty, attributes);
+            parser.EndElement(string.Empty, "hyphen", string.Empty);
+
+            parser.Characters("get".AsSpan());
+            parser.EndElement(string.Empty, "exceptions", string.Empty);
+
+            Assert.AreEqual(1, consumer.Exceptions.Count);
+            Assert.AreEqual("forget", consumer.Exceptions[0].Word);
+            Assert.AreEqual(3, consumer.Exceptions[0].HyphenatedWord.Count);
+            Assert.AreEqual("for", consumer.Exceptions[0].HyphenatedWord[0]);
+            Assert.IsInstanceOf<Hyphen>(consumer.Exceptions[0].HyphenatedWord[1]);
+            Assert.AreEqual("get", consumer.Exceptions[0].HyphenatedWord[2]);
+        }
+
+
         private sealed class NoOpPatternConsumer : IPatternConsumer
         {
             public void AddClass(string chargroup) { }
@@ -103,6 +264,31 @@ namespace Lucene.Net.Analysis.Compound
             public void AddException(string word, IList<object> hyphenatedword) { }
 
             public void AddPattern(string pattern, string values) { }
+        }
+
+        private sealed class TrackingPatternParser : PatternParser
+        {
+            public IList<string> ProcessedTokens { get; } = new List<string>();
+
+            protected override void ProcessToken(ReadOnlySpan<char> token)
+            {
+                ProcessedTokens.Add(token.ToString());
+            }
+        }
+
+        private sealed class RecordingPatternConsumer : IPatternConsumer
+        {
+            public IList<(string Word, IList<object> HyphenatedWord)> Exceptions { get; }
+                = new List<(string Word, IList<object> HyphenatedWord)>();
+
+            public void AddClass(string chargroup) { }
+
+            public void AddPattern(string pattern, string values) { }
+
+            public void AddException(string word, IList<object> hyphenatedword)
+            {
+                Exceptions.Add((word, hyphenatedword));
+            }
         }
     }
 }
