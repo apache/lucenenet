@@ -2,6 +2,7 @@
 using Lucene.Net.Text;
 using Lucene.Net.Util;
 using System;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -36,20 +37,20 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// </summary>
     public class Hyphen
     {
-        public string PreBreak { get; set; }
+        public string? PreBreak { get; set; }
 
-        public string NoBreak { get; set; }
+        public string? NoBreak { get; set; }
 
-        public string PostBreak { get; set; }
+        public string? PostBreak { get; set; }
 
-        internal Hyphen(string pre, string no, string post)
+        internal Hyphen(string? pre, string? no, string? post)
         {
             PreBreak = pre;
             NoBreak = no;
             PostBreak = post;
         }
 
-        internal Hyphen(string pre)
+        internal Hyphen(string? pre)
         {
             PreBreak = pre;
             NoBreak = null;
