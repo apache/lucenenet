@@ -1,8 +1,10 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Compound.Hyphenation;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support.Buffers;
 using Lucene.Net.Util;
 using System;
+using System.Buffers;
 using System.IO;
 using System.Text;
 
@@ -186,99 +188,117 @@ namespace Lucene.Net.Analysis.Compound
             return tree;
         }
 
+#nullable enable
+
         protected override void Decompose()
         {
-            // get the hyphenation points
-            Hyphenation.Hyphenation hyphens = hyphenator.Hyphenate(m_termAtt.AsSpan(), 1, 1);
-            // No hyphen points found -> exit
-            if (hyphens is null)
-            {
-                return;
-            }
+            // LUCENENET specific - reuse memory rather than returning a new array on every call
+            ReadOnlySpan<char> term = m_termAtt.AsSpan();
+            int maxHyphenateInt32Count = hyphenator.GetMaxHyphenateInt32Count(term);
 
-            int[] hyp = hyphens.HyphenationPoints;
+            int[]? rentedHyp = null;
+            Span<int> hyp = maxHyphenateInt32Count * sizeof(int) <= Constants.MaxStackByteLimit
+                ? stackalloc int[maxHyphenateInt32Count]
+                : (rentedHyp = ArrayPool<int>.Shared.Rent(maxHyphenateInt32Count))
+                    .AsSpan(0, maxHyphenateInt32Count);
 
-            for (int i = 0; i < hyp.Length; ++i)
+            try
             {
-                int remaining = hyp.Length - i;
-                int start = hyp[i];
-                CompoundToken longestMatchToken = null;
-                for (int j = 1; j < remaining; j++)
+                // get the hyphenation points
+                if (!hyphenator.TryHyphenate(term, 1, 1, hyp, out int hypLength))
                 {
-                    int partLength = hyp[i + j] - start;
+                    // No hyphen points found -> exit
+                    return;
+                }
 
-                    // if the part is longer than maxSubwordSize we
-                    // are done with this round
-                    if (partLength > this.m_maxSubwordSize)
-                    {
-                        break;
-                    }
+                hyp = hyp.Slice(0, hypLength);
 
-                    // we only put subwords to the token stream
-                    // that are longer than minPartSize
-                    if (partLength < this.m_minSubwordSize)
+                for (int i = 0; i < hyp.Length; ++i)
+                {
+                    int remaining = hyp.Length - i;
+                    int start = hyp[i];
+                    CompoundToken? longestMatchToken = null;
+                    for (int j = 1; j < remaining; j++)
                     {
-                        // BOGUS/BROKEN/FUNKY/WACKO: somehow we have negative 'parts' according to the
-                        // calculation above, and we rely upon minSubwordSize being >=0 to filter them out...
-                        continue;
-                    }
+                        int partLength = hyp[i + j] - start;
 
-                    // check the dictionary
-                    if (m_dictionary is null || m_dictionary.Contains(m_termAtt.AsSpan(start, partLength)))
-                    {
-                        if (this.m_onlyLongestMatch)
+                        // if the part is longer than maxSubwordSize we
+                        // are done with this round
+                        if (partLength > this.m_maxSubwordSize)
                         {
-                            if (longestMatchToken != null)
+                            break;
+                        }
+
+                        // we only put subwords to the token stream
+                        // that are longer than minPartSize
+                        if (partLength < this.m_minSubwordSize)
+                        {
+                            // BOGUS/BROKEN/FUNKY/WACKO: somehow we have negative 'parts' according to the
+                            // calculation above, and we rely upon minSubwordSize being >=0 to filter them out...
+                            continue;
+                        }
+
+                        // check the dictionary
+                        if (m_dictionary is null || m_dictionary.Contains(m_termAtt.AsSpan(start, partLength)))
+                        {
+                            if (this.m_onlyLongestMatch)
                             {
-                                if (longestMatchToken.Text.Length < partLength)
+                                if (longestMatchToken != null)
+                                {
+                                    if (longestMatchToken.Text.Length < partLength)
+                                    {
+                                        longestMatchToken = new CompoundToken(this, start, partLength);
+                                    }
+                                }
+                                else
                                 {
                                     longestMatchToken = new CompoundToken(this, start, partLength);
                                 }
                             }
                             else
                             {
-                                longestMatchToken = new CompoundToken(this, start, partLength);
+                                m_tokens.Enqueue(new CompoundToken(this, start, partLength));
                             }
                         }
-                        else
+                        // LUCENENET specific - guard against a negative length (partLength == 0).
+                        // Upstream Java relies on CharArrayMap silently treating a negative length as
+                        // "not found", but in .NET slicing the buffer with a negative length throws
+                        // ArgumentOutOfRangeException. See the BOGUS/BROKEN/FUNKY/WACKO note above.
+                        else if (partLength - 1 >= 0 && m_dictionary.Contains(m_termAtt.AsSpan(start, partLength - 1)))
                         {
-                            m_tokens.Enqueue(new CompoundToken(this, start, partLength));
-                        }
-                    }
-                    // LUCENENET specific - guard against a negative length (partLength == 0).
-                    // Upstream Java relies on CharArrayMap silently treating a negative length as
-                    // "not found", but in .NET slicing the buffer with a negative length throws
-                    // ArgumentOutOfRangeException. See the BOGUS/BROKEN/FUNKY/WACKO note above.
-                    else if (partLength - 1 >= 0 && m_dictionary.Contains(m_termAtt.AsSpan(start, partLength - 1)))
-                    {
-                        // check the dictionary again with a word that is one character
-                        // shorter
-                        // to avoid problems with genitive 's characters and other binding
-                        // characters
-                        if (this.m_onlyLongestMatch)
-                        {
-                            if (longestMatchToken != null)
+                            // check the dictionary again with a word that is one character
+                            // shorter
+                            // to avoid problems with genitive 's characters and other binding
+                            // characters
+                            if (this.m_onlyLongestMatch)
                             {
-                                if (longestMatchToken.Text.Length < partLength - 1)
+                                if (longestMatchToken != null)
+                                {
+                                    if (longestMatchToken.Text.Length < partLength - 1)
+                                    {
+                                        longestMatchToken = new CompoundToken(this, start, partLength - 1);
+                                    }
+                                }
+                                else
                                 {
                                     longestMatchToken = new CompoundToken(this, start, partLength - 1);
                                 }
                             }
                             else
                             {
-                                longestMatchToken = new CompoundToken(this, start, partLength - 1);
+                                m_tokens.Enqueue(new CompoundToken(this, start, partLength - 1));
                             }
                         }
-                        else
-                        {
-                            m_tokens.Enqueue(new CompoundToken(this, start, partLength - 1));
-                        }
+                    }
+                    if (this.m_onlyLongestMatch && longestMatchToken != null)
+                    {
+                        m_tokens.Enqueue(longestMatchToken);
                     }
                 }
-                if (this.m_onlyLongestMatch && longestMatchToken != null)
-                {
-                    m_tokens.Enqueue(longestMatchToken);
-                }
+            }
+            finally
+            {
+                ArrayPool<int>.Shared.ReturnIfNotNull(rentedHyp);
             }
         }
     }

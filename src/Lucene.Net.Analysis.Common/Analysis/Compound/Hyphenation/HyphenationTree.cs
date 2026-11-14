@@ -273,6 +273,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// if the size of pattern that is being searched for is unknown.
         /// </remarks>
         /// <seealso cref="MaxValueByteCount"/>
+        // LUCENENET specific - added allocation-free find
         public virtual bool TryFindPattern(ReadOnlySpan<char> pat, Span<char> destination, out int charsWritten)
         {
             int k = base.Find(pat);
@@ -323,6 +324,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// The maximum number of bytes (or chars) required to search for a specific value.
         /// </summary>
+        // LUCENENET specific - track the min buffer size needed for search operations across all values
         public int MaxValueByteCount { get; protected set; }
 
         /// <summary>
@@ -331,6 +333,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="k">The offset into the packed values buffer where the encoded interletter values begin.</param>
         /// <returns>The maximum number of bytes produced by unpacking a specific packed values offset.</returns>
 
+        // LUCENENET specific - allow callers to calculate the max byte count for TryGetValues
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual int GetMaxValueByteCount(int k)
         {
@@ -342,6 +345,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// </summary>
         /// <param name="k">The offset into the packed values buffer where the encoded interletter values begin.</param>
         /// <returns>The maximum number of characters produced by unpacking a specific packed values offset.</returns>
+        // LUCENENET specific - allow callers to calculate the max byte count for TryUnpack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual int GetMaxValueCharCount(int k)
         {
@@ -525,6 +529,208 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         }
 
         /// <summary>
+        /// Gets the maximum number of <see cref="int"/> values required to store the
+        /// hyphenation points for a word, including the synthetic beginning and ending
+        /// points.
+        /// </summary>
+        /// <param name="w"> The word to hyphenate. </param>
+        /// <returns>
+        /// An upper bound on the number of values required by
+        /// <see cref="TryHyphenate(ReadOnlySpan{char}, int, int, Span{int}, out int)"/>.
+        /// </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual int GetMaxHyphenateInt32Count(ReadOnlySpan<char> w)
+        {
+            return checked(w.Length + 2);
+        }
+
+        /// <summary>
+        /// Hyphenates a word and writes its hyphenation points into the specified
+        /// destination.
+        /// </summary>
+        /// <param name="w">
+        /// <see cref="ReadOnlySpan{Char}"/> that contains the word. This should be
+        /// sliced to the desired offset and length before passing in if necessary.
+        /// </param>
+        /// <param name="remainCharCount">Minimum number of characters allowed before the hyphenation point.</param>
+        /// <param name="pushCharCount">Minimum number of characters allowed after the hyphenation point.</param>
+        /// <param name="destination">
+        /// The destination into which the hyphenation points are written. The output
+        /// includes synthetic points at the beginning and end of the word.
+        /// </param>
+        /// <param name="intsWritten">
+        /// When this method returns <c>true</c>, receives the number of values written
+        /// to <paramref name="destination"/>, including the synthetic beginning and
+        /// ending points. Otherwise, receives <c>0</c>.
+        /// </param>
+        /// <returns><c>true</c> if the word was hyphenated; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentException">
+        /// The destination is too small to hold the resulting hyphenation points.
+        /// </exception>
+        /// <seealso cref="GetMaxHyphenateInt32Count(ReadOnlySpan{char})"/>
+        // LUCENENET specific overload to avoid allocating on each call
+        public virtual bool TryHyphenate(ReadOnlySpan<char> w, int remainCharCount, int pushCharCount, Span<int> destination, out int intsWritten)
+        {
+            int i, len = w.Length;
+            char[]? rentedWord = null;
+            byte[]? rentedIl = null;
+            intsWritten = 0;
+
+            // LUCENENET: optimized method for Span and stackalloc
+            int wordBufferLength = len + 3;
+            Span<char> word = wordBufferLength * sizeof(char) <= Constants.MaxStackByteLimit
+                ? stackalloc char[wordBufferLength]
+                : (rentedWord = ArrayPool<char>.Shared.Rent(wordBufferLength)).AsSpan(0, wordBufferLength);
+
+            try
+            {
+                // normalize word
+                Span<char> c = stackalloc char[2];
+                int iIgnoreAtBeginning = 0;
+                int iLength = len;
+                bool bEndOfLetters = false;
+
+                for (i = 1; i <= len; i++)
+                {
+                    c[0] = w[i - 1];
+                    int nc = m_classmap.Find(c, 0);
+
+                    if (nc < 0) // found a non-letter character ...
+                    {
+                        if (i == (1 + iIgnoreAtBeginning))
+                        {
+                            // ... before any letter character
+                            iIgnoreAtBeginning++;
+                        }
+                        else
+                        {
+                            // ... after a letter character
+                            bEndOfLetters = true;
+                        }
+
+                        iLength--;
+                    }
+                    else
+                    {
+                        if (!bEndOfLetters)
+                        {
+                            word[i - iIgnoreAtBeginning] = (char)nc;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                len = iLength;
+                if (len < (remainCharCount + pushCharCount))
+                {
+                    // word is too short to be hyphenated
+                    return false;
+                }
+
+                // Check exception list first.
+                ReadOnlySpan<char> sw = word.Slice(1, len);
+
+                // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+                if (TryGetStopListValue(sw, out IList<object>? hw))
+                {
+                    // assume only simple hyphens (Hyphen.pre="-", Hyphen.post = Hyphen.no =
+                    // null)
+                    int j = 0;
+
+                    for (i = 0; i < hw!.Count; i++)
+                    {
+                        object o = hw[i];
+
+                        // j = index(sw) = letterindex(word)?
+                        // result[k] = corresponding index(w)
+                        if (o is string os)
+                        {
+                            j += os.Length;
+
+                            if (j >= remainCharCount && j < (len - pushCharCount))
+                            {
+                                // Reserve room for this point and the two synthetic endpoints.
+                                if (destination.Length - intsWritten < 3)
+                                {
+                                    throw new ArgumentException(
+                                        "The destination is too small to hold the hyphenation points.",
+                                        nameof(destination));
+                                }
+
+                                destination[intsWritten + 1] = j + iIgnoreAtBeginning;
+                                intsWritten++;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // use algorithm to get hyphenation points
+                    word[0] = '.'; // word start marker
+                    word[len + 1] = '.'; // word end marker
+                    word[len + 2] = (char)0; // null terminated
+
+                    int ilBufferLength = len + 3;
+                    Span<byte> il = ilBufferLength <= Constants.MaxStackByteLimit
+                        ? stackalloc byte[ilBufferLength]
+                        : (rentedIl = ArrayPool<byte>.Shared.Rent(ilBufferLength)).AsSpan(0, ilBufferLength);
+
+                    // memory is not guaranteed to be zero-initialized.
+                    il.Clear();
+
+                    for (i = 0; i < len + 1; i++)
+                    {
+                        SearchPatterns(word, i, il);
+                    }
+
+                    // hyphenation points are located where interletter value is odd
+                    // i is letterindex(word),
+                    // i + 1 is index(word),
+                    // result[k] = corresponding index(w)
+                    for (i = 0; i < len; i++)
+                    {
+                        if (((il[i + 1] & 1) == 1) &&
+                            i >= remainCharCount &&
+                            i <= (len - pushCharCount))
+                        {
+                            // Reserve room for this point and the two synthetic endpoints.
+                            if (destination.Length - intsWritten < 3)
+                            {
+                                throw new ArgumentException(
+                                    "The destination is too small to hold the hyphenation points.",
+                                    nameof(destination));
+                            }
+
+                            destination[intsWritten + 1] = i + iIgnoreAtBeginning;
+                            intsWritten++;
+                        }
+                    }
+                }
+
+                if (intsWritten == 0)
+                {
+                    return false;
+                }
+
+                // Add the synthetic hyphenation points at the
+                // beginning and end of the word
+                destination[0] = 0;
+                destination[intsWritten + 1] = len;
+                intsWritten += 2;
+
+                return true;
+            }
+            finally
+            {
+                ArrayPool<char>.Shared.ReturnIfNotNull(rentedWord);
+                ArrayPool<byte>.Shared.ReturnIfNotNull(rentedIl);
+            }
+        }
+
+        /// <summary>
         /// Hyphenate word and return an array of hyphenation points.
         /// </summary>
         /// <remarks>
@@ -541,7 +747,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// iIgnoreAtBeginning
         /// </remarks>
         /// <param name="w">
-        /// <see cref="ReadOnlySpan{T}"/> that contains the word. This should be sliced
+        /// <see cref="ReadOnlySpan{Char}"/> that contains the word. This should be sliced
         /// to the desired offset and length before passing in if necessary.
         /// </param>
         /// <param name="remainCharCount">
@@ -555,146 +761,20 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// </returns>
         public virtual Hyphenation? Hyphenate(ReadOnlySpan<char> w, int remainCharCount, int pushCharCount)
         {
-            int i, len = w.Length;
-            char[]? rentedWord = null;
-            int[]? rentedResult = null;
-            byte[]? rentedIl = null;
+            int[] result = new int[GetMaxHyphenateInt32Count(w)];
 
-            // LUCENENET: optimized method for Span and stackalloc
-            int wordBufferLength = len + 3;
-            Span<char> word = wordBufferLength * sizeof(char) <= Constants.MaxStackByteLimit
-                ? stackalloc char[wordBufferLength]
-                : (rentedWord = ArrayPool<char>.Shared.Rent(wordBufferLength)).AsSpan(0, wordBufferLength);
-            try
+            if (!TryHyphenate(w, remainCharCount, pushCharCount, result, out int intsWritten))
             {
-                // normalize word
-                Span<char> c = stackalloc char[2];
-                int iIgnoreAtBeginning = 0;
-                int iLength = len;
-                bool bEndOfLetters = false;
-                for (i = 1; i <= len; i++)
-                {
-                    c[0] = w[i - 1];
-                    int nc = m_classmap.Find(c, 0);
-                    if (nc < 0) // found a non-letter character ...
-                    {
-                        if (i == (1 + iIgnoreAtBeginning))
-                        {
-                            // ... before any letter character
-                            iIgnoreAtBeginning++;
-                        }
-                        else
-                        {
-                            // ... after a letter character
-                            bEndOfLetters = true;
-                        }
-                        iLength--;
-                    }
-                    else
-                    {
-                        if (!bEndOfLetters)
-                        {
-                            word[i - iIgnoreAtBeginning] = (char)nc;
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    }
-                }
-                len = iLength;
-                if (len < (remainCharCount + pushCharCount))
-                {
-                    // word is too short to be hyphenated
-                    return null;
-                }
-                int resultBufferLength = len + 1;
-                Span<int> result = resultBufferLength * sizeof(int) <= Constants.MaxStackByteLimit
-                    ? stackalloc int[resultBufferLength]
-                    : (rentedResult = ArrayPool<int>.Shared.Rent(resultBufferLength)).AsSpan(0, resultBufferLength);
-                int k = 0;
-
-                // check exception list first
-                ReadOnlySpan<char> sw = word.Slice(1, len);
-                //string sw = word.Slice(1, len).ToString();
-                // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
-                //if (m_stoplist.TryGetValue(sw, out IList<object>? hw))
-                if (TryGetStopListValue(sw, out IList<object>? hw))
-                {
-                    // assume only simple hyphens (Hyphen.pre="-", Hyphen.post = Hyphen.no =
-                    // null)
-                    int j = 0;
-                    for (i = 0; i < hw!.Count; i++)
-                    {
-                        object o = hw[i];
-                        // j = index(sw) = letterindex(word)?
-                        // result[k] = corresponding index(w)
-                        if (o is string os)
-                        {
-                            j += os.Length;
-                            if (j >= remainCharCount && j < (len - pushCharCount))
-                            {
-                                result[k++] = j + iIgnoreAtBeginning;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    // use algorithm to get hyphenation points
-                    word[0] = '.'; // word start marker
-                    word[len + 1] = '.'; // word end marker
-                    word[len + 2] = (char)0; // null terminated
-                    int ilBufferLength = len + 3;
-                    Span<byte> il = ilBufferLength <= Constants.MaxStackByteLimit
-                        ? stackalloc byte[ilBufferLength] // initialized to zero
-                        : (rentedIl = ArrayPool<byte>.Shared.Rent(ilBufferLength)).AsSpan(0, ilBufferLength);
-                    if (rentedIl is not null)
-                    {
-                        // initialize to zero
-                        il.Clear();
-                    }
-
-                    for (i = 0; i < len + 1; i++)
-                    {
-                        SearchPatterns(word, i, il);
-                    }
-
-                    // hyphenation points are located where interletter value is odd
-                    // i is letterindex(word),
-                    // i + 1 is index(word),
-                    // result[k] = corresponding index(w)
-                    for (i = 0; i < len; i++)
-                    {
-                        if (((il[i + 1] & 1) == 1) && i >= remainCharCount && i <= (len - pushCharCount))
-                        {
-                            result[k++] = i + iIgnoreAtBeginning;
-                        }
-                    }
-                }
-
-                if (k > 0)
-                {
-                    // trim result array
-                    int[] res = new int[k + 2];
-                    result.Slice(0, k).CopyTo(res.AsSpan(1, k));
-                    // We add the synthetical hyphenation points
-                    // at the beginning and end of the word
-                    res[0] = 0;
-                    res[k + 1] = len;
-                    return new Hyphenation(res);
-                }
-                else
-                {
-                    return null;
-                }
+                return null;
             }
-            finally
+
+            // Trim the array to the number of values actually written.
+            if (intsWritten != result.Length)
             {
-                ArrayPool<char>.Shared.ReturnIfNotNull(rentedWord);
-                ArrayPool<int>.Shared.ReturnIfNotNull(rentedResult);
-                ArrayPool<byte>.Shared.ReturnIfNotNull(rentedIl);
+                Array.Resize(ref result, intsWritten);
             }
+
+            return new Hyphenation(result);
         }
 
 #nullable restore
