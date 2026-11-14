@@ -1,5 +1,4 @@
 // Lucene version compatibility level 4.8.1
-using Lucene.Net.Support;
 using Lucene.Net.Support.Buffers;
 using Lucene.Net.Text;
 using Lucene.Net.Util;
@@ -12,6 +11,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Temporary map to store interletter values on pattern loading.
         /// </summary>
-        private TernaryTree ivalues;
+        private TernaryTree? ivalues;
 
         public HyphenationTree()
         {
@@ -197,7 +197,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="f"> a <see cref="FileInfo"/> object representing the file </param>
         /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(FileInfo f)
-            => LoadPatterns(f.FullName, Encoding.UTF8);
+            => LoadPatterns(f?.FullName ?? throw new ArgumentNullException(nameof(f)), Encoding.UTF8);
 
         /// <summary>
         /// Read hyphenation patterns from an XML file.
@@ -206,7 +206,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="encoding">The character encoding to use</param>
         /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(FileInfo f, Encoding encoding)
-            => LoadPatterns(f.FullName, encoding);
+            => LoadPatterns(f?.FullName ?? throw new ArgumentNullException(nameof(f)), encoding);
 
         /// <summary>
         /// Read hyphenation patterns from an XML file.
@@ -318,8 +318,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
             return s[si] - t[ti];
         }
-
-#nullable enable
 
         /// <summary>
         /// The maximum number of bytes (or chars) required to search for a specific value.
@@ -777,8 +775,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return new Hyphenation(result);
         }
 
-#nullable restore
-
         /// <summary>
         /// Add a character class to the tree. It is used by
         /// <see cref="PatternParser"/> as callback to add character classes.
@@ -844,11 +840,13 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         ///        should contain only digit characters. (i.e. '0' to '9'). </param>
         public virtual void AddPattern(ReadOnlySpan<char> pattern, ReadOnlySpan<char> ivalue)
         {
-            int k = ivalues.Find(ivalue);
+            TernaryTree values = ivalues ?? throw new InvalidOperationException("Patterns can only be added while loading patterns.");
+
+            int k = values.Find(ivalue);
             if (k <= 0)
             {
                 k = PackValues(ivalue);
-                ivalues.Insert(ivalue, (char)k);
+                values.Insert(ivalue, (char)k);
             }
             Insert(pattern, (char)k);
         }
@@ -860,10 +858,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         // }
 
-#nullable enable
-
         // LUCENENET specific - favor alternate lookup, when available
-        private bool TryGetStopListValue(ReadOnlySpan<char> key, [MaybeNullWhen(false)] out IList<object>? value)
+        private bool TryGetStopListValue(ReadOnlySpan<char> key, [MaybeNullWhen(false)] out IList<object> value)
         {
             if (m_stoplist is JCG.Dictionary<string, IList<object>> jcgStopList &&
                 jcgStopList.TryGetSpanAlternateLookup<char>(out var jcgLookup))
