@@ -1,6 +1,7 @@
 // Lucene version compatibility level 4.8.1
+using Lucene.Net.Text;
+using Lucene.Net.Util;
 using System;
-using System.Text;
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -61,7 +62,11 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             {
                 return "-";
             }
-            StringBuilder res = new StringBuilder("{");
+            int length = (PreBreak?.Length ?? 0) + (NoBreak?.Length ?? 0) + (PostBreak?.Length ?? 0) + 6;
+            using ValueStringBuilder res = length * sizeof(char) <= Constants.MaxStackByteLimit
+                ? new(stackalloc char[length])
+                : new(length);
+            res.Append("{");
             res.Append(PreBreak);
             res.Append("}{");
             res.Append(PostBreak);
