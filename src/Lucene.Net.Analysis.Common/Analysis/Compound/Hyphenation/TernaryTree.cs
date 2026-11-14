@@ -1,4 +1,5 @@
 // Lucene version compatibility level 4.8.1
+using J2N.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Buffers;
 using Lucene.Net.Util;
@@ -7,7 +8,6 @@ using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -476,7 +476,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 while (iter.MoveNext())
                 {
                     v[i] = iter.Value;
-                    k[i++] = iter.Current;
+                    k[i++] = iter.Current.Span.ToString();
                 }
             }
             Init();
@@ -550,7 +550,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// NOTE: This was keys() in Lucene.
         /// </summary>
         /// <returns>An enumerator over the keys of this <see cref="TernaryTree"/>.</returns>
-        public virtual IEnumerator<string> GetEnumerator()
+        public virtual Enumerator GetEnumerator()
         {
             return new Enumerator(this);
         }
@@ -565,7 +565,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// to be before the first element until <see cref="MoveNext"/> is called, and
         /// if a move took place it will return <c>true</c>;
         /// </summary>
-        public class Enumerator : IEnumerator<string>
+        public class Enumerator : IEnumerator<ReadOnlyMemory<char>>
         {
             private readonly TernaryTree outerInstance;
 
@@ -577,7 +577,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             /// <summary>
             /// current key
             /// </summary>
-            private string curkey;
+            // LUCENENET specific - use TextBuilder rather than string so the enumerator reuses memory for each iteration
+            private readonly TextBuilder curkey;
 
             private class Item : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
             {
@@ -611,9 +612,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             private readonly Stack<Item> ns;
 
             /// <summary>
-            /// key stack implemented with a <see cref="StringBuilder"/>
+            /// key stack implemented with a <see cref="TextBuilder"/>
             /// </summary>
-            private readonly StringBuilder ks;
+            private readonly TextBuilder ks;
 
             private bool isInitialized = false;
 
@@ -622,7 +623,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 this.outerInstance = ternaryTree;
                 cur = -1;
                 ns = new Stack<Item>();
-                ks = new StringBuilder();
+                ks = new TextBuilder();
+                curkey = new TextBuilder();
                 isInitialized = false;
             }
 
@@ -630,6 +632,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             {
                 ns.Clear();
                 ks.Length = 0;
+                curkey.Length = 0;
                 cur = outerInstance.m_root;
                 Run();
             }
@@ -752,21 +755,29 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 }
                 // The current node should be a data node and
                 // the key should be in the key stack (at least partially)
-                StringBuilder buf = new StringBuilder(ks.ToString());
+                curkey.Length = 0;
+                curkey.Append(ks);
                 if (outerInstance.m_sc[cur] == 0xFFFF)
                 {
-                    int p = outerInstance.m_lo[cur];
-                    while (outerInstance.m_kv[p] != 0)
-                    {
-                        buf.Append(outerInstance.m_kv[p++]);
-                    }
+                    // LUCENENET specific - use IndexOf vectorized search instead of a while loop
+                    // and append the entire slice in one go to optimize the copy.
+                    // We copy into a reusable TextBuilder field to cut down on allocations.
+                    int start = outerInstance.m_lo[cur];
+                    ReadOnlySpan<char> suffix = outerInstance.m_kv.AsSpan(start);
+                    int length = suffix.IndexOf('\0');
+                    curkey.Append(suffix.Slice(0, length));
                 }
-                curkey = buf.ToString();
                 return 0;
             }
 
             #region Added for better .NET support
-            public string Current => curkey;
+            /// <summary>
+            /// Gets the chars at the current position. This is a direct
+            /// view into the underlying memory and will not live beyond
+            /// the current iteration. Callers should clone the chars
+            /// if a longer lifetime is required.
+            /// </summary>
+            public ReadOnlyMemory<char> Current => curkey.AsMemory();
 
             object IEnumerator.Current => Current;
 
