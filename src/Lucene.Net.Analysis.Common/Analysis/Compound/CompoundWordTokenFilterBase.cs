@@ -10,6 +10,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Compound
 {
@@ -60,7 +61,7 @@ namespace Lucene.Net.Analysis.Compound
         public const int DEFAULT_MAX_SUBWORD_SIZE = 15;
 
         protected readonly LuceneVersion m_matchVersion;
-        protected readonly CharArraySet m_dictionary;
+        protected readonly CharArraySet? m_dictionary;
         protected readonly Queue<CompoundToken> m_tokens;
         protected readonly int m_minWordSize;
         protected readonly int m_minSubwordSize;
@@ -71,19 +72,19 @@ namespace Lucene.Net.Analysis.Compound
         protected readonly IOffsetAttribute m_offsetAtt;
         private readonly IPositionIncrementAttribute posIncAtt;
 
-        private AttributeSource.State current;
+        private AttributeSource.State? current;
 
-        protected CompoundWordTokenFilterBase(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary, bool onlyLongestMatch)
+        protected CompoundWordTokenFilterBase(LuceneVersion matchVersion, TokenStream input, CharArraySet? dictionary, bool onlyLongestMatch)
             : this(matchVersion, input, dictionary, DEFAULT_MIN_WORD_SIZE, DEFAULT_MIN_SUBWORD_SIZE, DEFAULT_MAX_SUBWORD_SIZE, onlyLongestMatch)
         {
         }
 
-        protected CompoundWordTokenFilterBase(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary)
+        protected CompoundWordTokenFilterBase(LuceneVersion matchVersion, TokenStream input, CharArraySet? dictionary)
             : this(matchVersion, input, dictionary, DEFAULT_MIN_WORD_SIZE, DEFAULT_MIN_SUBWORD_SIZE, DEFAULT_MAX_SUBWORD_SIZE, false)
         {
         }
 
-        protected CompoundWordTokenFilterBase(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary, int minWordSize, int minSubwordSize, int maxSubwordSize, bool onlyLongestMatch)
+        protected CompoundWordTokenFilterBase(LuceneVersion matchVersion, TokenStream input, CharArraySet? dictionary, int minWordSize, int minSubwordSize, int maxSubwordSize, bool onlyLongestMatch)
             : base(input)
         {
             m_termAtt = AddAttribute<ICharTermAttribute>();
@@ -113,7 +114,7 @@ namespace Lucene.Net.Analysis.Compound
 
         public override sealed bool IncrementToken()
         {
-            if (m_tokens.TryDequeue(out CompoundToken token))
+            if (m_tokens.TryDequeue(out CompoundToken? token))
             {
                 // LUCENENET specific - ensure token disposal
                 try
@@ -188,8 +189,6 @@ namespace Lucene.Net.Analysis.Compound
             }
         }
 
-#nullable enable
-
         /// <summary>
         /// Disposes the provided compound token if it
         /// implements <see cref="IDisposable"/>.
@@ -244,6 +243,10 @@ namespace Lucene.Net.Analysis.Compound
 
             protected CompoundToken(CompoundWordTokenFilterBase compoundWordTokenFilterBase, int offset, int length, char[] buffer)
             {
+                // LUCENENET: added guard clauses
+                if (compoundWordTokenFilterBase is null)
+                    throw new ArgumentNullException(nameof(compoundWordTokenFilterBase));
+
                 this.length = length;
                 this.txt = buffer ?? throw new ArgumentNullException(nameof(buffer));
 
