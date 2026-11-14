@@ -3,10 +3,13 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Util;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace Lucene.Net.Analysis.Compound
 {
@@ -112,12 +115,20 @@ namespace Lucene.Net.Analysis.Compound
         {
             if (m_tokens.TryDequeue(out CompoundToken token))
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(current != null);
-                RestoreState(current); // keep all other attributes untouched
-                m_termAtt.SetEmpty().Append(token.Text);
-                m_offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
-                posIncAtt.PositionIncrement = 0;
-                return true;
+                // LUCENENET specific - ensure token disposal
+                try
+                {
+                    if (Debugging.AssertsEnabled) Debugging.Assert(current != null);
+                    RestoreState(current); // keep all other attributes untouched
+                    m_termAtt.SetEmpty().Append(token.Text.Span);
+                    m_offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
+                    posIncAtt.PositionIncrement = 0;
+                    return true;
+                }
+                finally
+                {
+                    DisposeToken(token);
+                }
             }
 
             current = null; // not really needed, but for safety
@@ -150,20 +161,75 @@ namespace Lucene.Net.Analysis.Compound
 
         public override void Reset()
         {
-            base.Reset();
-            m_tokens.Clear();
-            current = null;
+            // LUCENENET specific - ensure that ClearTokens() is called
+            // unconditionally for disposal
+            try
+            {
+                base.Reset();
+            }
+            finally
+            {
+                ClearTokens();
+                current = null;
+            }
         }
+
+        // LUCENENET specific - override Close() to ensure disposal is consistent.
+        public override void Close()
+        {
+            try
+            {
+                base.Close();
+            }
+            finally
+            {
+                ClearTokens();
+                current = null;
+            }
+        }
+
+#nullable enable
+
+        /// <summary>
+        /// Disposes the provided compound token if it
+        /// implements <see cref="IDisposable"/>.
+        /// </summary>
+        /// <param name="token">The token to dispose.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static void DisposeToken(CompoundToken? token)
+        {
+            if (token is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ClearTokens()
+        {
+            while (m_tokens.TryDequeue(out CompoundToken? token))
+            {
+                DisposeToken(token);
+            }
+        }
+
+        /// <summary>
+        /// Creates a compound token based on the provided offset and length.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected virtual CompoundToken CreateCompoundToken(int offset, int length)
+            => new PooledCompoundToken(this, offset, length);
 
         /// <summary>
         /// Helper class to hold decompounded token information
         /// </summary>
         protected class CompoundToken
         {
-            private readonly string txt; // LUCENENET: Changed from ICharSequence to string
+            private readonly char[] txt; // LUCENENET: Changed from ICharSequence to char[]
+            private readonly int length; // LUCENENET: Added because a pooled array may have extra unused chars, so we need to slice
             private readonly int startOffset, endOffset;
 
-            public string Text => txt; // LUCENENET specific: changed public field into property backed by private field
+            public ReadOnlyMemory<char> Text => new ReadOnlyMemory<char>(txt, 0, length); // LUCENENET specific: changed public field into property backed by private field
 
             public int StartOffset => startOffset; // LUCENENET specific: changed public field into property backed by private field
 
@@ -172,10 +238,18 @@ namespace Lucene.Net.Analysis.Compound
             /// <summary>
             /// Construct the compound token based on a slice of the current <see cref="CompoundWordTokenFilterBase.m_termAtt"/>. </summary>
             public CompoundToken(CompoundWordTokenFilterBase compoundWordTokenFilterBase, int offset, int length)
+                : this(compoundWordTokenFilterBase, offset, length, new char[length])
             {
-                // LUCENENET: Copy the slice into a new string (as Subsequence() did upstream) so the token
+            }
+
+            protected CompoundToken(CompoundWordTokenFilterBase compoundWordTokenFilterBase, int offset, int length, char[] buffer)
+            {
+                this.length = length;
+                this.txt = buffer ?? throw new ArgumentNullException(nameof(buffer));
+
+                // LUCENENET: Copy the slice into a new buffer (as Subsequence() did upstream) so the token
                 // does not depend on the backing array of m_termAtt, which may be cleared or replaced.
-                this.txt = new string(compoundWordTokenFilterBase.m_termAtt.Buffer, offset, length);
+                compoundWordTokenFilterBase.m_termAtt.AsSpan(offset, length).CopyTo(txt);
 
                 // offsets of the original word
                 int startOff = compoundWordTokenFilterBase.m_offsetAtt.StartOffset;
@@ -195,6 +269,45 @@ namespace Lucene.Net.Analysis.Compound
                     int newStart = startOff + offset;
                     this.startOffset = newStart;
                     this.endOffset = newStart + length;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Pooled helper class to hold decompounded token information, while allowing for memory reuse.
+        /// </summary>
+        // LUCENENET specific - Added subclass to use pooled memory
+        protected class PooledCompoundToken : CompoundToken, IDisposable
+        {
+            private char[]? arrayToReturnToPool;
+
+            public PooledCompoundToken(CompoundWordTokenFilterBase compoundWordTokenFilterBase, int offset, int length)
+                : this(compoundWordTokenFilterBase, offset, length, ArrayPool<char>.Shared.Rent(length))
+            {
+            }
+
+            private PooledCompoundToken(CompoundWordTokenFilterBase compoundWordTokenFilterBase, int offset, int length, char[] buffer)
+                : base(compoundWordTokenFilterBase, offset, length, buffer)
+            {
+                arrayToReturnToPool = buffer;
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposing)
+                    return;
+
+                char[]? toReturn = Interlocked.Exchange(ref arrayToReturnToPool, null);
+
+                if (toReturn is not null)
+                {
+                    ArrayPool<char>.Shared.Return(toReturn);
                 }
             }
         }

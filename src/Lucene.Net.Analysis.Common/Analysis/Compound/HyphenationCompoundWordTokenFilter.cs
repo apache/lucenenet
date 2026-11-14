@@ -247,17 +247,19 @@ namespace Lucene.Net.Analysis.Compound
                                 {
                                     if (longestMatchToken.Text.Length < partLength)
                                     {
-                                        longestMatchToken = new CompoundToken(this, start, partLength);
+                                        // LUCENENET specific - ensure token disposal
+                                        DisposeToken(longestMatchToken);
+                                        longestMatchToken = CreateCompoundToken(start, partLength);
                                     }
                                 }
                                 else
                                 {
-                                    longestMatchToken = new CompoundToken(this, start, partLength);
+                                    longestMatchToken = CreateCompoundToken(start, partLength);
                                 }
                             }
                             else
                             {
-                                m_tokens.Enqueue(new CompoundToken(this, start, partLength));
+                                m_tokens.Enqueue(CreateCompoundToken(start, partLength));
                             }
                         }
                         // LUCENENET specific - guard against a negative length (partLength == 0).
@@ -276,17 +278,19 @@ namespace Lucene.Net.Analysis.Compound
                                 {
                                     if (longestMatchToken.Text.Length < partLength - 1)
                                     {
-                                        longestMatchToken = new CompoundToken(this, start, partLength - 1);
+                                        // LUCENENET specific - ensure token disposal
+                                        DisposeToken(longestMatchToken);
+                                        longestMatchToken = CreateCompoundToken(start, partLength - 1);
                                     }
                                 }
                                 else
                                 {
-                                    longestMatchToken = new CompoundToken(this, start, partLength - 1);
+                                    longestMatchToken = CreateCompoundToken(start, partLength - 1);
                                 }
                             }
                             else
                             {
-                                m_tokens.Enqueue(new CompoundToken(this, start, partLength - 1));
+                                m_tokens.Enqueue(CreateCompoundToken(start, partLength - 1));
                             }
                         }
                     }

@@ -8,6 +8,7 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Analysis.Compound
 {
@@ -323,6 +324,335 @@ namespace Lucene.Net.Analysis.Compound
                 return new TokenStreamComponents(tokenizer, filter);
             });
             CheckOneTerm(b, "", "");
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestDictionaryCompoundTokensDisposedOnConsumption()
+        {
+            TokenTracker tracker = new TokenTracker();
+            CharArraySet dict = makeDictionary("ab", "cd", "ef");
+
+            Tokenizer tokenizer = new WhitespaceTokenizer(
+                TEST_VERSION_CURRENT, new StringReader("abcdef"));
+
+            TokenStream filter = new TrackingDictionaryCompoundWordTokenFilter(
+                TEST_VERSION_CURRENT, tokenizer, dict, false, tracker);
+
+            filter.Reset();
+            while (filter.IncrementToken())
+            {
+            }
+
+            Assert.Greater(tracker.Created, 0);
+            AssertAllTokensDisposed(tracker);
+
+            filter.End();
+            filter.Close();
+
+            AssertAllTokensDisposed(tracker);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestHyphenationCompoundTokensDisposedOnConsumption()
+        {
+            TokenTracker tracker = new TokenTracker();
+            CharArraySet dict = makeDictionary("basketball", "basket", "ball", "kurv");
+
+            Tokenizer tokenizer = new WhitespaceTokenizer(
+                TEST_VERSION_CURRENT, new StringReader("basketballkurv"));
+
+            TokenStream filter = new TrackingHyphenationCompoundWordTokenFilter(
+                TEST_VERSION_CURRENT, tokenizer, GetTestHyphenator(), dict, false, tracker);
+
+            filter.Reset();
+            while (filter.IncrementToken())
+            {
+            }
+
+            Assert.Greater(tracker.Created, 0);
+            AssertAllTokensDisposed(tracker);
+
+            filter.End();
+            filter.Close();
+
+            AssertAllTokensDisposed(tracker);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestDictionaryCompoundTokensDisposedOnEarlyClose()
+        {
+            TokenTracker tracker = new TokenTracker();
+            CharArraySet dict = makeDictionary("ab", "cd", "ef");
+
+            Tokenizer tokenizer = new WhitespaceTokenizer(
+                TEST_VERSION_CURRENT, new StringReader("abcdef"));
+
+            TokenStream filter = new TrackingDictionaryCompoundWordTokenFilter(
+                TEST_VERSION_CURRENT, tokenizer, dict, false, tracker);
+
+            filter.Reset();
+            Assert.IsTrue(filter.IncrementToken());
+
+            AssertTokensArePending(tracker);
+
+            filter.Close();
+
+            AssertAllTokensDisposed(tracker);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestHyphenationCompoundTokensDisposedOnEarlyClose()
+        {
+            TokenTracker tracker = new TokenTracker();
+            CharArraySet dict = makeDictionary("basketball", "basket", "ball", "kurv");
+
+            Tokenizer tokenizer = new WhitespaceTokenizer(
+                TEST_VERSION_CURRENT, new StringReader("basketballkurv"));
+
+            TokenStream filter = new TrackingHyphenationCompoundWordTokenFilter(
+                TEST_VERSION_CURRENT, tokenizer, GetTestHyphenator(), dict, false, tracker);
+
+            filter.Reset();
+            Assert.IsTrue(filter.IncrementToken());
+
+            AssertTokensArePending(tracker);
+
+            filter.Close();
+
+            AssertAllTokensDisposed(tracker);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestDictionaryCompoundTokensDisposedOnReset()
+        {
+            TokenTracker tracker = new TokenTracker();
+            CharArraySet dict = makeDictionary("ab", "cd", "ef");
+
+            Tokenizer tokenizer = new WhitespaceTokenizer(
+                TEST_VERSION_CURRENT, new StringReader("abcdef"));
+
+            TokenStream filter = new TrackingDictionaryCompoundWordTokenFilter(
+                TEST_VERSION_CURRENT, tokenizer, dict, false, tracker);
+
+            filter.Reset();
+            Assert.IsTrue(filter.IncrementToken());
+
+            AssertTokensArePending(tracker);
+
+            filter.Reset();
+
+            AssertAllTokensDisposed(tracker);
+
+            filter.Close();
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestHyphenationCompoundTokensDisposedOnReset()
+        {
+            TokenTracker tracker = new TokenTracker();
+            CharArraySet dict = makeDictionary("basketball", "basket", "ball", "kurv");
+
+            Tokenizer tokenizer = new WhitespaceTokenizer(
+                TEST_VERSION_CURRENT, new StringReader("basketballkurv"));
+
+            TokenStream filter = new TrackingHyphenationCompoundWordTokenFilter(
+                TEST_VERSION_CURRENT, tokenizer, GetTestHyphenator(), dict, false, tracker);
+
+            filter.Reset();
+            Assert.IsTrue(filter.IncrementToken());
+
+            AssertTokensArePending(tracker);
+
+            filter.Reset();
+
+            AssertAllTokensDisposed(tracker);
+
+            filter.Close();
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestDictionaryCompoundTokensDisposedOnLongestMatchReplacement()
+        {
+            TokenTracker tracker = new TokenTracker();
+            CharArraySet dict = makeDictionary("ab", "abc", "abcd", "cd", "ef");
+
+            Tokenizer tokenizer = new WhitespaceTokenizer(
+                TEST_VERSION_CURRENT, new StringReader("abcdef"));
+
+            TokenStream filter = new TrackingDictionaryCompoundWordTokenFilter(
+                TEST_VERSION_CURRENT, tokenizer, dict, true, tracker);
+
+            filter.Reset();
+            Assert.IsTrue(filter.IncrementToken());
+
+            // "ab" and "abc" should have been disposed as longer matches replaced them.
+            Assert.Greater(tracker.Disposed, 0,
+                "Replacing a shorter match should dispose the previous candidate.");
+
+            AssertTokensArePending(tracker);
+
+            while (filter.IncrementToken())
+            {
+            }
+
+            AssertAllTokensDisposed(tracker);
+
+            filter.End();
+            filter.Close();
+
+            AssertAllTokensDisposed(tracker);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestHyphenationCompoundTokensDisposedOnLongestMatchReplacement()
+        {
+            TokenTracker tracker = new TokenTracker();
+            CharArraySet dict = makeDictionary("basketball", "basket", "ball", "kurv");
+
+            Tokenizer tokenizer = new WhitespaceTokenizer(
+                TEST_VERSION_CURRENT, new StringReader("basketballkurv"));
+
+            TokenStream filter = new TrackingHyphenationCompoundWordTokenFilter(
+                TEST_VERSION_CURRENT, tokenizer, GetTestHyphenator(), dict, true, tracker);
+
+            filter.Reset();
+            Assert.IsTrue(filter.IncrementToken());
+
+            // The shorter "basket" candidate should be disposed when "basketball"
+            // replaces it.
+            Assert.Greater(tracker.Disposed, 0,
+                "Replacing a shorter match should dispose the previous candidate.");
+
+            AssertTokensArePending(tracker);
+
+            while (filter.IncrementToken())
+            {
+            }
+
+            AssertAllTokensDisposed(tracker);
+
+            filter.End();
+            filter.Close();
+
+            AssertAllTokensDisposed(tracker);
+        }
+
+
+        private HyphenationTree GetTestHyphenator()
+        {
+            using var stream = GetType().getResourceAsStream("da_UTF8.xml");
+            return HyphenationCompoundWordTokenFilter.GetHyphenationTree(stream);
+        }
+
+        private static void AssertAllTokensDisposed(TokenTracker tracker)
+        {
+            Assert.AreEqual(tracker.Created, tracker.Disposed,
+                "Every created pooled token should have been disposed.");
+        }
+
+        private static void AssertTokensArePending(TokenTracker tracker)
+        {
+            Assert.Greater(tracker.Created, 0,
+                "The test should have created at least one pooled token.");
+
+            Assert.Less(tracker.Disposed, tracker.Created,
+                "At least one pooled token should still be awaiting disposal.");
+        }
+
+        private sealed class TokenTracker
+        {
+            public int Created;
+            public int Disposed;
+        }
+
+        private sealed class TrackingDictionaryCompoundWordTokenFilter : DictionaryCompoundWordTokenFilter
+        {
+            private readonly TokenTracker tracker;
+
+            public TrackingDictionaryCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary,
+                bool onlyLongestMatch, TokenTracker tracker)
+                : base(matchVersion, input, dictionary, minWordSize: 0, minSubwordSize: 2, maxSubwordSize: 15,
+                      onlyLongestMatch: onlyLongestMatch)
+            {
+                this.tracker = tracker;
+            }
+
+            protected override PooledCompoundToken CreateCompoundToken(int offset, int length)
+            {
+                return new TrackingPooledCompoundToken(this, offset, length, tracker);
+            }
+
+            private sealed class TrackingPooledCompoundToken : PooledCompoundToken
+            {
+                private readonly TokenTracker tracker;
+                private int disposed;
+
+                public TrackingPooledCompoundToken(CompoundWordTokenFilterBase filter, int offset, int length, TokenTracker tracker)
+                    : base(filter, offset, length)
+                {
+                    this.tracker = tracker;
+                    Interlocked.Increment(ref tracker.Created);
+                }
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing && Interlocked.Exchange(ref disposed, 1) == 0)
+                    {
+                        Interlocked.Increment(ref tracker.Disposed);
+                    }
+
+                    base.Dispose(disposing);
+                }
+            }
+        }
+
+        private sealed class TrackingHyphenationCompoundWordTokenFilter : HyphenationCompoundWordTokenFilter
+        {
+            private readonly TokenTracker tracker;
+
+            public TrackingHyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input,
+                HyphenationTree hyphenator, CharArraySet dictionary, bool onlyLongestMatch, TokenTracker tracker)
+                : base(matchVersion, input, hyphenator, dictionary, minWordSize: 0, minSubwordSize: 2, maxSubwordSize: 40,
+                      onlyLongestMatch: onlyLongestMatch)
+            {
+                this.tracker = tracker;
+            }
+
+            protected override PooledCompoundToken CreateCompoundToken(int offset, int length)
+            {
+                return new TrackingPooledCompoundToken(this, offset, length, tracker);
+            }
+
+            private sealed class TrackingPooledCompoundToken : PooledCompoundToken
+            {
+                private readonly TokenTracker tracker;
+                private int disposed;
+
+                public TrackingPooledCompoundToken(CompoundWordTokenFilterBase filter, int offset, int length, TokenTracker tracker)
+                    : base(filter, offset, length)
+                {
+                    this.tracker = tracker;
+                    Interlocked.Increment(ref tracker.Created);
+                }
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing && Interlocked.Exchange(ref disposed, 1) == 0)
+                    {
+                        Interlocked.Increment(ref tracker.Disposed);
+                    }
+
+                    base.Dispose(disposing);
+                }
+            }
         }
     }
 }

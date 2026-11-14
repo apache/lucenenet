@@ -111,17 +111,19 @@ namespace Lucene.Net.Analysis.Compound
                             {
                                 if (longestMatchToken.Text.Length < j)
                                 {
-                                    longestMatchToken = new CompoundToken(this, i, j);
+                                    // LUCENENET specific - ensure token disposal
+                                    DisposeToken(longestMatchToken);
+                                    longestMatchToken = CreateCompoundToken(i, j);
                                 }
                             }
                             else
                             {
-                                longestMatchToken = new CompoundToken(this, i, j);
+                                longestMatchToken = CreateCompoundToken(i, j);
                             }
                         }
                         else
                         {
-                            m_tokens.Enqueue(new CompoundToken(this, i, j));
+                            m_tokens.Enqueue(CreateCompoundToken(i, j));
                         }
                     }
                 }
