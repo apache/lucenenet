@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -44,15 +45,15 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     {
         internal int currElement;
 
-        internal IPatternConsumer consumer;
+        internal IPatternConsumer? consumer;
 
         internal readonly TextBuilder token; // LUCENENET: marked readonly
 
-        internal IList<object> exception;
+        internal IList<object>? exception;
 
         internal char hyphenChar;
 
-        internal string errMsg;
+        internal string? errMsg;
 
         internal const int ELEM_CLASSES = 1;
 
@@ -74,7 +75,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             this.consumer = consumer;
         }
 
-        public virtual IPatternConsumer Consumer
+        public virtual IPatternConsumer? Consumer
         {
             get => this.consumer; // LUCENENET NOTE: Added getter per MSDN guidelines
             set => this.consumer = value;
@@ -107,7 +108,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="file">  a <see cref="FileInfo"/> object representing the file  </param>
         /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(FileInfo file)
-            => Parse(file.FullName, Encoding.UTF8);
+            => Parse(file?.FullName ?? throw new ArgumentNullException(nameof(file)), Encoding.UTF8);
 
         /// <summary>
         /// Parses a hyphenation pattern file.
@@ -116,7 +117,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="encoding">The character encoding to use</param>
         /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(FileInfo file, Encoding encoding)
-            => Parse(file.FullName, encoding);
+            => Parse(file?.FullName ?? throw new ArgumentNullException(nameof(file)), encoding);
 
         /// <summary>
         /// Parses a hyphenation pattern file.
@@ -229,8 +230,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         // So, ProcessToken() is an improved "event" that a subclass may be interested in that doesn't leave out any XML element endings
         // and provides a more sensible read-only token parameter that doesn't change when this ProcessToken() is called.
 
-#nullable enable
-
         /// <summary>
         /// Processes a completed token.
         /// </summary>
@@ -240,6 +239,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// </param>
         protected virtual void ProcessToken(ReadOnlySpan<char> token)
         {
+            IPatternConsumer consumer = this.consumer ?? throw new InvalidOperationException("A pattern consumer must be assigned before parsing.");
+
             switch (currElement)
             {
                 case ELEM_CLASSES:
@@ -247,8 +248,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     break;
 
                 case ELEM_EXCEPTIONS:
+                    IList<object> exception = this.exception ?? throw new InvalidOperationException("An exception list must be initialized before processing exception tokens.");
+
                     exception.Add(token.ToString());
                     exception = NormalizeException(exception);
+                    this.exception = exception;
+
                     // LUCENENET specific - removed allocations by using stack/pooled memory for maximum reuse
                     int exceptionBufferLength = GetExceptionWordCharCount(exception);
                     char[]? arrayToReturnToPool = null;
@@ -340,8 +345,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return true;
         }
 
-#nullable restore
-
         protected virtual IList<object> NormalizeException<T>(IList<T> ex)
         {
             ValueStringBuilder buf = new(stackalloc char[128]);
@@ -350,7 +353,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 IList<object> res = new JCG.List<object>();
                 for (int i = 0; i < ex.Count; i++)
                 {
-                    object item = ex[i];
+                    object item = ex[i] ?? throw new InvalidCastException("An element of ex cannot be null.");
                     if (item is string str)
                     {
                         // LUCENENET: Moved string builder outside of the loop so we can reuse it.
@@ -411,7 +414,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 }
                 else if (item is Hyphen hyphen)
                 {
-                    string noBreak = hyphen.NoBreak;
+                    string? noBreak = hyphen.NoBreak;
 
                     if (noBreak != null)
                     {
@@ -442,7 +445,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             for (int i = 0; i < ex.Count; i++)
             {
                 T item = ex[i];
-                string text;
+                string? text;
 
                 if (item is string str)
                 {
@@ -555,11 +558,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         {
             internal const string DTD_FILENAME = "hyphenation.dtd";
 
-            public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
+            public override object GetEntity(Uri absoluteUri, string? role, Type? ofObjectToReturn)
             {
-                if (DTD_FILENAME.Equals(absoluteUri?.Segments.LastOrDefault(), StringComparison.Ordinal))
+                if (DTD_FILENAME.Equals(absoluteUri.Segments.LastOrDefault(), StringComparison.Ordinal))
                 {
-                    return typeof(PatternParser).FindAndGetManifestResourceStream(DTD_FILENAME);
+                    return typeof(PatternParser).FindAndGetManifestResourceStream(DTD_FILENAME)
+                        ?? throw new InvalidOperationException($"Embedded resource '{DTD_FILENAME}' was not found.");
                 }
 
                 // Only the embedded hyphenation.dtd is a valid external reference. Reject anything
@@ -588,7 +592,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         {
             if (local.Equals("hyphen-char", StringComparison.Ordinal))
             {
-                if (attrs.TryGetValue("value", out string h) && h != null && h.Length == 1)
+                if (attrs.TryGetValue("value", out string? h) && h != null && h.Length == 1)
                 {
                     hyphenChar = h[0];
                 }
@@ -608,6 +612,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
             else if (local.Equals("hyphen", StringComparison.Ordinal))
             {
+                IList<object> exception = this.exception ?? throw new InvalidOperationException("A hyphen element can only occur inside an exceptions element.");
+
                 if (token.Length > 0)
                 {
                     exception.Add(token.ToString());
