@@ -142,6 +142,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             m_kv = new CharVector();
         }
 
+#nullable enable
+
         /// <summary>
         /// Branches are initially compressed, needing one node per key plus the size
         /// of the string key. They are decompressed as needed when another key with
@@ -158,10 +160,20 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
             // LUCENENET: add optimization for stackalloc and Span
             int strkeyLen = len--;
-            Span<char> strkey = strkeyLen * sizeof(char) > Constants.MaxStackByteLimit ? new char[strkeyLen] : stackalloc char[strkeyLen];
-            key.CopyTo(strkey);
-            strkey[len] = (char)0;
-            m_root = Insert(m_root, strkey, 0, val);
+            char[]? arrayToReturnToPool = null;
+            Span<char> strkey = strkeyLen * sizeof(char) <= Constants.MaxStackByteLimit
+                ? stackalloc char[strkeyLen]
+                : (arrayToReturnToPool = ArrayPool<char>.Shared.Rent(strkeyLen)).AsSpan(0, strkeyLen);
+            try
+            {
+                key.CopyTo(strkey);
+                strkey[len] = (char)0;
+                m_root = Insert(m_root, strkey, 0, val);
+            }
+            finally
+            {
+                ArrayPool<char>.Shared.ReturnIfNotNull(arrayToReturnToPool);
+            }
         }
 
         public virtual void Insert(ReadOnlySpan<char> key, int start, char val)
@@ -173,6 +185,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
             m_root = Insert(m_root, key, start, val);
         }
+
+#nullable restore
 
         /// <summary>
         /// The actual insertion function, recursive version.
@@ -338,7 +352,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             char[]? arrayToReturnToPool = null;
             Span<char> strkey = bufferLength * sizeof(char) <= Constants.MaxStackByteLimit
                 ? stackalloc char[bufferLength]
-                : (arrayToReturnToPool = ArrayPool<char>.Shared.Rent(bufferLength));
+                : (arrayToReturnToPool = ArrayPool<char>.Shared.Rent(bufferLength)).AsSpan(0, bufferLength);
             try
             {
                 key.CopyTo(strkey);
@@ -439,6 +453,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return t;
         }
 
+#nullable enable
+
         /// <summary>
         /// Recursively insert the median first and then the median of the lower and
         /// upper halves, and so on in order to get a balanced tree. The array of keys
@@ -470,22 +486,33 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             int i = 0, n = m_length;
             string[] k = new string[n];
             // LUCENENET: add optimization for stackalloc and Span
-            Span<char> v = n * sizeof(char) > Constants.MaxStackByteLimit ? new char[n] : stackalloc char[n];
-            using (Enumerator iter = new Enumerator(this))
+            char[]? arrayToReturnToPool = null;
+            Span<char> v = n * sizeof(char) <= Constants.MaxStackByteLimit
+                ? stackalloc char[n]
+                : (arrayToReturnToPool = ArrayPool<char>.Shared.Rent(n)).AsSpan(0, n);
+            try
             {
-                while (iter.MoveNext())
+                using (Enumerator iter = new Enumerator(this))
                 {
-                    v[i] = iter.Value;
-                    k[i++] = iter.Current.Span.ToString();
+                    while (iter.MoveNext())
+                    {
+                        v[i] = iter.Value;
+                        k[i++] = iter.Current.Span.ToString();
+                    }
                 }
+                Init();
+                InsertBalanced(k, v, 0, n);
+                // With uniform letter distribution sc[root] should be around 'm'
+                // System.out.print("After root splitchar = ");
+                // System.out.println(sc[root]);
             }
-            Init();
-            InsertBalanced(k, v, 0, n);
-
-            // With uniform letter distribution sc[root] should be around 'm'
-            // System.out.print("After root splitchar = ");
-            // System.out.println(sc[root]);
+            finally
+            {
+                ArrayPool<char>.Shared.ReturnIfNotNull(arrayToReturnToPool);
+            }
         }
+
+#nullable restore
 
         /// <summary>
         /// Each node stores a character (splitchar) which is part of some key(s). In a
