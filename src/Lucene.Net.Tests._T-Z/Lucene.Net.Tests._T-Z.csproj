@@ -33,7 +33,6 @@
   <ItemGroup>
     <Compile Include="..\Lucene.Net.Tests\Properties\AssemblyInfo.cs" Link="Properties\AssemblyInfo.cs" />
     <Compile Include="..\Lucene.Net.Tests\Util\**\*.cs" LinkBase="Util" />
-    <Compile Include="..\Lucene.Net.Tests\Support\TestHelpers.cs" />
     <Compile Remove="..\Lucene.Net.Tests\Util\JunitCompat\**\*;..\Lucene.Net.Tests\Util\TestMaxFailuresRule.cs" />
   </ItemGroup>
 
