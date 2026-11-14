@@ -7,7 +7,9 @@ using System;
 using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -130,6 +132,11 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         // LUCENENET specific - S1699 - marked non-virtual because calling
         // virtual members from the constructor is not a safe operation in .NET
+        [MemberNotNull(nameof(m_lo))]
+        [MemberNotNull(nameof(m_hi))]
+        [MemberNotNull(nameof(m_eq))]
+        [MemberNotNull(nameof(m_sc))]
+        [MemberNotNull(nameof(m_kv))]
         protected void Init()
         {
             m_root = (char)0;
@@ -141,8 +148,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             m_sc = new char[BLOCK_SIZE];
             m_kv = new CharVector();
         }
-
-#nullable enable
 
         /// <summary>
         /// Branches are initially compressed, needing one node per key plus the size
@@ -185,8 +190,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
             m_root = Insert(m_root, key, start, val);
         }
-
-#nullable restore
 
         /// <summary>
         /// The actual insertion function, recursive version.
@@ -344,7 +347,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return StrLen(a, 0);
         }
 
-#nullable enable
         public virtual int Find(ReadOnlySpan<char> key)
         {
             int bufferLength = key.Length + 1;
@@ -365,8 +367,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 ArrayPool<char>.Shared.ReturnIfNotNull(arrayToReturnToPool);
             }
         }
-
-#nullable restore
 
         public virtual int Find(ReadOnlySpan<char> key, int start)
         {
@@ -411,9 +411,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return -1;
         }
 
-        public virtual bool Knows(string key)
+        public virtual bool Knows(ReadOnlySpan<char> key)
         {
-            return (Find(key) >= 0);
+            return Find(key) >= 0;
         }
 
         // redimension the arrays
@@ -452,8 +452,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
             return t;
         }
-
-#nullable enable
 
         /// <summary>
         /// Recursively insert the median first and then the median of the lower and
@@ -511,8 +509,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 ArrayPool<char>.Shared.ReturnIfNotNull(arrayToReturnToPool);
             }
         }
-
-#nullable restore
 
         /// <summary>
         /// Each node stores a character (splitchar) which is part of some key(s). In a
@@ -647,7 +643,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
             public Enumerator(TernaryTree ternaryTree)
             {
-                this.outerInstance = ternaryTree;
+                // LUCENENET specific - added guard clause
+                this.outerInstance = ternaryTree ?? throw new ArgumentNullException(nameof(ternaryTree));
                 cur = -1;
                 ns = new Stack<Item>();
                 ks = new TextBuilder();
@@ -847,6 +844,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual void PrintStats(TextWriter @out)
         {
+            if (@out is null)
+                throw new ArgumentNullException(nameof(@out)); // LUCENENET: Added guard clause
+
             @out.WriteLine("Number of keys = " + Convert.ToString(m_length)); // LUCENENET: Intentionally using current culture
             @out.WriteLine("Node count = " + Convert.ToString(m_freenode)); // LUCENENET: Intentionally using current culture
             // System.out.println("Array length = " + Integer.toString(eq.length));
