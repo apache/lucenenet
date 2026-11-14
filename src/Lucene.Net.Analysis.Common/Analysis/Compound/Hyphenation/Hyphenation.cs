@@ -1,6 +1,8 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
+using System;
 using System.Diagnostics.CodeAnalysis;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -35,7 +37,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// </summary>
         internal Hyphenation(int[] points)
         {
-            hyphenPoints = points;
+            hyphenPoints = points ?? throw new ArgumentNullException(nameof(points)); // LUCENENET specific - added guard clause
         }
 
         /// <summary> the number of hyphenation points in the word </summary>
