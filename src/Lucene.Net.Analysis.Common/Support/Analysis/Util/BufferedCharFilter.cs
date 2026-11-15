@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Util
     /// so it supports Mark() and Reset() (which are part of the Java Reader class), but also
     /// provide the Correct() method of BaseCharFilter.
     /// </summary>
-    public class BufferedCharFilter : BaseCharFilter
+    public class BufferedCharFilter : BaseCharFilter 
     {
         public const int DEFAULT_CHAR_BUFFER_SIZE = 8192;
 
