@@ -5,9 +5,9 @@
 using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.Text;
 using System;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -434,7 +434,7 @@ namespace Lucene.Net.Analysis.Util
                 }
 
                 char eol = '\0';
-                StringBuilder result = new StringBuilder(80);
+                using ValueStringBuilder result = new(stackalloc char[80]);
                 /* Typical Line Length */
 
                 result.Append(buf, pos, end - pos);
