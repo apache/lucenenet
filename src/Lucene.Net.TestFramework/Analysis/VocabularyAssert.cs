@@ -1,4 +1,7 @@
 using J2N.Text;
+using Lucene.Net.Support.IO;
+using Lucene.Net.Text;
+using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -31,14 +34,23 @@ namespace Lucene.Net.Analysis
         /// Run a vocabulary test against two data files. </summary>
         public static void AssertVocabulary(Analyzer a, Stream voc, Stream @out)
         {
-            using TextReader vocReader = new StreamReader(voc, Encoding.UTF8);
-            using TextReader outputReader = new StreamReader(@out, Encoding.UTF8);
-            string inputWord = null;
-            while ((inputWord = vocReader.ReadLine()) != null)
+            // LUCENENET: Reuse the memory rather than allocating on each loop
+            ValueStringBuilder inputWord = new(stackalloc char[32]);
+            ValueStringBuilder expectedWord = new(stackalloc char[32]);
+            try
             {
-                string expectedWord = outputReader.ReadLine();
-                Assert.IsNotNull(expectedWord);
-                BaseTokenStreamTestCase.CheckOneTerm(a, inputWord, expectedWord);
+                using BufferedTextReader vocReader = new BufferedTextReader(new StreamReader(voc, Encoding.UTF8));
+                using BufferedTextReader outputReader = new BufferedTextReader(new StreamReader(@out, Encoding.UTF8));
+                while (vocReader.TryReadLine(ref inputWord))
+                {
+                    Assert.IsTrue(outputReader.TryReadLine(ref expectedWord));
+                    BaseTokenStreamTestCase.CheckOneTerm(a, inputWord.AsSpan(), expectedWord.AsSpan());
+                }
+            }
+            finally
+            {
+                inputWord.Dispose();
+                expectedWord.Dispose();
             }
         }
 
@@ -46,16 +58,35 @@ namespace Lucene.Net.Analysis
         /// Run a vocabulary test against one file: tab separated. </summary>
         public static void AssertVocabulary(Analyzer a, Stream vocOut)
         {
-            using TextReader vocReader = new StreamReader(vocOut, Encoding.UTF8);
-            string inputLine = null;
-            while ((inputLine = vocReader.ReadLine()) != null)
+            // LUCENENET: Reuse the memory rather than allocating on each loop
+            ValueStringBuilder line = new(stackalloc char[64]);
+            try
             {
-                if (inputLine.StartsWith("#", System.StringComparison.Ordinal) || inputLine.Trim().Length == 0)
+                using BufferedTextReader vocReader = new BufferedTextReader(new StreamReader(vocOut, Encoding.UTF8));
+                while (vocReader.TryReadLine(ref line))
                 {
-                    continue; // comment
+                    ReadOnlySpan<char> inputLine = line.AsSpan();
+                    if (inputLine.StartsWith("#") || inputLine.Trim().Length == 0)
+                    {
+                        continue; // comment
+                    }
+                    // LUCENENET: Use IndexOf() instead of Split()
+                    int tabPos1 = inputLine.IndexOf('\t');
+                    int tabPos2 = inputLine.Slice(tabPos1 + 1).IndexOf('\t');
+
+                    // LUCENENET: We knoe the pos of the first 2 tabs, now
+                    // slice to get the first 2 values
+                    ReadOnlySpan<char> input = inputLine.Slice(0, tabPos1);
+                    ReadOnlySpan<char> expected = tabPos2 > -1
+                        ? inputLine.Slice(tabPos1 + 1, tabPos2)
+                        : inputLine.Slice(tabPos1 + 1);
+
+                    BaseTokenStreamTestCase.CheckOneTerm(a, input, expected);
                 }
-                string[] words = inputLine.Split('\t').TrimEnd();
-                BaseTokenStreamTestCase.CheckOneTerm(a, words[0], words[1]);
+            }
+            finally
+            {
+                line.Dispose();
             }
         }
 
