@@ -58,9 +58,7 @@ variables:
 - name: BuildCounter
   value: $[counter(variables['VersionSuffix'],coalesce(variables['BuildCounterSeed'], 1250))]
 - name: DotNetSDKVersion
-  value: '10.0.301'
-- name: DotNet11SDKVersion
-  value: '11.0.100-rc.2.26504.105'
+  value: '11.0.100'
 - name: DocumentationArtifactName
   value: 'docs'
 - name: DocumentationArtifactZipFileName
@@ -129,11 +127,6 @@ stages:
     - template: '.build/azure-templates/install-dotnet-sdk.yml'
       parameters:
         sdkVersion: '$(DotNetSDKVersion)'
-
-    # The .NET 11 SDK is required to build the net11.0 test target framework
-    - template: '.build/azure-templates/install-dotnet-sdk.yml'
-      parameters:
-        sdkVersion: '$(DotNet11SDKVersion)'
 
     - pwsh: |
         Import-Module "$(BuildDirectory)/psake/psake.psm1"
@@ -415,7 +408,7 @@ stages:
           testResultsArtifactName: '$(TestResultsArtifactName)'
           maximumParallelJobs: $(maximumParallelJobs)
           maximumAllowedFailures: $(maximumAllowedFailures)
-          dotNetSdkVersion: '$(DotNet11SDKVersion)'
+          dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net11_0_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
@@ -440,7 +433,7 @@ stages:
           testResultsArtifactName: '$(TestResultsArtifactName)'
           maximumParallelJobs: $(maximumParallelJobs)
           maximumAllowedFailures: $(maximumAllowedFailures)
-          dotNetSdkVersion: '$(DotNet11SDKVersion)'
+          dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net10_0_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
