@@ -21,7 +21,7 @@ namespace Lucene.Net.Support
      * limitations under the License.
      */
 
-    internal static class SetExtensions
+    internal static partial class SetExtensions
     {
         /// <summary>
         /// Returns a concurrent wrapper for the current <see cref="ISet{T}"/>.

@@ -23,7 +23,7 @@ namespace Lucene.Net.Support
     /// <summary>
     /// Extensions to <see cref="IDictionary{TKey, TValue}"/>.
     /// </summary>
-    internal static class DictionaryExtensions
+    internal static partial class DictionaryExtensions
     {
         /// <summary>
         /// Copies all of the mappings from the specified <paramref name="collection"/> to this dictionary.
