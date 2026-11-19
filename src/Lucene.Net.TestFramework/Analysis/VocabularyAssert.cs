@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis
                     int tabPos1 = inputLine.IndexOf('\t');
                     int tabPos2 = inputLine.Slice(tabPos1 + 1).IndexOf('\t');
 
-                    // LUCENENET: We knoe the pos of the first 2 tabs, now
+                    // LUCENENET: We know the position of the first 2 tabs, now
                     // slice to get the first 2 values
                     ReadOnlySpan<char> input = inputLine.Slice(0, tabPos1);
                     ReadOnlySpan<char> expected = tabPos2 > -1
