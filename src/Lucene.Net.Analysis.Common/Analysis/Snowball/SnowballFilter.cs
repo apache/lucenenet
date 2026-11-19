@@ -2,7 +2,6 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Tartarus.Snowball;
 using System;
-using System.Reflection;
 
 namespace Lucene.Net.Analysis.Snowball
 {
@@ -73,8 +72,7 @@ namespace Lucene.Net.Analysis.Snowball
         {
             try
             {
-                string className = typeof(SnowballProgram).Namespace + ".Ext." +
-                    name + "Stemmer, " + this.GetType().Assembly.GetName().Name;
+                string className = $"{typeof(SnowballProgram).Namespace}.Ext.{name}Stemmer, {this.GetType().Assembly.GetName().Name}";
                 Type stemClass = Type.GetType(className);
 
                 stemmer = (SnowballProgram)Activator.CreateInstance(stemClass);

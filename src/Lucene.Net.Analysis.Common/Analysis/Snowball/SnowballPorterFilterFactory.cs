@@ -61,8 +61,7 @@ namespace Lucene.Net.Analysis.Snowball
 
         public virtual void Inform(IResourceLoader loader)
         {
-            string className = typeof(SnowballProgram).Namespace + ".Ext." +
-                language + "Stemmer, " + this.GetType().Assembly.GetName().Name;
+            string className = $"{typeof(SnowballProgram).Namespace}.Ext.{language}Stemmer, {this.GetType().Assembly.GetName().Name}";
             stemClass = Type.GetType(className);
 
             if (wordFiles != null)
@@ -80,7 +79,7 @@ namespace Lucene.Net.Analysis.Snowball
             }
             catch (Exception e) when (e.IsException())
             {
-                throw RuntimeException.Create("Error instantiating stemmer for language " + language + "from class " + stemClass, e);
+                throw RuntimeException.Create($"Error instantiating stemmer for language {language}from class {stemClass}", e);
             }
 
             if (protectedWords != null)
