@@ -1,5 +1,6 @@
 
 using System;
+using System.IO;
 
 namespace Lucene.Net.IO
 {
@@ -23,6 +24,10 @@ namespace Lucene.Net.IO
     /// <summary>
     /// Provides efficient synchronous character-reading operations using spans.
     /// </summary>
+    /// <remarks>
+    /// This interface acts as a bridge to patch older target frameworks that
+    /// do not support <see cref="Span{T}"/> overloads on <see cref="TextReader"/>.
+    /// </remarks>
     internal interface ISpanTextReadable
     {
         /// <summary>
