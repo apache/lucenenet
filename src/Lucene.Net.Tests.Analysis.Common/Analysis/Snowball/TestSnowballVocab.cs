@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Snowball
 
             // 2. Followed by the rest of the languages in any order
             yield return new TestCaseData("Danish", "danish");
-            
+
             yield return new TestCaseData("English", "english");
             // disabled due to snowball java code generation bug:
             // see http://article.gmane.org/gmane.comp.search.snowball/1139
@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Snowball
             yield return new TestCaseData("Porter", "porter");
             yield return new TestCaseData("Portuguese", "portuguese");
             yield return new TestCaseData("Romanian", "romanian");
-            
+
             yield return new TestCaseData("Spanish", "spanish");
             yield return new TestCaseData("Swedish", "swedish");
         }

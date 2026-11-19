@@ -154,4 +154,3 @@ namespace Lucene.Net.IO
         }
     }
 }
-
