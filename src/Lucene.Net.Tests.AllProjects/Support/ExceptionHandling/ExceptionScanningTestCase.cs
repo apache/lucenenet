@@ -472,6 +472,15 @@ namespace Lucene.Net.Support.ExceptionHandling
                         typeof(TargetInvocationException),
                         new object[] { message, new Exception() });
                 },
+                [typeof(System.Threading.ThreadStartException)] = (exceptionType, message) =>
+                {
+                    //public sealed class ThreadStartException : SystemException
+                    //{
+                    //    internal ThreadStartException(Exception reason)
+                    // NOTE: The parameterless constructor was removed in .NET 11
+                    BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
+                    return Activator.CreateInstance(typeof(System.Threading.ThreadStartException), flags, null, new object[] { new Exception(message) }, CultureInfo.InvariantCulture);
+                },
             };
 
             // Special case - this doesn't exist on .NET Framework, so we only add it if not null
