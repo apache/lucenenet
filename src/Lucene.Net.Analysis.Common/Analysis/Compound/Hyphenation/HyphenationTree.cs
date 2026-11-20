@@ -249,9 +249,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
             // patterns/values should be now in the tree
             // let's optimize a bit
-            TrimToSize();
-            m_vspace.TrimToSize();
-            m_classmap.TrimToSize();
+            TrimExcess();
+            m_vspace.TrimExcess();
+            m_classmap.TrimExcess();
 
             // get rid of the auxiliary map
             ivalues = null;

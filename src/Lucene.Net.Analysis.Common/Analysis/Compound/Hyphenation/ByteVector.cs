@@ -144,7 +144,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return index;
         }
 
-        public virtual void TrimToSize()
+        // LUCENENET specific - renamed from trimToSize() (.NET Platform Convention)
+        public virtual void TrimExcess()
         {
             if (n < array.Length)
             {

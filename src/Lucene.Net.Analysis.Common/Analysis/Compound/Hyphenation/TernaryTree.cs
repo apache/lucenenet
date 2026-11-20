@@ -521,7 +521,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// TernaryTree!).
         ///
         /// </summary>
-        public virtual void TrimToSize()
+        // LUCENENET specific - renamed from trimToSize() (.NET Platform Convention)
+        public virtual void TrimExcess()
         {
             // first balance the tree for best performance
             Balance();
@@ -535,7 +536,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             TernaryTree map = new TernaryTree();
             Compact(kx, map, m_root);
             m_kv = kx;
-            m_kv.TrimToSize();
+            m_kv.TrimExcess();
         }
 
         private void Compact(CharVector kx, TernaryTree map, char p)
@@ -866,7 +867,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             tt.insert("Car", 'r');
             tt.insert("palos", 'l');
             tt.insert("pa", 'p');
-            tt.trimToSize();
+            tt.TrimExcess();
             System.out.println((char) tt.find("Car"));
             System.out.println((char) tt.find("Carlos"));
             System.out.println((char) tt.find("alto"));
