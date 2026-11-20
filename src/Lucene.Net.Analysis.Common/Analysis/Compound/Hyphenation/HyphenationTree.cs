@@ -1,11 +1,11 @@
 // Lucene version compatibility level 4.8.1
+using Lucene.Net.Support;
 using Lucene.Net.Support.Buffers;
 using Lucene.Net.Text;
 using Lucene.Net.Util;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -632,7 +632,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 ReadOnlySpan<char> sw = word.Slice(1, len);
 
                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
-                if (TryGetStopListValue(sw, out IList<object>? hw))
+                if (m_stoplist.TryGetValue(sw, out IList<object>? hw))
                 {
                     // assume only simple hyphens (Hyphen.pre="-", Hyphen.post = Hyphen.no =
                     // null)
@@ -810,23 +810,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         ///        <see cref="Hyphen"/> objects. </param>
         public virtual void AddException(ReadOnlySpan<char> word, IList<object> hyphenatedword)
         {
-            // LUCENENET specific - favor alternate lookup, when available
-            if (m_stoplist is JCG.Dictionary<string, IList<object>> jcgStopList &&
-                jcgStopList.TryGetSpanAlternateLookup<char>(out var jcgLookup))
-            {
-                jcgLookup[word] = hyphenatedword;
-                return;
-            }
-#if FEATURE_DICTIONARY_ALTERNATELOOKUP
-            else if (m_stoplist is Dictionary<string, IList<object>> scgStopList &&
-                scgStopList.TryGetAlternateLookup<ReadOnlySpan<char>>(out var scgLookup))
-            {
-                scgLookup[word] = hyphenatedword;
-                return;
-            }
-#endif
-
-            m_stoplist[word.ToString()] = hyphenatedword;
+            m_stoplist[word] = hyphenatedword;
         }
 
         /// <summary>
@@ -857,24 +841,5 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         //base.printStats(@out);
 
         // }
-
-        // LUCENENET specific - favor alternate lookup, when available
-        private bool TryGetStopListValue(ReadOnlySpan<char> key, [MaybeNullWhen(false)] out IList<object> value)
-        {
-            if (m_stoplist is JCG.Dictionary<string, IList<object>> jcgStopList &&
-                jcgStopList.TryGetSpanAlternateLookup<char>(out var jcgLookup))
-            {
-                return jcgLookup.TryGetValue(key, out value);
-            }
-#if FEATURE_DICTIONARY_ALTERNATELOOKUP
-            else if (m_stoplist is Dictionary<string, IList<object>> scgStopList &&
-                scgStopList.TryGetAlternateLookup<ReadOnlySpan<char>>(out var scgLookup))
-            {
-                return scgLookup.TryGetValue(key, out value);
-            }
-#endif
-
-            return m_stoplist.TryGetValue(key.ToString(), out value);
-        }
     }
 }
