@@ -677,7 +677,7 @@ namespace Lucene.Net.Analysis
         {
             // LUCENENET specific - bypass the array overloads so we can pass expected directly through as a fake ReadOnlySpan<char> (ref struct) array.
             CheckResetException(a, input);
-            AssertTokenStreamContents(ts: a.GetTokenStream("dummy", new PooledStringReader(input)), output: expected, startOffsets: null, endOffsets: null, types: null, posIncrements: null, posLengths: null, finalOffset: null, finalPosInc: null, keywordAtts: null, offsetsAreCorrect: true, payloads: null);
+            AssertTokenStreamContents(ts: a.GetTokenStream("dummy", new PooledStringReader(input)), output: expected, startOffsets: null, endOffsets: null, types: null, posIncrements: null, posLengths: null, finalOffset: input.Length, finalPosInc: null, keywordAtts: null, offsetsAreCorrect: true, payloads: null);
             //AssertAnalyzesTo(a, input, new string[] { expected });
         }
 
