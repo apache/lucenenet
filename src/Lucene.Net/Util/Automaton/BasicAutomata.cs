@@ -102,7 +102,8 @@ namespace Lucene.Net.Util.Automaton
         {
             return new Automaton
             {
-                singleton = new string(Character.ToChars(c)),
+                // LUCENENET: Eliminated the heap allocated array
+                singleton = Character.ToChars(c, stackalloc char[2]).ToString(),
                 deterministic = true
             };
         }
