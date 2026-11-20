@@ -47,7 +47,7 @@ namespace Lucene.Net.Support
         /// <exception cref="ArgumentNullException">
         /// <paramref name="dictionary"/> is <c>null</c>.
         /// </exception>
-        /// <exception cref="NotSupportedException">
+        /// <exception cref="InvalidOperationException">
         /// The dictionary's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool ContainsKey<TValue>(this JCG.Dictionary<string, TValue> dictionary, ReadOnlySpan<char> key)
@@ -66,7 +66,7 @@ namespace Lucene.Net.Support
         /// <param name="key">The key to locate.</param>
         /// <returns><c>true</c> if the dictionary contains the key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The comparer does not support alternate lookup using a character span.</exception>
         public static bool ContainsKey<TValue>(this JCG.OrderedDictionary<string, TValue> dictionary, ReadOnlySpan<char> key)
         {
             if (dictionary is null)
@@ -88,8 +88,8 @@ namespace Lucene.Net.Support
         /// <paramref name="key"/>.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">
-        /// A recognized dictionary's comparer does not support alternate lookup.
+        /// <exception cref="InvalidOperationException">
+        /// A recognized dictionary's comparer does not support alternate lookup of character spans.
         /// </exception>
         public static bool ContainsKey<TValue>(this IDictionary<string, TValue> dictionary, ReadOnlySpan<char> key)
         {
@@ -139,7 +139,7 @@ namespace Lucene.Net.Support
         /// <exception cref="ArgumentNullException">
         /// <paramref name="dictionary"/> is <c>null</c>.
         /// </exception>
-        /// <exception cref="NotSupportedException">
+        /// <exception cref="InvalidOperationException">
         /// The dictionary's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static TValue Put<TValue>(this JCG.Dictionary<string, TValue> dictionary, ReadOnlySpan<char> key, TValue value)
@@ -165,7 +165,7 @@ namespace Lucene.Net.Support
         /// <returns>The previous value, or the default value of <typeparamref name="TValue"/> if the key was absent.</returns>
         /// <remarks>A default return value does not distinguish an absent key from one previously associated with the default value.</remarks>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The comparer does not support alternate lookup using a character span.</exception>
         public static TValue Put<TValue>(this JCG.OrderedDictionary<string, TValue> dictionary, ReadOnlySpan<char> key, TValue value)
         {
             if (dictionary is null)
@@ -199,8 +199,8 @@ namespace Lucene.Net.Support
         /// operations and are not atomic.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">
-        /// A recognized dictionary's comparer does not support alternate lookup.
+        /// <exception cref="InvalidOperationException">
+        /// A recognized dictionary's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static TValue Put<TValue>(this IDictionary<string, TValue> dictionary, ReadOnlySpan<char> key, TValue value)
         {
@@ -292,7 +292,7 @@ namespace Lucene.Net.Support
         /// <exception cref="ArgumentNullException">
         /// <paramref name="dictionary"/> is <c>null</c>.
         /// </exception>
-        /// <exception cref="NotSupportedException">
+        /// <exception cref="InvalidOperationException">
         /// The dictionary's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool Remove<TValue>(this JCG.Dictionary<string, TValue> dictionary, ReadOnlySpan<char> key)
@@ -323,7 +323,7 @@ namespace Lucene.Net.Support
         /// <exception cref="ArgumentNullException">
         /// <paramref name="dictionary"/> is <c>null</c>.
         /// </exception>
-        /// <exception cref="NotSupportedException">
+        /// <exception cref="InvalidOperationException">
         /// The dictionary's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool Remove<TValue>(this JCG.Dictionary<string, TValue> dictionary, ReadOnlySpan<char> key, [MaybeNullWhen(false)] out string actualKey, [MaybeNullWhen(false)] out TValue value)
@@ -342,7 +342,7 @@ namespace Lucene.Net.Support
         /// <param name="key">The key of the element to remove.</param>
         /// <returns><c>true</c> if the element was removed; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The comparer does not support alternate lookup using a character span.</exception>
         public static bool Remove<TValue>(this JCG.OrderedDictionary<string, TValue> dictionary, ReadOnlySpan<char> key)
         {
             if (dictionary is null)
@@ -361,7 +361,7 @@ namespace Lucene.Net.Support
         /// <param name="value">When this method returns, the removed value, if removed.</param>
         /// <returns><c>true</c> if the element was removed; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The comparer does not support alternate lookup using a character span.</exception>
         public static bool Remove<TValue>(this JCG.OrderedDictionary<string, TValue> dictionary, ReadOnlySpan<char> key, [MaybeNullWhen(false)] out string actualKey, [MaybeNullWhen(false)] out TValue value)
         {
             if (dictionary is null)
@@ -378,8 +378,8 @@ namespace Lucene.Net.Support
         /// <param name="key">The key of the element to remove.</param>
         /// <returns><c>true</c> if the element was removed; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">
-        /// A recognized dictionary's comparer does not support alternate lookup.
+        /// <exception cref="InvalidOperationException">
+        /// A recognized dictionary's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool Remove<TValue>(this IDictionary<string, TValue> dictionary, ReadOnlySpan<char> key)
         {
@@ -420,8 +420,8 @@ namespace Lucene.Net.Support
         /// <param name="value">When this method returns, the removed value, if an element was removed.</param>
         /// <returns><c>true</c> if the element was removed; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">
-        /// A recognized dictionary's comparer does not support alternate lookup.
+        /// <exception cref="InvalidOperationException">
+        /// A recognized dictionary's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool Remove<TValue>(this IDictionary<string, TValue> dictionary, ReadOnlySpan<char> key, [MaybeNullWhen(false)] out string actualKey, [MaybeNullWhen(false)] out TValue value)
         {
@@ -481,7 +481,7 @@ namespace Lucene.Net.Support
             /// <exception cref="KeyNotFoundException">
             /// The key is not present in the dictionary when getting the value.
             /// </exception>
-            /// <exception cref="NotSupportedException">
+            /// <exception cref="InvalidOperationException">
             /// The dictionary's comparer does not support alternate lookup using a character span.
             /// </exception>
             public TValue this[ReadOnlySpan<char> key]
@@ -522,7 +522,7 @@ namespace Lucene.Net.Support
             /// <exception cref="KeyNotFoundException">
             /// The key is not present in the dictionary when getting the value.
             /// </exception>
-            /// <exception cref="NotSupportedException">
+            /// <exception cref="InvalidOperationException">
             /// The dictionary's comparer does not support alternate lookup using a character span.
             /// </exception>
             public TValue this[ReadOnlySpan<char> key]
@@ -567,8 +567,8 @@ namespace Lucene.Net.Support
             /// <exception cref="KeyNotFoundException">
             /// The key is not present in the dictionary when getting the value.
             /// </exception>
-            /// <exception cref="NotSupportedException">
-            /// A recognized dictionary's comparer does not support alternate lookup.
+            /// <exception cref="InvalidOperationException">
+            /// A recognized dictionary's comparer does not support alternate lookup using a character span.
             /// </exception>
             public TValue this[ReadOnlySpan<char> key]
             {
@@ -657,7 +657,7 @@ namespace Lucene.Net.Support
         /// <exception cref="ArgumentNullException">
         /// <paramref name="dictionary"/> is <c>null</c>.
         /// </exception>
-        /// <exception cref="NotSupportedException">
+        /// <exception cref="InvalidOperationException">
         /// The dictionary's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool TryAdd<TValue>(this JCG.Dictionary<string, TValue> dictionary, ReadOnlySpan<char> key, TValue value)
@@ -677,7 +677,7 @@ namespace Lucene.Net.Support
         /// <param name="value">The value of the element to add.</param>
         /// <returns><c>true</c> if the element was added; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The comparer does not support alternate lookup using a character span.</exception>
         public static bool TryAdd<TValue>(this JCG.OrderedDictionary<string, TValue> dictionary, ReadOnlySpan<char> key, TValue value)
         {
             if (dictionary is null)
@@ -700,8 +700,8 @@ namespace Lucene.Net.Support
         /// <see cref="IDictionary{TKey, TValue}.Add(TKey, TValue)"/> and is not atomic.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">
-        /// A recognized dictionary's comparer does not support alternate lookup.
+        /// <exception cref="InvalidOperationException">
+        /// A recognized dictionary's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool TryAdd<TValue>(this IDictionary<string, TValue> dictionary, ReadOnlySpan<char> key, TValue value)
         {
@@ -752,7 +752,7 @@ namespace Lucene.Net.Support
         /// <exception cref="ArgumentNullException">
         /// <paramref name="dictionary"/> is <c>null</c>.
         /// </exception>
-        /// <exception cref="NotSupportedException">
+        /// <exception cref="InvalidOperationException">
         /// The dictionary's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool TryGetValue<TValue>(this JCG.Dictionary<string, TValue> dictionary, ReadOnlySpan<char> key, [MaybeNullWhen(false)] out TValue value)
@@ -782,7 +782,7 @@ namespace Lucene.Net.Support
         /// <exception cref="ArgumentNullException">
         /// <paramref name="dictionary"/> is <c>null</c>.
         /// </exception>
-        /// <exception cref="NotSupportedException">
+        /// <exception cref="InvalidOperationException">
         /// The dictionary's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool TryGetValue<TValue>(this JCG.Dictionary<string, TValue> dictionary, ReadOnlySpan<char> key, [MaybeNullWhen(false)] out string actualKey, [MaybeNullWhen(false)] out TValue value)
@@ -802,7 +802,7 @@ namespace Lucene.Net.Support
         /// <param name="value">When this method returns, the associated value, if found.</param>
         /// <returns><c>true</c> if the key was found; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The comparer does not support alternate lookup using a character span.</exception>
         public static bool TryGetValue<TValue>(this JCG.OrderedDictionary<string, TValue> dictionary, ReadOnlySpan<char> key, [MaybeNullWhen(false)] out TValue value)
         {
             if (dictionary is null)
@@ -821,7 +821,7 @@ namespace Lucene.Net.Support
         /// <param name="value">When this method returns, the associated value, if found.</param>
         /// <returns><c>true</c> if the key was found; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The comparer does not support alternate lookup using a character span.</exception>
         public static bool TryGetValue<TValue>(this JCG.OrderedDictionary<string, TValue> dictionary, ReadOnlySpan<char> key, [MaybeNullWhen(false)] out string actualKey, [MaybeNullWhen(false)] out TValue value)
         {
             if (dictionary is null)
@@ -844,8 +844,8 @@ namespace Lucene.Net.Support
         /// <paramref name="key"/>.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">
-        /// A recognized dictionary's comparer does not support alternate lookup.
+        /// <exception cref="InvalidOperationException">
+        /// A recognized dictionary's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool TryGetValue<TValue>(this IDictionary<string, TValue> dictionary, ReadOnlySpan<char> key, [MaybeNullWhen(false)] out TValue value)
         {
@@ -887,7 +887,7 @@ namespace Lucene.Net.Support
         /// <returns><c>true</c> if the dictionary contains the key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">
-        /// A recognized dictionary's comparer does not support alternate lookup.
+        /// A recognized dictionary's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool TryGetValue<TValue>(this IDictionary<string, TValue> dictionary, ReadOnlySpan<char> key, [MaybeNullWhen(false)] out string actualKey, [MaybeNullWhen(false)] out TValue value)
         {

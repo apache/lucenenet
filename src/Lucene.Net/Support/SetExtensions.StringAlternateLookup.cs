@@ -38,7 +38,7 @@ namespace Lucene.Net.Support
         /// <param name="value">The value to add.</param>
         /// <returns><c>true</c> if the value was added; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The set's comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The set's comparer does not support alternate lookup using a character span.</exception>
         public static bool Add(this JCG.HashSet<string> set, ReadOnlySpan<char> value)
         {
             if (set is null)
@@ -54,7 +54,7 @@ namespace Lucene.Net.Support
         /// <param name="value">The value to add.</param>
         /// <returns><c>true</c> if the value was added; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The set's comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The set's comparer does not support alternate lookup using a character span.</exception>
         public static bool Add(this JCG.OrderedHashSet<string> set, ReadOnlySpan<char> value)
         {
             if (set is null)
@@ -75,8 +75,8 @@ namespace Lucene.Net.Support
         /// <paramref name="value"/>.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">
-        /// A recognized set's comparer does not support alternate lookup.
+        /// <exception cref="InvalidOperationException">
+        /// A recognized set's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool Add(this ISet<string> set, ReadOnlySpan<char> value)
         {
@@ -111,7 +111,7 @@ namespace Lucene.Net.Support
         /// <param name="value">The value to locate.</param>
         /// <returns><c>true</c> if the set contains the value; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The set's comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The set's comparer does not support alternate lookup using a character span.</exception>
         public static bool Contains(this JCG.HashSet<string> set, ReadOnlySpan<char> value)
         {
             if (set is null)
@@ -127,7 +127,7 @@ namespace Lucene.Net.Support
         /// <param name="value">The value to locate.</param>
         /// <returns><c>true</c> if the set contains the value; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The set's comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The set's comparer does not support alternate lookup using a character span.</exception>
         public static bool Contains(this JCG.OrderedHashSet<string> set, ReadOnlySpan<char> value)
         {
             if (set is null)
@@ -148,8 +148,8 @@ namespace Lucene.Net.Support
         /// <paramref name="value"/>.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">
-        /// A recognized set's comparer does not support alternate lookup.
+        /// <exception cref="InvalidOperationException">
+        /// A recognized set's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool Contains(this ISet<string> set, ReadOnlySpan<char> value)
         {
@@ -184,7 +184,7 @@ namespace Lucene.Net.Support
         /// <param name="value">The value to remove.</param>
         /// <returns><c>true</c> if the value was successfully removed; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The set's comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The set's comparer does not support alternate lookup using a character span.</exception>
         public static bool Remove(this JCG.HashSet<string> set, ReadOnlySpan<char> value)
         {
             if (set is null)
@@ -200,7 +200,7 @@ namespace Lucene.Net.Support
         /// <param name="value">The value to remove.</param>
         /// <returns><c>true</c> if the value was successfully removed; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The set's comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The set's comparer does not support alternate lookup using a character span.</exception>
         public static bool Remove(this JCG.OrderedHashSet<string> set, ReadOnlySpan<char> value)
         {
             if (set is null)
@@ -221,8 +221,8 @@ namespace Lucene.Net.Support
         /// <paramref name="value"/>.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">
-        /// A recognized set's comparer does not support alternate lookup.
+        /// <exception cref="InvalidOperationException">
+        /// A recognized set's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool Remove(this ISet<string> set, ReadOnlySpan<char> value)
         {
@@ -258,7 +258,7 @@ namespace Lucene.Net.Support
         /// <param name="actualValue">When this method returns, the actual stored value, if found; otherwise, <c>null</c>.</param>
         /// <returns><c>true</c> if an equal value was found; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The set's comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The set's comparer does not support alternate lookup using a character span.</exception>
         public static bool TryGetValue(this JCG.HashSet<string> set, ReadOnlySpan<char> value, [MaybeNullWhen(false)] out string actualValue)
         {
             if (set is null)
@@ -275,7 +275,7 @@ namespace Lucene.Net.Support
         /// <param name="actualValue">When this method returns, the actual stored value, if found; otherwise, <c>null</c>.</param>
         /// <returns><c>true</c> if an equal value was found; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">The set's comparer does not support alternate lookup.</exception>
+        /// <exception cref="InvalidOperationException">The set's comparer does not support alternate lookup using a character span.</exception>
         public static bool TryGetValue(this JCG.OrderedHashSet<string> set, ReadOnlySpan<char> value, [MaybeNullWhen(false)] out string actualValue)
         {
             if (set is null)
@@ -302,8 +302,8 @@ namespace Lucene.Net.Support
         /// not necessarily the instance stored in the set.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">
-        /// A recognized set's comparer does not support alternate lookup.
+        /// <exception cref="InvalidOperationException">
+        /// A recognized set's comparer does not support alternate lookup using a character span.
         /// </exception>
         public static bool TryGetValue(this ISet<string> set, ReadOnlySpan<char> value, [MaybeNullWhen(false)] out string actualValue)
         {
