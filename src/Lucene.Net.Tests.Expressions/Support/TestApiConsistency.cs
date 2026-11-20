@@ -38,7 +38,7 @@ namespace Lucene.Net.Expressions
         [TestCase(typeof(Lucene.Net.Expressions.Bindings))]
         public override void TestPrivateFieldNames(Type typeFromTargetAssembly)
         {
-            base.TestPrivateFieldNames(typeFromTargetAssembly, @"JS\.JavascriptLexer\.DFA9_");
+            base.TestPrivateFieldNames(typeFromTargetAssembly);
         }
 
         [Test, LuceneNetSpecific]

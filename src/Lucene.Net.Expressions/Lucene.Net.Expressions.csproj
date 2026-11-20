@@ -42,19 +42,46 @@
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <Antlr4CodeGeneratorVersion>$([System.IO.Path]::GetFileName('$(PkgAntlr4_CodeGenerator)'))</Antlr4CodeGeneratorVersion>
-    <!-- Required for Antlr4BuildTasks to find the antlr4 .jar file. When missing,
-        it causes an error on the SonarCloud workflow. -->
-    <Antlr4ToolPath>$(PkgAntlr4_CodeGenerator)\tools\antlr4-csharp-$(Antlr4CodeGeneratorVersion)-complete.jar</Antlr4ToolPath>
-  </PropertyGroup>
-
   <ItemGroup>
-    <!-- Required to supply the antlr4 .jar file to Antlr4BuildTasks. -->
-    <PackageReference Include="Antlr4.CodeGenerator" Version="$(Antlr4CodeGeneratorPackageVersion)" PrivateAssets="all" ExcludeAssets="all" GeneratePathProperty="true" />
-    <PackageReference Include="Antlr4.Runtime.Standard" Version="$(Antlr4RuntimeStandardPackageVersion)" />
-    <PackageReference Include="Antlr4BuildTasks" Version="$(Antlr4BuildTasksPackageVersion)" PrivateAssets="all" IncludeAssets="build" />
+    <!-- Build-only: generates the expression parser from JS\JavascriptExpressionParser.parlot.cs into this assembly,
+        so there is no runtime dependency on Parlot. -->
+    <PackageReference Include="Parlot.SourceGenerator" Version="$(ParlotSourceGeneratorPackageVersion)" PrivateAssets="all" />
   </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'net462' ">
+    <!-- Required by the generated parser on downlevel targets -->
+    <PackageReference Include="System.Memory" Version="$(SystemMemoryPackageVersion)" />
+  </ItemGroup>
+
+  <!-- The Parlot generator only accepts .NET Framework 4.7.2+ (PARLOT026), but the code it generates for
+      .NET Standard 2.0 only needs System.Memory and System.ValueTuple, which net462 references. Report 4.7.2
+      to the generator while the analyzer config is written, after references are resolved, and reference
+      the netstandard facade that the generator compiles the grammar against. -->
+  <Target Name="_LuceneRemoveParlotNetStandardReference" BeforeTargets="ResolveAssemblyReferences" Condition=" '$(TargetFramework)' == 'net462' ">
+    <ItemGroup>
+      <!-- Only .NET Framework 4.7.1+ reference assemblies have this facade -->
+      <Reference Remove="netstandard" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_LuceneReferenceParlotNetStandardFacade" AfterTargets="ResolveAssemblyReferences" Condition=" '$(TargetFramework)' == 'net462' ">
+    <ItemGroup>
+      <ReferencePath Include="$(MSBuildExtensionsPath)/Microsoft/Microsoft.NET.Build.Extensions/net461/lib/netstandard.dll" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_LuceneReportParlotTargetFrameworkVersion" BeforeTargets="GenerateMSBuildEditorConfigFileCore" Condition=" '$(TargetFramework)' == 'net462' ">
+    <PropertyGroup>
+      <_LuceneTargetFrameworkVersion>$(TargetFrameworkVersion)</_LuceneTargetFrameworkVersion>
+      <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_LuceneRestoreTargetFrameworkVersion" AfterTargets="GenerateMSBuildEditorConfigFileCore" Condition=" '$(TargetFramework)' == 'net462' ">
+    <PropertyGroup>
+      <TargetFrameworkVersion>$(_LuceneTargetFrameworkVersion)</TargetFrameworkVersion>
+    </PropertyGroup>
+  </Target>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="System.Reflection.Emit" Version="$(SystemReflectionEmitPackageVersion)" />
@@ -63,15 +90,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="JS\JavascriptCompiler.properties" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Expressions" />
   </ItemGroup>
 
   <ItemGroup>
-    <Antlr4 Include="JS\Javascript.g4">
-      <Listener>true</Listener>
-      <Visitor>false</Visitor>
-      <Package>Lucene.Net.Expressions.JS</Package>
-    </Antlr4>
+    <EmbeddedResource Include="JS\JavascriptCompiler.properties" />
   </ItemGroup>
 
 </Project>
