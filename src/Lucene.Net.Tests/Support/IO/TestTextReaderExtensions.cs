@@ -34,10 +34,10 @@ namespace Lucene.Net.IO
             Span<char> buffer = stackalloc char[4];
 
             Assert.AreEqual(4, TextReaderExtensions.Read(reader, buffer));
-            Assert.AreEqual("foob", new string(buffer));
+            Assert.AreEqual("foob", buffer.ToString());
 
             Assert.AreEqual(2, TextReaderExtensions.Read(reader, buffer));
-            Assert.AreEqual("ar", new string(buffer.Slice(0, 2)));
+            Assert.AreEqual("ar", buffer.Slice(0, 2).ToString());
 
             Assert.AreEqual(0, TextReaderExtensions.Read(reader, buffer));
         }
@@ -52,13 +52,13 @@ namespace Lucene.Net.IO
             // Read performs one underlying read, so it may return fewer
             // characters than the destination span can hold.
             Assert.AreEqual(2, TextReaderExtensions.Read(reader, buffer));
-            Assert.AreEqual("fo", new string(buffer.Slice(0, 2)));
+            Assert.AreEqual("fo", buffer.Slice(0, 2).ToString());
 
             Assert.AreEqual(2, TextReaderExtensions.Read(reader, buffer));
-            Assert.AreEqual("ob", new string(buffer.Slice(0, 2)));
+            Assert.AreEqual("ob", buffer.Slice(0, 2).ToString());
 
             Assert.AreEqual(2, TextReaderExtensions.Read(reader, buffer));
-            Assert.AreEqual("ar", new string(buffer.Slice(0, 2)));
+            Assert.AreEqual("ar", buffer.Slice(0, 2).ToString());
 
             Assert.AreEqual(0, TextReaderExtensions.Read(reader, buffer));
         }
@@ -71,10 +71,10 @@ namespace Lucene.Net.IO
             Span<char> buffer = stackalloc char[4];
 
             Assert.AreEqual(4, TextReaderExtensions.ReadBlock(reader, buffer));
-            Assert.AreEqual("foob", new string(buffer));
+            Assert.AreEqual("foob", buffer.ToString());
 
             Assert.AreEqual(2, TextReaderExtensions.ReadBlock(reader, buffer));
-            Assert.AreEqual("ar", new string(buffer.Slice(0, 2)));
+            Assert.AreEqual("ar", buffer.Slice(0, 2).ToString());
 
             Assert.AreEqual(0, TextReaderExtensions.ReadBlock(reader, buffer));
         }
@@ -89,10 +89,10 @@ namespace Lucene.Net.IO
             // ReadBlock must continue reading until the destination is full
             // or the underlying reader reaches EOF.
             Assert.AreEqual(4, TextReaderExtensions.ReadBlock(reader, buffer));
-            Assert.AreEqual("foob", new string(buffer));
+            Assert.AreEqual("foob", buffer.ToString());
 
             Assert.AreEqual(2, TextReaderExtensions.ReadBlock(reader, buffer));
-            Assert.AreEqual("ar", new string(buffer.Slice(0, 2)));
+            Assert.AreEqual("ar", buffer.Slice(0, 2).ToString());
 
             Assert.AreEqual(0, TextReaderExtensions.ReadBlock(reader, buffer));
         }
@@ -105,10 +105,10 @@ namespace Lucene.Net.IO
             Span<char> buffer = stackalloc char[4];
 
             Assert.AreEqual(4, TextReaderExtensions.Read(reader, buffer));
-            Assert.AreEqual("foob", new string(buffer));
+            Assert.AreEqual("foob", buffer.ToString());
 
             Assert.AreEqual(2, TextReaderExtensions.Read(reader, buffer));
-            Assert.AreEqual("ar", new string(buffer.Slice(0, 2)));
+            Assert.AreEqual("ar", buffer.Slice(0, 2).ToString());
 
             Assert.AreEqual(0, TextReaderExtensions.Read(reader, buffer));
 
@@ -123,10 +123,10 @@ namespace Lucene.Net.IO
             Span<char> buffer = stackalloc char[4];
 
             Assert.AreEqual(4, TextReaderExtensions.ReadBlock(reader, buffer));
-            Assert.AreEqual("foob", new string(buffer));
+            Assert.AreEqual("foob", buffer.ToString());
 
             Assert.AreEqual(2, TextReaderExtensions.ReadBlock(reader, buffer));
-            Assert.AreEqual("ar", new string(buffer.Slice(0, 2)));
+            Assert.AreEqual("ar", buffer.Slice(0, 2).ToString());
 
             Assert.AreEqual(0, TextReaderExtensions.ReadBlock(reader, buffer));
 
