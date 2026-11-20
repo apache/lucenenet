@@ -90,7 +90,7 @@ namespace Lucene.Net.Support.IO
                 throw new ArgumentOutOfRangeException(nameof(bufferSize));
 
             this.bufferSize = bufferSize;
-            buffer = buffer = ArrayPool<char>.Shared.Rent(bufferSize);
+            buffer = ArrayPool<char>.Shared.Rent(bufferSize);
             this.leaveOpen = leaveOpen;
         }
 
