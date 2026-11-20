@@ -585,7 +585,7 @@ namespace Lucene.Net.Analysis.Compound
                 this.tracker = tracker;
             }
 
-            protected override PooledCompoundToken CreateCompoundToken(int offset, int length)
+            protected override CompoundToken CreateCompoundToken(int offset, int length)
             {
                 return new TrackingPooledCompoundToken(this, offset, length, tracker);
             }
@@ -626,7 +626,7 @@ namespace Lucene.Net.Analysis.Compound
                 this.tracker = tracker;
             }
 
-            protected override PooledCompoundToken CreateCompoundToken(int offset, int length)
+            protected override CompoundToken CreateCompoundToken(int offset, int length)
             {
                 return new TrackingPooledCompoundToken(this, offset, length, tracker);
             }
