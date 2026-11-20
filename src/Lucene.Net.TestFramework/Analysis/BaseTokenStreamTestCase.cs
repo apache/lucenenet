@@ -232,7 +232,7 @@ namespace Lucene.Net.Analysis
                     Assert.IsTrue(reset, "ClearAttributes() was not called correctly in TokenStream chain");
                     // LUCENENET specific - defer string formatting until after a failure happens
                     if (!output[i].SequenceEqual(termAtt.AsSpan()))
-                        Assert.Fail($"term {i},  output[i] = {output[i].ToString()}, termAtt = {termAtt.ToString()}");
+                        Assert.Fail($"Expected: {output[i].ToString()}\n Actual: {termAtt.ToString()}\nterm {i},  output[i] = {output[i].ToString()}, termAtt = {termAtt.ToString()}");
 
                     if (startOffsets != null)
                     {
