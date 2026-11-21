@@ -188,7 +188,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Adds a category to an NUnit test if it doesn't already exist on the node.
-        /// This ensures that the catgory will only be added once even if called multiple times
+        /// This ensures that the category will only be added once even if called multiple times
         /// on the same node.
         /// </summary>
         /// <param name="test">The test node to add the category to.</param>

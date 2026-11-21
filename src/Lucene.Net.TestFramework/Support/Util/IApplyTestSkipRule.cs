@@ -34,7 +34,7 @@ namespace Lucene.Net.Support.Util
     internal interface IApplyTestSkipRule
     {
         /// <summary>
-        /// A lower priority takes precence over a higher one. Each fixture is ordered
+        /// A lower priority takes precedence over a higher one. Each fixture is ordered
         /// in priority. The first one that returns <c>true</c> wins and the rest are skipped.
         /// </summary>
         int Priority { get; }
