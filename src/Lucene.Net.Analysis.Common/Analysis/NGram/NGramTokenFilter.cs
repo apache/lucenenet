@@ -1,9 +1,6 @@
 // Lucene version compatibility level 4.8.1
-using J2N;
-using J2N.Text;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
@@ -58,7 +55,7 @@ namespace Lucene.Net.Analysis.NGram
 
         private readonly int minGram, maxGram;
 
-        private readonly TextBuilder curTermBuffer = new TextBuilder();
+        private char[] curTermBuffer;
         private int curTermLength;
         private int curCodePointCount;
         private int curGramSize;
@@ -152,7 +149,7 @@ namespace Lucene.Net.Analysis.NGram
         {
             while (true)
             {
-                if (curTermBuffer.Length == 0)
+                if (curTermBuffer is null)
                 {
                     if (!m_input.IncrementToken())
                     {
@@ -160,7 +157,7 @@ namespace Lucene.Net.Analysis.NGram
                     }
                     else
                     {
-                        curTermBuffer.Append(termAtt.AsSpan());
+                        curTermBuffer = (char[])termAtt.Buffer.Clone();
                         curTermLength = termAtt.Length;
                         curCodePointCount = charUtils.CodePointCount(termAtt.AsSpan());
                         curGramSize = minGram;
@@ -186,9 +183,9 @@ namespace Lucene.Net.Analysis.NGram
                     if ((curPos + curGramSize) <= curCodePointCount)
                     {
                         ClearAttributes();
-                        int start = curTermBuffer.AsSpan(0, curTermLength).OffsetByCodePoints(0, curPos);
-                        int end = curTermBuffer.AsSpan(0, curTermLength).OffsetByCodePoints(start, curGramSize);
-                        termAtt.SetEmpty().Append(curTermBuffer.AsSpan(start, end - start));
+                        int start = charUtils.OffsetByCodePoints(curTermBuffer, 0, curTermLength, 0, curPos);
+                        int end = charUtils.OffsetByCodePoints(curTermBuffer, 0, curTermLength, start, curGramSize);
+                        termAtt.CopyBuffer(curTermBuffer, start, end - start);
                         posIncAtt.PositionIncrement = curPosInc;
                         curPosInc = 0;
                         posLenAtt.PositionLength = curPosLen;
@@ -204,7 +201,7 @@ namespace Lucene.Net.Analysis.NGram
                         while (curPos + curGramSize <= curTermLength) // while there is input
                         {
                             ClearAttributes();
-                            termAtt.SetEmpty().Append(curTermBuffer.AsSpan(curPos, curGramSize));
+                            termAtt.CopyBuffer(curTermBuffer, curPos, curGramSize);
                             if (hasIllegalOffsets)
                             {
                                 offsetAtt.SetOffset(tokStart, tokEnd);
@@ -220,15 +217,14 @@ namespace Lucene.Net.Analysis.NGram
                         curPos = 0;
                     }
                 }
-                curTermBuffer.Length = 0;
-
+                curTermBuffer = null;
             }
         }
 
         public override void Reset()
         {
             base.Reset();
-            curTermBuffer.Length = 0;
+            curTermBuffer = null;
         }
     }
 }
