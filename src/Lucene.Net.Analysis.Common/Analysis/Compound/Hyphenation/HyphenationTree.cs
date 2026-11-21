@@ -32,6 +32,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
      * limitations under the License.
      */
 
+    // LUCENENET specific - this class has been restructured from the upstream design to provide methods that
+    // allow the caller to supply pre-allocated memory rather than allocating on each call. While the general
+    // algorithm is the equivalent, a line-by-line comparison will have several differences. It is recommended
+    // that maintenance to this class be performed with care. Using AI is often a good option to preserve both the
+    // memory management while patching the algorthm to match any changes that are introduced upstream.
+
     /// <summary>
     /// This tree structure stores the hyphenation patterns in an efficient way for
     /// fast lookup. It provides the provides the method to hyphenate a word.
