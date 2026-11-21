@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Xml;
 
 namespace Lucene.Net.QueryParsers.Xml
 {
@@ -86,6 +88,111 @@ namespace Lucene.Net.QueryParsers.Xml
         {
             Query q = Parse("TermQuery.xml");
             DumpResults("TermQuery", q, 5);
+        }
+
+        // LUCENENET: Ported from Lucene 7.1 (SOLR-11477)
+        [Test]
+        public void Test_DOCTYPE_TermQueryXML()
+        {
+            ParserException pe = Assert.Throws<ParserException>(() => Parse("DOCTYPE_TermQuery.xml"));
+            AssertExternalEntityResolvingUnsupported(pe);
+        }
+
+        // LUCENENET: Ported from Lucene 7.1 (SOLR-11477)
+        [Test]
+        public void Test_ENTITY_TermQueryXML()
+        {
+            ParserException pe = Assert.Throws<ParserException>(() => Parse("ENTITY_TermQuery.xml"));
+            AssertExternalEntityResolvingUnsupported(pe);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestInternalEntityIsExpanded()
+        {
+            const string xml = "<?xml version=\"1.0\"?><!DOCTYPE TermQuery [<!ENTITY internalTerm \"sumitomo\">]>"
+                + "<TermQuery fieldName=\"contents\">&internalTerm;</TermQuery>";
+            Query q = builder.Parse(new StringReader(xml));
+            Assert.IsInstanceOf<TermQuery>(q);
+            Assert.AreEqual(new Term("contents", "sumitomo"), ((TermQuery)q).Term);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestEntityExpansionIsLimited()
+        {
+            string xml = CreateEntityExpansionXml("<TermQuery fieldName=\"contents\">&lol5;</TermQuery>");
+
+            using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
+            {
+                ParserException pe = Assert.Throws<ParserException>(() => builder.Parse(stream));
+                Assert.IsInstanceOf<XmlException>(pe.InnerException);
+            }
+
+            ParserException pe2 = Assert.Throws<ParserException>(() => builder.Parse(new StringReader(xml)));
+            Assert.IsInstanceOf<XmlException>(pe2.InnerException);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestDOMUtilsEntityExpansionIsLimited()
+        {
+            string xml = CreateEntityExpansionXml("<TermQuery fieldName=\"contents\">&lol5;</TermQuery>");
+
+            using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
+            {
+                Exception e = Assert.Catch(() => DOMUtils.LoadXML(stream));
+                Assert.IsTrue(e.IsRuntimeException());
+                Assert.IsInstanceOf<XmlException>(e.InnerException);
+            }
+
+            Exception e2 = Assert.Catch(() => DOMUtils.LoadXML(new StringReader(xml)));
+            Assert.IsTrue(e2.IsRuntimeException());
+            Assert.IsInstanceOf<XmlException>(e2.InnerException);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestDOMUtilsExternalEntityIsNotResolved()
+        {
+            using Stream xmlStream = typeof(TestParser).getResourceAsStream("ENTITY_TermQuery.xml");
+            Exception e = Assert.Catch(() => DOMUtils.LoadXML(xmlStream));
+            Assert.IsTrue(e.IsRuntimeException());
+            AssertExternalEntityResolvingUnsupported(e);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestBoostingTermQueryEntityExpansionIsLimited() // #1531
+        {
+            string xml = CreateEntityExpansionXml("<BoostingTermQuery fieldName=\"contents\">&lol5;</BoostingTermQuery>");
+
+            using Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
+            ParserException pe = Assert.Throws<ParserException>(() => builder.Parse(stream));
+            Assert.IsInstanceOf<XmlException>(pe.InnerException);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestExternalFileEntityIsNotResolved() // #1531
+        {
+            const string secret = "lucenenet-secret-1531";
+            FileInfo secretFile = CreateTempFile("secret", ".txt");
+            File.WriteAllText(secretFile.FullName, secret);
+            string xml = "<?xml version=\"1.0\"?>"
+                + "<!DOCTYPE TermQuery [<!ENTITY secret SYSTEM \"" + new Uri(secretFile.FullName).AbsoluteUri + "\">]>"
+                + "<TermQuery fieldName=\"contents\">&secret;</TermQuery>";
+
+            using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
+            {
+                ParserException pe = Assert.Throws<ParserException>(() => builder.Parse(stream));
+                AssertExternalEntityResolvingUnsupported(pe);
+                StringAssert.DoesNotContain(secret, pe.ToString());
+            }
+
+            ParserException pe2 = Assert.Throws<ParserException>(() => builder.Parse(new StringReader(xml)));
+            AssertExternalEntityResolvingUnsupported(pe2);
+            StringAssert.DoesNotContain(secret, pe2.ToString());
         }
 
         [Test]
@@ -250,6 +357,35 @@ namespace Lucene.Net.QueryParsers.Xml
             using Stream xmlStream = typeof(TestParser).getResourceAsStream(xmlFileName);
             Query result = builder.Parse(xmlStream);
             return result;
+        }
+
+        // LUCENENET specific - builds an XML document with exponentially expanding internal entities
+        // (10^5 = 100,000 "lol"s, 300,000 characters), which exceeds the entity expansion limit
+        private static string CreateEntityExpansionXml(string body)
+        {
+            return "<?xml version=\"1.0\"?>"
+                + "<!DOCTYPE TermQuery ["
+                + "<!ENTITY lol \"lol\">"
+                + "<!ENTITY lol1 \"&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;\">"
+                + "<!ENTITY lol2 \"&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;\">"
+                + "<!ENTITY lol3 \"&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;\">"
+                + "<!ENTITY lol4 \"&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;\">"
+                + "<!ENTITY lol5 \"&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;\">"
+                + "]>"
+                + body;
+        }
+
+        // LUCENENET specific - the "External Entity resolving unsupported" exception may be wrapped by XmlReader
+        internal static void AssertExternalEntityResolvingUnsupported(Exception e)
+        {
+            for (Exception cause = e; cause != null; cause = cause.InnerException)
+            {
+                if (cause.Message.StartsWith("External Entity resolving unsupported:", StringComparison.Ordinal))
+                {
+                    return;
+                }
+            }
+            Assert.Fail("Expected an 'External Entity resolving unsupported' exception, but got: " + e);
         }
 
         private void DumpResults(String qType, Query q, int numDocs)
