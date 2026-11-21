@@ -227,7 +227,7 @@ namespace Lucene.Net.Util
 
             bool IApplyTestSkipRule.ApplyTestSkipRule(NUnit.Framework.Internal.Test test)
             {
-                if (!TestNightly && !TestWeekly) // Weekly attribute takes 
+                if (!TestNightly && !TestWeekly) // Weekly attribute takes priority over Nigthly if both are applied and enabled
                 {
                     test.RunState = RunState.Skipped;
                     test.Properties.Set(PropertyNames.SkipReason, SKIP_REASON);
