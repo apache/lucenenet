@@ -356,7 +356,22 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return Math.Max(0, (m_vspace.Length - k - 1) * 2);
         }
 
-
+        /// <summary>
+        /// Attempts to get the values for the specified packed values offset and write
+        /// them to the provided destination buffer.
+        /// </summary>
+        /// <param name="k">The offset into the packed values buffer where the encoded interletter values begin.</param>
+        /// <param name="destination">Upon successful return, contains the value specified by <paramref name="k"/>.</param>
+        /// <param name="bytesWritten">The number of bytes written to <paramref name="destination"/>.</param>
+        /// <returns><c>true</c> if the bytes were successfully written; <c>false</c> if the
+        /// <paramref name="destination"/> was not long enough to hold the output.</returns>
+        /// <remarks>
+        /// Use the <see cref="GetMaxValueByteCount(int)"/> method to determine how much to allocate for a specific
+        /// packed values offset. However, if the goal is to search the whole <see cref="HyphenationTree"/>, allocating
+        /// a buffer using <see cref="MaxValueByteCount"/> will ensure every repeated call to this method will succeed.
+        /// </remarks>
+        /// <seealso cref="GetMaxValueByteCount(int)"/>
+        /// <seealso cref="MaxValueByteCount"/>
         // LUCENENET specific overload to avoid allocating on each call
         protected virtual bool TryGetValues(int k, Span<byte> destination, out int bytesWritten)
         {
