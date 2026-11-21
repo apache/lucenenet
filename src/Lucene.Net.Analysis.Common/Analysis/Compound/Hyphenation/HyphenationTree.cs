@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     // allow the caller to supply pre-allocated memory rather than allocating on each call. While the general
     // algorithm is the equivalent, a line-by-line comparison will have several differences. It is recommended
     // that maintenance to this class be performed with care. Using AI is often a good option to preserve both the
-    // memory management while patching the algorthm to match any changes that are introduced upstream.
+    // memory management while patching the algorithm to match any changes that are introduced upstream.
 
     /// <summary>
     /// This tree structure stores the hyphenation patterns in an efficient way for
