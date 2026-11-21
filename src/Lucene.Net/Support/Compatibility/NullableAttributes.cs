@@ -140,3 +140,37 @@ namespace System.Diagnostics.CodeAnalysis
     }
 }
 #endif
+
+// These didn't exist before .NET 5.0
+#if NETSTANDARD1_3 || NETSTANDARD2_0 || NETSTANDARD2_1 || NETCOREAPP2_0 || NETCOREAPP2_1 || NETCOREAPP2_2 || NETCOREAPP3_0 || NETCOREAPP3_1 || NET40 || NET45 || NET451 || NET452 || NET6 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48 || NET481
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
+#if INTERNAL_NULLABLE_ATTRIBUTES
+    internal
+#else
+    public
+#endif
+        sealed class MemberNotNullAttribute : Attribute
+    {
+        /// <summary>
+        /// Initializes the attribute with a field or property member.
+        /// </summary>
+        /// <param name="member">
+        /// The field or property member that is promised to be non-null.
+        /// </param>
+        public MemberNotNullAttribute(string member) => Members = new string[] { member };
+
+        /// <summary>
+        /// Initializes the attribute with the list of field and property members.
+        /// </summary>
+        /// <param name="members">
+        /// The list of field and property members that are promised to be non-null.
+        /// </param>
+        public MemberNotNullAttribute(params string[] members) => Members = members;
+
+        /// <summary>Gets the condition parameter value.</summary>
+        public string[] Members { get; }
+    }
+}
+#endif

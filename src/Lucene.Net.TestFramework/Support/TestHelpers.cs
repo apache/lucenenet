@@ -13,7 +13,7 @@ using System.Text;
 
 namespace Lucene.Net
 {
-    public static class TestHelpers
+    internal static class TestHelpers
     {
         public static void Validate<T>(this Span<T> span, params T[] expected) where T : struct, IEquatable<T>
         {

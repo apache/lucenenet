@@ -1,12 +1,19 @@
 // Lucene version compatibility level 4.8.1
 using J2N;
+using J2N.Text;
+using Lucene.Net.Support.Buffers;
+using Lucene.Net.Text;
+using Lucene.Net.Util;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -38,15 +45,15 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     {
         internal int currElement;
 
-        internal IPatternConsumer consumer;
+        internal IPatternConsumer? consumer;
 
-        internal readonly StringBuilder token; // LUCENENET: marked readonly
+        internal readonly TextBuilder token; // LUCENENET: marked readonly
 
-        internal IList<object> exception;
+        internal IList<object>? exception;
 
         internal char hyphenChar;
 
-        internal string errMsg;
+        internal string? errMsg;
 
         internal const int ELEM_CLASSES = 1;
 
@@ -58,7 +65,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public PatternParser()
         {
-            token = new StringBuilder();
+            token = new TextBuilder();
             hyphenChar = '-'; // default
         }
 
@@ -68,7 +75,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             this.consumer = consumer;
         }
 
-        public virtual IPatternConsumer Consumer
+        public virtual IPatternConsumer? Consumer
         {
             get => this.consumer; // LUCENENET NOTE: Added getter per MSDN guidelines
             set => this.consumer = value;
@@ -101,7 +108,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="file">  a <see cref="FileInfo"/> object representing the file  </param>
         /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(FileInfo file)
-            => Parse(file.FullName, Encoding.UTF8);
+            => Parse(file?.FullName ?? throw new ArgumentNullException(nameof(file)), Encoding.UTF8);
 
         /// <summary>
         /// Parses a hyphenation pattern file.
@@ -110,7 +117,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="encoding">The character encoding to use</param>
         /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(FileInfo file, Encoding encoding)
-            => Parse(file.FullName, encoding);
+            => Parse(file?.FullName ?? throw new ArgumentNullException(nameof(file)), encoding);
 
         /// <summary>
         /// Parses a hyphenation pattern file.
@@ -138,11 +145,14 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(XmlReader source)
         {
-            source.MoveToContent();
-            while (source.Read())
+            if (source.MoveToContent() == XmlNodeType.None)
+                return;
+
+            do
             {
                 ParseNode(source);
             }
+            while (source.Read());
         }
 
         private void ParseNode(XmlReader node)
@@ -154,10 +164,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
                     // Element start
                     uri = node.NamespaceURI;
-                    name = node.Name;
+                    name = node.LocalName;
+                    raw = node.Name;
                     bool isEmptyElement = node.IsEmptyElement;
                     var attributes = GetAttributes(node);
-                    raw = string.Empty; // node.ReadOuterXml(); - not used, but was messing with the node pointer
 
                     this.StartElement(uri, name, raw, attributes);
                     if (isEmptyElement)
@@ -168,13 +178,13 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
                 case XmlNodeType.Text:
 
-                    this.Characters(node.Value.ToCharArray(), 0, node.Value.Length);
+                    this.Characters(node.Value);
                     break;
 
                 case XmlNodeType.EndElement:
                     uri = node.NamespaceURI;
-                    name = node.Name;
-                    raw = string.Empty; // node.ReadOuterXml(); - not used, but was messing with the node pointer
+                    name = node.LocalName;
+                    raw = node.Name;
 
                     // Element end
                     this.EndElement(uri, name, raw);
@@ -208,158 +218,335 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return result;
         }
 
-        protected virtual string ReadToken(StringBuilder chars)
+        // LUCENENET specific - eliminated the ReadToken() method because it was doing too many responsibilities.
+        // It also exposed System.Text.StringBuilder on the public API and had a weird side-effect of deleting
+        // chars from the input as it processed them.
+        //
+        // ProcessToken() was added to replace it, but is now called in both cases where token processing needs to happen:
+        //
+        // 1. A whitespace delimiter is encountered in Characters(). The token is complete even though the XML element has not ended.
+        // 2. The XML element ends while a token is still buffered. The token is complete even though no trailing whitespace was encountered.
+        //
+        // So, ProcessToken() is an improved "event" that a subclass may be interested in that doesn't leave out any XML element endings
+        // and provides a more sensible read-only token parameter that doesn't change when this ProcessToken() is called.
+
+        /// <summary>
+        /// Processes a completed token.
+        /// </summary>
+        /// <param name="token">
+        /// The completed token. The span is valid only for the duration of this call
+        /// and must not be retained.
+        /// </param>
+        protected virtual void ProcessToken(ReadOnlySpan<char> token)
         {
-            string word;
-            bool space = false;
-            int i;
-            for (i = 0; i < chars.Length; i++)
+            IPatternConsumer consumer = this.consumer ?? throw new InvalidOperationException("A pattern consumer must be assigned before parsing.");
+
+            switch (currElement)
             {
-                if (char.IsWhiteSpace(chars[i]))
-                {
-                    space = true;
-                }
-                else
-                {
+                case ELEM_CLASSES:
+                    consumer.AddClass(token);
                     break;
-                }
-            }
-            if (space)
-            {
-                // chars.delete(0,i);
-                for (int countr = i; countr < chars.Length; countr++)
-                {
-                    chars[countr - i] = chars[countr];
-                }
-                chars.Length = chars.Length - i;
-                if (token.Length > 0)
-                {
-                    word = token.ToString();
-                    token.Length = 0;
-                    return word;
-                }
-            }
-            space = false;
-            for (i = 0; i < chars.Length; i++)
-            {
-                if (char.IsWhiteSpace(chars[i]))
-                {
-                    space = true;
+
+                case ELEM_EXCEPTIONS:
+                    IList<object> exception = this.exception ?? throw new InvalidOperationException("An exception list must be initialized before processing exception tokens.");
+
+                    exception.Add(token.ToString());
+                    exception = NormalizeException(exception);
+                    this.exception = exception;
+
+                    // LUCENENET specific - removed allocations by using stack/pooled memory for maximum reuse
+                    int exceptionBufferLength = GetExceptionWordCharCount(exception);
+                    char[]? arrayToReturnToPool = null;
+                    Span<char> exceptionWord = exceptionBufferLength * sizeof(char) <= Constants.MaxStackByteLimit
+                        ? stackalloc char[exceptionBufferLength]
+                        : (arrayToReturnToPool = ArrayPool<char>.Shared.Rent(exceptionBufferLength));
+                    try
+                    {
+                        if (!TryGetExceptionWord(exception, exceptionWord, out int exceptionWordLength))
+                            throw new InvalidOperationException("Exception Word buffer was not large enough for the result"); // Should never happen
+                        consumer.AddException(exceptionWord.Slice(0, exceptionWordLength), new JCG.List<object>(exception));
+                        exception.Clear();
+                    }
+                    finally
+                    {
+                        ArrayPool<char>.Shared.ReturnIfNotNull(arrayToReturnToPool);
+                    }
                     break;
-                }
-            }
-            token.Append(chars.ToString(0, i - 0));
-            // chars.delete(0,i);
-            for (int countr = i; countr < chars.Length; countr++)
-            {
-                chars[countr - i] = chars[countr];
-            }
-            chars.Length = chars.Length - i;
-            if (space)
-            {
-                word = token.ToString();
-                token.Length = 0;
-                return word;
-            }
-            token.Append(chars); // LUCENENET: CA1830: Prefer strongly-typed Append and Insert method overloads on StringBuilder
-            return null;
-        }
 
-        protected static string GetPattern(string word)
-        {
-            StringBuilder pat = new StringBuilder();
-            int len = word.Length;
-            for (int i = 0; i < len; i++)
-            {
-                if (!char.IsDigit(word[i]))
-                {
-                    pat.Append(word[i]);
-                }
-            }
-            return pat.ToString();
-        }
-
-        protected virtual IList<object> NormalizeException<T1>(IList<T1> ex)
-        {
-            IList<object> res = new JCG.List<object>();
-            for (int i = 0; i < ex.Count; i++)
-            {
-                object item = ex[i];
-                if (item is string str)
-                {
-                    StringBuilder buf = new StringBuilder();
-                    for (int j = 0; j < str.Length; j++)
+                case ELEM_PATTERNS:
+                    // LUCENENET specific - removed allocations by using stack/pooled memory for maximum reuse
+                    int patternBufferLength = GetMaxPatternCharCount(token);
+                    int valuesBufferLength = GetMaxInterletterValuesCharCount(token);
+                    char[]? patternArrayToReturnToPool = null;
+                    char[]? valuesArrayToReturnToPool = null;
+                    Span<char> pattern = patternBufferLength * sizeof(char) <= Constants.MaxStackByteLimit
+                        ? stackalloc char[patternBufferLength]
+                        : (patternArrayToReturnToPool = ArrayPool<char>.Shared.Rent(patternBufferLength));
+                    Span<char> values = valuesBufferLength * sizeof(char) <= Constants.MaxStackByteLimit
+                        ? stackalloc char[valuesBufferLength]
+                        : (valuesArrayToReturnToPool = ArrayPool<char>.Shared.Rent(valuesBufferLength));
+                    try
                     {
-                        char c = str[j];
-                        if (c != hyphenChar)
-                        {
-                            buf.Append(c);
-                        }
-                        else
-                        {
-                            res.Add(buf.ToString());
-                            buf.Length = 0;
-                            // LUCENENET: commented out unnecessary array allocation
-                            //char[] h = new char[1];
-                            //h[0] = hyphenChar;
-                            // we use here hyphenChar which is not necessarily
-                            // the one to be printed
-                            res.Add(new Hyphen(new string(hyphenChar, 1), null, null));
-                        }
+                        if (!TryGetPattern(token, pattern, out int patternLength))
+                            throw new InvalidOperationException("Pattern buffer was not large enough for the result"); // Should never happen
+                        if (!TryGetInterletterValues(token, values, out int valuesLength))
+                            throw new InvalidOperationException("Interletter Values buffer was not large enough for the result"); // Should never happen
+                        consumer.AddPattern(pattern.Slice(0, patternLength), values.Slice(0, valuesLength));
                     }
-                    if (buf.Length > 0)
+                    finally
                     {
-                        res.Add(buf.ToString());
+                        ArrayPool<char>.Shared.ReturnIfNotNull(patternArrayToReturnToPool);
+                        ArrayPool<char>.Shared.ReturnIfNotNull(valuesArrayToReturnToPool);
                     }
-                }
-                else
-                {
-                    res.Add(item);
-                }
+                    break;
             }
-            return res;
         }
 
-        protected virtual string GetExceptionWord<T1>(IList<T1> ex)
+        /// <summary>
+        /// Gets the maximum length of the pattern produced by
+        /// <see cref="TryGetPattern(ReadOnlySpan{char}, Span{char}, out int)"/>.
+        /// </summary>
+        /// <param name="word">The word to process.</param>
+        /// <returns>The maximum number of characters required for the resulting pattern.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static int GetMaxPatternCharCount(ReadOnlySpan<char> word)
         {
-            StringBuilder res = new StringBuilder();
-            for (int i = 0; i < ex.Count; i++)
-            {
-                object item = ex[i];
-                if (item is string str)
-                {
-                    res.Append(str);
-                }
-                else
-                {
-                    if (((Hyphen)item).NoBreak != null)
-                    {
-                        res.Append(((Hyphen)item).NoBreak);
-                    }
-                }
-            }
-            return res.ToString();
+            return word.Length;
         }
 
-        protected static string GetInterletterValues(string pat)
+        /// <summary>
+        /// Attempts to extract the pattern from a word, omitting all digit characters.
+        /// </summary>
+        /// <param name="word">The word to process.</param>
+        /// <param name="destination">The buffer into which the pattern is written.</param>
+        /// <param name="charsWritten">When this method returns, contains the number of characters
+        /// written to <paramref name="destination"/>, or zero if the destination was too small.</param>
+        /// <returns><c>true</c> if the pattern was successfully written; otherwise, <c>false</c>.</returns>
+        protected static bool TryGetPattern(ReadOnlySpan<char> word, Span<char> destination, out int charsWritten)
         {
-            StringBuilder il = new StringBuilder();
-            string word = pat + "a"; // add dummy letter to serve as sentinel
-            int len = word.Length;
-            for (int i = 0; i < len; i++)
+            charsWritten = 0;
+
+            for (int i = 0; i < word.Length; i++)
             {
                 char c = word[i];
+
+                if (!char.IsDigit(c))
+                {
+                    if (charsWritten >= destination.Length)
+                    {
+                        charsWritten = 0;
+                        return false;
+                    }
+
+                    destination[charsWritten++] = c;
+                }
+            }
+
+            return true;
+        }
+
+        protected virtual IList<object> NormalizeException<T>(IList<T> ex)
+        {
+            ValueStringBuilder buf = new(stackalloc char[128]);
+            try
+            {
+                IList<object> res = new JCG.List<object>();
+                for (int i = 0; i < ex.Count; i++)
+                {
+                    object item = ex[i] ?? throw new InvalidCastException("An element of ex cannot be null.");
+                    if (item is string str)
+                    {
+                        // LUCENENET: Moved string builder outside of the loop so we can reuse it.
+                        buf.Length = 0;
+                        for (int j = 0; j < str.Length; j++)
+                        {
+                            char c = str[j];
+                            if (c != hyphenChar)
+                            {
+                                buf.Append(c);
+                            }
+                            else
+                            {
+                                res.Add(buf.ToString());
+                                buf.Length = 0;
+                                // LUCENENET: commented out unnecessary array allocation
+                                //char[] h = new char[1];
+                                //h[0] = hyphenChar;
+                                // we use here hyphenChar which is not necessarily
+                                // the one to be printed
+                                res.Add(new Hyphen(new string(hyphenChar, 1), null, null));
+                            }
+                        }
+                        if (buf.Length > 0)
+                        {
+                            res.Add(buf.ToString());
+                        }
+                    }
+                    else
+                    {
+                        res.Add(item);
+                    }
+                }
+                return res;
+            }
+            finally
+            {
+                buf.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Gets the exact length of the exception word produced by <see cref="TryGetExceptionWord"/>.
+        /// </summary>
+        /// <param name="ex">The exception elements.</param>
+        /// <returns>The number of characters required to contain the resulting exception word.</returns>
+        protected virtual int GetExceptionWordCharCount<T>(IList<T> ex)
+        {
+            int length = 0;
+
+            for (int i = 0; i < ex.Count; i++)
+            {
+                T item = ex[i];
+
+                if (item is string text)
+                {
+                    length = checked(length + text.Length);
+                }
+                else if (item is Hyphen hyphen)
+                {
+                    string? noBreak = hyphen.NoBreak;
+
+                    if (noBreak != null)
+                    {
+                        length = checked(length + noBreak.Length);
+                    }
+                }
+                else
+                {
+                    throw new InvalidCastException("An element of ex is not supported. Subclass GetExceptionWordCharCount if types other than string and Hyphen are required.");
+                }
+            }
+
+            return length;
+        }
+
+        /// <summary>
+        /// Attempts to construct the exception word from its elements.
+        /// </summary>
+        /// <param name="ex">The exception elements.</param>
+        /// <param name="destination">The buffer into which the exception word is written.</param>
+        /// <param name="charsWritten">When this method returns, contains the number of characters
+        /// written to <paramref name="destination"/>, or zero if the destination was too small.</param>
+        /// <returns><c>true</c> if the exception word was successfully written; otherwise, <c>false</c>.</returns>
+        protected virtual bool TryGetExceptionWord<T>(IList<T> ex, Span<char> destination, out int charsWritten)
+        {
+            charsWritten = 0;
+
+            for (int i = 0; i < ex.Count; i++)
+            {
+                T item = ex[i];
+                string? text;
+
+                if (item is string str)
+                {
+                    text = str;
+                }
+                else if (item is Hyphen hyphen)
+                {
+                    text = hyphen.NoBreak;
+
+                    if (text == null)
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    throw new InvalidCastException("An element of ex is not supported. Subclass TryGetExceptionWord if types other than string and Hyphen are required.");
+                }
+
+                if (text.Length > destination.Length - charsWritten)
+                {
+                    charsWritten = 0;
+                    return false;
+                }
+
+                text.AsSpan().CopyTo(destination.Slice(charsWritten));
+                charsWritten += text.Length;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Gets the maximum length of the interletter values produced by
+        /// <see cref="TryGetInterletterValues(ReadOnlySpan{char}, Span{char}, out int)"/>.
+        /// </summary>
+        /// <param name="pat">The pattern to process.</param>
+        /// <returns>The maximum number of characters required for the resulting interletter values.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static int GetMaxInterletterValuesCharCount(ReadOnlySpan<char> pat)
+        {
+            return pat.Length == int.MaxValue ? int.MaxValue : pat.Length + 1;
+        }
+
+        /// <summary>
+        /// Attempts to extract the interletter values from a pattern.
+        /// </summary>
+        /// <param name="pat">The pattern to process.</param>
+        /// <param name="destination">The buffer into which the interletter values are written.</param>
+        /// <param name="charsWritten">When this method returns, contains the number of characters
+        /// written to <paramref name="destination"/>, or zero if the destination was too small.</param>
+        /// <returns><c>true</c> if the interletter values were successfully written; otherwise, <c>false</c>.</returns>
+        protected static bool TryGetInterletterValues(ReadOnlySpan<char> pat, Span<char> destination, out int charsWritten)
+        {
+            charsWritten = 0;
+
+            int i = 0;
+
+            while (i < pat.Length)
+            {
+                char c = pat[i++];
+
                 if (char.IsDigit(c))
                 {
-                    il.Append(c);
+                    if (charsWritten >= destination.Length)
+                    {
+                        charsWritten = 0;
+                        return false;
+                    }
+
+                    destination[charsWritten++] = c;
+
+                    // Skip the character following the digit.
                     i++;
                 }
                 else
                 {
-                    il.Append('0');
+                    if (charsWritten >= destination.Length)
+                    {
+                        charsWritten = 0;
+                        return false;
+                    }
+
+                    destination[charsWritten++] = '0';
                 }
             }
-            return il.ToString();
+
+            // Process the virtual sentinel ('a'), unless it was consumed by
+            // a digit at the end of the input.
+            if (i == pat.Length)
+            {
+                if (charsWritten >= destination.Length)
+                {
+                    charsWritten = 0;
+                    return false;
+                }
+
+                destination[charsWritten++] = '0';
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -371,11 +558,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         {
             internal const string DTD_FILENAME = "hyphenation.dtd";
 
-            public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
+            public override object GetEntity(Uri absoluteUri, string? role, Type? ofObjectToReturn)
             {
-                if (DTD_FILENAME.Equals(absoluteUri?.Segments.LastOrDefault(), StringComparison.Ordinal))
+                if (DTD_FILENAME.Equals(absoluteUri.Segments.LastOrDefault(), StringComparison.Ordinal))
                 {
-                    return typeof(PatternParser).FindAndGetManifestResourceStream(DTD_FILENAME);
+                    return typeof(PatternParser).FindAndGetManifestResourceStream(DTD_FILENAME)
+                        ?? throw new InvalidOperationException($"Embedded resource '{DTD_FILENAME}' was not found.");
                 }
 
                 // Only the embedded hyphenation.dtd is a valid external reference. Reject anything
@@ -396,15 +584,15 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// (even when the element is empty). All of the element's content will be reported,
         /// in order, before the corresponding endElement event.
         /// </summary>
-        /// <param name="uri">the Namespace URI, or the empty string if the element has no Namespace URI or if Namespace processing is not being performed</param>
-        /// <param name="local">the local name (without prefix), or the empty string if Namespace processing is not being performed</param>
-        /// <param name="raw"></param>
-        /// <param name="attrs"> the attributes attached to the element. If there are no attributes, it shall be an empty Attributes object. The value of this object after startElement returns is undefined</param>
+        /// /// <param name="uri">The namespace URI of the element, or an empty string if the element has no namespace URI or if namespace processing is not being performed.</param>
+        /// <param name="local">The local name of the element, without a namespace prefix, or an empty string if namespace processing is not being performed.</param>
+        /// <param name="raw">The qualified name of the element, including its namespace prefix, if one is present. If the element has no prefix, this is the same as <paramref name="local"/>.</param>
+        /// <param name="attrs"> the attributes attached to the element. If there are no attributes, it shall be an empty Attributes object. The value of this object after startElement returns is undefined.</param>
         public virtual void StartElement(string uri, string local, string raw, IDictionary<string, string> attrs)
         {
             if (local.Equals("hyphen-char", StringComparison.Ordinal))
             {
-                if (attrs.TryGetValue("value", out string h) && h != null && h.Length == 1)
+                if (attrs.TryGetValue("value", out string? h) && h != null && h.Length == 1)
                 {
                     hyphenChar = h[0];
                 }
@@ -424,6 +612,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
             else if (local.Equals("hyphen", StringComparison.Ordinal))
             {
+                IList<object> exception = this.exception ?? throw new InvalidOperationException("A hyphen element can only occur inside an exceptions element.");
+
                 if (token.Length > 0)
                 {
                     exception.Add(token.ToString());
@@ -441,34 +631,27 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// there will be a corresponding <see cref="StartElement"/> event for every
         /// <see cref="EndElement"/> event (even when the element is empty).
         /// </summary>
-        /// <param name="uri">the Namespace URI, or the empty string if the element has no Namespace URI or if Namespace processing is not being performed</param>
-        /// <param name="local">the local name (without prefix), or the empty string if Namespace processing is not being performed</param>
-        /// <param name="raw"></param>
+        /// /// <param name="uri">The namespace URI of the element, or an empty string if the element has no namespace URI or if namespace processing is not being performed.</param>
+        /// <param name="local">The local name of the element, without a namespace prefix, or an empty string if namespace processing is not being performed.</param>
+        /// <param name="raw">The qualified name of the element, including its namespace prefix, if one is present. If the element has no prefix, this is the same as <paramref name="local"/>.</param>
         public virtual void EndElement(string uri, string local, string raw)
         {
+            // LUCENENET specific - moved processing logic to a shared
+            // ProcessToken() method that is caleld both here and by Characters().
+            // This provides a more sensible hook for subclasses to tie into
+            // than ReadToken().
             if (token.Length > 0)
             {
-                string word = token.ToString();
-                switch (currElement)
-                {
-                    case ELEM_CLASSES:
-                        consumer.AddClass(word);
-                        break;
-                    case ELEM_EXCEPTIONS:
-                        exception.Add(word);
-                        exception = NormalizeException(exception);
-                        consumer.AddException(GetExceptionWord(exception), new JCG.List<object>(exception));
-                        break;
-                    case ELEM_PATTERNS:
-                        consumer.AddPattern(GetPattern(word), GetInterletterValues(word));
-                        break;
-                    case ELEM_HYPHEN:
-                        // nothing to do
-                        break;
-                }
                 if (currElement != ELEM_HYPHEN)
                 {
-                    token.Length = 0;
+                    try
+                    {
+                        ProcessToken(token);
+                    }
+                    finally
+                    {
+                        token.Length = 0;
+                    }
                 }
             }
             if (currElement == ELEM_HYPHEN)
@@ -481,6 +664,15 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
         }
 
+        // LUCENENET design notes:
+        // 1.   tokenLength can be zero when the input begins with whitespace.In that case, an already accumulated
+        //      token is processed; otherwise, the whitespace is simply skipped.
+        // 2.   Only one delimiter is consumed per iteration.Consecutive whitespace is handled by subsequent iterations.
+        // 3.   If the input ends without whitespace, the partial token remains in token for the next callback.
+        // 4.   The finally ensures the builder is cleared even if the consumer throws.This preserves the original
+        //      behavior, where ReadToken() cleared the token before returning it to the caller.
+        // 5.   The span passed to ProcessToken() is borrowed from token.It must not be retained after ProcessToken() returns.
+
         /// <summary>
         /// Receive notification of character data.
         /// <para/>
@@ -488,36 +680,50 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// return all contiguous character data in a single chunk, or they may split it into
         /// several chunks; however, all of the characters in any single event must come from
         /// the same external entity so that the Locator provides useful information.
-        /// <para/>
-        /// The application must not attempt to read from the array outside of the specified range.
         /// </summary>
-        /// <param name="ch"></param>
-        /// <param name="start"></param>
-        /// <param name="length"></param>
-        public virtual void Characters(char[] ch, int start, int length)
+        /// <param name="chars">The character data to process.</param>
+        public virtual void Characters(ReadOnlySpan<char> chars)
         {
-            StringBuilder chars = new StringBuilder(length);
-            chars.Append(ch, start, length);
-            string word = ReadToken(chars);
-            while (word != null)
+            while (!chars.IsEmpty)
             {
-                // System.out.println("\"" + word + "\"");
-                switch (currElement)
+                int tokenLength = 0;
+
+                // Find the next whitespace character, which terminates the current token.
+                while (tokenLength < chars.Length && !char.IsWhiteSpace(chars[tokenLength]))
                 {
-                    case ELEM_CLASSES:
-                        consumer.AddClass(word);
-                        break;
-                    case ELEM_EXCEPTIONS:
-                        exception.Add(word);
-                        exception = NormalizeException(exception);
-                        consumer.AddException(GetExceptionWord(exception), new JCG.List<object>(exception));
-                        exception.Clear();
-                        break;
-                    case ELEM_PATTERNS:
-                        consumer.AddPattern(GetPattern(word), GetInterletterValues(word));
-                        break;
+                    tokenLength++;
                 }
-                word = ReadToken(chars);
+
+                // Append the next portion of the token. This also handles tokens split
+                // across multiple Characters() calls.
+                token.Append(chars.Slice(0, tokenLength));
+
+                if (tokenLength < chars.Length)
+                {
+                    // A delimiter was found, so the accumulated token is complete.
+                    // Process it before clearing the builder because ProcessToken()
+                    // consumes the span synchronously.
+                    try
+                    {
+                        if (token.Length > 0)
+                        {
+                            ProcessToken(token);
+                        }
+                    }
+                    finally
+                    {
+                        token.Length = 0;
+                    }
+
+                    // Consume the token and its terminating whitespace character.
+                    chars = chars.Slice(tokenLength + 1);
+                }
+                else
+                {
+                    // No delimiter was found. Keep the accumulated token for the next
+                    // Characters() call or the corresponding EndElement() call.
+                    break;
+                }
             }
         }
     }

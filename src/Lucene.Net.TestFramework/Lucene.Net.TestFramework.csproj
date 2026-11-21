@@ -37,7 +37,7 @@
     <PackageTags>$(PackageTags);testframework;test;framework;nunit</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 
-
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
     <NoWarn Label="Collection initialization can be simplified">$(NoWarn);IDE0028</NoWarn>
   </PropertyGroup>

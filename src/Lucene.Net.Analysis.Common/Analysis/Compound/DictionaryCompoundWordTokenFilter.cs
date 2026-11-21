@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Compound
 {
@@ -96,14 +97,14 @@ namespace Lucene.Net.Analysis.Compound
             int len = m_termAtt.Length;
             for (int i = 0; i <= len - this.m_minSubwordSize; ++i)
             {
-                CompoundToken longestMatchToken = null;
+                CompoundToken? longestMatchToken = null;
                 for (int j = this.m_minSubwordSize; j <= this.m_maxSubwordSize; ++j)
                 {
                     if (i + j > len)
                     {
                         break;
                     }
-                    if (m_dictionary.Contains(m_termAtt.AsSpan(i, j)))
+                    if (m_dictionary!.Contains(m_termAtt.AsSpan(i, j)))
                     {
                         if (this.m_onlyLongestMatch)
                         {
@@ -111,17 +112,19 @@ namespace Lucene.Net.Analysis.Compound
                             {
                                 if (longestMatchToken.Text.Length < j)
                                 {
-                                    longestMatchToken = new CompoundToken(this, i, j);
+                                    // LUCENENET specific - ensure token disposal
+                                    DisposeToken(longestMatchToken);
+                                    longestMatchToken = CreateCompoundToken(i, j);
                                 }
                             }
                             else
                             {
-                                longestMatchToken = new CompoundToken(this, i, j);
+                                longestMatchToken = CreateCompoundToken(i, j);
                             }
                         }
                         else
                         {
-                            m_tokens.Enqueue(new CompoundToken(this, i, j));
+                            m_tokens.Enqueue(CreateCompoundToken(i, j));
                         }
                     }
                 }
