@@ -2,7 +2,7 @@ using Lucene.Net.Util;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 
-namespace Lucene.Net.Support.Util
+namespace Lucene.Net.Util
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

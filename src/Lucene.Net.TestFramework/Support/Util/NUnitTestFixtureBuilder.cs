@@ -1,6 +1,5 @@
 // Based on: https://github.com/nunit/nunit/blob/v3.14.0/src/NUnitFramework/framework/Internal/Builders/NUnitTestFixtureBuilder.cs
 
-using Lucene.Net.Support.Util;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
