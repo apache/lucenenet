@@ -134,7 +134,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         {
             int index = n;
             int len = array.Length;
-            if (n + size >= len)
+            if ((uint)n + (uint)size >= (uint)len) // LUCENENET: safe for int overflow
             {
                 byte[] aux = new byte[len + blockSize];
                 Arrays.Copy(array, 0, aux, 0, len);

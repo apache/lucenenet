@@ -184,7 +184,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         public virtual void Insert(ReadOnlySpan<char> key, int start, char val)
         {
             int len = StrLen(key) + 1;
-            if (m_freenode + len > m_eq.Length)
+            if (m_freenode + (uint)len > (uint)m_eq.Length) // LUCENENET: safe for int overflow
             {
                 RedimNodeArrays(m_eq.Length + BLOCK_SIZE);
             }
