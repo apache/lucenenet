@@ -4,6 +4,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.IO;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using RandomizedTesting.Generators;
@@ -116,6 +117,11 @@ namespace Lucene.Net.Analysis
         //     lastStartOffset)
         public static void AssertTokenStreamContents(TokenStream ts, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, int? finalOffset, int? finalPosInc, bool[] keywordAtts, bool offsetsAreCorrect, byte[][] payloads)
         {
+            AssertTokenStreamContents(ts, new ValueStringArray(output), startOffsets, endOffsets, types, posIncrements, posLengths, finalOffset, finalPosInc, keywordAtts, offsetsAreCorrect, payloads);
+        }
+
+        private static void AssertTokenStreamContents(TokenStream ts, ValueStringArray output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, int? finalOffset, int? finalPosInc, bool[] keywordAtts, bool offsetsAreCorrect, byte[][] payloads)
+        {
             // LUCENENET: Bug fix: NUnit throws an exception when something fails.
             // This causes Close() to be skipped and it pollutes other tests indicating false negatives
             // if there are open file handles. We added this try-finally block to fix this, but we must
@@ -124,7 +130,7 @@ namespace Lucene.Net.Analysis
             bool success = false;
             try
             {
-                Assert.IsNotNull(output);
+                Assert.IsFalse(output.IsNull); // LUCENENET: Assert that the array input is not null
                 var checkClearAtt = ts.AddAttribute<ICheckClearAttributesAttribute>();
 
                 ICharTermAttribute termAtt = null;
@@ -220,10 +226,14 @@ namespace Lucene.Net.Analysis
                     // *********** End From Lucene 8.2.0 **************
 
                     bool reset = checkClearAtt.GetAndResetClearCalled(); // reset it, because we called clearAttribute() before
-                    Assert.IsTrue(ts.IncrementToken(), "token " + i + " does not exist");
+                    // LUCENENET specific - defer string formatting until after a failure happens
+                    if (!ts.IncrementToken())
+                        Assert.Fail($"token {i} does not exist");
                     Assert.IsTrue(reset, "ClearAttributes() was not called correctly in TokenStream chain");
+                    // LUCENENET specific - defer string formatting until after a failure happens
+                    if (!output[i].SequenceEqual(termAtt.AsSpan()))
+                        Assert.Fail($"Expected: {output[i].ToString()}\n Actual: {termAtt.ToString()}\nterm {i},  output[i] = {output[i].ToString()}, termAtt = {termAtt.ToString()}");
 
-                    Assert.AreEqual(output[i], termAtt.ToString(), "term " + i + ", output[i] = " + output[i] + ", termAtt = " + termAtt.ToString());
                     if (startOffsets != null)
                     {
                         Assert.AreEqual(startOffsets[i], offsetAtt.StartOffset, "startOffset " + i);
@@ -271,12 +281,16 @@ namespace Lucene.Net.Analysis
                         if (finalOffset != null)
                         {
                             Assert.IsTrue(startOffset <= (int)finalOffset, "startOffset must be <= finalOffset");
-                            Assert.IsTrue(endOffset <= (int)finalOffset, "endOffset must be <= finalOffset: got endOffset=" + endOffset + " vs finalOffset=" + (int)finalOffset);
+                            // LUCENENET specific - defer string formatting until after a failure happens
+                            if (endOffset > (int)finalOffset)
+                                Assert.Fail($"endOffset must be <= finalOffset: got endOffset={endOffset} vs finalOffset={(int)finalOffset}");
                         }
 
                         if (offsetsAreCorrect)
                         {
-                            Assert.IsTrue(offsetAtt.StartOffset >= lastStartOffset, "offsets must not go backwards startOffset=" + startOffset + " is < lastStartOffset=" + lastStartOffset);
+                            // LUCENENET specific - defer string formatting until after a failure happens
+                            if (offsetAtt.StartOffset < lastStartOffset)
+                                Assert.Fail($"offsets must not go backwards startOffset={startOffset} is < lastStartOffset={lastStartOffset}");
                             lastStartOffset = offsetAtt.StartOffset;
                         }
 
@@ -302,7 +316,9 @@ namespace Lucene.Net.Analysis
                                 // We've seen a token leaving from this position
                                 // before; verify the startOffset is the same:
                                 //System.out.println("  + vs " + pos + " -> " + startOffset);
-                                Assert.AreEqual(oldStartOffset, startOffset, "pos=" + pos + " posLen=" + posLength + " token=" + termAtt);
+                                // LUCENENET specific - defer string formatting until after a failure happens
+                                if (oldStartOffset != startOffset)
+                                    Assert.Fail($"Expected: {oldStartOffset}\n Actual: {startOffset}\npos={pos} posLen={posLength} token={termAtt.ToString()}");
                             }
 
                             int endPos = pos + posLength;
@@ -318,7 +334,9 @@ namespace Lucene.Net.Analysis
                                 // We've seen a token arriving to this position
                                 // before; verify the endOffset is the same:
                                 //System.out.println("  + ve " + endPos + " -> " + endOffset);
-                                Assert.AreEqual(oldEndOffset, endOffset, "pos=" + pos + " posLen=" + posLength + " token=" + termAtt);
+                                // LUCENENET specific - defer string formatting until after a failure happens
+                                if (oldEndOffset != endOffset)
+                                    Assert.Fail($"Expected: {oldEndOffset}\n Actual: {endOffset}\npos={pos} posLen={posLength} token={termAtt.ToString()}");
                             }
                         }
                     }
@@ -341,7 +359,7 @@ namespace Lucene.Net.Analysis
 
                 if (ts.IncrementToken())
                 {
-                    Assert.Fail("TokenStream has more tokens than expected (expected count=" + output.Length + "); extra token=" + termAtt);
+                    Assert.Fail($"TokenStream has more tokens than expected (expected count={output.Length}); extra token={termAtt.ToString()}");
                 }
 
                 // repeat our extra safety checks for End()
@@ -479,10 +497,24 @@ namespace Lucene.Net.Analysis
             AssertTokenStreamContents(a.GetTokenStream("dummy", new StringReader(input)), output, startOffsets, endOffsets, types, posIncrements, null, input.Length);
         }
 
+        // LUCENENET specific - added ReadOnlySpan support
+        public static void AssertAnalyzesTo(Analyzer a, ReadOnlySpan<char> input, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements)
+        {
+            CheckResetException(a, input);
+            AssertTokenStreamContents(a.GetTokenStream("dummy", new PooledStringReader(input)), output, startOffsets, endOffsets, types, posIncrements, null, input.Length);
+        }
+
         public static void AssertAnalyzesTo(Analyzer a, string input, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths)
         {
             CheckResetException(a, input);
             AssertTokenStreamContents(a.GetTokenStream("dummy", new StringReader(input)), output, startOffsets, endOffsets, types, posIncrements, posLengths, input.Length);
+        }
+
+        // LUCENENET specific - added ReadOnlySpan support
+        public static void AssertAnalyzesTo(Analyzer a, ReadOnlySpan<char> input, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths)
+        {
+            CheckResetException(a, input);
+            AssertTokenStreamContents(a.GetTokenStream("dummy", new PooledStringReader(input)), output, startOffsets, endOffsets, types, posIncrements, posLengths, input.Length);
         }
 
         public static void AssertAnalyzesTo(Analyzer a, string input, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, bool offsetsAreCorrect)
@@ -491,8 +523,23 @@ namespace Lucene.Net.Analysis
             AssertTokenStreamContents(a.GetTokenStream("dummy", new StringReader(input)), output, startOffsets, endOffsets, types, posIncrements, posLengths, input.Length, offsetsAreCorrect);
         }
 
+        // LUCENENET specific - added ReadOnlySpan support
+        public static void AssertAnalyzesTo(Analyzer a, ReadOnlySpan<char> input, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, bool offsetsAreCorrect)
+        {
+            CheckResetException(a, input);
+            AssertTokenStreamContents(a.GetTokenStream("dummy", new PooledStringReader(input)), output, startOffsets, endOffsets, types, posIncrements, posLengths, input.Length, offsetsAreCorrect);
+        }
+
         // LUCENENET: Overload from Lucene 8.2.0
         public static void AssertAnalyzesTo(Analyzer a, string input, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, bool graphOffsetsAreCorrect, byte[][] payloads)
+        {
+            CheckResetException(a, input);
+            AssertTokenStreamContents(a.GetTokenStream("dummy", input), output, startOffsets, endOffsets, types, posIncrements, posLengths, input.Length, null, null, graphOffsetsAreCorrect, payloads);
+        }
+
+        // LUCENENET: Overload from Lucene 8.2.0
+        // LUCENENET specific - added ReadOnlySpan support
+        public static void AssertAnalyzesTo(Analyzer a, ReadOnlySpan<char> input, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, bool graphOffsetsAreCorrect, byte[][] payloads)
         {
             CheckResetException(a, input);
             AssertTokenStreamContents(a.GetTokenStream("dummy", input), output, startOffsets, endOffsets, types, posIncrements, posLengths, input.Length, null, null, graphOffsetsAreCorrect, payloads);
@@ -503,7 +550,19 @@ namespace Lucene.Net.Analysis
             AssertAnalyzesTo(a, input, output, null, null, null, null, null);
         }
 
+        // LUCENENET specific - added ReadOnlySpan support
+        public static void AssertAnalyzesTo(Analyzer a, ReadOnlySpan<char> input, string[] output)
+        {
+            AssertAnalyzesTo(a, input, output, null, null, null, null, null);
+        }
+
         public static void AssertAnalyzesTo(Analyzer a, string input, string[] output, string[] types)
+        {
+            AssertAnalyzesTo(a, input, output, null, null, types, null, null);
+        }
+
+        // LUCENENET specific - added ReadOnlySpan support
+        public static void AssertAnalyzesTo(Analyzer a, ReadOnlySpan<char> input, string[] output, string[] types)
         {
             AssertAnalyzesTo(a, input, output, null, null, types, null, null);
         }
@@ -513,7 +572,19 @@ namespace Lucene.Net.Analysis
             AssertAnalyzesTo(a, input, output, null, null, null, posIncrements, null);
         }
 
+        // LUCENENET specific - added ReadOnlySpan support
+        public static void AssertAnalyzesTo(Analyzer a, ReadOnlySpan<char> input, string[] output, int[] posIncrements)
+        {
+            AssertAnalyzesTo(a, input, output, null, null, null, posIncrements, null);
+        }
+
         public static void AssertAnalyzesToPositions(Analyzer a, string input, string[] output, int[] posIncrements, int[] posLengths)
+        {
+            AssertAnalyzesTo(a, input, output, null, null, null, posIncrements, posLengths);
+        }
+
+        // LUCENENET specific - added ReadOnlySpan support
+        public static void AssertAnalyzesToPositions(Analyzer a, ReadOnlySpan<char> input, string[] output, int[] posIncrements, int[] posLengths)
         {
             AssertAnalyzesTo(a, input, output, null, null, null, posIncrements, posLengths);
         }
@@ -523,14 +594,27 @@ namespace Lucene.Net.Analysis
             AssertAnalyzesTo(a, input, output, startOffsets, endOffsets, null, null, null);
         }
 
+        // LUCENENET specific - added ReadOnlySpan support
+        public static void AssertAnalyzesTo(Analyzer a, ReadOnlySpan<char> input, string[] output, int[] startOffsets, int[] endOffsets)
+        {
+            AssertAnalyzesTo(a, input, output, startOffsets, endOffsets, null, null, null);
+        }
+
         public static void AssertAnalyzesTo(Analyzer a, string input, string[] output, int[] startOffsets, int[] endOffsets, int[] posIncrements)
         {
             AssertAnalyzesTo(a, input, output, startOffsets, endOffsets, null, posIncrements, null);
         }
 
-        internal static void CheckResetException(Analyzer a, string input)
+        // LUCENENET specific - added ReadOnlySpan support
+        public static void AssertAnalyzesTo(Analyzer a, ReadOnlySpan<char> input, string[] output, int[] startOffsets, int[] endOffsets, int[] posIncrements)
         {
-            TokenStream ts = a.GetTokenStream("bogus", new StringReader(input));
+            AssertAnalyzesTo(a, input, output, startOffsets, endOffsets, null, posIncrements, null);
+        }
+
+        // LUCENENET specific - added ReadOnlySpan support
+        internal static void CheckResetException(Analyzer a, ReadOnlySpan<char> input)
+        {
+            TokenStream ts = a.GetTokenStream("bogus", new PooledStringReader(input));
             try
             {
                 if (ts.IncrementToken())
@@ -565,7 +649,7 @@ namespace Lucene.Net.Analysis
             }
 
             // check for a missing Close()
-            ts = a.GetTokenStream("bogus", new StringReader(input));
+            ts = a.GetTokenStream("bogus", new PooledStringReader(input));
             ts.Reset();
             while (ts.IncrementToken())
             {
@@ -573,7 +657,7 @@ namespace Lucene.Net.Analysis
             ts.End();
             try
             {
-                ts = a.GetTokenStream("bogus", new StringReader(input));
+                ts = a.GetTokenStream("bogus", new PooledStringReader(input));
                 Assert.Fail("Didn't get expected exception when Close() not called");
             }
             catch (Exception expected) when (expected.IsIllegalStateException())
@@ -589,9 +673,12 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Simple utility method for testing stemmers
         /// </summary>
-        public static void CheckOneTerm(Analyzer a, string input, string expected)
+        public static void CheckOneTerm(Analyzer a, ReadOnlySpan<char> input, ReadOnlySpan<char> expected)
         {
-            AssertAnalyzesTo(a, input, new string[] { expected });
+            // LUCENENET specific - bypass the array overloads so we can pass expected directly through as a fake ReadOnlySpan<char> (ref struct) array.
+            CheckResetException(a, input);
+            AssertTokenStreamContents(ts: a.GetTokenStream("dummy", new PooledStringReader(input)), output: expected, startOffsets: null, endOffsets: null, types: null, posIncrements: null, posLengths: null, finalOffset: input.Length, finalPosInc: null, keywordAtts: null, offsetsAreCorrect: true, payloads: null);
+            //AssertAnalyzesTo(a, input, new string[] { expected });
         }
 
         /// <summary>

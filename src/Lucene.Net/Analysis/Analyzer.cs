@@ -267,7 +267,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Returns a <see cref="Analysis.TokenStream"/> suitable for <paramref name="fieldName"/>, tokenizing
+        /// Returns a <see cref="TokenStream"/> suitable for <paramref name="fieldName"/>, tokenizing
         /// the contents of <paramref name="text"/>.
         /// <para/>
         /// This method uses <see cref="CreateComponents(string, TextReader)"/> to obtain an
@@ -277,13 +277,13 @@ namespace Lucene.Net.Analysis
         /// through <see cref="TokenStreamComponents.SetReader(TextReader)"/>.
         /// <para/>
         /// <b>NOTE:</b> After calling this method, the consumer must follow the
-        /// workflow described in <see cref="Analysis.TokenStream"/> to properly consume its contents.
+        /// workflow described in <see cref="TokenStream"/> to properly consume its contents.
         /// See the <see cref="Lucene.Net.Analysis"/> namespace documentation for
         /// some examples demonstrating this.
         /// </summary>
-        /// <param name="fieldName">the name of the field the created <see cref="Analysis.TokenStream"/> is used for</param>
-        /// <param name="text">the <see cref="string"/> the streams source reads from </param>
-        /// <returns><see cref="Analysis.TokenStream"/> for iterating the analyzed content of <c>reader</c></returns>
+        /// <param name="fieldName">The name of the field the created <see cref="TokenStream"/> is used for.</param>
+        /// <param name="text">The <see cref="string"/> the stream's source reads from.</param>
+        /// <returns><see cref="TokenStream"/> for iterating the analyzed content of <c>reader</c>.</returns>
         /// <exception cref="ObjectDisposedException"> if the Analyzer is disposed. </exception>
         /// <exception cref="IOException"> if an i/o error occurs (may rarely happen for strings). </exception>
         /// <seealso cref="GetTokenStream(string, TextReader)"/>
@@ -306,6 +306,147 @@ namespace Lucene.Net.Analysis
                 components.SetReader(r);
             }
             components.reusableStringReader = strReader;
+            return components.TokenStream;
+        }
+
+        /// <summary>
+        /// Returns a <see cref="TokenStream"/> suitable for <paramref name="fieldName"/>, tokenizing
+        /// the contents of <paramref name="text"/>.
+        /// <para/>
+        /// This method uses <see cref="CreateComponents(string, TextReader)"/> to obtain an
+        /// instance of <see cref="TokenStreamComponents"/>. It returns the sink of the
+        /// components and stores the components internally. Subsequent calls to this
+        /// method will reuse the previously stored components after resetting them
+        /// through <see cref="TokenStreamComponents.SetReader(TextReader)"/>.
+        /// <para/>
+        /// <b>NOTE:</b> After calling this method, the consumer must follow the
+        /// workflow described in <see cref="TokenStream"/> to properly consume its contents.
+        /// See the <see cref="Lucene.Net.Analysis"/> namespace documentation for
+        /// some examples demonstrating this.
+        /// </summary>
+        /// <param name="fieldName">The name of the field the created <see cref="TokenStream"/> is used for.</param>
+        /// <param name="text">The <see cref="ReadOnlyMemory{Char}"/> the stream's source reads from.</param>
+        /// <param name="buffered">When <c>false</c>, the backing memory of <paramref name="text"/> is read from its source;
+        /// if <c>true</c>, <paramref name="text"/> will be copied into a buffer that is owned by the <see cref="Analyzer"/>'s
+        /// reusable components.</param>
+        /// <returns><see cref="TokenStream"/> for iterating the analyzed content of <c>reader</c>.</returns>
+        /// <remarks>
+        /// If <paramref name="buffered"/> is <c>false</c>, this method retains the supplied
+        /// memory and the returned <see cref="TokenStream"/> reads directly from its underlying
+        /// storage. It does not allocate a character buffer or take ownership of the memory.
+        /// <para/>
+        /// If <paramref name="buffered"/> is <c>false</c>, the underlying memory must
+        /// remain valid and its contents must not be modified until the reader has
+        /// finished reading from it. In particular, if the memory refers to an array
+        /// rented from an array pool, that array must not be returned to the pool
+        /// while the reader is in use. Likewise, if the memory is backed by a disposable
+        /// memory owner, that owner must not be disposed while the reader is in use.
+        /// <para/>
+        /// Setting <paramref name="buffered"/> to <c>false</c> does not make
+        /// a copy of the passed in <paramref name="text"/>.
+        /// It is therefore preferable for longer text or text that is
+        /// already backed by heap memory. For short-lived data, set
+        /// <paramref name="buffered"/> to <c>true</c>, which will copy the
+        /// input into an internally owned buffer that is part of the <see cref="Analyzer"/>'s
+        /// reusable component state. Alternatively,
+        /// use the <see cref="GetTokenStream(string, ReadOnlySpan{char})"/>
+        /// overload, which supports reading from a stack-allocated span into
+        /// an internally owned buffer that is part of the <see cref="Analyzer"/>'s
+        /// reusable component state.
+        /// <para/>
+        /// If <paramref name="buffered"/> is <c>true</c>, the caller must ensure
+        /// the backing memory is not mutated until this method returns, after which
+        /// the <see cref="TokenStream"/> will own its own copy and <paramref name="text"/>
+        /// can be safely discarded or reused.
+        /// </remarks>
+        public TokenStream GetTokenStream(string fieldName, ReadOnlyMemory<char> text, bool buffered = false)
+        {
+            if (buffered)
+            {
+                return GetTokenStream(fieldName, text.Span);
+            }
+
+            TokenStreamComponents components = reuseStrategy.GetReusableComponents(this, fieldName);
+            ReusableStringReader strReader =
+                (components is null || components.reusableStringReader is null)
+                    ? new ReusableStringReader()
+                    : components.reusableStringReader;
+            strReader.SetValue(text);
+            var r = InitReader(fieldName, strReader);
+            if (components is null)
+            {
+                components = CreateComponents(fieldName, r);
+                reuseStrategy.SetReusableComponents(this, fieldName, components);
+            }
+            else
+            {
+                components.SetReader(r);
+            }
+            components.reusableStringReader = strReader;
+            return components.TokenStream;
+        }
+
+        /// <summary>
+        /// Returns a <see cref="TokenStream"/> suitable for <paramref name="fieldName"/>, tokenizing
+        /// the contents of <paramref name="text"/>.
+        /// <para/>
+        /// This method uses <see cref="CreateComponents(string, TextReader)"/> to obtain an
+        /// instance of <see cref="TokenStreamComponents"/>. It returns the sink of the
+        /// components and stores the components internally. Subsequent calls to this
+        /// method will reuse the previously stored components after resetting them
+        /// through <see cref="TokenStreamComponents.SetReader(TextReader)"/>.
+        /// <para/>
+        /// <b>NOTE:</b> After calling this method, the consumer must follow the
+        /// workflow described in <see cref="TokenStream"/> to properly consume its contents.
+        /// See the <see cref="Lucene.Net.Analysis"/> namespace documentation for
+        /// some examples demonstrating this.
+        /// </summary>
+        /// <param name="fieldName">The name of the field the created <see cref="TokenStream"/> is used for.</param>
+        /// <param name="text">The <see cref="string"/> the stream's source reads from.</param>
+        /// <returns><see cref="TokenStream"/> for iterating the analyzed content of <c>reader</c>.</returns>
+        /// <remarks>
+        /// This overload always copies <paramref name="text"/> to a buffer that is part
+        /// of the <see cref="Analyzer"/>'s reusable component state. As such, this overload is
+        /// particularly useful when reading from stack-allocated
+        /// character data (for example, a <see langword="stackalloc"/>-allocated
+        /// <see cref="Span{T}"/>). Since a <see cref="Span{T}"/> cannot be retained
+        /// by a <see cref="TokenStream"/>, its contents must be copied to heap memory
+        /// before they can be consumed.
+        /// <para/>
+        /// Because this overload requires copying the input into a reusable buffer,
+        /// it is best suited to relatively short text. The maximum input
+        /// length is constrained by the runtime's maximum supported array size,
+        /// which is slightly less than 4 GB on current .NET implementations.
+        /// Operations that produce a <see cref="string"/> are additionally
+        /// constrained by the maximum supported string length, which is slightly
+        /// less than 2 GB. In practice, available memory and hardware will usually
+        /// impose much lower limits. For longer text, or text that is already
+        /// backed by heap memory, prefer <see cref="GetTokenStream(string, ReadOnlyMemory{char}, bool)"/>,
+        /// which can read directly from the supplied memory without copying it.
+        /// <para/>
+        /// The caller must ensure the backing memory is not mutated until this method returns,
+        /// after which the <see cref="TokenStream"/> will own its own copy and <paramref name="text"/>
+        /// can be safely discarded or reused.
+        /// </remarks>
+        public TokenStream GetTokenStream(string fieldName, ReadOnlySpan<char> text)
+        {
+            TokenStreamComponents components = reuseStrategy.GetReusableComponents(this, fieldName);
+            BufferedReusableStringReader strReader =
+                (components is null || components.bufferedReusableStringReader is null)
+                    ? new BufferedReusableStringReader()
+                    : components.bufferedReusableStringReader;
+            strReader.SetValue(text);
+            var r = InitReader(fieldName, strReader);
+            if (components is null)
+            {
+                components = CreateComponents(fieldName, r);
+                reuseStrategy.SetReusableComponents(this, fieldName, components);
+            }
+            else
+            {
+                components.SetReader(r);
+            }
+            components.bufferedReusableStringReader = strReader;
             return components.TokenStream;
         }
 
@@ -550,6 +691,10 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Internal cache only used by <see cref="Analyzer.GetTokenStream(string, string)"/>. </summary>
         internal ReusableStringReader? reusableStringReader;
+
+        /// <summary>
+        /// Internal cache only used by <see cref="Analyzer.GetTokenStream(string, ReadOnlySpan{char})"/>.</summary>
+        internal BufferedReusableStringReader? bufferedReusableStringReader; // LUCENENET specific
 
         /// <summary>
         /// Creates a new <see cref="TokenStreamComponents"/> instance.

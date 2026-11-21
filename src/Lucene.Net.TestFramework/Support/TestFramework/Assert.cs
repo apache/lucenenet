@@ -561,6 +561,96 @@ namespace Lucene.Net.TestFramework
 
         //
         // Summary:
+        //     Verifies that two objects are not equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   actual:
+        //     The actual value
+        [DebuggerStepThrough]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void AreNotEqual(int expected, int actual)
+        {
+            if (expected.Equals(actual))
+                _NUnit.Assert.AreNotEqual(expected, actual);
+        }
+
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   actual:
+        //     The actual value
+        [DebuggerStepThrough]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void AreNotEqual(int expected, int actual, string message, params object[] args)
+        {
+            if (expected.Equals(actual))
+                _NUnit.Assert.AreNotEqual(expected, actual, message, args);
+        }
+
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   actual:
+        //     The actual value
+        [DebuggerStepThrough]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void AreNotEqual(long expected, long actual)
+        {
+            if (expected.Equals(actual))
+                _NUnit.Assert.AreNotEqual(expected, actual);
+        }
+
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   actual:
+        //     The actual value
+        [DebuggerStepThrough]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void AreNotEqual(long expected, long actual, string message, params object[] args)
+        {
+            if (expected.Equals(actual))
+                _NUnit.Assert.AreNotEqual(expected, actual, message, args);
+        }
+
+        //
+        // Summary:
         //     Verifies that two objects are not equal. Two objects are considered equal if
         //     both are null, or if both have the same value. NUnit has special semantics for
         //     some object types. If they are equal an NUnit.Framework.AssertionException is
@@ -624,7 +714,9 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void AreNotSame(object expected, object actual, string message, params object[] args)
         {
-            _NUnit.Assert.AreNotSame(expected, actual, message, args);
+            // NUnit is SLOOOOOWWWWW! We do the check faster and only take the slow path to format the exception
+            if (ReferenceEquals(expected, actual))
+                _NUnit.Assert.AreNotSame(expected, actual, message, args);
         }
         //
         // Summary:
@@ -641,7 +733,9 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void AreNotSame(object expected, object actual)
         {
-            _NUnit.Assert.AreNotSame(expected, actual);
+            // NUnit is SLOOOOOWWWWW! We do the check faster and only take the slow path to format the exception
+            if (ReferenceEquals(expected, actual))
+                _NUnit.Assert.AreNotSame(expected, actual);
         }
         //
         // Summary:
@@ -658,7 +752,9 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void AreSame(object expected, object actual)
         {
-            _NUnit.Assert.AreSame(expected, actual);
+            // NUnit is SLOOOOOWWWWW! We do the check faster and only take the slow path to format the exception
+            if (!ReferenceEquals(expected, actual))
+                _NUnit.Assert.AreSame(expected, actual);
         }
         //
         // Summary:
@@ -681,7 +777,9 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void AreSame(object expected, object actual, string message, params object[] args)
         {
-            _NUnit.Assert.AreSame(expected, actual, message, args);
+            // NUnit is SLOOOOOWWWWW! We do the check faster and only take the slow path to format the exception
+            if (!ReferenceEquals(expected, actual))
+                _NUnit.Assert.AreSame(expected, actual, message, args);
         }
 
         [DebuggerStepThrough]
@@ -829,7 +927,9 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void IsNotNull(object anObject, string message, params object[] args)
         {
-            _NUnit.Assert.IsNotNull(anObject, message, args);
+            // NUnit is SLOOOOOWWWWW! We do the check faster and only take the slow path to format the exception
+            if (anObject is null)
+                _NUnit.Assert.IsNotNull(anObject, message, args);
         }
         //
         // Summary:
@@ -843,7 +943,9 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void IsNotNull(object anObject)
         {
-            _NUnit.Assert.IsNotNull(anObject);
+            // NUnit is SLOOOOOWWWWW! We do the check faster and only take the slow path to format the exception
+            if (anObject is null)
+                _NUnit.Assert.IsNotNull(anObject);
         }
         //
         // Summary:
@@ -857,7 +959,9 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void IsNull(object anObject)
         {
-            _NUnit.Assert.IsNull(anObject);
+            // NUnit is SLOOOOOWWWWW! We do the check faster and only take the slow path to format the exception
+            if (anObject is not null)
+                _NUnit.Assert.IsNull(anObject);
         }
         //
         // Summary:
@@ -877,7 +981,9 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void IsNull(object anObject, string message, params object[] args)
         {
-            _NUnit.Assert.IsNull(anObject, message, args);
+            // NUnit is SLOOOOOWWWWW! We do the check faster and only take the slow path to format the exception
+            if (anObject is not null)
+                _NUnit.Assert.IsNull(anObject, message, args);
         }
 
         //
@@ -973,6 +1079,7 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Null(object anObject, string message, params object[] args)
         {
+            // NUnit is SLOOOOOWWWWW! We do the check faster and only take the slow path to format the exception
             if (anObject is not null)
                 _NUnit.Assert.Null(anObject, message, args);
         }
@@ -988,6 +1095,7 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Null(object anObject)
         {
+            // NUnit is SLOOOOOWWWWW! We do the check faster and only take the slow path to format the exception
             if (anObject is not null)
                 _NUnit.Assert.Null(anObject);
         }
