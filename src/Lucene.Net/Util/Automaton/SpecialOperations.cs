@@ -122,7 +122,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return a.singleton;
             }
-            using ValueStringBuilder b = new ValueStringBuilder(stackalloc char[128]);
+            using ValueStringBuilder b = new ValueStringBuilder(stackalloc char[BasicOperations.CharStackBufferSize]);
             JCG.HashSet<State> visited = new JCG.HashSet<State>();
             State s = a.initial;
             bool done;
@@ -221,7 +221,7 @@ namespace Lucene.Net.Util.Automaton
             Automaton r = a.Clone();
             Reverse(r);
             r.Determinize();
-            ValueStringBuilder b = new(stackalloc char[128]);
+            ValueStringBuilder b = new(stackalloc char[BasicOperations.CharStackBufferSize]);
             try
             {
                 GetCommonPrefix(ref b, r);

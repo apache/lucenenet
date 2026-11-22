@@ -247,7 +247,7 @@ namespace Lucene.Net.Util.Automaton
 
         public override string ToString()
         {
-            using ValueStringBuilder sb = new(stackalloc char[128]);
+            using ValueStringBuilder sb = new(stackalloc char[BasicOperations.CharStackBufferSize]);
             sb.Append('[');
             for (int i = 0; i < upto; i++)
             {
@@ -343,7 +343,7 @@ namespace Lucene.Net.Util.Automaton
 
             public override string ToString()
             {
-                using ValueStringBuilder sb = new(stackalloc char[128]);
+                using ValueStringBuilder sb = new(stackalloc char[BasicOperations.CharStackBufferSize]);
                 sb.Append('[');
                 for (int i = 0; i < values.Length; i++)
                 {

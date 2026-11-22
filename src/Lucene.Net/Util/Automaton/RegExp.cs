@@ -654,7 +654,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public override string ToString()
         {
-            ValueStringBuilder sb = new(stackalloc char[128]);
+            ValueStringBuilder sb = new(stackalloc char[BasicOperations.CharStackBufferSize]);
             try
             {
                 ToStringBuilder(ref sb);
@@ -877,7 +877,7 @@ namespace Lucene.Net.Util.Automaton
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static RegExp MakeString(RegExp exp1, RegExp exp2)
         {
-            using ValueStringBuilder b = new(stackalloc char[128]);
+            using ValueStringBuilder b = new(stackalloc char[BasicOperations.CharStackBufferSize]);
             if (exp1.kind == Kind.REGEXP_STRING)
             {
                 b.Append(exp1.s);

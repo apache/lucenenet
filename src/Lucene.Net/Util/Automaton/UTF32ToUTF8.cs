@@ -1,9 +1,8 @@
-using J2N;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Text;
+using System;
 using System.Runtime.CompilerServices;
-using Integer = J2N.Numerics.Int32;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Automaton
@@ -139,16 +138,33 @@ namespace Lucene.Net.Util.Automaton
 
             public override string ToString()
             {
-                using ValueStringBuilder b = new(stackalloc char[128]);
-                for (int i = 0; i < len; i++)
+                ValueStringBuilder b = len <= 15
+                    ? new(stackalloc char[BasicOperations.CharStackBufferSize])
+                    : new(checked(len * 8)); // Max is (len * (32 + 1)) - 1, but this covers most common cases
+                try
                 {
-                    if (i > 0)
+                    for (int i = 0; i < len; i++)
                     {
-                        b.Append(' ');
+                        if (i > 0)
+                        {
+                            b.Append(' ');
+                        }
+                        Span<char> destination = b.RawChars.Slice(b.Length);
+                        if (!NumberFormatter.TryFormatBinary(bytes[i].Value, destination, out int charsWritten))
+                        {
+                            b.EnsureCapacity(checked(b.Length + 32)); // Max binary string is 32 chars, but this will usually double anyway
+                            destination = b.RawChars.Slice(b.Length); // Reaquire the span because the underlying buffer changed
+                            if (!NumberFormatter.TryFormatBinary(bytes[i].Value, destination, out charsWritten))
+                                throw new InvalidOperationException("There was not enough buffer allocated to write the string."); // Should never happen
+                        }
+                        b.Length += charsWritten;
                     }
-                    b.Append(bytes[i].Value.ToBinaryString());
+                    return b.ToString();
                 }
-                return b.ToString();
+                finally
+                {
+                    b.Dispose();
+                }
             }
         }
 

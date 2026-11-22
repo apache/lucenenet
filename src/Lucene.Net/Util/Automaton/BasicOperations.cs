@@ -47,6 +47,11 @@ namespace Lucene.Net.Util.Automaton
     public static class BasicOperations // LUCENENET specific - made static since all members are static
     {
         /// <summary>
+        /// Specifies the initial and maximum buffer size for character stacks.
+        /// </summary>
+        internal const int CharStackBufferSize = 128; // LUCENENET specific
+
+        /// <summary>
         /// Returns an automaton that accepts the concatenation of the languages of the
         /// given automata.
         /// <para/>
@@ -111,7 +116,7 @@ namespace Lucene.Net.Util.Automaton
             }
             if (all_singleton)
             {
-                using ValueStringBuilder b = new(stackalloc char[128]);
+                using ValueStringBuilder b = new(stackalloc char[CharStackBufferSize]);
                 foreach (Automaton a in l)
                 {
                     b.Append(a.singleton);
@@ -768,7 +773,7 @@ namespace Lucene.Net.Util.Automaton
 
             public override string ToString()
             {
-                using ValueStringBuilder s = new(stackalloc char[128]);
+                using ValueStringBuilder s = new(stackalloc char[CharStackBufferSize]);
                 for (int i = 0; i < count; i++)
                 {
                     if (i > 0)
