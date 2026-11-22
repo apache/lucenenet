@@ -153,7 +153,7 @@ namespace Lucene.Net.Util.Automaton
                         if (!NumberFormatter.TryFormatBinary(bytes[i].Value, destination, out int charsWritten))
                         {
                             b.EnsureCapacity(checked(b.Length + 32)); // Max binary string is 32 chars, but this will usually double anyway
-                            destination = b.RawChars.Slice(b.Length); // Reaquire the span because the underlying buffer changed
+                            destination = b.RawChars.Slice(b.Length); // Reacquire the span because the underlying buffer changed
                             if (!NumberFormatter.TryFormatBinary(bytes[i].Value, destination, out charsWritten))
                                 throw new InvalidOperationException("There was not enough buffer allocated to write the string."); // Should never happen
                         }
