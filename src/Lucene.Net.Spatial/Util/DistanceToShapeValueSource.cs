@@ -49,7 +49,7 @@ namespace Lucene.Net.Spatial.Util
         {
             // LUCENENET specific - added guard clauses
             this.shapeValueSource = shapeValueSource ?? throw new ArgumentNullException(nameof(shapeValueSource));
-            this.queryPoint = queryPoint ?? throw new ArgumentNullException(nameof(shapeValueSource));
+            this.queryPoint = queryPoint ?? throw new ArgumentNullException(nameof(queryPoint));
             if (ctx is null)
                 throw new ArgumentNullException(nameof(ctx));
 

@@ -1,6 +1,8 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Search;
 using NUnit.Framework;
 using Spatial4n.Context;
+using System;
 
 namespace Lucene.Net.Spatial.Serialized
 {
@@ -41,6 +43,13 @@ namespace Lucene.Net.Spatial.Serialized
         {
             return new FilteredQuery(new MatchAllDocsQuery(), strategy.MakeFilter(q.args),
                 FilteredQuery.QUERY_FIRST_FILTER_STRATEGY);
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestMakeDistanceValueSourceNullQueryPoint()
+        {
+            var e = Assert.Throws<ArgumentNullException>(() => strategy.MakeDistanceValueSource(null, 1.0));
+            Assert.AreEqual("queryPoint", e.ParamName);
         }
 
         [Test]
