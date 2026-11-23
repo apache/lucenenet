@@ -69,7 +69,25 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled) Debugging.Assert(upto != slice.Length);
         }
 
-        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        public override void WriteBytes(byte[] b, int offset, int len)
+        {
+            int offsetEnd = offset + len;
+            while (offset < offsetEnd)
+            {
+                if (slice[upto] != 0)
+                {
+                    // End marker
+                    upto = pool.AllocSlice(slice, upto);
+                    slice = pool.Buffer;
+                    offset0 = pool.ByteOffset;
+                }
+
+                slice[upto++] = b[offset++];
+                if (Debugging.AssertsEnabled) Debugging.Assert(upto != slice.Length);
+            }
+        }
+
+        // LUCENENET: This duplication is intentional for performance reasons.
         public override void WriteBytes(ReadOnlySpan<byte> source)
         {
             int offset = 0;

@@ -446,7 +446,50 @@ namespace Lucene.Net.Util
                 outerInstance.currentBlock[outerInstance.upto++] = (byte)b;
             }
 
-            // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+            public override void WriteBytes(byte[] b, int offset, int length)
+            {
+                if (Debugging.AssertsEnabled) Debugging.Assert(b.Length >= offset + length);
+                if (length == 0)
+                {
+                    return;
+                }
+
+                if (outerInstance.upto == outerInstance.blockSize)
+                {
+                    if (outerInstance.currentBlock != null)
+                    {
+                        outerInstance.blocks.Add(outerInstance.currentBlock);
+                        outerInstance.blockEnd.Add(outerInstance.upto);
+                    }
+                    outerInstance.currentBlock = new byte[outerInstance.blockSize];
+                    outerInstance.upto = 0;
+                }
+
+                int offsetEnd = offset + length;
+                while (true)
+                {
+                    int left = offsetEnd - offset;
+                    int blockLeft = outerInstance.blockSize - outerInstance.upto;
+                    if (blockLeft < left)
+                    {
+                        Arrays.Copy(b, offset, outerInstance.currentBlock, outerInstance.upto, blockLeft);
+                        outerInstance.blocks.Add(outerInstance.currentBlock);
+                        outerInstance.blockEnd.Add(outerInstance.blockSize);
+                        outerInstance.currentBlock = new byte[outerInstance.blockSize];
+                        outerInstance.upto = 0;
+                        offset += blockLeft;
+                    }
+                    else
+                    {
+                        // Last block
+                        Arrays.Copy(b, offset, outerInstance.currentBlock, outerInstance.upto, left);
+                        outerInstance.upto += left;
+                        break;
+                    }
+                }
+            }
+
+            // LUCENENET: This duplication is intentional for performance reasons.
             public override void WriteBytes(ReadOnlySpan<byte> source)
             {
                 int offset = 0;

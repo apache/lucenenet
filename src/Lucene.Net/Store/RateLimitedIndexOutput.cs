@@ -53,8 +53,27 @@ namespace Lucene.Net.Store
             this.rateLimiter = rateLimiter;
         }
 
+        protected internal override void FlushBuffer(byte[] b, int offset, int len)
+        {
+            bytesSinceLastPause += len;
+            if (bytesSinceLastPause > rateLimiter.MinPauseCheckBytes)
+            {
+                rateLimiter.Pause(bytesSinceLastPause);
+                bytesSinceLastPause = 0;
+            }
+
+            if (bufferedDelegate != null)
+            {
+                bufferedDelegate.FlushBuffer(b, offset, len);
+            }
+            else
+            {
+                @delegate.WriteBytes(b, offset, len);
+            }
+        }
+
         /// <inheritdoc/>
-        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        // LUCENENET: This duplication is intentional for performance reasons.
         protected internal override void FlushBuffer(ReadOnlySpan<byte> source)
         {
             int len = source.Length;
