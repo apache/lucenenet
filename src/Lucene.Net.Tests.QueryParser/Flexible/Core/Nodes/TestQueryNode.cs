@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.QueryParsers.Flexible.Core.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -37,7 +38,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             assertEquals(2, bq.GetChildren().Count);
         }
 
-        [Test]
+        // LUCENENET specific: Added test to verify LUCENE-5365 fix
+        [Test, LuceneNetSpecific]
         public void TestLogicalAndWithSingleAndNode()
         {
             var nodeA = new FieldQueryNode("foo", "A", 0, 1);

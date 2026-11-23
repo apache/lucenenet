@@ -57,7 +57,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
                 op = ANDOperation.BOTH;
             else if (q1 is AndQueryNode)
                 op = ANDOperation.Q1;
-            else if (q2 is AndQueryNode) // LUCENENET: backport LUCENE-7818 fix
+            else if (q2 is AndQueryNode) // LUCENENET: backport LUCENE-5365 fix
                 op = ANDOperation.Q2;
             else
                 op = ANDOperation.NONE;
