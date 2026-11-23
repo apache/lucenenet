@@ -183,7 +183,13 @@ namespace Lucene.Net.Index
                 return this.input.ReadByte();
             }
 
-            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+            public override void ReadBytes(byte[] b, int offset, int len)
+            {
+                outerInstance.counter += len;
+                this.input.ReadBytes(b, offset, len);
+            }
+
+            // LUCENENET: This duplication is intentional for performance reasons.
             public override void ReadBytes(Span<byte> destination)
             {
                 int len = destination.Length;

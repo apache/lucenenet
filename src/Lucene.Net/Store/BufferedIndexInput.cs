@@ -135,26 +135,85 @@ namespace Lucene.Net.Store
             }
         }
 
+
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override sealed void ReadBytes(byte[] b, int offset, int len)
         {
-            ReadBytes(b.AsSpan(offset, len), true);
+            ReadBytes(b, offset, len, true);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override sealed void ReadBytes(byte[] b, int offset, int len, bool useBuffer)
         {
-            ReadBytes(b.AsSpan(offset, len), useBuffer);
+            int available = bufferLength - bufferPosition;
+            if (len <= available)
+            {
+                // the buffer contains enough data to satisfy this request
+                if (len > 0) // to allow b to be null if len is 0...
+                {
+                    Arrays.Copy(m_buffer, bufferPosition, b, offset, len);
+                }
+                bufferPosition += len;
+            }
+            else
+            {
+                // the buffer does not have enough data. First serve all we've got.
+                if (available > 0)
+                {
+                    Arrays.Copy(m_buffer, bufferPosition, b, offset, available);
+                    offset += available;
+                    len -= available;
+                    bufferPosition += available;
+                }
+                // and now, read the remaining 'len' bytes:
+                if (useBuffer && len < bufferSize)
+                {
+                    // If the amount left to read is small enough, and
+                    // we are allowed to use our buffer, do it in the usual
+                    // buffered way: fill the buffer and copy from it:
+                    Refill();
+                    if (bufferLength < len)
+                    {
+                        // Throw an exception when refill() could not read len bytes:
+                        Arrays.Copy(m_buffer, 0, b, offset, bufferLength);
+                        throw EOFException.Create("read past EOF: " + this);
+                    }
+                    else
+                    {
+                        Arrays.Copy(m_buffer, 0, b, offset, len);
+                        bufferPosition = len;
+                    }
+                }
+                else
+                {
+                    // The amount left to read is larger than the buffer
+                    // or we've been asked to not use our buffer -
+                    // there's no performance reason not to read it all
+                    // at once. Note that unlike the previous code of
+                    // this function, there is no need to do a seek
+                    // here, because there's no need to reread what we
+                    // had in the buffer.
+                    long after = bufferStart + bufferPosition + len;
+                    if (after > Length)
+                    {
+                        throw EOFException.Create("read past EOF: " + this);
+                    }
+                    ReadInternal(b, offset, len);
+                    bufferStart = after;
+                    bufferPosition = 0;
+                    bufferLength = 0; // trigger refill() on read
+                }
+            }
         }
 
-        // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+        // LUCENENET: This duplication is intentional for performance reasons.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override sealed void ReadBytes(Span<byte> destination)
         {
             ReadBytes(destination, true);
         }
 
-        // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+        // LUCENENET: This duplication is intentional for performance reasons.
         public override sealed void ReadBytes(Span<byte> destination, bool useBuffer)
         {
             int offset = 0;

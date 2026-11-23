@@ -40,6 +40,25 @@ namespace Lucene.Net.Index
             length = bytes.Length;
         }
 
+        protected override void ReadInternal(byte[] dest, int destOffset, int len)
+        {
+            int remainder = len;
+            int start = pointer;
+            while (remainder != 0)
+            {
+                //          int bufferNumber = start / buffer.length;
+                int bufferOffset = start % buffer.Length;
+                int bytesInBuffer = buffer.Length - bufferOffset;
+                int bytesToCopy = bytesInBuffer >= remainder ? remainder : bytesInBuffer;
+                Arrays.Copy(buffer, bufferOffset, dest, destOffset, bytesToCopy);
+                destOffset += bytesToCopy;
+                start += bytesToCopy;
+                remainder -= bytesToCopy;
+            }
+            pointer += len;
+        }
+
+        // LUCENENET: This duplication is intentional for performance reasons.
         protected override void ReadInternal(Span<byte> destination)
         {
             int destOffset = 0;

@@ -187,6 +187,14 @@ namespace Lucene.Net.Index
                 }
             }
 
+            protected override void ReadInternal(byte[] b, int offset, int length)
+            {
+                SimOutage();
+                @delegate.Seek(Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                @delegate.ReadBytes(b, offset, length);
+            }
+
+            // LUCENENET: This duplication is intentional for performance reasons.
             protected override void ReadInternal(Span<byte> destination)
             {
                 SimOutage();

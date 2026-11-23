@@ -350,7 +350,25 @@ namespace Lucene.Net.Store
             /// <summary>
             /// Expert: implements buffer refill.  Reads bytes from the current
             /// position in the input. </summary>
+            /// <param name="b"> the array to read bytes into </param>
+            /// <param name="offset"> the offset in the array to start storing bytes </param>
+            /// <param name="len"> the number of bytes to read </param>
+            protected override void ReadInternal(byte[] b, int offset, int len)
+            {
+                long start = Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                if (start + len > length)
+                {
+                    throw EOFException.Create("read past EOF: " + this);
+                }
+                @base.Seek(fileOffset + start);
+                @base.ReadBytes(b, offset, len, false);
+            }
+
+            /// <summary>
+            /// Expert: implements buffer refill.  Reads bytes from the current
+            /// position in the input. </summary>
             /// <param name="destination"> the span to read bytes into </param>
+            // LUCENENET: This duplication is intentional for performance reasons.
             protected override void ReadInternal(Span<byte> destination)
             {
                 int len = destination.Length;
@@ -360,7 +378,6 @@ namespace Lucene.Net.Store
                     throw EOFException.Create("read past EOF: " + this);
                 }
                 @base.Seek(fileOffset + start);
-                //@base.ReadBytes(b, offset, len, false);
                 @base.ReadBytes(destination, false);
             }
 

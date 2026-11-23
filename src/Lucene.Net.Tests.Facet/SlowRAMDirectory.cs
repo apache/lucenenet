@@ -143,7 +143,18 @@ namespace Lucene.Net.Facet
                 return ii.ReadByte();
             }
 
-            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+            public override void ReadBytes(byte[] b, int offset, int len)
+            {
+                if (numRead >= IO_SLEEP_THRESHOLD)
+                {
+                    outerInstance.DoSleep(rand, len);
+                    numRead = 0;
+                }
+                numRead += len;
+                ii.ReadBytes(b, offset, len);
+            }
+
+            // LUCENENET: This duplication is intentional for performance reasons.
             public override void ReadBytes(Span<byte> destination)
             {
                 int len = destination.Length;

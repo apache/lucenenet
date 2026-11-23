@@ -153,7 +153,30 @@ namespace Lucene.Net.Index
             }
         }
 
-        // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+        public override void ReadBytes(byte[] b, int offset, int len)
+        {
+            while (len > 0)
+            {
+                int numLeft = limit - upto;
+                if (numLeft < len)
+                {
+                    // Read entire slice
+                    Arrays.Copy(buffer, upto, b, offset, numLeft);
+                    offset += numLeft;
+                    len -= numLeft;
+                    NextSlice();
+                }
+                else
+                {
+                    // this slice is the last one
+                    Arrays.Copy(buffer, upto, b, offset, len);
+                    upto += len;
+                    break;
+                }
+            }
+        }
+
+        // LUCENENET: This duplication is intentional for performance reasons.
         public override void ReadBytes(Span<byte> destination)
         {
             int offset = 0;

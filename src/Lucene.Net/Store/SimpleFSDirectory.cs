@@ -231,8 +231,58 @@ namespace Lucene.Net.Store
 
             public override sealed long Length => m_end - m_off;
 
+
             /// <summary>
             /// <see cref="IndexInput"/> methods </summary>
+            protected override void ReadInternal(byte[] b, int offset, int len)
+            {
+                UninterruptableMonitor.Enter(m_file);
+                try
+                {
+                    long position = m_off + Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                    m_file.Seek(position, SeekOrigin.Begin);
+                    int total = 0;
+
+                    if (position + len > m_end)
+                    {
+                        throw EOFException.Create("read past EOF: " + this);
+                    }
+
+                    try
+                    {
+                        //while (total < len)
+                        //{
+                        //    int toRead = Math.Min(CHUNK_SIZE, len - total);
+                        //    int i = m_file.Read(b, offset + total, toRead);
+                        //    if (i < 0) // be defensive here, even though we checked before hand, something could have changed
+                        //    {
+                        //        throw EOFException.Create("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + m_end);
+                        //    }
+                        //    if (Debugging.AssertsEnabled) Debugging.Assert(i > 0, "RandomAccessFile.read with non zero-length toRead must always read at least one byte");
+                        //    total += i;
+                        //}
+
+                        // LUCENENET specific: FileStream is already optimized to read natively
+                        // using the buffer size that is passed through its constructor. So,
+                        // all we need to do is Read().
+                        total = m_file.Read(b, offset, len);
+
+                        if (Debugging.AssertsEnabled) Debugging.Assert(total == len);
+                    }
+                    catch (Exception ioe) when (ioe.IsIOException())
+                    {
+                        throw new IOException(ioe.Message + ": " + this, ioe);
+                    }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(m_file);
+                }
+            }
+
+            /// <summary>
+            /// <see cref="IndexInput"/> methods </summary>
+            // LUCENENET: This duplication is intentional for performance reasons.
             protected override void ReadInternal(Span<byte> destination)
             {
                 int len = destination.Length;
