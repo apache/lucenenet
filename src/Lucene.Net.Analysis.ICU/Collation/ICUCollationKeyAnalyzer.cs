@@ -32,7 +32,7 @@ namespace Lucene.Net.Collation
     /// <remarks>
     /// Converts the token into its <see cref="CollationKey"/>, and
     /// then encodes the <see cref="CollationKey"/> either directly or with
-    /// <see cref="IndexableBinaryStringTools"/> (see <a href="#version">below</a>), to allow it to
+    /// <see cref="IndexableBinaryStringTools"/> (see below), to allow it to
     /// be stored as an index term.
     /// <para/>
     /// <strong>WARNING:</strong> Make sure you use exactly the same <see cref="Collator"/> at

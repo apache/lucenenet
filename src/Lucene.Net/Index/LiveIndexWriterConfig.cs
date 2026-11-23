@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
         /// <para/>
         /// <b>NOTE</b>: It's not guaranteed that all memory resident documents are
         /// flushed once this limit is exceeded. Depending on the configured
-        /// <seealso cref="FlushPolicy"/> only a subset of the buffered documents are flushed and
+        /// <c>FlushPolicy</c> only a subset of the buffered documents are flushed and
         /// therefore only parts of the RAM buffer is released.
         /// <para/>
         ///

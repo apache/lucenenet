@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
     /// <para/>
     /// While normally term ords are type <see cref="long"/>, in this API they are
     /// <see cref="int"/> as the internal representation here cannot address
-    /// more than <see cref="BufferedUpdates.MAX_INT32"/> unique terms.  Also, typically this
+    /// more than <c>BufferedUpdates.MAX_INT32</c> unique terms.  Also, typically this
     /// class is used on fields with relatively few unique terms
     /// vs the number of documents.  In addition, there is an
     /// internal limit (16 MB) on how many bytes each chunk of

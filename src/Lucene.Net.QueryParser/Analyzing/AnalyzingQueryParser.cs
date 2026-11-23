@@ -34,7 +34,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
     using ParseException = Lucene.Net.QueryParsers.Classic.ParseException;
 
     /// <summary>
-    /// Overrides Lucene's default <see cref="QueryParser"/> so that Fuzzy-, Prefix-, Range-, and WildcardQuerys
+    /// Overrides Lucene's default <see cref="QueryParser"/> so that Fuzzy-, Prefix-, Range-, and WildcardQueries
     /// are also passed through the given analyzer, but wildcard characters <c>*</c> and
     /// <c>?</c> don't get removed from the search terms.
     /// <para/>

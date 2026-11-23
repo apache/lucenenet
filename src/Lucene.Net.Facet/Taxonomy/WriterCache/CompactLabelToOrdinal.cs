@@ -32,11 +32,11 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// </para>
     /// <para>
     /// This data structure grows by adding a new HashArray whenever the number of
-    /// collisions in the <see cref="CollisionMap"/> exceeds <see cref="loadFactor"/>
+    /// collisions in the <see cref="CollisionMap"/> exceeds <c>loadFactor</c>
     /// <c>GetMaxOrdinal().</c> Growing also includes reinserting all colliding
     /// labels into the <see cref="HashArray"/>s to possibly reduce the number of collisions.
     ///
-    /// For setting the <see cref="loadFactor"/> see
+    /// For setting the <c>loadFactor</c> see
     /// <see cref="CompactLabelToOrdinal(int, float, int)"/>.
     /// </para>
     /// <para>

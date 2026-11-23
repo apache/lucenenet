@@ -222,7 +222,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Adds an Object to a <see cref="PriorityQueue{T}"/> in log(size) time. If one tries to add
-        /// more objects than <see cref="maxSize"/> from initialize and it is not possible to resize
+        /// more objects than <c>maxSize</c> from initialize and it is not possible to resize
         /// the heap, an <see cref="IndexOutOfRangeException"/> is thrown.
         /// </summary>
         /// <returns> The new 'top' element in the queue. </returns>
@@ -262,7 +262,7 @@ namespace Lucene.Net.Util
         /// full heap's minimum, and couldn't be added), or another
         /// object that was previously the smallest value in the
         /// heap and now has been replaced by a larger one, or <c>null</c>
-        /// if the queue wasn't yet full with <see cref="maxSize"/> elements.
+        /// if the queue wasn't yet full with <c>maxSize</c> elements.
         /// </summary>
         // LUCENENET: IMPORTANT - this implementation should remain in sync with PriorityQueue<T>
         public T InsertWithOverflow(T element)
@@ -539,7 +539,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Adds an Object to a <see cref="PriorityQueue{T}"/> in log(size) time. If one tries to add
-        /// more objects than <see cref="maxSize"/> from initialize and it is not possible to resize
+        /// more objects than <c>maxSize</c> from initialize and it is not possible to resize
         /// the heap, an <see cref="IndexOutOfRangeException"/> is thrown.
         /// </summary>
         /// <returns> The new 'top' element in the queue. </returns>
@@ -579,7 +579,7 @@ namespace Lucene.Net.Util
         /// full heap's minimum, and couldn't be added), or another
         /// object that was previously the smallest value in the
         /// heap and now has been replaced by a larger one, or <c>null</c>
-        /// if the queue wasn't yet full with <see cref="maxSize"/> elements.
+        /// if the queue wasn't yet full with <c>maxSize</c> elements.
         /// </summary>
         // LUCENENET: IMPORTANT - this implementation should remain in sync with ValuePriorityQueue<T>
         public virtual T InsertWithOverflow(T element)

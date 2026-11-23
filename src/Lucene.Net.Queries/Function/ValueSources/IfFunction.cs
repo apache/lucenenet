@@ -24,8 +24,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Depending on the <see cref="bool"/> value of the <see cref="ifSource"/> function,
-    /// returns the value of the <see cref="trueSource"/> or <see cref="falseSource"/> function.
+    /// Depending on the <see cref="bool"/> value of the <c>ifSource</c> function,
+    /// returns the value of the <c>trueSource</c> or <c>falseSource</c> function.
     /// </summary>
     public class IfFunction : BoolFunction
     {

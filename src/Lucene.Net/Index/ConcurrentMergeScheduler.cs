@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns <see cref="maxThreadCount"/>.
+        /// Returns <see cref="MaxThreadCount"/>.
         /// </summary>
         /// <seealso cref="SetMaxMergesAndThreads(int, int)"/>
         public virtual int MaxThreadCount => maxThreadCount;

@@ -33,10 +33,10 @@ namespace Lucene.Net.Search.Suggest
     /// <para>An entry can be: </para>
     /// <list type="number">
     /// <item><description>suggestion</description></item>
-    /// <item><description>suggestion <see cref="fieldDelimiter"/> weight</description></item>
-    /// <item><description>suggestion <see cref="fieldDelimiter"/> weight <see cref="fieldDelimiter"/> payload</description></item>
+    /// <item><description>suggestion <c>fieldDelimiter</c> weight</description></item>
+    /// <item><description>suggestion <c>fieldDelimiter</c> weight <c>fieldDelimiter</c> payload</description></item>
     /// </list>
-    /// where the default <see cref="fieldDelimiter"/> is <see cref="DEFAULT_FIELD_DELIMITER"/> (a tab)
+    /// where the default <c>fieldDelimiter</c> is <see cref="DEFAULT_FIELD_DELIMITER"/> (a tab)
     /// <para>
     /// <b>NOTE:</b>
     /// <list type="number">
@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Suggest
     /// <item><description>A payload cannot be specified without having the weight specified for an entry</description></item>
     /// <item><description>If the payload for an entry is not specified (assuming payload is enabled)
     ///  then an empty payload is returned</description></item>
-    /// <item><description>An entry cannot have more than two <see cref="fieldDelimiter"/>s</description></item>
+    /// <item><description>An entry cannot have more than two <c>fieldDelimiter</c>s</description></item>
     /// </list>
     /// </para>
     /// <c>Example:</c><para/>

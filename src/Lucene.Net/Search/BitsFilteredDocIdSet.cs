@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// This implementation supplies a filtered <see cref="DocIdSet"/>, that excludes all
     /// docids which are not in a <see cref="IBits"/> instance. This is especially useful in
-    /// <see cref="Lucene.Net.Search.Filter"/> to apply the <see cref="acceptDocs"/>
+    /// <see cref="Lucene.Net.Search.Filter"/> to apply the <c>acceptDocs</c>
     /// passed to <see cref="Filter.GetDocIdSet(Index.AtomicReaderContext, IBits)"/> before returning the final <see cref="DocIdSet"/>.
     /// </summary>
     /// <seealso cref="DocIdSet"/>

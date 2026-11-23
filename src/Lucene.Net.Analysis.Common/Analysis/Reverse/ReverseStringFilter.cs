@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Reverse
     /// <summary>
     /// Reverse token string, for example "country" => "yrtnuoc".
     /// <para>
-    /// If <see cref="marker"/> is supplied, then tokens will be also prepended by
+    /// If <c>marker</c> is supplied, then tokens will be also prepended by
     /// that character. For example, with a marker of &#x5C;u0001, "country" =>
     /// "&#x5C;u0001yrtnuoc". This is useful when implementing efficient leading
     /// wildcards search.

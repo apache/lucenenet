@@ -145,6 +145,8 @@ $DocFxJsonMeta = @(
     "docfx.test-framework.json",
     "docfx.demo.json",
     # intentional duplicates
+    "docfx.icu.json",
+    "docfx.memory.json",
     "docfx.codecs.json",
     "docfx.core.json"
 )

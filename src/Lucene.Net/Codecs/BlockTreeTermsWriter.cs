@@ -190,7 +190,7 @@ namespace Lucene.Net.Codecs
     ///    <item><description>DocFreq is the count of documents which contain the term.</description></item>
     ///    <item><description>TotalTermFreq is the total number of occurrences of the term. this is encoded
     ///        as the difference between the total number of occurrences and the DocFreq.</description></item>
-    ///    <item><description>FieldNumber is the fields number from <see cref="fieldInfos"/>. (.fnm)</description></item>
+    ///    <item><description>FieldNumber is the fields number from <c>fieldInfos</c>. (.fnm)</description></item>
     ///    <item><description>NumTerms is the number of unique terms for the field.</description></item>
     ///    <item><description>RootCode points to the root block for the field.</description></item>
     ///    <item><description>SumDocFreq is the total number of postings, the number of term-document pairs across

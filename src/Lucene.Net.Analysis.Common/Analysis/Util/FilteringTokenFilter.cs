@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Create a new <see cref="FilteringTokenFilter"/>. </summary>
-        /// <param name="version">                  the <a href="#lucene_match_version">Lucene match version</a> </param>
+        /// <param name="version">                  the Lucene match version </param>
         /// <param name="enablePositionIncrements"> whether to increment position increments when filtering out terms </param>
         /// <param name="input">                    the input to consume </param>
         /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4

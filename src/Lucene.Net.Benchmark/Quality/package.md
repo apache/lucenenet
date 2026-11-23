@@ -26,16 +26,16 @@ This package allows to benchmark search quality of a Lucene application.
 
 In order to use this package you should provide:
 
-*   A [IndexSearcher]({@docRoot}/../core/org/apache/lucene/search/IndexSearcher.html).
+*   An `IndexSearcher`.
 
-*   [Quality queries](QualityQuery.html).
+*   [Quality queries](xref:Lucene.Net.Benchmarks.Quality.QualityQuery).
 
-*   [Judging object](Judge.html).
+*   [Judging object](xref:Lucene.Net.Benchmarks.Quality.IJudge).
 
-*   [Reporting object](utils/SubmissionReport.html).
+*   [Reporting object](xref:Lucene.Net.Benchmarks.Quality.Utils.SubmissionReport).
 
 For benchmarking TREC collections with TREC QRels, take a look at the
-[trec package](trec/package-summary.html).
+[trec package](xref:Lucene.Net.Benchmarks.Quality.Trec).
 
 Here is a sample code used to run the TREC 2006 queries 701-850 on the .Gov2 collection:
 
@@ -74,8 +74,8 @@ Here is a sample code used to run the TREC 2006 queries 701-850 on the .Gov2 col
 Some immediate ways to modify this program to your needs are:
 
 *   To run on different formats of queries and judgements provide your own
-      [Judge](Judge.html) and
-      [Quality queries](QualityQuery.html).
+      [Judge](xref:Lucene.Net.Benchmarks.Quality.IJudge) and
+      [Quality queries](xref:Lucene.Net.Benchmarks.Quality.QualityQuery).
 
 *   Create sophisticated Lucene queries by supplying a different
-  [Quality query parser](QualityQueryParser.html).
+  [Quality query parser](xref:Lucene.Net.Benchmarks.Quality.IQualityQueryParser).

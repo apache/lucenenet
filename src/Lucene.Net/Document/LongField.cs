@@ -103,8 +103,7 @@ namespace Lucene.Net.Documents
     /// term per value.</para>
     ///
     /// <para>For more information on the internals of numeric trie
-    /// indexing, including the <see cref="Search.NumericRangeQuery{T}.PrecisionStep"/> <a
-    /// href="../search/NumericRangeQuery.html#precisionStepDesc"><c>precisionStep</c></a>
+    /// indexing, including the <see cref="Search.NumericRangeQuery{T}.PrecisionStep"/> (<c>precisionStep</c>)
     /// configuration, see <see cref="Search.NumericRangeQuery{T}"/>. The format of
     /// indexed values is described in <see cref="Util.NumericUtils"/>.</para>
     ///

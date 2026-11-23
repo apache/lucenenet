@@ -419,7 +419,7 @@ namespace Lucene.Net.Search.Similarities
     ///   <b><i>t.Boost</i></b>
     ///   is a search time boost of term <i>t</i> in the query <i>q</i> as
     ///   specified in the query text
-    ///   (see <a href="{@docRoot}/../queryparser/org/apache/lucene/queryparser/classic/package-summary.html#Boosting_a_Term">query syntax</a>),
+    ///   (see <a href="xref:Lucene.Net.QueryParsers.Classic">query syntax</a>),
     ///   or as set by application calls to
     ///   <see cref="Lucene.Net.Search.Query.Boost"/>.
     ///   Notice that there is really no direct API for accessing a boost of one term in a multi term query,

@@ -501,9 +501,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through the <see cref="termArrays"/> collection.
+        /// Returns an enumerator that iterates through the <c>termArrays</c> collection.
         /// </summary>
-        /// <returns>An enumerator that can be used to iterate through the <see cref="termArrays"/> collection.</returns>
+        /// <returns>An enumerator that can be used to iterate through the <c>termArrays</c> collection.</returns>
         // LUCENENET specific
         public IEnumerator<Term[]> GetEnumerator()
         {
@@ -511,9 +511,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through the <see cref="termArrays"/>.
+        /// Returns an enumerator that iterates through the <c>termArrays</c>.
         /// </summary>
-        /// <returns>An enumerator that can be used to iterate through the <see cref="termArrays"/> collection.</returns>
+        /// <returns>An enumerator that can be used to iterate through the <c>termArrays</c> collection.</returns>
         // LUCENENET specific
         IEnumerator IEnumerable.GetEnumerator()
         {

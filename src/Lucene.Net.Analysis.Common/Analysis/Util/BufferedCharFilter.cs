@@ -220,7 +220,7 @@ namespace Lucene.Net.Analysis.Util
         /// Sets a mark position in this reader. The parameter <paramref name="markLimit"/>
         /// indicates how many characters can be read before the mark is invalidated.
         /// Calling <see cref="Reset()"/> will reposition the reader back to the marked
-        /// position if <see cref="markLimit"/> has not been surpassed.
+        /// position if <c>markLimit</c> has not been surpassed.
         /// </summary>
         /// <param name="markLimit">
         /// the number of characters that can be read before the mark is
@@ -555,7 +555,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Skips <paramref name="amount"/> characters in this reader. Subsequent
         /// <see cref="Read()"/>s will not return these characters unless <see cref="Reset()"/>
-        /// is used. Skipping characters may invalidate a mark if <see cref="markLimit"/>
+        /// is used. Skipping characters may invalidate a mark if <c>markLimit</c>
         /// is surpassed.
         /// </summary>
         /// <param name="amount">the maximum number of characters to skip.</param>

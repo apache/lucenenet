@@ -165,7 +165,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Scans the given <paramref name="assemblies"/> for subclasses of <see cref="Codec"/>
-        /// and adds their names to the <see cref="codecNameToTypeMap"/>. Note that names will be
+        /// and adds their names to the <c>codecNameToTypeMap</c>. Note that names will be
         /// automatically overridden if the <see cref="Codec"/> name appears multiple times - the last match wins.
         /// </summary>
         /// <param name="assemblies">A list of assemblies to scan. The assemblies will be scanned from first to last,
@@ -180,7 +180,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Scans the given <paramref name="assembly"/> for subclasses of <see cref="Codec"/>
-        /// and adds their names to the <see cref="codecNameToTypeMap"/>. Note that names will be
+        /// and adds their names to the <c>codecNameToTypeMap</c>. Note that names will be
         /// automatically overridden if the <see cref="Codec"/> name appears multiple times - the last match wins.
         /// </summary>
         /// <param name="assembly">The assembly to scan.</param>
@@ -198,7 +198,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Adds a <see cref="Codec"/> type to the <see cref="codecNameToTypeMap"/>, using
+        /// Adds a <see cref="Codec"/> type to the <c>codecNameToTypeMap</c>, using
         /// the name provided in the <see cref="CodecNameAttribute"/>, if present, or the name
         /// of the codec class minus the "Codec" suffix as the name by default.
         /// <para/>

@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
     /// Methods and constants inspired by the article
     /// "Broadword Implementation of Rank/Select Queries" by Sebastiano Vigna, January 30, 2012:
     /// <list type="bullet">
-    ///     <item><description>algorithm 1: <see cref="BitCount(long)"/>, count of set bits in a <see cref="long"/></description></item>
+    ///     <item><description>algorithm 1: <c>BitCount(long)</c>, count of set bits in a <see cref="long"/></description></item>
     ///     <item><description>algorithm 2: <see cref="Select(long, int)"/>, selection of a set bit in a <see cref="long"/>,</description></item>
     ///     <item><description>bytewise signed smaller &lt;<sub><small>8</small></sub> operator: <see cref="SmallerUpTo7_8(long,long)"/>.</description></item>
     ///     <item><description>shortwise signed smaller &lt;<sub><small>16</small></sub> operator: <see cref="SmallerUpto15_16(long,long)"/>.</description></item>
