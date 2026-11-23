@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Handlebars.Net" Version="2.1.6" />
+      <PackageReference Include="Handlebars.Net.Helpers" Version="2.4.12" />
+      <PackageReference Include="System.CommandLine" Version="2.0.8" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Analysis.Kuromoji\Lucene.Net.Analysis.Kuromoji.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Analysis.Morfologik\Lucene.Net.Analysis.Morfologik.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Analysis.OpenNLP\Lucene.Net.Analysis.OpenNLP.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Analysis.Phonetic\Lucene.Net.Analysis.Phonetic.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Analysis.SmartCn\Lucene.Net.Analysis.SmartCn.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Analysis.Stempel\Lucene.Net.Analysis.Stempel.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Benchmark\Lucene.Net.Benchmark.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Classification\Lucene.Net.Classification.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Demo\Lucene.Net.Demo.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Misc\Lucene.Net.Misc.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Replicator\Lucene.Net.Replicator.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Suggest\Lucene.Net.Suggest.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net\Lucene.Net.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Lucene.Net.Tests.ApiCheck" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Report\index.css" />
+      <EmbeddedResource Include="Report\index.handlebars" />
+    </ItemGroup>
+
+</Project>

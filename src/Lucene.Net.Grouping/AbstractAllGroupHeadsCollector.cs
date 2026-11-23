@@ -1,4 +1,5 @@
 using Lucene.Net.Index;
+using Lucene.Net.Reflection;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.IO;
@@ -165,6 +166,7 @@ namespace Lucene.Net.Search.Grouping
     /// it from GroupHead to <see cref="AbstractAllGroupHeadsCollector_GroupHead"/> to avoid naming conflicts with nested classes
     /// named GroupHead in derived classes of <see cref="AbstractAllGroupHeadsCollector"/>.
     /// </remarks>
+    [LuceneType("org.apache.lucene.search.grouping", "AbstractAllGroupHeadsCollector.GroupHead")]
     public abstract class AbstractAllGroupHeadsCollector_GroupHead /*<TGroupValue>*/
     {
 

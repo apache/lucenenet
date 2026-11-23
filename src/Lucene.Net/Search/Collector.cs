@@ -1,3 +1,4 @@
+using Lucene.Net.Reflection;
 using System;
 
 namespace Lucene.Net.Search
@@ -135,6 +136,8 @@ namespace Lucene.Net.Search
     /// <para/>
     /// @since 2.9
     /// </summary>
+    [LuceneType("org.apache.lucene.search", "Collector")]
+    [LuceneModifierDifference("Abstract class in Lucene is an interface in .NET since we need one for Grouping's covariance")]
     public interface ICollector // LUCENENET NOTE: This was an abstract class in Lucene, but made into an interface since we need one for Grouping's covariance
     {
         /// <summary>
@@ -193,6 +196,7 @@ namespace Lucene.Net.Search
     /// LUCENENET specific class used to hold the
     /// <see cref="NewAnonymous(Action{Scorer}, Action{int}, Action{AtomicReaderContext}, Func{bool})"/> static method.
     /// </summary>
+    [NoLuceneEquivalent]
     public static class Collector
     {
         /// <summary>

@@ -1,4 +1,5 @@
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Reflection;
 using Lucene.Net.Store;
 using System;
 using System.Runtime.CompilerServices;
@@ -51,6 +52,7 @@ namespace Lucene.Net.Util.Fst
     /// </para>
     /// @lucene.experimental
     /// </summary>
+    [LuceneType("org.apache.lucene.util.fst", "UpToTwoPositiveIntOutputs")]
     public sealed class UpToTwoPositiveInt64Outputs : Outputs<object>
     {
         /// <summary>
@@ -58,6 +60,7 @@ namespace Lucene.Net.Util.Fst
         /// <para/>
         /// NOTE: This was TwoLongs in Lucene
         /// </summary>
+        [LuceneType("org.apache.lucene.util.fst", "UpToTwoPositiveIntOutputs.TwoLongs")]
         public sealed class TwoInt64s
         {
             public long First => first;
