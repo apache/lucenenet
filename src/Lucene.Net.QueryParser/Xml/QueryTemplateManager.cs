@@ -143,7 +143,7 @@ namespace Lucene.Net.QueryParsers.Xml
             XmlDocument xslDoc = DOMUtils.LoadXMLSecure(xslIs); // LUCENENET: Disallow external entities and limit entity expansion
 
             XslCompiledTransform transformer = new XslCompiledTransform();
-            transformer.Load(xslDoc);
+            transformer.Load(xslDoc, XsltSettings.Default, CoreParser.DisallowExternalEntityResolver); // LUCENENET: Disallow external xsl:include and xsl:import
 
             TransformCriteria(formProperties, transformer, result);
         }
@@ -177,7 +177,7 @@ namespace Lucene.Net.QueryParsers.Xml
         {
             using var reader = XmlReader.Create(xslIs);
             XslCompiledTransform xslt = new XslCompiledTransform();
-            xslt.Load(reader);
+            xslt.Load(reader, XsltSettings.Default, CoreParser.DisallowExternalEntityResolver); // LUCENENET: Disallow external xsl:include and xsl:import
             return xslt;
         }
     }

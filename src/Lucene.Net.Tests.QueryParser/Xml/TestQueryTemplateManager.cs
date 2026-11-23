@@ -149,6 +149,37 @@ namespace Lucene.Net.QueryParsers.Xml
             TestParser.AssertExternalEntityResolvingUnsupported(e);
         }
 
+        [Test]
+        [LuceneNetSpecific]
+        public void TestStylesheetExternalIncludeAndImportAreNotResolved([Values("include", "import")] string element)
+        {
+            // The referenced stylesheet is valid, so it would compile successfully if it were resolved
+            System.IO.FileInfo externalFile = CreateTempFile("external", ".xsl");
+            System.IO.File.WriteAllText(externalFile.FullName,
+                "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
+                + "<xsl:template match=\"/Document\"><MatchAllDocsQuery/></xsl:template>"
+                + "</xsl:stylesheet>");
+
+            string xsl = "<?xml version=\"1.0\"?>"
+                + "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
+                + "<xsl:" + element + " href=\"" + new Uri(externalFile.FullName).AbsoluteUri + "\"/>"
+                + "</xsl:stylesheet>";
+
+            IDictionary<string, string> formProperties = getPropsFromString("artist=Fugazi");
+            using (var xslStream = new System.IO.MemoryStream(Encoding.UTF8.GetBytes(xsl)))
+            using (var result = new System.IO.MemoryStream())
+            {
+                Exception e = Assert.Catch(() => QueryTemplateManager.TransformCriteria(formProperties, xslStream, result));
+                TestParser.AssertExternalEntityResolvingUnsupported(e);
+            }
+
+            using (var xslStream = new System.IO.MemoryStream(Encoding.UTF8.GetBytes(xsl)))
+            {
+                Exception e = Assert.Catch(() => QueryTemplateManager.GetTemplates(xslStream));
+                TestParser.AssertExternalEntityResolvingUnsupported(e);
+            }
+        }
+
         //Helper method to construct Lucene query forms used in our test
         IDictionary<string, string> getPropsFromString(String nameValuePairs)
         {
