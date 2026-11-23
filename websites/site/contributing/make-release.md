@@ -366,34 +366,38 @@ Remove the old releases from SVN under https://dist.apache.org/repos/dist/releas
 
 - Publish the Draft [GitHub Release](https://github.com/apache/lucenenet/releases) that was [created earlier](#create-a-draft-github-release), updating the tag if necessary
 
+  > [!NOTE]
+  > Publishing the GitHub Release triggers the `Lucene-Net-Release-Website.yml` workflow, which automates the website and API documentation updates below. If the workflow fails, it can be re-run manually from the Actions tab by specifying the version, or the steps can be done manually as described below.
+
 - Update Website with new release
 
-  - Update the `/websites/site/lucenetemplate/doap_Lucene_Net.rdf` file to reflect the new version and ensure other links/info in the file are correct.
-    > [!IMPORTANT]
-    > Only update the version if it's a new stable version.
-
-  - Update the `/websites/site/lucenetemplate/.htaccess` file to reflect the `latest` and `absoluteLatest` versions.
-    - `latest` should reflect the current release only if it is not a pre-release
-    - `absoluteLatest` should reflect the current release (whether pre-release or not)
+  - The workflow runs `/websites/site/add-release.ps1` and submits the changes as a PR to `master`. Review the PR, in particular:
+    - Ensure the "Supported Frameworks" and "All Packages" sections and the Java Lucene release link of the new download page are accurate for the new release (they are copied from the previous release)
+    - Ensure the release notes page in `/websites/site/release-notes` exists
 <br/>
 <br/>
-  - Create a new release page in the `/websites/site/download`, in most cases it's easiest to just copy the previous release page.
-    - Ensure the `uid` in the header is correct
-    - Update all headers, status, release date to be correct
-    - Ensure supported frameworks and packages section is accurate for the new release
-<br/>
-<br/>
-  - Add the new release page to the `/websites/site/download/toc.yml` file
+  - Merge the PR. This triggers the website workflow, which submits a PR to the `lucenenet-site` repository. Merge it to [publish the website](https://lucenenet.apache.org/contributing/documentation.html#website).
 
-  - Add the new release version and release date to the `/websites/site/download/download.md` file
+  - To make the updates manually instead, run the script locally, then follow the instructions on how to [build, test & publish the website](https://lucenenet.apache.org/contributing/documentation.html#website):
 
-  - Follow the instructions on how to [build, test & publish the website](https://lucenenet.apache.org/contributing/documentation.html#website) and run/test the website locally.
+    ```console
+    ./websites/site/add-release.ps1 -Version 4.8.0-beta00019 -ReleaseDate 2026-11-01
+    ```
 
-  - Commit changes and [publish the website](https://lucenenet.apache.org/contributing/documentation.html#website).
+    The script makes the following changes (each step is skipped if it was already done):
+    - Creates a new release page in `/websites/site/download` (copied from the previous release page)
+    - Adds the new release page to the `/websites/site/download/toc.yml` file
+    - Adds the new release version and release date to the `/websites/site/download/download.md` file
+    - Adds the API docs link to the `/websites/site/docs.md` file
+    - Updates the `/websites/site/lucenetemplate/.htaccess` file to reflect the `latest` (only if it is not a pre-release) and `absoluteLatest` versions
+    - Adds the release to the `/websites/site/lucenetemplate/doap_Lucene_Net.rdf` file (only if it is a stable version)
+    - Updates the package versions in the quick-start tutorial and the `lucene-cli` install instructions
 
 - Update the API Documentation with new release
 
-  - Follow the instructions on how to [build](https://lucenenet.apache.org/contributing/documentation.html#api-docs), test and [publish](https://lucenenet.apache.org/contributing/documentation.html#publishing-the-docs) the docs.
+  - The workflow creates the `docs/[Version]` branch from the release tag (if it doesn't already exist) and runs the docs workflow on it, which submits a PR to the `lucenenet-site` repository. Merge it to publish the docs.
+
+  - To do this manually instead, follow the instructions on how to [build](https://lucenenet.apache.org/contributing/documentation.html#api-docs), test and [publish](https://lucenenet.apache.org/contributing/documentation.html#publishing-the-docs) the docs.
 <br/>
 <br/>
 - Send announcement email 24 hours after the release (to ensure the mirrors have propagated the download locations)
