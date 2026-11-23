@@ -186,27 +186,6 @@ namespace Lucene.Net.Util
         internal const string SYSPROP_FAILFAST = "tests:failfast"; // LUCENENET specific - made internal, because not fully implemented
 
         /// <summary>
-        /// Adds a category to an NUnit test if it doesn't already exist on the node.
-        /// This ensures that the category will only be added once even if called multiple times
-        /// on the same node.
-        /// </summary>
-        /// <param name="test">The test node to add the category to.</param>
-        /// <param name="category">The name of the category.</param>
-        private static void AddCategoryIfMissing(NUnit.Framework.Internal.Test test, string category)
-        {
-            if (test.Properties.ContainsKey(PropertyNames.Category))
-            {
-                var existingCategories = test.Properties[PropertyNames.Category];
-                if (existingCategories != null && existingCategories.Cast<object>().Any(v => Equals(v, category)))
-                {
-                    return;
-                }
-            }
-
-            test.Properties.Add(PropertyNames.Category, category);
-        }
-
-        /// <summary>
         /// Attribute for tests that should only be run during nightly builds.
         /// </summary>
         [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
@@ -219,7 +198,7 @@ namespace Lucene.Net.Util
             {
                 // This method is called before initialization. The only thing
                 // we can do here is set the category.
-                AddCategoryIfMissing(test, "Nightly");
+                test.AddCategoryIfMissing("Nightly");
             }
 
             int IApplyTestSkipRule.Priority => 30;
@@ -248,7 +227,7 @@ namespace Lucene.Net.Util
             {
                 // This method is called before initialization. The only thing
                 // we can do here is set the category.
-                AddCategoryIfMissing(test, "Weekly");
+                test.AddCategoryIfMissing("Weekly");
             }
 
             int IApplyTestSkipRule.Priority => 20;
@@ -275,7 +254,7 @@ namespace Lucene.Net.Util
             {
                 // This method is called before initialization. The only thing
                 // we can do here is set the category.
-                AddCategoryIfMissing(test, "AwaitsFix");
+                test.AddCategoryIfMissing("AwaitsFix");
             }
 
             int IApplyTestSkipRule.Priority => 10;
@@ -308,7 +287,7 @@ namespace Lucene.Net.Util
             {
                 // This method is called before initialization. The only thing
                 // we can do here is set the category.
-                AddCategoryIfMissing(test, "Slow");
+                test.AddCategoryIfMissing("Slow");
             }
 
             int IApplyTestSkipRule.Priority => 40;
