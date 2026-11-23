@@ -1,5 +1,6 @@
 using J2N.Text;
 using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -8,6 +9,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Xml;
 using JCG = J2N.Collections.Generic;
 
@@ -110,6 +112,71 @@ namespace Lucene.Net.QueryParsers.Xml
                 int expectedHits = int.Parse(queryFormProperties["expectedMatches"]);
                 assertEquals("Number of results should match for query " + queryForm, expectedHits, h);
 
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestStylesheetExternalEntityIsNotResolved()
+        {
+            const string xsl = "<?xml version=\"1.0\"?>"
+                + "<!DOCTYPE xsl:stylesheet SYSTEM \"foo://bar.xyz/mydtd\">"
+                + "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
+                + "<xsl:template match=\"/Document\"><MatchAllDocsQuery/></xsl:template>"
+                + "</xsl:stylesheet>";
+
+            IDictionary<string, string> formProperties = getPropsFromString("artist=Fugazi");
+            using var xslStream = new System.IO.MemoryStream(Encoding.UTF8.GetBytes(xsl));
+            using var result = new System.IO.MemoryStream();
+            Exception e = Assert.Catch(() => QueryTemplateManager.TransformCriteria(formProperties, xslStream, result));
+            TestParser.AssertExternalEntityResolvingUnsupported(e);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestTransformedQueryExternalEntityIsNotResolved()
+        {
+            // The stylesheet itself is safe, but it emits a DOCTYPE referencing an external DTD
+            const string xsl = "<?xml version=\"1.0\"?>"
+                + "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
+                + "<xsl:output method=\"xml\" doctype-system=\"foo://bar.xyz/mydtd\"/>"
+                + "<xsl:template match=\"/Document\"><MatchAllDocsQuery/></xsl:template>"
+                + "</xsl:stylesheet>";
+
+            IDictionary<string, string> formProperties = getPropsFromString("artist=Fugazi");
+            using var xslStream = new System.IO.MemoryStream(Encoding.UTF8.GetBytes(xsl));
+            Exception e = Assert.Catch(() => QueryTemplateManager.GetQueryAsDOM(formProperties, xslStream));
+            TestParser.AssertExternalEntityResolvingUnsupported(e);
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestStylesheetExternalIncludeAndImportAreNotResolved([Values("include", "import")] string element)
+        {
+            // The referenced stylesheet is valid, so it would compile successfully if it were resolved
+            System.IO.FileInfo externalFile = CreateTempFile("external", ".xsl");
+            System.IO.File.WriteAllText(externalFile.FullName,
+                "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
+                + "<xsl:template match=\"/Document\"><MatchAllDocsQuery/></xsl:template>"
+                + "</xsl:stylesheet>");
+
+            string xsl = "<?xml version=\"1.0\"?>"
+                + "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
+                + "<xsl:" + element + " href=\"" + new Uri(externalFile.FullName).AbsoluteUri + "\"/>"
+                + "</xsl:stylesheet>";
+
+            IDictionary<string, string> formProperties = getPropsFromString("artist=Fugazi");
+            using (var xslStream = new System.IO.MemoryStream(Encoding.UTF8.GetBytes(xsl)))
+            using (var result = new System.IO.MemoryStream())
+            {
+                Exception e = Assert.Catch(() => QueryTemplateManager.TransformCriteria(formProperties, xslStream, result));
+                TestParser.AssertExternalEntityResolvingUnsupported(e);
+            }
+
+            using (var xslStream = new System.IO.MemoryStream(Encoding.UTF8.GetBytes(xsl)))
+            {
+                Exception e = Assert.Catch(() => QueryTemplateManager.GetTemplates(xslStream));
+                TestParser.AssertExternalEntityResolvingUnsupported(e);
             }
         }
 
