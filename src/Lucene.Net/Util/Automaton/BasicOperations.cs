@@ -1,11 +1,11 @@
 using J2N;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using JCG = J2N.Collections.Generic;
 
 /*
@@ -46,6 +46,11 @@ namespace Lucene.Net.Util.Automaton
     /// </summary>
     public static class BasicOperations // LUCENENET specific - made static since all members are static
     {
+        /// <summary>
+        /// Specifies the initial and maximum buffer size for character stacks.
+        /// </summary>
+        internal const int CharStackBufferSize = 128; // LUCENENET specific
+
         /// <summary>
         /// Returns an automaton that accepts the concatenation of the languages of the
         /// given automata.
@@ -111,7 +116,7 @@ namespace Lucene.Net.Util.Automaton
             }
             if (all_singleton)
             {
-                StringBuilder b = new StringBuilder();
+                using ValueStringBuilder b = new(stackalloc char[CharStackBufferSize]);
                 foreach (Automaton a in l)
                 {
                     b.Append(a.singleton);
@@ -768,14 +773,18 @@ namespace Lucene.Net.Util.Automaton
 
             public override string ToString()
             {
-                StringBuilder s = new StringBuilder();
+                using ValueStringBuilder s = new(stackalloc char[CharStackBufferSize]);
                 for (int i = 0; i < count; i++)
                 {
                     if (i > 0)
                     {
                         s.Append(' ');
                     }
-                    s.Append(points[i].point).Append(':').Append(points[i].starts.count).Append(',').Append(points[i].ends.count);
+                    s.Append(points[i].point);
+                    s.Append(':');
+                    s.Append(points[i].starts.count);
+                    s.Append(',');
+                    s.Append(points[i].ends.count);
                 }
                 return s.ToString();
             }

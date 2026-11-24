@@ -1,11 +1,11 @@
 using J2N;
+using J2N.Globalization;
 using J2N.Text;
+using Lucene.Net.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Text;
 using Integer = J2N.Numerics.Int32;
 using JCG = J2N.Collections.Generic;
 
@@ -654,71 +654,91 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public override string ToString()
         {
-            return ToStringBuilder(new StringBuilder()).ToString();
+            ValueStringBuilder sb = new(stackalloc char[BasicOperations.CharStackBufferSize]);
+            try
+            {
+                ToStringBuilder(ref sb);
+                return sb.ToString();
+            }
+            finally
+            {
+                sb.Dispose();
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal virtual StringBuilder ToStringBuilder(StringBuilder b)
+        internal virtual void ToStringBuilder(ref ValueStringBuilder b)
         {
             switch (kind)
             {
                 case Kind.REGEXP_UNION:
                     b.Append('(');
-                    exp1.ToStringBuilder(b);
+                    exp1.ToStringBuilder(ref b);
                     b.Append('|');
-                    exp2.ToStringBuilder(b);
+                    exp2.ToStringBuilder(ref b);
                     b.Append(')');
                     break;
 
                 case Kind.REGEXP_CONCATENATION:
-                    exp1.ToStringBuilder(b);
-                    exp2.ToStringBuilder(b);
+                    exp1.ToStringBuilder(ref b);
+                    exp2.ToStringBuilder(ref b);
                     break;
 
                 case Kind.REGEXP_INTERSECTION:
                     b.Append('(');
-                    exp1.ToStringBuilder(b);
+                    exp1.ToStringBuilder(ref b);
                     b.Append('&');
-                    exp2.ToStringBuilder(b);
+                    exp2.ToStringBuilder(ref b);
                     b.Append(')');
                     break;
 
                 case Kind.REGEXP_OPTIONAL:
                     b.Append('(');
-                    exp1.ToStringBuilder(b);
+                    exp1.ToStringBuilder(ref b);
                     b.Append(")?");
                     break;
 
                 case Kind.REGEXP_REPEAT:
                     b.Append('(');
-                    exp1.ToStringBuilder(b);
+                    exp1.ToStringBuilder(ref b);
                     b.Append(")*");
                     break;
 
                 case Kind.REGEXP_REPEAT_MIN:
                     b.Append('(');
-                    exp1.ToStringBuilder(b);
-                    b.Append("){").Append(min).Append(",}");
+                    exp1.ToStringBuilder(ref b);
+                    b.Append("){");
+                    b.Append(min, provider: CultureInfo.InvariantCulture);
+                    b.Append(",}");
                     break;
 
                 case Kind.REGEXP_REPEAT_MINMAX:
                     b.Append('(');
-                    exp1.ToStringBuilder(b);
-                    b.Append("){").Append(min).Append(',').Append(max).Append('}');
+                    exp1.ToStringBuilder(ref b);
+                    b.Append("){");
+                    b.Append(min, provider: CultureInfo.InvariantCulture);
+                    b.Append(',');
+                    b.Append(max, provider: CultureInfo.InvariantCulture);
+                    b.Append('}');
                     break;
 
                 case Kind.REGEXP_COMPLEMENT:
                     b.Append("~(");
-                    exp1.ToStringBuilder(b);
+                    exp1.ToStringBuilder(ref b);
                     b.Append(')');
                     break;
 
                 case Kind.REGEXP_CHAR:
-                    b.Append('\\').AppendCodePoint(c);
+                    b.Append('\\');
+                    b.AppendCodePoint(c);
                     break;
 
                 case Kind.REGEXP_CHAR_RANGE:
-                    b.Append("[\\").AppendCodePoint(from).Append("-\\").AppendCodePoint(to).Append(']');
+                    b.Append("[\\");
+                    b.AppendCodePoint(from);
+                    b.Append("-\\");
+                    b.AppendCodePoint(to);
+                    b.Append(']');
                     break;
 
                 case Kind.REGEXP_ANYCHAR:
@@ -730,7 +750,9 @@ namespace Lucene.Net.Util.Automaton
                     break;
 
                 case Kind.REGEXP_STRING:
-                    b.Append('\"').Append(s).Append('\"');
+                    b.Append('"');
+                    b.Append(s);
+                    b.Append('"');
                     break;
 
                 case Kind.REGEXP_ANYSTRING:
@@ -738,32 +760,39 @@ namespace Lucene.Net.Util.Automaton
                     break;
 
                 case Kind.REGEXP_AUTOMATON:
-                    b.Append('<').Append(s).Append('>');
+                    b.Append('<');
+                    b.Append(s);
+                    b.Append('>');
                     break;
 
                 case Kind.REGEXP_INTERVAL:
-                    string s1 = Convert.ToString(min, CultureInfo.InvariantCulture);
-                    string s2 = Convert.ToString(max, CultureInfo.InvariantCulture);
+                    Span<char> s1 = stackalloc char[12];
+                    Span<char> s2 = stackalloc char[12];
+                    if (!Integer.TryFormat(min, s1, out int s1Length, provider: CultureInfo.InvariantCulture))
+                        throw new InvalidOperationException("min requires more than 12 characters"); // LUCENENET: Should never happen
+                    if (!Integer.TryFormat(max, s2, out int s2Length, provider: CultureInfo.InvariantCulture))
+                        throw new InvalidOperationException("max requires more than 12 characters"); // LUCENENET: Should never happen
                     b.Append('<');
                     if (digits > 0)
                     {
-                        for (int i = s1.Length; i < digits; i++)
+                        for (int i = s1Length; i < digits; i++)
                         {
                             b.Append('0');
                         }
                     }
-                    b.Append(s1).Append('-');
+                    b.Append(s1.Slice(0, s1Length));
+                    b.Append('-');
                     if (digits > 0)
                     {
-                        for (int i = s2.Length; i < digits; i++)
+                        for (int i = s2Length; i < digits; i++)
                         {
                             b.Append('0');
                         }
                     }
-                    b.Append(s2).Append('>');
+                    b.Append(s2.Slice(0, s2Length));
+                    b.Append('>');
                     break;
             }
-            return b;
         }
 
         /// <summary>
@@ -848,7 +877,7 @@ namespace Lucene.Net.Util.Automaton
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static RegExp MakeString(RegExp exp1, RegExp exp2)
         {
-            StringBuilder b = new StringBuilder();
+            using ValueStringBuilder b = new(stackalloc char[BasicOperations.CharStackBufferSize]);
             if (exp1.kind == Kind.REGEXP_STRING)
             {
                 b.Append(exp1.s);
@@ -1276,7 +1305,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     throw new ArgumentException("expected '>' at position " + pos);
                 }
-                string s = b.Substring(start, pos - 1 - start);
+                ReadOnlySpan<char> s = b.AsSpan(start, pos - 1 - start);
                 int i = s.IndexOf('-');
                 if (i == -1)
                 {
@@ -1284,7 +1313,7 @@ namespace Lucene.Net.Util.Automaton
                     {
                         throw new ArgumentException("interval syntax error at position " + (pos - 1));
                     }
-                    return MakeAutomaton(s);
+                    return MakeAutomaton(s.ToString());
                 }
                 else
                 {
@@ -1298,11 +1327,11 @@ namespace Lucene.Net.Util.Automaton
                     {
                         throw new ArgumentException("interval syntax error at position " + (pos - 1));
                     }
-                    string smin = s.Substring(0, i);
-                    string smax = s.Substring(i + 1, s.Length - (i + 1));
+                    ReadOnlySpan<char> smin = s.Slice(0, i);
+                    ReadOnlySpan<char> smax = s.Slice(i + 1, s.Length - (i + 1));
 
-                    if (!int.TryParse(smin, NumberStyles.Integer, CultureInfo.InvariantCulture, out int imin) ||
-                        !int.TryParse(smax, NumberStyles.Integer, CultureInfo.InvariantCulture, out int imax))
+                    if (!Integer.TryParse(smin, NumberStyle.Integer, CultureInfo.InvariantCulture, out int imin) ||
+                        !Integer.TryParse(smax, NumberStyle.Integer, CultureInfo.InvariantCulture, out int imax))
                         throw new ArgumentException("interval syntax error at position " + (pos - 1));
 
                     int digits;

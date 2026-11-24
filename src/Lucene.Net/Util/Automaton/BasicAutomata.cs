@@ -1,9 +1,10 @@
 using J2N;
+using Lucene.Net.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Text;
+using Integer = J2N.Numerics.Int32;
 using JCG = J2N.Collections.Generic;
 
 /*
@@ -101,7 +102,8 @@ namespace Lucene.Net.Util.Automaton
         {
             return new Automaton
             {
-                singleton = new string(Character.ToChars(c)),
+                // LUCENENET: Eliminated the heap allocated array
+                singleton = Character.ToChars(c, stackalloc char[2]).ToString(),
                 deterministic = true
             };
         }
@@ -134,7 +136,7 @@ namespace Lucene.Net.Util.Automaton
         /// <c>x.Substring(n).Length</c>.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static State AnyOfRightLength(string x, int n)
+        private static State AnyOfRightLength(ReadOnlySpan<char> x, int n)
         {
             State s = new State();
             if (x.Length == n)
@@ -153,7 +155,7 @@ namespace Lucene.Net.Util.Automaton
         /// <c>x.Substring(n)</c> and length <c>x.Substring(n).Length</c>.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static State AtLeast(string x, int n, ICollection<State> initials, bool zeros)
+        private static State AtLeast(ReadOnlySpan<char> x, int n, ICollection<State> initials, bool zeros)
         {
             State s = new State();
             if (x.Length == n)
@@ -181,7 +183,7 @@ namespace Lucene.Net.Util.Automaton
         /// <c>x.Substring(n)</c> and length <c>x.Substring(n).Length</c>.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static State AtMost(string x, int n)
+        private static State AtMost(ReadOnlySpan<char> x, int n)
         {
             State s = new State();
             if (x.Length == n)
@@ -206,7 +208,7 @@ namespace Lucene.Net.Util.Automaton
         /// (which must be equal to <c>y.Substring(n).Length</c>).
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static State Between(string x, string y, int n, ICollection<State> initials, bool zeros)
+        private static State Between(ReadOnlySpan<char> x, ReadOnlySpan<char> y, int n, ICollection<State> initials, bool zeros)
         {
             State s = new State();
             if (x.Length == n)
@@ -254,8 +256,12 @@ namespace Lucene.Net.Util.Automaton
         public static Automaton MakeInterval(int min, int max, int digits)
         {
             Automaton a = new Automaton();
-            string x = Convert.ToString(min, CultureInfo.InvariantCulture);
-            string y = Convert.ToString(max, CultureInfo.InvariantCulture);
+            Span<char> x = stackalloc char[12];
+            Span<char> y = stackalloc char[12];
+            if (!Integer.TryFormat(min, x, out int xLength, provider: CultureInfo.InvariantCulture))
+                throw new InvalidOperationException("min requires more than 12 characters"); // LUCNENET: Should never happen
+            if (!Integer.TryFormat(max, y, out int yLength, provider: CultureInfo.InvariantCulture))
+                throw new InvalidOperationException("max requires more than 12 characters"); // LUCNENET: Should never happen
 
             // LUCENENET specific - split into two `if` checks for different ArgumentOutOfRangeExceptions.
             // Also changed to use ArgumentOutOfRangeException instead of IllegalArgumentException (.NET Convention).
@@ -264,7 +270,7 @@ namespace Lucene.Net.Util.Automaton
                 throw new ArgumentOutOfRangeException(nameof(min), "min must be less than or equal to max");
             }
 
-            if (digits > 0 && y.Length > digits)
+            if (digits > 0 && yLength > digits)
             {
                 throw new ArgumentOutOfRangeException(nameof(digits), $"Cannot represent numbers between {min} and {max} with {digits} digits");
             }
@@ -276,24 +282,27 @@ namespace Lucene.Net.Util.Automaton
             }
             else
             {
-                d = y.Length;
+                d = yLength;
             }
-            StringBuilder bx = new StringBuilder();
-            for (int i = x.Length; i < d; i++)
+            using ValueStringBuilder bx = d * sizeof(char) <= Constants.MaxStackByteLimit
+                ? new(stackalloc char[d])
+                : new(d);
+            for (int i = xLength; i < d; i++)
             {
                 bx.Append('0');
             }
-            bx.Append(x);
-            x = bx.ToString();
-            StringBuilder by = new StringBuilder();
-            for (int i = y.Length; i < d; i++)
+            bx.Append(x.Slice(0, xLength));
+            using ValueStringBuilder by = d * sizeof(char) <= Constants.MaxStackByteLimit
+                ? new(stackalloc char[d])
+                : new(d);
+            for (int i = yLength; i < d; i++)
             {
                 by.Append('0');
             }
-            by.Append(y);
-            y = by.ToString();
+            by.Append(y.Slice(0, yLength));
             ICollection<State> initials = new JCG.List<State>();
-            a.initial = Between(x, y, 0, initials, digits <= 0);
+            // LUCENENET specific - pass the value from the builders so we don't have to allocate strings
+            a.initial = Between(bx.AsSpan(), by.AsSpan(), 0, initials, digits <= 0);
             if (digits <= 0)
             {
                 JCG.List<StatePair> pairs = new JCG.List<StatePair>();
