@@ -273,6 +273,59 @@ namespace Lucene.Net.Util
                         fixture.MakeInvalid(PARALLEL_NOT_ALLOWED_MSG);
                 }
             }
+
+            ApplyTestSkipRules(fixture);
+        }
+
+        /// <summary>
+        /// Detects test classes and methods that apply attributes with the <see cref="IApplyTestSkipRule"/>
+        /// and passes each test to the attribute for further evaluation. Nodes with more than one attribute
+        /// are ordered in ascending order by <see cref="IApplyTestSkipRule.Priority"/>. Each rule can return
+        /// <c>true</c> to skip lower priority rules (with a higher <see cref="IApplyTestSkipRule.Priority"/> value)
+        /// or <c>false</c> to continue to the next rule to evaluate the node.
+        /// </summary>
+        /// <param name="currentTest">The test node to evaluate. Typically, the root node.</param>
+        private static void ApplyTestSkipRules(Test currentTest)
+        {
+            IEnumerable<IApplyTestSkipRule> attributes = Enumerable.Empty<IApplyTestSkipRule>();
+
+            if (currentTest.Method?.MethodInfo is MethodInfo methodInfo)
+            {
+                attributes = methodInfo
+                    .GetCustomAttributes(typeof(IApplyTestSkipRule), inherit: true)
+                    .OfType<IApplyTestSkipRule>();
+            }
+            else if (currentTest.TypeInfo?.Type is Type fixtureType)
+            {
+                attributes = fixtureType
+                    .GetCustomAttributes(typeof(IApplyTestSkipRule), inherit: true)
+                    .OfType<IApplyTestSkipRule>();
+            }
+
+            foreach (var attr in attributes.OrderBy(a => a.Priority))
+            {
+                if (attr.ApplyTestSkipRule(currentTest))
+                {
+                    break;
+                }
+            }
+
+            // If this node is already skipped, NUnit won't run its children
+            if (currentTest.RunState == RunState.Skipped)
+            {
+                return;
+            }
+
+            if (currentTest.HasChildren)
+            {
+                foreach (ITest child in currentTest.Tests)
+                {
+                    if (child is Test childTest)
+                    {
+                        ApplyTestSkipRules(childTest);
+                    }
+                }
+            }
         }
 
         /// <summary>

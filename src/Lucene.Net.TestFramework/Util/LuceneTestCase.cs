@@ -13,7 +13,6 @@ using Lucene.Net.Support.Threading;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
-using NUnit.Framework.Internal.Commands;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections;
@@ -22,6 +21,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -185,57 +185,12 @@ namespace Lucene.Net.Util
         ///// <seealso cref="IgnoreAfterMaxFailures"/>
         internal const string SYSPROP_FAILFAST = "tests:failfast"; // LUCENENET specific - made internal, because not fully implemented
 
-        private class LuceneDelegatingTestCommand : DelegatingTestCommand
-        {
-            private readonly Func<bool> shouldSkip;
-            public LuceneDelegatingTestCommand(TestCommand command, Func<bool> shouldSkip, string skipReason) : base(command)
-            {
-                this.shouldSkip = shouldSkip ?? throw new ArgumentNullException(nameof(shouldSkip));
-                SkipReason = skipReason ?? throw new ArgumentNullException(nameof(skipReason));
-            }
-
-            public RunState RunState { get; set; } = RunState.Skipped;
-            public string SkipReason { get; }
-
-            public override TestResult Execute(TestExecutionContext context)
-            {
-                var test = context.CurrentTest;
-                // The test framework setting overrides the NUnit category setting, if false
-                bool skip = shouldSkip();
-                if (skip)
-                {
-                    test.RunState = RunState;
-                    test.Properties.Set(PropertyNames.SkipReason, SkipReason);
-                }
-
-                if (!skip)
-                {
-                    try
-                    {
-                        context.CurrentResult = innerCommand.Execute(context);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (context.CurrentResult is null) context.CurrentResult = context.CurrentTest.MakeTestResult();
-                        context.CurrentResult.RecordException(ex);
-                    }
-                }
-                else if (context.CurrentResult is null)
-                {
-                    context.CurrentResult = context.CurrentTest.MakeTestResult();
-                }
-
-                return context.CurrentResult;
-            }
-        }
-
         /// <summary>
         /// Attribute for tests that should only be run during nightly builds.
         /// </summary>
         [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
         [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
-        public sealed class NightlyAttribute : System.Attribute
-            , IApplyToTest, IApplyToContext, IWrapTestMethod
+        public sealed class NightlyAttribute : System.Attribute, IApplyToTest, IApplyTestSkipRule
         {
             private const string SKIP_REASON = "This is a nightly test.";
 
@@ -243,29 +198,19 @@ namespace Lucene.Net.Util
             {
                 // This method is called before initialization. The only thing
                 // we can do here is set the category.
-                test.Properties.Add(PropertyNames.Category, "Nightly");
+                test.AddCategoryIfMissing("Nightly");
             }
 
-            void IApplyToContext.ApplyToContext(TestExecutionContext context)
+            int IApplyTestSkipRule.Priority => 30;
+
+            bool IApplyTestSkipRule.ApplyTestSkipRule(NUnit.Framework.Internal.Test test)
             {
-                // Cover the case where this attribute is applied to the whole test fixture
-                var currentTest = context.CurrentTest;
-                if (!TestNightly && currentTest is NUnit.Framework.Internal.TestFixture fixture)
+                if (!TestNightly && !TestWeekly) // Weekly attribute takes priority over Nightly if both are applied and enabled
                 {
-                    foreach (var testInterface in fixture.Tests)
-                    {
-                        var test = (NUnit.Framework.Internal.Test)testInterface;
-                        test.RunState = RunState.Skipped;
-                        test.Properties.Set(PropertyNames.SkipReason, SKIP_REASON);
-                    }
+                    test.RunState = RunState.Skipped;
+                    test.Properties.Set(PropertyNames.SkipReason, SKIP_REASON);
                 }
-            }
-
-            TestCommand ICommandWrapper.Wrap(TestCommand command)
-            {
-                // This is to cover the case where the test is decorated with the attribute
-                // directly.
-                return new LuceneDelegatingTestCommand(command, () => !TestNightly, SKIP_REASON);
+                return true; // Always return true to skip Slow attribute if this attribute is applied
             }
         }
 
@@ -274,8 +219,7 @@ namespace Lucene.Net.Util
         /// </summary>
         [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
         [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
-        public sealed class WeeklyAttribute : System.Attribute
-            , IApplyToTest, IApplyToContext, IWrapTestMethod
+        public sealed class WeeklyAttribute : System.Attribute, IApplyToTest, IApplyTestSkipRule
         {
             private const string SKIP_REASON = "This is a weekly test.";
 
@@ -283,29 +227,19 @@ namespace Lucene.Net.Util
             {
                 // This method is called before initialization. The only thing
                 // we can do here is set the category.
-                test.Properties.Add(PropertyNames.Category, "Weekly");
+                test.AddCategoryIfMissing("Weekly");
             }
 
-            void IApplyToContext.ApplyToContext(TestExecutionContext context)
+            int IApplyTestSkipRule.Priority => 20;
+
+            bool IApplyTestSkipRule.ApplyTestSkipRule(NUnit.Framework.Internal.Test test)
             {
-                // Cover the case where this attribute is applied to the whole test fixture
-                var currentTest = context.CurrentTest;
-                if (!TestWeekly && currentTest is NUnit.Framework.Internal.TestFixture fixture)
+                if (!TestWeekly)
                 {
-                    foreach (var testInterface in fixture.Tests)
-                    {
-                        var test = (NUnit.Framework.Internal.Test)testInterface;
-                        test.RunState = RunState.Skipped;
-                        test.Properties.Set(PropertyNames.SkipReason, SKIP_REASON);
-                    }
+                    test.RunState = RunState.Skipped;
+                    test.Properties.Set(PropertyNames.SkipReason, SKIP_REASON);
                 }
-            }
-
-            TestCommand ICommandWrapper.Wrap(TestCommand command)
-            {
-                // This is to cover the case where the test is decorated with the attribute
-                // directly.
-                return new LuceneDelegatingTestCommand(command, () => !TestWeekly, SKIP_REASON);
+                return true; // Always return true to skip Nightly/Slow when this attribute is applied
             }
         }
 
@@ -314,36 +248,26 @@ namespace Lucene.Net.Util
         /// </summary>
         [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
         [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
-        public sealed class AwaitsFixAttribute : System.Attribute
-            , IApplyToTest, IApplyToContext, IWrapTestMethod
+        public sealed class AwaitsFixAttribute : System.Attribute, IApplyToTest, IApplyTestSkipRule
         {
             void IApplyToTest.ApplyToTest(NUnit.Framework.Internal.Test test)
             {
                 // This method is called before initialization. The only thing
                 // we can do here is set the category.
-                test.Properties.Add(PropertyNames.Category, "AwaitsFix");
+                test.AddCategoryIfMissing("AwaitsFix");
             }
 
-            void IApplyToContext.ApplyToContext(TestExecutionContext context)
+            int IApplyTestSkipRule.Priority => 10;
+
+            bool IApplyTestSkipRule.ApplyTestSkipRule(NUnit.Framework.Internal.Test test)
             {
-                // Cover the case where this attribute is applied to the whole test fixture
-                var currentTest = context.CurrentTest;
-                if (!TestAwaitsFix && currentTest is NUnit.Framework.Internal.TestFixture fixture)
+                if (!TestAwaitsFix)
                 {
-                    foreach (var testInterface in fixture.Tests)
-                    {
-                        var test = (NUnit.Framework.Internal.Test)testInterface;
-                        test.RunState = RunState.Skipped;
-                        test.Properties.Set(PropertyNames.SkipReason, BugUrl);
-                    }
+                    test.RunState = RunState.Skipped;
+                    test.Properties.Set(PropertyNames.SkipReason, BugUrl);
+                    return true;
                 }
-            }
-
-            TestCommand ICommandWrapper.Wrap(TestCommand command)
-            {
-                // This is to cover the case where the test is decorated with the attribute
-                // directly.
-                return new LuceneDelegatingTestCommand(command, () => !TestAwaitsFix, BugUrl) { RunState = RunState.Ignored };
+                return false;
             }
 
             /// <summary>
@@ -357,36 +281,26 @@ namespace Lucene.Net.Util
         /// </summary>
         [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false)]
         [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
-        public sealed class SlowAttribute : System.Attribute
-            , IApplyToTest, IApplyToContext, IWrapTestMethod
+        public sealed class SlowAttribute : System.Attribute, IApplyToTest, IApplyTestSkipRule
         {
             void IApplyToTest.ApplyToTest(NUnit.Framework.Internal.Test test)
             {
                 // This method is called before initialization. The only thing
                 // we can do here is set the category.
-                test.Properties.Add(PropertyNames.Category, "Slow");
+                test.AddCategoryIfMissing("Slow");
             }
 
-            void IApplyToContext.ApplyToContext(TestExecutionContext context)
+            int IApplyTestSkipRule.Priority => 40;
+
+            bool IApplyTestSkipRule.ApplyTestSkipRule(NUnit.Framework.Internal.Test test)
             {
-                // Cover the case where this attribute is applied to the whole test fixture
-                var currentTest = context.CurrentTest;
-                if (!TestSlow && currentTest is NUnit.Framework.Internal.TestFixture fixture)
+                if (!TestSlow)
                 {
-                    foreach (var testInterface in fixture.Tests)
-                    {
-                        var test = (NUnit.Framework.Internal.Test)testInterface;
-                        test.RunState = RunState.Skipped;
-                        test.Properties.Set(PropertyNames.SkipReason, Message);
-                    }
+                    test.RunState = RunState.Skipped;
+                    test.Properties.Set(PropertyNames.SkipReason, Message);
+                    return true;
                 }
-            }
-
-            TestCommand ICommandWrapper.Wrap(TestCommand command)
-            {
-                // This is to cover the case where the test is decorated with the attribute
-                // directly.
-                return new LuceneDelegatingTestCommand(command, () => !TestSlow, Message);
+                return false;
             }
 
             public string Message { get; set; } = "This test is slow.";

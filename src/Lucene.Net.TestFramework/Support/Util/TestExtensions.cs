@@ -85,6 +85,27 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
+        /// Adds a category to an NUnit test if it doesn't already exist on the node.
+        /// This ensures that the category will only be added once even if called multiple times
+        /// on the same node.
+        /// </summary>
+        /// <param name="test">The test node to add the category to.</param>
+        /// <param name="category">The name of the category.</param>
+        public static void AddCategoryIfMissing(this Test test, string category)
+        {
+            if (test.Properties.ContainsKey(PropertyNames.Category))
+            {
+                var existingCategories = test.Properties[PropertyNames.Category];
+                if (existingCategories != null && existingCategories.Cast<object>().Any(v => Equals(v, category)))
+                {
+                    return;
+                }
+            }
+
+            test.Properties.Add(PropertyNames.Category, category);
+        }
+
+        /// <summary>
         /// Mark the test and all descendents as Invalid (not runnable) specifying a reason and an exception.
         /// </summary>
         /// <param name="test">This <see cref="Test"/>.</param>
