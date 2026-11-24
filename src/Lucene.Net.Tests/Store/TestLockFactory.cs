@@ -1,4 +1,5 @@
 using J2N.Threading;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -242,6 +243,52 @@ namespace Lucene.Net.Store
                 lockFile.Delete();
             }
         }
+
+#if FEATURE_FILE_CREATESYMBOLICLINK
+        // LUCENENET: Verify: NativeFSLockFactory hands out the same lock when the lock dir is reached through
+        // a symbolic link, so two IndexWriters can't open the same index through different paths (see #1409)
+        [Test, LuceneNetSpecific]
+        public virtual void TestNativeFSLockFactorySymbolicLink()
+        {
+            AssumeTrue("Symbolic links are only resolved on Unix", Path.DirectorySeparatorChar == '/');
+
+            DirectoryInfo tempDir = CreateTempDir("testNativeFsLockFactorySymlink");
+            DirectoryInfo realDir = System.IO.Directory.CreateDirectory(Path.Combine(tempDir.FullName, "real"));
+            var linkDir = new DirectoryInfo(Path.Combine(tempDir.FullName, "link"));
+            linkDir.CreateAsSymbolicLink(realDir.FullName);
+
+            var l = new NativeFSLockFactory(realDir).MakeLock("test.lock");
+            var l2 = new NativeFSLockFactory(linkDir).MakeLock("test.lock");
+
+            Assert.IsTrue(l.Obtain(), "failed to obtain lock, got exception: {0}", l.FailureReason);
+            Assert.IsFalse(l2.Obtain(), "succeeded in obtaining lock twice through a symbolic link");
+            l.Dispose();
+
+            Assert.IsTrue(l2.Obtain(), "failed to obtain lock through a symbolic link after the first one was freed, got exception: {0}", l2.FailureReason);
+            l2.Dispose();
+        }
+
+        // LUCENENET: Verify: a second IndexWriter cannot open the same index through a symbolic link.
+        // Without symbolic link resolution both writers open and overwrite each other's segment files (see #1409)
+        [Test, LuceneNetSpecific]
+        public virtual void TestIndexWriterSymbolicLink()
+        {
+            AssumeTrue("Symbolic links are only resolved on Unix", Path.DirectorySeparatorChar == '/');
+
+            DirectoryInfo tempDir = CreateTempDir("testIndexWriterSymlink");
+            DirectoryInfo realDir = System.IO.Directory.CreateDirectory(Path.Combine(tempDir.FullName, "real"));
+            var linkDir = new DirectoryInfo(Path.Combine(tempDir.FullName, "link"));
+            linkDir.CreateAsSymbolicLink(realDir.FullName);
+
+            using Directory real = FSDirectory.Open(realDir);
+            using Directory link = FSDirectory.Open(linkDir);
+            using IndexWriter writer = new IndexWriter(real, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            AddDoc(writer);
+
+            Assert.Throws<LockObtainFailedException>(() =>
+                new IndexWriter(link, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)) { WriteLockTimeout = 0 }));
+        }
+#endif
 
         // Verify: NativeFSLockFactory assigns null as lockPrefix if the lockDir is inside directory
         [Test]

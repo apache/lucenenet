@@ -230,7 +230,7 @@ namespace Lucene.Net.Store
                     lf.SetLockDir(m_directory);
                     lf.LockPrefix = null;
                 }
-                else if (dir.GetCanonicalPath().Equals(m_directory.GetCanonicalPath(), StringComparison.Ordinal))
+                else if (dir.EqualsCanonicalPath(m_directory)) // LUCENENET: compares without allocating the strings
                 {
                     lf.LockPrefix = null;
                 }
