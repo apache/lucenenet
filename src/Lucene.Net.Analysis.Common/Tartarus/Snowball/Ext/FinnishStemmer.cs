@@ -30,6 +30,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+using J2N.Text;
 using System.Text;
 
 namespace Lucene.Net.Tartarus.Snowball.Ext
@@ -169,7 +170,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
         private static readonly char[] g_particle_end = { (char)17, (char)97, (char)24, (char)1, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)0, (char)8, (char)0, (char)32 };
 
         private bool B_ending_removed;
-        private StringBuilder S_x = new StringBuilder();
+        private TextBuilder S_x = new TextBuilder();
         private int I_p2;
         private int I_p1;
 
@@ -1020,7 +1021,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             // -> x, line 179
             S_x = SliceTo(S_x);
             // name x, line 179
-            if (!(Eq_V_B(S_x.ToString())))
+            if (!(Eq_V_B(S_x.AsSpan())))
             {
                 return false;
             }

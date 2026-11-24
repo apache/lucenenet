@@ -1,11 +1,9 @@
 // Lucene version compatibility level 4.8.1
-using J2N.Text;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Tartarus.Snowball.Ext;
 using NUnit.Framework;
 using System;
 using System.IO;
-using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Snowball
 {
@@ -35,13 +33,13 @@ namespace Lucene.Net.Analysis.Snowball
         {
             string text = "The fledgling banks were counting on a big boom in banking";
             EnglishStemmer stemmer = new EnglishStemmer();
-            string[] test = Regex.Split(text, "\\s").TrimEnd();
+            string[] test = text.Split(' ');
             string[] gold = new string[test.Length];
             for (int i = 0; i < test.Length; i++)
             {
                 stemmer.SetCurrent(test[i]);
                 stemmer.Stem();
-                gold[i] = stemmer.Current;
+                gold[i] = stemmer.CurrentSpan.ToString();
             }
 
             TextReader reader = new StringReader(text);

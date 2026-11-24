@@ -30,12 +30,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+using J2N.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Text;
 
 namespace Lucene.Net.Tartarus.Snowball
 {
@@ -54,7 +53,7 @@ namespace Lucene.Net.Tartarus.Snowball
 
         protected SnowballProgram()
         {
-            m_current = new char[8];
+            // LUCENENET: Don't allocate in the constructor.
             // LUCENENET specific - calling private method instead of public virtual
             SetCurrentInternal("");
         }
@@ -68,6 +67,12 @@ namespace Lucene.Net.Tartarus.Snowball
             => SetCurrentInternal(value);
 
         /// <summary>
+        /// Set the current span.
+        /// </summary>
+        public virtual void SetCurrent(ReadOnlySpan<char> value)
+            => SetCurrentInternal(value);
+
+        /// <summary>
         /// Set the current string.
         /// </summary>
         /// <param name="text">character array containing input</param>
@@ -75,8 +80,24 @@ namespace Lucene.Net.Tartarus.Snowball
         public virtual void SetCurrent(char[] text, int length) =>
             SetCurrentInternal(text, length);
 
-        private void SetCurrentInternal(string value)
-            => SetCurrentInternal(value.ToCharArray(), value.Length);
+        // LUCENENET specific - S1699 - introduced this to allow the constructor to
+        // still call "SetCurrent" functionality without having to call the virtual method
+        // that could be overridden by a subclass and don't have the state it expects
+        private void SetCurrentInternal(ReadOnlySpan<char> value)
+        {
+            // LUCENENET specific - This overload doesn't share the buffer, so
+            // we grow the buffer oversize for reuse.
+            if (m_current is null || value.Length > m_current.Length)
+                m_current = new char[ArrayUtil.Oversize(value.Length, RamUsageEstimator.NUM_BYTES_CHAR)];
+            if (value.Length > 0)
+                value.CopyTo(m_current);
+            m_cursor = 0;
+            m_limit = value.Length;
+            m_limit_backward = 0;
+            m_bra = m_cursor;
+            m_ket = m_limit;
+        }
+
 
         // LUCENENET specific - S1699 - introduced this to allow the constructor to
         // still call "SetCurrent" functionality without having to call the virtual method
@@ -91,10 +112,7 @@ namespace Lucene.Net.Tartarus.Snowball
             m_ket = m_limit;
         }
 
-        /// <summary>
-        /// Get the current string.
-        /// </summary>
-        public virtual string Current => new string(m_current, 0, m_limit);
+        // LUCENENET specific - removed the Current property and replace with CurrentSpan and CurrentMemory
 
         /// <summary>
         /// Get the current buffer containing the stem.
@@ -116,6 +134,15 @@ namespace Lucene.Net.Tartarus.Snowball
         /// Get the valid length of the character array in <seealso cref="CurrentBuffer"/>
         /// </summary>
         public virtual int CurrentBufferLength => m_limit;
+        /// <summary>
+        /// Gets the current stem, sliced to length, as a span.
+        /// </summary>
+        public virtual ReadOnlySpan<char> CurrentSpan => m_current.AsSpan(0, m_limit);
+
+        /// <summary>
+        /// Gets the current stem, sliced to length, as memory.
+        /// </summary>
+        public virtual ReadOnlyMemory<char> CurrentMemory => new ReadOnlyMemory<char>(m_current, 0, m_limit);
 
         // current string
         protected char[] m_current;
@@ -136,7 +163,7 @@ namespace Lucene.Net.Tartarus.Snowball
             m_ket = other.m_ket;
         }
 
-        protected virtual bool InGrouping(char[] s, int min, int max)
+        protected virtual bool InGrouping(ReadOnlySpan<char> s, int min, int max)
         {
             if (m_cursor >= m_limit) return false;
             char ch = m_current[m_cursor];
@@ -147,7 +174,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return true;
         }
 
-        protected virtual bool InGroupingB(char[] s, int min, int max)
+        protected virtual bool InGroupingB(ReadOnlySpan<char> s, int min, int max)
         {
             if (m_cursor <= m_limit_backward) return false;
             char ch = m_current[m_cursor - 1];
@@ -158,7 +185,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return true;
         }
 
-        protected virtual bool OutGrouping(char[] s, int min, int max)
+        protected virtual bool OutGrouping(ReadOnlySpan<char> s, int min, int max)
         {
             if (m_cursor >= m_limit) return false;
             char ch = m_current[m_cursor];
@@ -176,7 +203,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return false;
         }
 
-        protected virtual bool OutGroupingB(char[] s, int min, int max)
+        protected virtual bool OutGroupingB(ReadOnlySpan<char> s, int min, int max)
         {
             if (m_cursor <= m_limit_backward) return false;
             char ch = m_current[m_cursor - 1];
@@ -230,7 +257,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return true;
         }
 
-        protected virtual bool Eq_S(int s_size, string s)
+        protected virtual bool Eq_S(int s_size, ReadOnlySpan<char> s)
         {
             if (m_limit - m_cursor < s_size) return false;
             int i;
@@ -242,7 +269,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return true;
         }
 
-        protected virtual bool Eq_S_B(int s_size, string s)
+        protected virtual bool Eq_S_B(int s_size, ReadOnlySpan<char> s)
         {
             if (m_cursor - m_limit_backward < s_size) return false;
             int i;
@@ -254,12 +281,12 @@ namespace Lucene.Net.Tartarus.Snowball
             return true;
         }
 
-        protected virtual bool Eq_V(string s)
+        protected virtual bool Eq_V(ReadOnlySpan<char> s)
         {
             return Eq_S(s.Length, s);
         }
 
-        protected virtual bool Eq_V_B(string s)
+        protected virtual bool Eq_V_B(ReadOnlySpan<char> s)
         {
             return Eq_S_B(s.Length, s);
         }
@@ -413,7 +440,7 @@ namespace Lucene.Net.Tartarus.Snowball
         /// to replace chars between <paramref name="c_bra"/> and <paramref name="c_ket"/> in current by the
         /// chars in <paramref name="s"/>.
         /// </summary>
-        protected virtual int ReplaceS(int c_bra, int c_ket, string s)
+        protected virtual int ReplaceS(int c_bra, int c_ket, ReadOnlySpan<char> s)
         {
             int adjustment = s.Length - (c_ket - c_bra);
             int newLength = m_limit + adjustment;
@@ -459,7 +486,7 @@ namespace Lucene.Net.Tartarus.Snowball
             }
         }
 
-        protected virtual void SliceFrom(string s)
+        protected virtual void SliceFrom(ReadOnlySpan<char> s)
         {
             SliceCheck();
             ReplaceS(m_bra, m_ket, s);
@@ -470,7 +497,7 @@ namespace Lucene.Net.Tartarus.Snowball
             SliceFrom("");
         }
 
-        protected virtual void Insert(int c_bra, int c_ket, string s)
+        protected virtual void Insert(int c_bra, int c_ket, ReadOnlySpan<char> s)
         {
             int adjustment = ReplaceS(c_bra, c_ket, s);
             if (c_bra <= m_bra) m_bra += adjustment;
@@ -478,9 +505,9 @@ namespace Lucene.Net.Tartarus.Snowball
         }
 
         /// <summary>
-        /// Copy the slice into the supplied <see cref="StringBuilder"/>
+        /// Copy the slice into the supplied <see cref="TextBuilder"/>
         /// </summary>
-        protected virtual StringBuilder SliceTo(StringBuilder s)
+        protected virtual TextBuilder SliceTo(TextBuilder s)
         {
             SliceCheck();
             int len = m_ket - m_bra;
@@ -489,7 +516,7 @@ namespace Lucene.Net.Tartarus.Snowball
             return s;
         }
 
-        protected virtual StringBuilder AssignTo(StringBuilder s)
+        protected virtual TextBuilder AssignTo(TextBuilder s)
         {
             s.Length = 0;
             s.Append(m_current, 0, m_limit);

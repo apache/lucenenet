@@ -30,6 +30,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+using J2N.Text;
 using System.Text;
 
 namespace Lucene.Net.Tartarus.Snowball.Ext
@@ -98,7 +99,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
 
         private int I_x;
         private int I_p1;
-        private StringBuilder S_ch = new StringBuilder();
+        private TextBuilder S_ch = new TextBuilder();
 
         // LUCENENET: commented out unused private method
         // private void copy_from(DanishStemmer other)
@@ -408,7 +409,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             S_ch = SliceTo(S_ch);
             m_limit_backward = v_2;
             // name ch, line 77
-            if (!(Eq_V_B(S_ch.ToString())))
+            if (!(Eq_V_B(S_ch.AsSpan())))
             {
                 return false;
             }

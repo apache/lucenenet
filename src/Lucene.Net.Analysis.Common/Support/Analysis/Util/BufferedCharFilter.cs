@@ -5,9 +5,9 @@
 using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.Text;
 using System;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -434,7 +434,7 @@ namespace Lucene.Net.Analysis.Util
                 }
 
                 char eol = '\0';
-                StringBuilder result = new StringBuilder(80);
+                using ValueStringBuilder result = new(stackalloc char[80]);
                 /* Typical Line Length */
 
                 result.Append(buf, pos, end - pos);
@@ -641,16 +641,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-#if FEATURE_STREAM_READ_SPAN
-        /// <summary>
-        /// Not supported.
-        /// </summary>
-        /// <exception cref="NotSupportedException">In all cases.</exception>
-        public override int Read(Span<char> buffer)
-        {
-            throw UnsupportedOperationException.Create();
-        }
-
+#if FEATURE_TEXTREADER_MEMORY
         /// <summary>
         /// Not supported.
         /// </summary>
@@ -664,7 +655,18 @@ namespace Lucene.Net.Analysis.Util
         /// Not supported.
         /// </summary>
         /// <exception cref="NotSupportedException">In all cases.</exception>
-        public override int ReadBlock(Span<char> buffer)
+        public override ValueTask<int> ReadBlockAsync(Memory<char> buffer, CancellationToken cancellationToken = default)
+        {
+            throw UnsupportedOperationException.Create();
+        }
+#endif
+
+#if FEATURE_TEXTREADER_SPAN
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">In all cases.</exception>
+        public override int Read(Span<char> buffer)
         {
             throw UnsupportedOperationException.Create();
         }
@@ -673,11 +675,12 @@ namespace Lucene.Net.Analysis.Util
         /// Not supported.
         /// </summary>
         /// <exception cref="NotSupportedException">In all cases.</exception>
-        public override ValueTask<int> ReadBlockAsync(Memory<char> buffer, CancellationToken cancellationToken = default)
+        public override int ReadBlock(Span<char> buffer)
         {
             throw UnsupportedOperationException.Create();
         }
 #endif
+
         /// <summary>
         /// Not supported.
         /// </summary>
@@ -731,6 +734,23 @@ namespace Lucene.Net.Analysis.Util
         {
             throw UnsupportedOperationException.Create();
         }
+
+#if FEATURE_TEXTREADER_ASYNC_CANCELLATION
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">In all cases.</exception>
+        public override ValueTask<string> ReadLineAsync(CancellationToken cancellationToken)
+            => throw UnsupportedOperationException.Create();
+
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">In all cases.</exception>
+        public override Task<string> ReadToEndAsync(CancellationToken cancellationToken)
+            => throw UnsupportedOperationException.Create();
+#endif
+
 #if FEATURE_TEXTWRITER_INITIALIZELIFETIMESERVICE
         /// <summary>
         /// Not supported.
