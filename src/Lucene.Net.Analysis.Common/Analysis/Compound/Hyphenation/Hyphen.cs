@@ -1,6 +1,8 @@
 // Lucene version compatibility level 4.8.1
+using Lucene.Net.Text;
+using Lucene.Net.Util;
 using System;
-using System.Text;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -35,20 +37,20 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// </summary>
     public class Hyphen
     {
-        public string PreBreak { get; set; }
+        public string? PreBreak { get; set; }
 
-        public string NoBreak { get; set; }
+        public string? NoBreak { get; set; }
 
-        public string PostBreak { get; set; }
+        public string? PostBreak { get; set; }
 
-        internal Hyphen(string pre, string no, string post)
+        internal Hyphen(string? pre, string? no, string? post)
         {
             PreBreak = pre;
             NoBreak = no;
             PostBreak = post;
         }
 
-        internal Hyphen(string pre)
+        internal Hyphen(string? pre)
         {
             PreBreak = pre;
             NoBreak = null;
@@ -61,7 +63,11 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             {
                 return "-";
             }
-            StringBuilder res = new StringBuilder("{");
+            int length = (PreBreak?.Length ?? 0) + (NoBreak?.Length ?? 0) + (PostBreak?.Length ?? 0) + 6;
+            using ValueStringBuilder res = length * sizeof(char) <= Constants.MaxStackByteLimit
+                ? new(stackalloc char[length])
+                : new(length);
+            res.Append("{");
             res.Append(PreBreak);
             res.Append("}{");
             res.Append(PostBreak);

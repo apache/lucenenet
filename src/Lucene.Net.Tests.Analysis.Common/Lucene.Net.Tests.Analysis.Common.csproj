@@ -27,6 +27,7 @@
     <AssemblyTitle>Lucene.Net.Tests.Analysis.Common</AssemblyTitle>
     <TestShardIsolated>true</TestShardIsolated>
     <RootNamespace>Lucene.Net</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

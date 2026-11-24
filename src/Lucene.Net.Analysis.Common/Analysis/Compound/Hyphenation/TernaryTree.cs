@@ -1,11 +1,15 @@
 // Lucene version compatibility level 4.8.1
+using J2N.Text;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Buffers;
 using Lucene.Net.Util;
 using System;
+using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Text;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -128,6 +132,11 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         // LUCENENET specific - S1699 - marked non-virtual because calling
         // virtual members from the constructor is not a safe operation in .NET
+        [MemberNotNull(nameof(m_lo))]
+        [MemberNotNull(nameof(m_hi))]
+        [MemberNotNull(nameof(m_eq))]
+        [MemberNotNull(nameof(m_sc))]
+        [MemberNotNull(nameof(m_kv))]
         protected void Init()
         {
             m_root = (char)0;
@@ -146,19 +155,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// same prefix is inserted. This saves a lot of space, specially for long
         /// keys.
         /// </summary>
-        // LUCENENET: string overload retained here for public API for non-C#-14 callers
-        public void Insert(string key, char val)
-            => Insert(key.AsSpan(), val);
-
-        /// <summary>
-        /// Branches are initially compressed, needing one node per key plus the size
-        /// of the string key. They are decompressed as needed when another key with
-        /// same prefix is inserted. This saves a lot of space, specially for long
-        /// keys.
-        /// </summary>
-        /// <remarks>
-        /// LUCENENET specific overload for <see cref="ReadOnlySpan{T}"/>
-        /// </remarks>
         public virtual void Insert(ReadOnlySpan<char> key, char val)
         {
             // make sure we have enough room in the arrays
@@ -169,16 +165,26 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
             // LUCENENET: add optimization for stackalloc and Span
             int strkeyLen = len--;
-            Span<char> strkey = strkeyLen * sizeof(char) > Constants.MaxStackByteLimit ? new char[strkeyLen] : stackalloc char[strkeyLen];
-            key.CopyTo(strkey);
-            strkey[len] = (char)0;
-            m_root = Insert(m_root, strkey, 0, val);
+            char[]? arrayToReturnToPool = null;
+            Span<char> strkey = strkeyLen * sizeof(char) <= Constants.MaxStackByteLimit
+                ? stackalloc char[strkeyLen]
+                : (arrayToReturnToPool = ArrayPool<char>.Shared.Rent(strkeyLen)).AsSpan(0, strkeyLen);
+            try
+            {
+                key.CopyTo(strkey);
+                strkey[len] = (char)0;
+                m_root = Insert(m_root, strkey, 0, val);
+            }
+            finally
+            {
+                ArrayPool<char>.Shared.ReturnIfNotNull(arrayToReturnToPool);
+            }
         }
 
         public virtual void Insert(ReadOnlySpan<char> key, int start, char val)
         {
             int len = StrLen(key) + 1;
-            if (m_freenode + len > m_eq.Length)
+            if (m_freenode + (uint)len > (uint)m_eq.Length) // LUCENENET: safe for int overflow
             {
                 RedimNodeArrays(m_eq.Length + BLOCK_SIZE);
             }
@@ -341,15 +347,25 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return StrLen(a, 0);
         }
 
-        public virtual int Find(string key)
+        public virtual int Find(ReadOnlySpan<char> key)
         {
-            int len = key.Length;
+            int bufferLength = key.Length + 1;
             // LUCENENET: add optimization for stackalloc and Span
-            Span<char> strkey = (len + 1) * sizeof(char) > Constants.MaxStackByteLimit ? new char[len + 1] : stackalloc char[len + 1];
-            key.AsSpan().CopyTo(strkey);
-            strkey[len] = (char)0;
+            char[]? arrayToReturnToPool = null;
+            Span<char> strkey = bufferLength * sizeof(char) <= Constants.MaxStackByteLimit
+                ? stackalloc char[bufferLength]
+                : (arrayToReturnToPool = ArrayPool<char>.Shared.Rent(bufferLength)).AsSpan(0, bufferLength);
+            try
+            {
+                key.CopyTo(strkey);
+                strkey[bufferLength - 1] = (char)0;
 
-            return Find(strkey, 0);
+                return Find(strkey, 0);
+            }
+            finally
+            {
+                ArrayPool<char>.Shared.ReturnIfNotNull(arrayToReturnToPool);
+            }
         }
 
         public virtual int Find(ReadOnlySpan<char> key, int start)
@@ -395,9 +411,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return -1;
         }
 
-        public virtual bool Knows(string key)
+        public virtual bool Knows(ReadOnlySpan<char> key)
         {
-            return (Find(key) >= 0);
+            return Find(key) >= 0;
         }
 
         // redimension the arrays
@@ -468,21 +484,30 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             int i = 0, n = m_length;
             string[] k = new string[n];
             // LUCENENET: add optimization for stackalloc and Span
-            Span<char> v = n * sizeof(char) > Constants.MaxStackByteLimit ? new char[n] : stackalloc char[n];
-            using (Enumerator iter = new Enumerator(this))
+            char[]? arrayToReturnToPool = null;
+            Span<char> v = n * sizeof(char) <= Constants.MaxStackByteLimit
+                ? stackalloc char[n]
+                : (arrayToReturnToPool = ArrayPool<char>.Shared.Rent(n)).AsSpan(0, n);
+            try
             {
-                while (iter.MoveNext())
+                using (Enumerator iter = new Enumerator(this))
                 {
-                    v[i] = iter.Value;
-                    k[i++] = iter.Current;
+                    while (iter.MoveNext())
+                    {
+                        v[i] = iter.Value;
+                        k[i++] = iter.Current.Span.ToString();
+                    }
                 }
+                Init();
+                InsertBalanced(k, v, 0, n);
+                // With uniform letter distribution sc[root] should be around 'm'
+                // System.out.print("After root splitchar = ");
+                // System.out.println(sc[root]);
             }
-            Init();
-            InsertBalanced(k, v, 0, n);
-
-            // With uniform letter distribution sc[root] should be around 'm'
-            // System.out.print("After root splitchar = ");
-            // System.out.println(sc[root]);
+            finally
+            {
+                ArrayPool<char>.Shared.ReturnIfNotNull(arrayToReturnToPool);
+            }
         }
 
         /// <summary>
@@ -496,7 +521,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// TernaryTree!).
         ///
         /// </summary>
-        public virtual void TrimToSize()
+        // LUCENENET specific - renamed from trimToSize() (.NET Platform Convention)
+        public virtual void TrimExcess()
         {
             // first balance the tree for best performance
             Balance();
@@ -510,7 +536,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             TernaryTree map = new TernaryTree();
             Compact(kx, map, m_root);
             m_kv = kx;
-            m_kv.TrimToSize();
+            m_kv.TrimExcess();
         }
 
         private void Compact(CharVector kx, TernaryTree map, char p)
@@ -548,7 +574,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// NOTE: This was keys() in Lucene.
         /// </summary>
         /// <returns>An enumerator over the keys of this <see cref="TernaryTree"/>.</returns>
-        public virtual IEnumerator<string> GetEnumerator()
+        public virtual Enumerator GetEnumerator()
         {
             return new Enumerator(this);
         }
@@ -563,7 +589,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// to be before the first element until <see cref="MoveNext"/> is called, and
         /// if a move took place it will return <c>true</c>;
         /// </summary>
-        public class Enumerator : IEnumerator<string>
+        public class Enumerator : IEnumerator<ReadOnlyMemory<char>>
         {
             private readonly TernaryTree outerInstance;
 
@@ -575,7 +601,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             /// <summary>
             /// current key
             /// </summary>
-            private string curkey;
+            // LUCENENET specific - use TextBuilder rather than string so the enumerator reuses memory for each iteration
+            private readonly TextBuilder curkey;
 
             private class Item : ICloneable // LUCENENET NOTE: ICloneable is to support the Clone<T>() extension method
             {
@@ -609,18 +636,20 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             private readonly Stack<Item> ns;
 
             /// <summary>
-            /// key stack implemented with a <see cref="StringBuilder"/>
+            /// key stack implemented with a <see cref="TextBuilder"/>
             /// </summary>
-            private readonly StringBuilder ks;
+            private readonly TextBuilder ks;
 
             private bool isInitialized = false;
 
             public Enumerator(TernaryTree ternaryTree)
             {
-                this.outerInstance = ternaryTree;
+                // LUCENENET specific - added guard clause
+                this.outerInstance = ternaryTree ?? throw new ArgumentNullException(nameof(ternaryTree));
                 cur = -1;
                 ns = new Stack<Item>();
-                ks = new StringBuilder();
+                ks = new TextBuilder();
+                curkey = new TextBuilder();
                 isInitialized = false;
             }
 
@@ -628,6 +657,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             {
                 ns.Clear();
                 ks.Length = 0;
+                curkey.Length = 0;
                 cur = outerInstance.m_root;
                 Run();
             }
@@ -750,21 +780,29 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 }
                 // The current node should be a data node and
                 // the key should be in the key stack (at least partially)
-                StringBuilder buf = new StringBuilder(ks.ToString());
+                curkey.Length = 0;
+                curkey.Append(ks);
                 if (outerInstance.m_sc[cur] == 0xFFFF)
                 {
-                    int p = outerInstance.m_lo[cur];
-                    while (outerInstance.m_kv[p] != 0)
-                    {
-                        buf.Append(outerInstance.m_kv[p++]);
-                    }
+                    // LUCENENET specific - use IndexOf vectorized search instead of a while loop
+                    // and append the entire slice in one go to optimize the copy.
+                    // We copy into a reusable TextBuilder field to cut down on allocations.
+                    int start = outerInstance.m_lo[cur];
+                    ReadOnlySpan<char> suffix = outerInstance.m_kv.AsSpan(start);
+                    int length = suffix.IndexOf('\0');
+                    curkey.Append(suffix.Slice(0, length));
                 }
-                curkey = buf.ToString();
                 return 0;
             }
 
             #region Added for better .NET support
-            public string Current => curkey;
+            /// <summary>
+            /// Gets the chars at the current position. This is a direct
+            /// view into the underlying memory and will not live beyond
+            /// the current iteration. Callers should clone the chars
+            /// if a longer lifetime is required.
+            /// </summary>
+            public ReadOnlyMemory<char> Current => curkey.AsMemory();
 
             object IEnumerator.Current => Current;
 
@@ -807,6 +845,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual void PrintStats(TextWriter @out)
         {
+            if (@out is null)
+                throw new ArgumentNullException(nameof(@out)); // LUCENENET: Added guard clause
+
             @out.WriteLine("Number of keys = " + Convert.ToString(m_length)); // LUCENENET: Intentionally using current culture
             @out.WriteLine("Node count = " + Convert.ToString(m_freenode)); // LUCENENET: Intentionally using current culture
             // System.out.println("Array length = " + Integer.toString(eq.length));
@@ -826,7 +867,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             tt.insert("Car", 'r');
             tt.insert("palos", 'l');
             tt.insert("pa", 'p');
-            tt.trimToSize();
+            tt.TrimExcess();
             System.out.println((char) tt.find("Car"));
             System.out.println((char) tt.find("Carlos"));
             System.out.println((char) tt.find("alto"));
