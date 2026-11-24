@@ -20,6 +20,7 @@ using Docfx.Plugins;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace LuceneDocsPlugins;
 
@@ -30,12 +31,14 @@ public class EnvironmentVariableProcessor : IPostProcessor
         return metadata;
     }
 
-    public Manifest Process(Manifest manifest, string outputFolder)
+    public Manifest Process(Manifest manifest, string outputFolder, CancellationToken cancellationToken)
     {
         foreach (var manifestItem in manifest.Files.Where(x => x.Type == "Conceptual"))
         {
             foreach (var manifestItemOutputFile in manifestItem.Output)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 var outputPath = Path.Combine(outputFolder, manifestItemOutputFile.Value.RelativePath);
 
                 var content = File.ReadAllText(outputPath);
