@@ -38,7 +38,16 @@ namespace Lucene.Net.Util.Fst
             return bytes[pos--];
         }
 
-        // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override void ReadBytes(byte[] b, int offset, int len)
+        {
+            for (int i = 0; i < len; i++)
+            {
+                b[offset + i] = bytes[pos--];
+            }
+        }
+
+        // LUCENENET: This duplication is intentional for performance reasons.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void ReadBytes(Span<byte> destination)
         {

@@ -98,7 +98,34 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <inheritdoc/>
-        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        public override void WriteBytes(byte[] b, int offset, int len)
+        {
+            while (len > 0)
+            {
+                int chunk = blockSize - nextWrite;
+                if (len <= chunk)
+                {
+                    Arrays.Copy(b, offset, current, nextWrite, len);
+                    nextWrite += len;
+                    break;
+                }
+                else
+                {
+                    if (chunk > 0)
+                    {
+                        Arrays.Copy(b, offset, current, nextWrite, chunk);
+                        offset += chunk;
+                        len -= chunk;
+                    }
+                    current = new byte[blockSize];
+                    blocks.Add(current);
+                    nextWrite = 0;
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        // LUCENENET: This duplication is intentional for performance reasons.
         public override void WriteBytes(ReadOnlySpan<byte> source)
         {
             int offset = 0;
@@ -449,7 +476,32 @@ namespace Lucene.Net.Util.Fst
                 Position += count;
             }
 
-            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+            public override void ReadBytes(byte[] b, int offset, int len)
+            {
+                while (len > 0)
+                {
+                    int chunkLeft = outerInstance.blockSize - nextRead;
+                    if (len <= chunkLeft)
+                    {
+                        Arrays.Copy(current, nextRead, b, offset, len);
+                        nextRead += len;
+                        break;
+                    }
+                    else
+                    {
+                        if (chunkLeft > 0)
+                        {
+                            Arrays.Copy(current, nextRead, b, offset, chunkLeft);
+                            offset += chunkLeft;
+                            len -= chunkLeft;
+                        }
+                        current = outerInstance.blocks[nextBuffer++];
+                        nextRead = 0;
+                    }
+                }
+            }
+
+            // LUCENENET: This duplication is intentional for performance reasons.
             public override void ReadBytes(Span<byte> destination)
             {
                 int offset = 0;

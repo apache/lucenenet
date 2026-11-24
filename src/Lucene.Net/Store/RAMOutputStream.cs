@@ -160,7 +160,28 @@ namespace Lucene.Net.Store
             currentBuffer[bufferPosition++] = b;
         }
 
-        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        public override void WriteBytes(byte[] b, int offset, int len)
+        {
+            if (Debugging.AssertsEnabled) Debugging.Assert(b != null);
+            crc.Update(b, offset, len);
+            while (len > 0)
+            {
+                if (bufferPosition == bufferLength)
+                {
+                    currentBufferIndex++;
+                    SwitchCurrentBuffer();
+                }
+
+                int remainInBuffer = currentBuffer.Length - bufferPosition;
+                int bytesToCopy = len < remainInBuffer ? len : remainInBuffer;
+                Arrays.Copy(b, offset, currentBuffer, bufferPosition, bytesToCopy);
+                offset += bytesToCopy;
+                len -= bytesToCopy;
+                bufferPosition += bytesToCopy;
+            }
+        }
+
+        // LUCENENET: This duplication is intentional for performance reasons.
         public override void WriteBytes(ReadOnlySpan<byte> source)
         {
             int offset = 0;

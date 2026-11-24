@@ -142,9 +142,6 @@ namespace Lucene.Net.Store
             WriteBytes(singleByte, 0, 1);
         }
 
-        // LUCENENET: For performance reasons, it is better to keep this duplication, for now.
-        // At least until we have migrated many of the callers to call the ReadOnlySpan<char> overload
-        // directly.
         public override void WriteBytes(byte[] b, int offset, int len)
         {
             CheckCrashed();
@@ -173,7 +170,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        // LUCENENET: This duplication is intentional for performance reasons.
         public override void WriteBytes(ReadOnlySpan<byte> source)
         {
             int len = source.Length;

@@ -378,7 +378,15 @@ namespace Lucene.Net.Codecs
                 return data[pos++];
             }
 
-            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public override void ReadBytes(byte[] b, int offset, int len)
+            {
+                EnsureOpen(); // LUCENENET: Guard against disposed IndexInput
+                Arrays.Copy(data, pos, b, offset, len);
+                pos += len;
+            }
+
+            // LUCENENET: This duplication is intentional for performance reasons.
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void ReadBytes(Span<byte> destination)
             {

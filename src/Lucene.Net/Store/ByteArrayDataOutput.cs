@@ -105,11 +105,18 @@ namespace Lucene.Net.Store
             bytes[pos++] = b;
         }
 
-        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        public override void WriteBytes(byte[] b, int offset, int length)
+        {
+            if (Debugging.AssertsEnabled) Debugging.Assert((uint)pos + (uint)length <= (uint)limit);
+            Arrays.Copy(b, offset, bytes, pos, length);
+            pos += length;
+        }
+
+        // LUCENENET: This duplication is intentional for performance reasons.
         public override void WriteBytes(ReadOnlySpan<byte> source)
         {
             int length = source.Length;
-            if (Debugging.AssertsEnabled) Debugging.Assert(pos + length <= limit);
+            if (Debugging.AssertsEnabled) Debugging.Assert((uint)pos + (uint)length <= (uint)limit);
             Arrays.Copy(source, /*offset*/ 0, bytes, pos, length);
             pos += length;
         }

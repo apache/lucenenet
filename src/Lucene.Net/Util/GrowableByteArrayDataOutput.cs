@@ -65,7 +65,16 @@ namespace Lucene.Net.Util
             bytes[Length++] = b;
         }
 
-        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override void WriteBytes(byte[] b, int off, int len)
+        {
+            int newLength = Length + len;
+            bytes = ArrayUtil.Grow(bytes, newLength);
+            Arrays.Copy(b, off, bytes, Length, len);
+            Length = newLength;
+        }
+
+        // LUCENENET: This duplication is intentional for performance reasons.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void WriteBytes(ReadOnlySpan<byte> source)
         {

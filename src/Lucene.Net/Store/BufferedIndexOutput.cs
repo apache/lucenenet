@@ -78,10 +78,60 @@ namespace Lucene.Net.Store
 
         public override void WriteBytes(byte[] b, int offset, int length)
         {
-            WriteBytes(b.AsSpan(offset, length));
+            if (buffer is null) buffer = new byte[bufferSize]; // LUCENENET: Lazy-load the buffer, so we don't force all subclasses to allocate it
+            int bytesLeft = bufferSize - bufferPosition;
+            // is there enough space in the buffer?
+            if (bytesLeft >= length)
+            {
+                // we add the data to the end of the buffer
+                Arrays.Copy(b, offset, buffer, bufferPosition, length);
+                bufferPosition += length;
+                // if the buffer is full, flush it
+                if (bufferSize - bufferPosition == 0)
+                {
+                    Flush();
+                }
+            }
+            else
+            {
+                // is data larger then buffer?
+                if (length > bufferSize)
+                {
+                    // we flush the buffer
+                    if (bufferPosition > 0)
+                    {
+                        Flush();
+                    }
+                    // and write data at once
+                    crc.Update(b, offset, length);
+                    FlushBuffer(b, offset, length);
+                    bufferStart += length;
+                }
+                else
+                {
+                    // we fill/flush the buffer (until the input is written)
+                    int pos = 0; // position in the input data
+                    int pieceLength;
+                    while (pos < length)
+                    {
+                        pieceLength = (length - pos < bytesLeft) ? length - pos : bytesLeft;
+                        Arrays.Copy(b, pos + offset, buffer, bufferPosition, pieceLength);
+                        pos += pieceLength;
+                        bufferPosition += pieceLength;
+                        // if the buffer is full, flush it
+                        bytesLeft = bufferSize - bufferPosition;
+                        if (bytesLeft == 0)
+                        {
+                            Flush();
+                            bytesLeft = bufferSize;
+                        }
+                    }
+                }
+            }
         }
 
-        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+
+        // LUCENENET: This duplication is intentional for performance reasons.
         public override void WriteBytes(ReadOnlySpan<byte> source)
         {
             int length = source.Length;

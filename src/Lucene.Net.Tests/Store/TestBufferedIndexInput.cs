@@ -232,6 +232,16 @@ namespace Lucene.Net.Store
                 // an infinite file
             }
 
+            protected override void ReadInternal(byte[] b, int offset, int length)
+            {
+                for (int i = offset; i < offset + length; i++)
+                {
+                    b[i] = Byten(pos++);
+                }
+            }
+
+
+            // LUCENENET: This duplication is intentional for performance reasons.
             protected override void ReadInternal(Span<byte> destination)
             {
                 int length = destination.Length;

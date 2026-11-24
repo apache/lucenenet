@@ -107,7 +107,19 @@ namespace Lucene.Net.Util
             WriteBytes(bytes, 0, 1);
         }
 
-        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        public override void WriteBytes(byte[] b, int offset, int length)
+        {
+            long before = J2N.Time.NanoTime();
+            // TODO: sometimes, write only half the bytes, then
+            // sleep, then 2nd half, then sleep, so we sometimes
+            // interrupt having only written not all bytes
+            @delegate.WriteBytes(b, offset, length);
+            timeElapsed += J2N.Time.NanoTime() - before;
+            pendingBytes += length;
+            Sleep(GetDelay(false));
+        }
+
+        // LUCENENET: This duplication is intentional for performance reasons.
         public override void WriteBytes(ReadOnlySpan<byte> source)
         {
             int length = source.Length;

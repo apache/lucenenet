@@ -232,6 +232,12 @@ namespace Lucene.Net.Store
 
             public override sealed long Length => m_end - m_off;
 
+            protected override void ReadInternal(byte[] b, int offset, int len)
+            {
+                ReadInternal(b.AsSpan(offset, len));
+            }
+
+            // LUCENENET: Always use Span<byte> overload, since it is required by RandomAccess.Read() anyway.
             protected override void ReadInternal(Span<byte> destination)
             {
                 int len = destination.Length;

@@ -1466,7 +1466,12 @@ namespace Lucene.Net.Store
 
             public override long Length => io.Length;
 
-            // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+            protected internal override void FlushBuffer(byte[] b, int offset, int len)
+            {
+                io.WriteBytes(b, offset, len);
+            }
+
+            // LUCENENET: This duplication is intentional for performance reasons.
             protected internal override void FlushBuffer(ReadOnlySpan<byte> bytes)
             {
                 io.WriteBytes(bytes);
