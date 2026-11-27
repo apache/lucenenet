@@ -596,7 +596,7 @@ namespace Lucene.Net.Search
             t.Join();
 
             // if maybeRefreshBlocking didn't release the lock, this will fail.
-            assertTrue("failde to obtain the refreshLock!", sm.MaybeRefresh());
+            assertTrue("failed to obtain the refreshLock!", sm.MaybeRefresh());
 
             sm.Dispose();
             dir.Dispose();

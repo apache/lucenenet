@@ -218,7 +218,7 @@ namespace Lucene.Net.Benchmarks.Quality
             QualityStats avg = new QualityStats(0, 0);
             if (stats.Length == 0)
             {
-                // weired, no stats to average!
+                // weird, no stats to average!
                 return avg;
             }
             int m = 0; // queries with positive judgements

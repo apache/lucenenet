@@ -270,7 +270,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         }
 
         /**
-         * Test Exhasting Doc Maker logic
+         * Test Exhausting Doc Maker logic
          */
         [Test]
         public void TestExhaustContentSource()
@@ -535,7 +535,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         }
 
         /**
-         * Test that " {[AddDoc(4000)]: 4} : * " works corrcetly (for LUCENE-941)
+         * Test that " {[AddDoc(4000)]: 4} : * " works correctly (for LUCENE-941)
          */
         [Test]
         public void TestParallelExhausted()
@@ -831,7 +831,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             assertNull("taxo writer was not properly closed", runData.TaxonomyWriter);
             TaxonomyReader taxoReader = runData.GetTaxonomyReader();
             assertNotNull("taxo reader was not opened", taxoReader);
-            assertTrue("nothing was added to the taxnomy (expecting root and at least one addtional category)", taxoReader.Count > 1);
+            assertTrue("nothing was added to the taxonomy (expecting root and at least one additional category)", taxoReader.Count > 1);
             taxoReader.Dispose();
         }
 
